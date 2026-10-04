@@ -4,104 +4,104 @@
     "text": "请注意，拿取贵族板块并非一个独立行动，",
     "words": [
       {
-        "confidence": 0.9392624,
-        "endTime": 0.505,
+        "confidence": 0.91754353,
+        "endTime": 0.485,
         "startTime": 0.285,
         "word": "请"
       },
       {
-        "confidence": 0.91478264,
-        "endTime": 0.645,
-        "startTime": 0.505,
+        "confidence": 0.9184413,
+        "endTime": 0.605,
+        "startTime": 0.485,
         "word": "注"
       },
       {
-        "confidence": 0.912787,
-        "endTime": 0.875,
-        "startTime": 0.645,
+        "confidence": 0.9574233,
+        "endTime": 0.855,
+        "startTime": 0.605,
         "word": "意，"
       },
       {
-        "confidence": 0.9482651,
-        "endTime": 1.385,
-        "startTime": 1.185,
+        "confidence": 0.9464668,
+        "endTime": 1.355,
+        "startTime": 1.145,
         "word": "拿"
       },
       {
-        "confidence": 0.90061355,
-        "endTime": 1.595,
-        "startTime": 1.385,
+        "confidence": 0.89373523,
+        "endTime": 1.555,
+        "startTime": 1.355,
         "word": "取"
       },
       {
-        "confidence": 0.94351655,
-        "endTime": 1.785,
-        "startTime": 1.595,
+        "confidence": 0.93712527,
+        "endTime": 1.735,
+        "startTime": 1.555,
         "word": "贵"
       },
       {
-        "confidence": 0.8637784,
-        "endTime": 1.915,
-        "startTime": 1.785,
+        "confidence": 0.83999234,
+        "endTime": 1.855,
+        "startTime": 1.735,
         "word": "族"
       },
       {
-        "confidence": 0.9271799,
-        "endTime": 2.105,
-        "startTime": 1.915,
+        "confidence": 0.962164,
+        "endTime": 2.045,
+        "startTime": 1.855,
         "word": "板"
       },
       {
-        "confidence": 0.9577562,
-        "endTime": 2.385,
-        "startTime": 2.105,
+        "confidence": 0.9569473,
+        "endTime": 2.335,
+        "startTime": 2.045,
         "word": "块"
       },
       {
-        "confidence": 0.9185379,
-        "endTime": 2.575,
-        "startTime": 2.385,
+        "confidence": 0.89684975,
+        "endTime": 2.525,
+        "startTime": 2.335,
         "word": "并"
       },
       {
-        "confidence": 0.8951109,
-        "endTime": 2.735,
-        "startTime": 2.575,
+        "confidence": 0.9477885,
+        "endTime": 2.685,
+        "startTime": 2.525,
         "word": "非"
       },
       {
-        "confidence": 0.93864584,
-        "endTime": 2.845,
-        "startTime": 2.735,
+        "confidence": 0.94385725,
+        "endTime": 2.825,
+        "startTime": 2.685,
         "word": "一"
       },
       {
-        "confidence": 0.96190387,
+        "confidence": 0.96908844,
         "endTime": 2.985,
-        "startTime": 2.845,
+        "startTime": 2.825,
         "word": "个"
       },
       {
-        "confidence": 0.9751949,
-        "endTime": 3.155,
+        "confidence": 0.97697574,
+        "endTime": 3.165,
         "startTime": 2.985,
         "word": "独"
       },
       {
-        "confidence": 0.9604921,
-        "endTime": 3.285,
-        "startTime": 3.155,
+        "confidence": 0.9744331,
+        "endTime": 3.295,
+        "startTime": 3.165,
         "word": "立"
       },
       {
-        "confidence": 0.9628831,
+        "confidence": 0.95151067,
         "endTime": 3.505,
-        "startTime": 3.285,
+        "startTime": 3.295,
         "word": "行"
       },
       {
-        "confidence": 0.984568,
-        "endTime": 3.715,
+        "confidence": 0.98335063,
+        "endTime": 3.755,
         "startTime": 3.505,
         "word": "动，"
       }
@@ -112,106 +112,340 @@
     "text": "而是购买一张发展卡牌之后的附加行动。",
     "words": [
       {
-        "confidence": 0.5939068,
-        "endTime": 4.1350417,
-        "startTime": 4.0900416,
+        "confidence": 0.6150645,
+        "endTime": 4.1750417,
+        "startTime": 4.1300416,
         "word": "而"
       },
       {
-        "confidence": 0.773626,
-        "endTime": 4.3450418,
-        "startTime": 4.1350417,
+        "confidence": 0.80502206,
+        "endTime": 4.325042,
+        "startTime": 4.1750417,
         "word": "是"
       },
       {
-        "confidence": 0.83691317,
-        "endTime": 4.495042,
-        "startTime": 4.3450418,
+        "confidence": 0.7993591,
+        "endTime": 4.4750414,
+        "startTime": 4.325042,
         "word": "购"
       },
       {
-        "confidence": 0.9474617,
-        "endTime": 4.6250415,
-        "startTime": 4.495042,
+        "confidence": 0.95803183,
+        "endTime": 4.5950418,
+        "startTime": 4.4750414,
         "word": "买"
       },
       {
-        "confidence": 0.94537073,
-        "endTime": 4.7750416,
-        "startTime": 4.6250415,
+        "confidence": 0.9367244,
+        "endTime": 4.7350416,
+        "startTime": 4.5950418,
         "word": "一"
       },
       {
-        "confidence": 0.9808009,
-        "endTime": 4.995042,
-        "startTime": 4.7750416,
+        "confidence": 0.95805216,
+        "endTime": 4.9550414,
+        "startTime": 4.7350416,
         "word": "张"
       },
       {
-        "confidence": 0.9793893,
-        "endTime": 5.2250414,
-        "startTime": 4.995042,
+        "confidence": 0.98240113,
+        "endTime": 5.1650414,
+        "startTime": 4.9550414,
         "word": "发"
       },
       {
-        "confidence": 0.8420522,
-        "endTime": 5.3650417,
-        "startTime": 5.2250414,
+        "confidence": 0.91362566,
+        "endTime": 5.3050413,
+        "startTime": 5.1650414,
         "word": "展"
       },
       {
-        "confidence": 0.92439884,
-        "endTime": 5.5650415,
-        "startTime": 5.3650417,
+        "confidence": 0.9469405,
+        "endTime": 5.5050416,
+        "startTime": 5.3050413,
         "word": "卡"
       },
       {
-        "confidence": 0.9656566,
-        "endTime": 5.745042,
-        "startTime": 5.5650415,
+        "confidence": 0.9631426,
+        "endTime": 5.6950417,
+        "startTime": 5.5050416,
         "word": "牌"
       },
       {
-        "confidence": 0.9663603,
-        "endTime": 5.9050417,
-        "startTime": 5.745042,
+        "confidence": 0.9521964,
+        "endTime": 5.8450418,
+        "startTime": 5.6950417,
         "word": "之"
       },
       {
-        "confidence": 0.98366857,
-        "endTime": 6.1050415,
-        "startTime": 5.9050417,
+        "confidence": 0.98439926,
+        "endTime": 6.0650415,
+        "startTime": 5.8450418,
         "word": "后"
       },
       {
-        "confidence": 0.97269034,
-        "endTime": 6.2250414,
-        "startTime": 6.1050415,
+        "confidence": 0.95935583,
+        "endTime": 6.1950417,
+        "startTime": 6.0650415,
         "word": "的"
       },
       {
-        "confidence": 0.96461546,
+        "confidence": 0.9444583,
         "endTime": 6.3850417,
-        "startTime": 6.2250414,
+        "startTime": 6.1950417,
         "word": "附"
       },
       {
-        "confidence": 0.93727744,
+        "confidence": 0.91690326,
         "endTime": 6.5650415,
         "startTime": 6.3850417,
         "word": "加"
       },
       {
-        "confidence": 0.953594,
-        "endTime": 6.7750416,
+        "confidence": 0.95173854,
+        "endTime": 6.7950416,
         "startTime": 6.5650415,
         "word": "行"
       },
       {
-        "confidence": 0.9781992,
-        "endTime": 6.9250417,
-        "startTime": 6.7750416,
+        "confidence": 0.9858926,
+        "endTime": 7.0050416,
+        "startTime": 6.7950416,
         "word": "动。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "并且这个行动是强制性的，玩家不可以选择跳过。",
+    "words": [
+      {
+        "confidence": 0.9164421,
+        "endTime": 7.5750833,
+        "startTime": 7.4150834,
+        "word": "并"
+      },
+      {
+        "confidence": 0.92082614,
+        "endTime": 7.8250833,
+        "startTime": 7.5750833,
+        "word": "且"
+      },
+      {
+        "confidence": 0.9197566,
+        "endTime": 7.9750834,
+        "startTime": 7.8250833,
+        "word": "这"
+      },
+      {
+        "confidence": 0.5786699,
+        "endTime": 8.045083,
+        "startTime": 7.9750834,
+        "word": "个"
+      },
+      {
+        "confidence": 0.9669461,
+        "endTime": 8.255083,
+        "startTime": 8.045083,
+        "word": "行"
+      },
+      {
+        "confidence": 0.98480195,
+        "endTime": 8.425083,
+        "startTime": 8.255083,
+        "word": "动"
+      },
+      {
+        "confidence": 0.98596823,
+        "endTime": 8.625083,
+        "startTime": 8.425083,
+        "word": "是"
+      },
+      {
+        "confidence": 0.97627944,
+        "endTime": 8.885083,
+        "startTime": 8.625083,
+        "word": "强"
+      },
+      {
+        "confidence": 0.9464013,
+        "endTime": 9.0650835,
+        "startTime": 8.885083,
+        "word": "制"
+      },
+      {
+        "confidence": 0.87826705,
+        "endTime": 9.285084,
+        "startTime": 9.0650835,
+        "word": "性"
+      },
+      {
+        "confidence": 0.97503036,
+        "endTime": 9.485084,
+        "startTime": 9.285084,
+        "word": "的，"
+      },
+      {
+        "confidence": 0.93858236,
+        "endTime": 9.895083,
+        "startTime": 9.755083,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.95097005,
+        "endTime": 10.125084,
+        "startTime": 9.895083,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9406073,
+        "endTime": 10.255083,
+        "startTime": 10.125084,
+        "word": "不"
+      },
+      {
+        "confidence": 0.7967575,
+        "endTime": 10.395083,
+        "startTime": 10.255083,
+        "word": "可"
+      },
+      {
+        "confidence": 0.5961584,
+        "endTime": 10.505083,
+        "startTime": 10.395083,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9627178,
+        "endTime": 10.685083,
+        "startTime": 10.505083,
+        "word": "选"
+      },
+      {
+        "confidence": 0.49470758,
+        "endTime": 10.765083,
+        "startTime": 10.685083,
+        "word": "择"
+      },
+      {
+        "confidence": 0.11494685,
+        "endTime": 10.825083,
+        "startTime": 10.765083,
+        "word": "跳"
+      },
+      {
+        "confidence": 0.22089307,
+        "endTime": 10.885083,
+        "startTime": 10.825083,
+        "word": "过。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "买了满足条件的牌却不拿贵族，是犯规的。",
+    "words": [
+      {
+        "confidence": 0.9745108,
+        "endTime": 11.875125,
+        "startTime": 11.685125,
+        "word": "买"
+      },
+      {
+        "confidence": 0.97160244,
+        "endTime": 11.985126,
+        "startTime": 11.875125,
+        "word": "了"
+      },
+      {
+        "confidence": 0.8824323,
+        "endTime": 12.165125,
+        "startTime": 11.985126,
+        "word": "满"
+      },
+      {
+        "confidence": 0.9153941,
+        "endTime": 12.315125,
+        "startTime": 12.165125,
+        "word": "足"
+      },
+      {
+        "confidence": 0.92770576,
+        "endTime": 12.515125,
+        "startTime": 12.315125,
+        "word": "条"
+      },
+      {
+        "confidence": 0.9731072,
+        "endTime": 12.665125,
+        "startTime": 12.515125,
+        "word": "件"
+      },
+      {
+        "confidence": 0.94882387,
+        "endTime": 12.765125,
+        "startTime": 12.665125,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9043996,
+        "endTime": 13.085125,
+        "startTime": 12.765125,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.838136,
+        "endTime": 13.255125,
+        "startTime": 13.085125,
+        "word": "却"
+      },
+      {
+        "confidence": 0.95159125,
+        "endTime": 13.415125,
+        "startTime": 13.255125,
+        "word": "不"
+      },
+      {
+        "confidence": 0.96838456,
+        "endTime": 13.565125,
+        "startTime": 13.415125,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.96395075,
+        "endTime": 13.765125,
+        "startTime": 13.565125,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.9650941,
+        "endTime": 14.115126,
+        "startTime": 13.765125,
+        "word": "族，"
+      },
+      {
+        "confidence": 0.9789216,
+        "endTime": 14.385125,
+        "startTime": 14.175125,
+        "word": "是"
+      },
+      {
+        "confidence": 0.9563978,
+        "endTime": 14.575125,
+        "startTime": 14.385125,
+        "word": "犯"
+      },
+      {
+        "confidence": 0.9530379,
+        "endTime": 14.785126,
+        "startTime": 14.575125,
+        "word": "规"
+      },
+      {
+        "confidence": 0.7824764,
+        "endTime": 14.905125,
+        "startTime": 14.785126,
+        "word": "的。"
       }
     ]
   }
