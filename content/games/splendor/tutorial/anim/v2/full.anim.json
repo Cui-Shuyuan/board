@@ -10790,17 +10790,23 @@
       "parent": "action.nobles.trigger.001.1",
       "timing": [
         {
-          "key": "B合法有贵族 / A也已满足条件 → 搬B贵族 → 禁止标记（节奏放慢）",
-          "text": "整条 cue"
+          "key": "B合法持有贵族 / A买1张白牌满足条件 / A搬B的贵族 / 禁止标记",
+          "text": "整条 cue（节奏放慢）"
         }
       ],
       "script": {
         "story": "【玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取】",
-        "note": "【来源反例：只能从供应堆拿贵族】\n  cue 开始时玩家B贵族区已有 noble_5，且B的发展区已有 3白+3红+3黑，B合法满足该贵族；\n  玩家A的发展区也已经满足 noble_5（3白+4红+4黑，白牌都是之前回合买到的，本 cue 不演购买）。\n  本 cue 唯一的真动作是：A 把 noble_5 从玩家B的贵族区搬到自己的贵族区。\n  双方条件虽然都满足，但贵族不是无主的，不能从其他玩家那里拿；最后在新来的 noble_5 上打 forbid 标记。\n  本 cue 是错误示范分支，不进入 canonical；action.nobles.choice.001.1 用 entry 回 action.nobles.trigger.001.1 继续。\n  【节奏】cue 音频尾部追加了 3.504s 静音，动作在 0s / 1.8s / 4.0s / 6.5s 分阶段发生，留出反应时间。",
+        "note": "【来源反例：只能从供应堆拿贵族】\n  cue 开始：B 已有合法 noble_5（发展区 3白+3红+3黑）；A 发展区是 2白+4红+4黑，\n  其中多出的1张白牌是A之前回合买到的，本 cue 不补牌。\n  本 cue 的唯一购买动作：A 从市场 slot9 买走三级白牌 card_l3_diamond_81（价格 6黑+3红+3白，\n  折扣后实付 2黑+1白；A 持有区已有这些宝石），买后 A 变成 3白+4红+4黑，满足 noble_5 条件。\n  市场空位由 deck_level_3 顶牌 card_l3_sapphire_78 真补位。\n  随后 A 把 noble_5 从玩家B的贵族区搬到自己的贵族区 —— 双方条件都满足，但贵族不属于无主供应堆，\n  从其他玩家那里拿仍然犯规；最后在新来的 noble_5 上打 forbid 标记。\n  本 cue 是错误示范分支，不进入 canonical；action.nobles.choice.001.1 用 entry 回 action.nobles.trigger.001.1 继续。\n  【节奏】cue 音频尾部追加了 3.504s 静音；动作在 0s/1.6s/2.2s/2.5s/2.8s/3.1s/4.5s/5.8s/7.4s 分阶段发生。",
         "enter": {
           "zones": {
             "deck_level_1": {
               "count": 27
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "card_market": {
+              "count": 12
             },
             "noble_market": {
               "count": 1
@@ -10942,19 +10948,6 @@
                       "value": "<diamond>"
                     }
                   ]
-                },
-                {
-                  "template": "card_l1_diamond_22",
-                  "palette": "card_level_1",
-                  "concept": "development_card_level_1",
-                  "count": 1,
-                  "face": "up",
-                  "parts": [
-                    {
-                      "key": "bonus",
-                      "value": "<diamond>"
-                    }
-                  ]
                 }
               ]
             },
@@ -11078,6 +11071,40 @@
                   ]
                 }
               ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 2,
+                  "face": "down"
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "count": 2
+            },
+            "gem_supply_diamond": {
+              "count": 3
             }
           }
         },
@@ -11085,6 +11112,12 @@
           "zones": {
             "deck_level_1": {
               "count": 27
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "card_market": {
+              "count": 12
             },
             "noble_market": {
               "count": 1
@@ -11228,9 +11261,9 @@
                   ]
                 },
                 {
-                  "template": "card_l1_diamond_22",
-                  "palette": "card_level_1",
-                  "concept": "development_card_level_1",
+                  "template": "card_l3_diamond_81",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
                   "count": 1,
                   "face": "up",
                   "parts": [
@@ -11362,6 +11395,28 @@
                   ]
                 }
               ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_diamond": {
+              "count": 4
             }
           }
         }
@@ -11597,24 +11652,26 @@
           }
         },
         {
-          "op": "create",
+          "op": "transfer",
           "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
+          "setup": true,
+          "quantity": 2,
           "anchor": "action.nobles.source.001.start",
           "offset": 0.0,
           "target": {
             "space": "entity",
-            "zone": "player_development",
-            "template": "card_l1_diamond_22",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
             "parts": [
               {
-                "key": "bonus",
-                "value": "<diamond>"
+                "key": "color",
+                "value": "<onyx>"
               }
             ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
           }
         },
         {
@@ -11648,10 +11705,101 @@
         },
         {
           "op": "highlight",
-          "dur": 1.2,
+          "dur": 1.0,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.source.001.start",
-          "offset": 1.8,
+          "offset": 1.6,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 2.2,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 9
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 2.5,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 2.8,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 1.0,
+          "quantity": 1,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 3.1,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l3_diamond_81",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.8,
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 4.3,
           "target": {
             "space": "entity",
             "zone": "player_development"
@@ -11659,10 +11807,36 @@
         },
         {
           "op": "transfer",
-          "dur": 1.5,
+          "dur": 0.8,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 9,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 4.5,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "template": "card_l3_sapphire_78",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 1.4,
           "quantity": 1,
           "anchor": "action.nobles.source.001.start",
-          "offset": 4.0,
+          "offset": 5.8,
           "target": {
             "space": "entity",
             "zone": "player_b_nobles",
@@ -11680,7 +11854,7 @@
           "dur": 0.0,
           "indicator": "forbid",
           "anchor": "action.nobles.source.001.start",
-          "offset": 6.5,
+          "offset": 7.4,
           "target": {
             "space": "entity",
             "zone": "player_nobles",
@@ -11691,7 +11865,7 @@
       "tree": "main",
       "qa": [
         {
-          "q": "两人局。玩家A和玩家B的发展区都满足了同一枚贵族的条件，该贵族在玩家B的贵族区；A把它从B那里拿到自己面前。A的做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "q": "两人局。玩家A打出一张发展牌：发展区从2白4红4黑买成3白4红4黑，满足了玩家B面前那枚3黑3红3白贵族；贵族在B的贵族区，A把它从B那里拿到自己面前。A的做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
           "expect": "有问题"
         }
       ]
