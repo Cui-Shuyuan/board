@@ -9983,399 +9983,380 @@
         "3.2 发展卡牌与贵族",
         "3.2.1 认识发展卡牌"
       ],
-      "text": "和宝石相同，已购买的发展卡牌也属于公开信息，",
+      "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。",
       "audio": "media/tts/full/action.cards.public.001.1.mp3",
-      "duration": 4.68,
+      "duration": 12.024,
       "start": 314.74,
       "refs": [
         "<development_area>"
       ],
       "subtitles": [
         {
-          "t": 0.305,
-          "end": 4.325,
-          "text": "和宝石相同，已购买的发展卡牌也属于公开信息，\n",
+          "t": 0.285,
+          "end": 4.435,
+          "text": "和宝石相同，已购买的发展卡牌也属于公开信息，",
           "words": [
             {
               "word": "和",
-              "start": 0.305,
-              "end": 0.515,
-              "confidence": 0.9089
+              "start": 0.285,
+              "end": 0.505,
+              "confidence": 0.9145
             },
             {
               "word": "宝",
-              "start": 0.515,
-              "end": 0.685,
-              "confidence": 0.9423
+              "start": 0.505,
+              "end": 0.695,
+              "confidence": 0.9336
             },
             {
               "word": "石",
-              "start": 0.685,
-              "end": 0.865,
-              "confidence": 0.9495
+              "start": 0.695,
+              "end": 0.885,
+              "confidence": 0.9509
             },
             {
               "word": "相",
-              "start": 0.865,
-              "end": 1.045,
+              "start": 0.885,
+              "end": 1.075,
               "confidence": 0.9327
             },
             {
               "word": "同，",
-              "start": 1.045,
-              "end": 1.405,
-              "confidence": 0.821
+              "start": 1.075,
+              "end": 1.435,
+              "confidence": 0.9417
             },
             {
               "word": "已",
               "start": 1.675,
-              "end": 1.775,
-              "confidence": 0.729
+              "end": 1.805,
+              "confidence": 0.8558
             },
             {
               "word": "购",
-              "start": 1.775,
-              "end": 1.955,
-              "confidence": 0.7978
+              "start": 1.805,
+              "end": 2.015,
+              "confidence": 0.855
             },
             {
               "word": "买",
-              "start": 1.955,
-              "end": 2.135,
-              "confidence": 0.9748
+              "start": 2.015,
+              "end": 2.185,
+              "confidence": 0.9725
             },
             {
               "word": "的",
-              "start": 2.135,
-              "end": 2.225,
-              "confidence": 0.971
+              "start": 2.185,
+              "end": 2.285,
+              "confidence": 0.9575
             },
             {
               "word": "发",
-              "start": 2.225,
-              "end": 2.385,
-              "confidence": 0.9774
+              "start": 2.285,
+              "end": 2.465,
+              "confidence": 0.9806
             },
             {
               "word": "展",
-              "start": 2.385,
-              "end": 2.515,
-              "confidence": 0.8881
+              "start": 2.465,
+              "end": 2.605,
+              "confidence": 0.9053
             },
             {
               "word": "卡",
-              "start": 2.515,
-              "end": 2.725,
-              "confidence": 0.9517
+              "start": 2.605,
+              "end": 2.805,
+              "confidence": 0.9419
             },
             {
               "word": "牌",
-              "start": 2.725,
-              "end": 3.015,
-              "confidence": 0.89
+              "start": 2.805,
+              "end": 3.125,
+              "confidence": 0.8455
             },
             {
               "word": "也",
-              "start": 3.015,
-              "end": 3.155,
-              "confidence": 0.8717
+              "start": 3.125,
+              "end": 3.265,
+              "confidence": 0.8152
             },
             {
               "word": "属",
-              "start": 3.155,
-              "end": 3.365,
-              "confidence": 0.9657
+              "start": 3.265,
+              "end": 3.475,
+              "confidence": 0.9577
             },
             {
               "word": "于",
-              "start": 3.365,
-              "end": 3.505,
-              "confidence": 0.9873
+              "start": 3.475,
+              "end": 3.595,
+              "confidence": 0.975
             },
             {
               "word": "公",
-              "start": 3.505,
-              "end": 3.655,
-              "confidence": 0.9562
+              "start": 3.595,
+              "end": 3.745,
+              "confidence": 0.9605
             },
             {
               "word": "开",
-              "start": 3.655,
-              "end": 3.845,
-              "confidence": 0.9479
+              "start": 3.745,
+              "end": 3.935,
+              "confidence": 0.972
             },
             {
               "word": "信",
-              "start": 3.845,
-              "end": 4.045,
-              "confidence": 0.8644
+              "start": 3.935,
+              "end": 4.115,
+              "confidence": 0.8929
             },
             {
               "word": "息，",
-              "start": 4.045,
-              "end": 4.325,
-              "confidence": 0.9597
-            }
-          ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.cards.public.001.2",
-      "group": "3.2.1 认识发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.2 发展卡牌与贵族",
-        "3.2.1 认识发展卡牌"
-      ],
-      "text": "每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。",
-      "audio": "media/tts/full/action.cards.public.001.2.mp3",
-      "duration": 8.28,
-      "start": 319.42,
-      "refs": [
-        "<development_area>"
-      ],
-      "subtitles": [
-        {
-          "t": 0.295,
-          "end": 5.405,
-          "text": "每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，",
-          "words": [
-            {
-              "word": "每",
-              "start": 0.295,
-              "end": 0.515,
-              "confidence": 0.9114
-            },
-            {
-              "word": "位",
-              "start": 0.515,
-              "end": 0.695,
-              "confidence": 0.9346
-            },
-            {
-              "word": "玩",
-              "start": 0.695,
-              "end": 0.895,
-              "confidence": 0.9436
-            },
-            {
-              "word": "家",
-              "start": 0.895,
-              "end": 1.145,
-              "confidence": 0.9363
-            },
-            {
-              "word": "都",
-              "start": 1.145,
-              "end": 1.275,
-              "confidence": 0.8913
-            },
-            {
-              "word": "需",
-              "start": 1.275,
-              "end": 1.465,
-              "confidence": 0.8293
-            },
-            {
-              "word": "要",
-              "start": 1.465,
-              "end": 1.595,
-              "confidence": 0.9567
-            },
-            {
-              "word": "将",
-              "start": 1.595,
-              "end": 1.815,
-              "confidence": 0.9483
-            },
-            {
-              "word": "自",
-              "start": 1.815,
-              "end": 1.975,
-              "confidence": 0.9691
-            },
-            {
-              "word": "己",
-              "start": 1.975,
-              "end": 2.315,
-              "confidence": 0.914
-            },
-            {
-              "word": "已",
-              "start": 2.315,
-              "end": 2.375,
-              "confidence": 0.7576
-            },
-            {
-              "word": "购",
-              "start": 2.405,
-              "end": 2.575,
-              "confidence": 0.871
-            },
-            {
-              "word": "买",
-              "start": 2.575,
-              "end": 2.765,
-              "confidence": 0.9743
-            },
-            {
-              "word": "的",
-              "start": 2.765,
-              "end": 2.895,
-              "confidence": 0.9761
-            },
-            {
-              "word": "发",
-              "start": 2.895,
-              "end": 3.065,
-              "confidence": 0.983
-            },
-            {
-              "word": "展",
-              "start": 3.065,
-              "end": 3.195,
-              "confidence": 0.8361
-            },
-            {
-              "word": "卡",
-              "start": 3.195,
-              "end": 3.425,
-              "confidence": 0.9552
-            },
-            {
-              "word": "牌",
-              "start": 3.425,
-              "end": 3.715,
-              "confidence": 0.8988
-            },
-            {
-              "word": "摊",
-              "start": 3.715,
-              "end": 3.935,
-              "confidence": 0.8631
-            },
-            {
-              "word": "开",
-              "start": 3.935,
-              "end": 4.205,
-              "confidence": 0.9456
-            },
-            {
-              "word": "放",
-              "start": 4.205,
-              "end": 4.405,
-              "confidence": 0.9798
-            },
-            {
-              "word": "在",
-              "start": 4.405,
-              "end": 4.575,
-              "confidence": 0.9799
-            },
-            {
-              "word": "自",
-              "start": 4.575,
-              "end": 4.705,
-              "confidence": 0.9614
-            },
-            {
-              "word": "己",
-              "start": 4.705,
-              "end": 4.855,
-              "confidence": 0.981
-            },
-            {
-              "word": "面",
-              "start": 4.855,
-              "end": 5.025,
-              "confidence": 0.9829
-            },
-            {
-              "word": "前，",
-              "start": 5.025,
-              "end": 5.405,
-              "confidence": 0.9596
+              "start": 4.115,
+              "end": 4.435,
+              "confidence": 0.9645
             }
           ]
         },
         {
-          "t": 5.765,
-          "end": 6.845,
+          "t": 4.855,
+          "end": 9.455,
+          "text": "每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，",
+          "words": [
+            {
+              "word": "每",
+              "start": 4.855,
+              "end": 4.975,
+              "confidence": 0.9194
+            },
+            {
+              "word": "位",
+              "start": 4.975,
+              "end": 5.115,
+              "confidence": 0.8943
+            },
+            {
+              "word": "玩",
+              "start": 5.115,
+              "end": 5.275,
+              "confidence": 0.9618
+            },
+            {
+              "word": "家",
+              "start": 5.275,
+              "end": 5.525,
+              "confidence": 0.9521
+            },
+            {
+              "word": "都",
+              "start": 5.525,
+              "end": 5.645,
+              "confidence": 0.9127
+            },
+            {
+              "word": "需",
+              "start": 5.645,
+              "end": 5.815,
+              "confidence": 0.9262
+            },
+            {
+              "word": "要",
+              "start": 5.815,
+              "end": 5.925,
+              "confidence": 0.9804
+            },
+            {
+              "word": "将",
+              "start": 5.925,
+              "end": 6.125,
+              "confidence": 0.8869
+            },
+            {
+              "word": "自",
+              "start": 6.125,
+              "end": 6.285,
+              "confidence": 0.9585
+            },
+            {
+              "word": "己",
+              "start": 6.285,
+              "end": 6.575,
+              "confidence": 0.9471
+            },
+            {
+              "word": "已",
+              "start": 6.575,
+              "end": 6.645,
+              "confidence": 0.7761
+            },
+            {
+              "word": "购",
+              "start": 6.645,
+              "end": 6.835,
+              "confidence": 0.8635
+            },
+            {
+              "word": "买",
+              "start": 6.835,
+              "end": 7.005,
+              "confidence": 0.9752
+            },
+            {
+              "word": "的",
+              "start": 7.005,
+              "end": 7.095,
+              "confidence": 0.9008
+            },
+            {
+              "word": "发",
+              "start": 7.095,
+              "end": 7.265,
+              "confidence": 0.9833
+            },
+            {
+              "word": "展",
+              "start": 7.265,
+              "end": 7.395,
+              "confidence": 0.9106
+            },
+            {
+              "word": "卡",
+              "start": 7.395,
+              "end": 7.595,
+              "confidence": 0.9546
+            },
+            {
+              "word": "牌",
+              "start": 7.595,
+              "end": 7.875,
+              "confidence": 0.9453
+            },
+            {
+              "word": "摊",
+              "start": 7.915,
+              "end": 8.065,
+              "confidence": 0.8126
+            },
+            {
+              "word": "开",
+              "start": 8.065,
+              "end": 8.345,
+              "confidence": 0.9461
+            },
+            {
+              "word": "放",
+              "start": 8.345,
+              "end": 8.515,
+              "confidence": 0.9792
+            },
+            {
+              "word": "在",
+              "start": 8.515,
+              "end": 8.675,
+              "confidence": 0.9795
+            },
+            {
+              "word": "自",
+              "start": 8.675,
+              "end": 8.785,
+              "confidence": 0.9541
+            },
+            {
+              "word": "己",
+              "start": 8.785,
+              "end": 8.925,
+              "confidence": 0.9836
+            },
+            {
+              "word": "面",
+              "start": 8.925,
+              "end": 9.095,
+              "confidence": 0.9821
+            },
+            {
+              "word": "前，",
+              "start": 9.095,
+              "end": 9.455,
+              "confidence": 0.9695
+            }
+          ]
+        },
+        {
+          "t": 9.875,
+          "end": 10.635,
           "text": "所有人都能清楚看到的地方。",
           "words": [
             {
               "word": "所",
-              "start": 5.765,
-              "end": 5.995,
-              "confidence": 0.9063
+              "start": 9.875,
+              "end": 9.975,
+              "confidence": 0.7358
             },
             {
               "word": "有",
-              "start": 5.995,
-              "end": 6.105,
-              "confidence": 0.9595
+              "start": 9.975,
+              "end": 10.005,
+              "confidence": 0.4442
             },
             {
               "word": "人",
-              "start": 6.105,
-              "end": 6.225,
-              "confidence": 0.7125
+              "start": 10.005,
+              "end": 10.065,
+              "confidence": 0.2446
             },
             {
               "word": "都",
-              "start": 6.225,
-              "end": 6.285,
-              "confidence": 0.2145
+              "start": 10.065,
+              "end": 10.125,
+              "confidence": 0.2123
             },
             {
               "word": "能",
-              "start": 6.285,
-              "end": 6.345,
-              "confidence": 0.2484
+              "start": 10.125,
+              "end": 10.185,
+              "confidence": 0.1646
             },
             {
               "word": "清",
-              "start": 6.345,
-              "end": 6.405,
-              "confidence": 0.1186
+              "start": 10.185,
+              "end": 10.245,
+              "confidence": 0.1634
             },
             {
               "word": "楚",
-              "start": 6.405,
-              "end": 6.465,
-              "confidence": 0.1371
+              "start": 10.245,
+              "end": 10.305,
+              "confidence": 0.144
             },
             {
               "word": "看",
-              "start": 6.465,
-              "end": 6.585,
-              "confidence": 0.2453
+              "start": 10.305,
+              "end": 10.365,
+              "confidence": 0.1368
             },
             {
               "word": "到",
-              "start": 6.585,
-              "end": 6.645,
-              "confidence": 0.1754
+              "start": 10.365,
+              "end": 10.445,
+              "confidence": 0.3534
             },
             {
               "word": "的",
-              "start": 6.645,
-              "end": 6.725,
-              "confidence": 0.1991
+              "start": 10.445,
+              "end": 10.505,
+              "confidence": 0.1763
             },
             {
               "word": "地",
-              "start": 6.725,
-              "end": 6.785,
-              "confidence": 0.1677
+              "start": 10.505,
+              "end": 10.575,
+              "confidence": 0.2637
             },
             {
               "word": "方。",
-              "start": 6.785,
-              "end": 6.845,
-              "confidence": 0.146
+              "start": 10.575,
+              "end": 10.635,
+              "confidence": 0.1466
             }
           ]
         }
@@ -10393,7 +10374,7 @@
       "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，",
       "audio": "media/tts/full/action.cards.limit.001.1.mp3",
       "duration": 4.824,
-      "start": 327.7,
+      "start": 326.76,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -10552,7 +10533,7 @@
       "text": "但玩家总计可以购买的发展卡牌数量没有上限。",
       "audio": "media/tts/full/action.cards.limit.001.2.mp3",
       "duration": 4.032,
-      "start": 332.52,
+      "start": 331.58,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -10699,7 +10680,7 @@
       "text": "我们再介绍一下贵族板块。",
       "audio": "media/tts/full/action.nobles.intro.001.mp3",
       "duration": 2.28,
-      "start": 336.55,
+      "start": 335.62,
       "refs": [
         "<noble>"
       ],
@@ -10791,7 +10772,7 @@
       "text": "左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，",
       "audio": "media/tts/full/action.nobles.value.001.1.mp3",
       "duration": 6.24,
-      "start": 338.83,
+      "start": 337.9,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -10986,7 +10967,7 @@
       "text": "也就是已购买的卡牌数量。",
       "audio": "media/tts/full/action.nobles.value.001.2.mp3",
       "duration": 2.664,
-      "start": 345.07,
+      "start": 344.14,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -11079,7 +11060,7 @@
       "text": "当玩家结束自己的回合后，",
       "audio": "media/tts/full/action.nobles.trigger.001.1.mp3",
       "duration": 2.664,
-      "start": 347.74,
+      "start": 346.8,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11172,7 +11153,7 @@
       "text": "如果已购买的发展卡牌种类和数量均已满足一位供应堆中的贵族的条件，",
       "audio": "media/tts/full/action.nobles.trigger.001.2.mp3",
       "duration": 6.456,
-      "start": 350.4,
+      "start": 349.46,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11392,7 +11373,7 @@
       "text": "他必须立即拿取这张贵族板块并立刻获得其声望值。",
       "audio": "media/tts/full/action.nobles.trigger.001.3.mp3",
       "duration": 4.848,
-      "start": 356.86,
+      "start": 355.92,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11551,7 +11532,7 @@
       "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。",
       "audio": "media/tts/full/action.nobles.forced.001.1.mp3",
       "duration": 7.248,
-      "start": 361.7,
+      "start": 360.77,
       "refs": [
         "<attract_noble>"
       ],
@@ -11788,7 +11769,7 @@
       "text": "并且这个行动是强制性的，玩家不可以选择跳过。",
       "audio": "media/tts/full/action.nobles.forced.001.2.mp3",
       "duration": 4.416,
-      "start": 368.95,
+      "start": 368.02,
       "refs": [
         "<attract_noble>"
       ],
@@ -11934,7 +11915,7 @@
       "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。",
       "audio": "media/tts/full/action.nobles.source.001.mp3",
       "duration": 5.256,
-      "start": 373.37,
+      "start": 372.43,
       "refs": [
         "<noble_market>",
         "<attract_noble>"
@@ -12105,7 +12086,7 @@
       "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，",
       "audio": "media/tts/full/action.nobles.choice.001.1.mp3",
       "duration": 5.472,
-      "start": 378.62,
+      "start": 377.69,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -12288,7 +12269,7 @@
       "text": "他必须从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.choice.001.2.mp3",
       "duration": 3.456,
-      "start": 384.1,
+      "start": 383.16,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -12417,7 +12398,7 @@
       "text": "当他的下一个回合结束时，不管这回合他做了什么行动，",
       "audio": "media/tts/full/action.nobles.repeat.001.1.mp3",
       "duration": 4.68,
-      "start": 387.55,
+      "start": 386.62,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12582,7 +12563,7 @@
       "text": "只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.repeat.001.2.mp3",
       "duration": 7.488,
-      "start": 392.23,
+      "start": 391.3,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12838,7 +12819,7 @@
       "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。",
       "audio": "media/tts/full/action.nobles.repeat.001.3.mp3",
       "duration": 6.672,
-      "start": 399.72,
+      "start": 398.78,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -13058,7 +13039,7 @@
       "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，",
       "audio": "media/tts/full/action.cards.summary.001.1.mp3",
       "duration": 5.064,
-      "start": 406.39,
+      "start": 405.46,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13219,7 +13200,7 @@
       "text": "已购买的发展卡牌会为玩家带来声望值和折扣。",
       "audio": "media/tts/full/action.cards.summary.001.2.mp3",
       "duration": 4.44,
-      "start": 411.46,
+      "start": 410.52,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13368,7 +13349,7 @@
       "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
       "audio": "media/tts/full/action.cards.summary.001.3.mp3",
       "duration": 6.432,
-      "start": 415.9,
+      "start": 414.96,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13589,7 +13570,7 @@
       "text": "除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，",
       "audio": "media/tts/full/action.reserve.intro.001.1.mp3",
       "duration": 6.672,
-      "start": 422.33,
+      "start": 421.39,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13803,7 +13784,7 @@
       "text": "正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金。",
       "audio": "media/tts/full/action.reserve.intro.001.2.mp3",
       "duration": 6.432,
-      "start": 429.0,
+      "start": 428.06,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13986,7 +13967,7 @@
       "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。",
       "audio": "media/tts/full/action.reserve.gold.001.mp3",
       "duration": 6.84,
-      "start": 435.43,
+      "start": 434.5,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -14217,7 +14198,7 @@
       "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。",
       "audio": "media/tts/full/action.reserve.deck.001.mp3",
       "duration": 7.656,
-      "start": 442.27,
+      "start": 441.34,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -14474,7 +14455,7 @@
       "text": "注意事项如下：",
       "audio": "media/tts/full/action.reserve.notes_intro.001.mp3",
       "duration": 1.632,
-      "start": 449.93,
+      "start": 448.99,
       "refs": [
         "<reserve_development_card>"
       ],
@@ -14535,7 +14516,7 @@
       "text": "拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.1.mp3",
       "duration": 7.464,
-      "start": 451.56,
+      "start": 450.62,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14767,7 +14748,7 @@
       "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.2.mp3",
       "duration": 5.472,
-      "start": 459.02,
+      "start": 458.09,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14950,7 +14931,7 @@
       "text": "每位玩家最多同时保留3张发展卡牌。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.1.mp3",
       "duration": 3.648,
-      "start": 464.5,
+      "start": 463.56,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -15072,7 +15053,7 @@
       "text": "如果一位玩家已经保留了3张发展卡牌，就不能继续保留了。此时他必须选择其他行动。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.2.mp3",
       "duration": 7.464,
-      "start": 468.14,
+      "start": 467.21,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -15321,7 +15302,7 @@
       "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容，",
       "audio": "media/tts/full/action.reserve.private.001.1.mp3",
       "duration": 6.456,
-      "start": 475.61,
+      "start": 474.67,
       "refs": [
         "<hand>"
       ],
@@ -15551,7 +15532,7 @@
       "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。",
       "audio": "media/tts/full/action.reserve.private.001.2.mp3",
       "duration": 4.68,
-      "start": 482.06,
+      "start": 481.13,
       "refs": [
         "<hand>"
       ],
@@ -15708,7 +15689,7 @@
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
       "audio": "media/tts/full/action.reserve.private.002.mp3",
       "duration": 6.456,
-      "start": 486.74,
+      "start": 485.81,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15908,7 +15889,7 @@
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
       "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
       "duration": 7.08,
-      "start": 493.2,
+      "start": 492.26,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -16128,7 +16109,7 @@
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
       "duration": 5.472,
-      "start": 500.28,
+      "start": 499.34,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -16310,7 +16291,7 @@
       "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，",
       "audio": "media/tts/full/action.purchase_reserved.002.1.mp3",
       "duration": 6.696,
-      "start": 505.75,
+      "start": 504.82,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16531,7 +16512,7 @@
       "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.002.2.mp3",
       "duration": 7.272,
-      "start": 512.45,
+      "start": 511.51,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16781,7 +16762,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 519.72,
+      "start": 518.78,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -17014,7 +16995,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 7.08,
-      "start": 526.94,
+      "start": 526.01,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17228,7 +17209,7 @@
       "text": "左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 6.288,
-      "start": 534.02,
+      "start": 533.09,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17423,7 +17404,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 540.31,
+      "start": 539.38,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17580,7 +17561,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 5.472,
-      "start": 545.54,
+      "start": 544.61,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17750,7 +17731,7 @@
       "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.2.mp3",
       "duration": 5.664,
-      "start": 551.02,
+      "start": 550.08,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17926,7 +17907,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 4.464,
-      "start": 556.68,
+      "start": 555.74,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18064,7 +18045,7 @@
       "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
       "audio": "media/tts/full/endgame.example.001.2.mp3",
       "duration": 5.448,
-      "start": 561.14,
+      "start": 560.21,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18244,7 +18225,7 @@
       "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.002.mp3",
       "duration": 7.464,
-      "start": 566.59,
+      "start": 565.66,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18485,7 +18466,7 @@
       "text": "声望值最高的玩家获得胜利。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 3.072,
-      "start": 574.06,
+      "start": 573.12,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18582,7 +18563,7 @@
       "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
       "audio": "media/tts/full/endgame.tie.001.1.mp3",
       "duration": 6.264,
-      "start": 577.13,
+      "start": 576.19,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18781,7 +18762,7 @@
       "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
       "audio": "media/tts/full/endgame.tie.001.2.mp3",
       "duration": 6.456,
-      "start": 583.39,
+      "start": 582.46,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

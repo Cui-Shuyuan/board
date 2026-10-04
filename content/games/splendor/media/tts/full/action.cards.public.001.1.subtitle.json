@@ -1,127 +1,367 @@
 [
   {
     "phonemes": [],
-    "text": "和宝石相同，已购买的发展卡牌也属于公开信息，\n",
+    "text": "和宝石相同，已购买的发展卡牌也属于公开信息，",
     "words": [
       {
-        "confidence": 0.9088563,
-        "endTime": 0.515,
-        "startTime": 0.305,
+        "confidence": 0.91450834,
+        "endTime": 0.505,
+        "startTime": 0.285,
         "word": "和"
       },
       {
-        "confidence": 0.9422825,
-        "endTime": 0.685,
-        "startTime": 0.515,
+        "confidence": 0.9335604,
+        "endTime": 0.695,
+        "startTime": 0.505,
         "word": "宝"
       },
       {
-        "confidence": 0.94945717,
-        "endTime": 0.865,
-        "startTime": 0.685,
+        "confidence": 0.95090955,
+        "endTime": 0.885,
+        "startTime": 0.695,
         "word": "石"
       },
       {
-        "confidence": 0.9327065,
-        "endTime": 1.045,
-        "startTime": 0.865,
+        "confidence": 0.9327126,
+        "endTime": 1.075,
+        "startTime": 0.885,
         "word": "相"
       },
       {
-        "confidence": 0.8209511,
-        "endTime": 1.405,
-        "startTime": 1.045,
+        "confidence": 0.9416759,
+        "endTime": 1.435,
+        "startTime": 1.075,
         "word": "同，"
       },
       {
-        "confidence": 0.72903097,
-        "endTime": 1.775,
+        "confidence": 0.8557916,
+        "endTime": 1.805,
         "startTime": 1.675,
         "word": "已"
       },
       {
-        "confidence": 0.7977899,
-        "endTime": 1.955,
-        "startTime": 1.775,
+        "confidence": 0.8549581,
+        "endTime": 2.015,
+        "startTime": 1.805,
         "word": "购"
       },
       {
-        "confidence": 0.9748375,
-        "endTime": 2.135,
-        "startTime": 1.955,
+        "confidence": 0.97245914,
+        "endTime": 2.185,
+        "startTime": 2.015,
         "word": "买"
       },
       {
-        "confidence": 0.9710474,
-        "endTime": 2.225,
-        "startTime": 2.135,
+        "confidence": 0.9574831,
+        "endTime": 2.285,
+        "startTime": 2.185,
         "word": "的"
       },
       {
-        "confidence": 0.977393,
-        "endTime": 2.385,
-        "startTime": 2.225,
+        "confidence": 0.9805771,
+        "endTime": 2.465,
+        "startTime": 2.285,
         "word": "发"
       },
       {
-        "confidence": 0.8881172,
-        "endTime": 2.515,
-        "startTime": 2.385,
+        "confidence": 0.9052961,
+        "endTime": 2.605,
+        "startTime": 2.465,
         "word": "展"
       },
       {
-        "confidence": 0.9517097,
-        "endTime": 2.725,
-        "startTime": 2.515,
+        "confidence": 0.9419237,
+        "endTime": 2.805,
+        "startTime": 2.605,
         "word": "卡"
       },
       {
-        "confidence": 0.89002,
-        "endTime": 3.015,
-        "startTime": 2.725,
+        "confidence": 0.8454593,
+        "endTime": 3.125,
+        "startTime": 2.805,
         "word": "牌"
       },
       {
-        "confidence": 0.8717234,
-        "endTime": 3.155,
-        "startTime": 3.015,
+        "confidence": 0.81519765,
+        "endTime": 3.265,
+        "startTime": 3.125,
         "word": "也"
       },
       {
-        "confidence": 0.9656795,
-        "endTime": 3.365,
-        "startTime": 3.155,
+        "confidence": 0.95765066,
+        "endTime": 3.475,
+        "startTime": 3.265,
         "word": "属"
       },
       {
-        "confidence": 0.9873267,
-        "endTime": 3.505,
-        "startTime": 3.365,
+        "confidence": 0.974966,
+        "endTime": 3.595,
+        "startTime": 3.475,
         "word": "于"
       },
       {
-        "confidence": 0.9561709,
-        "endTime": 3.655,
-        "startTime": 3.505,
+        "confidence": 0.9604988,
+        "endTime": 3.745,
+        "startTime": 3.595,
         "word": "公"
       },
       {
-        "confidence": 0.94785094,
-        "endTime": 3.845,
-        "startTime": 3.655,
+        "confidence": 0.97197324,
+        "endTime": 3.935,
+        "startTime": 3.745,
         "word": "开"
       },
       {
-        "confidence": 0.86443913,
-        "endTime": 4.045,
-        "startTime": 3.845,
+        "confidence": 0.892862,
+        "endTime": 4.115,
+        "startTime": 3.935,
         "word": "信"
       },
       {
-        "confidence": 0.95973843,
-        "endTime": 4.325,
-        "startTime": 4.045,
+        "confidence": 0.96445364,
+        "endTime": 4.435,
+        "startTime": 4.115,
         "word": "息，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，",
+    "words": [
+      {
+        "confidence": 0.91938174,
+        "endTime": 4.975042,
+        "startTime": 4.855042,
+        "word": "每"
+      },
+      {
+        "confidence": 0.894266,
+        "endTime": 5.1150417,
+        "startTime": 4.975042,
+        "word": "位"
+      },
+      {
+        "confidence": 0.9618095,
+        "endTime": 5.275042,
+        "startTime": 5.1150417,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9520764,
+        "endTime": 5.525042,
+        "startTime": 5.275042,
+        "word": "家"
+      },
+      {
+        "confidence": 0.91272813,
+        "endTime": 5.645042,
+        "startTime": 5.525042,
+        "word": "都"
+      },
+      {
+        "confidence": 0.9262476,
+        "endTime": 5.815042,
+        "startTime": 5.645042,
+        "word": "需"
+      },
+      {
+        "confidence": 0.98042196,
+        "endTime": 5.925042,
+        "startTime": 5.815042,
+        "word": "要"
+      },
+      {
+        "confidence": 0.8869241,
+        "endTime": 6.125042,
+        "startTime": 5.925042,
+        "word": "将"
+      },
+      {
+        "confidence": 0.958505,
+        "endTime": 6.285042,
+        "startTime": 6.125042,
+        "word": "自"
+      },
+      {
+        "confidence": 0.9471422,
+        "endTime": 6.575042,
+        "startTime": 6.285042,
+        "word": "己"
+      },
+      {
+        "confidence": 0.77609515,
+        "endTime": 6.645042,
+        "startTime": 6.575042,
+        "word": "已"
+      },
+      {
+        "confidence": 0.8634977,
+        "endTime": 6.835042,
+        "startTime": 6.645042,
+        "word": "购"
+      },
+      {
+        "confidence": 0.9752278,
+        "endTime": 7.005042,
+        "startTime": 6.835042,
+        "word": "买"
+      },
+      {
+        "confidence": 0.90083134,
+        "endTime": 7.095042,
+        "startTime": 7.005042,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9832877,
+        "endTime": 7.265042,
+        "startTime": 7.095042,
+        "word": "发"
+      },
+      {
+        "confidence": 0.91056055,
+        "endTime": 7.395042,
+        "startTime": 7.265042,
+        "word": "展"
+      },
+      {
+        "confidence": 0.9545929,
+        "endTime": 7.595042,
+        "startTime": 7.395042,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.94528866,
+        "endTime": 7.875042,
+        "startTime": 7.595042,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.81260127,
+        "endTime": 8.0650425,
+        "startTime": 7.915042,
+        "word": "摊"
+      },
+      {
+        "confidence": 0.9461029,
+        "endTime": 8.345042,
+        "startTime": 8.0650425,
+        "word": "开"
+      },
+      {
+        "confidence": 0.979172,
+        "endTime": 8.515041,
+        "startTime": 8.345042,
+        "word": "放"
+      },
+      {
+        "confidence": 0.97947955,
+        "endTime": 8.675042,
+        "startTime": 8.515041,
+        "word": "在"
+      },
+      {
+        "confidence": 0.9541249,
+        "endTime": 8.785042,
+        "startTime": 8.675042,
+        "word": "自"
+      },
+      {
+        "confidence": 0.9835501,
+        "endTime": 8.925041,
+        "startTime": 8.785042,
+        "word": "己"
+      },
+      {
+        "confidence": 0.9820591,
+        "endTime": 9.095041,
+        "startTime": 8.925041,
+        "word": "面"
+      },
+      {
+        "confidence": 0.9695063,
+        "endTime": 9.455042,
+        "startTime": 9.095041,
+        "word": "前，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "所有人都能清楚看到的地方。",
+    "words": [
+      {
+        "confidence": 0.73578894,
+        "endTime": 9.975084,
+        "startTime": 9.875084,
+        "word": "所"
+      },
+      {
+        "confidence": 0.44423085,
+        "endTime": 10.005084,
+        "startTime": 9.975084,
+        "word": "有"
+      },
+      {
+        "confidence": 0.24460849,
+        "endTime": 10.065084,
+        "startTime": 10.005084,
+        "word": "人"
+      },
+      {
+        "confidence": 0.21231514,
+        "endTime": 10.125084,
+        "startTime": 10.065084,
+        "word": "都"
+      },
+      {
+        "confidence": 0.1646483,
+        "endTime": 10.185084,
+        "startTime": 10.125084,
+        "word": "能"
+      },
+      {
+        "confidence": 0.16335583,
+        "endTime": 10.245084,
+        "startTime": 10.185084,
+        "word": "清"
+      },
+      {
+        "confidence": 0.14403099,
+        "endTime": 10.305084,
+        "startTime": 10.245084,
+        "word": "楚"
+      },
+      {
+        "confidence": 0.13678126,
+        "endTime": 10.365084,
+        "startTime": 10.305084,
+        "word": "看"
+      },
+      {
+        "confidence": 0.35337743,
+        "endTime": 10.445084,
+        "startTime": 10.365084,
+        "word": "到"
+      },
+      {
+        "confidence": 0.17630017,
+        "endTime": 10.505084,
+        "startTime": 10.445084,
+        "word": "的"
+      },
+      {
+        "confidence": 0.26371685,
+        "endTime": 10.575084,
+        "startTime": 10.505084,
+        "word": "地"
+      },
+      {
+        "confidence": 0.14656396,
+        "endTime": 10.635084,
+        "startTime": 10.575084,
+        "word": "方。"
       }
     ]
   }

@@ -1405,25 +1405,15 @@
       "edge": "end"
     },
     {
-      "id": "action.cards.public.001.2.start",
-      "cue": "action.cards.public.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.cards.public.001.2.end",
-      "cue": "action.cards.public.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.cards.public.001.2.b1.start",
-      "cue": "action.cards.public.001.2",
-      "beat": "action.cards.public.001.2.b1",
+      "id": "action.cards.public.001.1.b2.start",
+      "cue": "action.cards.public.001.1",
+      "beat": "action.cards.public.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "action.cards.public.001.2.b1.end",
-      "cue": "action.cards.public.001.2",
-      "beat": "action.cards.public.001.2.b1",
+      "id": "action.cards.public.001.1.b2.end",
+      "cue": "action.cards.public.001.1",
+      "beat": "action.cards.public.001.1.b2",
       "edge": "end"
     },
     {
@@ -9007,11 +8997,15 @@
         {
           "key": "镜头给发展区",
           "text": "0.00"
+        },
+        {
+          "key": "镜头回整桌",
+          "text": "第二句"
         }
       ],
       "script": {
-        "story": "【和宝石相同，已购买的发展卡牌也属于公开信息】",
-        "note": "【发展卡也是公开信息】\n  规则说明，**没有状态变化**：镜头给玩家发展区，点一下。\n  此时发展区是折扣例子（demo 分支）里的 5 张牌：2 白 + 3 红；\n  其中红牌 card_l1_ruby_38 就是上一条免费拿到的目标牌。"
+        "story": "【和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方】",
+        "note": "【发展卡也是公开信息：摊开放在自己面前，人人可见】\n  规则说明，**没有状态变化**：前半句镜头给玩家发展区；后半句镜头拉回整桌（『所有人都能清楚看到』用镜头语言说）。\n  此时发展区是折扣例子（demo 分支）里的 5 张牌：2 白 + 3 红；\n  其中红牌 card_l1_ruby_38 就是上一条免费拿到的目标牌。"
       },
       "events": [
         {
@@ -9020,43 +9014,23 @@
           "shot": "shot_development",
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.public.001.1.start"
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.cards.public.001.2",
-      "parent": "action.cards.public.001.1",
-      "timing": [
-        {
-          "key": "镜头回整桌",
-          "text": "2.60"
-        }
-      ],
-      "script": {
-        "story": "【每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方】",
-        "note": "【摊开放在自己面前，人人可见】\n  点发展区 → 镜头拉回整桌（『所有人都能清楚看到』用镜头语言说）。没有状态变化。"
-      },
-      "events": [
+        },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
-          "anchor": "action.cards.public.001.2.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "action.cards.public.001.2.b1.start",
-          "offset": 2.305
+          "anchor": "action.cards.public.001.1.b2.start"
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。玩家已经购买的发展卡牌属于公开信息，必须摊开放在自己面前，所有玩家都能清楚看到。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ]
     },
     {
       "id": "action.cards.limit.001.1",
-      "parent": "action.cards.public.001.2",
+      "parent": "action.cards.public.001.1",
       "timing": [
         {
           "key": "镜头回整桌",
