@@ -1473,30 +1473,6 @@
       "edge": "end"
     },
     {
-      "id": "action.nobles.intro.001.b2.start",
-      "cue": "action.nobles.intro.001",
-      "beat": "action.nobles.intro.001.b2",
-      "edge": "start"
-    },
-    {
-      "id": "action.nobles.intro.001.b2.end",
-      "cue": "action.nobles.intro.001",
-      "beat": "action.nobles.intro.001.b2",
-      "edge": "end"
-    },
-    {
-      "id": "action.nobles.intro.001.b3.start",
-      "cue": "action.nobles.intro.001",
-      "beat": "action.nobles.intro.001.b3",
-      "edge": "start"
-    },
-    {
-      "id": "action.nobles.intro.001.b3.end",
-      "cue": "action.nobles.intro.001",
-      "beat": "action.nobles.intro.001.b3",
-      "edge": "end"
-    },
-    {
       "id": "action.nobles.trigger.001.1.start",
       "cue": "action.nobles.trigger.001.1",
       "edge": "cue_start"
@@ -9024,21 +9000,13 @@
       "transition": "overlay",
       "timing": [
         {
-          "key": "镜头推近贵族",
-          "text": "0.00"
-        },
-        {
-          "key": "点一下",
-          "text": "0.80"
-        },
-        {
-          "key": "依次点三块",
-          "text": "第二句 0.60 / 1.80 / 3.00"
+          "key": "贵族 mask → 玩家发展区",
+          "text": "整条 cue"
         }
       ],
       "script": {
         "story": "【我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。】",
-        "note": "【介绍贵族板块：声望与条件】\n  贵族供应堆 3 块：noble_1/0001（4白+4红）、noble_4/0004（4蓝+4白）、noble_5/0005（3黑+3红+3白）。\n  贵族不是买来的牌，是条件达成后自动到你面前的板块。\n  贵族只摆在规则成立的位置：玩家B 没有发展卡，因此不摆贵族；贵族合法性以“发展卡真能满足条件”为准。\n  左上角 = 声望值（这五块都是 **3 分**，读图得到）；下方 = 条件（本片三块：4白+4红 / 4蓝+4白 / 3黑+3红+3白）。\n  条件看的是已购买卡牌的种类和数量：点贵族、再点自己面前的发展区；这一步没有状态变化，3 张还差得远，只是说明『条件』指的是什么。",
+        "note": "【贵族板块：先用 mask 看信息，再切到玩家发展区】\n  开场用 scene_backdrop + 一张贵族卡 mask 讲贵族板块，不在桌子上直接开讲。\n  左上角箭头/圈 = 声望值；下方箭头/圈 = 结识条件。\n  讲到“已购买的卡牌数量”时，隐藏 mask、镜头切到 player_development 并高亮已购买的发展卡；\n  让客人把“条件”与面前的实体卡对应起来。\n  canonical 还原仍在本 cue 开场 entry 完成；发展区只有 market.001.2 买入的一级白 card_l1_diamond_18。",
         "enter": {
           "picture": null,
           "zones": {
@@ -9198,88 +9166,125 @@
       },
       "events": [
         {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "action.nobles.intro.001.start",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "action.nobles.intro.001.start",
+          "rect": {
+            "x": 0.35,
+            "y": 0.1,
+            "w": 0.3,
+            "h": 0.533
+          },
+          "image": "media/card/贵族_0001_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "prestige",
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 2.235,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 3.7,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "condition",
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 4.755,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "condition",
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 6.07,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "hide",
+          "dur": 0.0,
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 8.44,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "hide",
+          "dur": 0.0,
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 8.44,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_nobles",
+          "shot": "shot_development",
           "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.intro.001.start"
+          "anchor": "action.nobles.intro.001.b1.start",
+          "offset": 8.44
         },
         {
           "op": "highlight",
-          "dur": 0.5,
+          "dur": 0.9,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.intro.001.b1.start",
-          "offset": 0.715,
+          "offset": 8.49,
           "target": {
             "space": "entity",
-            "zone": "noble_market"
+            "zone": "player_development"
           }
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_nobles_f08",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.intro.001.b2.start"
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
-          "part": "prestige",
-          "anchor": "action.nobles.intro.001.b2.start",
-          "offset": 0.235,
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "order": 0
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "circle",
-          "part": "prestige",
-          "anchor": "action.nobles.intro.001.b2.start",
-          "offset": 1.235,
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "order": 0
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
-          "part": "condition",
-          "anchor": "action.nobles.intro.001.b2.start",
-          "offset": 2.235,
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "order": 0
-          }
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "circle",
-          "part": "condition",
-          "anchor": "action.nobles.intro.001.b2.end",
-          "offset": -1.905,
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "order": 0
-          }
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.intro.001.b3.start"
         }
       ],
       "entry": "action.cards.discount.001",
