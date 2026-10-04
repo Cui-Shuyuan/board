@@ -10790,26 +10790,26 @@
       "parent": "action.nobles.trigger.001.1",
       "timing": [
         {
-          "key": "给B贵族 / A补齐条件 / 搬B的贵族 / 打禁止标记",
+          "key": "B已有非法贵族+说明 → A补牌 → 搬B贵族 → 禁止标记（节奏放慢）",
           "text": "整条 cue"
         }
       ],
       "script": {
         "story": "【玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取】",
-        "note": "【来源反例：只能从供应堆拿贵族】\n  开场 canonical：A 已有 noble_1，noble_market 剩 noble_4/noble_5。\n  1) 先把 noble_5 从 noble_market 搬到 player_b_nobles —— 玩家B 已经有一枚贵族；\n  2) 给 A 补 2 张白牌，发展区变成 3白+4红+4黑，正好满足 noble_5 的 3黑+3红+3白条件；\n  3) 把 noble_5 从玩家B的贵族区搬到玩家A的贵族区 —— 这是错误示范；\n  4) 在 A 贵族区新来的 noble_5 上打 forbid 标记：『不可以从其他人那里拿贵族』。\n  本 cue 是错误示范分支，不进入 canonical；action.nobles.choice.001.1 用 entry 回 action.nobles.trigger.001.1 继续。",
+        "note": "【来源反例：只能从供应堆拿贵族】\n  cue 开始时玩家B的贵族区已经有 noble_5（setup 静默前提）—— 但B一张发展卡都没有，这枚贵族本身就不合法；\n  镜头给整桌后用 world label 在B的贵族旁说明：『玩家B没有发展卡，这枚贵族不合法』。\n  A 补 2 张白牌后发展区变成 3白+4红+4黑，满足 noble_5 的 3黑+3红+3白条件；\n  接着 A 把 noble_5 从玩家B的贵族区搬到自己的贵族区 —— 这是错误示范；\n  最后在 A 贵族区新来的 noble_5 上打 forbid 标记：『不可以从其他人那里拿贵族』。\n  本 cue 是错误示范分支，不进入 canonical；action.nobles.choice.001.1 用 entry 回 action.nobles.trigger.001.1 继续。\n  【节奏】cue 音频尾部追加了 3.504s 静音，动作在 0s / 1.8s / 2.5s / 5.3s / 7.4s 分阶段发生，给客人反应时间。",
         "enter": {
           "zones": {
             "deck_level_1": {
               "count": 27
             },
             "noble_market": {
-              "count": 2
+              "count": 1
             },
             "player_nobles": {
               "count": 1
             },
             "player_b_nobles": {
-              "count": 0
+              "count": 1
             },
             "player_development": {
               "items": [
@@ -11100,17 +11100,11 @@
       },
       "events": [
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.source.001.start"
-        },
-        {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
           "quantity": 1,
-          "anchor": "action.nobles.source.001.b1.start",
+          "setup": true,
+          "anchor": "action.nobles.source.001.start",
           "offset": 0.0,
           "target": {
             "space": "entity",
@@ -11125,23 +11119,46 @@
           }
         },
         {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.nobles.source.001.start"
+        },
+        {
           "op": "highlight",
-          "dur": 0.5,
+          "dur": 1.2,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 0.7,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 0.0,
           "target": {
             "space": "entity",
             "zone": "player_b_nobles"
           }
         },
         {
+          "op": "label",
+          "dur": 4.8,
+          "text": "玩家B没有发展卡，这枚贵族不合法",
+          "anchor": "action.nobles.source.001.start",
+          "offset": 0.4,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_nobles",
+            "order": 0
+          },
+          "nudge": {
+            "x": 0.0,
+            "y": -0.1
+          }
+        },
+        {
           "op": "create",
-          "dur": 0.4,
+          "dur": 1.0,
           "count": 1,
           "to": "face_up",
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 1.25,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 1.8,
           "target": {
             "space": "entity",
             "zone": "player_development",
@@ -11158,11 +11175,11 @@
         },
         {
           "op": "create",
-          "dur": 0.4,
+          "dur": 1.0,
           "count": 1,
           "to": "face_up",
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 1.35,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 2.5,
           "target": {
             "space": "entity",
             "zone": "player_development",
@@ -11179,10 +11196,10 @@
         },
         {
           "op": "highlight",
-          "dur": 0.5,
+          "dur": 1.0,
           "peak_alpha": 0.65,
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 1.95,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 3.8,
           "target": {
             "space": "entity",
             "zone": "player_development"
@@ -11190,10 +11207,10 @@
         },
         {
           "op": "transfer",
-          "dur": 0.8,
+          "dur": 1.5,
           "quantity": 1,
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 2.75,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 5.3,
           "target": {
             "space": "entity",
             "zone": "player_b_nobles",
@@ -11210,8 +11227,8 @@
           "op": "point",
           "dur": 0.0,
           "indicator": "forbid",
-          "anchor": "action.nobles.source.001.b1.start",
-          "offset": 4.0,
+          "anchor": "action.nobles.source.001.start",
+          "offset": 7.4,
           "target": {
             "space": "entity",
             "zone": "player_nobles",
@@ -11222,7 +11239,7 @@
       "tree": "main",
       "qa": [
         {
-          "q": "两人局。玩家A的发展区已经满足3黑3红3白贵族条件，但那枚贵族在玩家B的贵族区；A把它从B那里拿到自己面前。这个做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "q": "两人局。玩家B一张发展卡都没有，贵族区里却有一枚贵族（这本身不合法）；玩家A的发展区满足这枚贵族的条件，A把它从B那里拿到自己面前。A的做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
           "expect": "有问题"
         }
       ]
