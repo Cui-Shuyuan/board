@@ -11800,7 +11800,7 @@
       "timing": [],
       "script": {
         "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
-        "note": "【同时满足多名贵族 → 挑一个拿走】\n  cue 继承 canonical trigger：先把桌面上所有贵族收回盒子（noble_1/noble_4/noble_5 移入 offstage）。\n  挑选两枚共享『黑4』条件的贵族：noble_1（4黑+4红）和 noble_2（4白+4黑）。\n  A 发展区摆成 4白+4红+3黑，只差一张黑牌就能同时满足两块贵族；A 持有区有 2 白（其中 1 白用于付款）。\n  A 从市场买走二级黑牌 card_l2_onyx_45（价格 5白，4白折扣后实付 1白），发展区变成 4白+4红+4黑，\n  两块贵族同时满足并同时高亮；市场空位由 deck_level_2 顶牌 card_l2_onyx_909 真补位。\n  右侧出现 magnifier 放大镜：镜头实时放大 noble_market 区域，桌上的贵族和放大镜里的贵族同时高亮。\n  最后 A 拿走 noble_1，放大镜里对应的那枚也同步飞走（render texture 直接反映世界状态）。",
+        "note": "【同时满足多名贵族 → 挑一个拿走】\n  cue 继承 canonical trigger：先把桌面上所有贵族收回盒子（noble_1/noble_4/noble_5 移入 offstage）。\n  挑选两枚共享『黑4』条件的贵族：noble_1（4黑+4红）和 noble_2（4白+4黑）。\n  A 发展区摆成 4白+4红+3黑，只差一张黑牌就能同时满足两块贵族；A 持有区有 2 白（其中 1 白用于付款）。\n  A 从市场买走二级黑牌 card_l2_onyx_45（价格 5白，4白折扣后实付 1白），发展区变成 4白+4红+4黑，\n  两块贵族同时满足并同时高亮；市场空位由 deck_level_2 顶牌 card_l2_onyx_909 真补位。\n  右侧出现 magnifier 放大镜（circle，位置/大小/zoom/layer 全部来自脚本事件参数）：镜头实时放大 noble_market 区域，桌上的贵族和放大镜里的贵族同时高亮。\n  最后 A 拿走 noble_1，放大镜里对应的那枚也同步飞走（render texture 直接反映世界状态）。",
         "enter": {
           "zones": {
             "card_market": {
@@ -12539,7 +12539,8 @@
           "zoom": 1.25,
           "padding": 0.16,
           "anchor": "action.nobles.choice.001.1.start",
-          "offset": 4.6
+          "offset": 4.6,
+          "shape": "circle"
         },
         {
           "op": "transfer",

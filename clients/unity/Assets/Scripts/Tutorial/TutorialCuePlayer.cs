@@ -940,10 +940,9 @@ namespace BoardGameTutorial
                 foreach (var m in frame.Magnifiers)
                 {
                     if (m == null || m.Alpha <= 0.001f) continue;
-                    float pw = Mathf.Max(24f, m.W * Screen.width);
-                    float ph = Mathf.Max(24f, m.H * Screen.height);
-                    int texW = Mathf.Clamp(Mathf.RoundToInt(pw), 64, 1024);
-                    int texH = Mathf.Clamp(Mathf.RoundToInt(ph), 64, 1024);
+                    Rect lensRect = ResolveMagnifierRect(m);
+                    int texW = Mathf.Clamp(Mathf.RoundToInt(lensRect.width), 64, 1024);
+                    int texH = Mathf.Clamp(Mathf.RoundToInt(lensRect.height), 64, 1024);
                     var view = GetMagnifierView(m.Id, texW, texH);
                     if (view == null || view.Cam == null) continue;
 
@@ -988,22 +987,19 @@ namespace BoardGameTutorial
             var ordered = new List<VisualMagnifierState>(frame.Magnifiers);
             ordered.Sort((a, b) => a.Layer.CompareTo(b.Layer));
             var alive = new HashSet<string>(StringComparer.Ordinal);
-            var mask = GetMagnifierMaskTexture();
+            var circleMask = GetMagnifierMaskTexture();
 
             foreach (var m in ordered)
             {
                 if (m == null || m.Alpha <= 0.001f) continue;
                 if (!magnifierViews.TryGetValue(m.Id, out var view) || view == null) continue;
-                float px = m.X * Screen.width;
-                float py = m.Y * Screen.height;
-                float pw = Mathf.Max(24f, m.W * Screen.width);
-                float ph = Mathf.Max(24f, m.H * Screen.height);
-                Rect rect = new Rect(px, py, pw, ph);
+                Rect rect = ResolveMagnifierRect(m);
 
                 var savedColor = GUI.color;
                 GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
                 GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, false);
-                if (mask != null) GUI.DrawTexture(rect, mask, ScaleMode.StretchToFill, false);
+                if (MagnifierShape(m) == "circle" && circleMask != null)
+                    GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, false);
                 GUI.color = savedColor;
                 alive.Add(m.Id);
             }
@@ -1031,6 +1027,29 @@ namespace BoardGameTutorial
                 }
                 magnifierViews.Remove(id);
             }
+        }
+
+        private static string MagnifierShape(VisualMagnifierState m)
+        {
+            if (m == null || string.IsNullOrEmpty(m.Shape)) return "circle";
+            string shape = m.Shape.Trim().ToLowerInvariant();
+            return shape == "box" ? "box" : "circle";
+        }
+
+        private static Rect ResolveMagnifierRect(VisualMagnifierState m)
+        {
+            float px = m.X * Screen.width;
+            float py = m.Y * Screen.height;
+            float pw = Mathf.Max(24f, m.W * Screen.width);
+            float ph = Mathf.Max(24f, m.H * Screen.height);
+            if (MagnifierShape(m) == "circle")
+            {
+                // `rect` is the lens' available screen box; a circle uses the
+                // largest square inside it so the mask is never stretched.
+                float side = Mathf.Min(pw, ph);
+                return new Rect(px + (pw - side) * 0.5f, py + (ph - side) * 0.5f, side, side);
+            }
+            return new Rect(px, py, pw, ph);
         }
 
         private MagnifierView GetMagnifierView(string id, int width, int height)

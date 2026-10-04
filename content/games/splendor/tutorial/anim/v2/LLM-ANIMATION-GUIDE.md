@@ -213,6 +213,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 ```json
 { "op": "magnifier", "anchor": "<cue>.start", "offset": 4.6,
   "id": "magnifier_nobles",
+  "shape": "circle",
   "target": { "space": "entity", "zone": "noble_market" },
   "rect": { "x": 0.60, "y": 0.16, "w": 0.34, "h": 0.34 },
   "zoom": 1.25, "padding": 0.16, "layer": 10 }
@@ -220,9 +221,12 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 规则：
 
-- 只支持 `target.space="entity"`；取 `zone` + 选择器匹配到的全部实体，
+- `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）。
+  `circle` 取 `rect` 内最大的正方形作圆窗，`box` 直接使用整个 `rect`。
+- `rect`：屏幕比例坐标（左上角原点），同时规定放大镜的位置和大小。
+- `zoom`：放大倍率；`padding`：目标实体包围盒外扩的世界单位。
+- `target` 仍只支持 `space="entity"`；取 `zone` + 选择器匹配到的全部实体，
   按它们的 world 包围盒确定镜头中心，再生成 lens 参数。
-- `rect` 是屏幕比例（左上角原点）；`zoom` 控制放大倍率，`padding` 是包围盒外扩的世界单位。
 - `layer` 用于同一 cue 内多个放大镜的前后层叠；`id` 省略时默认 `magnifier`。
 - 可选 `dur`（秒）：放大镜淡入时长；省略时立即出现。放大镜随 cue 结束消失。
 - `magnifier` 是纯表现原语，不改变逻辑状态；桌面对象的高亮 / 飞牌仍必须由

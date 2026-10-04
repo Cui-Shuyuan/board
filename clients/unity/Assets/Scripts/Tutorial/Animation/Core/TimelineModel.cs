@@ -142,6 +142,7 @@ namespace BoardGameTutorial.Animation
     public sealed class VisualMagnifierState
     {
         public string Id;
+        public string Shape = "circle";
         public float X;
         public float Y;
         public float W;
@@ -511,6 +512,7 @@ namespace BoardGameTutorial.Animation
                     activeMagnifiers[id] = new VisualMagnifierState
                     {
                         Id = id,
+                        Shape = string.IsNullOrEmpty(clip.mag_shape) ? "circle" : clip.mag_shape,
                         X = clip.mag_x,
                         Y = clip.mag_y,
                         W = clip.mag_w,

@@ -177,6 +177,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
                 "at": 0.9,
                 "dur": 0.2,
                 "id": "lens",
+                "shape": "circle",
                 "zoom": 1.3,
                 "padding": 0.1,
                 "rect": {"x": 0.6, "y": 0.1, "w": 0.3, "h": 0.3},
@@ -191,6 +192,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
         clip = clips[0]
         self.assertEqual("screen", clip["object_space"])
         self.assertEqual("lens", clip["overlay"])
+        self.assertEqual("circle", clip["mag_shape"])
         self.assertAlmostEqual(0.6, clip["mag_x"])
         self.assertAlmostEqual(0.3, clip["mag_w"])
         self.assertGreater(clip["mag_ortho_size"], 0.0)
@@ -198,6 +200,27 @@ class CompileAnimationV2Tests(unittest.TestCase):
         resolution = [r for r in cue["pointer_resolution"] if r.get("op") == "magnifier"]
         self.assertEqual(1, len(resolution), resolution)
         self.assertEqual(["sample_card_1|card_level_1#1"], resolution[0]["item_ids"])
+
+    def test_magnifier_box_shape_compiles(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "magnifier",
+                "at": 0.9,
+                "id": "lens_box",
+                "shape": "box",
+                "zoom": 1.2,
+                "rect": {"x": 0.1, "y": 0.2, "w": 0.4, "h": 0.2},
+                "target": {"space": "entity", "zone": "showcase"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "magnifier_show"]
+        self.assertEqual(1, len(clips), clips)
+        self.assertEqual("box", clips[0]["mag_shape"])
+        self.assertAlmostEqual(0.4, clips[0]["mag_w"])
+        self.assertAlmostEqual(0.2, clips[0]["mag_h"])
 
     def test_camera_shot_view_offset_shifts_frame_center(self):
         stage = {

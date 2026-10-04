@@ -29,6 +29,8 @@ STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "mov
 PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label", "magnifier",
                      "overlay_show", "overlay_hide"}
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
+# Magnifier 专用形状（circle=圆形透镜；box=矩形透镜）
+MAGNIFIER_SHAPES = {"circle", "box"}
 # 对象接口：世界/屏幕对象的原语统一指向一个 target。
 #   {"space": "entity", "zone": ..., "template": ..., "palette": ..., "concept": ..., "parts": [...], "order": n}
 #   {"space": "screen", "id": "overlay_slot"}
@@ -433,6 +435,10 @@ def _check_event(report: Report, where: str, ev: dict):
             ident = ev.get("id") if "id" in ev else ev.get("overlay")
             if ident is not None and not isinstance(ident, str):
                 report.error(f"{where}: magnifier id must be a string")
+            shape = ev.get("shape")
+            if shape is not None:
+                if not isinstance(shape, str) or shape.strip().lower() not in MAGNIFIER_SHAPES:
+                    report.error(f"{where}: magnifier shape must be one of {sorted(MAGNIFIER_SHAPES)}, got {shape!r}")
         elif op == "label":
             if "text" not in ev or ev.get("text") is None:
                 report.error(f"{where}: label needs text")
