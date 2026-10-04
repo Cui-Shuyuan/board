@@ -170,6 +170,30 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("purchase_card", clips[0]["overlay"])
         self.assertEqual("cost", clips[0]["part"])
 
+    def test_camera_shot_view_offset_shifts_frame_center(self):
+        stage = {
+            "id": "offset_test",
+            "game": "splendor",
+            "board": {
+                "aspect": 1.7778,
+                "extent": {"min_x": -1.0, "max_x": 1.0, "min_z": -1.0, "max_z": 1.0},
+            },
+            "zones": [{
+                "id": "zone",
+                "center": {"x": 0.0, "z": 0.0},
+                "layout": {"type": "row", "x_step": 1.0},
+                "capacity": 1,
+                "size": {"w": 0.5, "h": 0.5},
+            }],
+        }
+        base = compile_anim.geom.build_camera_frame(stage, {"zones": ["zone"], "fill": 0.8})
+        shifted = compile_anim.geom.build_camera_frame(
+            stage,
+            {"zones": ["zone"], "fill": 0.8, "view_offset_x": -2.0, "view_offset_z": -0.5},
+        )
+        self.assertAlmostEqual(base["center_x"] - 2.0, shifted["center_x"], places=6)
+        self.assertAlmostEqual(base["center_z"] - 0.5, shifted["center_z"], places=6)
+
     def test_cost_kind_parts_use_measured_box_geometry(self):
         expected = {
             "cost_1": (0.1125, 0.920, 0.315, 0.22),

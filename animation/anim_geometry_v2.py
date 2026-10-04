@@ -214,8 +214,8 @@ def build_camera_frame(stage: dict, camera: dict) -> dict:
         scale = 1.0 / clamp(fill, 0.2, 1.0)
 
     min_x, max_x, min_z, max_z = box
-    cx = (min_x + max_x) * 0.5
-    cz = (min_z + max_z) * 0.5
+    cx = (min_x + max_x) * 0.5 + num((camera or {}).get("view_offset_x"), 0.0)
+    cz = (min_z + max_z) * 0.5 + num((camera or {}).get("view_offset_z"), 0.0)
     half_w = max(0.5, (max_x - min_x) * 0.5 * scale)
     half_h = max(0.5, (max_z - min_z) * 0.5 * scale)
     sin_p = max(0.15, math.sin(math.radians(pitch)))

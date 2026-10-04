@@ -2799,6 +2799,16 @@
       "desc": "框 player_development，占画面 0.5556"
     },
     {
+      "id": "shot_development_side",
+      "zones": [
+        "player_development"
+      ],
+      "fill": 0.5556,
+      "view_offset_x": -2.1,
+      "view_offset_z": -0.3,
+      "desc": "玩家A发展区偏到画面右侧，给左侧 mask 留位"
+    },
+    {
       "id": "shot_nobles_f07143",
       "zones": [
         "noble_market"

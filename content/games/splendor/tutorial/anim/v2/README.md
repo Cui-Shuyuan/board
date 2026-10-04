@@ -15,7 +15,8 @@
    显式写 `move_order`。默认追加位置是 `max(order)+1`，不是 `count()`。
 
 2. **`camera_ops`** — 机位时间轴。
-   stage 里定义命名机位 `shots`（zones + fill），cue 的 `camera` 事件只写
+   stage 里定义命名机位 `shots`（zones + fill，可选 `view_offset_x` /
+   `view_offset_z` 平移机位中心），cue 的 `camera` 事件只写
    `{"op":"camera","at":...,"shot":"shot_market"}`。编译器把 shot 解析成
    center/ortho/pitch/rect 写进 `camera_ops`。没有 camera 事件的 cue
    沿用上一条 cue 的终态机位（`camera_in`）。

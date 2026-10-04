@@ -943,6 +943,8 @@ class Compiler:
                 return geom.build_camera_frame(stage, {
                     "zones": zones,
                     "fill": sh.get("fill", 0.8),
+                    "view_offset_x": sh.get("view_offset_x", 0.0),
+                    "view_offset_z": sh.get("view_offset_z", 0.0),
                     "at": 0.0,
                 })
         raise ValueError(f"stage {stage_id}: unknown shot {shot_id!r}")

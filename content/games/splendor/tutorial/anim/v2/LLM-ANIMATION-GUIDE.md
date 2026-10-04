@@ -251,6 +251,7 @@ cue 里用 anchor 指向 shot：
 
 规则：
 
+- shot 可选 `view_offset_x` / `view_offset_z`（世界单位）：在 `zones` 算出的机位中心上整体平移，用来把 zone 压到画面一侧，给另一侧留 mask（例：贵族介绍左 mask、右玩家发展区）。
 - 没有 camera 事件的 cue 继承**状态来源 cue 的 `camera_out`**（同一 resolved stage 且非 `cut/world_cut`）；否则使用当前 stage 的默认机位。
 - 同 cue 内多机位必须是作者明确设计的节奏；不要写“wide 镜头一闪就切”的伪多镜头。
 - 一个机位至少要有叙事意义；1 帧机位是脚本事故。
