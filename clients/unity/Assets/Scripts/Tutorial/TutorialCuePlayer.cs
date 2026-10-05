@@ -951,7 +951,7 @@ namespace BoardGameTutorial
                     view.Cam.enabled = false;
                     view.Cam.cullingMask = mainCam != null ? mainCam.cullingMask : ~0;
                     view.Cam.clearFlags = CameraClearFlags.SolidColor;
-                    view.Cam.backgroundColor = mainCam != null ? mainCam.backgroundColor : Color.black;
+                    view.Cam.backgroundColor = new Color(0f, 0f, 0f, 0f);
                     view.Cam.aspect = (float)view.Width / Mathf.Max(1, view.Height);
                     view.Cam.orthographic = true;
                     view.Cam.orthographicSize = Mathf.Max(0.05f, m.OrthoSize);
@@ -1003,7 +1003,7 @@ namespace BoardGameTutorial
 
                 var savedColor = GUI.color;
                 GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
-                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, false);
+                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, true);
                 if (MagnifierShape(m) == "circle" && circleMask != null)
                     GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, true);
                 GUI.color = savedColor;
@@ -1114,7 +1114,7 @@ namespace BoardGameTutorial
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
             tex.filterMode = FilterMode.Bilinear;
             tex.wrapMode = TextureWrapMode.Clamp;
-            var outside = new Color(0.09f, 0.10f, 0.13f, 1f);
+            var outside = new Color(0f, 0f, 0f, 0f);
             var rim = new Color(0.95f, 0.82f, 0.36f, 1f);
             for (int y = 0; y < size; y++)
             {
