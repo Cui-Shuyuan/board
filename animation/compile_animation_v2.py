@@ -1272,6 +1272,7 @@ class Compiler:
                     "mag_ortho_size": round(ortho, 6),
                     "mag_shape": shape,
                     "mag_mask": mask_mode,
+                    "mag_item_ids": [it["id"] for it in matched],
                     "layer": int(ev.get("layer", 10) or 10),
                 })
                 clips.append(c)

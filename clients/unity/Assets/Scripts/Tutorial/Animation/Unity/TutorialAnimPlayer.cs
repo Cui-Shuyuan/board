@@ -107,6 +107,16 @@ namespace BoardGameTutorial.Animation
             return string.IsNullOrEmpty(relative) ? null : sprites.LoadRelative(relative, "card");
         }
 
+        public void BeginLensRender(string[] targetItemIds)
+        {
+            binder.BeginLensRender(targetItemIds);
+        }
+
+        public void EndLensRender()
+        {
+            binder.EndLensRender();
+        }
+
         public bool LoadCue(string cueId)
         {
             if (!IsLoaded)

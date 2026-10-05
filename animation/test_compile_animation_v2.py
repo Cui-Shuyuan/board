@@ -195,6 +195,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("lens", clip["overlay"])
         self.assertEqual("circle", clip["mag_shape"])
         self.assertEqual("items", clip["mag_mask"])
+        self.assertEqual(["sample_card_1|card_level_1#1"], clip["mag_item_ids"])
         self.assertAlmostEqual(0.6, clip["mag_x"])
         self.assertAlmostEqual(0.3, clip["mag_w"])
         self.assertGreater(clip["mag_ortho_size"], 0.0)

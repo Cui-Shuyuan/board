@@ -970,8 +970,20 @@ namespace BoardGameTutorial
                     // the old OnGUI path this manual offscreen render is safe.
                     // Keeping the camera disabled prevents URP from also
                     // rendering it as a normal camera in the same frame.
+                    // Only the event's matched targets may enter the lens;
+                    // unrelated world objects that happen to fall in the same
+                    // region (e.g. the market row under the nobles) must not
+                    // bleed into an otherwise opaque lens.
                     view.Cam.enabled = false;
-                    view.Cam.Render();
+                    if (v2AnimPlayer != null) v2AnimPlayer.BeginLensRender(m.ItemIds);
+                    try
+                    {
+                        view.Cam.Render();
+                    }
+                    finally
+                    {
+                        if (v2AnimPlayer != null) v2AnimPlayer.EndLensRender();
+                    }
                     alive.Add(m.Id);
                 }
             }

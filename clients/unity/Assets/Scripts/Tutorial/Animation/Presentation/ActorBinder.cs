@@ -16,6 +16,10 @@ namespace BoardGameTutorial.Animation
         private Camera camera;
         private SpriteRenderer pictureRenderer;
         private string currentPicture;
+        private readonly Dictionary<string, bool> lensFilterSaved = new Dictionary<string, bool>();
+        private bool lensFilterActive;
+        private bool lensFilterPictureSaved;
+        private bool lensFilterPictureWasEnabled;
         private static readonly Dictionary<string, Sprite> MarkerSprites = new Dictionary<string, Sprite>();
 
         public void Init(Transform root, StageRuntime stage, SpriteLibrary sprites, Camera camera)
@@ -28,6 +32,9 @@ namespace BoardGameTutorial.Animation
 
         public void Clear()
         {
+            lensFilterActive = false;
+            lensFilterSaved.Clear();
+            lensFilterPictureSaved = false;
             foreach (var kv in actors)
                 if (kv.Value != null) Object.Destroy(kv.Value);
             actors.Clear();
@@ -37,6 +44,58 @@ namespace BoardGameTutorial.Animation
                 pictureRenderer = null;
             }
             currentPicture = null;
+        }
+
+        /// <summary>
+        /// Temporarily hide every actor that is not an explicit magnifier target
+        /// so an offscreen lens camera cannot render unrelated world objects
+        /// that happen to fall inside the lens region.  Call
+        /// <see cref="EndLensRender"/> after the lens camera has been rendered.
+        /// </summary>
+        public void BeginLensRender(string[] targetItemIds)
+        {
+            if (lensFilterActive) return;
+            if (targetItemIds == null || targetItemIds.Length == 0) return;
+
+            var keep = new HashSet<string>(targetItemIds);
+            lensFilterActive = true;
+            lensFilterSaved.Clear();
+            foreach (var kv in actors)
+            {
+                if (kv.Value == null) continue;
+                var sr = kv.Value.GetComponent<SpriteRenderer>();
+                if (sr == null) continue;
+                lensFilterSaved[kv.Key] = sr.enabled;
+                if (!keep.Contains(kv.Key)) sr.enabled = false;
+            }
+
+            if (pictureRenderer != null)
+            {
+                lensFilterPictureSaved = true;
+                lensFilterPictureWasEnabled = pictureRenderer.enabled;
+                pictureRenderer.enabled = false;
+            }
+        }
+
+        public void EndLensRender()
+        {
+            if (!lensFilterActive) return;
+            lensFilterActive = false;
+            foreach (var kv in lensFilterSaved)
+            {
+                if (actors.TryGetValue(kv.Key, out var go) && go != null)
+                {
+                    var sr = go.GetComponent<SpriteRenderer>();
+                    if (sr != null) sr.enabled = kv.Value;
+                }
+            }
+            lensFilterSaved.Clear();
+
+            if (lensFilterPictureSaved)
+            {
+                if (pictureRenderer != null) pictureRenderer.enabled = lensFilterPictureWasEnabled;
+                lensFilterPictureSaved = false;
+            }
         }
 
         public void Sync(FrameState frame)
