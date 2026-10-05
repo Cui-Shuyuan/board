@@ -211,12 +211,12 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 实体被 `transfer` 飞走时，放大镜里的那件也会同时飞走。
 
 ```json
-{ "op": "magnifier", "anchor": "<cue>.start", "offset": 4.6,
+{ "op": "magnifier", "anchor": "<cue>.start", "offset": 0.0,
   "id": "magnifier_nobles",
   "shape": "box",
   "mask": "full",
   "target": { "space": "entity", "zone": "noble_market" },
-  "rect": { "x": 0.39, "y": 0.158, "w": 0.18, "h": 0.36 },
+  "rect": { "x": 0.29, "y": 0.30, "w": 0.20, "h": 0.35 },
   "zoom": 1.15, "padding": 0.10, "layer": 10 }
 ```
 
@@ -224,7 +224,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 - `mask`：放大镜是否保留桌面背景。
   - `"items"`（默认）：只显示事件 target 匹配到的实体，实体之外透明。透明处显示的是主画面内容，不保证等于放大镜对应的那块桌面；目标飞走 / 被拿走后可能露出错误背景。
-  - `"full"`：保留桌面上下文。`box` 用桌面色铺满整个 `rect`；`circle` 先铺一个与圆等大的桌面色底，再叠加事件 target 匹配到的实体，最后画金色圆环。同一区域里的非 target 实体（例如贵族圈下方市场行的牌）不会进入镜片；目标飞走 / 被拿走后，原位置只剩桌面色，不会透出后面的主画面。Splendor full 的 `magnifier_nobles` 用这个模式：`shape:"box"`，矩形贴着贵族区下沿，覆盖其下方的市场。
+  - `"full"`：保留桌面上下文。`box` 用桌面色铺满整个 `rect`；`circle` 先铺一个与圆等大的桌面色底，再叠加事件 target 匹配到的实体，最后画金色圆环。同一区域里的非 target 实体（例如贵族圈下方市场行的牌）不会进入镜片；目标飞走 / 被拿走后，原位置只剩桌面色，不会透出后面的主画面。Splendor full 的 `magnifier_nobles` 用这个模式：`shape:"box"`，矩形紧贴玩家A发展区上方，整段 cue 常驻显示。
 - `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）。
   `circle` 在屏幕像素上取 `rect` 内最大的正方形作圆窗，`mask:"items"` 和 `"full"` 都会按这个正方形取景并画金色圆环，不会出现方形黑框；
   `box` 直接使用整个 `rect`，画金色矩形外框，矩形窗口内按 `mask` 决定是透明还是铺桌面色。

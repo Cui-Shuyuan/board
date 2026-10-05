@@ -11800,7 +11800,7 @@
       "timing": [],
       "script": {
         "story": "【当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件】",
-        "note": "【同时满足多名贵族 → 挑一个拿走】\n  cue 继承 canonical trigger：先把桌面上所有贵族收回盒子（noble_1/noble_4/noble_5 移入 offstage）。\n  挑选两枚共享『黑4』条件的贵族：noble_1（4黑+4红）和 noble_2（4白+4黑）。\n  A 发展区摆成 4白+4红+3黑，只差一张黑牌就能同时满足两块贵族；A 持有区有 2 白（其中 1 白用于付款）。\n  A 从市场买走二级黑牌 card_l2_onyx_45（价格 5白，4白折扣后实付 1白），发展区变成 4白+4红+4黑，\n  两块贵族同时满足并同时高亮；市场空位由 deck_level_2 顶牌 card_l2_onyx_909 真补位。\n  右侧出现 magnifier 放大镜（box，位置/大小/zoom/layer 全部来自脚本事件参数）：不透明矩形镜片贴着贵族区下沿，向下覆盖发展卡牌市场；镜片只放大 target 匹配到的两块贵族和桌面色，被压住的市场牌不会透出来，也不会遮挡上方贵族区。\n  最后 A 拿走 noble_1，放大镜里对应的那枚也同步飞走（render texture 直接反映世界状态）。",
+        "note": "【同时满足多名贵族 → 挑一个拿走】\n  cue 继承 canonical trigger：先把桌面上所有贵族收回盒子（noble_1/noble_4/noble_5 移入 offstage）。\n  挑选两枚共享『黑4』条件的贵族：noble_1（4黑+4红）和 noble_2（4白+4黑）。\n  A 发展区摆成 4白+4红+3黑，只差一张黑牌就能同时满足两块贵族；A 持有区有 2 白（其中 1 白用于付款）。\n  A 从市场买走二级黑牌 card_l2_onyx_45（价格 5白，4白折扣后实付 1白），发展区变成 4白+4红+4黑，\n  两块贵族同时满足并同时高亮；市场空位由 deck_level_2 顶牌 card_l2_onyx_909 真补位。\n  cue 一开始就在玩家A发展区上方出现 magnifier 矩形镜片（box，位置/大小/zoom/layer 全部来自脚本事件参数），只放大 target 匹配到的两块贵族和桌面色；A 买完卡后高亮这两块贵族，停一会给客人反应，再把其中一枚拿走。\n  最后 A 拿走 noble_1，放大镜里对应的那枚也同步飞走（render texture 直接反映世界状态）。",
         "enter": {
           "zones": {
             "card_market": {
@@ -12441,6 +12441,26 @@
           "anchor": "action.nobles.choice.001.1.start"
         },
         {
+          "op": "magnifier",
+          "id": "magnifier_nobles",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          },
+          "rect": {
+            "x": 0.29,
+            "y": 0.30,
+            "w": 0.20,
+            "h": 0.35
+          },
+          "zoom": 1.15,
+          "padding": 0.1,
+          "anchor": "action.nobles.choice.001.1.start",
+          "offset": 0.0,
+          "shape": "box",
+          "mask": "full"
+        },
+        {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
@@ -12517,38 +12537,18 @@
           "dur": 1.6,
           "peak_alpha": 0.65,
           "anchor": "action.nobles.choice.001.1.start",
-          "offset": 4.6,
+          "offset": 3.3,
           "target": {
             "space": "entity",
             "zone": "noble_market"
           }
         },
         {
-          "op": "magnifier",
-          "id": "magnifier_nobles",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market"
-          },
-          "rect": {
-            "x": 0.39,
-            "y": 0.158,
-            "w": 0.18,
-            "h": 0.36
-          },
-          "zoom": 1.15,
-          "padding": 0.1,
-          "anchor": "action.nobles.choice.001.1.start",
-          "offset": 4.6,
-          "shape": "box",
-          "mask": "full"
-        },
-        {
           "op": "transfer",
           "dur": 1.0,
           "quantity": 1,
           "anchor": "action.nobles.choice.001.1.start",
-          "offset": 6.2,
+          "offset": 7.2,
           "target": {
             "space": "entity",
             "zone": "noble_market",
