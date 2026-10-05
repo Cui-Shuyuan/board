@@ -102,6 +102,7 @@ namespace BoardGameTutorial
         private Texture2D overlayPanelTexture;
         private Texture2D magnifierMaskTexture;
         private Texture2D magnifierDiskTexture;
+        private Texture2D magnifierFrameTexture;
         private readonly Dictionary<string, MagnifierView> magnifierViews = new Dictionary<string, MagnifierView>(StringComparer.Ordinal);
         private int magnifierRenderedFrame = -1;
         private static readonly Vector2[] SubtitleOutlineOffsets =
@@ -1044,6 +1045,8 @@ namespace BoardGameTutorial
                 GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, !(fullMask && !circleLens));
                 if (circleLens && circleMask != null)
                     GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, true);
+                else if (!circleLens)
+                    DrawMagnifierBoxFrame(rect);
                 GUI.color = savedColor;
                 alive.Add(m.Id);
             }
@@ -1171,6 +1174,29 @@ namespace BoardGameTutorial
             }
             tex.Apply();
             magnifierDiskTexture = tex;
+            return tex;
+        }
+
+        private void DrawMagnifierBoxFrame(Rect rect)
+        {
+            var frame = GetMagnifierFrameTexture();
+            if (frame == null) return;
+            float stroke = Mathf.Max(4f, Mathf.Min(rect.width, rect.height) * 0.045f);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, stroke), frame);
+            GUI.DrawTexture(new Rect(rect.x, rect.yMax - stroke, rect.width, stroke), frame);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, stroke, rect.height), frame);
+            GUI.DrawTexture(new Rect(rect.xMax - stroke, rect.y, stroke, rect.height), frame);
+        }
+
+        private Texture2D GetMagnifierFrameTexture()
+        {
+            if (magnifierFrameTexture != null) return magnifierFrameTexture;
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Point;
+            tex.wrapMode = TextureWrapMode.Clamp;
+            tex.SetPixel(0, 0, new Color(0.95f, 0.82f, 0.36f, 1f));
+            tex.Apply();
+            magnifierFrameTexture = tex;
             return tex;
         }
 
