@@ -959,7 +959,13 @@ namespace BoardGameTutorial
                     view.Cam.transform.position = new Vector3(m.CenterX, distance, m.CenterZ);
                     view.Cam.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
                     view.Cam.targetTexture = view.Rt;
-                    view.Cam.enabled = true;
+
+                    // LateUpdate is outside URP's render callbacks, so unlike
+                    // the old OnGUI path this manual offscreen render is safe.
+                    // Keeping the camera disabled prevents URP from also
+                    // rendering it as a normal camera in the same frame.
+                    view.Cam.enabled = false;
+                    view.Cam.Render();
                     alive.Add(m.Id);
                 }
             }
