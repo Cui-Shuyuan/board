@@ -1252,7 +1252,7 @@ class Compiler:
                 half_w = (maxx - minx) * 0.5
                 half_h = (maxz - minz) * 0.5
                 zoom = float(ev.get("zoom", 1.2) or 1.2)
-                ortho = max(0.32, half_h, half_w / max(0.2, lens_aspect)) * zoom
+                ortho = max(0.32, half_h, half_w / max(0.2, lens_aspect)) / max(0.05, zoom)
                 c = self.base_clip("magnifier_show", at, dur, lead, easing)
                 c.update({
                     "object_space": "screen",

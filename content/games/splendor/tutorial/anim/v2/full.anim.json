@@ -12531,13 +12531,13 @@
             "zone": "noble_market"
           },
           "rect": {
-            "x": 0.6,
-            "y": 0.16,
-            "w": 0.34,
-            "h": 0.34
+            "x": 0.27,
+            "y": 0.03,
+            "w": 0.46,
+            "h": 0.46
           },
           "zoom": 1.25,
-          "padding": 0.16,
+          "padding": 0.1,
           "anchor": "action.nobles.choice.001.1.start",
           "offset": 4.6,
           "shape": "circle"

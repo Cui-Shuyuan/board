@@ -222,6 +222,26 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertAlmostEqual(0.4, clips[0]["mag_w"])
         self.assertAlmostEqual(0.2, clips[0]["mag_h"])
 
+    def test_magnifier_zoom_reduces_ortho_size(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "magnifier",
+                "at": 0.9,
+                "id": "lens_zoom",
+                "shape": "circle",
+                "zoom": 2.0,
+                "rect": {"x": 0.3, "y": 0.2, "w": 0.3, "h": 0.3},
+                "target": {"space": "entity", "zone": "showcase"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clip = [c for c in cue["clips"] if c.get("kind") == "magnifier_show"][0]
+        self.assertGreater(clip["mag_ortho_size"], 0.0)
+        # Base fit for the schema card is roughly 0.55; zoom 2 halves it.
+        self.assertLess(clip["mag_ortho_size"], 0.35)
+
     def test_camera_shot_view_offset_shifts_frame_center(self):
         stage = {
             "id": "offset_test",

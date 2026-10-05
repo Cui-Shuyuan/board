@@ -215,8 +215,8 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
   "id": "magnifier_nobles",
   "shape": "circle",
   "target": { "space": "entity", "zone": "noble_market" },
-  "rect": { "x": 0.60, "y": 0.16, "w": 0.34, "h": 0.34 },
-  "zoom": 1.25, "padding": 0.16, "layer": 10 }
+  "rect": { "x": 0.27, "y": 0.03, "w": 0.46, "h": 0.46 },
+  "zoom": 1.25, "padding": 0.10, "layer": 10 }
 ```
 
 规则：
@@ -224,7 +224,8 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 - `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）。
   `circle` 取 `rect` 内最大的正方形作圆窗，`box` 直接使用整个 `rect`。
 - `rect`：屏幕比例坐标（左上角原点），同时规定放大镜的位置和大小。
-- `zoom`：放大倍率；`padding`：目标实体包围盒外扩的世界单位。
+- `zoom`：放大倍率。`zoom=1` 表示镜头刚好框住目标包围盒；`>1` 推近放大，`<1` 拉远。
+- `padding`：目标世界包围盒外扩量；调小会让画面更满、目标更大。
 - `target` 仍只支持 `space="entity"`；取 `zone` + 选择器匹配到的全部实体，
   按它们的 world 包围盒确定镜头中心，再生成 lens 参数。
 - `layer` 用于同一 cue 内多个放大镜的前后层叠；`id` 省略时默认 `magnifier`。
