@@ -1,360 +1,318 @@
 [
   {
     "phonemes": [],
-    "text": "除购买外，玩家也可以选择不支付费用，",
+    "text": "除购买外，玩家也可以不支付费用，",
     "words": [
       {
-        "confidence": 0.96510744,
-        "endTime": 0.495,
-        "startTime": 0.265,
+        "confidence": 0.9465231,
+        "endTime": 0.575,
+        "startTime": 0.295,
         "word": "除"
       },
       {
-        "confidence": 0.96104807,
-        "endTime": 0.655,
-        "startTime": 0.495,
+        "confidence": 0.93023485,
+        "endTime": 0.765,
+        "startTime": 0.575,
         "word": "购"
       },
       {
-        "confidence": 0.9571076,
-        "endTime": 0.845,
-        "startTime": 0.655,
+        "confidence": 0.9713318,
+        "endTime": 0.975,
+        "startTime": 0.765,
         "word": "买"
       },
       {
-        "confidence": 0.86296403,
-        "endTime": 1.105,
-        "startTime": 0.845,
+        "confidence": 0.8861162,
+        "endTime": 1.205,
+        "startTime": 0.975,
         "word": "外，"
       },
       {
-        "confidence": 0.9404042,
-        "endTime": 1.465,
-        "startTime": 1.355,
+        "confidence": 0.9050151,
+        "endTime": 1.595,
+        "startTime": 1.485,
         "word": "玩"
       },
       {
-        "confidence": 0.93121755,
-        "endTime": 1.665,
-        "startTime": 1.465,
+        "confidence": 0.93307716,
+        "endTime": 1.805,
+        "startTime": 1.595,
         "word": "家"
       },
       {
-        "confidence": 0.92346704,
-        "endTime": 1.755,
-        "startTime": 1.665,
+        "confidence": 0.92495346,
+        "endTime": 1.915,
+        "startTime": 1.805,
         "word": "也"
       },
       {
-        "confidence": 0.7496202,
-        "endTime": 1.905,
-        "startTime": 1.755,
+        "confidence": 0.80304956,
+        "endTime": 2.055,
+        "startTime": 1.915,
         "word": "可"
       },
       {
-        "confidence": 0.7331883,
-        "endTime": 2.005,
-        "startTime": 1.905,
+        "confidence": 0.8459379,
+        "endTime": 2.205,
+        "startTime": 2.055,
         "word": "以"
       },
       {
-        "confidence": 0.8724675,
-        "endTime": 2.215,
-        "startTime": 2.005,
-        "word": "选"
-      },
-      {
-        "confidence": 0.97701335,
-        "endTime": 2.485,
-        "startTime": 2.215,
-        "word": "择"
-      },
-      {
-        "confidence": 0.9629346,
-        "endTime": 2.665,
-        "startTime": 2.485,
+        "confidence": 0.9671092,
+        "endTime": 2.365,
+        "startTime": 2.205,
         "word": "不"
       },
       {
-        "confidence": 0.94478416,
-        "endTime": 2.815,
-        "startTime": 2.665,
+        "confidence": 0.97442764,
+        "endTime": 2.525,
+        "startTime": 2.365,
         "word": "支"
       },
       {
-        "confidence": 0.9598734,
-        "endTime": 2.965,
-        "startTime": 2.815,
+        "confidence": 0.97319424,
+        "endTime": 2.665,
+        "startTime": 2.525,
         "word": "付"
       },
       {
-        "confidence": 0.97139734,
-        "endTime": 3.205,
-        "startTime": 2.965,
+        "confidence": 0.9747255,
+        "endTime": 2.855,
+        "startTime": 2.665,
         "word": "费"
       },
       {
-        "confidence": 0.9347341,
-        "endTime": 3.415,
-        "startTime": 3.205,
+        "confidence": 0.9732459,
+        "endTime": 3.085,
+        "startTime": 2.855,
         "word": "用，"
       }
     ]
   },
   {
     "phonemes": [],
-    "text": "将一张发展卡牌从供应堆中拿走，",
+    "text": "把一张发展卡牌从供应堆拿走，",
     "words": [
       {
-        "confidence": 0.51972854,
-        "endTime": 3.8750417,
-        "startTime": 3.8000417,
-        "word": "将"
+        "confidence": 0.5521974,
+        "endTime": 3.4850416,
+        "startTime": 3.4100416,
+        "word": "把"
       },
       {
-        "confidence": 0.8467881,
-        "endTime": 3.9850416,
-        "startTime": 3.8750417,
+        "confidence": 0.8132766,
+        "endTime": 3.5650415,
+        "startTime": 3.4850416,
         "word": "一"
       },
       {
-        "confidence": 0.9634211,
-        "endTime": 4.2350416,
-        "startTime": 3.9850416,
+        "confidence": 0.9779845,
+        "endTime": 3.7850416,
+        "startTime": 3.5650415,
         "word": "张"
       },
       {
-        "confidence": 0.97964954,
-        "endTime": 4.4250417,
-        "startTime": 4.2350416,
+        "confidence": 0.97964036,
+        "endTime": 3.9850416,
+        "startTime": 3.7850416,
         "word": "发"
       },
       {
-        "confidence": 0.9105496,
-        "endTime": 4.5650415,
-        "startTime": 4.4250417,
+        "confidence": 0.91665465,
+        "endTime": 4.1150417,
+        "startTime": 3.9850416,
         "word": "展"
       },
       {
-        "confidence": 0.9531108,
-        "endTime": 4.765042,
-        "startTime": 4.5650415,
+        "confidence": 0.95332694,
+        "endTime": 4.3050413,
+        "startTime": 4.1150417,
         "word": "卡"
       },
       {
-        "confidence": 0.9054243,
-        "endTime": 5.075042,
-        "startTime": 4.765042,
+        "confidence": 0.9249686,
+        "endTime": 4.6050415,
+        "startTime": 4.3050413,
         "word": "牌"
       },
       {
-        "confidence": 0.9502572,
-        "endTime": 5.3350415,
-        "startTime": 5.075042,
+        "confidence": 0.9507201,
+        "endTime": 4.825042,
+        "startTime": 4.6050415,
         "word": "从"
       },
       {
-        "confidence": 0.93046397,
-        "endTime": 5.515042,
-        "startTime": 5.3350415,
+        "confidence": 0.9153006,
+        "endTime": 5.0450416,
+        "startTime": 4.825042,
         "word": "供"
       },
       {
-        "confidence": 0.8285998,
-        "endTime": 5.6550417,
-        "startTime": 5.515042,
+        "confidence": 0.89946103,
+        "endTime": 5.1450415,
+        "startTime": 5.0450416,
         "word": "应"
       },
       {
-        "confidence": 0.63532865,
-        "endTime": 5.8150415,
-        "startTime": 5.6550417,
+        "confidence": 0.7039274,
+        "endTime": 5.2950416,
+        "startTime": 5.1450415,
         "word": "堆"
       },
       {
-        "confidence": 0.902351,
-        "endTime": 5.9750414,
-        "startTime": 5.8150415,
-        "word": "中"
-      },
-      {
-        "confidence": 0.90758085,
-        "endTime": 6.1550417,
-        "startTime": 5.9750414,
+        "confidence": 0.9303228,
+        "endTime": 5.4750414,
+        "startTime": 5.2950416,
         "word": "拿"
       },
       {
-        "confidence": 0.9575272,
-        "endTime": 6.4250417,
-        "startTime": 6.1550417,
+        "confidence": 0.96769387,
+        "endTime": 5.7350416,
+        "startTime": 5.4750414,
         "word": "走，"
       }
     ]
   },
   {
     "phonemes": [],
-    "text": "正面朝下放置在自己面前，",
+    "text": "正面朝下放在自己面前，",
     "words": [
       {
-        "confidence": 0.87097627,
-        "endTime": 6.9250836,
-        "startTime": 6.7800837,
+        "confidence": 0.838004,
+        "endTime": 6.1850834,
+        "startTime": 6.050083,
         "word": "正"
       },
       {
-        "confidence": 0.940471,
-        "endTime": 7.0750837,
-        "startTime": 6.9250836,
+        "confidence": 0.95879203,
+        "endTime": 6.335083,
+        "startTime": 6.1850834,
         "word": "面"
       },
       {
-        "confidence": 0.873171,
-        "endTime": 7.2750835,
-        "startTime": 7.0750837,
+        "confidence": 0.86205065,
+        "endTime": 6.525083,
+        "startTime": 6.335083,
         "word": "朝"
       },
       {
-        "confidence": 0.87771225,
-        "endTime": 7.5550838,
-        "startTime": 7.2750835,
+        "confidence": 0.9482833,
+        "endTime": 6.7850833,
+        "startTime": 6.525083,
         "word": "下"
       },
       {
-        "confidence": 0.9460468,
-        "endTime": 7.7750835,
-        "startTime": 7.5550838,
+        "confidence": 0.9376587,
+        "endTime": 6.965083,
+        "startTime": 6.7850833,
         "word": "放"
       },
       {
-        "confidence": 0.93236184,
-        "endTime": 7.9450836,
-        "startTime": 7.7750835,
-        "word": "置"
-      },
-      {
-        "confidence": 0.96624273,
-        "endTime": 8.125084,
-        "startTime": 7.9450836,
+        "confidence": 0.98787606,
+        "endTime": 7.125083,
+        "startTime": 6.965083,
         "word": "在"
       },
       {
-        "confidence": 0.9629505,
-        "endTime": 8.235084,
-        "startTime": 8.125084,
+        "confidence": 0.95910597,
+        "endTime": 7.2450833,
+        "startTime": 7.125083,
         "word": "自"
       },
       {
-        "confidence": 0.97530746,
-        "endTime": 8.375084,
-        "startTime": 8.235084,
+        "confidence": 0.9667872,
+        "endTime": 7.375083,
+        "startTime": 7.2450833,
         "word": "己"
       },
       {
-        "confidence": 0.9830971,
-        "endTime": 8.535084,
-        "startTime": 8.375084,
+        "confidence": 0.98221743,
+        "endTime": 7.5350833,
+        "startTime": 7.375083,
         "word": "面"
       },
       {
-        "confidence": 0.9642319,
-        "endTime": 8.925083,
-        "startTime": 8.535084,
+        "confidence": 0.94472116,
+        "endTime": 7.8950834,
+        "startTime": 7.5350833,
         "word": "前，"
       }
     ]
   },
   {
     "phonemes": [],
-    "text": "并且从黄金供应堆中拿取一枚黄金。",
+    "text": "再从黄金供应堆拿一枚黄金。",
     "words": [
       {
-        "confidence": 0.9389712,
-        "endTime": 9.415125,
-        "startTime": 9.255125,
-        "word": "并"
+        "confidence": 0.94589865,
+        "endTime": 8.385124,
+        "startTime": 8.225124,
+        "word": "再"
       },
       {
-        "confidence": 0.9378069,
-        "endTime": 9.645125,
-        "startTime": 9.415125,
-        "word": "且"
-      },
-      {
-        "confidence": 0.9547116,
-        "endTime": 9.965125,
-        "startTime": 9.645125,
+        "confidence": 0.95214576,
+        "endTime": 8.645124,
+        "startTime": 8.385124,
         "word": "从"
       },
       {
-        "confidence": 0.9325828,
-        "endTime": 10.195126,
-        "startTime": 9.965125,
+        "confidence": 0.94527245,
+        "endTime": 8.855124,
+        "startTime": 8.645124,
         "word": "黄"
       },
       {
-        "confidence": 0.9614007,
-        "endTime": 10.395125,
-        "startTime": 10.195126,
+        "confidence": 0.95502615,
+        "endTime": 9.035125,
+        "startTime": 8.855124,
         "word": "金"
       },
       {
-        "confidence": 0.9053309,
-        "endTime": 10.605125,
-        "startTime": 10.395125,
+        "confidence": 0.94425434,
+        "endTime": 9.225124,
+        "startTime": 9.035125,
         "word": "供"
       },
       {
-        "confidence": 0.8630726,
-        "endTime": 10.695126,
-        "startTime": 10.605125,
+        "confidence": 0.83219975,
+        "endTime": 9.345124,
+        "startTime": 9.225124,
         "word": "应"
       },
       {
-        "confidence": 0.7076362,
-        "endTime": 10.855125,
-        "startTime": 10.695126,
+        "confidence": 0.8394695,
+        "endTime": 9.585125,
+        "startTime": 9.345124,
         "word": "堆"
       },
       {
-        "confidence": 0.90086603,
-        "endTime": 11.085125,
-        "startTime": 10.855125,
-        "word": "中"
-      },
-      {
-        "confidence": 0.9631925,
-        "endTime": 11.315125,
-        "startTime": 11.135125,
+        "confidence": 0.9251329,
+        "endTime": 9.765124,
+        "startTime": 9.635124,
         "word": "拿"
       },
       {
-        "confidence": 0.8993749,
-        "endTime": 11.505125,
-        "startTime": 11.315125,
-        "word": "取"
-      },
-      {
-        "confidence": 0.9336822,
-        "endTime": 11.635125,
-        "startTime": 11.505125,
+        "confidence": 0.96490735,
+        "endTime": 9.915125,
+        "startTime": 9.765124,
         "word": "一"
       },
       {
-        "confidence": 0.88974947,
-        "endTime": 11.735126,
-        "startTime": 11.635125,
+        "confidence": 0.95876956,
+        "endTime": 10.045124,
+        "startTime": 9.915125,
         "word": "枚"
       },
       {
-        "confidence": 0.20524156,
-        "endTime": 11.795125,
-        "startTime": 11.735126,
+        "confidence": 0.7061332,
+        "endTime": 10.165125,
+        "startTime": 10.045124,
         "word": "黄"
       },
       {
-        "confidence": 0.26081476,
-        "endTime": 11.855125,
-        "startTime": 11.795125,
+        "confidence": 0.2421087,
+        "endTime": 10.225124,
+        "startTime": 10.165125,
         "word": "金。"
       }
     ]

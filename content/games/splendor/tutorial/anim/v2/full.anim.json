@@ -1753,18 +1753,6 @@
       "edge": "end"
     },
     {
-      "id": "action.reserve.intro.001.1.b2.start",
-      "cue": "action.reserve.intro.001.1",
-      "beat": "action.reserve.intro.001.1.b2",
-      "edge": "start"
-    },
-    {
-      "id": "action.reserve.intro.001.1.b2.end",
-      "cue": "action.reserve.intro.001.1",
-      "beat": "action.reserve.intro.001.1.b2",
-      "edge": "end"
-    },
-    {
       "id": "action.reserve.gold.001.start",
       "cue": "action.reserve.gold.001",
       "edge": "cue_start"
@@ -12821,17 +12809,13 @@
       "parent": "action.cards.summary.001.3",
       "timing": [
         {
-          "key": "镜头推近市场 / 点要保留的牌",
-          "text": "第一句"
-        },
-        {
-          "key": "牌进保留区（朝下）+ 补牌 + 拿黄金",
-          "text": "第二句"
+          "key": "桌面镜头 / 扣牌 + 补牌 + 拿黄金",
+          "text": "整句同步"
         }
       ],
       "script": {
-        "story": "【除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，正面朝下放在自己面前，并从黄金供应堆中拿取一枚黄金】",
-        "note": "【保留一张牌：不付钱拿走 + 朝下放 + 拿黄金 + 补牌】\n  第一句讲『可以选择不支付费用，将一张发展卡牌从供应堆中拿走』：镜头推近市场，点一下要保留的那张（三级白），此时牌还没有离桌。\n  第二句讲实际结算：三级白 → player_reserved 终态 face_down；市场空位按规则用 deck_level_3 顶牌三级蓝真牌补回，保持市场 12 张；黄金供应堆 → 持有区（保留奖励）。\n  说明与真实结算合并为一条 cue。",
+        "story": "【除购买外，玩家也可以选择不支付费用，把一张发展卡牌从供应堆拿走、朝下放在自己面前，并从黄金供应堆拿一枚黄金】",
+        "note": "【保留：一句话完成 扣牌 → 补牌 → 拿黄金】\n  整条 cue 只有一个 shot_board 桌面镜头，口播一句话说完保留流程。\n  「把一张发展卡牌从供应堆拿走」时市场三级白 → player_reserved（终态 face_down）；\n  「正面朝下放在自己面前」时补牌：deck_level_3 顶牌三级蓝 → 市场空位，保持市场 12 张；\n  「从黄金供应堆拿一枚黄金」时黄金 → 持有区。\n  高亮和搬运的 offset 按实际 TTS 词时间校准。",
         "enter": {
           "zones": {
             "player_reserved": {
@@ -12894,7 +12878,7 @@
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_market",
+          "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.reserve.intro.001.1.start"
         },
@@ -12902,8 +12886,8 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.reserve.intro.001.1.b1.start",
-          "offset": 0.925,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 3.4,
           "target": {
             "space": "entity",
             "zone": "card_market",
@@ -12915,8 +12899,8 @@
           "dur": 0.6,
           "quantity": 1,
           "to": "face_down",
-          "anchor": "action.reserve.intro.001.1.b2.start",
-          "offset": 0.505,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 5.3,
           "target": {
             "space": "entity",
             "zone": "card_market",
@@ -12938,8 +12922,8 @@
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
-          "anchor": "action.reserve.intro.001.1.b2.start",
-          "offset": 1.205,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 6.05,
           "target": {
             "space": "entity",
             "zone": "deck_level_3",
@@ -12954,15 +12938,14 @@
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          },
-          "order": 9
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.reserve.intro.001.1.b2.start",
-          "offset": 2.305,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 9.635,
           "target": {
             "space": "entity",
             "zone": "gold_supply",
@@ -12977,8 +12960,8 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.reserve.intro.001.1.b2.end",
-          "offset": -1.785,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 10.2,
           "target": {
             "space": "entity",
             "zone": "player_reserved"
