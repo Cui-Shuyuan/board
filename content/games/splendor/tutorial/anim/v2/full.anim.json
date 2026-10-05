@@ -12449,8 +12449,8 @@
           },
           "rect": {
             "x": 0.29,
-            "y": 0.30,
-            "w": 0.20,
+            "y": 0.3,
+            "w": 0.2,
             "h": 0.35
           },
           "zoom": 1.15,
@@ -12579,9 +12579,46 @@
       ],
       "script": {
         "story": "【当他的下一个回合结束时，不管这回合他做了什么行动】",
-        "note": "【下一个回合结束再检查一次 → 还剩就再拿】\n  先前场景里 A 已拿走 noble_1，供应堆只剩 noble_2；A 的发展区 4白4红4黑 仍然满足 noble_2（4白+4黑）。\n  第一句讲『下一个回合结束时不管做了什么行动』，镜头给玩家面前；第二句真搬最后一块 noble_2 到 player_nobles（此时共2块）。",
+        "note": "【下一个回合结束再检查一次 → 还剩就再拿】\n  沿用 cue59 的整桌画面与镜片：镜片仍贴在玩家A发展区上方，显示供应堆里剩下的 noble_2。\n  第一句『下一个回合结束时不管做了什么行动』期间，A 从宝石供应堆拿取 3 枚不同颜色宝石；\n  第二句高亮剩下的 noble_2，停一会给客人反应，再按 cue59 的节奏把它移到 player_nobles（此时共2块）。",
         "exit": {
           "zones": {
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
             "noble_market": {
               "count": 0
             },
@@ -12595,29 +12632,92 @@
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_development",
+          "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.nobles.repeat.001.1.start"
         },
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_nobles_f08",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.nobles.repeat.001.1.b2.start"
+          "op": "magnifier",
+          "id": "magnifier_nobles",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          },
+          "rect": {
+            "x": 0.29,
+            "y": 0.3,
+            "w": 0.2,
+            "h": 0.35
+          },
+          "zoom": 1.15,
+          "padding": 0.1,
+          "anchor": "action.nobles.repeat.001.1.start",
+          "offset": 0.0,
+          "shape": "box",
+          "mask": "full"
         },
         {
           "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.repeat.001.1.b2.start",
-          "offset": 0.3,
+          "dur": 0.35,
+          "grow": 1.2,
+          "anchor": "action.nobles.repeat.001.1.b1.start",
+          "offset": 0.005,
           "target": {
             "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_2",
-            "palette": "noble",
-            "concept": "noble"
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.35,
+          "grow": 1.2,
+          "anchor": "action.nobles.repeat.001.1.b1.start",
+          "offset": 0.255,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.35,
+          "grow": 1.2,
+          "anchor": "action.nobles.repeat.001.1.b1.start",
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 1,
+          "stagger": 0.25,
+          "anchor": "action.nobles.repeat.001.1.b1.end",
+          "offset": -1.635,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 1.6,
+          "peak_alpha": 0.65,
+          "anchor": "action.nobles.repeat.001.1.b2.start",
+          "offset": 1.8,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
           }
         },
         {
@@ -12625,7 +12725,7 @@
           "dur": 0.8,
           "quantity": 1,
           "anchor": "action.nobles.repeat.001.1.b2.start",
-          "offset": 1.4,
+          "offset": 5.7,
           "target": {
             "space": "entity",
             "zone": "noble_market",
@@ -12634,17 +12734,6 @@
             "concept": "noble"
           },
           "destination": {
-            "space": "entity",
-            "zone": "player_nobles"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.nobles.repeat.001.1.b2.end",
-          "offset": -0.5,
-          "target": {
             "space": "entity",
             "zone": "player_nobles"
           }
@@ -12821,13 +12910,13 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_sapphire",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
@@ -12839,6 +12928,12 @@
                 {
                   "template": "gem",
                   "palette": "gem_gold",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
                   "count": 1,
                   "face": "down"
                 }
@@ -13015,13 +13110,13 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_sapphire",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
@@ -13034,6 +13129,12 @@
                   "template": "gem",
                   "palette": "gem_gold",
                   "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1,
                   "face": "down"
                 }
               ]
@@ -13230,13 +13331,13 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_sapphire",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
@@ -13249,6 +13350,12 @@
                   "template": "gem",
                   "palette": "gem_gold",
                   "count": 3,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1,
                   "face": "down"
                 }
               ]
@@ -13484,13 +13591,13 @@
                 {
                   "template": "gem",
                   "palette": "gem_diamond",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
                   "template": "gem",
                   "palette": "gem_sapphire",
-                  "count": 1,
+                  "count": 2,
                   "face": "down"
                 },
                 {
@@ -13502,6 +13609,12 @@
                 {
                   "template": "gem",
                   "palette": "gem_gold",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
                   "count": 1,
                   "face": "down"
                 }
