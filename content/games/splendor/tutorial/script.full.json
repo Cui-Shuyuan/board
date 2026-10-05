@@ -1368,28 +1368,13 @@
         {
           "id": "action.reserve.intro.001.1.b1",
           "text": "除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，"
-        }
-      ]
-    },
-    {
-      "id": "action.reserve.intro.001.2",
-      "group": "3.3 保留一张发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.3 保留一张发展卡牌"
-      ],
-      "refs": [
-        "<reserve_development_card>",
-        "<gold>",
-        "<gold_supply>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "action.reserve.intro.001.2.b1",
+          "id": "action.reserve.intro.001.1.b2",
           "text": "正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金。"
         }
-      ]
+      ],
+      "story": "【除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，正面朝下放在自己面前，并从黄金供应堆中拿取一枚黄金】"
     },
     {
       "id": "action.reserve.gold.001",

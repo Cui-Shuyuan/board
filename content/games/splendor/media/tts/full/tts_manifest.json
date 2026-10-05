@@ -792,7 +792,7 @@
       "id": "action.reserve.intro.001.1",
       "group": "3.3 保留一张发展卡牌",
       "start": 422.256,
-      "duration": 6.672,
+      "duration": 12.456,
       "file": "content/games/splendor/media/tts/full/action.reserve.intro.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.intro.001.1.subtitle.json",
       "refs": [
@@ -802,22 +802,9 @@
       ]
     },
     {
-      "id": "action.reserve.intro.001.2",
-      "group": "3.3 保留一张发展卡牌",
-      "start": 428.928,
-      "duration": 6.432,
-      "file": "content/games/splendor/media/tts/full/action.reserve.intro.001.2.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.intro.001.2.subtitle.json",
-      "refs": [
-        "<reserve_development_card>",
-        "<gold>",
-        "<gold_supply>"
-      ]
-    },
-    {
       "id": "action.reserve.gold.001",
       "group": "3.3 保留一张发展卡牌",
-      "start": 435.36,
+      "start": 434.712,
       "duration": 6.84,
       "file": "content/games/splendor/media/tts/full/action.reserve.gold.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.gold.001.subtitle.json",
@@ -829,7 +816,7 @@
     {
       "id": "action.reserve.deck.001",
       "group": "3.3 保留一张发展卡牌",
-      "start": 442.2,
+      "start": 441.552,
       "duration": 7.656,
       "file": "content/games/splendor/media/tts/full/action.reserve.deck.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.deck.001.subtitle.json",
@@ -843,7 +830,7 @@
     {
       "id": "action.reserve.notes_intro.001",
       "group": "3.3 保留一张发展卡牌",
-      "start": 449.856,
+      "start": 449.208,
       "duration": 1.632,
       "file": "content/games/splendor/media/tts/full/action.reserve.notes_intro.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.notes_intro.001.subtitle.json",
@@ -854,7 +841,7 @@
     {
       "id": "action.reserve.limit_gold.001.1",
       "group": "3.3 保留一张发展卡牌",
-      "start": 451.488,
+      "start": 450.84,
       "duration": 7.464,
       "file": "content/games/splendor/media/tts/full/action.reserve.limit_gold.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.limit_gold.001.1.subtitle.json",
@@ -867,7 +854,7 @@
     {
       "id": "action.reserve.limit_gold.001.2",
       "group": "3.3 保留一张发展卡牌",
-      "start": 458.952,
+      "start": 458.304,
       "duration": 5.472,
       "file": "content/games/splendor/media/tts/full/action.reserve.limit_gold.001.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.limit_gold.001.2.subtitle.json",
@@ -880,7 +867,7 @@
     {
       "id": "action.reserve.limit_hand.001.1",
       "group": "3.3 保留一张发展卡牌",
-      "start": 464.424,
+      "start": 463.776,
       "duration": 3.648,
       "file": "content/games/splendor/media/tts/full/action.reserve.limit_hand.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.limit_hand.001.1.subtitle.json",
@@ -892,7 +879,7 @@
     {
       "id": "action.reserve.limit_hand.001.2",
       "group": "3.3 保留一张发展卡牌",
-      "start": 468.072,
+      "start": 467.424,
       "duration": 7.464,
       "file": "content/games/splendor/media/tts/full/action.reserve.limit_hand.001.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.limit_hand.001.2.subtitle.json",
@@ -904,7 +891,7 @@
     {
       "id": "action.reserve.private.001.1",
       "group": "3.3 保留一张发展卡牌",
-      "start": 475.536,
+      "start": 474.888,
       "duration": 6.456,
       "file": "content/games/splendor/media/tts/full/action.reserve.private.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.private.001.1.subtitle.json",
@@ -915,7 +902,7 @@
     {
       "id": "action.reserve.private.001.2",
       "group": "3.3 保留一张发展卡牌",
-      "start": 481.992,
+      "start": 481.344,
       "duration": 4.68,
       "file": "content/games/splendor/media/tts/full/action.reserve.private.001.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.private.001.2.subtitle.json",
@@ -926,7 +913,7 @@
     {
       "id": "action.reserve.private.002",
       "group": "3.3 保留一张发展卡牌",
-      "start": 486.672,
+      "start": 486.024,
       "duration": 6.456,
       "file": "content/games/splendor/media/tts/full/action.reserve.private.002.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.private.002.subtitle.json",
@@ -938,7 +925,7 @@
     {
       "id": "action.reserve.not_purchase.001",
       "group": "3.3 保留一张发展卡牌",
-      "start": 493.128,
+      "start": 492.48,
       "duration": 7.08,
       "file": "content/games/splendor/media/tts/full/action.reserve.not_purchase.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.not_purchase.001.subtitle.json",
@@ -951,7 +938,7 @@
     {
       "id": "action.purchase_reserved.001",
       "group": "3.4 购买保留的发展卡牌",
-      "start": 500.208,
+      "start": 499.56,
       "duration": 5.472,
       "file": "content/games/splendor/media/tts/full/action.purchase_reserved.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.purchase_reserved.001.subtitle.json",
@@ -963,7 +950,7 @@
     {
       "id": "action.purchase_reserved.002.1",
       "group": "3.4 购买保留的发展卡牌",
-      "start": 505.68,
+      "start": 505.032,
       "duration": 6.696,
       "file": "content/games/splendor/media/tts/full/action.purchase_reserved.002.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.purchase_reserved.002.1.subtitle.json",
@@ -976,7 +963,7 @@
     {
       "id": "action.purchase_reserved.002.2",
       "group": "3.4 购买保留的发展卡牌",
-      "start": 512.376,
+      "start": 511.728,
       "duration": 7.272,
       "file": "content/games/splendor/media/tts/full/action.purchase_reserved.002.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.purchase_reserved.002.2.subtitle.json",
@@ -989,7 +976,7 @@
     {
       "id": "action.summary.001",
       "group": "3.5 回合结束与循环",
-      "start": 519.648,
+      "start": 519.0,
       "duration": 7.224,
       "file": "content/games/splendor/media/tts/full/action.summary.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.summary.001.subtitle.json",
@@ -1003,7 +990,7 @@
     {
       "id": "action.summary.002.1",
       "group": "3.5 回合结束与循环",
-      "start": 526.872,
+      "start": 526.224,
       "duration": 7.08,
       "file": "content/games/splendor/media/tts/full/action.summary.002.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.summary.002.1.subtitle.json",
@@ -1016,7 +1003,7 @@
     {
       "id": "action.summary.002.2",
       "group": "3.5 回合结束与循环",
-      "start": 533.952,
+      "start": 533.304,
       "duration": 6.288,
       "file": "content/games/splendor/media/tts/full/action.summary.002.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.summary.002.2.subtitle.json",
@@ -1029,7 +1016,7 @@
     {
       "id": "endgame.trigger.001",
       "group": "4 游戏结束",
-      "start": 540.24,
+      "start": 539.592,
       "duration": 5.232,
       "file": "content/games/splendor/media/tts/full/endgame.trigger.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.trigger.001.subtitle.json",
@@ -1041,7 +1028,7 @@
     {
       "id": "endgame.final_rounds.001.1",
       "group": "4 游戏结束",
-      "start": 545.472,
+      "start": 544.824,
       "duration": 5.472,
       "file": "content/games/splendor/media/tts/full/endgame.final_rounds.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.final_rounds.001.1.subtitle.json",
@@ -1054,7 +1041,7 @@
     {
       "id": "endgame.final_rounds.001.2",
       "group": "4 游戏结束",
-      "start": 550.944,
+      "start": 550.296,
       "duration": 5.664,
       "file": "content/games/splendor/media/tts/full/endgame.final_rounds.001.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.final_rounds.001.2.subtitle.json",
@@ -1067,7 +1054,7 @@
     {
       "id": "endgame.example.001.1",
       "group": "4 游戏结束",
-      "start": 556.608,
+      "start": 555.96,
       "duration": 4.464,
       "file": "content/games/splendor/media/tts/full/endgame.example.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.example.001.1.subtitle.json",
@@ -1078,7 +1065,7 @@
     {
       "id": "endgame.example.001.2",
       "group": "4 游戏结束",
-      "start": 561.072,
+      "start": 560.424,
       "duration": 5.448,
       "file": "content/games/splendor/media/tts/full/endgame.example.001.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.example.001.2.subtitle.json",
@@ -1089,7 +1076,7 @@
     {
       "id": "endgame.example.002",
       "group": "4 游戏结束",
-      "start": 566.52,
+      "start": 565.872,
       "duration": 7.464,
       "file": "content/games/splendor/media/tts/full/endgame.example.002.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.example.002.subtitle.json",
@@ -1100,7 +1087,7 @@
     {
       "id": "endgame.winner.001",
       "group": "4 游戏结束",
-      "start": 573.984,
+      "start": 573.336,
       "duration": 3.072,
       "file": "content/games/splendor/media/tts/full/endgame.winner.001.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.winner.001.subtitle.json",
@@ -1112,7 +1099,7 @@
     {
       "id": "endgame.tie.001.1",
       "group": "4 游戏结束",
-      "start": 577.056,
+      "start": 576.408,
       "duration": 6.264,
       "file": "content/games/splendor/media/tts/full/endgame.tie.001.1.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.tie.001.1.subtitle.json",
@@ -1124,7 +1111,7 @@
     {
       "id": "endgame.tie.001.2",
       "group": "4 游戏结束",
-      "start": 583.32,
+      "start": 582.672,
       "duration": 6.456,
       "file": "content/games/splendor/media/tts/full/endgame.tie.001.2.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.tie.001.2.subtitle.json",

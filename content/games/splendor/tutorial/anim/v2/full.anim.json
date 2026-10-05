@@ -1753,25 +1753,15 @@
       "edge": "end"
     },
     {
-      "id": "action.reserve.intro.001.2.start",
-      "cue": "action.reserve.intro.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.reserve.intro.001.2.end",
-      "cue": "action.reserve.intro.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.reserve.intro.001.2.b1.start",
-      "cue": "action.reserve.intro.001.2",
-      "beat": "action.reserve.intro.001.2.b1",
+      "id": "action.reserve.intro.001.1.b2.start",
+      "cue": "action.reserve.intro.001.1",
+      "beat": "action.reserve.intro.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "action.reserve.intro.001.2.b1.end",
-      "cue": "action.reserve.intro.001.2",
-      "beat": "action.reserve.intro.001.2.b1",
+      "id": "action.reserve.intro.001.1.b2.end",
+      "cue": "action.reserve.intro.001.1",
+      "beat": "action.reserve.intro.001.1.b2",
       "edge": "end"
     },
     {
@@ -12831,17 +12821,17 @@
       "parent": "action.cards.summary.001.3",
       "timing": [
         {
-          "key": "镜头推近市场",
-          "text": "0.00"
+          "key": "镜头推近市场 / 点要保留的牌",
+          "text": "第一句"
         },
         {
-          "key": "点要保留的牌",
-          "text": "1.20 / 3.20"
+          "key": "牌进保留区（朝下）+ 补牌 + 拿黄金",
+          "text": "第二句"
         }
       ],
       "script": {
-        "story": "【除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走】",
-        "note": "【保留（一）：不付钱，把牌拿走】\n  口播前半句先把『保留』这件事说出来 → 镜头推近市场，点一下要保留的那张（三级白）。\n  ⚠ 这一句**没有搬运**：口播讲到『拿走』就切到下一句，牌是下一句（001.2）才真正离桌的 —— 「一句话一条状态变化」比抢半句台词更清楚。",
+        "story": "【除购买外，玩家也可以选择不支付费用，将一张发展卡牌从供应堆中拿走，正面朝下放在自己面前，并从黄金供应堆中拿取一枚黄金】",
+        "note": "【保留一张牌：不付钱拿走 + 朝下放 + 拿黄金 + 补牌】\n  第一句讲『可以选择不支付费用，将一张发展卡牌从供应堆中拿走』：镜头推近市场，点一下要保留的那张（三级白），此时牌还没有离桌。\n  第二句讲实际结算：三级白 → player_reserved 终态 face_down；市场空位按规则用 deck_level_3 顶牌三级蓝真牌补回，保持市场 12 张；黄金供应堆 → 持有区（保留奖励）。\n  说明与真实结算合并为一条 cue。",
         "enter": {
           "zones": {
             "player_reserved": {
@@ -12849,57 +12839,6 @@
             }
           }
         },
-        "exit": {
-          "zones": {
-            "player_reserved": {
-              "count": 0
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_market",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.intro.001.1.start"
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.intro.001.1.b1.start",
-          "offset": 0.925,
-          "target": {
-            "space": "entity",
-            "zone": "card_market",
-            "order": 9
-          }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.reserve.intro.001.2",
-      "parent": "action.reserve.intro.001.1",
-      "timing": [
-        {
-          "key": "搬牌到保留区（朝下）",
-          "text": "0.80"
-        },
-        {
-          "key": "拿一枚黄金",
-          "text": "2.60"
-        },
-        {
-          "key": "点保留区",
-          "text": "4.40"
-        }
-      ],
-      "script": {
-        "story": "【正面朝下放置在自己面前，并且从黄金供应堆中拿取一枚黄金】",
-        "note": "【保留（二）：朝下放自己面前 + 拿一枚黄金 + 补牌】\n  ① 市场三级白 → player_reserved，终态 face_down；\n  ② 黄金供应堆 → 持有区（保留奖励）；\n  ③ 市场空位按规则从 deck_level_3 翻一张真牌补回（当前牌堆真牌是三级蓝），保持市场 12 张。\n  『朝下』写成终态而不是翻一下，重复 Seek/重播一致。\n",
         "exit": {
           "zones": {
             "card_market": {
@@ -12953,11 +12892,30 @@
       },
       "events": [
         {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_market",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.intro.001.1.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.intro.001.1.b1.start",
+          "offset": 0.925,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 9
+          }
+        },
+        {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_down",
-          "anchor": "action.reserve.intro.001.2.b1.start",
+          "anchor": "action.reserve.intro.001.1.b2.start",
           "offset": 0.505,
           "target": {
             "space": "entity",
@@ -12980,7 +12938,7 @@
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
-          "anchor": "action.reserve.intro.001.2.b1.start",
+          "anchor": "action.reserve.intro.001.1.b2.start",
           "offset": 1.205,
           "target": {
             "space": "entity",
@@ -13003,7 +12961,7 @@
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.reserve.intro.001.2.b1.start",
+          "anchor": "action.reserve.intro.001.1.b2.start",
           "offset": 2.305,
           "target": {
             "space": "entity",
@@ -13019,7 +12977,7 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.reserve.intro.001.2.b1.end",
+          "anchor": "action.reserve.intro.001.1.b2.end",
           "offset": -1.785,
           "target": {
             "space": "entity",
@@ -13031,7 +12989,7 @@
     },
     {
       "id": "action.reserve.gold.001",
-      "parent": "action.reserve.intro.001.2",
+      "parent": "action.reserve.intro.001.1",
       "timing": [
         {
           "key": "点持有区（黄金）",
