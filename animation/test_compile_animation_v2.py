@@ -265,6 +265,30 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("full", clip["mag_mask"])
         self.assertEqual("box", clip["mag_shape"])
 
+    def test_magnifier_view_override_pins_framing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "magnifier",
+                "at": 0.9,
+                "id": "lens_locked",
+                "mask": "full",
+                "shape": "box",
+                "zoom": 1.15,
+                "view_center_x": -1.57,
+                "view_center_z": 2.55,
+                "view_ortho_size": 0.633424,
+                "rect": {"x": 0.29, "y": 0.3, "w": 0.2, "h": 0.35},
+                "target": {"space": "entity", "zone": "showcase"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clip = [c for c in cue["clips"] if c.get("kind") == "magnifier_show"][0]
+        self.assertAlmostEqual(-1.57, clip["mag_center_x"])
+        self.assertAlmostEqual(2.55, clip["mag_center_z"])
+        self.assertAlmostEqual(0.633424, clip["mag_ortho_size"])
+
     def test_magnifier_full_circle_uses_square_window_aspect(self):
         events = [
             {

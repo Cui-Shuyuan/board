@@ -433,6 +433,21 @@ def _check_event(report: Report, where: str, ev: dict):
                         report.error(f"{where}: magnifier {key} must be > 0")
                 except (TypeError, ValueError):
                     report.error(f"{where}: magnifier {key} must be numeric")
+            for key in ("view_center_x", "view_center_z"):
+                raw = ev.get(key)
+                if raw is None:
+                    continue
+                try:
+                    float(raw)
+                except (TypeError, ValueError):
+                    report.error(f"{where}: magnifier {key} must be numeric")
+            raw = ev.get("view_ortho_size")
+            if raw is not None:
+                try:
+                    if float(raw) <= 0:
+                        report.error(f"{where}: magnifier view_ortho_size must be > 0")
+                except (TypeError, ValueError):
+                    report.error(f"{where}: magnifier view_ortho_size must be numeric")
             ident = ev.get("id") if "id" in ev else ev.get("overlay")
             if ident is not None and not isinstance(ident, str):
                 report.error(f"{where}: magnifier id must be a string")

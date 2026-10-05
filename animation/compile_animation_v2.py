@@ -1260,15 +1260,28 @@ class Compiler:
                 half_w = (maxx - minx) * 0.5
                 half_h = (maxz - minz) * 0.5
                 zoom = float(ev.get("zoom", 1.2) or 1.2)
+                center_x = (minx + maxx) * 0.5
+                center_z = (minz + maxz) * 0.5
                 ortho = max(0.32, half_h, half_w / max(0.2, lens_aspect)) / max(0.05, zoom)
+                # Optional explicit world framing.  Cues that must keep the
+                # exact same lens while their target set changes use this to
+                # pin the same center/ortho as a sibling cue.
+                if ev.get("view_center_x") is not None:
+                    center_x = float(ev["view_center_x"])
+                if ev.get("view_center_z") is not None:
+                    center_z = float(ev["view_center_z"])
+                if ev.get("view_ortho_size") is not None:
+                    ortho = float(ev["view_ortho_size"])
+                    if ortho <= 0.0:
+                        raise ValueError(f"cue {cue_id}: view_ortho_size must be > 0")
                 c = self.base_clip("magnifier_show", at, dur, lead, easing)
                 c.update({
                     "object_space": "screen",
                     "overlay": overlay_id,
                     "mag_x": round(rx, 6), "mag_y": round(ry, 6),
                     "mag_w": round(rw, 6), "mag_h": round(rh, 6),
-                    "mag_center_x": round((minx + maxx) * 0.5, 6),
-                    "mag_center_z": round((minz + maxz) * 0.5, 6),
+                    "mag_center_x": round(center_x, 6),
+                    "mag_center_z": round(center_z, 6),
                     "mag_ortho_size": round(ortho, 6),
                     "mag_shape": shape,
                     "mag_mask": mask_mode,
