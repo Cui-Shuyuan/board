@@ -1251,12 +1251,12 @@ class Compiler:
                 mask_mode = norm(ev.get("mask") or "items").lower()
                 if mask_mode not in ("items", "full"):
                     raise ValueError(f"cue {cue_id}: unknown magnifier mask {mask_mode!r}")
-                if mask_mode == "full":
-                    # Full-rect mode keeps the whole magnified frame
-                    # (table + objects), so its aspect follows `rect`.
-                    lens_aspect = (rw * 16.0) / max(0.001, rh * 9.0)
+                if shape == "circle":
+                    # Circle always resolves to a square window; this also
+                    # lets full mask draw an opaque table-coloured disc.
+                    lens_aspect = 1.0
                 else:
-                    lens_aspect = 1.0 if shape == "circle" else (rw * 16.0) / max(0.001, rh * 9.0)
+                    lens_aspect = (rw * 16.0) / max(0.001, rh * 9.0)
                 half_w = (maxx - minx) * 0.5
                 half_h = (maxz - minz) * 0.5
                 zoom = float(ev.get("zoom", 1.2) or 1.2)

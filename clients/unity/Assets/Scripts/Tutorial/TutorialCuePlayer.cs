@@ -101,6 +101,7 @@ namespace BoardGameTutorial
         private GUIStyle labelShadowStyle;
         private Texture2D overlayPanelTexture;
         private Texture2D magnifierMaskTexture;
+        private Texture2D magnifierDiskTexture;
         private readonly Dictionary<string, MagnifierView> magnifierViews = new Dictionary<string, MagnifierView>(StringComparer.Ordinal);
         private int magnifierRenderedFrame = -1;
         private static readonly Vector2[] SubtitleOutlineOffsets =
@@ -952,7 +953,9 @@ namespace BoardGameTutorial
                     view.Cam.cullingMask = mainCam != null ? mainCam.cullingMask : ~0;
                     view.Cam.clearFlags = CameraClearFlags.SolidColor;
                     bool fullMask = MagnifierMaskMode(m) == "full";
-                    view.Cam.backgroundColor = fullMask
+                    bool circleLens = MagnifierShape(m) == "circle";
+                    bool opaqueTable = fullMask && !circleLens;
+                    view.Cam.backgroundColor = opaqueTable
                         ? (mainCam != null ? mainCam.backgroundColor : Color.black)
                         : new Color(0f, 0f, 0f, 0f);
                     view.Cam.aspect = (float)view.Width / Mathf.Max(1, view.Height);
@@ -1005,10 +1008,29 @@ namespace BoardGameTutorial
                 Rect rect = ResolveMagnifierRect(m);
 
                 bool fullMask = MagnifierMaskMode(m) == "full";
+                bool circleLens = MagnifierShape(m) == "circle";
                 var savedColor = GUI.color;
+
+                // Full + circle: put an opaque table-coloured disc inside the
+                // lens, then draw the transparent object pass on top.  This
+                // keeps the magnifier showing "that piece of table" instead
+                // of revealing the live screen behind a removed noble.
+                if (fullMask && circleLens)
+                {
+                    var mainCam = v2AnimPlayer != null ? v2AnimPlayer.Camera : null;
+                    Color tableColor = mainCam != null ? mainCam.backgroundColor : Color.black;
+                    // OnGUI consumes GUI.color as linear, while Camera.backgroundColor
+                    // was authored from the sRGB stage hex.  Match the live table clear
+                    // colour by converting before drawing the disc.
+                    tableColor = tableColor.linear;
+                    tableColor.a *= Mathf.Clamp01(m.Alpha);
+                    GUI.color = tableColor;
+                    GUI.DrawTexture(rect, GetMagnifierDiskTexture(), ScaleMode.StretchToFill, true);
+                }
+
                 GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
-                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, !fullMask);
-                if (!fullMask && MagnifierShape(m) == "circle" && circleMask != null)
+                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, !(fullMask && !circleLens));
+                if (circleLens && circleMask != null)
                     GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, true);
                 GUI.color = savedColor;
                 alive.Add(m.Id);
@@ -1058,7 +1080,7 @@ namespace BoardGameTutorial
             float py = m.Y * Screen.height;
             float pw = Mathf.Max(24f, m.W * Screen.width);
             float ph = Mathf.Max(24f, m.H * Screen.height);
-            if (MagnifierMaskMode(m) != "full" && MagnifierShape(m) == "circle")
+            if (MagnifierShape(m) == "circle")
             {
                 // `rect` is the lens' available screen box; a circle uses the
                 // largest square inside it so the mask is never stretched.
@@ -1115,6 +1137,29 @@ namespace BoardGameTutorial
             rt.wrapMode = TextureWrapMode.Clamp;
             rt.Create();
             return rt;
+        }
+
+        private Texture2D GetMagnifierDiskTexture()
+        {
+            if (magnifierDiskTexture != null) return magnifierDiskTexture;
+            const int size = 256;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Bilinear;
+            tex.wrapMode = TextureWrapMode.Clamp;
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float dx = (x + 0.5f) / size * 2f - 1f;
+                    float dy = (y + 0.5f) / size * 2f - 1f;
+                    float d = Mathf.Sqrt(dx * dx + dy * dy);
+                    Color c = d <= 0.97f ? Color.white : new Color(0f, 0f, 0f, 0f);
+                    tex.SetPixel(x, y, c);
+                }
+            }
+            tex.Apply();
+            magnifierDiskTexture = tex;
+            return tex;
         }
 
         private Texture2D GetMagnifierMaskTexture()

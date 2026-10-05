@@ -206,7 +206,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 ### 2.3 放大镜：放大桌面上的一部分实体
 
-`magnifier` 把目标实体所在的世界区域**实时**渲染到屏幕上的放大镜 rect 里。
+`magnifier` 把目标实体所在的世界区域**实时**渲染到屏幕上的放大镜 rect 里；用 `mask:"full"` 时还会保留那块区域的桌面色上下文。
 它不是截图或影子副本：桌面实体高亮 / 变大时，放大镜里看到的是同一帧的同一个实体；
 实体被 `transfer` 飞走时，放大镜里的那件也会同时飞走。
 
@@ -214,7 +214,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 { "op": "magnifier", "anchor": "<cue>.start", "offset": 4.6,
   "id": "magnifier_nobles",
   "shape": "circle",
-  "mask": "items",
+  "mask": "full",
   "target": { "space": "entity", "zone": "noble_market" },
   "rect": { "x": 0.27, "y": 0.03, "w": 0.46, "h": 0.46 },
   "zoom": 1.25, "padding": 0.10, "layer": 10 }
@@ -222,10 +222,12 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 规则：
 
-- `mask`：`"items"`（默认）只显示待放大的对象，背景透明，卡片/贵族本身即遮罩；`"full"` 显示整个 `rect` 放大区域（对象 + 桌面背景），适合需要保留桌面上下文的镜头。`full` 使用整个 `rect`，此时 `shape` 不参与裁剪。
-- `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）；仅 `mask:"items"` 时用于裁剪/画边环。
-  `circle` 取 `rect` 内最大的正方形作圆窗，只画金色圆环，窗口外透明，不会出现方形黑框遮挡桌面；
-  `box` 直接使用整个 `rect`，不画遮罩。
+- `mask`：放大镜是否保留桌面背景。
+  - `"items"`（默认）：只把放大区域里的实体画出来，实体之外透明。透明处显示的是主画面内容，不保证等于放大镜对应的那块桌面；目标飞走 / 被拿走后可能露出错误背景。
+  - `"full"`：保留桌面上下文。`box` 用桌面色铺满整个 `rect`；`circle` 先铺一个与圆等大的桌面色底，再叠加放大区域里的实体，最后画金色圆环。目标飞走 / 被拿走后，原位置只剩桌面色，不会透出后面的主画面。Splendor full 的 `magnifier_nobles` 用这个模式。
+- `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）。
+  `circle` 在屏幕像素上取 `rect` 内最大的正方形作圆窗，`mask:"items"` 和 `"full"` 都会按这个正方形取景并画金色圆环，不会出现方形黑框；
+  `box` 直接使用整个 `rect`，不画圆环，矩形窗口内按 `mask` 决定是透明还是铺桌面色。
 - `rect`：屏幕比例坐标（左上角原点），同时规定放大镜的位置和大小。
 - `zoom`：放大倍率。`zoom=1` 表示镜头刚好框住目标包围盒；`>1` 推近放大，`<1` 拉远。
 - `padding`：目标世界包围盒外扩量；调小会让画面更满、目标更大。

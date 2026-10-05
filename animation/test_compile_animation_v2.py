@@ -264,6 +264,45 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("full", clip["mag_mask"])
         self.assertEqual("box", clip["mag_shape"])
 
+    def test_magnifier_full_circle_uses_square_window_aspect(self):
+        events = [
+            {
+                "op": "magnifier",
+                "at": 0.9,
+                "id": "lens_full_wide",
+                "mask": "full",
+                "shape": "circle",
+                "zoom": 1.2,
+                "rect": {"x": 0.1, "y": 0.1, "w": 0.09, "h": 0.32},
+                "target": {"space": "entity", "zone": "showcase"},
+            },
+            {
+                "op": "magnifier",
+                "at": 0.9,
+                "id": "lens_full_tall",
+                "mask": "full",
+                "shape": "circle",
+                "zoom": 1.2,
+                "rect": {"x": 0.1, "y": 0.1, "w": 0.32, "h": 0.09},
+                "target": {"space": "entity", "zone": "showcase"},
+            },
+        ]
+        clips = []
+        for event in events:
+            with tempfile.TemporaryDirectory() as tmp:
+                track_path, _ = write_schema_track(Path(tmp), event)
+                compiled = compile_anim.Compiler(track_path).compile()
+                cue = _compiled_cue(compiled, "example.show.001")
+                clip = [c for c in cue["clips"] if c.get("kind") == "magnifier_show"][0]
+                clips.append(clip)
+
+        self.assertEqual("full", clips[0]["mag_mask"])
+        self.assertEqual("circle", clips[0]["mag_shape"])
+        # A circle lens resolves to a square world window; its ortho size must
+        # not depend on the authored rect's w/h aspect.
+        self.assertAlmostEqual(
+            clips[0]["mag_ortho_size"], clips[1]["mag_ortho_size"], places=6)
+
     def test_camera_shot_view_offset_shifts_frame_center(self):
         stage = {
             "id": "offset_test",
