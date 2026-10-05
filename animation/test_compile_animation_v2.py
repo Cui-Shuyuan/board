@@ -178,6 +178,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
                 "dur": 0.2,
                 "id": "lens",
                 "shape": "circle",
+                "mask": "items",
                 "zoom": 1.3,
                 "padding": 0.1,
                 "rect": {"x": 0.6, "y": 0.1, "w": 0.3, "h": 0.3},
@@ -193,6 +194,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("screen", clip["object_space"])
         self.assertEqual("lens", clip["overlay"])
         self.assertEqual("circle", clip["mag_shape"])
+        self.assertEqual("items", clip["mag_mask"])
         self.assertAlmostEqual(0.6, clip["mag_x"])
         self.assertAlmostEqual(0.3, clip["mag_w"])
         self.assertGreater(clip["mag_ortho_size"], 0.0)
@@ -241,6 +243,26 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertGreater(clip["mag_ortho_size"], 0.0)
         # Base fit for the schema card is roughly 0.55; zoom 2 halves it.
         self.assertLess(clip["mag_ortho_size"], 0.35)
+
+    def test_magnifier_full_mask_compiles(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "magnifier",
+                "at": 0.9,
+                "id": "lens_full",
+                "mask": "full",
+                "shape": "box",
+                "zoom": 1.2,
+                "rect": {"x": 0.1, "y": 0.1, "w": 0.3, "h": 0.3},
+                "target": {"space": "entity", "zone": "showcase"},
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clip = [c for c in cue["clips"] if c.get("kind") == "magnifier_show"][0]
+        self.assertEqual("full", clip["mag_mask"])
+        self.assertEqual("box", clip["mag_shape"])
 
     def test_camera_shot_view_offset_shifts_frame_center(self):
         stage = {

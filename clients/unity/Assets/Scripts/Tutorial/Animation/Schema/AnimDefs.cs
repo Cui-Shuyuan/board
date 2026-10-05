@@ -356,6 +356,7 @@ namespace BoardGameTutorial.Animation
         public float mag_center_z;
         public float mag_ortho_size;
         public string mag_shape = "circle";
+        public string mag_mask = "items";
 
         public string picture;
         public bool picture_on;

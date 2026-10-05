@@ -143,6 +143,7 @@ namespace BoardGameTutorial.Animation
     {
         public string Id;
         public string Shape = "circle";
+        public string MaskMode = "items";
         public float X;
         public float Y;
         public float W;
@@ -513,6 +514,7 @@ namespace BoardGameTutorial.Animation
                     {
                         Id = id,
                         Shape = string.IsNullOrEmpty(clip.mag_shape) ? "circle" : clip.mag_shape,
+                        MaskMode = string.IsNullOrEmpty(clip.mag_mask) ? "items" : clip.mag_mask,
                         X = clip.mag_x,
                         Y = clip.mag_y,
                         W = clip.mag_w,

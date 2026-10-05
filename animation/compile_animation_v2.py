@@ -1248,7 +1248,15 @@ class Compiler:
                 shape = norm(ev.get("shape") or "circle").lower()
                 if shape not in ("circle", "box"):
                     raise ValueError(f"cue {cue_id}: unknown magnifier shape {shape!r}")
-                lens_aspect = 1.0 if shape == "circle" else (rw * 16.0) / max(0.001, rh * 9.0)
+                mask_mode = norm(ev.get("mask") or "items").lower()
+                if mask_mode not in ("items", "full"):
+                    raise ValueError(f"cue {cue_id}: unknown magnifier mask {mask_mode!r}")
+                if mask_mode == "full":
+                    # Full-rect mode keeps the whole magnified frame
+                    # (table + objects), so its aspect follows `rect`.
+                    lens_aspect = (rw * 16.0) / max(0.001, rh * 9.0)
+                else:
+                    lens_aspect = 1.0 if shape == "circle" else (rw * 16.0) / max(0.001, rh * 9.0)
                 half_w = (maxx - minx) * 0.5
                 half_h = (maxz - minz) * 0.5
                 zoom = float(ev.get("zoom", 1.2) or 1.2)
@@ -1263,6 +1271,7 @@ class Compiler:
                     "mag_center_z": round((minz + maxz) * 0.5, 6),
                     "mag_ortho_size": round(ortho, 6),
                     "mag_shape": shape,
+                    "mag_mask": mask_mode,
                     "layer": int(ev.get("layer", 10) or 10),
                 })
                 clips.append(c)

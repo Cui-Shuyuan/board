@@ -12540,7 +12540,8 @@
           "padding": 0.1,
           "anchor": "action.nobles.choice.001.1.start",
           "offset": 4.6,
-          "shape": "circle"
+          "shape": "circle",
+          "mask": "items"
         },
         {
           "op": "transfer",

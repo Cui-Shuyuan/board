@@ -214,6 +214,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 { "op": "magnifier", "anchor": "<cue>.start", "offset": 4.6,
   "id": "magnifier_nobles",
   "shape": "circle",
+  "mask": "items",
   "target": { "space": "entity", "zone": "noble_market" },
   "rect": { "x": 0.27, "y": 0.03, "w": 0.46, "h": 0.46 },
   "zoom": 1.25, "padding": 0.10, "layer": 10 }
@@ -221,7 +222,8 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 规则：
 
-- `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）。
+- `mask`：`"items"`（默认）只显示待放大的对象，背景透明，卡片/贵族本身即遮罩；`"full"` 显示整个 `rect` 放大区域（对象 + 桌面背景），适合需要保留桌面上下文的镜头。`full` 使用整个 `rect`，此时 `shape` 不参与裁剪。
+- `shape`：`"circle"`（默认，圆形透镜）或 `"box"`（矩形透镜）；仅 `mask:"items"` 时用于裁剪/画边环。
   `circle` 取 `rect` 内最大的正方形作圆窗，只画金色圆环，窗口外透明，不会出现方形黑框遮挡桌面；
   `box` 直接使用整个 `rect`，不画遮罩。
 - `rect`：屏幕比例坐标（左上角原点），同时规定放大镜的位置和大小。

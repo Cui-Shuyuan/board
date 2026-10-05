@@ -951,7 +951,10 @@ namespace BoardGameTutorial
                     view.Cam.enabled = false;
                     view.Cam.cullingMask = mainCam != null ? mainCam.cullingMask : ~0;
                     view.Cam.clearFlags = CameraClearFlags.SolidColor;
-                    view.Cam.backgroundColor = new Color(0f, 0f, 0f, 0f);
+                    bool fullMask = MagnifierMaskMode(m) == "full";
+                    view.Cam.backgroundColor = fullMask
+                        ? (mainCam != null ? mainCam.backgroundColor : Color.black)
+                        : new Color(0f, 0f, 0f, 0f);
                     view.Cam.aspect = (float)view.Width / Mathf.Max(1, view.Height);
                     view.Cam.orthographic = true;
                     view.Cam.orthographicSize = Mathf.Max(0.05f, m.OrthoSize);
@@ -1001,10 +1004,11 @@ namespace BoardGameTutorial
                 if (!magnifierViews.TryGetValue(m.Id, out var view) || view == null) continue;
                 Rect rect = ResolveMagnifierRect(m);
 
+                bool fullMask = MagnifierMaskMode(m) == "full";
                 var savedColor = GUI.color;
                 GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
-                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, true);
-                if (MagnifierShape(m) == "circle" && circleMask != null)
+                GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, !fullMask);
+                if (!fullMask && MagnifierShape(m) == "circle" && circleMask != null)
                     GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, true);
                 GUI.color = savedColor;
                 alive.Add(m.Id);
@@ -1035,6 +1039,12 @@ namespace BoardGameTutorial
             }
         }
 
+        private static string MagnifierMaskMode(VisualMagnifierState m)
+        {
+            if (m == null || string.IsNullOrEmpty(m.MaskMode)) return "items";
+            return m.MaskMode.Trim().ToLowerInvariant() == "full" ? "full" : "items";
+        }
+
         private static string MagnifierShape(VisualMagnifierState m)
         {
             if (m == null || string.IsNullOrEmpty(m.Shape)) return "circle";
@@ -1048,7 +1058,7 @@ namespace BoardGameTutorial
             float py = m.Y * Screen.height;
             float pw = Mathf.Max(24f, m.W * Screen.width);
             float ph = Mathf.Max(24f, m.H * Screen.height);
-            if (MagnifierShape(m) == "circle")
+            if (MagnifierMaskMode(m) != "full" && MagnifierShape(m) == "circle")
             {
                 // `rect` is the lens' available screen box; a circle uses the
                 // largest square inside it so the mask is never stretched.
