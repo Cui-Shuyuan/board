@@ -1005,7 +1005,7 @@ namespace BoardGameTutorial
                 GUI.color = new Color(1f, 1f, 1f, Mathf.Clamp01(m.Alpha));
                 GUI.DrawTexture(rect, view.Rt, ScaleMode.StretchToFill, false);
                 if (MagnifierShape(m) == "circle" && circleMask != null)
-                    GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, false);
+                    GUI.DrawTexture(rect, circleMask, ScaleMode.StretchToFill, true);
                 GUI.color = savedColor;
                 alive.Add(m.Id);
             }
@@ -1124,8 +1124,8 @@ namespace BoardGameTutorial
                     float dy = (y + 0.5f) / size * 2f - 1f;
                     float d = Mathf.Sqrt(dx * dx + dy * dy);
                     Color c;
-                    if (d <= 0.455f) c = new Color(1f, 1f, 1f, 0f);
-                    else if (d <= 0.5f) c = rim;
+                    if (d <= 0.90f) c = new Color(0f, 0f, 0f, 0f);
+                    else if (d <= 0.97f) c = rim;
                     else c = outside;
                     tex.SetPixel(x, y, c);
                 }
