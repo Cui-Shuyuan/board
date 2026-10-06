@@ -543,7 +543,12 @@ class StateModel:
         records = []
         for it in moved:
             rec = {"item": it, "from_zone": it["zone"], "from_order": it["order"],
-                   "from_layer": int(it.get("layer", 0) or 0)}
+                   "from_layer": int(it.get("layer", 0) or 0),
+                   # Face before the transfer.  A flip clip needs it during the
+                   # first half of the turn: the logical state already carries
+                   # the destination face from the event time, so the runtime
+                   # must explicitly draw the old face until the midpoint.
+                   "from_face": int(it.get("face", 1) or 1)}
             records.append(rec)
         self.items = [i for i in self.items if i["id"] not in moved_ids]
         for idx, rec in enumerate(records):
@@ -1462,14 +1467,53 @@ class Compiler:
                     })
                     clips.append(c)
             elif op == "set_face":
-                state.set_face(sel, zone, face_int(ev.get("to")))
+                face = face_int(ev.get("to"))
+                flip = self.flip_options(ev, cue_id)
                 affected = state.matching(zone, sel)
                 affected_ids = [it["id"] for it in affected]
-                for it in affected:
-                    if ev.get("flip"):
-                        clips.append(self.flip_clip(it, at, dur, lead, easing, ev.get("to")))
-                    else:
-                        clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
+                if flip and flip["destination"]:
+                    # Flip into a destination slot: this is logically the same
+                    # as transfer(..., to=face) but rendered as one continuous
+                    # hinge turn from the source slot to the destination slot.
+                    if not affected:
+                        raise ValueError(
+                            f"cue {cue_id}: set_face flip destination found no items "
+                            f"in zone {zone!r}"
+                        )
+                    records = state.transfer(
+                        sel, zone, flip["destination"], len(affected),
+                        ev.get("to"), flip["order"], ev.get("layer"),
+                    )
+                    affected = [rec["item"] for rec in records]
+                    affected_ids = [it["id"] for it in affected]
+                    span_axis = flip["axis"]
+                    for rec in records:
+                        fx, fz = self.position(stage_slots, rec["from_zone"], rec["from_order"])
+                        tx, tz = self.position(stage_slots, rec["to_zone"], rec["to_order"])
+                        span = self.flip_span(stage_id, rec["item"]["template"], span_axis)
+                        clips.append(self.flip_clip(
+                            rec["item"], at, dur, lead, easing, ev.get("to"),
+                            from_face=rec.get("from_face"),
+                            axis=span_axis, direction=flip["direction"],
+                            from_x=fx, from_z=fz, to_x=tx, to_z=tz,
+                            span=span, mode="edge",
+                        ))
+                else:
+                    old_faces = {it["id"]: int(it.get("face", 1) or 1) for it in affected}
+                    state.set_face(sel, zone, face)
+                    for it in affected:
+                        if flip:
+                            x, z = self.position(stage_slots, it["zone"], it["order"])
+                            span = self.flip_span(stage_id, it["template"], flip["axis"])
+                            clips.append(self.flip_clip(
+                                it, at, dur, lead, easing, ev.get("to"),
+                                from_face=old_faces.get(it["id"]),
+                                axis=flip["axis"], direction=flip["direction"],
+                                from_x=x, from_z=z, to_x=x, to_z=z,
+                                span=span, mode="center",
+                            ))
+                        else:
+                            clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
             elif op == "move_order":
                 arr = state.matching(zone, sel)
                 if arr:
@@ -1760,6 +1804,68 @@ class Compiler:
         return clips, state_ops, camera_ops, first_state, pointer_resolution
 
     # ── clip builders ─────────────────────────────────────────────────────
+    @staticmethod
+    def flip_options(ev: dict, cue_id=None):
+        """Parse `set_face` flip config.
+
+        ``flip: true`` keeps the original centred edge-on turn (axis=long,
+        direction=ccw).  The object form adds:
+
+        * ``axis``      long | short  -- hinge parallel to the card's long or
+          short edge (long turns collapse local X/width, short turns collapse
+          local Y/height);
+        * ``direction`` ccw | cw      -- which edge is the hinge / which way
+          the free side sweeps;
+        * ``destination``             -- optional entity target; when present
+          the card turns while travelling to that zone/slot;
+        * ``order``                   -- optional destination order/slot.
+        """
+        raw = ev.get("flip")
+        if not raw:
+            return None
+        if raw is True:
+            raw = {}
+        if not isinstance(raw, dict):
+            raise ValueError(f"cue {cue_id}: flip must be true or an object")
+        axis = norm(raw.get("axis") or "long").lower()
+        if axis not in ("long", "short"):
+            raise ValueError(f"cue {cue_id}: flip.axis must be long or short")
+        direction = norm(raw.get("direction") or "ccw").lower()
+        if direction not in ("ccw", "cw"):
+            raise ValueError(f"cue {cue_id}: flip.direction must be ccw or cw")
+        dest = raw.get("destination")
+        if isinstance(dest, dict):
+            # schema.resolve_track normally flattens this; stay robust for
+            # direct Compiler use in tests/tools.
+            dest = dest.get("zone") or dest.get("id") or dest.get("overlay")
+        dest = norm(dest) or None
+        raw_order = raw.get("order")
+        try:
+            order = int(raw_order) if raw_order is not None else -1
+        except (TypeError, ValueError):
+            raise ValueError(f"cue {cue_id}: flip.order must be an integer")
+        return {
+            "axis": axis,
+            "direction": direction,
+            "destination": dest,
+            "order": order,
+        }
+
+    def template_size(self, stage_id: str, template: str):
+        stage = self.compiled_stages.get(stage_id) or {}
+        for tpl in stage.get("templates") or []:
+            if tpl.get("id") != template:
+                continue
+            w = float(tpl.get("width", 0.0) or 0.0)
+            h = float(tpl.get("height", 0.0) or 0.0)
+            if w > 0.0 and h > 0.0:
+                return w, h
+        return 0.63, 0.88
+
+    def flip_span(self, stage_id: str, template: str, axis: str) -> float:
+        w, h = self.template_size(stage_id, template)
+        return w if axis == "long" else h
+
     def base_clip(self, kind, at, dur, lead, easing):
         return {
             "kind": kind, "at": at, "dur": dur, "lead": lead, "easing": easing,
@@ -1769,7 +1875,9 @@ class Compiler:
             "from_x": 0.0, "from_z": 0.0, "to_x": 0.0, "to_z": 0.0,
             "from_scale": 1.0, "to_scale": 1.0,
             "from_alpha": 1.0, "to_alpha": 1.0,
-            "to_face": "", "part": "", "indicator": "",
+            "to_face": "", "from_face": "", "part": "", "indicator": "",
+            "flip_axis": "long", "flip_direction": "ccw", "flip_mode": "center",
+            "flip_span": 0.0, "flip_side": 0,
             "picture": "", "picture_on": False,
             "sh_amp": 0.0, "sh_freq": 0.0, "sh_phase": 0.0, "sh_zamp": 0.0, "sh_env": 0.0,
         }
@@ -1872,11 +1980,37 @@ class Compiler:
                   "to_face": face_name(face_int(to_face))})
         return c
 
-    def flip_clip(self, it, at, dur, lead, easing, to_face):
-        """卡牌绕竖轴翻转：中点 scale-x=0，正面/背面都不可见，随后换成 to_face。"""
+    def flip_clip(self, it, at, dur, lead, easing, to_face, from_face=None,
+                  axis="long", direction="ccw",
+                  from_x=0.0, from_z=0.0, to_x=0.0, to_z=0.0,
+                  span=0.0, mode="center"):
+        """Card flip clip.
+
+        ``mode=center`` keeps the legacy in-place edge-on spin: the card
+        collapses around its centre and comes back at its original slot.
+        ``mode=edge`` hinges around the selected card edge and travels from
+        ``(from_x, from_z)`` to ``(to_x, to_z)`` over the turn, which is what
+        "flip along the long/short edge into a slot" means.
+
+        ``axis=long`` collapses the local X/width (hinge parallel to the long
+        edge); ``axis=short`` collapses the local Y/height.  ``direction=ccw``
+        puts the hinge on the negative side of that axis, ``cw`` on the
+        positive side.  At the midpoint the projected scale is exactly zero,
+        so neither face is visible.
+        """
         c = self.base_clip("flip", at, dur, lead, easing)
-        c.update({"item_id": it["id"], "template": it["template"], "palette": it["palette"],
-                  "to_face": face_name(face_int(to_face))})
+        c.update({
+            "item_id": it["id"], "template": it["template"], "palette": it["palette"],
+            "to_face": face_name(face_int(to_face)) if to_face else "",
+            "from_face": face_name(face_int(from_face)) if from_face is not None else "",
+            "flip_axis": axis,
+            "flip_direction": direction,
+            "flip_mode": "edge" if mode == "edge" and span > 0.0 else "center",
+            "flip_span": float(span) if mode == "edge" else 0.0,
+            "flip_side": -1 if direction == "ccw" else 1,
+            "from_x": round(float(from_x), 6), "from_z": round(float(from_z), 6),
+            "to_x": round(float(to_x), 6), "to_z": round(float(to_z), 6),
+        })
         return c
 
     def presentation_clip(self, kind, it, at, dur, lead, easing, **kw):

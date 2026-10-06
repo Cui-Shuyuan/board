@@ -190,7 +190,12 @@ namespace BoardGameTutorial.Animation
             var baseScale = BaseScale(tpl, sr.sprite);
             float grow = item.Highlighted ? item.HighlightGrow : 1f;
             var finalScale = baseScale * (item.Scale * grow);
-            finalScale.x *= Mathf.Max(0f, item.Flip);
+            // long-edge flip collapses the width (local X); short-edge flip
+            // collapses the height (local Y).
+            if (item.FlipAxis == "short")
+                finalScale.y *= Mathf.Max(0f, item.Flip);
+            else
+                finalScale.x *= Mathf.Max(0f, item.Flip);
             go.transform.localScale = finalScale;
             go.transform.localPosition = new Vector3(item.X, 0f, item.Z);
             go.transform.localRotation = stage.SpriteRotation(item.Rotation);

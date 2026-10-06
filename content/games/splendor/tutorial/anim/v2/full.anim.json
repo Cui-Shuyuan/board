@@ -14276,12 +14276,16 @@
           "text": "0.00"
         },
         {
-          "key": "牌移到左侧查看位",
+          "key": "沿长边逆时针起翻",
           "text": "4.30"
         },
         {
-          "key": "真正翻面（中间竖着）",
-          "text": "5.10"
+          "key": "翻面中点（侧对镜头）",
+          "text": "5.00"
+        },
+        {
+          "key": "落入查看位（正面朝上）",
+          "text": "5.70"
         },
         {
           "key": "在翻开的牌上打禁止",
@@ -14290,7 +14294,7 @@
       ],
       "script": {
         "story": "【如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息】",
-        "note": "【从牌堆顶保留：保留之前也不能看（真实查看 + 翻转）】\n  demo 前提（setup 静默）：在 deck_level_1 顶放一张真实牌 card_l1_diamond_17。\n  4.30s：牌从牌堆顶飞向 deck_peek（牌堆顶同高、向左一牌宽，x=-3.50, z=-0.732）。\n  5.10s：在 deck_peek 上执行 `set_face + flip:true`，牌真正翻转；翻转中点 scale-x=0，\n  牌面正好侧对镜头，看不到正面也看不到背面。\n  5.80s：在翻开后的牌上打 forbid 标记，表示保留前不能查看；标记持续到 cue 结束。\n  下一条 cue 用 setup 销毁这张演示牌，canonical 牌堆恢复原样。",
+        "note": "【从牌堆顶保留：保留之前也不能看（真实翻面 + 落位）】\n  demo 前提（setup 静默）：在 deck_level_1 顶放一张真实牌 card_l1_diamond_17。\n  4.30–5.70s：牌从牌堆顶沿长边逆时针翻入 deck_peek。前半程以左侧长边为轴折起，\n  5.00s 侧对镜头（scale-x=0），正反两面都看不到；后半程在 deck_peek 展开，\n  5.70s 正面朝上落入查看位。\n  5.80s：在翻开后的牌上打 forbid 标记，表示保留前不能查看；标记持续到 cue 结束。\n  下一条 cue 用 setup 销毁这张演示牌，canonical 牌堆恢复原样。",
         "enter": {
           "zones": {
             "card_market": {
@@ -14426,9 +14430,9 @@
           "anchor": "action.reserve.private.002.start"
         },
         {
-          "op": "transfer",
-          "dur": 0.8,
-          "quantity": 1,
+          "op": "set_face",
+          "to": "face_up",
+          "dur": 1.4,
           "anchor": "action.reserve.private.002.start",
           "offset": 4.3,
           "target": {
@@ -14444,30 +14448,13 @@
               }
             ]
           },
-          "destination": {
-            "space": "entity",
-            "zone": "deck_peek"
-          }
-        },
-        {
-          "op": "set_face",
-          "to": "face_up",
-          "flip": true,
-          "dur": 0.6,
-          "anchor": "action.reserve.private.002.start",
-          "offset": 5.1,
-          "target": {
-            "space": "entity",
-            "zone": "deck_peek",
-            "template": "card_l1_diamond_17",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
+          "flip": {
+            "axis": "long",
+            "direction": "ccw",
+            "destination": {
+              "space": "entity",
+              "zone": "deck_peek"
+            }
           }
         },
         {

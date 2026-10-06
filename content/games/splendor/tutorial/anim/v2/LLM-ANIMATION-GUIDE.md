@@ -133,8 +133,28 @@
 
 - `create` / `ensure` / `destroy` / `transfer` / `stack` /
   `move_order` / `set_face` 改变逻辑状态，只实现实体对象。
-- `set_face` 可加 `"flip": true` 和 `dur`：卡牌会真正绕竖轴翻转，`t=0` 与 `t=end`
-  时 scale-x 为 1，中点为 0（侧对镜头，正反都看不到），中点后切到 `to` 面。
+- `set_face` 可加 `"flip"` 和 `dur`：卡牌会真正翻面，`t=0` 与 `t=end` 时缩放
+  恢复为 1，中点为 0（侧对镜头，正反都看不到）；翻转前半程显示翻前的面，中点后
+  切到 `to` 面。`flip` 有两种写法：
+
+  ```json
+  { "op": "set_face", "to": "face_up", "dur": 0.6,
+    "target": { "space": "entity", "zone": "deck_level_1", "concept": "development_card_level_1" },
+    "flip": { "axis": "long", "direction": "ccw",
+              "destination": { "space": "entity", "zone": "deck_peek" }, "order": 0 } }
+  ```
+
+  - `"flip": true` 是兼容写法：等价于 `axis=long, direction=ccw`、原位翻。
+  - `axis`：`long` = 沿长边翻（压缩卡牌宽度 / 局部 X）；`short` = 沿短边翻
+    （压缩高度 / 局部 Y）。翻转中点归零的轴就是“垂直于长/短边”的那一维。
+  - `direction`：`ccw` = 逆时针，`cw` = 顺时针。约定：沿长边翻时 `ccw` 以局部
+    -X 长边为轴（牌向左侧翻），`cw` 以 +X 为轴；沿短边翻时 `ccw` 以局部 -Y 短边
+    为轴，`cw` 以 +Y 为轴。
+  - `destination` 可省略：省略时牌在原位翻转；提供时牌一边翻一边落到目标
+    zone/槽位，逻辑效果等于 `transfer + set_face`，但画面是一段连续的绕边翻面。
+    cue72 用 `axis=long, direction=ccw, destination=deck_peek` 把牌堆顶的牌沿
+    长边逆时针翻入牌堆旁的查看位。
+
   `shuffle` 也写在实体事件序列里，但它是牌堆的**纯视觉**抖动：只生成抖动 clip，
   不重排逻辑 order；源数据里的 `real_templates` 顺序就是抽牌顺序。
 - `transfer` 一次移动多枚宝石（含黄金）时，编译器默认让它们逐枚以短间隔起飞，

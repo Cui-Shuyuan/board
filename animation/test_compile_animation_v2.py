@@ -587,7 +587,112 @@ class CompileAnimationV2Tests(unittest.TestCase):
         flips = [clip for clip in cue["clips"] if clip.get("kind") == "flip"]
         self.assertEqual(1, len(flips), flips)
         self.assertEqual("face_up", flips[0]["to_face"])
+        # The logical state already contains the target face at the event
+        # time, so the clip must carry the old face for its first half.
+        self.assertEqual("face_down", flips[0]["from_face"])
+        self.assertEqual("long", flips[0]["flip_axis"])
+        self.assertEqual("center", flips[0]["flip_mode"])
         self.assertAlmostEqual(0.5, flips[0]["dur"])
+
+    def test_set_face_flip_into_destination_emits_edge_flip_clip(self):
+        stage = _stage_doc("s1", ["showcase", "dest"])
+        stage["templates"] = [{
+            "id": "sample_card", "shape": "card", "palette": "card_level_1",
+            "width": 0.6, "height": 0.9,
+        }]
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "create", "at": 0.0, "count": 1, "to": "face_down",
+                         "target": {"space": "entity", "zone": "showcase",
+                                    "template": "sample_card", "palette": "card_level_1"}},
+                        {"op": "set_face", "at": 1.0, "dur": 0.6, "to": "face_up",
+                         "target": {"space": "entity", "zone": "showcase",
+                                    "template": "sample_card", "palette": "card_level_1"},
+                         "flip": {"axis": "long", "direction": "ccw",
+                                  "destination": {"space": "entity", "zone": "dest"}}},
+                    ],
+                ),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        cue = _compiled_cue(compiled, "c1")
+        flips = [clip for clip in cue["clips"] if clip.get("kind") == "flip"]
+        self.assertEqual(1, len(flips), flips)
+        flip = flips[0]
+        self.assertEqual("edge", flip["flip_mode"])
+        self.assertEqual("long", flip["flip_axis"])
+        self.assertEqual("ccw", flip["flip_direction"])
+        self.assertEqual(-1, flip["flip_side"])
+        self.assertAlmostEqual(0.6, flip["flip_span"])
+        self.assertEqual("face_down", flip["from_face"])
+        self.assertEqual("face_up", flip["to_face"])
+        # The clip must start at the source slot and end at the destination
+        # slot, not at the already-mutated logical position.
+        self.assertNotAlmostEqual(flip["from_x"], flip["to_x"])
+        puts = [op for op in cue["state_ops"] if op.get("op") == "put"
+                and op.get("item", {}).get("ZoneId") == "dest"]
+        self.assertTrue(puts, cue["state_ops"])
+        self.assertEqual("face_up", ["face_up" if p["item"]["Face"] == 2 else "face_down"
+                                     for p in puts][-1])
+
+    def test_set_face_flip_short_axis_center_mode_keeps_current_slot(self):
+        stage = _stage_doc("s1", ["showcase"])
+        stage["templates"] = [{
+            "id": "sample_card", "shape": "card", "palette": "card_level_1",
+            "width": 0.6, "height": 0.9,
+        }]
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "create", "at": 0.0, "count": 1, "to": "face_down",
+                         "target": {"space": "entity", "zone": "showcase",
+                                    "template": "sample_card", "palette": "card_level_1"}},
+                        {"op": "set_face", "at": 1.0, "dur": 0.5, "to": "face_up",
+                         "target": {"space": "entity", "zone": "showcase",
+                                    "template": "sample_card", "palette": "card_level_1"},
+                         "flip": {"axis": "short", "direction": "cw"}},
+                    ],
+                ),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        cue = _compiled_cue(compiled, "c1")
+        flips = [clip for clip in cue["clips"] if clip.get("kind") == "flip"]
+        self.assertEqual(1, len(flips), flips)
+        flip = flips[0]
+        self.assertEqual("short", flip["flip_axis"])
+        self.assertEqual("cw", flip["flip_direction"])
+        self.assertEqual(1, flip["flip_side"])
+        self.assertEqual("center", flip["flip_mode"])
+        self.assertEqual(flip["from_x"], flip["to_x"])
+        self.assertEqual(flip["from_z"], flip["to_z"])
 
     def test_transfer_multiple_gems_defaults_to_short_stagger(self):
         stage = _stage_doc("s1", ["gem_supply_onyx", "player_holding"])

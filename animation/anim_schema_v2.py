@@ -180,6 +180,20 @@ def _normalize_event(ev):
         sspace = src.get("space")
         if sspace == "entity":
             ev["source"] = src.get("zone")
+    # `set_face` flip can carry its own destination (flip into a zone/slot).
+    # Normalize the nested object target to the same flat zone string used by
+    # transfer, so the compiler only sees one form.
+    flip = ev.get("flip")
+    if isinstance(flip, dict):
+        fdest = flip.get("destination")
+        if isinstance(fdest, dict):
+            fspace = fdest.get("space")
+            if fspace == "entity":
+                flip["destination"] = fdest.get("zone")
+            elif fspace == "screen":
+                flip["destination"] = fdest.get("id") or fdest.get("overlay")
+        if flip.get("destination") is None:
+            flip.pop("destination", None)
     return ev
 
 
@@ -371,6 +385,26 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: set_face needs zone")
             if ev.get("to") not in ("face_up", "face_down"):
                 report.error(f"{where}: set_face to must be face_up/face_down")
+            flip = ev.get("flip")
+            if flip not in (None, False, True) and not isinstance(flip, dict):
+                report.error(f"{where}: set_face flip must be true or an object")
+            elif isinstance(flip, dict):
+                axis = str(flip.get("axis") or "long").strip().lower()
+                if axis not in ("long", "short"):
+                    report.error(f"{where}: flip.axis must be long or short")
+                direction = str(flip.get("direction") or "ccw").strip().lower()
+                if direction not in ("ccw", "cw"):
+                    report.error(f"{where}: flip.direction must be ccw or cw")
+                if "destination" in flip:
+                    if not flip.get("destination"):
+                        report.error(f"{where}: flip.destination must not be empty")
+                    if not ev.get("zone"):
+                        report.error(f"{where}: flip with destination needs a source zone")
+                if flip.get("order") is not None:
+                    try:
+                        int(flip.get("order"))
+                    except (TypeError, ValueError):
+                        report.error(f"{where}: flip.order must be an integer")
     else:
         if op == "show":
             if ev.get("space") == "entity":

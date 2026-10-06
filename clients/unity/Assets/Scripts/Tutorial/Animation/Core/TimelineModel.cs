@@ -36,6 +36,9 @@ namespace BoardGameTutorial.Animation
         public float Scale = 1f;
         // 1 = 无翻转；flip 动画中从 1 -> 0 -> 1，0 表示卡牌侧对镜头、正反都看不到。
         public float Flip = 1f;
+        // long = hinge parallel to the long edge, collapse local X/width.
+        // short = hinge parallel to the short edge, collapse local Y/height.
+        public string FlipAxis = "long";
         public float Alpha = 1f;
         public float Rotation;
         public FaceState Face = FaceState.Up;
@@ -359,16 +362,87 @@ namespace BoardGameTutorial.Animation
                             break;
                         case "flip":
                         {
+                            bool flipShort = string.Equals(clip.flip_axis, "short", StringComparison.Ordinal);
+                            bool flipEdge = string.Equals(clip.flip_mode, "edge", StringComparison.Ordinal)
+                                            && clip.flip_span > 0f;
+                            // Compiled assets from before flip_mode existed carry no
+                            // position fields; keep their in-place behaviour.
+                            bool legacyFlip = string.IsNullOrEmpty(clip.flip_mode);
+                            v.FlipAxis = flipShort ? "short" : "long";
                             if (end > start && t < end)
                             {
-                                float angle = (float)Math.PI * eased;
-                                v.Flip = Math.Abs((float)Math.Cos(angle));
-                                if (eased >= 0.5f && !string.IsNullOrEmpty(clip.to_face))
-                                    v.Face = ParseFace(clip.to_face);
+                                // Project a 180-degree turn about the hinge:
+                                // scale = |cos(pi*p)| is 0 exactly at the
+                                // midpoint, so neither face is visible there.
+                                float p = eased;
+                                v.Flip = Math.Abs((float)Math.Cos(Math.PI * p));
+
+                                FaceState fromFace = ParseFace(clip.from_face);
+                                if (string.IsNullOrEmpty(clip.from_face) && !string.IsNullOrEmpty(clip.to_face))
+                                {
+                                    // Old compiled assets only carried to_face;
+                                    // the only sensible from-face is the opposite.
+                                    fromFace = ParseFace(clip.to_face) == FaceState.Up
+                                        ? FaceState.Down : FaceState.Up;
+                                }
+                                v.Face = p < 0.5f ? fromFace : ParseFace(clip.to_face);
+
+                                if (flipEdge)
+                                {
+                                    // U is the folding axis: world X for a long-edge
+                                    // hinge, world Z for a short-edge hinge.  The
+                                    // hinge sits on the starting card edge selected
+                                    // by direction.  First half moves the centre to
+                                    // the hinge while the card collapses; second half
+                                    // unfolds from the hinge into the destination slot.
+                                    float su = flipShort ? clip.from_z : clip.from_x;
+                                    float sv = flipShort ? clip.from_x : clip.from_z;
+                                    float tu = flipShort ? clip.to_z : clip.to_x;
+                                    float tv = flipShort ? clip.to_x : clip.to_z;
+                                    float hinge = su + clip.flip_side * 0.5f * clip.flip_span;
+                                    float u, w;
+                                    if (p <= 0.5f)
+                                    {
+                                        // 0..0.5s: q sweeps 0..1; cos(pi*p)
+                                        // goes 1 -> 0, so the centre reaches the
+                                        // hinge exactly at the midpoint.
+                                        float q = p * 2f;
+                                        u = hinge + (su - hinge) * (float)Math.Cos(0.5f * Math.PI * q);
+                                        w = sv;
+                                    }
+                                    else
+                                    {
+                                        float q = (p - 0.5f) * 2f;
+                                        float s = (float)Math.Sin(0.5f * Math.PI * q);
+                                        u = hinge + (tu - hinge) * s;
+                                        w = sv + (tv - sv) * s;
+                                    }
+                                    if (flipShort)
+                                    {
+                                        v.Z = u;
+                                        v.X = w;
+                                    }
+                                    else
+                                    {
+                                        v.X = u;
+                                        v.Z = w;
+                                    }
+                                }
+                                else if (!legacyFlip)
+                                {
+                                    // New centred flip: explicit source slot.
+                                    v.X = clip.from_x;
+                                    v.Z = clip.from_z;
+                                }
                             }
                             else
                             {
                                 v.Flip = 1f;
+                                if (!legacyFlip)
+                                {
+                                    v.X = clip.to_x;
+                                    v.Z = clip.to_z;
+                                }
                                 if (!string.IsNullOrEmpty(clip.to_face)) v.Face = ParseFace(clip.to_face);
                             }
                             break;

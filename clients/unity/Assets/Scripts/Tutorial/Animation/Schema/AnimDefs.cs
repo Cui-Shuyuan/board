@@ -308,6 +308,12 @@ namespace BoardGameTutorial.Animation
         public float from_alpha = 1f;
         public float to_alpha = 1f;
         public string to_face;
+        public string from_face;
+        public string flip_axis;
+        public string flip_direction;
+        public string flip_mode;
+        public float flip_span;
+        public int flip_side;
         public string part;
         public string indicator;
         public float marker_x;
