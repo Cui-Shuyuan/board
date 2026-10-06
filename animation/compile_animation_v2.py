@@ -44,6 +44,25 @@ SHUFFLE_DEPTH_MIN = 0.25
 SHUFFLE_DEPTH_MAX = 0.60
 SHUFFLE_ENVELOPE_POWER = 0.45
 
+# 多枚宝石的默认逐枚间隔：视觉上能分辨，但整体保持紧凑。
+# 事件显式写 stagger 时仍以事件为准。
+DEFAULT_GEM_STAGGER = 0.12
+
+
+def is_gem_item(item: dict) -> bool:
+    """Return True for gem/gold tokens, not development cards."""
+    if not isinstance(item, dict):
+        return False
+    concept = norm(item.get("concept")).lower()
+    template = norm(item.get("template")).lower()
+    palette = norm(item.get("palette")).lower()
+    if concept in ("gem", "gold") or template == "gem" or palette.startswith("gem_"):
+        return True
+    for part in item.get("parts") or []:
+        if isinstance(part, dict) and norm(part.get("key")).lower() == "color":
+            return True
+    return False
+
 
 # ── helpers ────────────────────────────────────────────────────────────────
 
@@ -1343,26 +1362,39 @@ class Compiler:
                 sources = raw_src if isinstance(raw_src, list) else [raw_src]
                 sources = [norm(x) for x in sources if norm(x)]
                 dest = norm(ev.get("destination"))
-                stagger = float(ev.get("stagger", 0.0) or 0.0)
-                index = 0
-                records_with_times = []
                 is_setup = bool(ev.get("setup"))
+
+                # 先收齐所有转移记录，再决定时间：
+                # 非 setup 的多枚宝石默认逐枚短间隔飞出，避免整把同时位移。
+                records = []
                 for source in sources:
-                    records = state.transfer(
+                    records.extend(state.transfer(
                         sel, source, dest, quantity, ev.get("to"),
                         int(ev.get("order", -1)), ev.get("layer"),
                         from_top=bool(ev.get("from_top", True)),
                         to_top=bool(ev.get("to_top", True)),
-                    )
-                    for rec in records:
-                        # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
-                        # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
-                        record_at = at + max(0.0, lead) + index * stagger
-                        if not is_setup:
-                            clips.append(self.move_clip(rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to")))
-                        records_with_times.append((record_at, rec["item"]["id"]))
-                        manual_state_item_ids.add(rec["item"]["id"])
-                        index += 1
+                    ))
+
+                explicit_stagger = ev.get("stagger")
+                if is_setup:
+                    stagger = float(explicit_stagger or 0.0)
+                elif explicit_stagger is not None:
+                    stagger = float(explicit_stagger or 0.0)
+                elif len(records) > 1 and all(is_gem_item(rec["item"]) for rec in records):
+                    stagger = DEFAULT_GEM_STAGGER
+                else:
+                    stagger = 0.0
+
+                records_with_times = []
+                for index, rec in enumerate(records):
+                    # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
+                    # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
+                    record_at = at + max(0.0, lead) + index * stagger
+                    if not is_setup:
+                        clips.append(self.move_clip(rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to")))
+                    records_with_times.append((record_at, rec["item"]["id"]))
+                    manual_state_item_ids.add(rec["item"]["id"])
+
                 if records_with_times:
                     after_map = state.component_map()
                     manual_state_ops = [

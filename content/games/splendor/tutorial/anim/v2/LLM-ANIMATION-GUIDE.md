@@ -135,6 +135,10 @@
   `move_order` / `set_face` 改变逻辑状态，只实现实体对象。
   `shuffle` 也写在实体事件序列里，但它是牌堆的**纯视觉**抖动：只生成抖动 clip，
   不重排逻辑 order；源数据里的 `real_templates` 顺序就是抽牌顺序。
+- `transfer` 一次移动多枚宝石（含黄金）时，编译器默认让它们逐枚以短间隔起飞，
+  不再整组同时移动；间隔常量为 `DEFAULT_GEM_STAGGER = 0.12s`。
+  显式写 `stagger` 时以事件值为准；`setup: true` 的前提转移只改状态，不生成视觉
+  逐枚动作。
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
 - **费用框按宝石种类数选择 `part`**：发展卡左下角的价格是一列彩色圆盘，一个颜色一个

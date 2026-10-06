@@ -554,6 +554,49 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual([3, 4, 5], [item["order"] for item in dest_items])
         self.assertEqual([-3, -2, -1], [item["layer"] for item in dest_items])
 
+    def test_transfer_multiple_gems_defaults_to_short_stagger(self):
+        stage = _stage_doc("s1", ["gem_supply_onyx", "player_holding"])
+        gem_parts = [{"key": "color", "value": "<onyx>"}]
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "create", "at": 0.0, "count": 2, "to": "face_up",
+                         "target": {"space": "entity", "zone": "gem_supply_onyx",
+                                    "template": "gem", "palette": "gem_onyx",
+                                    "concept": "gem", "parts": gem_parts}},
+                        {"op": "transfer", "at": 1.0, "dur": 0.5, "quantity": 2,
+                         "target": {"space": "entity", "zone": "gem_supply_onyx",
+                                    "concept": "gem", "parts": gem_parts},
+                         "destination": {"space": "entity", "zone": "player_holding"}},
+                    ],
+                ),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        cue = _compiled_cue(compiled, "c1")
+        moves = sorted(
+            (clip for clip in cue["clips"] if clip.get("kind") == "move"),
+            key=lambda clip: clip["at"],
+        )
+        self.assertEqual(2, len(moves), moves)
+        self.assertAlmostEqual(1.0, moves[0]["at"])
+        self.assertAlmostEqual(1.0 + compile_anim.DEFAULT_GEM_STAGGER, moves[1]["at"])
+        self.assertAlmostEqual(0.5, moves[0]["dur"])
+        self.assertAlmostEqual(0.5, moves[1]["dur"])
+
 
 def _stage_doc(stage_id: str, zone_ids: list[str]) -> dict:
     zones = []
