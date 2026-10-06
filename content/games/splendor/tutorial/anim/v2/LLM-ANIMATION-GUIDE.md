@@ -167,7 +167,7 @@
 - **通用语义原语**：`move` / `take` / `pay` / `deal` / `draw` 是常用 transfer 组合的
   命名，编译期展开成 `transfer`（draw 额外带 edge flip），runtime 无变化，也**不做
   归属校验**。写脚本时优先用它们；语义不匹配时直接用底层 `transfer`：
-  - `move`：同归属下的位置变化（不换 owner、不换面）；字段同 `transfer`。
+  - `move`：同归属下的位置变化（不换 owner；可选 `to` 换面）；字段同 `transfer`。
     `{ "op": "move", "target": { "space": "entity", "zone": "player_reserved" },
        "destination": { "space": "entity", "zone": "player_development" } }`
   - `take`：无主 → 玩家（宝石、黄金、市场卡、贵族都走它；牌堆/供应堆默认取顶）。
@@ -184,6 +184,8 @@
        "axis": "long", "direction": "ccw" }`
   - **buy / reserve / claim 不是原语**：它们分别由 `pay + take + deal`、
     `take(to=face_down)`、`take(noble_market → player_nobles)` 组合表达。
+  - `setup: true` 的静默前提状态仍写底层 `transfer`（例如“玩家已经拿过两枚金”），
+    不要套成 `take`/`pay`，避免把前提状态误读成一次可见动作。
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
 - **费用框按宝石种类数选择 `part`**：发展卡左下角的价格是一列彩色圆盘，一个颜色一个
