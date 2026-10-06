@@ -727,7 +727,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
                         {"op": "move",
                          "target": {"space": "entity", "zone": "player_reserved"},
                          "destination": {"space": "entity", "zone": "player_development"}},
-                        {"op": "draw", "dur": 0.7,
+                        {"op": "draw",
                          "target": {"space": "entity", "zone": "deck_level_1"},
                          "destination": {"space": "entity", "zone": "deck_peek"},
                          "axis": "short", "direction": "cw"},
@@ -748,6 +748,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual("player_development", events[3]["destination"])
         self.assertIs(True, events[4]["from_top"])
         self.assertEqual(1, events[4]["quantity"])
+        self.assertEqual(schema.DEFAULT_DRAW_DURATION, events[4]["dur"])
         self.assertEqual({"axis": "short", "direction": "cw"}, events[4]["flip"])
         self.assertNotIn("axis", events[4])
         self.assertNotIn("direction", events[4])

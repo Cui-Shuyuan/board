@@ -48,6 +48,9 @@ ENTITY_TARGET_FIELDS = ("zone", "template", "palette", "concept", "parts", "orde
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS | SEMANTIC_OPS
+# Seconds.  draw is the one semantic verb whose visual is a flip, so it needs a
+# sensible duration when the author does not write one explicitly.
+DEFAULT_DRAW_DURATION = 0.6
 FACES = {"up", "down", "hidden", None, ""}
 CONCEPT_ID_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.:\-]*$")
 SPECIAL_CONCEPT_RE = re.compile(r"^<[A-Za-z_][A-Za-z0-9_.:\-]*>$")
@@ -248,6 +251,10 @@ def _lower_semantic_event(ev: dict, cue_id: str = "") -> list:
     out = dict(ev)
     out["op"] = "transfer"
     out["to"] = require("to") if ev.get("to") else "face_up"
+    try:
+        out["dur"] = float(ev.get("dur", DEFAULT_DRAW_DURATION) or DEFAULT_DRAW_DURATION)
+    except (TypeError, ValueError):
+        raise ValueError(f"{where}: dur must be numeric seconds")
     out["quantity"] = int(ev.get("quantity", 1) or 1)
     if out["quantity"] != 1:
         raise ValueError(f"{where}: draw quantity must be 1; use multiple draws for several cards")

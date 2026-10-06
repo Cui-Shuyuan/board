@@ -177,11 +177,11 @@
   - `pay`：玩家区 → 供应堆（反向 transfer），字段同 `transfer`。
   - `deal`：牌堆顶 → 市场槽位，默认 `to=face_up`；需要写 `order` 指定槽位。
   - `draw`：牌堆顶 → `destination`，一张牌，默认 `to=face_up`，视觉是带落点的
-    `axis/direction` edge flip；**必须写 destination**。cue72 的
-    `action.reserve.private.002` 就是 `draw` 的样板：
+    `axis/direction` edge flip；**必须写 destination**。`dur` 是翻面+移动的总时长，
+    不写时默认 0.6s；cue72 当前覆盖为 0.2s 做快速翻面样板：
     `{ "op": "draw", "target": { "space": "entity", "zone": "deck_level_1" },
        "destination": { "space": "entity", "zone": "deck_peek" },
-       "axis": "long", "direction": "ccw" }`
+       "axis": "long", "direction": "ccw", "dur": 0.2 }`
   - **buy / reserve / claim 不是原语**：它们分别由 `pay + take + deal`、
     `take(to=face_down)`、`take(noble_market → player_nobles)` 组合表达。
   - `setup: true` 的静默前提状态若语义匹配通用动词，写对应动词 + `setup:true`
