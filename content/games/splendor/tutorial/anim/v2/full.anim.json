@@ -13367,21 +13367,21 @@
       "parent": "action.reserve.gold.001",
       "timing": [
         {
-          "key": "镜头推近牌堆",
+          "key": "整桌镜头（继承 cue66）",
           "text": "0.00"
         },
         {
           "key": "从牌堆顶保留",
-          "text": "1.40"
+          "text": "4.30"
         },
         {
           "key": "拿第二枚黄金",
-          "text": "3.20"
+          "text": "5.10"
         }
       ],
       "script": {
         "story": "【除了供应堆的 12 张卡牌外，玩家也可以从 3 摞牌堆顶选择一张未被翻开的发展卡牌保留】",
-        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `deck_level_1` 顶取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻顶牌是真实的一级红 card_l1_ruby_37（价格蓝2+绿1），保留前观众和对手看不到它。\n  · 后面 A 有了绿色发展卡的绿折扣后，正好可以用保留奖励的黄金买它。",
+        "note": "【也可以从牌堆顶保留】\n  真做一次：等口播讲到「从3摞牌堆顶选择」后（约 4.30s）`transfer` 从 `deck_level_1` 顶取一张 → 保留区（**朝下**）；约 5.10s 再拿一枚黄金。cue 沿用 cue66 的整桌 `shot_board` 镜头，不再单独推近牌堆，也没有实体高亮。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻顶牌是真实的一级红 card_l1_ruby_37（价格蓝2+绿1），保留前观众和对手看不到它。\n  · 后面 A 有了绿色发展卡的绿折扣后，正好可以用保留奖励的黄金买它。",
         "exit": {
           "zones": {
             "card_market": {
@@ -13535,19 +13535,12 @@
           }
         },
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_decks",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.deck.001.start"
-        },
-        {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_down",
           "anchor": "action.reserve.deck.001.b1.start",
-          "offset": 1.115,
+          "offset": 4.015,
           "target": {
             "space": "entity",
             "zone": "deck_level_1",
@@ -13563,7 +13556,7 @@
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.reserve.deck.001.b1.start",
-          "offset": 2.915,
+          "offset": 4.815,
           "target": {
             "space": "entity",
             "zone": "gold_supply",
@@ -13572,18 +13565,6 @@
           "destination": {
             "space": "entity",
             "zone": "player_holding"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.deck.001.b1.end",
-          "offset": -2.675,
-          "target": {
-            "space": "entity",
-            "zone": "player_reserved",
-            "order": 1
           }
         }
       ],
