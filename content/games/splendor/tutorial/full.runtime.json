@@ -14937,380 +14937,362 @@
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
-      "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容，",
+      "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。",
       "audio": "media/tts/full/action.reserve.private.001.1.mp3",
-      "duration": 6.456,
+      "duration": 11.088,
       "start": 470.38,
       "refs": [
         "<hand>"
       ],
       "subtitles": [
         {
-          "t": 0.285,
-          "end": 2.735,
+          "t": 0.315,
+          "end": 2.845,
           "text": "已保留的发展卡牌属于个人信息，",
           "words": [
             {
               "word": "已",
-              "start": 0.285,
-              "end": 0.435,
-              "confidence": 0.6335
+              "start": 0.315,
+              "end": 0.445,
+              "confidence": 0.6417
             },
             {
               "word": "保",
-              "start": 0.435,
-              "end": 0.625,
-              "confidence": 0.8146
+              "start": 0.445,
+              "end": 0.615,
+              "confidence": 0.7861
             },
             {
               "word": "留",
-              "start": 0.625,
-              "end": 0.805,
-              "confidence": 0.9752
+              "start": 0.615,
+              "end": 0.795,
+              "confidence": 0.9793
             },
             {
               "word": "的",
-              "start": 0.805,
+              "start": 0.795,
               "end": 0.895,
-              "confidence": 0.9625
+              "confidence": 0.9577
             },
             {
               "word": "发",
               "start": 0.895,
               "end": 1.055,
-              "confidence": 0.9829
+              "confidence": 0.9891
             },
             {
               "word": "展",
               "start": 1.055,
-              "end": 1.185,
-              "confidence": 0.9253
+              "end": 1.195,
+              "confidence": 0.916
             },
             {
               "word": "卡",
-              "start": 1.185,
-              "end": 1.385,
-              "confidence": 0.9644
+              "start": 1.195,
+              "end": 1.405,
+              "confidence": 0.9348
             },
             {
               "word": "牌",
-              "start": 1.385,
-              "end": 1.655,
-              "confidence": 0.9117
+              "start": 1.405,
+              "end": 1.665,
+              "confidence": 0.8998
             },
             {
               "word": "属",
-              "start": 1.655,
-              "end": 1.855,
-              "confidence": 0.9701
+              "start": 1.665,
+              "end": 1.905,
+              "confidence": 0.9686
             },
             {
               "word": "于",
-              "start": 1.855,
-              "end": 1.975,
-              "confidence": 0.9596
+              "start": 1.905,
+              "end": 2.045,
+              "confidence": 0.9492
             },
             {
               "word": "个",
-              "start": 1.975,
-              "end": 2.135,
-              "confidence": 0.9384
+              "start": 2.045,
+              "end": 2.205,
+              "confidence": 0.8997
             },
             {
               "word": "人",
-              "start": 2.135,
-              "end": 2.245,
-              "confidence": 0.9559
+              "start": 2.205,
+              "end": 2.335,
+              "confidence": 0.9394
             },
             {
               "word": "信",
-              "start": 2.245,
-              "end": 2.435,
-              "confidence": 0.9627
+              "start": 2.335,
+              "end": 2.535,
+              "confidence": 0.9524
             },
             {
               "word": "息，",
-              "start": 2.435,
-              "end": 2.735,
-              "confidence": 0.9748
+              "start": 2.535,
+              "end": 2.845,
+              "confidence": 0.9846
             }
           ]
         },
         {
-          "t": 3.09,
-          "end": 5.665,
-          "text": "只有保留这张卡的玩家才可以确认卡牌内容，\n",
+          "t": 3.245,
+          "end": 6.445,
+          "text": "只有保留这张卡的玩家才可以确认卡牌内容；",
           "words": [
             {
               "word": "只",
-              "start": 3.09,
-              "end": 3.205,
-              "confidence": 0.7366
+              "start": 3.245,
+              "end": 3.375,
+              "confidence": 0.8097
             },
             {
               "word": "有",
-              "start": 3.205,
-              "end": 3.345,
-              "confidence": 0.6075
+              "start": 3.375,
+              "end": 3.485,
+              "confidence": 0.6796
             },
             {
               "word": "保",
-              "start": 3.345,
-              "end": 3.535,
-              "confidence": 0.7566
+              "start": 3.485,
+              "end": 3.655,
+              "confidence": 0.8769
             },
             {
               "word": "留",
-              "start": 3.535,
-              "end": 3.715,
-              "confidence": 0.981
+              "start": 3.655,
+              "end": 3.845,
+              "confidence": 0.9746
             },
             {
               "word": "这",
-              "start": 3.715,
-              "end": 3.835,
-              "confidence": 0.9506
+              "start": 3.845,
+              "end": 3.965,
+              "confidence": 0.9466
             },
             {
               "word": "张",
-              "start": 3.835,
-              "end": 3.975,
-              "confidence": 0.9751
+              "start": 3.965,
+              "end": 4.095,
+              "confidence": 0.9701
             },
             {
               "word": "卡",
-              "start": 3.975,
-              "end": 4.175,
-              "confidence": 0.9137
+              "start": 4.095,
+              "end": 4.285,
+              "confidence": 0.8939
             },
             {
               "word": "的",
-              "start": 4.175,
-              "end": 4.255,
-              "confidence": 0.8693
+              "start": 4.285,
+              "end": 4.375,
+              "confidence": 0.857
             },
             {
               "word": "玩",
-              "start": 4.255,
-              "end": 4.405,
-              "confidence": 0.9318
+              "start": 4.375,
+              "end": 4.535,
+              "confidence": 0.9503
             },
             {
               "word": "家",
-              "start": 4.405,
-              "end": 4.675,
-              "confidence": 0.9337
+              "start": 4.535,
+              "end": 4.845,
+              "confidence": 0.864
             },
             {
               "word": "才",
-              "start": 4.715,
-              "end": 4.855,
-              "confidence": 0.9114
+              "start": 4.845,
+              "end": 5.025,
+              "confidence": 0.9256
             },
             {
               "word": "可",
-              "start": 4.855,
-              "end": 4.985,
-              "confidence": 0.9626
+              "start": 5.025,
+              "end": 5.165,
+              "confidence": 0.9635
             },
             {
               "word": "以",
-              "start": 4.985,
-              "end": 5.095,
-              "confidence": 0.835
+              "start": 5.165,
+              "end": 5.285,
+              "confidence": 0.826
             },
             {
               "word": "确",
-              "start": 5.095,
-              "end": 5.305,
-              "confidence": 0.9078
+              "start": 5.285,
+              "end": 5.495,
+              "confidence": 0.9026
             },
             {
               "word": "认",
-              "start": 5.305,
-              "end": 5.425,
-              "confidence": 0.8235
+              "start": 5.495,
+              "end": 5.685,
+              "confidence": 0.9699
             },
             {
               "word": "卡",
-              "start": 5.425,
-              "end": 5.485,
-              "confidence": 0.1138
+              "start": 5.685,
+              "end": 5.865,
+              "confidence": 0.9092
             },
             {
               "word": "牌",
-              "start": 5.485,
-              "end": 5.545,
-              "confidence": 0.1461
+              "start": 5.865,
+              "end": 6.035,
+              "confidence": 0.9687
             },
             {
               "word": "内",
-              "start": 5.545,
-              "end": 5.605,
-              "confidence": 0.0759
+              "start": 6.035,
+              "end": 6.175,
+              "confidence": 0.899
             },
             {
-              "word": "容，",
-              "start": 5.605,
-              "end": 5.665,
-              "confidence": 0.1064
+              "word": "容；",
+              "start": 6.175,
+              "end": 6.445,
+              "confidence": 0.986
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.reserve.private.001.2",
-      "group": "3.3 保留一张发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.3 保留一张发展卡牌"
-      ],
-      "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。",
-      "audio": "media/tts/full/action.reserve.private.001.2.mp3",
-      "duration": 4.68,
-      "start": 476.83,
-      "refs": [
-        "<hand>"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.275,
-          "end": 3.935,
+          "t": 6.845,
+          "end": 10.215,
           "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。",
           "words": [
             {
               "word": "不",
-              "start": 0.275,
-              "end": 0.395,
-              "confidence": 0.9747
+              "start": 6.845,
+              "end": 6.945,
+              "confidence": 0.972
             },
             {
               "word": "可",
-              "start": 0.395,
-              "end": 0.575,
-              "confidence": 0.8866
+              "start": 6.945,
+              "end": 7.075,
+              "confidence": 0.7754
             },
             {
               "word": "以",
-              "start": 0.575,
-              "end": 0.695,
-              "confidence": 0.7067
+              "start": 7.075,
+              "end": 7.175,
+              "confidence": 0.6691
             },
             {
               "word": "给",
-              "start": 0.695,
-              "end": 0.845,
-              "confidence": 0.9614
+              "start": 7.175,
+              "end": 7.335,
+              "confidence": 0.9745
             },
             {
               "word": "其",
-              "start": 0.845,
-              "end": 1.005,
-              "confidence": 0.8941
+              "start": 7.335,
+              "end": 7.505,
+              "confidence": 0.8743
             },
             {
               "word": "他",
-              "start": 1.005,
-              "end": 1.165,
-              "confidence": 0.9544
+              "start": 7.505,
+              "end": 7.665,
+              "confidence": 0.9685
             },
             {
               "word": "玩",
-              "start": 1.165,
-              "end": 1.285,
-              "confidence": 0.9242
+              "start": 7.665,
+              "end": 7.785,
+              "confidence": 0.9601
             },
             {
               "word": "家",
-              "start": 1.285,
-              "end": 1.485,
-              "confidence": 0.9544
+              "start": 7.785,
+              "end": 7.975,
+              "confidence": 0.9731
             },
             {
               "word": "看，",
-              "start": 1.485,
-              "end": 1.795,
-              "confidence": 0.9761
+              "start": 7.975,
+              "end": 8.225,
+              "confidence": 0.9805
             },
             {
               "word": "其",
-              "start": 2.085,
-              "end": 2.255,
-              "confidence": 0.909
+              "start": 8.535,
+              "end": 8.695,
+              "confidence": 0.9134
             },
             {
               "word": "他",
-              "start": 2.255,
-              "end": 2.405,
-              "confidence": 0.9701
+              "start": 8.695,
+              "end": 8.835,
+              "confidence": 0.9758
             },
             {
               "word": "玩",
-              "start": 2.405,
-              "end": 2.545,
-              "confidence": 0.9631
+              "start": 8.835,
+              "end": 8.975,
+              "confidence": 0.972
             },
             {
               "word": "家",
-              "start": 2.545,
-              "end": 2.825,
-              "confidence": 0.9175
+              "start": 8.975,
+              "end": 9.255,
+              "confidence": 0.9039
             },
             {
               "word": "也",
-              "start": 2.825,
-              "end": 2.925,
-              "confidence": 0.9044
+              "start": 9.255,
+              "end": 9.375,
+              "confidence": 0.9188
             },
             {
               "word": "不",
-              "start": 2.925,
-              "end": 3.065,
-              "confidence": 0.9788
+              "start": 9.375,
+              "end": 9.495,
+              "confidence": 0.9866
             },
             {
               "word": "可",
-              "start": 3.065,
-              "end": 3.215,
-              "confidence": 0.7973
+              "start": 9.495,
+              "end": 9.635,
+              "confidence": 0.7959
             },
             {
               "word": "以",
-              "start": 3.215,
-              "end": 3.355,
-              "confidence": 0.6516
+              "start": 9.635,
+              "end": 9.765,
+              "confidence": 0.6867
             },
             {
               "word": "主",
-              "start": 3.355,
-              "end": 3.535,
-              "confidence": 0.9637
+              "start": 9.765,
+              "end": 9.955,
+              "confidence": 0.9647
             },
             {
               "word": "动",
-              "start": 3.535,
-              "end": 3.715,
-              "confidence": 0.9764
+              "start": 9.955,
+              "end": 10.035,
+              "confidence": 0.6106
             },
             {
               "word": "去",
-              "start": 3.715,
-              "end": 3.815,
-              "confidence": 0.7756
+              "start": 10.035,
+              "end": 10.095,
+              "confidence": 0.0895
             },
             {
               "word": "查",
-              "start": 3.815,
-              "end": 3.875,
-              "confidence": 0.1738
+              "start": 10.095,
+              "end": 10.155,
+              "confidence": 0.1214
             },
             {
               "word": "看。",
-              "start": 3.875,
-              "end": 3.935,
-              "confidence": 0.3659
+              "start": 10.155,
+              "end": 10.215,
+              "confidence": 0.1656
             }
           ]
         }
@@ -15327,7 +15309,7 @@
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
       "audio": "media/tts/full/action.reserve.private.002.mp3",
       "duration": 6.456,
-      "start": 481.51,
+      "start": 481.46,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15527,7 +15509,7 @@
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
       "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
       "duration": 7.08,
-      "start": 487.97,
+      "start": 487.92,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -15747,7 +15729,7 @@
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
       "duration": 5.472,
-      "start": 495.05,
+      "start": 495.0,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -15929,7 +15911,7 @@
       "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，",
       "audio": "media/tts/full/action.purchase_reserved.002.1.mp3",
       "duration": 6.696,
-      "start": 500.52,
+      "start": 500.47,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16150,7 +16132,7 @@
       "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.002.2.mp3",
       "duration": 7.272,
-      "start": 507.22,
+      "start": 507.17,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16400,7 +16382,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 514.49,
+      "start": 514.44,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16633,7 +16615,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 7.08,
-      "start": 521.71,
+      "start": 521.66,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -16847,7 +16829,7 @@
       "text": "左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 6.288,
-      "start": 528.79,
+      "start": 528.74,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17042,7 +17024,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 535.08,
+      "start": 535.03,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17199,7 +17181,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 5.472,
-      "start": 540.31,
+      "start": 540.26,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17369,7 +17351,7 @@
       "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.2.mp3",
       "duration": 5.664,
-      "start": 545.78,
+      "start": 545.74,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17545,7 +17527,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 4.464,
-      "start": 551.45,
+      "start": 551.4,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17683,7 +17665,7 @@
       "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
       "audio": "media/tts/full/endgame.example.001.2.mp3",
       "duration": 5.448,
-      "start": 555.91,
+      "start": 555.86,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17863,7 +17845,7 @@
       "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.002.mp3",
       "duration": 7.464,
-      "start": 561.36,
+      "start": 561.31,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18104,7 +18086,7 @@
       "text": "声望值最高的玩家获得胜利。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 3.072,
-      "start": 568.82,
+      "start": 568.78,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18201,7 +18183,7 @@
       "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
       "audio": "media/tts/full/endgame.tie.001.1.mp3",
       "duration": 6.264,
-      "start": 571.9,
+      "start": 571.85,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18400,7 +18382,7 @@
       "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
       "audio": "media/tts/full/endgame.tie.001.2.mp3",
       "duration": 6.456,
-      "start": 578.16,
+      "start": 578.11,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

@@ -1885,28 +1885,6 @@
       "edge": "end"
     },
     {
-      "id": "action.reserve.private.001.2.start",
-      "cue": "action.reserve.private.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.reserve.private.001.2.end",
-      "cue": "action.reserve.private.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.reserve.private.001.2.b1.start",
-      "cue": "action.reserve.private.001.2",
-      "beat": "action.reserve.private.001.2.b1",
-      "edge": "start"
-    },
-    {
-      "id": "action.reserve.private.001.2.b1.end",
-      "cue": "action.reserve.private.001.2",
-      "beat": "action.reserve.private.001.2.b1",
-      "edge": "end"
-    },
-    {
       "id": "action.reserve.private.002.start",
       "cue": "action.reserve.private.002",
       "edge": "cue_start"
@@ -14146,13 +14124,13 @@
       "parent": "action.reserve.limit_hand.001.1",
       "timing": [
         {
-          "key": "镜头推近保留区",
+          "key": "保留区近景 / 整句",
           "text": "0.00"
         }
       ],
       "script": {
-        "story": "【已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容】",
-        "note": "【保留的牌是个人信息】\n  setup（不可见）：把上一条 demo 里非法保留的第 4 张收回市场，canonical 仍是保留区 3 张。\n  规则说明，**没有状态变化**：镜头推近保留区（3 张都朝下）—— 画面说明观众看得见『有几张』，看不见『是哪张』。",
+        "story": "【已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看】",
+        "note": "【保留的牌是个人信息 + 别人不能看】\n  合并为一条 cue、一个 beat、一个 shot_reserved 镜头。\n  setup（不可见）：承接上一条 demo，把非法保留的第 4 张收回市场，canonical 仍是保留区 3 张。\n  画面继续停在保留区近景：3 张都朝下，说明只有本人可以确认内容、不给别人看、别人也不能主动翻看。",
         "enter": {
           "zones": {
             "card_market": {
@@ -14290,19 +14268,8 @@
       "tree": "main"
     },
     {
-      "id": "action.reserve.private.001.2",
-      "parent": "action.reserve.private.001.1",
-      "timing": [],
-      "script": {
-        "story": "【不可以给其他玩家看，其他玩家也不可以主动去查看】",
-        "note": "【不给别人看、别人也不能翻】\n  规则说明，**没有状态变化**：继续停在保留区近景，点一下。\n  ⚠ 『不可以』两层意思（不给看 / 别人不主动翻）都没有对应画面 —— 仍然是没有否定原语。"
-      },
-      "events": [],
-      "tree": "main"
-    },
-    {
       "id": "action.reserve.private.002",
-      "parent": "action.reserve.private.001.2",
+      "parent": "action.reserve.private.001.1",
       "timing": [
         {
           "key": "镜头给牌堆",
