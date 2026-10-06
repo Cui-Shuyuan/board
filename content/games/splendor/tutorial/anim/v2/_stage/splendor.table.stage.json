@@ -543,14 +543,15 @@
       "id": "player_reserved",
       "label": "玩家A手牌区（保留卡）",
       "center": {
-        "x": -2.05,
+        "x": -1.94,
         "z": -1.8
       },
       "layout": {
         "type": "row",
-        "x_step": 0.22
+        "x_step": 0.22,
+        "capacity": 4
       },
-      "capacity": 3,
+      "capacity": 4,
       "palette": "panel_player",
       "size": {
         "w": 0.63,
@@ -565,7 +566,7 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "保留的发展卡放的地方（<reserve>）。x_step 0.35 = 卡片半叠成扇形：保留区**必须**放得下 3 张（规则上限就是 3），而桌子横向不够摊开 —— 真人遇到这种情况也是这样错开叠的，而且朝下的牌只需要露出边缘。",
+      "note": "保留的发展卡放的地方（<reserve>）。规则上限是 3 张；这里 layout 留 4 个槽位，order 0-2 的坐标与容量 3 方案完全一致（center 从 -2.05 调到 -1.94），多出的 order 3 位于 -1.61，专门给「已保留 3 张后再尝试保留第 4 张」的禁止演示使用。真人遇到这种情况也是这样错开叠的。",
       "group": "player_a"
     },
     {
