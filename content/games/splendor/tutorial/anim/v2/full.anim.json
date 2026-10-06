@@ -14274,13 +14274,146 @@
         {
           "key": "镜头给牌堆",
           "text": "0.00"
+        },
+        {
+          "key": "把牌堆顶的牌移到左侧一牌宽处并翻面",
+          "text": "4.30"
+        },
+        {
+          "key": "在翻开的牌上打禁止",
+          "text": "5.20"
         }
       ],
       "script": {
         "story": "【如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息】",
-        "note": "【从牌堆顶保留：保留之前也不能看】\n  规则说明，**没有状态变化**：镜头给三摞牌堆（都朝下）→ 再给保留区（也朝下）。『保留前不能看』与『保留后只能自己看』在画面上是同一件事：那张牌一直朝下。\n  ⚠ 认不出哪张是从牌堆保留的：三张保留牌都朝下，没有『来自牌堆』的标记 ——要区分得给件加来源标记（本作暂时不需要）。"
+        "note": "【从牌堆顶保留：保留之前也不能看（真实查看动作）】\n  demo 前提（setup 静默）：在 deck_level_1 顶放一张真实牌 card_l1_diamond_17，模拟“牌堆顶有一张真卡”。\n  4.30s：把这张牌从牌堆顶 transfer 到 deck_peek（牌堆左侧一牌宽，x=-3.38），同时翻面朝上；\n  5.20s：在这张被翻开的牌上打 forbid，表示“保留之前不能查看”。禁止标记持续到 cue 结束。\n  下一条 cue 用 setup 把这张演示牌销毁，canonical 牌堆恢复原样。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            },
+            "deck_peek": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            },
+            "deck_peek": {
+              "count": 1
+            }
+          }
+        }
       },
       "events": [
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_down",
+          "anchor": "action.reserve.private.002.start",
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
         {
           "op": "camera",
           "dur": 0.0,
@@ -14289,13 +14422,53 @@
           "anchor": "action.reserve.private.002.start"
         },
         {
-          "op": "wait",
+          "op": "transfer",
+          "dur": 0.8,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "action.reserve.private.002.start",
+          "offset": 4.3,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "deck_peek"
+          }
+        },
+        {
+          "op": "point",
           "dur": 0.0,
-          "anchor": "action.reserve.private.002.b1.start",
-          "offset": 2.715
+          "indicator": "forbid",
+          "anchor": "action.reserve.private.002.start",
+          "offset": 5.2,
+          "target": {
+            "space": "entity",
+            "zone": "deck_peek",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "demo": true
     },
     {
       "id": "action.reserve.not_purchase.001",
@@ -14308,9 +14481,133 @@
       ],
       "script": {
         "story": "【保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值】",
-        "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（刚买到的那张绿色牌）——对比就是这句话：\n  只有进了发展区的牌才给折扣和声望；保留区的牌不在发展区，所以怎么点发展区都数不到它们。"
+        "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（刚买到的那张绿色牌）——对比就是这句话：\n  只有进了发展区的牌才给折扣和声望；保留区的牌不在发展区，所以怎么点发展区都数不到它们。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            },
+            "deck_peek": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            },
+            "deck_peek": {
+              "count": 0
+            }
+          }
+        }
       },
       "events": [
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "anchor": "action.reserve.not_purchase.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "deck_peek",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
         {
           "op": "camera",
           "dur": 0.0,

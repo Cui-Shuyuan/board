@@ -741,6 +741,30 @@
       "contains": [
         "starting_player_marker"
       ]
+    },
+    {
+      "id": "deck_peek",
+      "label": "牌堆顶查看位",
+      "role": "zone",
+      "center": {
+        "x": -3.47,
+        "z": -0.62
+      },
+      "size": {
+        "w": 0.63,
+        "h": 0.88
+      },
+      "layout": {
+        "type": "row",
+        "x_step": 0.63,
+        "capacity": 1
+      },
+      "capacity": 1,
+      "display": {
+        "mode": "count"
+      },
+      "qa_ignore": true,
+      "note": "动画演示专用：把牌堆顶的牌移到牌堆左侧约一牌宽处并翻开，供「保留前不能查看」反例使用；不参与逻辑 QA。"
     }
   ],
   "templates": [
@@ -2905,10 +2929,11 @@
       "zones": [
         "deck_level_1",
         "deck_level_2",
-        "deck_level_3"
+        "deck_level_3",
+        "deck_peek"
       ],
       "fill": 0.7143,
-      "desc": "框 deck_level_1、deck_level_2、deck_level_3，占画面 0.7143"
+      "desc": "框 deck_level_1、deck_level_2、deck_level_3 和 deck_peek，占画面 0.7143"
     },
     {
       "id": "shot_reserved",
