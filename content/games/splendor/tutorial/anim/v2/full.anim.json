@@ -13553,24 +13553,225 @@
       "parent": "action.reserve.deck.001",
       "timing": [
         {
-          "key": "镜头给持有区",
-          "text": "整句"
+          "key": "演示前提：A 已有 10 枚各色宝石",
+          "text": "0.00"
+        },
+        {
+          "key": "保留一张牌 + 拿一枚黄金",
+          "text": "1.80-3.00"
+        },
+        {
+          "key": "超上限，放回 1 枚宝石",
+          "text": "6.40"
         }
       ],
       "script": {
-        "story": "【注意事项：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
-        "note": "【注意事项：拿黄金可能超上限】\n  合并后只有一句话、一个镜头：镜头给持有区，说明『黄金和宝石一起算在 10 枚上限里』。\n  规则说明，**没有状态变化**：当前持有 1 枚黄金（0 宝石），还远没到 10。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。"
+        "story": "【注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
+        "note": "【注意事项：拿黄金可能超上限（真实演示）】\n  演示前提：玩家 A 手上已经有 10 枚宝石：白2、蓝2、红2、绿2、黑2；\n  cue 开头把 A 原有的一枚黄金放回黄金供应堆，再从各色供应堆各拿 2 枚到 A 持有区。\n  然后真实执行一次「从牌堆顶保留」：牌堆顶一张 → player_reserved（朝下），并从黄金供应堆拿 1 枚黄金；\n  此时 A 持有 10 宝石 + 1 黄金 = 11 枚，超过 10 上限，随即把 1 枚钻石放回钻石供应堆，回到 10 枚。\n  这对应口播「拿取黄金后，如果持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止」。\n  本 cue 是 demo 示范；下一条 cue 用 entry 回到保留主线，不把这次假想的保留/超限写回 canonical。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 2
+            },
+            "gem_supply_onyx": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 10
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 2
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_emerald": {
+              "count": 2
+            },
+            "gem_supply_onyx": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 10
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        }
       },
       "events": [
         {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "action.reserve.notes_intro.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "action.reserve.notes_intro.001.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby",
+              "gem_supply_emerald",
+              "gem_supply_onyx"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_holding",
+          "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.reserve.notes_intro.001.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "action.reserve.notes_intro.001.start",
+          "offset": 1.8,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 1,
+          "over_limit_demo": true,
+          "anchor": "action.reserve.notes_intro.001.start",
+          "offset": 2.5,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "action.reserve.notes_intro.001.start",
+          "offset": 6.4,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "demo": true
     },
     {
       "id": "action.reserve.limit_gold.001.2",
@@ -13594,7 +13795,8 @@
           "anchor": "action.reserve.limit_gold.001.2.start"
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.reserve.deck.001"
     },
     {
       "id": "action.reserve.limit_hand.001.1",

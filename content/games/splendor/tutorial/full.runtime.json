@@ -14223,9 +14223,9 @@
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
-      "text": "拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
+      "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
       "audio": "media/tts/full/action.reserve.notes_intro.001.mp3",
-      "duration": 7.464,
+      "duration": 8.664,
       "start": 447.58,
       "refs": [
         "<reserve_development_card>",
@@ -14236,213 +14236,256 @@
       "subtitles": [
         {
           "t": 0.295,
-          "end": 4.725,
-          "text": "拿取黄金后，如果已持有的宝石和黄金总数超过10枚，",
+          "end": 2.645,
+          "text": "注意事项如下：拿取黄金后，",
           "words": [
             {
-              "word": "拿",
+              "word": "注",
               "start": 0.295,
-              "end": 0.485,
-              "confidence": 0.9009
+              "end": 0.425,
+              "confidence": 0.8511
             },
             {
-              "word": "取",
-              "start": 0.485,
-              "end": 0.635,
-              "confidence": 0.8938
+              "word": "意",
+              "start": 0.425,
+              "end": 0.535,
+              "confidence": 0.9707
             },
             {
-              "word": "黄",
-              "start": 0.635,
-              "end": 0.835,
-              "confidence": 0.9452
+              "word": "事",
+              "start": 0.535,
+              "end": 0.695,
+              "confidence": 0.9494
             },
             {
-              "word": "金",
-              "start": 0.835,
-              "end": 1.005,
-              "confidence": 0.8837
-            },
-            {
-              "word": "后，",
-              "start": 1.005,
-              "end": 1.365,
-              "confidence": 0.9314
+              "word": "项",
+              "start": 0.695,
+              "end": 0.865,
+              "confidence": 0.921
             },
             {
               "word": "如",
-              "start": 1.525,
-              "end": 1.675,
-              "confidence": 0.9662
+              "start": 0.865,
+              "end": 1.005,
+              "confidence": 0.8341
             },
             {
-              "word": "果",
-              "start": 1.675,
-              "end": 1.875,
-              "confidence": 0.8152
+              "word": "下：",
+              "start": 1.185,
+              "end": 1.215,
+              "confidence": 0.2546
             },
             {
-              "word": "已",
-              "start": 1.875,
-              "end": 2.005,
-              "confidence": 0.8191
+              "word": "拿",
+              "start": 1.635,
+              "end": 1.795,
+              "confidence": 0.9067
             },
             {
-              "word": "持",
-              "start": 2.005,
-              "end": 2.205,
-              "confidence": 0.9129
-            },
-            {
-              "word": "有",
-              "start": 2.205,
-              "end": 2.335,
-              "confidence": 0.8742
-            },
-            {
-              "word": "的",
-              "start": 2.335,
-              "end": 2.455,
-              "confidence": 0.9738
-            },
-            {
-              "word": "宝",
-              "start": 2.455,
-              "end": 2.645,
-              "confidence": 0.9464
-            },
-            {
-              "word": "石",
-              "start": 2.645,
-              "end": 2.895,
-              "confidence": 0.8142
-            },
-            {
-              "word": "和",
-              "start": 2.895,
-              "end": 3.035,
-              "confidence": 0.9175
+              "word": "取",
+              "start": 1.795,
+              "end": 1.955,
+              "confidence": 0.9122
             },
             {
               "word": "黄",
-              "start": 3.035,
-              "end": 3.245,
-              "confidence": 0.9462
+              "start": 1.955,
+              "end": 2.105,
+              "confidence": 0.9037
             },
             {
               "word": "金",
-              "start": 3.245,
-              "end": 3.425,
-              "confidence": 0.935
+              "start": 2.105,
+              "end": 2.275,
+              "confidence": 0.7869
             },
             {
-              "word": "总",
-              "start": 3.425,
-              "end": 3.605,
-              "confidence": 0.971
-            },
-            {
-              "word": "数",
-              "start": 3.605,
-              "end": 3.865,
-              "confidence": 0.9869
-            },
-            {
-              "word": "超",
-              "start": 3.865,
-              "end": 4.055,
-              "confidence": 0.9809
-            },
-            {
-              "word": "过",
-              "start": 4.055,
-              "end": 4.175,
-              "confidence": 0.6956
-            },
-            {
-              "word": "10",
-              "start": 4.425,
-              "end": 4.455,
-              "confidence": 0.1966
-            },
-            {
-              "word": "枚，",
-              "start": 4.455,
-              "end": 4.725,
-              "confidence": 0.8707
+              "word": "后，",
+              "start": 2.275,
+              "end": 2.645,
+              "confidence": 0.9357
             }
           ]
         },
         {
-          "t": 5.06,
-          "end": 6.755,
+          "t": 2.96,
+          "end": 6.045,
+          "text": "如果已持有的宝石和黄金总数超过10枚，",
+          "words": [
+            {
+              "word": "如",
+              "start": 2.96,
+              "end": 3.035,
+              "confidence": 0.407
+            },
+            {
+              "word": "果",
+              "start": 3.035,
+              "end": 3.125,
+              "confidence": 0.5298
+            },
+            {
+              "word": "已",
+              "start": 3.125,
+              "end": 3.275,
+              "confidence": 0.7243
+            },
+            {
+              "word": "持",
+              "start": 3.275,
+              "end": 3.465,
+              "confidence": 0.9095
+            },
+            {
+              "word": "有",
+              "start": 3.465,
+              "end": 3.605,
+              "confidence": 0.8076
+            },
+            {
+              "word": "的",
+              "start": 3.605,
+              "end": 3.725,
+              "confidence": 0.967
+            },
+            {
+              "word": "宝",
+              "start": 3.725,
+              "end": 3.915,
+              "confidence": 0.9492
+            },
+            {
+              "word": "石",
+              "start": 3.915,
+              "end": 4.195,
+              "confidence": 0.8263
+            },
+            {
+              "word": "和",
+              "start": 4.195,
+              "end": 4.345,
+              "confidence": 0.915
+            },
+            {
+              "word": "黄",
+              "start": 4.345,
+              "end": 4.545,
+              "confidence": 0.9527
+            },
+            {
+              "word": "金",
+              "start": 4.545,
+              "end": 4.745,
+              "confidence": 0.9183
+            },
+            {
+              "word": "总",
+              "start": 4.745,
+              "end": 4.925,
+              "confidence": 0.9761
+            },
+            {
+              "word": "数",
+              "start": 4.925,
+              "end": 5.195,
+              "confidence": 0.9841
+            },
+            {
+              "word": "超",
+              "start": 5.195,
+              "end": 5.395,
+              "confidence": 0.9773
+            },
+            {
+              "word": "过",
+              "start": 5.395,
+              "end": 5.515,
+              "confidence": 0.6973
+            },
+            {
+              "word": "10",
+              "start": 5.775,
+              "end": 5.805,
+              "confidence": 0.158
+            },
+            {
+              "word": "枚，",
+              "start": 5.805,
+              "end": 6.045,
+              "confidence": 0.9001
+            }
+          ]
+        },
+        {
+          "t": 6.385,
+          "end": 8.095,
           "text": "也需要弃至还剩10个为止。",
           "words": [
             {
               "word": "也",
-              "start": 5.06,
-              "end": 5.135,
-              "confidence": 0.8372
+              "start": 6.385,
+              "end": 6.495,
+              "confidence": 0.9174
             },
             {
               "word": "需",
-              "start": 5.135,
-              "end": 5.325,
-              "confidence": 0.9534
+              "start": 6.495,
+              "end": 6.675,
+              "confidence": 0.9809
             },
             {
               "word": "要",
-              "start": 5.325,
-              "end": 5.475,
-              "confidence": 0.8762
+              "start": 6.675,
+              "end": 6.805,
+              "confidence": 0.8833
             },
             {
               "word": "弃",
-              "start": 5.475,
-              "end": 5.745,
-              "confidence": 0.8907
+              "start": 6.805,
+              "end": 7.075,
+              "confidence": 0.8806
             },
             {
               "word": "至",
-              "start": 5.745,
-              "end": 5.975,
-              "confidence": 0.9577
+              "start": 7.075,
+              "end": 7.315,
+              "confidence": 0.9649
             },
             {
               "word": "还",
-              "start": 5.975,
-              "end": 6.155,
-              "confidence": 0.9679
+              "start": 7.315,
+              "end": 7.485,
+              "confidence": 0.9586
             },
             {
               "word": "剩",
-              "start": 6.155,
-              "end": 6.335,
-              "confidence": 0.8579
+              "start": 7.485,
+              "end": 7.665,
+              "confidence": 0.8744
             },
             {
               "word": "10",
-              "start": 6.335,
-              "end": 6.365,
-              "confidence": 0.1175
+              "start": 7.665,
+              "end": 7.695,
+              "confidence": 0.1338
             },
             {
               "word": "个",
-              "start": 6.605,
-              "end": 6.665,
-              "confidence": 0.3612
+              "start": 7.885,
+              "end": 7.995,
+              "confidence": 0.6598
             },
             {
               "word": "为",
-              "start": 6.665,
-              "end": 6.695,
-              "confidence": 0.2061
+              "start": 7.995,
+              "end": 8.035,
+              "confidence": 0.4454
             },
             {
               "word": "止。",
-              "start": 6.695,
-              "end": 6.755,
-              "confidence": 0.1463
+              "start": 8.035,
+              "end": 8.095,
+              "confidence": 0.1364
             }
           ]
         }
@@ -14459,7 +14502,7 @@
       "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.2.mp3",
       "duration": 5.472,
-      "start": 455.04,
+      "start": 456.24,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14642,7 +14685,7 @@
       "text": "每位玩家最多同时保留3张发展卡牌。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.1.mp3",
       "duration": 3.648,
-      "start": 460.51,
+      "start": 461.71,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -14764,7 +14807,7 @@
       "text": "如果一位玩家已经保留了3张发展卡牌，就不能继续保留了。此时他必须选择其他行动。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.2.mp3",
       "duration": 7.464,
-      "start": 464.16,
+      "start": 465.36,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -15013,7 +15056,7 @@
       "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容，",
       "audio": "media/tts/full/action.reserve.private.001.1.mp3",
       "duration": 6.456,
-      "start": 471.62,
+      "start": 472.82,
       "refs": [
         "<hand>"
       ],
@@ -15243,7 +15286,7 @@
       "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。",
       "audio": "media/tts/full/action.reserve.private.001.2.mp3",
       "duration": 4.68,
-      "start": 478.08,
+      "start": 479.28,
       "refs": [
         "<hand>"
       ],
@@ -15400,7 +15443,7 @@
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
       "audio": "media/tts/full/action.reserve.private.002.mp3",
       "duration": 6.456,
-      "start": 482.76,
+      "start": 483.96,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15600,7 +15643,7 @@
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
       "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
       "duration": 7.08,
-      "start": 489.22,
+      "start": 490.42,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -15820,7 +15863,7 @@
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
       "duration": 5.472,
-      "start": 496.3,
+      "start": 497.5,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -16002,7 +16045,7 @@
       "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，",
       "audio": "media/tts/full/action.purchase_reserved.002.1.mp3",
       "duration": 6.696,
-      "start": 501.77,
+      "start": 502.97,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16223,7 +16266,7 @@
       "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.002.2.mp3",
       "duration": 7.272,
-      "start": 508.46,
+      "start": 509.66,
       "refs": [
         "<purchase_development_card>",
         "<attract_noble>",
@@ -16473,7 +16516,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 515.74,
+      "start": 516.94,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16706,7 +16749,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 7.08,
-      "start": 522.96,
+      "start": 524.16,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -16920,7 +16963,7 @@
       "text": "左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 6.288,
-      "start": 530.04,
+      "start": 531.24,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17115,7 +17158,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 536.33,
+      "start": 537.53,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17272,7 +17315,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 5.472,
-      "start": 541.56,
+      "start": 542.76,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17442,7 +17485,7 @@
       "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.2.mp3",
       "duration": 5.664,
-      "start": 547.03,
+      "start": 548.23,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17618,7 +17661,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 4.464,
-      "start": 552.7,
+      "start": 553.9,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17756,7 +17799,7 @@
       "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
       "audio": "media/tts/full/endgame.example.001.2.mp3",
       "duration": 5.448,
-      "start": 557.16,
+      "start": 558.36,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17936,7 +17979,7 @@
       "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.002.mp3",
       "duration": 7.464,
-      "start": 562.61,
+      "start": 563.81,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18177,7 +18220,7 @@
       "text": "声望值最高的玩家获得胜利。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 3.072,
-      "start": 570.07,
+      "start": 571.27,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18274,7 +18317,7 @@
       "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
       "audio": "media/tts/full/endgame.tie.001.1.mp3",
       "duration": 6.264,
-      "start": 573.14,
+      "start": 574.34,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18473,7 +18516,7 @@
       "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
       "audio": "media/tts/full/endgame.tie.001.2.mp3",
       "duration": 6.456,
-      "start": 579.41,
+      "start": 580.61,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
