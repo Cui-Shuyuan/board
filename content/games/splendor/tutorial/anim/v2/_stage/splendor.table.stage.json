@@ -662,14 +662,15 @@
       "id": "player_b_reserved",
       "label": "玩家B手牌区（保留卡）",
       "center": {
-        "x": 2.1,
+        "x": 2.21,
         "z": -1.8
       },
       "layout": {
         "type": "row",
-        "x_step": 0.22
+        "x_step": 0.22,
+        "capacity": 4
       },
-      "capacity": 3,
+      "capacity": 4,
       "palette": "panel_player",
       "size": {
         "w": 0.63,
@@ -684,7 +685,7 @@
         "development_card_level_2",
         "development_card_level_3"
       ],
-      "note": "玩家B保留的卡（朝下，别人看不到内容）。",
+      "note": "玩家B保留的卡（朝下，别人看不到内容）。与 player_reserved 同步：layout 留 4 个演示槽位；order 0-2 坐标保持 1.88 / 2.10 / 2.32 不变（center 从 2.10 调到 2.21），多出的 order 3 位于 x=2.54，用于演示「已保留 3 张后再尝试保留第 4 张」。",
       "group": "player_b"
     },
     {
