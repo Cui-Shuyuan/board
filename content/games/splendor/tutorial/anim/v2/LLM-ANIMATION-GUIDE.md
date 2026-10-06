@@ -184,8 +184,10 @@
        "axis": "long", "direction": "ccw" }`
   - **buy / reserve / claim 不是原语**：它们分别由 `pay + take + deal`、
     `take(to=face_down)`、`take(noble_market → player_nobles)` 组合表达。
-  - `setup: true` 的静默前提状态仍写底层 `transfer`（例如“玩家已经拿过两枚金”），
-    不要套成 `take`/`pay`，避免把前提状态误读成一次可见动作。
+  - `setup: true` 的静默前提状态若语义匹配通用动词，写对应动词 + `setup:true`
+    （例如“玩家已经拿过两枚金” = `take`，只改状态不出动作）；只有纯清场/复位
+    （`deck→offstage`、`player→offstage`、`offstage→noble_market` 等）才用底层
+    `transfer`。
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
 - **费用框按宝石种类数选择 `part`**：发展卡左下角的价格是一列彩色圆盘，一个颜色一个

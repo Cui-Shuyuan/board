@@ -5988,7 +5988,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 4,
@@ -6010,7 +6010,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 4,
@@ -6032,7 +6032,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -6054,7 +6054,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -6281,7 +6281,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -6301,7 +6301,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -6323,7 +6323,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -6770,7 +6770,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -6792,7 +6792,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -6814,7 +6814,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -7060,7 +7060,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.cards.cost.001.1.start",
@@ -7082,7 +7082,7 @@
           "setup": true
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.cards.cost.001.1.start",
@@ -7420,7 +7420,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.cards.market.001.1.start",
@@ -7751,7 +7751,7 @@
           "anchor": "action.cards.market.001.2.start"
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.cards.market.001.2.start",
@@ -8319,7 +8319,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "setup": true,
@@ -8341,7 +8341,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "setup": true,
@@ -9833,7 +9833,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "setup": true,
@@ -9988,7 +9988,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "setup": true,
@@ -10011,7 +10011,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "setup": true,
@@ -10444,7 +10444,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.nobles.forced.001.1.start",
@@ -10565,7 +10565,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.nobles.forced.001.1.b1.start",
@@ -10588,7 +10588,7 @@
           "setup": true
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "anchor": "action.nobles.forced.001.1.b1.start",
@@ -11304,7 +11304,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "quantity": 1,
           "setup": true,
@@ -11533,7 +11533,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -12292,7 +12292,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -13103,7 +13103,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 3,
@@ -13613,7 +13613,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -13629,7 +13629,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -13836,7 +13836,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 4,
@@ -14000,7 +14000,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -14023,7 +14023,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -14047,7 +14047,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -15073,7 +15073,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
@@ -15090,7 +15090,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,
@@ -15116,7 +15116,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.0,
           "setup": true,
           "quantity": 2,
