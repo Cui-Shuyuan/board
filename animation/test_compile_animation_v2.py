@@ -724,6 +724,9 @@ class CompileAnimationV2Tests(unittest.TestCase):
                          "target": {"space": "entity", "zone": "deck_level_1"},
                          "destination": {"space": "entity", "zone": "card_market"},
                          "order": 3},
+                        {"op": "move",
+                         "target": {"space": "entity", "zone": "player_reserved"},
+                         "destination": {"space": "entity", "zone": "player_development"}},
                         {"op": "draw", "dur": 0.7,
                          "target": {"space": "entity", "zone": "deck_level_1"},
                          "destination": {"space": "entity", "zone": "deck_peek"},
@@ -734,18 +737,20 @@ class CompileAnimationV2Tests(unittest.TestCase):
         }
         resolved = schema.resolve_track(copy.deepcopy(track))
         events = resolved["cues"][0]["events"]
-        self.assertEqual(["transfer", "transfer", "transfer", "transfer"],
+        self.assertEqual(["transfer", "transfer", "transfer", "transfer", "transfer"],
                          [ev.get("op") for ev in events])
         self.assertEqual("gem_supply_ruby", events[0]["source"])
         self.assertEqual("player_holding", events[0]["destination"])
         self.assertEqual(2, events[0]["quantity"])
         self.assertEqual("face_up", events[2]["to"])
         self.assertEqual(3, events[2]["order"])
-        self.assertIs(True, events[3]["from_top"])
-        self.assertEqual(1, events[3]["quantity"])
-        self.assertEqual({"axis": "short", "direction": "cw"}, events[3]["flip"])
-        self.assertNotIn("axis", events[3])
-        self.assertNotIn("direction", events[3])
+        self.assertEqual("player_reserved", events[3]["source"])
+        self.assertEqual("player_development", events[3]["destination"])
+        self.assertIs(True, events[4]["from_top"])
+        self.assertEqual(1, events[4]["quantity"])
+        self.assertEqual({"axis": "short", "direction": "cw"}, events[4]["flip"])
+        self.assertNotIn("axis", events[4])
+        self.assertNotIn("direction", events[4])
 
     def test_draw_macro_compiles_top_card_edge_flip(self):
         stage = _stage_doc("s1", ["deck", "peek"])

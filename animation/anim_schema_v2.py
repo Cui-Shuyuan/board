@@ -29,8 +29,8 @@ STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "mov
 # Semantic action macros.  They are source-level sugar and are lowered to the
 # primitive STATE_OPS above by resolve_track(), so the compiler, validators and
 # audit tools only ever see the primitive event stream.
-SEMANTIC_OPS = {"take", "pay", "deal", "draw"}
-SEMANTIC_SOURCE_OPS = ("transfer", "take", "pay", "deal", "draw")
+SEMANTIC_OPS = {"take", "move", "pay", "deal", "draw"}
+SEMANTIC_SOURCE_OPS = ("transfer", "take", "move", "pay", "deal", "draw")
 PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label", "magnifier",
                      "overlay_show", "overlay_hide"}
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
@@ -206,9 +206,9 @@ def _lower_semantic_event(ev: dict, cue_id: str = "") -> list:
     """Lower one semantic action event to its primitive event stream.
 
     The macros are deliberately thin: they do not validate ownership and do not
-    change the runtime model.  ``take`` / ``pay`` / ``deal`` are named transfer
-    directions; ``draw`` is a top-of-deck transfer rendered as an edge flip
-    (``from_top`` + ``flip`` are primitive transfer features).
+    change the runtime model.  ``move`` / ``take`` / ``pay`` / ``deal`` are named
+    transfer directions; ``draw`` is a top-of-deck transfer rendered as an edge
+    flip (``from_top`` + ``flip`` are primitive transfer features).
     """
     if not isinstance(ev, dict):
         return [ev]
@@ -223,7 +223,7 @@ def _lower_semantic_event(ev: dict, cue_id: str = "") -> list:
             raise ValueError(f"{where}: missing {name}")
         return value
 
-    if op in ("take", "pay", "deal"):
+    if op in ("take", "move", "pay", "deal"):
         require("source")
         require("destination")
         out = dict(ev)
