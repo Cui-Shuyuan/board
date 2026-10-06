@@ -13906,25 +13906,21 @@
       "parent": "action.reserve.limit_gold.001.2",
       "timing": [
         {
-          "key": "整桌镜头 / 保留第三张",
-          "text": "4.30"
+          "key": "保留区已 3 张（演示前提）",
+          "text": "0.00"
         },
         {
-          "key": "补回市场",
-          "text": "4.90"
+          "key": "尝试保留第 4 张",
+          "text": "4.40"
         },
         {
-          "key": "拿黄金",
-          "text": "5.40"
-        },
-        {
-          "key": "点保留区 / 禁止再保留",
+          "key": "禁止标记",
           "text": "6.90"
         }
       ],
       "script": {
         "story": "【每位玩家最多同时保留 3 张发展卡牌；已经保留 3 张时，就不能再保留，必须选择其他行动】",
-        "note": "【注意事项三：最多保留 3 张；满了不能继续保留】\n  合并成一条 cue、一个 beat、一个 shot_board 镜头。\n  口播先讲上限 3 张，再讲满了不能继续保留、必须选择其他行动。\n  画面真实做一次：从市场保留一张二级红（朝下）→ 保留区正好 3 张；市场空位由 deck_level_2 顶牌补回；\n  同时拿保留奖励的 1 枚黄金。到 3 张后再点保留区并打禁止标记，表示不能继续保留。",
+        "note": "【注意事项三：最多保留 3 张；第 4 张会被禁止】\n  演示前提（setup 静默完成）：A 已经从市场合法保留到第 3 张，并拿了对应的保留奖励黄金；\n  此时保留区 3 张，市场仍保持 12 张。\n  正确动画：A 再尝试从市场保留第 4 张牌 → 第 4 张进入保留区后，在保留区打禁止标记，\n  表示已经 3 张时不能再保留，必须选择其他行动。\n  为了让下一条 canonical 继续看到“保留区 3 张”，禁止标记后把这张非法尝试的第 4 张退回市场。\n  该 cue 标记 over_limit_demo：只在本条演示内允许保留数瞬时到 4，结束前回到 3。",
         "enter": {
           "zones": {
             "card_market": {
@@ -13934,7 +13930,7 @@
               "count": 35
             },
             "deck_level_2": {
-              "count": 26
+              "count": 25
             },
             "deck_level_3": {
               "count": 15
@@ -13955,7 +13951,7 @@
               "count": 4
             },
             "gold_supply": {
-              "count": 4
+              "count": 3
             },
             "noble_market": {
               "count": 3
@@ -13964,13 +13960,13 @@
               "count": 1
             },
             "player_holding": {
-              "count": 1
+              "count": 2
             },
             "player_marker": {
               "count": 1
             },
             "player_reserved": {
-              "count": 2
+              "count": 3
             }
           }
         },
@@ -14026,19 +14022,12 @@
       },
       "events": [
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.limit_hand.001.1.start"
-        },
-        {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
+          "setup": true,
           "quantity": 1,
           "to": "face_down",
           "anchor": "action.reserve.limit_hand.001.1.start",
-          "offset": 4.3,
           "target": {
             "space": "entity",
             "zone": "card_market",
@@ -14057,11 +14046,11 @@
         },
         {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
+          "setup": true,
           "quantity": 1,
           "to": "face_up",
           "anchor": "action.reserve.limit_hand.001.1.start",
-          "offset": 4.9,
           "order": 6,
           "target": {
             "space": "entity",
@@ -14081,10 +14070,10 @@
         },
         {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
+          "setup": true,
           "quantity": 1,
           "anchor": "action.reserve.limit_hand.001.1.start",
-          "offset": 5.4,
           "target": {
             "space": "entity",
             "zone": "gold_supply",
@@ -14096,12 +14085,34 @@
           }
         },
         {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.limit_hand.001.1.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "over_limit_demo": true,
           "anchor": "action.reserve.limit_hand.001.1.start",
-          "offset": 5.9,
+          "offset": 4.4,
           "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
             "space": "entity",
             "zone": "player_reserved"
           }
@@ -14114,7 +14125,42 @@
           "offset": 6.9,
           "target": {
             "space": "entity",
-            "zone": "player_reserved"
+            "zone": "player_reserved",
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "action.reserve.limit_hand.001.1.start",
+          "offset": 7.35,
+          "order": 6,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
           }
         }
       ],
