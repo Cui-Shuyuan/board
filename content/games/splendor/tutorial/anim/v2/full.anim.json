@@ -12922,6 +12922,7 @@
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
+          "order": 9,
           "anchor": "action.reserve.intro.001.1.start",
           "offset": 6.05,
           "target": {
@@ -12954,17 +12955,6 @@
           "destination": {
             "space": "entity",
             "zone": "player_holding"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.intro.001.1.start",
-          "offset": 10.2,
-          "target": {
-            "space": "entity",
-            "zone": "player_reserved"
           }
         }
       ],
