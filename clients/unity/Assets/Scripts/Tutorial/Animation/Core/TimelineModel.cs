@@ -427,6 +427,13 @@ namespace BoardGameTutorial.Animation
                                         v.X = u;
                                         v.Z = w;
                                     }
+                                    // While the card is turning, keep the source
+                                    // render layer so it draws above the deck it
+                                    // came from; the destination layer is applied
+                                    // once the clip ends.  Without this the card
+                                    // sinks under the deck and reads as flipping
+                                    // through/below the table.
+                                    v.Layer = clip.from_layer;
                                 }
                                 else if (!legacyFlip)
                                 {
@@ -443,6 +450,7 @@ namespace BoardGameTutorial.Animation
                                     v.X = clip.to_x;
                                     v.Z = clip.to_z;
                                 }
+                                if (flipEdge) v.Layer = clip.to_layer;
                                 if (!string.IsNullOrEmpty(clip.to_face)) v.Face = ParseFace(clip.to_face);
                             }
                             break;

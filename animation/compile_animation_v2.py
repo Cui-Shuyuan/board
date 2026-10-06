@@ -1497,6 +1497,8 @@ class Compiler:
                             axis=span_axis, direction=flip["direction"],
                             from_x=fx, from_z=fz, to_x=tx, to_z=tz,
                             span=span, mode="edge",
+                            from_layer=rec.get("from_layer", 0),
+                            to_layer=rec.get("to_layer", 0),
                         ))
                 else:
                     old_faces = {it["id"]: int(it.get("face", 1) or 1) for it in affected}
@@ -1511,6 +1513,8 @@ class Compiler:
                                 axis=flip["axis"], direction=flip["direction"],
                                 from_x=x, from_z=z, to_x=x, to_z=z,
                                 span=span, mode="center",
+                                from_layer=int(it.get("layer", 0) or 0),
+                                to_layer=int(it.get("layer", 0) or 0),
                             ))
                         else:
                             clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
@@ -1983,7 +1987,7 @@ class Compiler:
     def flip_clip(self, it, at, dur, lead, easing, to_face, from_face=None,
                   axis="long", direction="ccw",
                   from_x=0.0, from_z=0.0, to_x=0.0, to_z=0.0,
-                  span=0.0, mode="center"):
+                  span=0.0, mode="center", from_layer=0, to_layer=0):
         """Card flip clip.
 
         ``mode=center`` keeps the legacy in-place edge-on spin: the card
@@ -2010,6 +2014,10 @@ class Compiler:
             "flip_side": -1 if direction == "ccw" else 1,
             "from_x": round(float(from_x), 6), "from_z": round(float(from_z), 6),
             "to_x": round(float(to_x), 6), "to_z": round(float(to_z), 6),
+            # Render layer before/after the turn.  The logical state moves the
+            # card to the destination at clip start; without an override it
+            # would be drawn under the source deck for the whole flip.
+            "from_layer": int(from_layer), "to_layer": int(to_layer),
         })
         return c
 

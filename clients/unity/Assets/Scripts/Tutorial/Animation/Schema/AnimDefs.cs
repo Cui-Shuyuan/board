@@ -314,6 +314,8 @@ namespace BoardGameTutorial.Animation
         public string flip_mode;
         public float flip_span;
         public int flip_side;
+        public int from_layer;
+        public int to_layer;
         public string part;
         public string indicator;
         public float marker_x;

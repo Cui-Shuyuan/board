@@ -614,7 +614,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
                 _cue_doc(
                     "c1", "main", entry="initial", transition="world_cut",
                     events=[
-                        {"op": "create", "at": 0.0, "count": 1, "to": "face_down",
+                        {"op": "create", "at": 0.0, "count": 1, "to": "face_down", "layer": 7,
                          "target": {"space": "entity", "zone": "showcase",
                                     "template": "sample_card", "palette": "card_level_1"}},
                         {"op": "set_face", "at": 1.0, "dur": 0.6, "to": "face_up",
@@ -640,6 +640,10 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertAlmostEqual(0.6, flip["flip_span"])
         self.assertEqual("face_down", flip["from_face"])
         self.assertEqual("face_up", flip["to_face"])
+        # The card must render in the source layer during the turn, then settle
+        # into the destination layer, otherwise it flips under the deck.
+        self.assertEqual(7, flip["from_layer"])
+        self.assertEqual(0, flip["to_layer"])
         # The clip must start at the source slot and end at the destination
         # slot, not at the already-mutated logical position.
         self.assertNotAlmostEqual(flip["from_x"], flip["to_x"])
