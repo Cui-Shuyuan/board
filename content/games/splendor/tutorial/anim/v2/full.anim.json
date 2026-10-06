@@ -12817,7 +12817,7 @@
       ],
       "script": {
         "story": "【除购买外，玩家也可以选择不支付费用，把一张发展卡牌从供应堆拿走、朝下放在自己面前，并从黄金供应堆拿一枚黄金】",
-        "note": "【保留：新行动，从零开始】\n  本 cue 继承 setup 完成后的空白开局：A 没有宝石、发展区、保留牌和贵族。\n  第一个行动选择保留：市场三级? → 这里保留一张一级蓝（价格黑3，后面正好可以用保留奖励的黄金买它）。\n  「把一张发展卡牌从供应堆拿走」时，市场 order 3 的一级蓝 → player_reserved 终态 face_down；\n  「正面朝下放在自己面前」时从 deck_level_1 顶翻一张真牌补回 order 3；\n  「从黄金供应堆拿一枚黄金」时黄金 → 持有区。\n  整条 cue 只有一个 shot_board 桌面镜头，高亮和搬运 offset 按 TTS 词时间校准。",
+        "note": "【保留：新行动，从零开始】\n  本 cue 继承 setup 完成后的空白开局：A 没有宝石、发展区、保留牌和贵族。\n  市场三级白（order 9）也能被第一个行动直接保留，说明市场上任意等级的发展卡都可以保留，不是必须从一级开始。\n  「把一张发展卡牌从供应堆拿走」时，市场三级白 → player_reserved 终态 face_down；\n  「正面朝下放在自己面前」时从 deck_level_3 顶翻一张三级蓝补回 order 9；\n  「从黄金供应堆拿一枚黄金」时黄金 → 持有区。\n  整条 cue 只有一个 shot_board 桌面镜头，高亮和搬运 offset 按 TTS 词时间校准。",
         "enter": {
           "zones": {
             "card_market": {
@@ -12888,13 +12888,13 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 35
+              "count": 36
             },
             "deck_level_2": {
               "count": 26
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -12949,31 +12949,12 @@
       },
       "events": [
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.intro.001.1.start"
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.intro.001.1.start",
-          "offset": 3.4,
-          "target": {
-            "space": "entity",
-            "zone": "card_market",
-            "order": 3
-          }
-        },
-        {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
+          "setup": true,
           "quantity": 1,
-          "to": "face_down",
           "anchor": "action.reserve.intro.001.1.start",
-          "offset": 5.3,
+          "offset": 0.0,
           "target": {
             "space": "entity",
             "zone": "card_market",
@@ -12989,17 +12970,19 @@
           },
           "destination": {
             "space": "entity",
-            "zone": "player_reserved"
-          }
+            "zone": "deck_level_1"
+          },
+          "to": "face_down"
         },
         {
           "op": "transfer",
-          "dur": 0.6,
+          "dur": 0.0,
+          "setup": true,
           "quantity": 1,
           "to": "face_up",
           "order": 3,
           "anchor": "action.reserve.intro.001.1.start",
-          "offset": 6.05,
+          "offset": 0.0,
           "target": {
             "space": "entity",
             "zone": "deck_level_1",
@@ -13010,6 +12993,72 @@
               {
                 "key": "bonus",
                 "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.intro.001.1.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 3.4,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 9
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 5.3,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 9,
+          "anchor": "action.reserve.intro.001.1.start",
+          "offset": 6.05,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
               }
             ]
           },
@@ -13108,20 +13157,20 @@
       ],
       "script": {
         "story": "【除了供应堆的 12 张卡牌外，玩家也可以从 3 摞牌堆顶选择一张未被翻开的发展卡牌保留】",
-        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `<development_deck_level_1>` 取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻一级牌堆顶是空白垫牌，脚本不点名、也不得用 `target.order` 当源选择。\n  · 牌面朝下，观众和对手都看不到这张垫牌是哪张；这一条演示的是“可以盲抽并保留”，不依赖它是不是真卡。",
+        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `deck_level_1` 顶取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻一级牌堆顶是真实牌 card_l1_sapphire_15，脚本不点名，观众和对手在保留前都看不到它。\n  · 牌面朝下，但后面可以直接买它——这条同时说明任何一级牌堆（以及任意等级）的顶牌都可以保留。\n",
         "exit": {
           "zones": {
             "card_market": {
               "count": 12
             },
             "deck_level_1": {
-              "count": 34
+              "count": 35
             },
             "deck_level_2": {
               "count": 26
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -13179,13 +13228,13 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 35
+              "count": 36
             },
             "deck_level_2": {
               "count": 26
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -13417,13 +13466,13 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 34
+              "count": 35
             },
             "deck_level_2": {
               "count": 25
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -13481,13 +13530,13 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 34
+              "count": 35
             },
             "deck_level_2": {
               "count": 26
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -13751,20 +13800,20 @@
       ],
       "script": {
         "story": "【按照之前介绍过的规则，支付费用，将一张被保留的、背面朝上的卡牌反面（翻开）】",
-        "note": "【买下保留的那张：真付钱】\n  买的是保留区第 1 张 **一级蓝 card_l1_sapphire_15**：价格读图 = **3 黑**。\n  本局 A 没有黑宝石，也没有黑折扣；保留奖励攒下的 **3 张黄金**正好当 3 枚黑宝石支付。\n  这一整套账由 `animation/validate_anim_rules.py` 在写脚本时逐色核对：每色在场恒 4 枚、黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
+        "note": "【买下保留的那张：真付钱】\n  买的是保留区里那张 **一级蓝 card_l1_sapphire_15**（之前从一级牌堆顶保留）：价格读图 = **3 黑**。\n  本局 A 没有黑宝石，也没有黑折扣；保留奖励攒下的 **3 张黄金**正好当 3 枚黑宝石支付。\n  这一整套账由 `animation/validate_anim_rules.py` 在写脚本时逐色核对：每色在场恒 4 枚、黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
         "exit": {
           "zones": {
             "card_market": {
               "count": 12
             },
             "deck_level_1": {
-              "count": 34
+              "count": 35
             },
             "deck_level_2": {
               "count": 25
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -13822,13 +13871,13 @@
               "count": 12
             },
             "deck_level_1": {
-              "count": 34
+              "count": 35
             },
             "deck_level_2": {
               "count": 25
             },
             "deck_level_3": {
-              "count": 16
+              "count": 15
             },
             "gem_supply_diamond": {
               "count": 4
@@ -13898,7 +13947,7 @@
           "target": {
             "space": "entity",
             "zone": "player_reserved",
-            "order": 0
+            "order": 1
           }
         },
         {
