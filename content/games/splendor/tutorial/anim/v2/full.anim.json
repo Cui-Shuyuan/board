@@ -13775,28 +13775,165 @@
     },
     {
       "id": "action.reserve.limit_gold.001.2",
-      "parent": "action.reserve.notes_intro.001",
+      "parent": "action.reserve.deck.001",
       "timing": [
         {
-          "key": "镜头黄金供应堆",
-          "text": "0.00"
+          "key": "整桌镜头 / 从牌堆顶保留",
+          "text": "整句"
         }
       ],
       "script": {
         "story": "【如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金】",
-        "note": "【注意事项二：黄金拿完了也能保留，只是不给黄金】\n  规则说明，**没有状态变化**：镜头给黄金供应堆（还有 4 枚）→ 点它、再点保留区。\n  ⚠ 不演示『黄金没了』：那要把供应堆掏空（口播没让人拿那 4 枚）。规则本身靠口播说清，画面只指位置。"
+        "note": "【注意事项二：黄金拿完了也能保留，只是不给黄金（真实演示）】\n  本 cue 与上一条超上限 demo 是兄弟节点，都从 action.reserve.deck.001 的 canonical 状态分叉。\n  演示前提：把黄金供应堆里的 4 枚黄金移到玩家 B 持有区，黄金供应堆变空；\n  A 仍然从牌堆顶保留一张牌（朝下）→ player_reserved，但因为黄金供应堆已空，不拿黄金。\n  用真实状态说明「没有黄金也可以保留，只是不给黄金」。\n  本 cue 是 demo；下一条限制保留 cue 用 entry 回到 canonical，不把这里的状态写回主线。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 0
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_b_holding": {
+              "count": 4
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 1
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 2
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 0
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_b_holding": {
+              "count": 4
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 1
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        }
       },
       "events": [
         {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 4,
+          "anchor": "action.reserve.limit_gold.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_holding"
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_gold",
+          "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.reserve.limit_gold.001.2.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "action.reserve.limit_gold.001.2.start",
+          "offset": 2.6,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
         }
       ],
       "tree": "main",
-      "entry": "action.reserve.deck.001"
+      "demo": true
     },
     {
       "id": "action.reserve.limit_hand.001.1",
@@ -13815,7 +13952,8 @@
           "anchor": "action.reserve.limit_hand.001.1.start"
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.reserve.deck.001"
     },
     {
       "id": "action.reserve.limit_hand.001.2",
