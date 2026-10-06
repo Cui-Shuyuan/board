@@ -13049,7 +13049,7 @@
       ],
       "script": {
         "story": "【黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代】",
-        "note": "【黄金 = 万能宝石：真买一张】\n  开场用 setup 给 A 补 3 枚黑宝石（作为本 demo 的前提）。\n  黄金当第 4 枚黑宝石：绿色一级牌 card_l1_emerald_32 价格是黑 4，A 付 3 枚黑宝石 + 1 枚黄金。\n  付款后绿色发展卡进入 A 的发展区，市场空位由 deck_level_1 顶牌 card_l1_onyx_3 补回。\n  这条把『黄金可以成为任意一种宝石的替代』从口播变成真实支付。",
+        "note": "【黄金 = 万能宝石：真买一张】\n  开场用 setup 给 A 补 3 枚黑宝石（作为本 demo 的前提）。\n  黄金当第 4 枚黑宝石：绿色一级牌 card_l1_emerald_32 价格是黑 4，A 付 3 枚黑宝石 + 1 枚黄金。\n  付款后绿色发展卡进入 A 的发展区，市场空位由 deck_level_1 顶牌 card_l1_onyx_3 补回。\n  这条把『黄金可以成为任意一种宝石的替代』从口播变成真实支付。\n  · 画面用 screen mask `purchase_card` 展示这张绿卡，并用 `shape cost_1` 框出左下角价格；左上角 `hint_action_first` 显示说明『这里用1枚黄金代替了一枚黑宝石』。",
         "enter": {
           "zones": {
             "card_market": {
@@ -13220,6 +13220,65 @@
             "space": "entity",
             "zone": "card_market",
             "order": 0
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 2.3,
+          "rect": {
+            "x": 0.7,
+            "y": 0.08,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 2.3,
+          "rect": {
+            "x": 0.7,
+            "y": 0.08,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "image": "media/card/一级发展卡_绿_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_1",
+          "dur": 0.0,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 3.1,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "这里用1枚黄金代替了一枚黑宝石",
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 3.55,
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
           }
         },
         {
