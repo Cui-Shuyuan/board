@@ -12817,9 +12817,66 @@
       ],
       "script": {
         "story": "【除购买外，玩家也可以选择不支付费用，把一张发展卡牌从供应堆拿走、朝下放在自己面前，并从黄金供应堆拿一枚黄金】",
-        "note": "【保留：一句话完成 扣牌 → 补牌 → 拿黄金】\n  整条 cue 只有一个 shot_board 桌面镜头，口播一句话说完保留流程。\n  「把一张发展卡牌从供应堆拿走」时市场三级白 → player_reserved（终态 face_down）；\n  「正面朝下放在自己面前」时补牌：deck_level_3 顶牌三级蓝 → 市场空位，保持市场 12 张；\n  「从黄金供应堆拿一枚黄金」时黄金 → 持有区。\n  高亮和搬运的 offset 按实际 TTS 词时间校准。",
+        "note": "【保留：新行动，从零开始】\n  本 cue 继承 setup 完成后的空白开局：A 没有宝石、发展区、保留牌和贵族。\n  第一个行动选择保留：市场三级? → 这里保留一张一级蓝（价格黑3，后面正好可以用保留奖励的黄金买它）。\n  「把一张发展卡牌从供应堆拿走」时，市场 order 3 的一级蓝 → player_reserved 终态 face_down；\n  「正面朝下放在自己面前」时从 deck_level_1 顶翻一张真牌补回 order 3；\n  「从黄金供应堆拿一枚黄金」时黄金 → 持有区。\n  整条 cue 只有一个 shot_board 桌面镜头，高亮和搬运 offset 按 TTS 词时间校准。",
         "enter": {
           "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
             "player_reserved": {
               "count": 0
             }
@@ -12830,48 +12887,62 @@
             "card_market": {
               "count": 12
             },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
             "gold_supply": {
               "count": 4
             },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
             "player_holding": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 1,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_gold",
-                  "count": 1,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 1,
-                  "face": "down"
-                }
-              ]
+              "count": 1
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
             },
             "player_reserved": {
               "count": 1
-            },
-            "deck_level_3": {
-              "count": 15
             }
           }
         }
@@ -12893,7 +12964,7 @@
           "target": {
             "space": "entity",
             "zone": "card_market",
-            "order": 9
+            "order": 3
           }
         },
         {
@@ -12906,11 +12977,13 @@
           "target": {
             "space": "entity",
             "zone": "card_market",
-            "concept": "development_card_level_3",
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<diamond>"
+                "value": "<sapphire>"
               }
             ]
           },
@@ -12924,17 +12997,19 @@
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
-          "order": 9,
+          "order": 3,
           "anchor": "action.reserve.intro.001.1.start",
           "offset": 6.05,
           "target": {
             "space": "entity",
-            "zone": "deck_level_3",
-            "concept": "development_card_level_3",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<sapphire>"
+                "value": "<onyx>"
               }
             ]
           },
@@ -12960,7 +13035,8 @@
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.turn.002"
     },
     {
       "id": "action.reserve.gold.001",
@@ -13035,48 +13111,129 @@
         "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `<development_deck_level_1>` 取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻一级牌堆顶是空白垫牌，脚本不点名、也不得用 `target.order` 当源选择。\n  · 牌面朝下，观众和对手都看不到这张垫牌是哪张；这一条演示的是“可以盲抽并保留”，不依赖它是不是真卡。",
         "exit": {
           "zones": {
+            "card_market": {
+              "count": 12
+            },
             "deck_level_1": {
-              "count": 19
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
             },
             "gold_supply": {
               "count": 3
             },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
             "player_holding": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 1,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_gold",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 1,
-                  "face": "down"
-                }
-              ]
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
             },
             "player_reserved": {
               "count": 2
+            }
+          }
+        },
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 1
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 1
             }
           }
         }
@@ -13178,7 +13335,7 @@
       "timing": [],
       "script": {
         "story": "【拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
-        "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 7 枚（5 宝石 + 2 黄金），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出 4 枚（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。"
+        "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 2 枚黄金（0 宝石），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。"
       },
       "events": [
         {
@@ -13259,48 +13416,126 @@
             "card_market": {
               "count": 12
             },
-            "gold_supply": {
-              "count": 2
-            },
-            "player_holding": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 1,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_gold",
-                  "count": 3,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 1,
-                  "face": "down"
-                }
-              ]
-            },
-            "player_reserved": {
-              "count": 3
+            "deck_level_1": {
+              "count": 34
             },
             "deck_level_2": {
               "count": 25
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 2
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 3
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        },
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 2
             }
           }
         }
@@ -13477,7 +13712,7 @@
       ],
       "script": {
         "story": "【保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值】",
-        "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（真正买到的那 9 张）——对比就是这句话：只有进了发展区的牌才给折扣和声望。\n  保留区的牌**不在**发展区，所以怎么点发展区都数不到它们。"
+        "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（当前还没有买到的牌）——对比就是这句话：\n  只有进了发展区的牌才给折扣和声望；保留区的牌不在发展区，所以怎么点发展区都数不到它们。"
       },
       "events": [
         {
@@ -13516,103 +13751,65 @@
       ],
       "script": {
         "story": "【按照之前介绍过的规则，支付费用，将一张被保留的、背面朝上的卡牌反面（翻开）】",
-        "note": "【买下保留的那张：**真付钱**（用户指示⑤ + 状态必须合法）】\n  买的是保留区第 3 张 **二级红**：价格读图 = **6 红**。\n  为什么不是第 1 张三级白：它要 **3白+3红+6黑**，而 2 人局每色在场只有 4 枚 ——\n  **6 枚黑宝石根本不存在**，而发展区没有黑牌、折扣抵不到黑 → 这张在 2 人局里买不起，\n  留在保留区是对的（真实牌局里『先留着，以后再买』也是常态）。\n  二级红的账：发展区有 4 张红牌（一级红×4）→ 红折扣 4 → 6 − 4 = 实付 **2 红**；\n  手上没有红宝石（白2 绿1 黄金3）→ 用 **2 枚黄金**替代（黄金就是万能宝石，3.3 刚讲过）。\n  这一整套账由 `animation/validate_anim_rules.py` 在**写脚本时**逐色核对：每色在场恒 4 枚、\n  黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
+        "note": "【买下保留的那张：真付钱】\n  买的是保留区第 1 张 **一级蓝 card_l1_sapphire_15**：价格读图 = **3 黑**。\n  本局 A 没有黑宝石，也没有黑折扣；保留奖励攒下的 **3 张黄金**正好当 3 枚黑宝石支付。\n  这一整套账由 `animation/validate_anim_rules.py` 在写脚本时逐色核对：每色在场恒 4 枚、黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
         "exit": {
           "zones": {
-            "gold_supply": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
               "count": 4
             },
-            "player_holding": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 2,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 1,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_gold",
-                  "count": 1,
-                  "face": "down"
-                },
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 1,
-                  "face": "down"
-                }
-              ]
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
             },
             "player_development": {
-              "items": [
-                {
-                  "template": "card_l1_diamond_18",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_20",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_22",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_24",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_33",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_35",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_37",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_40",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l2_ruby_70",
-                  "palette": "card_level_2",
-                  "count": 1,
-                  "face": "up"
-                }
-              ]
+              "count": 1
+            },
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
             },
             "player_reserved": {
               "count": 2
@@ -13620,7 +13817,68 @@
           }
         },
         "enter": {
-          "zones": {}
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 2
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 3
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
         }
       },
       "events": [
@@ -13640,13 +13898,13 @@
           "target": {
             "space": "entity",
             "zone": "player_reserved",
-            "order": 2
+            "order": 0
           }
         },
         {
           "op": "transfer",
           "dur": 0.6,
-          "quantity": 2,
+          "quantity": 3,
           "anchor": "action.purchase_reserved.002.1.b1.start",
           "offset": 1.265,
           "target": {
@@ -13669,11 +13927,13 @@
           "target": {
             "space": "entity",
             "zone": "player_reserved",
-            "concept": "development_card_level_2",
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<ruby>"
+                "value": "<sapphire>"
               }
             ]
           },
@@ -13692,7 +13952,7 @@
           "target": {
             "space": "entity",
             "zone": "player_development",
-            "template": "card_l2_ruby_70"
+            "template": "card_l1_sapphire_15"
           }
         }
       ],
@@ -13704,7 +13964,7 @@
       "timing": [],
       "script": {
         "story": "【正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣】",
-        "note": "【买完之后的结算】\n  规则说明，没有状态变化：点发展区（声望 + 折扣）→ 点自己面前贵族（看条件）。\n  刚买进的是二级红，读图 3 分（不是三级白 4 分）；发展区现在 4 张白 + 4 张红 + 二级红。\n  贵族供应堆已空（前面 3 块都拿完）→ 这一步没有对象可查，是演示顺序造成的；下一步 endgame 会把分数补到触发线。\n"
+        "note": "【买完之后的结算】\n  规则说明，没有状态变化：点发展区（声望 + 折扣）→ 点自己面前贵族（看条件）。\n  刚买进的是 level 1 蓝 card_l1_sapphire_15（声望 0，蓝折扣 1）；发展区现在只有这一张牌。\n  贵族条件的检查照常进行，但当前发展区数量还不足以满足贵族。"
       },
       "events": [
         {
@@ -13791,84 +14051,194 @@
         "note": "【到达 15 分 → 触发结束】\n  口播前提是达到 15 或更多 → 这里把可见前提补到位：\n  发展区 4 张一级白 card_l1_diamond_18/20/22/24，读图 VPs = 0/0/0/1；\n  4 张一级红 card_l1_ruby_33/35/37/40，VPs = 0/0/0/1；\n  二级黑 card_l2_onyx_45 = 2；二级红 card_l2_ruby_70 = 3；再从 deck_level_3 移除 1 张 blank_card_3 垫牌，\n  create card_l3_sapphire_77（4 VP）并显式 face_up。\n  发展区 = 1 + 1 + 3 + 2 + 4 = 11 分；玩家面前 2 块贵族各 3 分 = 6；总计 17 ≥ 15。\n  圈声望时发展区每张牌左上角 + 贵族左上角都圈，画面与账一致。",
         "exit": {
           "zones": {
-            "player_development": {
-              "items": [
-                {
-                  "template": "card_l1_diamond_18",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_20",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_22",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_diamond_24",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_33",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_35",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_37",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l1_ruby_40",
-                  "palette": "card_level_1",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l2_ruby_70",
-                  "palette": "card_level_2",
-                  "count": 1,
-                  "face": "up"
-                },
-                {
-                  "template": "card_l3_sapphire_77",
-                  "palette": "card_level_3",
-                  "count": 1,
-                  "face": "up"
-                }
-              ]
+            "card_market": {
+              "count": 11
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 26
             },
             "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 0
+            },
+            "offstage": {
+              "count": 3
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
               "count": 14
+            },
+            "player_holding": {
+              "count": 6
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 2
+            },
+            "player_reserved": {
+              "count": 0
             }
           }
         },
         "enter": {
           "zones": {
+            "card_market": {
+              "count": 11
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 26
+            },
             "deck_level_3": {
-              "count": 14
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 0
+            },
+            "offstage": {
+              "count": 3
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 13
+            },
+            "player_holding": {
+              "count": 6
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 2
+            },
+            "player_reserved": {
+              "count": 0
             }
           }
         }
       },
       "events": [
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "endgame.trigger.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "endgame.trigger.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l2_ruby_70",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "endgame.trigger.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
+        },
         {
           "op": "camera",
           "dur": 0.0,
@@ -13953,7 +14323,8 @@
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.cards.summary.001.3"
     },
     {
       "id": "endgame.final_rounds.001.1",
