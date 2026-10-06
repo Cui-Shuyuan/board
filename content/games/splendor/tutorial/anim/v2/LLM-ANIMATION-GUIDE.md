@@ -164,7 +164,7 @@
   不再整组同时移动；间隔常量为 `DEFAULT_GEM_STAGGER = 0.12s`。
   显式写 `stagger` 时以事件值为准；`setup: true` 的前提转移只改状态，不生成视觉
   逐枚动作。
-- **通用语义原语**：`move` / `take` / `pay` / `deal` / `flip` / `draw` 是常用
+- **通用语义原语**：`move` / `take` / `pay` / `flip` / `draw` 是常用
   transfer 组合的命名，编译期展开成 `transfer`（flip/draw 额外带 edge flip），
   runtime 无变化，也**不做归属校验**。写脚本时优先用它们；语义不匹配时直接用底层
   `transfer`：
@@ -176,7 +176,6 @@
        "destination": { "space": "entity", "zone": "player_holding" }, "quantity": 2 }`
     多色拿取写 `target: { "zones": [...] }` 或 `source` 列表，配合 `stagger`。
   - `pay`：玩家区 → 供应堆（反向 transfer），字段同 `transfer`。
-  - `deal`：牌堆顶 → 市场槽位，默认 `to=face_up`；需要写 `order` 指定槽位。
   - `flip`：显式对象 → `destination`，一边绕边翻转一边移动；必须写
     `destination` 和 `to=face_up/face_down`，`axis`/`direction` 同 draw，`dur`
     默认 0.6s。购买自己保留的牌（背面朝上 → 发展区朝上）用 `flip`：
@@ -185,12 +184,16 @@
        "destination": { "space": "entity", "zone": "player_development" },
        "axis": "long", "direction": "ccw" }`
   - `draw`：牌堆顶 → `destination`，一张牌，默认 `to=face_up`，视觉是带落点的
-    `axis/direction` edge flip；**必须写 destination**。`dur` 是翻面+移动的总时长，
-    不写时默认 0.6s；cue72 当前覆盖为 0.2s 做快速翻面样板：
+    `axis/direction` edge flip；**必须写 destination**。给玩家抽牌和给市场补牌都用
+    `draw`，市场槽位用 `order` 指定；`dur` 不写时默认 0.6s。
+    cue72（抽给玩家）：
     `{ "op": "draw", "target": { "space": "entity", "zone": "deck_level_1" },
        "destination": { "space": "entity", "zone": "deck_peek" },
        "axis": "long", "direction": "ccw", "dur": 0.2 }`
-  - **buy / reserve / claim 不是原语**：它们分别由 `pay + take + deal`、
+    市场补牌：
+    `{ "op": "draw", "target": { "space": "entity", "zone": "deck_level_1" },
+       "destination": { "space": "entity", "zone": "card_market" }, "order": 2 }`
+  - **buy / reserve / claim 不是原语**：它们分别由 `pay + take + draw`（补牌）、
     `take(to=face_down)`、`take(noble_market → player_nobles)` 组合表达。
   - `setup: true` 的静默前提状态若语义匹配通用动词，写对应动词 + `setup:true`
     （例如“玩家已经拿过两枚金” = `take`，只改状态不出动作）；只有纯清场/复位

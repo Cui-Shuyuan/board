@@ -720,7 +720,7 @@ class CompileAnimationV2Tests(unittest.TestCase):
                          "target": {"space": "entity", "zone": "player_holding"},
                          "destination": {"space": "entity", "zone": "gem_supply_ruby"},
                          "quantity": 1},
-                        {"op": "deal",
+                        {"op": "draw",
                          "target": {"space": "entity", "zone": "deck_level_1"},
                          "destination": {"space": "entity", "zone": "card_market"},
                          "order": 3},
@@ -744,6 +744,10 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual(2, events[0]["quantity"])
         self.assertEqual("face_up", events[2]["to"])
         self.assertEqual(3, events[2]["order"])
+        self.assertIs(True, events[2]["from_top"])
+        self.assertEqual(1, events[2]["quantity"])
+        self.assertEqual(schema.DEFAULT_FLIP_DURATION, events[2]["dur"])
+        self.assertEqual({"axis": "long", "direction": "ccw"}, events[2]["flip"])
         self.assertEqual("player_reserved", events[3]["source"])
         self.assertEqual("player_development", events[3]["destination"])
         self.assertIs(True, events[4]["from_top"])

@@ -3002,7 +3002,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3026,7 +3026,7 @@
           "order": 0
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3050,7 +3050,7 @@
           "order": 1
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3074,7 +3074,7 @@
           "order": 2
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3098,7 +3098,7 @@
           "order": 3
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3122,7 +3122,7 @@
           "order": 4
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3146,7 +3146,7 @@
           "order": 5
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3170,7 +3170,7 @@
           "order": 6
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3194,7 +3194,7 @@
           "order": 7
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3218,7 +3218,7 @@
           "order": 8
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3242,7 +3242,7 @@
           "order": 9
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3266,7 +3266,7 @@
           "order": 10
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -7564,7 +7564,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -8503,7 +8503,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.5,
           "quantity": 1,
           "to": "face_up",
@@ -8721,7 +8721,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.5,
           "quantity": 1,
           "to": "face_up",
@@ -10014,7 +10014,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -10591,7 +10591,7 @@
           "setup": true
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -11611,7 +11611,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.8,
           "quantity": 1,
           "to": "face_up",
@@ -12389,7 +12389,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.8,
           "quantity": 1,
           "to": "face_up",
@@ -12893,7 +12893,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -13236,7 +13236,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -14003,7 +14003,7 @@
           }
         },
         {
-          "op": "deal",
+          "op": "draw",
           "dur": 0.0,
           "setup": true,
           "quantity": 1,

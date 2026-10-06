@@ -102,7 +102,7 @@ class CueGraph:
         # `shuffle` is intentionally absent: it only adds visual jitter and
         # never permutes the logical pile.
         state_ops = {"create", "ensure", "destroy", "transfer", "stack",
-                     "set_face", "move_order", "take", "move", "pay", "deal", "draw"}
+                     "set_face", "move_order", "take", "move", "pay", "flip", "draw"}
         changed = any(e.get("op") in state_ops for e in (target.get("events") or []))
         if changed and not force:
             raise CueGraphError(
