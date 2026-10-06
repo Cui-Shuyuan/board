@@ -350,13 +350,12 @@ def run(anim, default_stage, stages, facts, rep: Report = None,
             if n > LEVEL_CAP[lv]:
                 rep.error(cid, f"{lv} 级发展卡共 {n} 张 > 实物 {LEVEL_CAP[lv]} 张")
         for zid in zones:
-            # over_limit_demo 用来标记“故意展示越限”的教学片段；保留上限也允许在同一 cue 内瞬时越界，
-            # 例如“已保留 3 张后再尝试保留第 4 张，然后打禁止标记”。
-            if "reserved" in zid and not over_limit_demo and st.count(zid) > RESERVE_LIMIT:
+            # demo 分支允许假设性/错误示范状态；保留上限等只在 canonical 分支严格校验。
+            if not is_demo and "reserved" in zid and st.count(zid) > RESERVE_LIMIT:
                 rep.error(cid, f"{zid} 保留 {st.count(zid)} 张 > 上限 {RESERVE_LIMIT}")
             if not over_limit_demo and "holding" in zid and st.hand(zid) > HAND_LIMIT:
                 rep.error(cid, f"{zid} 手上 {st.hand(zid)} 枚 > 上限 {HAND_LIMIT}")
-        if not over_limit_demo and len(reserved) > gold_taken and st.count("gold_supply") + gold_taken >= len(reserved):
+        if not is_demo and len(reserved) > gold_taken and st.count("gold_supply") + gold_taken >= len(reserved):
             rep.error(cid, f"保留了 {len(reserved)} 张牌却只拿了 {gold_taken} 枚黄金（黄金堆还有，必须给）")
         if on_cue_end is not None:
             on_cue_end(cid, st)
