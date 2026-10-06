@@ -1368,6 +1368,7 @@ class Compiler:
                 sources = [norm(x) for x in sources if norm(x)]
                 dest = norm(ev.get("destination"))
                 is_setup = bool(ev.get("setup"))
+                flip = self.flip_options(ev, cue_id)
 
                 # 先收齐所有转移记录，再决定时间：
                 # 非 setup 的多枚宝石默认逐枚短间隔飞出，避免整把同时位移。
@@ -1396,7 +1397,15 @@ class Compiler:
                     # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
                     record_at = at + max(0.0, lead) + index * stagger
                     if not is_setup:
-                        clips.append(self.move_clip(rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to")))
+                        if flip:
+                            clips.append(self.flip_record_clip(
+                                rec, record_at, dur, 0.0, easing, stage_slots,
+                                stage_id, ev.get("to"), flip,
+                            ))
+                        else:
+                            clips.append(self.move_clip(
+                                rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to"),
+                            ))
                     records_with_times.append((record_at, rec["item"]["id"]))
                     manual_state_item_ids.add(rec["item"]["id"])
 
@@ -1486,19 +1495,10 @@ class Compiler:
                     )
                     affected = [rec["item"] for rec in records]
                     affected_ids = [it["id"] for it in affected]
-                    span_axis = flip["axis"]
                     for rec in records:
-                        fx, fz = self.position(stage_slots, rec["from_zone"], rec["from_order"])
-                        tx, tz = self.position(stage_slots, rec["to_zone"], rec["to_order"])
-                        span = self.flip_span(stage_id, rec["item"]["template"], span_axis)
-                        clips.append(self.flip_clip(
-                            rec["item"], at, dur, lead, easing, ev.get("to"),
-                            from_face=rec.get("from_face"),
-                            axis=span_axis, direction=flip["direction"],
-                            from_x=fx, from_z=fz, to_x=tx, to_z=tz,
-                            span=span, mode="edge",
-                            from_layer=rec.get("from_layer", 0),
-                            to_layer=rec.get("to_layer", 0),
+                        clips.append(self.flip_record_clip(
+                            rec, at, dur, lead, easing, stage_slots, stage_id,
+                            ev.get("to"), flip,
                         ))
                 else:
                     old_faces = {it["id"]: int(it.get("face", 1) or 1) for it in affected}
@@ -1869,6 +1869,24 @@ class Compiler:
     def flip_span(self, stage_id: str, template: str, axis: str) -> float:
         w, h = self.template_size(stage_id, template)
         return w if axis == "long" else h
+
+    def flip_record_clip(self, rec, at, dur, lead, easing, slots, stage_id,
+                         to_face, flip):
+        """One transfer record rendered as an edge flip (used by set_face and
+        by a transfer carrying ``flip``, e.g. the ``draw`` macro)."""
+        it = rec["item"]
+        fx, fz = self.position(slots, rec["from_zone"], rec["from_order"])
+        tx, tz = self.position(slots, rec["to_zone"], rec["to_order"])
+        span = self.flip_span(stage_id, it["template"], flip["axis"])
+        return self.flip_clip(
+            it, at, dur, lead, easing, to_face,
+            from_face=rec.get("from_face"),
+            axis=flip["axis"], direction=flip["direction"],
+            from_x=fx, from_z=fz, to_x=tx, to_z=tz,
+            span=span, mode="edge",
+            from_layer=rec.get("from_layer", 0),
+            to_layer=rec.get("to_layer", 0),
+        )
 
     def base_clip(self, kind, at, dur, lead, easing):
         return {

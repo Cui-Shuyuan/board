@@ -297,7 +297,7 @@ def run(anim, default_stage, stages, facts, rep: Report = None,
                                     continue
                                 if want_bonus and card_bonus(stage, kt) != want_bonus:
                                     continue
-                                if not tid and want_lv in "123" and card_level(stage, kt) != want_lv:
+                                if not tid and want_lv in ("1", "2", "3") and card_level(stage, kt) != want_lv:
                                     continue
                                 ident = k
                                 break

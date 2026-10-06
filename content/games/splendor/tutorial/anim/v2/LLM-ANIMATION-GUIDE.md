@@ -164,6 +164,20 @@
   不再整组同时移动；间隔常量为 `DEFAULT_GEM_STAGGER = 0.12s`。
   显式写 `stagger` 时以事件值为准；`setup: true` 的前提转移只改状态，不生成视觉
   逐枚动作。
+- **语义动作宏**：`take` / `pay` / `deal` / `draw` 是常用 transfer 组合的命名，
+  编译期展开成 `transfer`（draw 额外带 edge flip），runtime 无变化，也**不做归属
+  校验**。写脚本时优先用它们表达意图；语义不匹配时直接用 `transfer`：
+  - `take`：从来源拿 → 目的地（和 `transfer` 同字段；牌堆/供应堆默认取顶）。
+    `{ "op": "take", "target": { "space": "entity", "zone": "gem_supply_ruby" },
+       "destination": { "space": "entity", "zone": "player_holding" }, "quantity": 2 }`
+  - `pay`：玩家区 → 供应堆（反向 transfer），字段同 `transfer`。
+  - `deal`：牌堆顶 → 市场槽位，默认 `to=face_up`；需要写 `order` 指定槽位。
+  - `draw`：牌堆顶 → `destination`，一张牌，默认 `to=face_up`，视觉是带落点的
+    `axis/direction` edge flip；**必须写 destination**。cue72 的
+    `action.reserve.private.002` 就是 `draw` 的样板：
+    `{ "op": "draw", "target": { "space": "entity", "zone": "deck_level_1" },
+       "destination": { "space": "entity", "zone": "deck_peek" },
+       "axis": "long", "direction": "ccw" }`
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
 - **费用框按宝石种类数选择 `part`**：发展卡左下角的价格是一列彩色圆盘，一个颜色一个

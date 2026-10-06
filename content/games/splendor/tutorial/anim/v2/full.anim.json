@@ -3022,7 +3022,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3046,7 +3046,7 @@
           "order": 0
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3070,7 +3070,7 @@
           "order": 1
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3094,7 +3094,7 @@
           "order": 2
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3118,7 +3118,7 @@
           "order": 3
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3142,7 +3142,7 @@
           "order": 4
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3166,7 +3166,7 @@
           "order": 5
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3190,7 +3190,7 @@
           "order": 6
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3214,7 +3214,7 @@
           "order": 7
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3238,7 +3238,7 @@
           "order": 8
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3262,7 +3262,7 @@
           "order": 9
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -3286,7 +3286,7 @@
           "order": 10
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.34,
           "quantity": 1,
           "to": "face_up",
@@ -5563,7 +5563,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.5,
           "quantity": 1,
           "stagger": 0.25,
@@ -5663,7 +5663,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.6,
           "quantity": 2,
           "stagger": 0.25,
@@ -5812,7 +5812,7 @@
           "anchor": "action.take.draw_rule.001.1.start"
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.6,
           "quantity": 1,
           "forbid": true,
@@ -6076,7 +6076,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.6,
           "quantity": 1,
           "stagger": 0.25,
@@ -6352,7 +6352,7 @@
           "anchor": "action.take.limit.001.1.start"
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.6,
           "quantity": 1,
           "over_limit_demo": true,
@@ -6571,7 +6571,7 @@
       },
       "events": [
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 2,
           "anchor": "action.take.limit.001.2.b1.start",
@@ -7210,7 +7210,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 2,
           "anchor": "action.cards.cost.001.2.start",
@@ -7232,7 +7232,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 2,
           "anchor": "action.cards.cost.001.2.start",
@@ -7463,7 +7463,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.market.001.1.b2.start",
@@ -7485,7 +7485,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 2,
           "anchor": "action.cards.market.001.1.b2.end",
@@ -7507,7 +7507,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.market.001.1.b2.end",
@@ -7529,7 +7529,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.market.001.1.b2.end",
@@ -7584,7 +7584,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -7799,7 +7799,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.market.001.2.b1.start",
@@ -7821,7 +7821,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 2,
           "anchor": "action.cards.market.001.2.b1.start",
@@ -7843,7 +7843,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.market.001.2.b1.start",
@@ -7865,7 +7865,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.market.001.2.b1.start",
@@ -8424,7 +8424,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 2,
           "anchor": "action.cards.discount.002.1.b2.start",
@@ -8446,7 +8446,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.discount.002.1.b2.start",
@@ -8468,7 +8468,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.cards.discount.002.1.b2.start",
@@ -8523,7 +8523,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.5,
           "quantity": 1,
           "to": "face_up",
@@ -8741,7 +8741,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.5,
           "quantity": 1,
           "to": "face_up",
@@ -9909,7 +9909,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 2,
           "anchor": "action.nobles.trigger.001.1.b2.start",
@@ -9931,7 +9931,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 1,
           "anchor": "action.nobles.trigger.001.1.b2.start",
@@ -10034,7 +10034,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -10486,7 +10486,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 2,
           "anchor": "action.nobles.forced.001.1.b1.start",
@@ -10508,7 +10508,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 1,
           "anchor": "action.nobles.forced.001.1.b1.start",
@@ -10611,7 +10611,7 @@
           "setup": true
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -11563,7 +11563,7 @@
           "anchor": "action.nobles.source.001.start"
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 2,
           "anchor": "action.nobles.source.001.start",
@@ -11585,7 +11585,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.nobles.source.001.start",
@@ -11631,7 +11631,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.8,
           "quantity": 1,
           "to": "face_up",
@@ -12363,7 +12363,7 @@
           "mask": "full"
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.nobles.choice.001.1.start",
@@ -12409,7 +12409,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.8,
           "quantity": 1,
           "to": "face_up",
@@ -12595,7 +12595,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.5,
           "quantity": 1,
           "stagger": 0.25,
@@ -12913,7 +12913,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -12937,7 +12937,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.reserve.intro.001.1.start",
@@ -13192,7 +13192,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 3,
           "anchor": "action.reserve.gold.001.start",
@@ -13215,7 +13215,7 @@
           "stagger": 0.12
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 1,
           "anchor": "action.reserve.gold.001.start",
@@ -13256,7 +13256,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "deal",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
@@ -13474,7 +13474,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.6,
           "quantity": 1,
           "anchor": "action.reserve.deck.001.b1.start",
@@ -13675,7 +13675,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "take",
           "dur": 0.5,
           "quantity": 1,
           "over_limit_demo": true,
@@ -13692,7 +13692,7 @@
           }
         },
         {
-          "op": "transfer",
+          "op": "pay",
           "dur": 0.5,
           "quantity": 1,
           "anchor": "action.reserve.notes_intro.001.start",
@@ -14430,32 +14430,21 @@
           "anchor": "action.reserve.private.002.start"
         },
         {
-          "op": "set_face",
+          "op": "draw",
           "to": "face_up",
           "dur": 1.4,
           "anchor": "action.reserve.private.002.start",
           "offset": 4.3,
           "target": {
             "space": "entity",
-            "zone": "deck_level_1",
-            "template": "card_l1_diamond_17",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
+            "zone": "deck_level_1"
           },
-          "flip": {
-            "axis": "long",
-            "direction": "ccw",
-            "destination": {
-              "space": "entity",
-              "zone": "deck_peek"
-            }
-          }
+          "destination": {
+            "space": "entity",
+            "zone": "deck_peek"
+          },
+          "axis": "long",
+          "direction": "ccw"
         },
         {
           "op": "point",

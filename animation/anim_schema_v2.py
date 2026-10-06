@@ -26,6 +26,11 @@ COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
 STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
+# Semantic action macros.  They are source-level sugar and are lowered to the
+# primitive STATE_OPS above by resolve_track(), so the compiler, validators and
+# audit tools only ever see the primitive event stream.
+SEMANTIC_OPS = {"take", "pay", "deal", "draw"}
+SEMANTIC_SOURCE_OPS = ("transfer", "take", "pay", "deal", "draw")
 PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label", "magnifier",
                      "overlay_show", "overlay_hide"}
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
@@ -42,7 +47,7 @@ TARGET_SPACES = {"entity", "screen"}
 ENTITY_TARGET_FIELDS = ("zone", "template", "palette", "concept", "parts", "order")
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
-OPS = STATE_OPS | PRESENTATION_OPS
+OPS = STATE_OPS | PRESENTATION_OPS | SEMANTIC_OPS
 FACES = {"up", "down", "hidden", None, ""}
 CONCEPT_ID_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.:\-]*$")
 SPECIAL_CONCEPT_RE = re.compile(r"^<[A-Za-z_][A-Za-z0-9_.:\-]*>$")
@@ -133,7 +138,7 @@ def _normalize_event(ev):
                 zones.append(z)
         if first is not None:
             _merge_entity_target_fields(ev, first)
-        if op == "transfer":
+        if op in SEMANTIC_SOURCE_OPS:
             ev["source"] = zones
             ev["space"] = "entity"
     elif isinstance(target, dict):
@@ -158,7 +163,7 @@ def _normalize_event(ev):
             else:
                 _merge_entity_target_fields(ev, target)
                 zone = _entity_target_zone(target)
-                if op == "transfer":
+                if op in SEMANTIC_SOURCE_OPS:
                     if isinstance(zone, list):
                         ev["source"] = zone
                     elif zone and not ev.get("source"):
@@ -195,6 +200,66 @@ def _normalize_event(ev):
         if flip.get("destination") is None:
             flip.pop("destination", None)
     return ev
+
+
+def _lower_semantic_event(ev: dict, cue_id: str = "") -> list:
+    """Lower one semantic action event to its primitive event stream.
+
+    The macros are deliberately thin: they do not validate ownership and do not
+    change the runtime model.  ``take`` / ``pay`` / ``deal`` are named transfer
+    directions; ``draw`` is a top-of-deck transfer rendered as an edge flip
+    (``from_top`` + ``flip`` are primitive transfer features).
+    """
+    if not isinstance(ev, dict):
+        return [ev]
+    op = ev.get("op")
+    if op not in SEMANTIC_OPS:
+        return [ev]
+    where = f"cue {cue_id}: {op}" if cue_id else op
+
+    def require(name):
+        value = ev.get(name)
+        if not value:
+            raise ValueError(f"{where}: missing {name}")
+        return value
+
+    if op in ("take", "pay", "deal"):
+        require("source")
+        require("destination")
+        out = dict(ev)
+        out["op"] = "transfer"
+        if op == "deal":
+            out.setdefault("to", "face_up")
+        return [out]
+
+    # draw: top of source -> destination, visual is one edge flip.
+    source = require("source")
+    if not isinstance(source, str):
+        raise ValueError(f"{where}: draw needs exactly one source zone")
+    destination = require("destination")
+    if not isinstance(destination, str):
+        raise ValueError(f"{where}: draw needs exactly one destination zone")
+    axis = str(ev.get("axis") or "long").strip().lower()
+    if axis not in ("long", "short"):
+        raise ValueError(f"{where}: axis must be long or short")
+    direction = str(ev.get("direction") or "ccw").strip().lower()
+    if direction not in ("ccw", "cw"):
+        raise ValueError(f"{where}: direction must be ccw or cw")
+    out = dict(ev)
+    out["op"] = "transfer"
+    out["to"] = require("to") if ev.get("to") else "face_up"
+    out["quantity"] = int(ev.get("quantity", 1) or 1)
+    if out["quantity"] != 1:
+        raise ValueError(f"{where}: draw quantity must be 1; use multiple draws for several cards")
+    # Transfer already defaults to the top of stack/pile sources, but make the
+    # draw contract explicit: one top card, no selector materialization.
+    out["from_top"] = True
+    if not ev.get("space"):
+        out["space"] = "entity"
+    out["flip"] = {"axis": axis, "direction": direction}
+    out.pop("axis", None)
+    out.pop("direction", None)
+    return [out]
 
 
 def _check_offset(report: Report, where: str, ev: dict) -> None:
@@ -796,8 +861,11 @@ def resolve_track(doc: dict) -> dict:
             eff["demo"] = bool(base.get("demo"))
         else:
             eff["demo"] = False
-        eff["events"] = [_normalize_event(_deep_copy(ev))
-                         for ev in (raw.get("events") or [])]
+        lowered = []
+        for raw_ev in (raw.get("events") or []):
+            normalized = _normalize_event(_deep_copy(raw_ev))
+            lowered.extend(_lower_semantic_event(normalized, raw.get("id") or ""))
+        eff["events"] = lowered
         if "transition" not in raw:
             eff["transition"] = "continue"
         if "tree" not in eff or eff.get("tree") is None:

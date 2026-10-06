@@ -698,6 +698,102 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual(flip["from_x"], flip["to_x"])
         self.assertEqual(flip["from_z"], flip["to_z"])
 
+    def test_semantic_macros_lower_to_transfer_primitives(self):
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "take",
+                         "target": {"space": "entity", "zone": "gem_supply_ruby"},
+                         "destination": {"space": "entity", "zone": "player_holding"},
+                         "quantity": 2},
+                        {"op": "pay",
+                         "target": {"space": "entity", "zone": "player_holding"},
+                         "destination": {"space": "entity", "zone": "gem_supply_ruby"},
+                         "quantity": 1},
+                        {"op": "deal",
+                         "target": {"space": "entity", "zone": "deck_level_1"},
+                         "destination": {"space": "entity", "zone": "card_market"},
+                         "order": 3},
+                        {"op": "draw", "dur": 0.7,
+                         "target": {"space": "entity", "zone": "deck_level_1"},
+                         "destination": {"space": "entity", "zone": "deck_peek"},
+                         "axis": "short", "direction": "cw"},
+                    ],
+                ),
+            ],
+        }
+        resolved = schema.resolve_track(copy.deepcopy(track))
+        events = resolved["cues"][0]["events"]
+        self.assertEqual(["transfer", "transfer", "transfer", "transfer"],
+                         [ev.get("op") for ev in events])
+        self.assertEqual("gem_supply_ruby", events[0]["source"])
+        self.assertEqual("player_holding", events[0]["destination"])
+        self.assertEqual(2, events[0]["quantity"])
+        self.assertEqual("face_up", events[2]["to"])
+        self.assertEqual(3, events[2]["order"])
+        self.assertIs(True, events[3]["from_top"])
+        self.assertEqual(1, events[3]["quantity"])
+        self.assertEqual({"axis": "short", "direction": "cw"}, events[3]["flip"])
+        self.assertNotIn("axis", events[3])
+        self.assertNotIn("direction", events[3])
+
+    def test_draw_macro_compiles_top_card_edge_flip(self):
+        stage = _stage_doc("s1", ["deck", "peek"])
+        stage["zones"][0]["display"] = {"mode": "stack"}
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "create", "at": 0.0, "count": 2, "to": "face_down",
+                         "target": {"space": "entity", "zone": "deck",
+                                    "template": "sample_card", "palette": "card_level_1"}},
+                        {"op": "draw", "at": 1.0, "dur": 0.6, "to": "face_up",
+                         "target": {"space": "entity", "zone": "deck"},
+                         "destination": {"space": "entity", "zone": "peek"},
+                         "axis": "long", "direction": "ccw"},
+                    ],
+                ),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        cue = _compiled_cue(compiled, "c1")
+        flips = [clip for clip in cue["clips"] if clip.get("kind") == "flip"]
+        self.assertEqual(1, len(flips), flips)
+        flip = flips[0]
+        self.assertEqual("edge", flip["flip_mode"])
+        self.assertEqual("long", flip["flip_axis"])
+        self.assertEqual(-1, flip["flip_side"])
+        self.assertEqual("face_down", flip["from_face"])
+        self.assertEqual("face_up", flip["to_face"])
+        # From the two stacked cards, draw must take the top one (order 1).
+        self.assertTrue(flip["item_id"].endswith("#2"), flip["item_id"])
+        puts = [op for op in cue["state_ops"] if op.get("op") == "put"
+                and op.get("item", {}).get("ZoneId") == "peek"]
+        self.assertEqual(1, len(puts), puts)
+        self.assertTrue(puts[0]["item"]["Id"].endswith("#2"))
+
     def test_transfer_multiple_gems_defaults_to_short_stagger(self):
         stage = _stage_doc("s1", ["gem_supply_onyx", "player_holding"])
         gem_parts = [{"key": "color", "value": "<onyx>"}]
