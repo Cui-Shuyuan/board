@@ -13920,7 +13920,7 @@
       ],
       "script": {
         "story": "【每位玩家最多同时保留 3 张发展卡牌；已经保留 3 张时，就不能再保留，必须选择其他行动】",
-        "note": "【注意事项三：最多保留 3 张；第 4 张会被禁止】\n  演示前提（setup 静默完成）：A 已经从市场合法保留到第 3 张，并拿了对应的保留奖励黄金；\n  此时保留区 3 张，市场仍保持 12 张。\n  正确动画：A 再尝试从市场保留第 4 张牌 → 第 4 张进入保留区后，在保留区打禁止标记，\n  表示已经 3 张时不能再保留，必须选择其他行动。\n  保留区 stage 额外留了 order 3 槽位（x=-1.61），第 4 张会飞到前 3 张右侧的演示槽，而不是叠在原位或飞到原点。\n  为了让下一条 canonical 继续看到“保留区 3 张”，禁止标记后把这张非法尝试的第 4 张退回市场。\n  该 cue 标记 demo: true：假设/错误示范状态只在本条内成立；第 4 张在禁止标记后退回市场，结束前回到 3。",
+        "note": "【注意事项三：最多保留 3 张；第 4 张会被禁止】\n  演示前提（setup 静默完成）：A 已经从市场合法保留到第 3 张，并拿了对应的保留奖励黄金；\n  此时保留区 3 张，市场仍保持 12 张。\n  正确动画：A 再尝试从市场保留第 4 张牌 → 第 4 张进入保留区后，在保留区打禁止标记，\n  表示已经 3 张时不能再保留，必须选择其他行动。\n  保留区 stage 额外留了 order 3 槽位（x=-1.61），第 4 张会飞到前 3 张右侧的演示槽，而不是叠在原位或飞到原点。\n  第 4 张留在保留区不回去，forbid 标记持续到 cue 结束；下一条规则说明 cue 在 setup 里静默恢复 canonical（保留区回到 3 张）。\n  该 cue 标记 demo: true：假设/错误示范状态只在本条内成立。",
         "enter": {
           "zones": {
             "card_market": {
@@ -13973,7 +13973,7 @@
         "exit": {
           "zones": {
             "card_market": {
-              "count": 12
+              "count": 11
             },
             "deck_level_1": {
               "count": 35
@@ -14015,7 +14015,7 @@
               "count": 1
             },
             "player_reserved": {
-              "count": 3
+              "count": 4
             }
           }
         }
@@ -14135,32 +14135,6 @@
               }
             ]
           }
-        },
-        {
-          "op": "transfer",
-          "dur": 0.5,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "action.reserve.limit_hand.001.1.start",
-          "offset": 7.35,
-          "order": 6,
-          "target": {
-            "space": "entity",
-            "zone": "player_reserved",
-            "template": "card_l2_diamond_55",
-            "palette": "card_level_2",
-            "concept": "development_card_level_2",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          }
         }
       ],
       "tree": "main",
@@ -14178,9 +14152,133 @@
       ],
       "script": {
         "story": "【已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容】",
-        "note": "【保留的牌是个人信息】\n  规则说明，**没有状态变化**：镜头推近保留区（3 张都朝下）—— 画面本身就说明了这件事：观众看得见『有几张』，看不见『是哪张』。"
+        "note": "【保留的牌是个人信息】\n  setup（不可见）：把上一条 demo 里非法保留的第 4 张收回市场，canonical 仍是保留区 3 张。\n  规则说明，**没有状态变化**：镜头推近保留区（3 张都朝下）—— 画面说明观众看得见『有几张』，看不见『是哪张』。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        }
       },
       "events": [
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 6,
+          "anchor": "action.reserve.private.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
         {
           "op": "camera",
           "dur": 0.0,
