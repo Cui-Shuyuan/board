@@ -1469,32 +1469,10 @@
       "beats": [
         {
           "id": "action.reserve.limit_hand.001.1.b1",
-          "text": "每位玩家最多同时保留3张发展卡牌。"
+          "text": "每位玩家最多同时保留3张发展卡牌；已经保留3张时，就不能再保留，必须选择其他行动。"
         }
-      ]
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2",
-      "group": "3.3 保留一张发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.3 保留一张发展卡牌"
       ],
-      "refs": [
-        "<hand>",
-        "<card_reservable>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "action.reserve.limit_hand.001.2.b1",
-          "text": "如果一位玩家已经保留了3张发展卡牌，就不能继续保留了。"
-        },
-        {
-          "id": "action.reserve.limit_hand.001.2.b2",
-          "text": "此时他必须选择其他行动。"
-        }
-      ]
+      "story": "【每位玩家最多同时保留 3 张发展卡牌；已经保留 3 张时，就不能再保留，必须选择其他行动】"
     },
     {
       "id": "action.reserve.private.001.1",

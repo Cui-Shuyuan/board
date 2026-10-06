@@ -1863,40 +1863,6 @@
       "edge": "end"
     },
     {
-      "id": "action.reserve.limit_hand.001.2.start",
-      "cue": "action.reserve.limit_hand.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2.end",
-      "cue": "action.reserve.limit_hand.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2.b1.start",
-      "cue": "action.reserve.limit_hand.001.2",
-      "beat": "action.reserve.limit_hand.001.2.b1",
-      "edge": "start"
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2.b1.end",
-      "cue": "action.reserve.limit_hand.001.2",
-      "beat": "action.reserve.limit_hand.001.2.b1",
-      "edge": "end"
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2.b2.start",
-      "cue": "action.reserve.limit_hand.001.2",
-      "beat": "action.reserve.limit_hand.001.2.b2",
-      "edge": "start"
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2.b2.end",
-      "cue": "action.reserve.limit_hand.001.2",
-      "beat": "action.reserve.limit_hand.001.2.b2",
-      "edge": "end"
-    },
-    {
       "id": "action.reserve.private.001.1.start",
       "cue": "action.reserve.private.001.1",
       "edge": "cue_start"
@@ -13938,107 +13904,27 @@
     {
       "id": "action.reserve.limit_hand.001.1",
       "parent": "action.reserve.limit_gold.001.2",
-      "timing": [],
-      "script": {
-        "story": "【每位玩家最多同时保留 3 张发展卡牌】",
-        "note": "【注意事项三：最多保留 3 张】\n  规则说明（前半句），**没有状态变化**：点保留区（现在 2 张）—— 下一句再加一张就正好到 3。"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_reserved",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.limit_hand.001.1.start"
-        }
-      ],
-      "tree": "main",
-      "entry": "action.reserve.deck.001"
-    },
-    {
-      "id": "action.reserve.limit_hand.001.2",
-      "parent": "action.reserve.limit_hand.001.1",
       "timing": [
         {
-          "key": "再从市场保留一张",
-          "text": "1.60"
+          "key": "整桌镜头 / 保留第三张",
+          "text": "4.30"
         },
         {
-          "key": "拿第三枚黄金",
-          "text": "3.20"
+          "key": "补回市场",
+          "text": "4.90"
         },
         {
-          "key": "点满 3 张的保留区",
-          "text": "4.60"
+          "key": "拿黄金",
+          "text": "5.40"
+        },
+        {
+          "key": "点保留区 / 禁止再保留",
+          "text": "6.90"
         }
       ],
       "script": {
-        "story": "【如果一位玩家已经保留了 3 张发展卡牌，就不能继续保留了。此时他必须选择其他行动】",
-        "note": "【到 3 张就满了；同时补回市场】\n  真做一次：从市场保留一张二级红（保留区朝下）+ 拿第二枚黄金 → 保留区正好 3 张。\n  市场空位按规则从 deck_level_2 翻一张真牌补回（当前牌堆真牌是二级白），保持市场 12 张。\n  『不能继续保留』仍靠『正好 3 张』+ 禁止符号表达。\n",
-        "exit": {
-          "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 35
-            },
-            "deck_level_2": {
-              "count": 25
-            },
-            "deck_level_3": {
-              "count": 15
-            },
-            "gem_supply_diamond": {
-              "count": 4
-            },
-            "gem_supply_emerald": {
-              "count": 4
-            },
-            "gem_supply_onyx": {
-              "count": 4
-            },
-            "gem_supply_ruby": {
-              "count": 4
-            },
-            "gem_supply_sapphire": {
-              "count": 4
-            },
-            "gold_supply": {
-              "count": 3
-            },
-            "noble_market": {
-              "count": 3
-            },
-            "offstage": {
-              "count": 0
-            },
-            "player_b_development": {
-              "count": 0
-            },
-            "player_b_holding": {
-              "count": 0
-            },
-            "player_b_nobles": {
-              "count": 0
-            },
-            "player_development": {
-              "count": 1
-            },
-            "player_holding": {
-              "count": 2
-            },
-            "player_marker": {
-              "count": 1
-            },
-            "player_nobles": {
-              "count": 0
-            },
-            "player_reserved": {
-              "count": 3
-            }
-          }
-        },
+        "story": "【每位玩家最多同时保留 3 张发展卡牌；已经保留 3 张时，就不能再保留，必须选择其他行动】",
+        "note": "【注意事项三：最多保留 3 张；满了不能继续保留】\n  合并成一条 cue、一个 beat、一个 shot_board 镜头。\n  口播先讲上限 3 张，再讲满了不能继续保留、必须选择其他行动。\n  画面真实做一次：从市场保留一张二级红（朝下）→ 保留区正好 3 张；市场空位由 deck_level_2 顶牌补回；\n  同时拿保留奖励的 1 枚黄金。到 3 张后再点保留区并打禁止标记，表示不能继续保留。",
         "enter": {
           "zones": {
             "card_market": {
@@ -14074,18 +13960,6 @@
             "noble_market": {
               "count": 3
             },
-            "offstage": {
-              "count": 0
-            },
-            "player_b_development": {
-              "count": 0
-            },
-            "player_b_holding": {
-              "count": 0
-            },
-            "player_b_nobles": {
-              "count": 0
-            },
             "player_development": {
               "count": 1
             },
@@ -14095,11 +13969,57 @@
             "player_marker": {
               "count": 1
             },
-            "player_nobles": {
-              "count": 0
-            },
             "player_reserved": {
               "count": 2
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
             }
           }
         }
@@ -14108,17 +14028,17 @@
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_market",
+          "shot": "shot_board",
           "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.limit_hand.001.2.start"
+          "anchor": "action.reserve.limit_hand.001.1.start"
         },
         {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
           "to": "face_down",
-          "anchor": "action.reserve.limit_hand.001.2.b1.start",
-          "offset": 1.315,
+          "anchor": "action.reserve.limit_hand.001.1.start",
+          "offset": 4.3,
           "target": {
             "space": "entity",
             "zone": "card_market",
@@ -14140,8 +14060,9 @@
           "dur": 0.6,
           "quantity": 1,
           "to": "face_up",
-          "anchor": "action.reserve.limit_hand.001.2.b1.start",
-          "offset": 1.915,
+          "anchor": "action.reserve.limit_hand.001.1.start",
+          "offset": 4.9,
+          "order": 6,
           "target": {
             "space": "entity",
             "zone": "deck_level_2",
@@ -14156,15 +14077,14 @@
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          },
-          "order": 6
+          }
         },
         {
           "op": "transfer",
           "dur": 0.6,
           "quantity": 1,
-          "anchor": "action.reserve.limit_hand.001.2.b1.end",
-          "offset": -1.665,
+          "anchor": "action.reserve.limit_hand.001.1.start",
+          "offset": 5.4,
           "target": {
             "space": "entity",
             "zone": "gold_supply",
@@ -14179,8 +14099,8 @@
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
-          "anchor": "action.reserve.limit_hand.001.2.b1.end",
-          "offset": -0.265,
+          "anchor": "action.reserve.limit_hand.001.1.start",
+          "offset": 5.9,
           "target": {
             "space": "entity",
             "zone": "player_reserved"
@@ -14190,19 +14110,20 @@
           "op": "point",
           "dur": 0.0,
           "indicator": "forbid",
-          "anchor": "action.reserve.limit_hand.001.2.b2.start",
-          "offset": -0.03,
+          "anchor": "action.reserve.limit_hand.001.1.start",
+          "offset": 6.9,
           "target": {
             "space": "entity",
             "zone": "player_reserved"
           }
         }
       ],
-      "tree": "main"
+      "tree": "main",
+      "entry": "action.reserve.deck.001"
     },
     {
       "id": "action.reserve.private.001.1",
-      "parent": "action.reserve.limit_hand.001.2",
+      "parent": "action.reserve.limit_hand.001.1",
       "timing": [
         {
           "key": "镜头推近保留区",
