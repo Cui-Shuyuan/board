@@ -2959,6 +2959,16 @@
       "fill": 0.95,
       "static": true,
       "desc": "全景：主树所有 zone 都入镜（包括空玩家区），占画面 0.95"
+    },
+    {
+      "id": "shot_player_a",
+      "zones": [
+        "player_holding",
+        "player_reserved",
+        "player_development"
+      ],
+      "fill": 0.85,
+      "desc": "框玩家A的持有/保留/发展区，用于购买保留牌时的连续动作"
     }
   ],
   "groups": [

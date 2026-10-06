@@ -2,7 +2,7 @@
 [game:splendor]
 [track:full]
 [timing:tts]
-[generator:animation/compile_tutorial.py]
+[generator:animation/tts_doubao.py]
 [version:0.1.0]
 [group:1 背景介绍]
 [00:00.00][id:bg.intro.001.1][ref:rulebook:background]《璀璨宝石》是一款支持2到4名玩家的游戏。
@@ -91,21 +91,19 @@
 [08:01.46][id:action.reserve.private.002][ref:<hand>|<reserve_development_card>]如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。
 [08:07.92][id:action.reserve.not_purchase.001][ref:<reserve_development_card>|<discount>|<prestige_point>]保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。
 [group:3.4 购买保留的发展卡牌]
-[08:15.00][id:action.purchase_reserved.001][ref:<purchase_development_card>|<hand>]不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。
-[08:20.47][id:action.purchase_reserved.002.1][ref:<purchase_development_card>|<attract_noble>|<discount>]按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，
-[08:27.17][id:action.purchase_reserved.002.2][ref:<purchase_development_card>|<attract_noble>|<discount>]正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。
+[08:15.00][id:action.purchase_reserved.001][ref:<purchase_development_card>|<hand>]不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。
 [group:3.5 回合结束与循环]
-[08:34.44][id:action.summary.001][ref:<take_gems_different>|<take_gems_same>|<purchase_development_card>|<reserve_development_card>]以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。
-[08:41.66][id:action.summary.002.1][ref:flow:turn_cycle|flow:player_turns|flow:main_gameplay]一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，
-[08:48.74][id:action.summary.002.2][ref:flow:turn_cycle|flow:player_turns|flow:main_gameplay]左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。
+[08:33.86][id:action.summary.001][ref:<take_gems_different>|<take_gems_same>|<purchase_development_card>|<reserve_development_card>]以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。
+[08:41.09][id:action.summary.002.1][ref:flow:turn_cycle|flow:player_turns|flow:main_gameplay]一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，
+[08:48.17][id:action.summary.002.2][ref:flow:turn_cycle|flow:player_turns|flow:main_gameplay]左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。
 [group:4 游戏结束]
-[08:55.03][id:endgame.trigger.001][ref:<enter_endgame>|<reach_15_prestige>]当一位玩家的声望值达到15或更多时，触发游戏结束。
-[09:00.26][id:endgame.final_rounds.001.1][ref:flow:final_turn_cycle|flow:final_turns|<no_remaining_players>]为了让所有玩家都进行相同数量的回合，游戏会继续进行，
-[09:05.74][id:endgame.final_rounds.001.2][ref:flow:final_turn_cycle|flow:final_turns|<no_remaining_players>]直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。
-[09:11.40][id:endgame.example.001.1][ref:<no_remaining_players>]以4人局为例：如果起始玩家的声望值达到15，
-[09:15.86][id:endgame.example.001.2][ref:<no_remaining_players>]剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。
-[09:21.31][id:endgame.example.002][ref:<no_remaining_players>]但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。
-[09:28.78][id:endgame.winner.001][ref:<highest_prestige_wins>|<prestige_highest>]声望值最高的玩家获得胜利。
-[09:31.85][id:endgame.tie.001.1][ref:<highest_prestige_wins>|<fewest_development_cards>]如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。
-[09:38.11][id:endgame.tie.001.2][ref:<highest_prestige_wins>|<fewest_development_cards>]如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。
-[length:09:44.57]
+[08:54.46][id:endgame.trigger.001][ref:<enter_endgame>|<reach_15_prestige>]当一位玩家的声望值达到15或更多时，触发游戏结束。
+[08:59.69][id:endgame.final_rounds.001.1][ref:flow:final_turn_cycle|flow:final_turns|<no_remaining_players>]为了让所有玩家都进行相同数量的回合，游戏会继续进行，
+[09:05.16][id:endgame.final_rounds.001.2][ref:flow:final_turn_cycle|flow:final_turns|<no_remaining_players>]直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。
+[09:10.82][id:endgame.example.001.1][ref:<no_remaining_players>]以4人局为例：如果起始玩家的声望值达到15，
+[09:15.29][id:endgame.example.001.2][ref:<no_remaining_players>]剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。
+[09:20.74][id:endgame.example.002][ref:<no_remaining_players>]但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。
+[09:28.20][id:endgame.winner.001][ref:<highest_prestige_wins>|<prestige_highest>]声望值最高的玩家获得胜利。
+[09:31.27][id:endgame.tie.001.1][ref:<highest_prestige_wins>|<fewest_development_cards>]如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。
+[09:37.54][id:endgame.tie.001.2][ref:<highest_prestige_wins>|<fewest_development_cards>]如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。
+[length:09:43.99]

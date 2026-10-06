@@ -15726,9 +15726,9 @@
         "3 行动",
         "3.4 购买保留的发展卡牌"
       ],
-      "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
+      "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
-      "duration": 5.472,
+      "duration": 18.864,
       "start": 495.0,
       "refs": [
         "<purchase_development_card>",
@@ -15736,636 +15736,596 @@
       ],
       "subtitles": [
         {
-          "t": 0.265,
-          "end": 5.195,
+          "t": 0.275,
+          "end": 4.745,
           "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
           "words": [
             {
               "word": "不",
-              "start": 0.265,
-              "end": 0.375,
-              "confidence": 0.9448
+              "start": 0.275,
+              "end": 0.385,
+              "confidence": 0.9661
             },
             {
               "word": "仅",
-              "start": 0.375,
-              "end": 0.575,
-              "confidence": 0.9678
+              "start": 0.385,
+              "end": 0.585,
+              "confidence": 0.9663
             },
             {
               "word": "是",
-              "start": 0.575,
-              "end": 0.765,
-              "confidence": 0.9559
+              "start": 0.585,
+              "end": 0.775,
+              "confidence": 0.9385
             },
             {
               "word": "供",
-              "start": 0.765,
+              "start": 0.775,
               "end": 0.955,
-              "confidence": 0.9521
+              "confidence": 0.9616
             },
             {
               "word": "应",
               "start": 0.955,
-              "end": 1.125,
-              "confidence": 0.9255
+              "end": 1.095,
+              "confidence": 0.8982
             },
             {
               "word": "堆，",
-              "start": 1.125,
-              "end": 1.435,
-              "confidence": 0.875
+              "start": 1.095,
+              "end": 1.335,
+              "confidence": 0.8633
             },
             {
               "word": "玩",
-              "start": 1.665,
-              "end": 1.815,
-              "confidence": 0.9012
+              "start": 1.645,
+              "end": 1.755,
+              "confidence": 0.9035
             },
             {
               "word": "家",
-              "start": 1.815,
-              "end": 2.075,
-              "confidence": 0.9221
+              "start": 1.755,
+              "end": 1.955,
+              "confidence": 0.9394
             },
             {
               "word": "也",
-              "start": 2.075,
-              "end": 2.175,
-              "confidence": 0.9567
+              "start": 1.955,
+              "end": 2.045,
+              "confidence": 0.9466
             },
             {
               "word": "可",
-              "start": 2.175,
-              "end": 2.315,
-              "confidence": 0.8111
+              "start": 2.045,
+              "end": 2.185,
+              "confidence": 0.8174
             },
             {
               "word": "以",
-              "start": 2.315,
-              "end": 2.425,
-              "confidence": 0.7746
+              "start": 2.185,
+              "end": 2.295,
+              "confidence": 0.7549
             },
             {
               "word": "从",
-              "start": 2.425,
-              "end": 2.735,
-              "confidence": 0.9062
+              "start": 2.295,
+              "end": 2.525,
+              "confidence": 0.9482
             },
             {
               "word": "自",
-              "start": 2.735,
-              "end": 2.875,
-              "confidence": 0.9617
+              "start": 2.525,
+              "end": 2.655,
+              "confidence": 0.9632
             },
             {
               "word": "己",
-              "start": 2.875,
-              "end": 3.045,
-              "confidence": 0.9844
+              "start": 2.655,
+              "end": 2.805,
+              "confidence": 0.9736
             },
             {
               "word": "保",
-              "start": 3.045,
-              "end": 3.225,
-              "confidence": 0.9477
+              "start": 2.805,
+              "end": 2.985,
+              "confidence": 0.965
             },
             {
               "word": "留",
-              "start": 3.225,
-              "end": 3.385,
+              "start": 2.985,
+              "end": 3.115,
               "confidence": 0.9803
             },
             {
               "word": "的",
-              "start": 3.385,
-              "end": 3.485,
-              "confidence": 0.8785
+              "start": 3.115,
+              "end": 3.215,
+              "confidence": 0.8721
             },
             {
               "word": "卡",
-              "start": 3.485,
-              "end": 3.665,
-              "confidence": 0.8322
+              "start": 3.215,
+              "end": 3.375,
+              "confidence": 0.8225
             },
             {
               "word": "牌",
-              "start": 3.665,
-              "end": 3.865,
-              "confidence": 0.9652
+              "start": 3.375,
+              "end": 3.555,
+              "confidence": 0.9417
             },
             {
               "word": "中",
-              "start": 3.865,
-              "end": 4.085,
-              "confidence": 0.9712
+              "start": 3.555,
+              "end": 3.745,
+              "confidence": 0.9751
             },
             {
               "word": "选",
-              "start": 4.085,
-              "end": 4.335,
-              "confidence": 0.9682
+              "start": 3.745,
+              "end": 3.965,
+              "confidence": 0.9751
             },
             {
               "word": "择",
-              "start": 4.335,
-              "end": 4.515,
-              "confidence": 0.9791
+              "start": 3.965,
+              "end": 4.135,
+              "confidence": 0.9774
             },
             {
               "word": "一",
-              "start": 4.515,
-              "end": 4.635,
-              "confidence": 0.9427
+              "start": 4.135,
+              "end": 4.245,
+              "confidence": 0.9435
             },
             {
               "word": "张",
-              "start": 4.635,
-              "end": 4.815,
-              "confidence": 0.9663
+              "start": 4.245,
+              "end": 4.405,
+              "confidence": 0.9744
             },
             {
               "word": "购",
-              "start": 4.815,
-              "end": 5.015,
-              "confidence": 0.9335
+              "start": 4.405,
+              "end": 4.585,
+              "confidence": 0.9522
             },
             {
               "word": "买。",
-              "start": 5.015,
-              "end": 5.195,
-              "confidence": 0.9688
+              "start": 4.585,
+              "end": 4.745,
+              "confidence": 0.97
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.purchase_reserved.002.1",
-      "group": "3.4 购买保留的发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.4 购买保留的发展卡牌"
-      ],
-      "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，",
-      "audio": "media/tts/full/action.purchase_reserved.002.1.mp3",
-      "duration": 6.696,
-      "start": 500.47,
-      "refs": [
-        "<purchase_development_card>",
-        "<attract_noble>",
-        "<discount>"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.335,
-          "end": 2.035,
+          "t": 5.28,
+          "end": 6.975,
           "text": "按照之前介绍过的规则，",
           "words": [
             {
               "word": "按",
-              "start": 0.335,
-              "end": 0.415,
-              "confidence": 0.8181
+              "start": 5.28,
+              "end": 5.395,
+              "confidence": 0.7813
             },
             {
               "word": "照",
-              "start": 0.415,
-              "end": 0.605,
-              "confidence": 0.9041
+              "start": 5.395,
+              "end": 5.625,
+              "confidence": 0.9528
             },
             {
               "word": "之",
-              "start": 0.605,
-              "end": 0.755,
-              "confidence": 0.9197
+              "start": 5.625,
+              "end": 5.755,
+              "confidence": 0.9318
             },
             {
               "word": "前",
-              "start": 0.755,
-              "end": 0.935,
-              "confidence": 0.9756
+              "start": 5.755,
+              "end": 5.915,
+              "confidence": 0.9782
             },
             {
               "word": "介",
-              "start": 0.935,
-              "end": 1.075,
-              "confidence": 0.9175
+              "start": 5.915,
+              "end": 6.045,
+              "confidence": 0.9444
             },
             {
               "word": "绍",
-              "start": 1.075,
-              "end": 1.245,
-              "confidence": 0.971
+              "start": 6.045,
+              "end": 6.225,
+              "confidence": 0.9664
             },
             {
               "word": "过",
-              "start": 1.245,
-              "end": 1.385,
-              "confidence": 0.9574
+              "start": 6.225,
+              "end": 6.345,
+              "confidence": 0.9585
             },
             {
               "word": "的",
-              "start": 1.385,
-              "end": 1.485,
-              "confidence": 0.9467
+              "start": 6.345,
+              "end": 6.455,
+              "confidence": 0.9541
             },
             {
               "word": "规",
-              "start": 1.485,
-              "end": 1.675,
-              "confidence": 0.9674
+              "start": 6.455,
+              "end": 6.635,
+              "confidence": 0.9726
             },
             {
               "word": "则，",
-              "start": 1.675,
-              "end": 2.035,
-              "confidence": 0.9781
+              "start": 6.635,
+              "end": 6.975,
+              "confidence": 0.98
             }
           ]
         },
         {
-          "t": 2.41,
-          "end": 4.575,
+          "t": 7.22,
+          "end": 9.535,
           "text": "支付费用，将一张被保留的，",
           "words": [
             {
               "word": "支",
-              "start": 2.41,
-              "end": 2.485,
-              "confidence": 0.3666
+              "start": 7.22,
+              "end": 7.295,
+              "confidence": 0.8395
             },
             {
               "word": "付",
-              "start": 2.485,
-              "end": 2.545,
-              "confidence": 0.4525
+              "start": 7.295,
+              "end": 7.435,
+              "confidence": 0.9552
             },
             {
               "word": "费",
-              "start": 2.545,
-              "end": 2.775,
-              "confidence": 0.9648
+              "start": 7.435,
+              "end": 7.675,
+              "confidence": 0.9602
             },
             {
               "word": "用，",
-              "start": 2.775,
-              "end": 3.015,
-              "confidence": 0.9304
+              "start": 7.675,
+              "end": 7.895,
+              "confidence": 0.8592
             },
             {
               "word": "将",
-              "start": 3.175,
-              "end": 3.345,
-              "confidence": 0.8957
+              "start": 8.095,
+              "end": 8.275,
+              "confidence": 0.917
             },
             {
               "word": "一",
-              "start": 3.345,
-              "end": 3.475,
-              "confidence": 0.9593
+              "start": 8.275,
+              "end": 8.425,
+              "confidence": 0.9554
             },
             {
               "word": "张",
-              "start": 3.475,
-              "end": 3.725,
-              "confidence": 0.9568
+              "start": 8.425,
+              "end": 8.685,
+              "confidence": 0.9499
             },
             {
               "word": "被",
-              "start": 3.725,
-              "end": 3.915,
-              "confidence": 0.9398
+              "start": 8.685,
+              "end": 8.845,
+              "confidence": 0.9637
             },
             {
               "word": "保",
-              "start": 3.915,
-              "end": 4.125,
-              "confidence": 0.9607
+              "start": 8.845,
+              "end": 9.055,
+              "confidence": 0.9646
             },
             {
               "word": "留",
-              "start": 4.125,
-              "end": 4.355,
-              "confidence": 0.9719
+              "start": 9.055,
+              "end": 9.285,
+              "confidence": 0.9713
             },
             {
               "word": "的，",
-              "start": 4.355,
-              "end": 4.575,
-              "confidence": 0.9641
+              "start": 9.285,
+              "end": 9.535,
+              "confidence": 0.9574
             }
           ]
         },
         {
-          "t": 4.95,
-          "end": 6.405,
-          "text": "背面朝上的卡牌反面，\n",
+          "t": 9.84,
+          "end": 13.295,
+          "text": "背面朝上的卡牌反面，正常结算它的声望值，",
           "words": [
             {
               "word": "背",
-              "start": 4.95,
-              "end": 5.025,
-              "confidence": 0.5234
+              "start": 9.84,
+              "end": 9.915,
+              "confidence": 0.4632
             },
             {
               "word": "面",
-              "start": 5.025,
-              "end": 5.125,
-              "confidence": 0.7491
+              "start": 9.915,
+              "end": 10.065,
+              "confidence": 0.8934
             },
             {
               "word": "朝",
-              "start": 5.125,
-              "end": 5.365,
-              "confidence": 0.8887
+              "start": 10.065,
+              "end": 10.265,
+              "confidence": 0.9128
             },
             {
               "word": "上",
-              "start": 5.365,
-              "end": 5.595,
-              "confidence": 0.9768
+              "start": 10.265,
+              "end": 10.475,
+              "confidence": 0.9576
             },
             {
               "word": "的",
-              "start": 5.595,
-              "end": 5.695,
-              "confidence": 0.9211
+              "start": 10.475,
+              "end": 10.575,
+              "confidence": 0.8629
             },
             {
               "word": "卡",
-              "start": 5.695,
-              "end": 5.855,
-              "confidence": 0.8765
+              "start": 10.575,
+              "end": 10.745,
+              "confidence": 0.8651
             },
             {
               "word": "牌",
-              "start": 5.855,
-              "end": 6.025,
-              "confidence": 0.9839
+              "start": 10.745,
+              "end": 10.925,
+              "confidence": 0.9731
             },
             {
               "word": "反",
-              "start": 6.025,
-              "end": 6.215,
-              "confidence": 0.961
+              "start": 10.925,
+              "end": 11.125,
+              "confidence": 0.9185
             },
             {
               "word": "面，",
-              "start": 6.215,
-              "end": 6.405,
-              "confidence": 0.9272
-            }
-          ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "action.purchase_reserved.002.2",
-      "group": "3.4 购买保留的发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.4 购买保留的发展卡牌"
-      ],
-      "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
-      "audio": "media/tts/full/action.purchase_reserved.002.2.mp3",
-      "duration": 7.272,
-      "start": 507.17,
-      "refs": [
-        "<purchase_development_card>",
-        "<attract_noble>",
-        "<discount>"
-      ],
-      "subtitles": [
-        {
-          "t": 0.275,
-          "end": 3.945,
-          "text": "正常结算它的声望值，查看是否满足贵族条件，",
-          "words": [
+              "start": 11.125,
+              "end": 11.365,
+              "confidence": 0.9423
+            },
             {
               "word": "正",
-              "start": 0.275,
-              "end": 0.445,
-              "confidence": 0.9158
+              "start": 11.625,
+              "end": 11.805,
+              "confidence": 0.955
             },
             {
               "word": "常",
-              "start": 0.445,
-              "end": 0.615,
-              "confidence": 0.9781
+              "start": 11.805,
+              "end": 11.985,
+              "confidence": 0.967
             },
             {
               "word": "结",
-              "start": 0.615,
-              "end": 0.805,
-              "confidence": 0.9786
+              "start": 11.985,
+              "end": 12.195,
+              "confidence": 0.9777
             },
             {
               "word": "算",
-              "start": 0.805,
-              "end": 0.985,
-              "confidence": 0.9693
+              "start": 12.195,
+              "end": 12.385,
+              "confidence": 0.9698
             },
             {
               "word": "它",
-              "start": 0.985,
-              "end": 1.125,
-              "confidence": 0.9584
+              "start": 12.385,
+              "end": 12.545,
+              "confidence": 0.9651
             },
             {
               "word": "的",
-              "start": 1.125,
-              "end": 1.215,
-              "confidence": 0.9444
+              "start": 12.545,
+              "end": 12.635,
+              "confidence": 0.9741
             },
             {
               "word": "声",
-              "start": 1.215,
-              "end": 1.375,
-              "confidence": 0.8763
+              "start": 12.635,
+              "end": 12.785,
+              "confidence": 0.8872
             },
             {
               "word": "望",
-              "start": 1.375,
-              "end": 1.575,
-              "confidence": 0.9541
+              "start": 12.785,
+              "end": 12.955,
+              "confidence": 0.9584
             },
             {
               "word": "值，",
-              "start": 1.575,
-              "end": 1.885,
-              "confidence": 0.9089
-            },
-            {
-              "word": "查",
-              "start": 2.075,
-              "end": 2.265,
-              "confidence": 0.9585
-            },
-            {
-              "word": "看",
-              "start": 2.265,
-              "end": 2.445,
-              "confidence": 0.9334
-            },
-            {
-              "word": "是",
-              "start": 2.445,
-              "end": 2.655,
-              "confidence": 0.9219
-            },
-            {
-              "word": "否",
-              "start": 2.655,
-              "end": 2.805,
-              "confidence": 0.9013
-            },
-            {
-              "word": "满",
-              "start": 2.805,
-              "end": 3.005,
-              "confidence": 0.9535
-            },
-            {
-              "word": "足",
-              "start": 3.005,
-              "end": 3.215,
-              "confidence": 0.9612
-            },
-            {
-              "word": "贵",
-              "start": 3.215,
-              "end": 3.375,
-              "confidence": 0.9459
-            },
-            {
-              "word": "族",
-              "start": 3.375,
-              "end": 3.495,
-              "confidence": 0.9246
-            },
-            {
-              "word": "条",
-              "start": 3.495,
-              "end": 3.695,
-              "confidence": 0.9393
-            },
-            {
-              "word": "件，",
-              "start": 3.695,
-              "end": 3.945,
-              "confidence": 0.9857
+              "start": 12.955,
+              "end": 13.295,
+              "confidence": 0.9181
             }
           ]
         },
         {
-          "t": 4.27,
-          "end": 6.685,
+          "t": 13.6,
+          "end": 14.975,
+          "text": "查看是否满足贵族条件，",
+          "words": [
+            {
+              "word": "查",
+              "start": 13.6,
+              "end": 13.765,
+              "confidence": 0.9317
+            },
+            {
+              "word": "看",
+              "start": 13.765,
+              "end": 13.995,
+              "confidence": 0.9552
+            },
+            {
+              "word": "是",
+              "start": 13.995,
+              "end": 14.185,
+              "confidence": 0.9
+            },
+            {
+              "word": "否",
+              "start": 14.185,
+              "end": 14.335,
+              "confidence": 0.9431
+            },
+            {
+              "word": "满",
+              "start": 14.335,
+              "end": 14.535,
+              "confidence": 0.9385
+            },
+            {
+              "word": "足",
+              "start": 14.535,
+              "end": 14.735,
+              "confidence": 0.9709
+            },
+            {
+              "word": "贵",
+              "start": 14.735,
+              "end": 14.795,
+              "confidence": 0.1764
+            },
+            {
+              "word": "族",
+              "start": 14.795,
+              "end": 14.855,
+              "confidence": 0.1305
+            },
+            {
+              "word": "条",
+              "start": 14.855,
+              "end": 14.915,
+              "confidence": 0.1488
+            },
+            {
+              "word": "件，",
+              "start": 14.915,
+              "end": 14.975,
+              "confidence": 0.2193
+            }
+          ]
+        },
+        {
+          "t": 15.835,
+          "end": 18.675,
           "text": "并在后续的回合中适用它所带来的折扣。",
           "words": [
             {
               "word": "并",
-              "start": 4.27,
-              "end": 4.405,
-              "confidence": 0.8859
+              "start": 15.835,
+              "end": 15.985,
+              "confidence": 0.9445
             },
             {
               "word": "在",
-              "start": 4.405,
-              "end": 4.605,
-              "confidence": 0.9368
+              "start": 15.985,
+              "end": 16.205,
+              "confidence": 0.903
             },
             {
               "word": "后",
-              "start": 4.605,
-              "end": 4.795,
-              "confidence": 0.97
+              "start": 16.205,
+              "end": 16.395,
+              "confidence": 0.9636
             },
             {
               "word": "续",
-              "start": 4.795,
-              "end": 4.925,
-              "confidence": 0.8468
+              "start": 16.395,
+              "end": 16.535,
+              "confidence": 0.9228
             },
             {
               "word": "的",
-              "start": 4.925,
-              "end": 5.015,
-              "confidence": 0.931
+              "start": 16.535,
+              "end": 16.625,
+              "confidence": 0.9804
             },
             {
               "word": "回",
-              "start": 5.015,
-              "end": 5.155,
-              "confidence": 0.9718
+              "start": 16.625,
+              "end": 16.765,
+              "confidence": 0.9776
             },
             {
               "word": "合",
-              "start": 5.155,
-              "end": 5.315,
-              "confidence": 0.959
+              "start": 16.765,
+              "end": 16.935,
+              "confidence": 0.9576
             },
             {
               "word": "中",
-              "start": 5.315,
-              "end": 5.535,
-              "confidence": 0.9731
+              "start": 16.935,
+              "end": 17.165,
+              "confidence": 0.9703
             },
             {
               "word": "适",
-              "start": 5.535,
-              "end": 5.755,
-              "confidence": 0.9632
+              "start": 17.165,
+              "end": 17.365,
+              "confidence": 0.9404
             },
             {
               "word": "用",
-              "start": 5.755,
-              "end": 5.895,
-              "confidence": 0.9933
+              "start": 17.365,
+              "end": 17.515,
+              "confidence": 0.9858
             },
             {
               "word": "它",
-              "start": 5.895,
-              "end": 6.085,
-              "confidence": 0.9699
+              "start": 17.515,
+              "end": 17.695,
+              "confidence": 0.9767
             },
             {
               "word": "所",
-              "start": 6.085,
-              "end": 6.255,
-              "confidence": 0.9694
+              "start": 17.695,
+              "end": 17.835,
+              "confidence": 0.9773
             },
             {
               "word": "带",
-              "start": 6.255,
-              "end": 6.425,
-              "confidence": 0.8825
+              "start": 17.835,
+              "end": 18.025,
+              "confidence": 0.9337
             },
             {
               "word": "来",
-              "start": 6.425,
-              "end": 6.505,
-              "confidence": 0.6561
+              "start": 18.025,
+              "end": 18.145,
+              "confidence": 0.9661
             },
             {
               "word": "的",
-              "start": 6.505,
-              "end": 6.565,
-              "confidence": 0.3209
+              "start": 18.145,
+              "end": 18.235,
+              "confidence": 0.9236
             },
             {
               "word": "折",
-              "start": 6.565,
-              "end": 6.625,
-              "confidence": 0.2654
+              "start": 18.235,
+              "end": 18.415,
+              "confidence": 0.8997
             },
             {
               "word": "扣。",
-              "start": 6.625,
-              "end": 6.685,
-              "confidence": 0.2941
+              "start": 18.415,
+              "end": 18.675,
+              "confidence": 0.9455
             }
           ]
         }
@@ -16382,7 +16342,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 514.44,
+      "start": 513.86,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16615,7 +16575,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 7.08,
-      "start": 521.66,
+      "start": 521.09,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -16829,7 +16789,7 @@
       "text": "左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 6.288,
-      "start": 528.74,
+      "start": 528.17,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17024,7 +16984,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 535.03,
+      "start": 534.46,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17181,7 +17141,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 5.472,
-      "start": 540.26,
+      "start": 539.69,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17351,7 +17311,7 @@
       "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.2.mp3",
       "duration": 5.664,
-      "start": 545.74,
+      "start": 545.16,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17527,7 +17487,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 4.464,
-      "start": 551.4,
+      "start": 550.82,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17665,7 +17625,7 @@
       "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
       "audio": "media/tts/full/endgame.example.001.2.mp3",
       "duration": 5.448,
-      "start": 555.86,
+      "start": 555.29,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -17845,7 +17805,7 @@
       "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.002.mp3",
       "duration": 7.464,
-      "start": 561.31,
+      "start": 560.74,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18086,7 +18046,7 @@
       "text": "声望值最高的玩家获得胜利。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 3.072,
-      "start": 568.78,
+      "start": 568.2,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18183,7 +18143,7 @@
       "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
       "audio": "media/tts/full/endgame.tie.001.1.mp3",
       "duration": 6.264,
-      "start": 571.85,
+      "start": 571.27,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18382,7 +18342,7 @@
       "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
       "audio": "media/tts/full/endgame.tie.001.2.mp3",
       "duration": 6.456,
-      "start": 578.11,
+      "start": 577.54,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

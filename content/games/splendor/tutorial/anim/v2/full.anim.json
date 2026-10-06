@@ -1951,46 +1951,26 @@
       "edge": "end"
     },
     {
-      "id": "action.purchase_reserved.002.1.start",
-      "cue": "action.purchase_reserved.002.1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.purchase_reserved.002.1.end",
-      "cue": "action.purchase_reserved.002.1",
-      "edge": "cue_end"
-    },
-    {
       "id": "action.purchase_reserved.002.1.b1.start",
-      "cue": "action.purchase_reserved.002.1",
+      "cue": "action.purchase_reserved.001",
       "beat": "action.purchase_reserved.002.1.b1",
       "edge": "start"
     },
     {
       "id": "action.purchase_reserved.002.1.b1.end",
-      "cue": "action.purchase_reserved.002.1",
+      "cue": "action.purchase_reserved.001",
       "beat": "action.purchase_reserved.002.1.b1",
       "edge": "end"
     },
     {
-      "id": "action.purchase_reserved.002.2.start",
-      "cue": "action.purchase_reserved.002.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.purchase_reserved.002.2.end",
-      "cue": "action.purchase_reserved.002.2",
-      "edge": "cue_end"
-    },
-    {
       "id": "action.purchase_reserved.002.2.b1.start",
-      "cue": "action.purchase_reserved.002.2",
+      "cue": "action.purchase_reserved.001",
       "beat": "action.purchase_reserved.002.2.b1",
       "edge": "start"
     },
     {
       "id": "action.purchase_reserved.002.2.b1.end",
-      "cue": "action.purchase_reserved.002.2",
+      "cue": "action.purchase_reserved.001",
       "beat": "action.purchase_reserved.002.2.b1",
       "edge": "end"
     },
@@ -14621,94 +14601,27 @@
     {
       "id": "action.purchase_reserved.001",
       "parent": "action.reserve.not_purchase.001",
-      "timing": [],
-      "script": {
-        "story": "【不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买】",
-        "note": "【买牌的两个来源】\n  规则说明，**没有状态变化**：点市场（供应堆那 12 张）、再点保留区（自己留的 3 张）——两条路都能买。"
-      },
-      "events": [],
-      "tree": "main"
-    },
-    {
-      "id": "action.purchase_reserved.002.1",
-      "parent": "action.purchase_reserved.001",
       "timing": [
         {
-          "key": "点保留区那张",
-          "text": "0.80"
+          "key": "镜头给玩家A区",
+          "text": "0.00"
         },
         {
-          "key": "搬进发展区（翻开）",
-          "text": "2.40"
+          "key": "第二句：高亮保留牌并支付",
+          "text": "第二句起"
+        },
+        {
+          "key": "flip：一边翻一边进入发展区",
+          "text": "第二句 2.665s"
+        },
+        {
+          "key": "第三句：结算声望/贵族/折扣",
+          "text": "第三句起"
         }
       ],
       "script": {
-        "story": "【按照之前介绍过的规则，支付费用，将一张被保留的、背面朝上的卡牌反面（翻开）】",
-        "note": "【买下保留的那张：真付钱】\n  买的是保留区里那张 **一级红 card_l1_ruby_37**（从牌堆顶保留）：价格读图 = **蓝2 + 绿1**。\n  A 发展区已有刚买到的绿色一级牌，提供 **绿折扣1**，所以绿色费用被抵掉；还差 **蓝2**。\n  A 手上没有蓝宝石，但有 2 张黄金（保留奖励攒下），用 **2 枚黄金**当蓝宝石支付。\n  这一整套账由 `animation/validate_anim_rules.py` 在写脚本时逐色核对：每色在场恒 4 枚、黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
-        "exit": {
-          "zones": {
-            "card_market": {
-              "count": 12
-            },
-            "deck_level_1": {
-              "count": 35
-            },
-            "deck_level_2": {
-              "count": 25
-            },
-            "deck_level_3": {
-              "count": 15
-            },
-            "gem_supply_diamond": {
-              "count": 4
-            },
-            "gem_supply_emerald": {
-              "count": 4
-            },
-            "gem_supply_onyx": {
-              "count": 4
-            },
-            "gem_supply_ruby": {
-              "count": 4
-            },
-            "gem_supply_sapphire": {
-              "count": 4
-            },
-            "gold_supply": {
-              "count": 5
-            },
-            "noble_market": {
-              "count": 3
-            },
-            "offstage": {
-              "count": 0
-            },
-            "player_b_development": {
-              "count": 0
-            },
-            "player_b_holding": {
-              "count": 0
-            },
-            "player_b_nobles": {
-              "count": 0
-            },
-            "player_development": {
-              "count": 2
-            },
-            "player_holding": {
-              "count": 0
-            },
-            "player_marker": {
-              "count": 1
-            },
-            "player_nobles": {
-              "count": 0
-            },
-            "player_reserved": {
-              "count": 2
-            }
-          }
-        },
+        "story": "【不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买；支付费用后把背面朝上的保留牌翻开并结算】",
+        "note": "【购买保留的发展卡牌：合并 001 + 002.1 + 002.2】\n  合并为一条 cue，镜头只用一个 shot_player_a（玩家A的持有/保留/发展区）。\n  第二句：高亮保留牌 → pay 黄金/宝石 → flip 保留牌（face_down → face_up），\n  一边绕长边逆时针翻面，一边从 player_reserved 移动到 player_development。\n  第三句继续停在玩家A区：结算声望、贵族条件与后续折扣；没有额外状态变化。",
         "enter": {
           "zones": {
             "card_market": {
@@ -14772,15 +14685,79 @@
               "count": 3
             }
           }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 2
+            },
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 2
+            }
+          }
         }
       },
       "events": [
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_reserved",
+          "shot": "shot_player_a",
           "realizes": "<ontology::timing>",
-          "anchor": "action.purchase_reserved.002.1.start"
+          "anchor": "action.purchase_reserved.001.start"
         },
         {
           "op": "highlight",
@@ -14811,7 +14788,7 @@
           }
         },
         {
-          "op": "move",
+          "op": "flip",
           "dur": 0.7,
           "quantity": 1,
           "to": "face_up",
@@ -14833,7 +14810,9 @@
           "destination": {
             "space": "entity",
             "zone": "player_development"
-          }
+          },
+          "axis": "long",
+          "direction": "ccw"
         },
         {
           "op": "point",
@@ -14847,38 +14826,18 @@
             "zone": "player_development",
             "template": "card_l1_ruby_37"
           }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.purchase_reserved.002.2",
-      "parent": "action.purchase_reserved.002.1",
-      "timing": [],
-      "script": {
-        "story": "【正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣】",
-        "note": "【买完之后的结算】\n  规则说明，没有状态变化：点发展区（声望 + 折扣）→ 点自己面前贵族（看条件）。\n  刚买进的是 level 1 红 card_l1_ruby_37（声望 0，红折扣 1）；发展区现在有绿色一级牌和这张红牌。\n  贵族条件的检查照常进行，但当前发展区数量还不足以满足贵族。"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_development",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.purchase_reserved.002.2.start"
         },
         {
           "op": "wait",
           "dur": 0.0,
-          "anchor": "action.purchase_reserved.002.2.b1.start",
-          "offset": 2.125
+          "anchor": "action.purchase_reserved.001.end"
         }
       ],
       "tree": "main"
     },
     {
       "id": "action.summary.001",
-      "parent": "action.purchase_reserved.002.2",
+      "parent": "action.purchase_reserved.001",
       "timing": [],
       "script": {
         "story": "【以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌】",

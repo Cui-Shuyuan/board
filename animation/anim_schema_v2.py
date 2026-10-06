@@ -29,8 +29,8 @@ STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "mov
 # Semantic action macros.  They are source-level sugar and are lowered to the
 # primitive STATE_OPS above by resolve_track(), so the compiler, validators and
 # audit tools only ever see the primitive event stream.
-SEMANTIC_OPS = {"take", "move", "pay", "deal", "draw"}
-SEMANTIC_SOURCE_OPS = ("transfer", "take", "move", "pay", "deal", "draw")
+SEMANTIC_OPS = {"take", "move", "pay", "deal", "flip", "draw"}
+SEMANTIC_SOURCE_OPS = ("transfer", "take", "move", "pay", "deal", "flip", "draw")
 PRESENTATION_OPS = {"show", "hide", "highlight", "point", "shape", "fade", "scale", "wait", "camera", "label", "magnifier",
                      "overlay_show", "overlay_hide"}
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
@@ -48,9 +48,10 @@ ENTITY_TARGET_FIELDS = ("zone", "template", "palette", "concept", "parts", "orde
 # 一个机位至少要保持这么久，否则属于「1 帧镜头」书写事故。
 MIN_CAMERA_SHOT_SECONDS = 0.4
 OPS = STATE_OPS | PRESENTATION_OPS | SEMANTIC_OPS
-# Seconds.  draw is the one semantic verb whose visual is a flip, so it needs a
-# sensible duration when the author does not write one explicitly.
-DEFAULT_DRAW_DURATION = 0.6
+# Seconds.  flip/draw are the semantic verbs whose visual is an edge flip, so
+# they need a sensible duration when the author does not write one explicitly.
+DEFAULT_FLIP_DURATION = 0.6
+DEFAULT_DRAW_DURATION = DEFAULT_FLIP_DURATION
 FACES = {"up", "down", "hidden", None, ""}
 CONCEPT_ID_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.:\-]*$")
 SPECIAL_CONCEPT_RE = re.compile(r"^<[A-Za-z_][A-Za-z0-9_.:\-]*>$")
@@ -233,6 +234,39 @@ def _lower_semantic_event(ev: dict, cue_id: str = "") -> list:
         out["op"] = "transfer"
         if op == "deal":
             out.setdefault("to", "face_up")
+        return [out]
+
+    if op == "flip":
+        # Generic edge flip: an explicit object moves to destination while
+        # turning over.  draw is the same visual locked to a deck top.
+        source = require("source")
+        if not isinstance(source, str):
+            raise ValueError(f"{where}: flip needs exactly one source zone")
+        destination = require("destination")
+        if not isinstance(destination, str):
+            raise ValueError(f"{where}: flip needs exactly one destination zone")
+        to_face = str(ev.get("to") or "").strip().lower()
+        if to_face not in ("face_up", "face_down"):
+            raise ValueError(f"{where}: flip needs to=face_up/face_down")
+        axis = str(ev.get("axis") or "long").strip().lower()
+        if axis not in ("long", "short"):
+            raise ValueError(f"{where}: axis must be long or short")
+        direction = str(ev.get("direction") or "ccw").strip().lower()
+        if direction not in ("ccw", "cw"):
+            raise ValueError(f"{where}: direction must be ccw or cw")
+        out = dict(ev)
+        out["op"] = "transfer"
+        out["to"] = to_face
+        try:
+            out["dur"] = float(ev.get("dur", DEFAULT_FLIP_DURATION) or DEFAULT_FLIP_DURATION)
+        except (TypeError, ValueError):
+            raise ValueError(f"{where}: dur must be numeric seconds")
+        out["quantity"] = int(ev.get("quantity", 1) or 1)
+        if out["quantity"] != 1:
+            raise ValueError(f"{where}: flip quantity must be 1")
+        out["flip"] = {"axis": axis, "direction": direction}
+        out.pop("axis", None)
+        out.pop("direction", None)
         return [out]
 
     # draw: top of source -> destination, visual is one edge flip.

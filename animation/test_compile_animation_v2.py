@@ -753,6 +753,42 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertNotIn("axis", events[4])
         self.assertNotIn("direction", events[4])
 
+    def test_flip_macro_lowers_to_transfer_with_edge_flip(self):
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "flip", "to": "face_up",
+                         "target": {"space": "entity", "zone": "player_reserved",
+                                    "template": "sample_card"},
+                         "destination": {"space": "entity", "zone": "player_development"},
+                         "axis": "short", "direction": "cw"},
+                    ],
+                ),
+            ],
+        }
+        events = schema.resolve_track(copy.deepcopy(track))["cues"][0]["events"]
+        self.assertEqual(1, len(events))
+        event = events[0]
+        self.assertEqual("transfer", event["op"])
+        self.assertEqual("player_reserved", event["source"])
+        self.assertEqual("player_development", event["destination"])
+        self.assertEqual("face_up", event["to"])
+        self.assertEqual(1, event["quantity"])
+        self.assertEqual(schema.DEFAULT_FLIP_DURATION, event["dur"])
+        self.assertEqual({"axis": "short", "direction": "cw"}, event["flip"])
+        self.assertNotIn("axis", event)
+        self.assertNotIn("direction", event)
+
     def test_draw_macro_compiles_top_card_edge_flip(self):
         stage = _stage_doc("s1", ["deck", "peek"])
         stage["zones"][0]["display"] = {"mode": "stack"}

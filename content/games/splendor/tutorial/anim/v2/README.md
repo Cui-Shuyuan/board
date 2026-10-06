@@ -27,7 +27,7 @@
 
 3. **`clips`** — 纯视觉插值。
    位置/缩放/透明度/翻转（轴向、方向、落点）/洗混。**不得再写 ZoneId/Order/Face**：逻辑状态只由
-   `move` / `take` / `pay` / `deal` / `draw` 是编译期展开的通用薄宏，写法见 LLM-ANIMATION-GUIDE.md。
+   `move` / `take` / `pay` / `deal` / `flip` / `draw` 是编译期展开的通用薄宏，写法见 LLM-ANIMATION-GUIDE.md。
    `state_ops` 决定。
 
 ## 时间锚点（全量）

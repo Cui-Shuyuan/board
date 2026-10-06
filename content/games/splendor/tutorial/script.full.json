@@ -1548,43 +1548,11 @@
         {
           "id": "action.purchase_reserved.001.b1",
           "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。"
-        }
-      ]
-    },
-    {
-      "id": "action.purchase_reserved.002.1",
-      "group": "3.4 购买保留的发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.4 购买保留的发展卡牌"
-      ],
-      "refs": [
-        "<purchase_development_card>",
-        "<attract_noble>",
-        "<discount>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
           "id": "action.purchase_reserved.002.1.b1",
           "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，"
-        }
-      ]
-    },
-    {
-      "id": "action.purchase_reserved.002.2",
-      "group": "3.4 购买保留的发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.4 购买保留的发展卡牌"
-      ],
-      "refs": [
-        "<purchase_development_card>",
-        "<attract_noble>",
-        "<discount>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
           "id": "action.purchase_reserved.002.2.b1",
           "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。"
