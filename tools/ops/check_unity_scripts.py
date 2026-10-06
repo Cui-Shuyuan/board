@@ -161,6 +161,10 @@ namespace UnityEngine
     {
         public float x, y, width, height;
         public Rect(float x, float y, float w, float h) { this.x = x; this.y = y; width = w; height = h; }
+        public float xMin => x;
+        public float yMin => y;
+        public float xMax => x + width;
+        public float yMax => y + height;
     }
 
     public static class Mathf
