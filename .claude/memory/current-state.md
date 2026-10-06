@@ -40,7 +40,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 ## 当前优先待办
 
 1. **Splendor full 重新过动画（扫描件已补，下一步就是这一项）**
-   - 28 个 face-up 发展卡卡位已有独立真卡扫描件/模板，`check_card_identity_v2.py` 已通过。
+   - 28 个 face-up 发展卡卡位已有独立真卡扫描件/模板；`check_card_identity_v2.py` 曾在 `3e979b1` 通过，但 `22c080c`/`16c18ce` 改动反例 cue 后出现 91 条失败（见待办 7）。
    - 现在需要从头到尾重新过一遍 Splendor full 110 cue：真实播放/真机观看，逐段确认画面、卡面、镜头、字幕和口播仍然一致。
    - 重点：cue46–110 市场/玩家发展区的卡面是否都是对应真卡、无重复；cue59 demo、cue70 补 4 白/4 红、cue102 终局补三级蓝的画面观感；之前 2 条 stage 重叠 warning 是否实际影响观感。
    - 产出逐 cue 问题清单；能当场改的改，需要用户裁决的记录待办。
@@ -49,6 +49,53 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 4. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
 5. **动画检查遗留**：当前 `check_anim_v2.py` 报 2 条 stage 布局重叠 warning，待用户裁决调 stage 还是允许叠加。
 6. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
+7. **补 Splendor 真卡扫描（等用户回家；先做这个）**
+   - 目标：修 `action.nobles.source.001` 的 91 条 `check_card_identity_v2` 失败。
+   - 最低只需补 4 张真卡：红 L1 / 红 L3 / 黑 L1 / 黑 L3 各 1 张。
+   - 另有 4 处 B 区占位卡可换成已扫描/已登记模板，不需要新图；精确清单与替换关系见下方〈待补充 Splendor 真卡清单〉。
+
+## 待补充 Splendor 真卡清单（等用户回家，2026-10-06）
+
+**背景**：`action.nobles.source.001`（偷贵族反例）里给玩家 B 补齐 3 白 + 3 红 + 3 黑发展区时，7 张卡复用了市场已有的真卡模板，导致同一物理卡在同一状态出现两次；`check_card_identity_v2` 按每个中间快照累计报出 91 条。当前该 cue 的最终状态需要 10 张红卡位、10 张黑卡位，而 registry 只有各 8 个身份，所以最低补 4 张真卡即可同时解决容量和重复。
+
+### 需要新扫的卡（4 张）
+
+| 新模板 ID | 真卡（等级 / 奖励） | 声望 | 造价 | 建议文件 |
+|---|---|---:|---|---|
+| `card_l1_ruby_34` | 一级红 34 | 0 | 黑 1、蓝 1、绿 1、白 2 | `一级发展卡_红_34_cutout.png` |
+| `card_l3_ruby_87` | 三级红 87 | 3 | 黑 3、蓝 5、绿 3、白 3 | `三级发展卡_红_87_cutout.png` |
+| `card_l1_onyx_1` | 一级黑 1 | 0 | 蓝 1、绿 1、红 1、白 1 | `一级发展卡_黑_1_cutout.png` |
+| `card_l3_onyx_71` | 三级黑 71 | 3 | 蓝 3、绿 5、红 3、白 3 | `三级发展卡_黑_71_cutout.png` |
+
+备选（保持同组一张 L1 + 一张 L3 即可）：红 L1 34/36/39，红 L3 87/89/90，黑 L1 1/2/4/5/6/7/8，黑 L3 71/72/73。
+
+### B 发展区替换映射（不需要新图的部分）
+
+| 现在 B 区的模板 | 替换为 | 新图 | 说明 |
+|---|---|---|---|
+| `card_l1_diamond_17` | 保留 | 否 | 当前不与其他区域冲突 |
+| `card_l2_diamond_55` | `card_l1_diamond_22` | 否 | 22 已有扫描；顺带消除 B 与 `deck_level_2` 的面朝下重复 |
+| `card_l3_diamond_81` | `card_l3_diamond_80` | 否 | 80 已有扫描；81 留给 A 从市场买走 |
+| `card_l1_ruby_38` | `card_l1_ruby_34` | 是 | 新扫；避开市场 L1 红 38 |
+| `card_l2_ruby_70` | `card_l2_ruby_69` | 否 | 69 已有扫描 |
+| `card_l3_ruby_88` | `card_l3_ruby_87` | 是 | 新扫；避开市场 L3 红 88 |
+| `card_l1_onyx_908` | `card_l1_onyx_1` | 是 | 新扫；避开市场 L1 黑 908 |
+| `card_l2_onyx_45` | `card_l2_onyx_909` | 否 | 909 已登记；确认该 state 未占用 |
+| `card_l3_onyx_74` | `card_l3_onyx_71` | 是 | 新扫；避开市场 L3 黑 74 |
+
+### 扫描补完后要做的实现步骤
+
+1. 图片放入 `content/games/splendor/media/card/`：原图 + `_cutout.png`。
+2. 把 4 个新模板补进：
+   - `content/games/splendor/card_registry.json`
+   - `content/games/splendor/card_facts.json`
+   - `content/games/splendor/tutorial/anim/v2/_stage/*.stage.json`（至少 `splendor.table.stage.json`，如需近景再补其它 stage）
+3. 改 `full.anim.json` 中 `action.nobles.source.001` 的 setup `create` 事件、`script.enter`/`exit` 契约；同步更新该 cue 的 QA 问题与 `_qa` 留档。
+4. 重编译 `full.compiled.json`，并依次跑：
+   - `python3 animation/check_card_identity_v2.py --game splendor --track full`
+   - `python3 animation/validate_anim_rules_v2.py --game splendor --track full`
+   - `python3 animation/check_anim_v2.py --game splendor --track full`
+   - `python3 animation/audit_anim_v2.py --game splendor --track full`
 
 ## 已知未做 / 未闭环
 
