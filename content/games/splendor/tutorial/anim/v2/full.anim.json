@@ -12949,59 +12949,6 @@
       },
       "events": [
         {
-          "op": "transfer",
-          "dur": 0.0,
-          "setup": true,
-          "quantity": 1,
-          "anchor": "action.reserve.intro.001.1.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "card_market",
-            "template": "card_l1_sapphire_15",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<sapphire>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "deck_level_1"
-          },
-          "to": "face_down"
-        },
-        {
-          "op": "transfer",
-          "dur": 0.0,
-          "setup": true,
-          "quantity": 1,
-          "to": "face_up",
-          "order": 3,
-          "anchor": "action.reserve.intro.001.1.start",
-          "offset": 0.0,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1",
-            "template": "card_l1_onyx_3",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<onyx>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          }
-        },
-        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
@@ -13102,62 +13049,71 @@
       ],
       "script": {
         "story": "【黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代】",
-        "note": "【黄金 = 万能宝石】\n  规则说明，**没有状态变化**：先点持有区里那枚黄金（刚拿到的），再点保留的那张牌 ——『买它的时候，这枚黄金可以当任意一种宝石』。"
-      },
-      "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.gold.001.start"
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.gold.001.b1.start",
-          "offset": 0.535,
-          "target": {
-            "space": "entity",
-            "zone": "player_holding",
-            "concept": "gold"
+        "note": "【黄金 = 万能宝石：真买一张】\n  开场用 setup 给 A 补 3 枚黑宝石（作为本 demo 的前提）。\n  黄金当第 4 枚黑宝石：绿色一级牌 card_l1_emerald_32 价格是黑 4，A 付 3 枚黑宝石 + 1 枚黄金。\n  付款后绿色发展卡进入 A 的发展区，市场空位由 deck_level_1 顶牌 card_l1_onyx_3 补回。\n  这条把『黄金可以成为任意一种宝石的替代』从口播变成真实支付。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 1
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 4
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 1
+            }
           }
         },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.gold.001.b1.start",
-          "offset": 2.335,
-          "target": {
-            "space": "entity",
-            "zone": "player_reserved"
-          }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.reserve.deck.001",
-      "parent": "action.reserve.gold.001",
-      "timing": [
-        {
-          "key": "镜头推近牌堆",
-          "text": "0.00"
-        },
-        {
-          "key": "从牌堆顶保留",
-          "text": "1.40"
-        },
-        {
-          "key": "拿第二枚黄金",
-          "text": "3.20"
-        }
-      ],
-      "script": {
-        "story": "【除了供应堆的 12 张卡牌外，玩家也可以从 3 摞牌堆顶选择一张未被翻开的发展卡牌保留】",
-        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `deck_level_1` 顶取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻一级牌堆顶是真实牌 card_l1_sapphire_15，脚本不点名，观众和对手在保留前都看不到它。\n  · 牌面朝下，但后面可以直接买它——这条同时说明任何一级牌堆（以及任意等级）的顶牌都可以保留。\n",
         "exit": {
           "zones": {
             "card_market": {
@@ -13188,7 +13144,7 @@
               "count": 4
             },
             "gold_supply": {
-              "count": 3
+              "count": 5
             },
             "noble_market": {
               "count": 3
@@ -13206,10 +13162,241 @@
               "count": 0
             },
             "player_development": {
-              "count": 0
+              "count": 1
             },
             "player_holding": {
-              "count": 2
+              "count": 0
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 1
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 3,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "action.reserve.gold.001.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 2.3,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 0
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 3,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 3.6,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 3.9,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.7,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 4.3,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_emerald_32",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 0,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 5.1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "action.reserve.gold.001.start",
+          "offset": 5.9,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        }
+      ],
+      "tree": "main"
+    },
+    {
+      "id": "action.reserve.deck.001",
+      "parent": "action.reserve.gold.001",
+      "timing": [
+        {
+          "key": "镜头推近牌堆",
+          "text": "0.00"
+        },
+        {
+          "key": "从牌堆顶保留",
+          "text": "1.40"
+        },
+        {
+          "key": "拿第二枚黄金",
+          "text": "3.20"
+        }
+      ],
+      "script": {
+        "story": "【除了供应堆的 12 张卡牌外，玩家也可以从 3 摞牌堆顶选择一张未被翻开的发展卡牌保留】",
+        "note": "【也可以从牌堆顶保留】\n  真做一次：`transfer` 从 `deck_level_1` 顶取一张 → 保留区（**朝下**）+ 再拿一枚黄金。\n  · 取的是牌堆顶：`transfer` 对 stack zone 默认取 **order 最大** 的那张；此刻顶牌是真实的一级红 card_l1_ruby_37（价格蓝2+绿1），保留前观众和对手看不到它。\n  · 后面 A 有了绿色发展卡的绿折扣后，正好可以用保留奖励的黄金买它。",
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 1
             },
             "player_marker": {
               "count": 1
@@ -13252,7 +13439,7 @@
               "count": 4
             },
             "gold_supply": {
-              "count": 4
+              "count": 5
             },
             "noble_market": {
               "count": 3
@@ -13270,10 +13457,10 @@
               "count": 0
             },
             "player_development": {
-              "count": 0
+              "count": 1
             },
             "player_holding": {
-              "count": 1
+              "count": 0
             },
             "player_marker": {
               "count": 1
@@ -13288,6 +13475,28 @@
         }
       },
       "events": [
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_down",
+          "anchor": "action.reserve.deck.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_ruby_37",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
         {
           "op": "camera",
           "dur": 0.0,
@@ -13384,7 +13593,7 @@
       "timing": [],
       "script": {
         "story": "【拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
-        "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 2 枚黄金（0 宝石），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。"
+        "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 1 枚黄金（0 宝石），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。"
       },
       "events": [
         {
@@ -13408,7 +13617,7 @@
       ],
       "script": {
         "story": "【如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金】",
-        "note": "【注意事项二：黄金拿完了也能保留，只是不给黄金】\n  规则说明，**没有状态变化**：镜头给黄金供应堆（还有 3 枚）→ 点它、再点保留区。\n  ⚠ 不演示『黄金没了』：那要把供应堆掏空（口播没让人拿那 3 枚）。规则本身靠口播说清，画面只指位置。"
+        "note": "【注意事项二：黄金拿完了也能保留，只是不给黄金】\n  规则说明，**没有状态变化**：镜头给黄金供应堆（还有 4 枚）→ 点它、再点保留区。\n  ⚠ 不演示『黄金没了』：那要把供应堆掏空（口播没让人拿那 4 枚）。规则本身靠口播说清，画面只指位置。"
       },
       "events": [
         {
@@ -13459,7 +13668,7 @@
       ],
       "script": {
         "story": "【如果一位玩家已经保留了 3 张发展卡牌，就不能继续保留了。此时他必须选择其他行动】",
-        "note": "【到 3 张就满了；同时补回市场】\n  真做一次：从市场保留一张二级红（保留区朝下）+ 拿第三枚黄金 → 保留区正好 3 张。\n  市场空位按规则从 deck_level_2 翻一张真牌补回（当前牌堆真牌是二级白），保持市场 12 张。\n  『不能继续保留』仍靠『正好 3 张』+ 禁止符号表达。\n",
+        "note": "【到 3 张就满了；同时补回市场】\n  真做一次：从市场保留一张二级红（保留区朝下）+ 拿第二枚黄金 → 保留区正好 3 张。\n  市场空位按规则从 deck_level_2 翻一张真牌补回（当前牌堆真牌是二级白），保持市场 12 张。\n  『不能继续保留』仍靠『正好 3 张』+ 禁止符号表达。\n",
         "exit": {
           "zones": {
             "card_market": {
@@ -13490,7 +13699,7 @@
               "count": 4
             },
             "gold_supply": {
-              "count": 2
+              "count": 3
             },
             "noble_market": {
               "count": 3
@@ -13508,10 +13717,10 @@
               "count": 0
             },
             "player_development": {
-              "count": 0
+              "count": 1
             },
             "player_holding": {
-              "count": 3
+              "count": 2
             },
             "player_marker": {
               "count": 1
@@ -13554,7 +13763,7 @@
               "count": 4
             },
             "gold_supply": {
-              "count": 3
+              "count": 4
             },
             "noble_market": {
               "count": 3
@@ -13572,10 +13781,10 @@
               "count": 0
             },
             "player_development": {
-              "count": 0
+              "count": 1
             },
             "player_holding": {
-              "count": 2
+              "count": 1
             },
             "player_marker": {
               "count": 1
@@ -13761,7 +13970,7 @@
       ],
       "script": {
         "story": "【保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值】",
-        "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（当前还没有买到的牌）——对比就是这句话：\n  只有进了发展区的牌才给折扣和声望；保留区的牌不在发展区，所以怎么点发展区都数不到它们。"
+        "note": "【保留 ≠ 购买：没有折扣、没有声望】\n  规则说明，**没有状态变化**：先点保留区（3 张朝下的牌），再点发展区（刚买到的那张绿色牌）——对比就是这句话：\n  只有进了发展区的牌才给折扣和声望；保留区的牌不在发展区，所以怎么点发展区都数不到它们。"
       },
       "events": [
         {
@@ -13800,7 +14009,7 @@
       ],
       "script": {
         "story": "【按照之前介绍过的规则，支付费用，将一张被保留的、背面朝上的卡牌反面（翻开）】",
-        "note": "【买下保留的那张：真付钱】\n  买的是保留区里那张 **一级蓝 card_l1_sapphire_15**（之前从一级牌堆顶保留）：价格读图 = **3 黑**。\n  本局 A 没有黑宝石，也没有黑折扣；保留奖励攒下的 **3 张黄金**正好当 3 枚黑宝石支付。\n  这一整套账由 `animation/validate_anim_rules.py` 在写脚本时逐色核对：每色在场恒 4 枚、黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
+        "note": "【买下保留的那张：真付钱】\n  买的是保留区里那张 **一级红 card_l1_ruby_37**（从牌堆顶保留）：价格读图 = **蓝2 + 绿1**。\n  A 发展区已有刚买到的绿色一级牌，提供 **绿折扣1**，所以绿色费用被抵掉；还差 **蓝2**。\n  A 手上没有蓝宝石，但有 2 张黄金（保留奖励攒下），用 **2 枚黄金**当蓝宝石支付。\n  这一整套账由 `animation/validate_anim_rules.py` 在写脚本时逐色核对：每色在场恒 4 枚、黄金 ≤5、手上限 10、买牌那一步『价格 − 折扣 == 实付』。",
         "exit": {
           "zones": {
             "card_market": {
@@ -13849,7 +14058,7 @@
               "count": 0
             },
             "player_development": {
-              "count": 1
+              "count": 2
             },
             "player_holding": {
               "count": 0
@@ -13895,7 +14104,7 @@
               "count": 4
             },
             "gold_supply": {
-              "count": 2
+              "count": 3
             },
             "noble_market": {
               "count": 3
@@ -13913,10 +14122,10 @@
               "count": 0
             },
             "player_development": {
-              "count": 0
+              "count": 1
             },
             "player_holding": {
-              "count": 3
+              "count": 2
             },
             "player_marker": {
               "count": 1
@@ -13953,7 +14162,7 @@
         {
           "op": "transfer",
           "dur": 0.6,
-          "quantity": 3,
+          "quantity": 2,
           "anchor": "action.purchase_reserved.002.1.b1.start",
           "offset": 1.265,
           "target": {
@@ -13976,13 +14185,13 @@
           "target": {
             "space": "entity",
             "zone": "player_reserved",
-            "template": "card_l1_sapphire_15",
+            "template": "card_l1_ruby_37",
             "palette": "card_level_1",
             "concept": "development_card_level_1",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<sapphire>"
+                "value": "<ruby>"
               }
             ]
           },
@@ -13994,14 +14203,14 @@
         {
           "op": "point",
           "dur": 0.0,
-          "part": "cost_1",
+          "part": "cost_2",
           "indicator": "circle",
           "anchor": "action.purchase_reserved.002.1.b1.end",
           "offset": -2.005,
           "target": {
             "space": "entity",
             "zone": "player_development",
-            "template": "card_l1_sapphire_15"
+            "template": "card_l1_ruby_37"
           }
         }
       ],
@@ -14013,7 +14222,7 @@
       "timing": [],
       "script": {
         "story": "【正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣】",
-        "note": "【买完之后的结算】\n  规则说明，没有状态变化：点发展区（声望 + 折扣）→ 点自己面前贵族（看条件）。\n  刚买进的是 level 1 蓝 card_l1_sapphire_15（声望 0，蓝折扣 1）；发展区现在只有这一张牌。\n  贵族条件的检查照常进行，但当前发展区数量还不足以满足贵族。"
+        "note": "【买完之后的结算】\n  规则说明，没有状态变化：点发展区（声望 + 折扣）→ 点自己面前贵族（看条件）。\n  刚买进的是 level 1 红 card_l1_ruby_37（声望 0，红折扣 1）；发展区现在有绿色一级牌和这张红牌。\n  贵族条件的检查照常进行，但当前发展区数量还不足以满足贵族。"
       },
       "events": [
         {
