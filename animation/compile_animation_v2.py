@@ -1466,7 +1466,10 @@ class Compiler:
                 affected = state.matching(zone, sel)
                 affected_ids = [it["id"] for it in affected]
                 for it in affected:
-                    clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
+                    if ev.get("flip"):
+                        clips.append(self.flip_clip(it, at, dur, lead, easing, ev.get("to")))
+                    else:
+                        clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
             elif op == "move_order":
                 arr = state.matching(zone, sel)
                 if arr:
@@ -1865,6 +1868,13 @@ class Compiler:
 
     def face_clip(self, it, at, dur, lead, easing, to_face):
         c = self.base_clip("face", at, dur, lead, easing)
+        c.update({"item_id": it["id"], "template": it["template"], "palette": it["palette"],
+                  "to_face": face_name(face_int(to_face))})
+        return c
+
+    def flip_clip(self, it, at, dur, lead, easing, to_face):
+        """卡牌绕竖轴翻转：中点 scale-x=0，正面/背面都不可见，随后换成 to_face。"""
+        c = self.base_clip("flip", at, dur, lead, easing)
         c.update({"item_id": it["id"], "template": it["template"], "palette": it["palette"],
                   "to_face": face_name(face_int(to_face))})
         return c

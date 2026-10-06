@@ -14276,17 +14276,21 @@
           "text": "0.00"
         },
         {
-          "key": "把牌堆顶的牌移到左侧一牌宽处并翻面",
+          "key": "牌移到左侧查看位",
           "text": "4.30"
         },
         {
+          "key": "真正翻面（中间竖着）",
+          "text": "5.10"
+        },
+        {
           "key": "在翻开的牌上打禁止",
-          "text": "5.20"
+          "text": "5.80"
         }
       ],
       "script": {
         "story": "【如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息】",
-        "note": "【从牌堆顶保留：保留之前也不能看（真实查看动作）】\n  demo 前提（setup 静默）：在 deck_level_1 顶放一张真实牌 card_l1_diamond_17，模拟“牌堆顶有一张真卡”。\n  4.30s：把这张牌从牌堆顶 transfer 到 deck_peek（牌堆左侧一牌宽，x=-3.38），同时翻面朝上；\n  5.20s：在这张被翻开的牌上打 forbid，表示“保留之前不能查看”。禁止标记持续到 cue 结束。\n  下一条 cue 用 setup 把这张演示牌销毁，canonical 牌堆恢复原样。",
+        "note": "【从牌堆顶保留：保留之前也不能看（真实查看 + 翻转）】\n  demo 前提（setup 静默）：在 deck_level_1 顶放一张真实牌 card_l1_diamond_17。\n  4.30s：牌从牌堆顶飞向 deck_peek（牌堆顶同高、向左一牌宽，x=-3.50, z=-0.732）。\n  5.10s：在 deck_peek 上执行 `set_face + flip:true`，牌真正翻转；翻转中点 scale-x=0，\n  牌面正好侧对镜头，看不到正面也看不到背面。\n  5.80s：在翻开后的牌上打 forbid 标记，表示保留前不能查看；标记持续到 cue 结束。\n  下一条 cue 用 setup 销毁这张演示牌，canonical 牌堆恢复原样。",
         "enter": {
           "zones": {
             "card_market": {
@@ -14425,7 +14429,6 @@
           "op": "transfer",
           "dur": 0.8,
           "quantity": 1,
-          "to": "face_up",
           "anchor": "action.reserve.private.002.start",
           "offset": 4.3,
           "target": {
@@ -14447,11 +14450,32 @@
           }
         },
         {
+          "op": "set_face",
+          "to": "face_up",
+          "flip": true,
+          "dur": 0.6,
+          "anchor": "action.reserve.private.002.start",
+          "offset": 5.1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_peek",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
           "op": "point",
           "dur": 0.0,
           "indicator": "forbid",
           "anchor": "action.reserve.private.002.start",
-          "offset": 5.2,
+          "offset": 5.8,
           "target": {
             "space": "entity",
             "zone": "deck_peek",

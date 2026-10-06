@@ -34,6 +34,8 @@ namespace BoardGameTutorial.Animation
         public float X;
         public float Z;
         public float Scale = 1f;
+        // 1 = 无翻转；flip 动画中从 1 -> 0 -> 1，0 表示卡牌侧对镜头、正反都看不到。
+        public float Flip = 1f;
         public float Alpha = 1f;
         public float Rotation;
         public FaceState Face = FaceState.Up;
@@ -355,6 +357,22 @@ namespace BoardGameTutorial.Animation
                             if (end <= start || t + 1e-6f >= end)
                                 v.Face = ParseFace(clip.to_face);
                             break;
+                        case "flip":
+                        {
+                            if (end > start && t < end)
+                            {
+                                float angle = (float)Math.PI * eased;
+                                v.Flip = Math.Abs((float)Math.Cos(angle));
+                                if (eased >= 0.5f && !string.IsNullOrEmpty(clip.to_face))
+                                    v.Face = ParseFace(clip.to_face);
+                            }
+                            else
+                            {
+                                v.Flip = 1f;
+                                if (!string.IsNullOrEmpty(clip.to_face)) v.Face = ParseFace(clip.to_face);
+                            }
+                            break;
+                        }
                         case "shuffle":
                         {
                             float bx = clip.from_x;

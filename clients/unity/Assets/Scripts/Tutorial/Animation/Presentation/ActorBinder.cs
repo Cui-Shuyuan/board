@@ -189,7 +189,9 @@ namespace BoardGameTutorial.Animation
 
             var baseScale = BaseScale(tpl, sr.sprite);
             float grow = item.Highlighted ? item.HighlightGrow : 1f;
-            go.transform.localScale = baseScale * (item.Scale * grow);
+            var finalScale = baseScale * (item.Scale * grow);
+            finalScale.x *= Mathf.Max(0f, item.Flip);
+            go.transform.localScale = finalScale;
             go.transform.localPosition = new Vector3(item.X, 0f, item.Z);
             go.transform.localRotation = stage.SpriteRotation(item.Rotation);
 

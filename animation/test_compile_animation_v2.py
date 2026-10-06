@@ -554,6 +554,41 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual([3, 4, 5], [item["order"] for item in dest_items])
         self.assertEqual([-3, -2, -1], [item["layer"] for item in dest_items])
 
+    def test_set_face_with_flip_compiles_flip_clip(self):
+        stage = _stage_doc("s1", ["showcase"])
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "create", "at": 0.0, "count": 1, "to": "face_down",
+                         "target": {"space": "entity", "zone": "showcase",
+                                    "template": "sample_card", "palette": "card_level_1"}},
+                        {"op": "set_face", "at": 1.0, "dur": 0.5, "to": "face_up", "flip": True,
+                         "target": {"space": "entity", "zone": "showcase",
+                                    "template": "sample_card", "palette": "card_level_1"}},
+                    ],
+                ),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        cue = _compiled_cue(compiled, "c1")
+        flips = [clip for clip in cue["clips"] if clip.get("kind") == "flip"]
+        self.assertEqual(1, len(flips), flips)
+        self.assertEqual("face_up", flips[0]["to_face"])
+        self.assertAlmostEqual(0.5, flips[0]["dur"])
+
     def test_transfer_multiple_gems_defaults_to_short_stagger(self):
         stage = _stage_doc("s1", ["gem_supply_onyx", "player_holding"])
         gem_parts = [{"key": "color", "value": "<onyx>"}]

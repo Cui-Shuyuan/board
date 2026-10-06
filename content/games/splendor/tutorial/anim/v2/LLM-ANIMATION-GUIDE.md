@@ -133,6 +133,8 @@
 
 - `create` / `ensure` / `destroy` / `transfer` / `stack` /
   `move_order` / `set_face` 改变逻辑状态，只实现实体对象。
+- `set_face` 可加 `"flip": true` 和 `dur`：卡牌会真正绕竖轴翻转，`t=0` 与 `t=end`
+  时 scale-x 为 1，中点为 0（侧对镜头，正反都看不到），中点后切到 `to` 面。
   `shuffle` 也写在实体事件序列里，但它是牌堆的**纯视觉**抖动：只生成抖动 clip，
   不重排逻辑 order；源数据里的 `real_templates` 顺序就是抽牌顺序。
 - `transfer` 一次移动多枚宝石（含黄金）时，编译器默认让它们逐枚以短间隔起飞，
