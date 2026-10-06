@@ -13211,18 +13211,6 @@
           "anchor": "action.reserve.gold.001.start"
         },
         {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.gold.001.start",
-          "offset": 2.3,
-          "target": {
-            "space": "entity",
-            "zone": "card_market",
-            "order": 0
-          }
-        },
-        {
           "op": "show",
           "dur": 0.0,
           "anchor": "action.reserve.gold.001.start",
@@ -13369,17 +13357,6 @@
           "destination": {
             "space": "entity",
             "zone": "card_market"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.gold.001.start",
-          "offset": 5.9,
-          "target": {
-            "space": "entity",
-            "zone": "player_development"
           }
         }
       ],
