@@ -1819,25 +1819,15 @@
       "edge": "end"
     },
     {
-      "id": "action.reserve.limit_gold.001.1.start",
-      "cue": "action.reserve.limit_gold.001.1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "action.reserve.limit_gold.001.1.end",
-      "cue": "action.reserve.limit_gold.001.1",
-      "edge": "cue_end"
-    },
-    {
-      "id": "action.reserve.limit_gold.001.1.b1.start",
-      "cue": "action.reserve.limit_gold.001.1",
-      "beat": "action.reserve.limit_gold.001.1.b1",
+      "id": "action.reserve.notes_intro.001.b2.start",
+      "cue": "action.reserve.notes_intro.001",
+      "beat": "action.reserve.notes_intro.001.b2",
       "edge": "start"
     },
     {
-      "id": "action.reserve.limit_gold.001.1.b1.end",
-      "cue": "action.reserve.limit_gold.001.1",
-      "beat": "action.reserve.limit_gold.001.1.b1",
+      "id": "action.reserve.notes_intro.001.b2.end",
+      "cue": "action.reserve.notes_intro.001",
+      "beat": "action.reserve.notes_intro.001.b2",
       "edge": "end"
     },
     {
@@ -13575,13 +13565,17 @@
       "parent": "action.reserve.deck.001",
       "timing": [
         {
-          "key": "镜头给保留区",
-          "text": "0.00"
+          "key": "镜头给保留区 / 点保留区",
+          "text": "第一句"
+        },
+        {
+          "key": "镜头给持有区",
+          "text": "第二句"
         }
       ],
       "script": {
-        "story": "【注意事项如下】",
-        "note": "【注意事项：先把保留区指出来】\n  1.6 秒的过渡句：镜头给保留区（现在有 2 张，都朝下），下面几条都在讲它。没有状态变化。"
+        "story": "【注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
+        "note": "【注意事项：先把保留区指出来 + 拿黄金上限】\n  第一句「注意事项如下」：镜头给保留区（现在有 2 张，都朝下），下面几条都在讲它。\n  第二句「拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止」：切到持有区，说明『它和宝石一起算在 10 枚里』；此时持有 1 枚黄金、0 宝石，还远没到 10。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。"
       },
       "events": [
         {
@@ -13601,32 +13595,20 @@
             "space": "entity",
             "zone": "player_reserved"
           }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "action.reserve.limit_gold.001.1",
-      "parent": "action.reserve.notes_intro.001",
-      "timing": [],
-      "script": {
-        "story": "【拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
-        "note": "【注意事项一：拿黄金也可能超上限】\n  规则说明，**没有状态变化**：现在持有 1 枚黄金（0 宝石），还远没到 10 ——所以这里只点持有区说明『它和宝石一起算在 10 枚里』。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。与 3.1 的 limit 那条同一处理。"
-      },
-      "events": [
+        },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_holding",
           "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.limit_gold.001.1.start"
+          "anchor": "action.reserve.notes_intro.001.b2.start"
         }
       ],
       "tree": "main"
     },
     {
       "id": "action.reserve.limit_gold.001.2",
-      "parent": "action.reserve.limit_gold.001.1",
+      "parent": "action.reserve.notes_intro.001",
       "timing": [
         {
           "key": "镜头黄金供应堆",

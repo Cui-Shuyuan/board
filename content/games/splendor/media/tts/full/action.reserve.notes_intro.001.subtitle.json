@@ -1,43 +1,253 @@
 [
   {
     "phonemes": [],
-    "text": "注意事项如下：\n",
+    "text": "注意事项如下：拿取黄金后，",
     "words": [
       {
-        "confidence": 0.90396416,
+        "confidence": 0.92189646,
         "endTime": 0.425,
-        "startTime": 0.295,
+        "startTime": 0.275,
         "word": "注"
       },
       {
-        "confidence": 0.9776004,
-        "endTime": 0.535,
+        "confidence": 0.97586626,
+        "endTime": 0.515,
         "startTime": 0.425,
         "word": "意"
       },
       {
-        "confidence": 0.92921805,
-        "endTime": 0.705,
-        "startTime": 0.535,
+        "confidence": 0.9239099,
+        "endTime": 0.665,
+        "startTime": 0.515,
         "word": "事"
       },
       {
-        "confidence": 0.9612648,
-        "endTime": 0.885,
-        "startTime": 0.705,
+        "confidence": 0.9550942,
+        "endTime": 0.835,
+        "startTime": 0.665,
         "word": "项"
       },
       {
-        "confidence": 0.8720292,
-        "endTime": 1.025,
-        "startTime": 0.885,
+        "confidence": 0.8331946,
+        "endTime": 0.965,
+        "startTime": 0.835,
         "word": "如"
       },
       {
-        "confidence": 0.34111804,
-        "endTime": 1.565,
-        "startTime": 1.535,
+        "confidence": 0.3682873,
+        "endTime": 1.485,
+        "startTime": 1.455,
         "word": "下："
+      },
+      {
+        "confidence": 0.9356493,
+        "endTime": 1.905,
+        "startTime": 1.745,
+        "word": "拿"
+      },
+      {
+        "confidence": 0.8403755,
+        "endTime": 2.035,
+        "startTime": 1.905,
+        "word": "取"
+      },
+      {
+        "confidence": 0.93964946,
+        "endTime": 2.195,
+        "startTime": 2.035,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.8323541,
+        "endTime": 2.375,
+        "startTime": 2.195,
+        "word": "金"
+      },
+      {
+        "confidence": 0.94150037,
+        "endTime": 2.755,
+        "startTime": 2.375,
+        "word": "后，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "如果已持有的宝石和黄金总数超过10枚，",
+    "words": [
+      {
+        "confidence": 0.59630764,
+        "endTime": 3.1250417,
+        "startTime": 3.0500417,
+        "word": "如"
+      },
+      {
+        "confidence": 0.58291984,
+        "endTime": 3.2050416,
+        "startTime": 3.1250417,
+        "word": "果"
+      },
+      {
+        "confidence": 0.8221844,
+        "endTime": 3.3550417,
+        "startTime": 3.2050416,
+        "word": "已"
+      },
+      {
+        "confidence": 0.8986594,
+        "endTime": 3.5650415,
+        "startTime": 3.3550417,
+        "word": "持"
+      },
+      {
+        "confidence": 0.8284226,
+        "endTime": 3.7050416,
+        "startTime": 3.5650415,
+        "word": "有"
+      },
+      {
+        "confidence": 0.95912796,
+        "endTime": 3.8250418,
+        "startTime": 3.7050416,
+        "word": "的"
+      },
+      {
+        "confidence": 0.9559157,
+        "endTime": 4.015042,
+        "startTime": 3.8250418,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.8286028,
+        "endTime": 4.2750416,
+        "startTime": 4.015042,
+        "word": "石"
+      },
+      {
+        "confidence": 0.9055095,
+        "endTime": 4.4350414,
+        "startTime": 4.2750416,
+        "word": "和"
+      },
+      {
+        "confidence": 0.94579005,
+        "endTime": 4.625042,
+        "startTime": 4.4350414,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.94695234,
+        "endTime": 4.805042,
+        "startTime": 4.625042,
+        "word": "金"
+      },
+      {
+        "confidence": 0.9601243,
+        "endTime": 4.9750414,
+        "startTime": 4.805042,
+        "word": "总"
+      },
+      {
+        "confidence": 0.9786203,
+        "endTime": 5.245042,
+        "startTime": 4.9750414,
+        "word": "数"
+      },
+      {
+        "confidence": 0.98313594,
+        "endTime": 5.4250417,
+        "startTime": 5.245042,
+        "word": "超"
+      },
+      {
+        "confidence": 0.68800163,
+        "endTime": 5.5450416,
+        "startTime": 5.4250417,
+        "word": "过"
+      },
+      {
+        "confidence": 0.1651139,
+        "endTime": 5.7950416,
+        "startTime": 5.7650414,
+        "word": "10"
+      },
+      {
+        "confidence": 0.82860035,
+        "endTime": 6.0650415,
+        "startTime": 5.7950416,
+        "word": "枚，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "也需要弃至还剩10个为止。",
+    "words": [
+      {
+        "confidence": 0.92228496,
+        "endTime": 6.4850836,
+        "startTime": 6.3950834,
+        "word": "也"
+      },
+      {
+        "confidence": 0.9718006,
+        "endTime": 6.6650834,
+        "startTime": 6.4850836,
+        "word": "需"
+      },
+      {
+        "confidence": 0.8899607,
+        "endTime": 6.8050833,
+        "startTime": 6.6650834,
+        "word": "要"
+      },
+      {
+        "confidence": 0.8676522,
+        "endTime": 7.0550833,
+        "startTime": 6.8050833,
+        "word": "弃"
+      },
+      {
+        "confidence": 0.9754513,
+        "endTime": 7.2450833,
+        "startTime": 7.0550833,
+        "word": "至"
+      },
+      {
+        "confidence": 0.9721859,
+        "endTime": 7.3950834,
+        "startTime": 7.2450833,
+        "word": "还"
+      },
+      {
+        "confidence": 0.88510764,
+        "endTime": 7.5750833,
+        "startTime": 7.3950834,
+        "word": "剩"
+      },
+      {
+        "confidence": 0.14744984,
+        "endTime": 7.6050835,
+        "startTime": 7.5750833,
+        "word": "10"
+      },
+      {
+        "confidence": 0.5664087,
+        "endTime": 7.9350834,
+        "startTime": 7.8250833,
+        "word": "个"
+      },
+      {
+        "confidence": 0.91679806,
+        "endTime": 8.0650835,
+        "startTime": 7.9350834,
+        "word": "为"
+      },
+      {
+        "confidence": 0.3807757,
+        "endTime": 8.125083,
+        "startTime": 8.0650835,
+        "word": "止。"
       }
     ]
   }
