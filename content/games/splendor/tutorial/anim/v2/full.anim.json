@@ -9303,7 +9303,8 @@
             "template": "blank_card_1",
             "palette": "card_level_1",
             "concept": "development_card_level_1"
-          }
+          },
+          "from_back": true
         },
         {
           "op": "create",
@@ -12188,7 +12189,8 @@
             "template": "blank_card_1",
             "palette": "card_level_1",
             "concept": "development_card_level_1"
-          }
+          },
+          "from_back": true
         },
         {
           "op": "transfer",
