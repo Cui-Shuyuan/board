@@ -1819,18 +1819,6 @@
       "edge": "end"
     },
     {
-      "id": "action.reserve.notes_intro.001.b2.start",
-      "cue": "action.reserve.notes_intro.001",
-      "beat": "action.reserve.notes_intro.001.b2",
-      "edge": "start"
-    },
-    {
-      "id": "action.reserve.notes_intro.001.b2.end",
-      "cue": "action.reserve.notes_intro.001",
-      "beat": "action.reserve.notes_intro.001.b2",
-      "edge": "end"
-    },
-    {
       "id": "action.reserve.limit_gold.001.2.start",
       "cue": "action.reserve.limit_gold.001.2",
       "edge": "cue_start"
@@ -13565,43 +13553,21 @@
       "parent": "action.reserve.deck.001",
       "timing": [
         {
-          "key": "镜头给保留区 / 点保留区",
-          "text": "第一句"
-        },
-        {
           "key": "镜头给持有区",
-          "text": "第二句"
+          "text": "整句"
         }
       ],
       "script": {
-        "story": "【注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
-        "note": "【注意事项：先把保留区指出来 + 拿黄金上限】\n  第一句「注意事项如下」：镜头给保留区（现在有 2 张，都朝下），下面几条都在讲它。\n  第二句「拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止」：切到持有区，说明『它和宝石一起算在 10 枚里』；此时持有 1 枚黄金、0 宝石，还远没到 10。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。"
+        "story": "【注意事项：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
+        "note": "【注意事项：拿黄金可能超上限】\n  合并后只有一句话、一个镜头：镜头给持有区，说明『黄金和宝石一起算在 10 枚上限里』。\n  规则说明，**没有状态变化**：当前持有 1 枚黄金（0 宝石），还远没到 10。\n  ⚠ 不演示『超过 10 再弃回』：那要凭空多出宝石（口播没让人拿），违反『脚本没写有的就是没有』+ 每色 7 枚的账。"
       },
       "events": [
         {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_reserved",
-          "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.notes_intro.001.start"
-        },
-        {
-          "op": "highlight",
-          "dur": 0.5,
-          "peak_alpha": 0.65,
-          "anchor": "action.reserve.notes_intro.001.b1.start",
-          "offset": 0.305,
-          "target": {
-            "space": "entity",
-            "zone": "player_reserved"
-          }
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
           "shot": "shot_holding",
           "realizes": "<ontology::timing>",
-          "anchor": "action.reserve.notes_intro.001.b2.start"
+          "anchor": "action.reserve.notes_intro.001.start"
         }
       ],
       "tree": "main"
