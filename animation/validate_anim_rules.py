@@ -378,11 +378,19 @@ def run(anim, default_stage, stages, facts, rep: Report = None,
             need = {c: n for c, n in need.items() if n}
             got = {c: n for c, n in paid.items() if c != "gold" and n}
             gold_used = paid.get("gold", 0)
-            short = sum(need.values()) - sum(got.values())
-            if got and need != got:
-                rep.error(where, f"买 {tid}：价格 {cost} − 折扣 {dict(disc)} → 应实付 {need}，实际付了 {got}")
-            if gold_used and gold_used != max(0, short):
-                rep.error(where, f"买 {tid}：差额 {max(0, short)} 枚，却付了 {gold_used} 枚黄金")
-            if not got and not gold_used and need:
-                rep.error(where, f"买 {tid}：需要 {need}，但这一步**一枚宝石都没付**")
+            # 黄金是万能替代：宝石可以只付需要的一部分，差额必须正好由黄金补齐。
+            # 但不能多付，也不能付出费用里没有的宝石种类。
+            need_total = sum(need.values())
+            exact_total = sum(got.values())
+            over = {c: n for c, n in got.items() if n > need.get(c, 0)}
+            if over or exact_total > need_total:
+                rep.error(where, f"买 {tid}：价格 {cost} − 折扣 {dict(disc)} → 应实付 {need}，"
+                                 f"实际付了 {got}（宝石种类/数量不符，不能超额支付）")
+            else:
+                short = need_total - exact_total
+                if gold_used != short:
+                    rep.error(where, f"买 {tid}：价格 {cost} − 折扣 {dict(disc)} → 应实付 {need}，"
+                                     f"其中可用黄金替代 {short} 枚；实际付了 {got or '{}'} + {gold_used} 枚黄金")
+                elif not got and not gold_used and need:
+                    rep.error(where, f"买 {tid}：需要 {need}，但这一步**一枚宝石都没付**")
     return rep
