@@ -15726,9 +15726,9 @@
         "3 行动",
         "3.4 购买保留的发展卡牌"
       ],
-      "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
+      "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
-      "duration": 19.896,
+      "duration": 18.672,
       "start": 494.88,
       "refs": [
         "<purchase_development_card>",
@@ -15736,596 +15736,596 @@
       ],
       "subtitles": [
         {
-          "t": 0.285,
-          "end": 5.145,
+          "t": 0.275,
+          "end": 4.715,
           "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。",
           "words": [
             {
               "word": "不",
-              "start": 0.285,
+              "start": 0.275,
               "end": 0.395,
-              "confidence": 0.952
+              "confidence": 0.9455
             },
             {
               "word": "仅",
               "start": 0.395,
-              "end": 0.625,
-              "confidence": 0.9626
+              "end": 0.565,
+              "confidence": 0.9513
             },
             {
               "word": "是",
-              "start": 0.625,
-              "end": 0.885,
-              "confidence": 0.9551
+              "start": 0.565,
+              "end": 0.725,
+              "confidence": 0.9579
             },
             {
               "word": "供",
-              "start": 0.885,
-              "end": 1.085,
-              "confidence": 0.9534
+              "start": 0.725,
+              "end": 0.905,
+              "confidence": 0.9468
             },
             {
               "word": "应",
-              "start": 1.085,
-              "end": 1.245,
-              "confidence": 0.934
+              "start": 0.905,
+              "end": 1.035,
+              "confidence": 0.8546
             },
             {
               "word": "堆，",
-              "start": 1.245,
-              "end": 1.525,
-              "confidence": 0.8838
+              "start": 1.035,
+              "end": 1.285,
+              "confidence": 0.867
             },
             {
               "word": "玩",
-              "start": 1.905,
-              "end": 2.015,
-              "confidence": 0.9318
+              "start": 1.565,
+              "end": 1.705,
+              "confidence": 0.9387
             },
             {
               "word": "家",
-              "start": 2.015,
-              "end": 2.265,
-              "confidence": 0.8919
+              "start": 1.705,
+              "end": 1.925,
+              "confidence": 0.9529
             },
             {
               "word": "也",
-              "start": 2.265,
-              "end": 2.385,
-              "confidence": 0.9316
+              "start": 1.925,
+              "end": 2.015,
+              "confidence": 0.9186
             },
             {
               "word": "可",
-              "start": 2.385,
-              "end": 2.525,
-              "confidence": 0.7849
+              "start": 2.015,
+              "end": 2.155,
+              "confidence": 0.8018
             },
             {
               "word": "以",
-              "start": 2.525,
-              "end": 2.625,
-              "confidence": 0.7091
+              "start": 2.155,
+              "end": 2.255,
+              "confidence": 0.7489
             },
             {
               "word": "从",
-              "start": 2.625,
-              "end": 2.865,
-              "confidence": 0.9453
+              "start": 2.255,
+              "end": 2.465,
+              "confidence": 0.9394
             },
             {
               "word": "自",
-              "start": 2.865,
-              "end": 3.005,
-              "confidence": 0.9516
+              "start": 2.465,
+              "end": 2.605,
+              "confidence": 0.9651
             },
             {
               "word": "己",
-              "start": 3.005,
-              "end": 3.135,
-              "confidence": 0.9796
+              "start": 2.605,
+              "end": 2.745,
+              "confidence": 0.9726
             },
             {
               "word": "保",
-              "start": 3.135,
-              "end": 3.295,
-              "confidence": 0.954
+              "start": 2.745,
+              "end": 2.915,
+              "confidence": 0.961
             },
             {
               "word": "留",
-              "start": 3.295,
-              "end": 3.445,
-              "confidence": 0.9756
+              "start": 2.915,
+              "end": 3.065,
+              "confidence": 0.9829
             },
             {
               "word": "的",
-              "start": 3.445,
-              "end": 3.535,
-              "confidence": 0.8841
+              "start": 3.065,
+              "end": 3.155,
+              "confidence": 0.8892
             },
             {
               "word": "卡",
-              "start": 3.535,
-              "end": 3.715,
-              "confidence": 0.8807
+              "start": 3.155,
+              "end": 3.325,
+              "confidence": 0.8829
             },
             {
               "word": "牌",
-              "start": 3.715,
-              "end": 3.925,
-              "confidence": 0.9567
+              "start": 3.325,
+              "end": 3.515,
+              "confidence": 0.9532
             },
             {
               "word": "中",
-              "start": 3.925,
-              "end": 4.115,
-              "confidence": 0.9741
-            },
-            {
-              "word": "选",
-              "start": 4.115,
-              "end": 4.335,
+              "start": 3.515,
+              "end": 3.715,
               "confidence": 0.9715
             },
             {
+              "word": "选",
+              "start": 3.715,
+              "end": 3.925,
+              "confidence": 0.9832
+            },
+            {
               "word": "择",
-              "start": 4.335,
-              "end": 4.505,
-              "confidence": 0.9633
+              "start": 3.925,
+              "end": 4.085,
+              "confidence": 0.97
             },
             {
               "word": "一",
-              "start": 4.505,
-              "end": 4.615,
-              "confidence": 0.9207
+              "start": 4.085,
+              "end": 4.175,
+              "confidence": 0.9316
             },
             {
               "word": "张",
-              "start": 4.615,
-              "end": 4.795,
-              "confidence": 0.9464
+              "start": 4.175,
+              "end": 4.345,
+              "confidence": 0.9623
             },
             {
               "word": "购",
-              "start": 4.795,
-              "end": 4.985,
-              "confidence": 0.9308
+              "start": 4.345,
+              "end": 4.535,
+              "confidence": 0.9629
             },
             {
               "word": "买。",
-              "start": 4.985,
-              "end": 5.145,
-              "confidence": 0.9505
+              "start": 4.535,
+              "end": 4.715,
+              "confidence": 0.9705
             }
           ]
         },
         {
-          "t": 5.66,
-          "end": 7.375,
+          "t": 5.17,
+          "end": 6.795,
           "text": "按照之前介绍过的规则，",
           "words": [
             {
               "word": "按",
-              "start": 5.66,
-              "end": 5.735,
-              "confidence": 0.6547
+              "start": 5.17,
+              "end": 5.245,
+              "confidence": 0.696
             },
             {
               "word": "照",
-              "start": 5.735,
-              "end": 5.965,
-              "confidence": 0.9091
+              "start": 5.245,
+              "end": 5.445,
+              "confidence": 0.9074
             },
             {
               "word": "之",
-              "start": 5.965,
-              "end": 6.105,
-              "confidence": 0.9423
+              "start": 5.445,
+              "end": 5.575,
+              "confidence": 0.9602
             },
             {
               "word": "前",
-              "start": 6.105,
-              "end": 6.265,
-              "confidence": 0.9767
+              "start": 5.575,
+              "end": 5.735,
+              "confidence": 0.9817
             },
             {
               "word": "介",
-              "start": 6.265,
-              "end": 6.405,
-              "confidence": 0.9183
+              "start": 5.735,
+              "end": 5.865,
+              "confidence": 0.9231
             },
             {
               "word": "绍",
-              "start": 6.405,
-              "end": 6.585,
-              "confidence": 0.9842
+              "start": 5.865,
+              "end": 6.035,
+              "confidence": 0.9509
             },
             {
               "word": "过",
-              "start": 6.585,
-              "end": 6.715,
-              "confidence": 0.9596
+              "start": 6.035,
+              "end": 6.165,
+              "confidence": 0.9468
             },
             {
               "word": "的",
-              "start": 6.715,
-              "end": 6.825,
-              "confidence": 0.9529
+              "start": 6.165,
+              "end": 6.255,
+              "confidence": 0.9474
             },
             {
               "word": "规",
-              "start": 6.825,
-              "end": 7.015,
-              "confidence": 0.965
+              "start": 6.255,
+              "end": 6.435,
+              "confidence": 0.9764
             },
             {
               "word": "则，",
-              "start": 7.015,
-              "end": 7.375,
-              "confidence": 0.9686
+              "start": 6.435,
+              "end": 6.795,
+              "confidence": 0.9754
             }
           ]
         },
         {
-          "t": 7.6,
-          "end": 9.975,
+          "t": 7.01,
+          "end": 9.275,
           "text": "支付费用，将一张被保留的，",
           "words": [
             {
               "word": "支",
-              "start": 7.6,
-              "end": 7.675,
-              "confidence": 0.7604
+              "start": 7.01,
+              "end": 7.085,
+              "confidence": 0.7281
             },
             {
               "word": "付",
-              "start": 7.675,
-              "end": 7.805,
-              "confidence": 0.9136
+              "start": 7.085,
+              "end": 7.205,
+              "confidence": 0.9433
             },
             {
               "word": "费",
-              "start": 7.805,
-              "end": 8.055,
-              "confidence": 0.9257
+              "start": 7.205,
+              "end": 7.445,
+              "confidence": 0.9625
             },
             {
               "word": "用，",
-              "start": 8.055,
-              "end": 8.295,
-              "confidence": 0.9073
+              "start": 7.445,
+              "end": 7.645,
+              "confidence": 0.887
             },
             {
               "word": "将",
-              "start": 8.495,
-              "end": 8.655,
-              "confidence": 0.9569
+              "start": 7.865,
+              "end": 8.025,
+              "confidence": 0.93
             },
             {
               "word": "一",
-              "start": 8.655,
-              "end": 8.815,
-              "confidence": 0.9618
+              "start": 8.025,
+              "end": 8.165,
+              "confidence": 0.9738
             },
             {
               "word": "张",
-              "start": 8.815,
-              "end": 9.075,
-              "confidence": 0.9391
+              "start": 8.165,
+              "end": 8.425,
+              "confidence": 0.9564
             },
             {
               "word": "被",
-              "start": 9.075,
-              "end": 9.265,
-              "confidence": 0.9458
+              "start": 8.425,
+              "end": 8.595,
+              "confidence": 0.9649
             },
             {
               "word": "保",
-              "start": 9.265,
-              "end": 9.485,
-              "confidence": 0.9674
+              "start": 8.595,
+              "end": 8.805,
+              "confidence": 0.9642
             },
             {
               "word": "留",
-              "start": 9.485,
-              "end": 9.725,
-              "confidence": 0.9679
+              "start": 8.805,
+              "end": 9.035,
+              "confidence": 0.9672
             },
             {
               "word": "的，",
-              "start": 9.725,
-              "end": 9.975,
-              "confidence": 0.9663
+              "start": 9.035,
+              "end": 9.275,
+              "confidence": 0.9678
             }
           ]
         },
         {
-          "t": 10.26,
-          "end": 13.835,
-          "text": "背面朝上的卡牌反面，正常结算它的声望值，",
+          "t": 9.55,
+          "end": 12.985,
+          "text": "背面朝上的卡牌翻面，正常结算它的声望值，",
           "words": [
             {
               "word": "背",
-              "start": 10.26,
-              "end": 10.335,
-              "confidence": 0.4881
+              "start": 9.55,
+              "end": 9.625,
+              "confidence": 0.4151
             },
             {
               "word": "面",
-              "start": 10.335,
-              "end": 10.515,
-              "confidence": 0.9403
+              "start": 9.625,
+              "end": 9.745,
+              "confidence": 0.833
             },
             {
               "word": "朝",
-              "start": 10.515,
-              "end": 10.755,
-              "confidence": 0.9312
+              "start": 9.745,
+              "end": 9.945,
+              "confidence": 0.9221
             },
             {
               "word": "上",
-              "start": 10.755,
-              "end": 10.965,
-              "confidence": 0.9831
+              "start": 9.945,
+              "end": 10.135,
+              "confidence": 0.9779
             },
             {
               "word": "的",
-              "start": 10.965,
-              "end": 11.075,
-              "confidence": 0.9245
+              "start": 10.135,
+              "end": 10.235,
+              "confidence": 0.9354
             },
             {
               "word": "卡",
-              "start": 11.075,
-              "end": 11.245,
-              "confidence": 0.8502
+              "start": 10.235,
+              "end": 10.405,
+              "confidence": 0.9136
             },
             {
               "word": "牌",
-              "start": 11.245,
-              "end": 11.435,
-              "confidence": 0.9801
+              "start": 10.405,
+              "end": 10.595,
+              "confidence": 0.9729
             },
             {
-              "word": "反",
-              "start": 11.435,
-              "end": 11.635,
-              "confidence": 0.9324
+              "word": "翻",
+              "start": 10.595,
+              "end": 10.755,
+              "confidence": 0.9041
             },
             {
               "word": "面，",
-              "start": 11.635,
-              "end": 11.885,
-              "confidence": 0.9424
+              "start": 10.755,
+              "end": 10.985,
+              "confidence": 0.9642
             },
             {
               "word": "正",
-              "start": 12.125,
-              "end": 12.305,
-              "confidence": 0.9537
+              "start": 11.325,
+              "end": 11.505,
+              "confidence": 0.9555
             },
             {
               "word": "常",
-              "start": 12.305,
-              "end": 12.505,
-              "confidence": 0.961
+              "start": 11.505,
+              "end": 11.695,
+              "confidence": 0.9738
             },
             {
               "word": "结",
-              "start": 12.505,
-              "end": 12.725,
-              "confidence": 0.9781
+              "start": 11.695,
+              "end": 11.895,
+              "confidence": 0.9789
             },
             {
               "word": "算",
-              "start": 12.725,
-              "end": 12.935,
-              "confidence": 0.978
+              "start": 11.895,
+              "end": 12.095,
+              "confidence": 0.9831
             },
             {
               "word": "它",
-              "start": 12.935,
-              "end": 13.095,
-              "confidence": 0.9545
+              "start": 12.095,
+              "end": 12.245,
+              "confidence": 0.9485
             },
             {
               "word": "的",
-              "start": 13.095,
-              "end": 13.175,
-              "confidence": 0.8639
+              "start": 12.245,
+              "end": 12.335,
+              "confidence": 0.922
             },
             {
               "word": "声",
-              "start": 13.175,
-              "end": 13.325,
-              "confidence": 0.895
+              "start": 12.335,
+              "end": 12.485,
+              "confidence": 0.8593
             },
             {
               "word": "望",
-              "start": 13.325,
-              "end": 13.485,
-              "confidence": 0.9565
+              "start": 12.485,
+              "end": 12.655,
+              "confidence": 0.9355
             },
             {
               "word": "值，",
-              "start": 13.485,
-              "end": 13.835,
-              "confidence": 0.91
+              "start": 12.655,
+              "end": 12.985,
+              "confidence": 0.9177
             }
           ]
         },
         {
-          "t": 14.18,
-          "end": 15.735,
+          "t": 13.31,
+          "end": 15.135,
           "text": "查看是否满足贵族条件，",
           "words": [
             {
               "word": "查",
-              "start": 14.18,
-              "end": 14.365,
-              "confidence": 0.8405
+              "start": 13.31,
+              "end": 13.445,
+              "confidence": 0.8522
             },
             {
               "word": "看",
-              "start": 14.365,
-              "end": 14.615,
-              "confidence": 0.9322
+              "start": 13.445,
+              "end": 13.635,
+              "confidence": 0.9119
             },
             {
               "word": "是",
-              "start": 14.615,
-              "end": 14.805,
-              "confidence": 0.9441
+              "start": 13.635,
+              "end": 13.825,
+              "confidence": 0.9282
             },
             {
               "word": "否",
-              "start": 14.805,
-              "end": 14.975,
-              "confidence": 0.9306
+              "start": 13.825,
+              "end": 13.985,
+              "confidence": 0.9068
             },
             {
               "word": "满",
-              "start": 14.975,
-              "end": 15.155,
-              "confidence": 0.9451
+              "start": 13.985,
+              "end": 14.165,
+              "confidence": 0.9399
             },
             {
               "word": "足",
-              "start": 15.155,
-              "end": 15.395,
-              "confidence": 0.9512
+              "start": 14.165,
+              "end": 14.395,
+              "confidence": 0.951
             },
             {
               "word": "贵",
-              "start": 15.395,
-              "end": 15.555,
-              "confidence": 0.9283
+              "start": 14.395,
+              "end": 14.555,
+              "confidence": 0.9288
             },
             {
               "word": "族",
-              "start": 15.555,
-              "end": 15.615,
-              "confidence": 0.2626
+              "start": 14.555,
+              "end": 14.675,
+              "confidence": 0.9425
             },
             {
               "word": "条",
-              "start": 15.615,
-              "end": 15.675,
-              "confidence": 0.1852
+              "start": 14.675,
+              "end": 14.875,
+              "confidence": 0.9636
             },
             {
               "word": "件，",
-              "start": 15.675,
-              "end": 15.735,
-              "confidence": 0.3249
+              "start": 14.875,
+              "end": 15.135,
+              "confidence": 0.9728
             }
           ]
         },
         {
-          "t": 16.475,
-          "end": 19.705,
+          "t": 15.41,
+          "end": 17.985,
           "text": "并在后续的回合中适用它所带来的折扣。",
           "words": [
             {
               "word": "并",
-              "start": 16.475,
-              "end": 16.655,
-              "confidence": 0.9531
+              "start": 15.41,
+              "end": 15.595,
+              "confidence": 0.8754
             },
             {
               "word": "在",
-              "start": 16.655,
-              "end": 16.905,
-              "confidence": 0.878
+              "start": 15.595,
+              "end": 15.835,
+              "confidence": 0.8752
             },
             {
               "word": "后",
-              "start": 16.905,
-              "end": 17.105,
-              "confidence": 0.9712
+              "start": 15.835,
+              "end": 16.025,
+              "confidence": 0.9523
             },
             {
               "word": "续",
-              "start": 17.105,
-              "end": 17.265,
-              "confidence": 0.9631
+              "start": 16.025,
+              "end": 16.175,
+              "confidence": 0.7908
             },
             {
               "word": "的",
-              "start": 17.265,
-              "end": 17.365,
-              "confidence": 0.971
+              "start": 16.175,
+              "end": 16.275,
+              "confidence": 0.9466
             },
             {
               "word": "回",
-              "start": 17.365,
-              "end": 17.515,
-              "confidence": 0.9779
+              "start": 16.275,
+              "end": 16.425,
+              "confidence": 0.9848
             },
             {
               "word": "合",
-              "start": 17.515,
-              "end": 17.685,
-              "confidence": 0.9416
+              "start": 16.425,
+              "end": 16.605,
+              "confidence": 0.9644
             },
             {
               "word": "中",
-              "start": 17.685,
-              "end": 17.925,
-              "confidence": 0.9504
+              "start": 16.605,
+              "end": 16.825,
+              "confidence": 0.9724
             },
             {
               "word": "适",
-              "start": 18.055,
-              "end": 18.295,
-              "confidence": 0.9082
+              "start": 16.825,
+              "end": 17.055,
+              "confidence": 0.9342
             },
             {
               "word": "用",
-              "start": 18.295,
-              "end": 18.475,
-              "confidence": 0.984
+              "start": 17.055,
+              "end": 17.235,
+              "confidence": 0.9785
             },
             {
               "word": "它",
-              "start": 18.475,
-              "end": 18.675,
-              "confidence": 0.9728
+              "start": 17.235,
+              "end": 17.405,
+              "confidence": 0.9735
             },
             {
               "word": "所",
-              "start": 18.675,
-              "end": 18.835,
-              "confidence": 0.9783
+              "start": 17.405,
+              "end": 17.565,
+              "confidence": 0.9746
             },
             {
               "word": "带",
-              "start": 18.835,
-              "end": 19.015,
-              "confidence": 0.9031
+              "start": 17.565,
+              "end": 17.735,
+              "confidence": 0.8601
             },
             {
               "word": "来",
-              "start": 19.015,
-              "end": 19.155,
-              "confidence": 0.9747
+              "start": 17.735,
+              "end": 17.805,
+              "confidence": 0.4906
             },
             {
               "word": "的",
-              "start": 19.155,
-              "end": 19.245,
-              "confidence": 0.8939
+              "start": 17.805,
+              "end": 17.865,
+              "confidence": 0.2881
             },
             {
               "word": "折",
-              "start": 19.245,
-              "end": 19.435,
-              "confidence": 0.8667
+              "start": 17.865,
+              "end": 17.925,
+              "confidence": 0.2118
             },
             {
               "word": "扣。",
-              "start": 19.435,
-              "end": 19.705,
-              "confidence": 0.9492
+              "start": 17.925,
+              "end": 17.985,
+              "confidence": 0.2687
             }
           ]
         }
@@ -16342,7 +16342,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 514.78,
+      "start": 513.55,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16572,10 +16572,10 @@
         "3 行动",
         "3.5 回合结束与循环"
       ],
-      "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，",
+      "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。",
       "audio": "media/tts/full/action.summary.002.1.mp3",
-      "duration": 7.08,
-      "start": 522.0,
+      "duration": 9.456,
+      "start": 520.78,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -16583,196 +16583,275 @@
       ],
       "subtitles": [
         {
-          "t": 0.305,
-          "end": 3.305,
+          "t": 0.285,
+          "end": 3.295,
           "text": "一个回合内，只能选择一种行动进行，",
           "words": [
             {
               "word": "一",
-              "start": 0.305,
-              "end": 0.435,
-              "confidence": 0.8899
+              "start": 0.285,
+              "end": 0.425,
+              "confidence": 0.9064
             },
             {
               "word": "个",
-              "start": 0.435,
-              "end": 0.565,
-              "confidence": 0.9516
+              "start": 0.425,
+              "end": 0.555,
+              "confidence": 0.9701
             },
             {
               "word": "回",
-              "start": 0.565,
-              "end": 0.715,
-              "confidence": 0.9813
+              "start": 0.555,
+              "end": 0.725,
+              "confidence": 0.9721
             },
             {
               "word": "合",
-              "start": 0.715,
-              "end": 0.905,
-              "confidence": 0.9587
+              "start": 0.725,
+              "end": 0.925,
+              "confidence": 0.9655
             },
             {
               "word": "内，",
-              "start": 0.905,
-              "end": 1.155,
-              "confidence": 0.898
+              "start": 0.925,
+              "end": 1.175,
+              "confidence": 0.8886
             },
             {
               "word": "只",
               "start": 1.335,
               "end": 1.485,
-              "confidence": 0.9586
+              "confidence": 0.9636
             },
             {
               "word": "能",
               "start": 1.485,
-              "end": 1.625,
-              "confidence": 0.9718
+              "end": 1.605,
+              "confidence": 0.9827
             },
             {
               "word": "选",
-              "start": 1.625,
-              "end": 1.845,
-              "confidence": 0.9607
+              "start": 1.605,
+              "end": 1.825,
+              "confidence": 0.9701
             },
             {
               "word": "择",
-              "start": 1.845,
+              "start": 1.825,
               "end": 2.095,
-              "confidence": 0.9753
+              "confidence": 0.9762
             },
             {
               "word": "一",
               "start": 2.095,
-              "end": 2.245,
-              "confidence": 0.9351
+              "end": 2.255,
+              "confidence": 0.9086
             },
             {
               "word": "种",
-              "start": 2.245,
-              "end": 2.395,
-              "confidence": 0.9802
+              "start": 2.255,
+              "end": 2.425,
+              "confidence": 0.965
             },
             {
               "word": "行",
-              "start": 2.395,
-              "end": 2.615,
-              "confidence": 0.9725
+              "start": 2.425,
+              "end": 2.645,
+              "confidence": 0.9524
             },
             {
               "word": "动",
-              "start": 2.615,
-              "end": 2.775,
-              "confidence": 0.9726
+              "start": 2.645,
+              "end": 2.795,
+              "confidence": 0.9765
             },
             {
               "word": "进",
-              "start": 2.775,
-              "end": 2.945,
-              "confidence": 0.8999
+              "start": 2.795,
+              "end": 2.965,
+              "confidence": 0.9029
             },
             {
               "word": "行，",
-              "start": 2.945,
-              "end": 3.305,
-              "confidence": 0.94
+              "start": 2.965,
+              "end": 3.295,
+              "confidence": 0.9611
             }
           ]
         },
         {
-          "t": 3.65,
-          "end": 6.745,
-          "text": "随后回合立刻结束，按照顺时针顺序，\n",
+          "t": 3.61,
+          "end": 6.805,
+          "text": "随后回合立刻结束，按照顺时针顺序，",
           "words": [
             {
               "word": "随",
-              "start": 3.65,
-              "end": 3.795,
-              "confidence": 0.7243
+              "start": 3.61,
+              "end": 3.745,
+              "confidence": 0.7161
             },
             {
               "word": "后",
-              "start": 3.795,
-              "end": 4.065,
-              "confidence": 0.9622
+              "start": 3.745,
+              "end": 4.005,
+              "confidence": 0.9572
             },
             {
               "word": "回",
-              "start": 4.065,
-              "end": 4.245,
-              "confidence": 0.9869
+              "start": 4.005,
+              "end": 4.185,
+              "confidence": 0.982
             },
             {
               "word": "合",
-              "start": 4.245,
-              "end": 4.435,
-              "confidence": 0.9589
+              "start": 4.185,
+              "end": 4.365,
+              "confidence": 0.9702
             },
             {
               "word": "立",
-              "start": 4.435,
-              "end": 4.585,
-              "confidence": 0.9289
+              "start": 4.365,
+              "end": 4.515,
+              "confidence": 0.953
             },
             {
               "word": "刻",
-              "start": 4.585,
-              "end": 4.735,
-              "confidence": 0.9647
+              "start": 4.515,
+              "end": 4.665,
+              "confidence": 0.9673
             },
             {
               "word": "结",
-              "start": 4.735,
-              "end": 4.905,
-              "confidence": 0.9619
+              "start": 4.665,
+              "end": 4.835,
+              "confidence": 0.9549
             },
             {
               "word": "束，",
-              "start": 4.905,
-              "end": 5.215,
-              "confidence": 0.986
+              "start": 4.835,
+              "end": 5.125,
+              "confidence": 0.9827
             },
             {
               "word": "按",
               "start": 5.495,
-              "end": 5.575,
-              "confidence": 0.8972
+              "end": 5.585,
+              "confidence": 0.8082
             },
             {
               "word": "照",
-              "start": 5.575,
+              "start": 5.585,
               "end": 5.815,
-              "confidence": 0.9207
+              "confidence": 0.9353
             },
             {
               "word": "顺",
               "start": 5.815,
               "end": 6.025,
-              "confidence": 0.843
+              "confidence": 0.8622
             },
             {
               "word": "时",
               "start": 6.025,
-              "end": 6.195,
-              "confidence": 0.7305
+              "end": 6.185,
+              "confidence": 0.7431
             },
             {
               "word": "针",
-              "start": 6.195,
-              "end": 6.335,
-              "confidence": 0.9209
+              "start": 6.185,
+              "end": 6.325,
+              "confidence": 0.9338
             },
             {
               "word": "顺",
-              "start": 6.335,
-              "end": 6.555,
-              "confidence": 0.8883
+              "start": 6.325,
+              "end": 6.525,
+              "confidence": 0.9123
             },
             {
               "word": "序，",
-              "start": 6.555,
-              "end": 6.745,
-              "confidence": 0.8793
+              "start": 6.525,
+              "end": 6.805,
+              "confidence": 0.9242
+            }
+          ]
+        },
+        {
+          "t": 7.09,
+          "end": 8.545,
+          "text": "左手边的玩家开始他的回合。",
+          "words": [
+            {
+              "word": "左",
+              "start": 7.09,
+              "end": 7.165,
+              "confidence": 0.6522
+            },
+            {
+              "word": "手",
+              "start": 7.165,
+              "end": 7.335,
+              "confidence": 0.8986
+            },
+            {
+              "word": "边",
+              "start": 7.335,
+              "end": 7.475,
+              "confidence": 0.8795
+            },
+            {
+              "word": "的",
+              "start": 7.475,
+              "end": 7.575,
+              "confidence": 0.9189
+            },
+            {
+              "word": "玩",
+              "start": 7.575,
+              "end": 7.745,
+              "confidence": 0.9553
+            },
+            {
+              "word": "家",
+              "start": 7.745,
+              "end": 7.995,
+              "confidence": 0.9288
+            },
+            {
+              "word": "开",
+              "start": 7.995,
+              "end": 8.055,
+              "confidence": 0.2449
+            },
+            {
+              "word": "始",
+              "start": 8.055,
+              "end": 8.115,
+              "confidence": 0.126
+            },
+            {
+              "word": "他",
+              "start": 8.115,
+              "end": 8.175,
+              "confidence": 0.1627
+            },
+            {
+              "word": "的",
+              "start": 8.365,
+              "end": 8.425,
+              "confidence": 0.2958
+            },
+            {
+              "word": "回",
+              "start": 8.425,
+              "end": 8.485,
+              "confidence": 0.071
+            },
+            {
+              "word": "合。",
+              "start": 8.485,
+              "end": 8.545,
+              "confidence": 0.1757
             }
           ]
         }
@@ -16786,10 +16865,10 @@
         "3 行动",
         "3.5 回合结束与循环"
       ],
-      "text": "左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
+      "text": "就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
-      "duration": 6.288,
-      "start": 529.08,
+      "duration": 3.456,
+      "start": 530.23,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -16797,178 +16876,99 @@
       ],
       "subtitles": [
         {
-          "t": 0.295,
-          "end": 2.445,
-          "text": "左手边的玩家开始他的回合。",
-          "words": [
-            {
-              "word": "左",
-              "start": 0.295,
-              "end": 0.495,
-              "confidence": 0.7962
-            },
-            {
-              "word": "手",
-              "start": 0.495,
-              "end": 0.695,
-              "confidence": 0.932
-            },
-            {
-              "word": "边",
-              "start": 0.695,
-              "end": 0.835,
-              "confidence": 0.8881
-            },
-            {
-              "word": "的",
-              "start": 0.835,
-              "end": 0.945,
-              "confidence": 0.9245
-            },
-            {
-              "word": "玩",
-              "start": 0.945,
-              "end": 1.115,
-              "confidence": 0.9596
-            },
-            {
-              "word": "家",
-              "start": 1.115,
-              "end": 1.375,
-              "confidence": 0.9093
-            },
-            {
-              "word": "开",
-              "start": 1.375,
-              "end": 1.545,
-              "confidence": 0.9873
-            },
-            {
-              "word": "始",
-              "start": 1.545,
-              "end": 1.695,
-              "confidence": 0.9802
-            },
-            {
-              "word": "他",
-              "start": 1.695,
-              "end": 1.875,
-              "confidence": 0.9554
-            },
-            {
-              "word": "的",
-              "start": 1.875,
-              "end": 1.965,
-              "confidence": 0.9464
-            },
-            {
-              "word": "回",
-              "start": 1.965,
-              "end": 2.115,
-              "confidence": 0.9807
-            },
-            {
-              "word": "合。",
-              "start": 2.115,
-              "end": 2.445,
-              "confidence": 0.9782
-            }
-          ]
-        },
-        {
-          "t": 2.87,
-          "end": 5.845,
+          "t": 0.305,
+          "end": 3.265,
           "text": "就这样一直循环，直到整局游戏结束。",
           "words": [
             {
               "word": "就",
-              "start": 2.87,
-              "end": 3.025,
-              "confidence": 0.9293
+              "start": 0.305,
+              "end": 0.475,
+              "confidence": 0.9066
             },
             {
               "word": "这",
-              "start": 3.025,
-              "end": 3.185,
-              "confidence": 0.9871
+              "start": 0.475,
+              "end": 0.605,
+              "confidence": 0.9803
             },
             {
               "word": "样",
-              "start": 3.185,
-              "end": 3.295,
-              "confidence": 0.9722
+              "start": 0.605,
+              "end": 0.685,
+              "confidence": 0.9836
             },
             {
               "word": "一",
-              "start": 3.295,
-              "end": 3.445,
-              "confidence": 0.9678
+              "start": 0.685,
+              "end": 0.845,
+              "confidence": 0.965
             },
             {
               "word": "直",
-              "start": 3.445,
-              "end": 3.575,
-              "confidence": 0.9623
+              "start": 0.845,
+              "end": 0.975,
+              "confidence": 0.9657
             },
             {
               "word": "循",
-              "start": 3.575,
-              "end": 3.805,
-              "confidence": 0.826
+              "start": 0.975,
+              "end": 1.215,
+              "confidence": 0.8041
             },
             {
               "word": "环，",
-              "start": 3.805,
-              "end": 4.095,
-              "confidence": 0.8841
+              "start": 1.215,
+              "end": 1.535,
+              "confidence": 0.8708
             },
             {
               "word": "直",
-              "start": 4.335,
-              "end": 4.495,
-              "confidence": 0.9245
+              "start": 1.785,
+              "end": 1.935,
+              "confidence": 0.8678
             },
             {
               "word": "到",
-              "start": 4.495,
-              "end": 4.735,
-              "confidence": 0.9313
+              "start": 1.935,
+              "end": 2.115,
+              "confidence": 0.9268
             },
             {
               "word": "整",
-              "start": 4.735,
-              "end": 4.995,
-              "confidence": 0.9613
+              "start": 2.115,
+              "end": 2.355,
+              "confidence": 0.9526
             },
             {
               "word": "局",
-              "start": 4.995,
-              "end": 5.185,
-              "confidence": 0.757
+              "start": 2.355,
+              "end": 2.495,
+              "confidence": 0.7605
             },
             {
               "word": "游",
-              "start": 5.185,
-              "end": 5.275,
-              "confidence": 0.67
+              "start": 2.495,
+              "end": 2.615,
+              "confidence": 0.698
             },
             {
               "word": "戏",
-              "start": 5.275,
-              "end": 5.455,
-              "confidence": 0.9682
+              "start": 2.615,
+              "end": 2.795,
+              "confidence": 0.9826
             },
             {
               "word": "结",
-              "start": 5.455,
-              "end": 5.615,
-              "confidence": 0.9791
+              "start": 2.795,
+              "end": 2.955,
+              "confidence": 0.9799
             },
             {
               "word": "束。",
-              "start": 5.615,
-              "end": 5.845,
-              "confidence": 0.9777
+              "start": 2.955,
+              "end": 3.265,
+              "confidence": 0.9883
             }
           ]
         }
@@ -16984,7 +16984,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 535.37,
+      "start": 533.69,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17138,10 +17138,10 @@
       "group_path": [
         "4 游戏结束"
       ],
-      "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
+      "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
-      "duration": 5.472,
-      "start": 540.6,
+      "duration": 10.296,
+      "start": 538.92,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17149,329 +17149,310 @@
       ],
       "subtitles": [
         {
-          "t": 0.285,
-          "end": 4.675,
-          "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，\n",
+          "t": 0.265,
+          "end": 4.985,
+          "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，",
           "words": [
             {
               "word": "为",
-              "start": 0.285,
+              "start": 0.265,
               "end": 0.425,
-              "confidence": 0.9617
+              "confidence": 0.9468
             },
             {
               "word": "了",
               "start": 0.425,
               "end": 0.515,
-              "confidence": 0.9056
+              "confidence": 0.9182
             },
             {
               "word": "让",
               "start": 0.515,
               "end": 0.695,
-              "confidence": 0.9149
+              "confidence": 0.9207
             },
             {
               "word": "所",
               "start": 0.695,
-              "end": 0.905,
-              "confidence": 0.921
+              "end": 0.885,
+              "confidence": 0.9395
             },
             {
               "word": "有",
-              "start": 0.905,
-              "end": 1.025,
-              "confidence": 0.8932
+              "start": 0.885,
+              "end": 0.985,
+              "confidence": 0.87
             },
             {
               "word": "玩",
-              "start": 1.025,
-              "end": 1.185,
-              "confidence": 0.8757
+              "start": 0.985,
+              "end": 1.155,
+              "confidence": 0.8585
             },
             {
               "word": "家",
-              "start": 1.185,
-              "end": 1.435,
-              "confidence": 0.9313
+              "start": 1.155,
+              "end": 1.415,
+              "confidence": 0.9441
             },
             {
               "word": "都",
-              "start": 1.435,
-              "end": 1.585,
-              "confidence": 0.9049
+              "start": 1.415,
+              "end": 1.545,
+              "confidence": 0.9368
             },
             {
               "word": "进",
-              "start": 1.585,
-              "end": 1.765,
-              "confidence": 0.9417
+              "start": 1.545,
+              "end": 1.745,
+              "confidence": 0.9166
             },
             {
               "word": "行",
-              "start": 1.765,
+              "start": 1.745,
               "end": 2.005,
-              "confidence": 0.9461
+              "confidence": 0.9175
             },
             {
               "word": "相",
               "start": 2.005,
-              "end": 2.215,
-              "confidence": 0.944
+              "end": 2.235,
+              "confidence": 0.9625
             },
             {
               "word": "同",
-              "start": 2.215,
-              "end": 2.395,
-              "confidence": 0.9792
+              "start": 2.235,
+              "end": 2.415,
+              "confidence": 0.9809
             },
             {
               "word": "数",
-              "start": 2.395,
-              "end": 2.595,
-              "confidence": 0.9594
+              "start": 2.415,
+              "end": 2.615,
+              "confidence": 0.9638
             },
             {
               "word": "量",
-              "start": 2.595,
-              "end": 2.735,
-              "confidence": 0.9697
+              "start": 2.615,
+              "end": 2.745,
+              "confidence": 0.9684
             },
             {
               "word": "的",
-              "start": 2.735,
-              "end": 2.825,
-              "confidence": 0.9485
+              "start": 2.745,
+              "end": 2.835,
+              "confidence": 0.9762
             },
             {
               "word": "回",
-              "start": 2.825,
+              "start": 2.835,
               "end": 3.005,
-              "confidence": 0.9714
+              "confidence": 0.9686
             },
             {
               "word": "合，",
               "start": 3.005,
-              "end": 3.385,
-              "confidence": 0.9818
+              "end": 3.375,
+              "confidence": 0.98
             },
             {
               "word": "游",
-              "start": 3.615,
-              "end": 3.725,
-              "confidence": 0.8105
+              "start": 3.625,
+              "end": 3.715,
+              "confidence": 0.8627
             },
             {
               "word": "戏",
-              "start": 3.725,
-              "end": 3.995,
-              "confidence": 0.9713
+              "start": 3.715,
+              "end": 3.965,
+              "confidence": 0.977
             },
             {
               "word": "会",
-              "start": 3.995,
-              "end": 4.225,
-              "confidence": 0.9391
+              "start": 3.965,
+              "end": 4.155,
+              "confidence": 0.9152
             },
             {
               "word": "继",
-              "start": 4.225,
-              "end": 4.415,
-              "confidence": 0.908
+              "start": 4.155,
+              "end": 4.335,
+              "confidence": 0.921
             },
             {
               "word": "续",
-              "start": 4.415,
-              "end": 4.555,
-              "confidence": 0.9604
+              "start": 4.335,
+              "end": 4.465,
+              "confidence": 0.9743
             },
             {
               "word": "进",
-              "start": 4.555,
-              "end": 4.615,
-              "confidence": 0.3284
+              "start": 4.465,
+              "end": 4.635,
+              "confidence": 0.9377
             },
             {
               "word": "行，",
-              "start": 4.615,
-              "end": 4.675,
-              "confidence": 0.4572
+              "start": 4.635,
+              "end": 4.985,
+              "confidence": 0.9462
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "endgame.final_rounds.001.2",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
-      "audio": "media/tts/full/endgame.final_rounds.001.2.mp3",
-      "duration": 5.664,
-      "start": 546.07,
-      "refs": [
-        "flow:final_turn_cycle",
-        "flow:final_turns",
-        "<no_remaining_players>"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.285,
-          "end": 5.445,
+          "t": 5.24,
+          "end": 9.595,
           "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
           "words": [
             {
               "word": "直",
-              "start": 0.285,
-              "end": 0.465,
-              "confidence": 0.8854
+              "start": 5.24,
+              "end": 5.385,
+              "confidence": 0.8518
             },
             {
               "word": "到",
-              "start": 0.465,
-              "end": 0.725,
-              "confidence": 0.9123
+              "start": 5.385,
+              "end": 5.655,
+              "confidence": 0.9056
             },
             {
               "word": "起",
-              "start": 0.725,
-              "end": 0.945,
-              "confidence": 0.7927
+              "start": 5.655,
+              "end": 5.855,
+              "confidence": 0.7219
             },
             {
               "word": "始",
-              "start": 0.945,
-              "end": 1.105,
-              "confidence": 0.7565
+              "start": 5.855,
+              "end": 6.005,
+              "confidence": 0.7217
             },
             {
               "word": "玩",
-              "start": 1.105,
-              "end": 1.285,
-              "confidence": 0.9205
+              "start": 6.005,
+              "end": 6.145,
+              "confidence": 0.9707
             },
             {
               "word": "家",
-              "start": 1.285,
-              "end": 1.565,
-              "confidence": 0.8791
+              "start": 6.145,
+              "end": 6.385,
+              "confidence": 0.8987
             },
             {
               "word": "右",
-              "start": 1.565,
-              "end": 1.735,
-              "confidence": 0.9279
+              "start": 6.385,
+              "end": 6.535,
+              "confidence": 0.9538
             },
             {
               "word": "手",
-              "start": 1.735,
-              "end": 1.925,
-              "confidence": 0.9636
+              "start": 6.535,
+              "end": 6.705,
+              "confidence": 0.9433
             },
             {
               "word": "边",
-              "start": 1.925,
-              "end": 2.085,
-              "confidence": 0.8947
+              "start": 6.705,
+              "end": 6.855,
+              "confidence": 0.8926
             },
             {
               "word": "的",
-              "start": 2.085,
-              "end": 2.185,
-              "confidence": 0.9348
+              "start": 6.855,
+              "end": 6.945,
+              "confidence": 0.9267
             },
             {
               "word": "玩",
-              "start": 2.185,
-              "end": 2.355,
-              "confidence": 0.9677
+              "start": 6.945,
+              "end": 7.105,
+              "confidence": 0.96
             },
             {
               "word": "家",
-              "start": 2.355,
-              "end": 2.625,
-              "confidence": 0.8869
+              "start": 7.105,
+              "end": 7.365,
+              "confidence": 0.9048
             },
             {
               "word": "结",
-              "start": 2.625,
-              "end": 2.815,
-              "confidence": 0.9345
+              "start": 7.365,
+              "end": 7.565,
+              "confidence": 0.9301
             },
             {
               "word": "束",
-              "start": 2.815,
-              "end": 2.995,
-              "confidence": 0.9573
+              "start": 7.565,
+              "end": 7.745,
+              "confidence": 0.9698
             },
             {
               "word": "他",
-              "start": 2.995,
-              "end": 3.165,
-              "confidence": 0.9516
+              "start": 7.745,
+              "end": 7.905,
+              "confidence": 0.9693
             },
             {
               "word": "的",
-              "start": 3.165,
-              "end": 3.265,
-              "confidence": 0.9695
+              "start": 7.905,
+              "end": 7.995,
+              "confidence": 0.969
             },
             {
               "word": "回",
-              "start": 3.265,
-              "end": 3.425,
-              "confidence": 0.9814
+              "start": 7.995,
+              "end": 8.145,
+              "confidence": 0.9822
             },
             {
               "word": "合",
-              "start": 3.425,
-              "end": 3.605,
-              "confidence": 0.977
+              "start": 8.145,
+              "end": 8.325,
+              "confidence": 0.9811
             },
             {
               "word": "时，",
-              "start": 3.605,
-              "end": 3.995,
-              "confidence": 0.9535
+              "start": 8.325,
+              "end": 8.675,
+              "confidence": 0.9652
             },
             {
               "word": "整",
-              "start": 4.205,
-              "end": 4.415,
-              "confidence": 0.9493
+              "start": 8.875,
+              "end": 9.075,
+              "confidence": 0.9468
             },
             {
               "word": "场",
-              "start": 4.415,
-              "end": 4.625,
-              "confidence": 0.9176
+              "start": 9.075,
+              "end": 9.285,
+              "confidence": 0.9361
             },
             {
               "word": "游",
-              "start": 4.625,
-              "end": 4.795,
-              "confidence": 0.9524
+              "start": 9.285,
+              "end": 9.415,
+              "confidence": 0.9454
             },
             {
               "word": "戏",
-              "start": 4.795,
-              "end": 4.975,
-              "confidence": 0.98
+              "start": 9.415,
+              "end": 9.475,
+              "confidence": 0.2355
             },
             {
               "word": "结",
-              "start": 4.975,
-              "end": 5.135,
-              "confidence": 0.9831
+              "start": 9.475,
+              "end": 9.535,
+              "confidence": 0.1401
             },
             {
               "word": "束。",
-              "start": 5.135,
-              "end": 5.445,
-              "confidence": 0.9845
+              "start": 9.535,
+              "end": 9.595,
+              "confidence": 0.1806
             }
           ]
         }
@@ -17484,553 +17465,519 @@
       "group_path": [
         "4 游戏结束"
       ],
-      "text": "以4人局为例：如果起始玩家的声望值达到15，",
+      "text": "以4人局为例：如果起始玩家的声望值达到15，剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
-      "duration": 4.464,
-      "start": 551.74,
+      "duration": 16.488,
+      "start": 549.22,
       "refs": [
         "<no_remaining_players>"
       ],
       "subtitles": [
         {
-          "t": 0.275,
-          "end": 3.685,
-          "text": "以4人局为例：如果起始玩家的声望值达到15，\n",
+          "t": 0.295,
+          "end": 4.455,
+          "text": "以4人局为例：如果起始玩家的声望值达到15，",
           "words": [
             {
               "word": "以",
-              "start": 0.275,
-              "end": 0.385,
-              "confidence": 0.7232
+              "start": 0.295,
+              "end": 0.395,
+              "confidence": 0.7139
             },
             {
               "word": "4",
-              "start": 0.665,
-              "end": 0.695,
-              "confidence": 0.2156
+              "start": 0.655,
+              "end": 0.685,
+              "confidence": 0.2229
             },
             {
               "word": "人",
-              "start": 0.695,
-              "end": 0.885,
-              "confidence": 0.8396
+              "start": 0.685,
+              "end": 0.875,
+              "confidence": 0.8675
             },
             {
               "word": "局",
-              "start": 0.885,
-              "end": 1.035,
-              "confidence": 0.7737
+              "start": 0.875,
+              "end": 1.015,
+              "confidence": 0.7749
             },
             {
               "word": "为",
-              "start": 1.035,
-              "end": 1.185,
-              "confidence": 0.743
+              "start": 1.015,
+              "end": 1.165,
+              "confidence": 0.7145
             },
             {
               "word": "例：",
-              "start": 1.185,
-              "end": 1.215,
-              "confidence": 0.2726
+              "start": 1.165,
+              "end": 1.195,
+              "confidence": 0.2082
             },
             {
               "word": "如",
-              "start": 1.745,
-              "end": 1.885,
-              "confidence": 0.9818
+              "start": 1.615,
+              "end": 1.765,
+              "confidence": 0.9807
             },
             {
               "word": "果",
-              "start": 1.885,
-              "end": 2.075,
-              "confidence": 0.9215
+              "start": 1.765,
+              "end": 1.925,
+              "confidence": 0.9649
             },
             {
               "word": "起",
-              "start": 2.075,
-              "end": 2.275,
-              "confidence": 0.7932
+              "start": 1.925,
+              "end": 2.145,
+              "confidence": 0.8021
             },
             {
               "word": "始",
-              "start": 2.275,
-              "end": 2.405,
-              "confidence": 0.7247
+              "start": 2.145,
+              "end": 2.285,
+              "confidence": 0.695
             },
             {
               "word": "玩",
-              "start": 2.405,
-              "end": 2.545,
-              "confidence": 0.958
-            },
-            {
-              "word": "家",
-              "start": 2.545,
-              "end": 2.715,
-              "confidence": 0.9745
-            },
-            {
-              "word": "的",
-              "start": 2.715,
-              "end": 2.795,
-              "confidence": 0.9359
-            },
-            {
-              "word": "声",
-              "start": 2.795,
-              "end": 2.955,
-              "confidence": 0.8475
-            },
-            {
-              "word": "望",
-              "start": 2.955,
-              "end": 3.125,
-              "confidence": 0.9463
-            },
-            {
-              "word": "值",
-              "start": 3.125,
-              "end": 3.395,
-              "confidence": 0.8757
-            },
-            {
-              "word": "达",
-              "start": 3.395,
-              "end": 3.545,
-              "confidence": 0.969
-            },
-            {
-              "word": "到",
-              "start": 3.545,
-              "end": 3.655,
-              "confidence": 0.9156
-            },
-            {
-              "word": "15，",
-              "start": 3.655,
-              "end": 3.685,
-              "confidence": 0.1192
-            }
-          ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "endgame.example.001.2",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
-      "audio": "media/tts/full/endgame.example.001.2.mp3",
-      "duration": 5.448,
-      "start": 556.2,
-      "refs": [
-        "<no_remaining_players>"
-      ],
-      "subtitles": [
-        {
-          "t": 0.265,
-          "end": 4.795,
-          "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
-          "words": [
-            {
-              "word": "剩",
-              "start": 0.265,
-              "end": 0.555,
-              "confidence": 0.8939
-            },
-            {
-              "word": "下",
-              "start": 0.555,
-              "end": 0.755,
-              "confidence": 0.7758
-            },
-            {
-              "word": "3",
-              "start": 0.845,
-              "end": 0.875,
-              "confidence": 0.3801
-            },
-            {
-              "word": "位",
-              "start": 0.875,
-              "end": 1.015,
-              "confidence": 0.8519
-            },
-            {
-              "word": "玩",
-              "start": 1.015,
-              "end": 1.185,
-              "confidence": 0.9581
-            },
-            {
-              "word": "家",
-              "start": 1.185,
-              "end": 1.475,
-              "confidence": 0.9257
-            },
-            {
-              "word": "各",
-              "start": 1.475,
-              "end": 1.675,
-              "confidence": 0.8241
-            },
-            {
-              "word": "自",
-              "start": 1.675,
-              "end": 1.815,
-              "confidence": 0.8481
-            },
-            {
-              "word": "还",
-              "start": 1.815,
-              "end": 2.005,
-              "confidence": 0.9569
-            },
-            {
-              "word": "有",
-              "start": 2.005,
-              "end": 2.105,
-              "confidence": 0.8826
-            },
-            {
-              "word": "最",
-              "start": 2.105,
-              "end": 2.305,
-              "confidence": 0.9563
-            },
-            {
-              "word": "后",
-              "start": 2.305,
-              "end": 2.505,
-              "confidence": 0.9897
-            },
-            {
-              "word": "一",
-              "start": 2.505,
-              "end": 2.585,
-              "confidence": 0.9487
-            },
-            {
-              "word": "回",
-              "start": 2.585,
-              "end": 2.755,
-              "confidence": 0.9731
-            },
-            {
-              "word": "合",
-              "start": 2.755,
-              "end": 2.945,
-              "confidence": 0.9369
-            },
-            {
-              "word": "可",
-              "start": 2.945,
-              "end": 3.075,
-              "confidence": 0.8256
-            },
-            {
-              "word": "以",
-              "start": 3.075,
-              "end": 3.165,
-              "confidence": 0.7061
-            },
-            {
-              "word": "行",
-              "start": 3.165,
-              "end": 3.385,
-              "confidence": 0.9576
-            },
-            {
-              "word": "动，",
-              "start": 3.385,
-              "end": 3.605,
-              "confidence": 0.9856
-            },
-            {
-              "word": "之",
-              "start": 3.945,
-              "end": 4.115,
-              "confidence": 0.921
-            },
-            {
-              "word": "后",
-              "start": 4.115,
-              "end": 4.355,
-              "confidence": 0.9783
-            },
-            {
-              "word": "游",
-              "start": 4.355,
-              "end": 4.455,
-              "confidence": 0.8395
-            },
-            {
-              "word": "戏",
-              "start": 4.455,
-              "end": 4.615,
-              "confidence": 0.9481
-            },
-            {
-              "word": "才",
-              "start": 4.615,
-              "end": 4.675,
-              "confidence": 0.3704
-            },
-            {
-              "word": "结",
-              "start": 4.675,
-              "end": 4.735,
-              "confidence": 0.1191
-            },
-            {
-              "word": "束。",
-              "start": 4.735,
-              "end": 4.795,
-              "confidence": 0.1731
-            }
-          ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "endgame.example.002",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
-      "audio": "media/tts/full/endgame.example.002.mp3",
-      "duration": 7.464,
-      "start": 561.65,
-      "refs": [
-        "<no_remaining_players>"
-      ],
-      "subtitles": [
-        {
-          "t": 0.285,
-          "end": 4.295,
-          "text": "但如果是起始玩家左手边的玩家声望值达到15，",
-          "words": [
-            {
-              "word": "但",
-              "start": 0.285,
-              "end": 0.425,
-              "confidence": 0.877
-            },
-            {
-              "word": "如",
-              "start": 0.425,
-              "end": 0.605,
-              "confidence": 0.9844
-            },
-            {
-              "word": "果",
-              "start": 0.605,
-              "end": 0.755,
-              "confidence": 0.9838
-            },
-            {
-              "word": "是",
-              "start": 0.755,
-              "end": 1.015,
-              "confidence": 0.9533
-            },
-            {
-              "word": "起",
-              "start": 1.015,
-              "end": 1.245,
-              "confidence": 0.7246
-            },
-            {
-              "word": "始",
-              "start": 1.245,
-              "end": 1.405,
-              "confidence": 0.6926
-            },
-            {
-              "word": "玩",
-              "start": 1.405,
-              "end": 1.565,
-              "confidence": 0.971
-            },
-            {
-              "word": "家",
-              "start": 1.565,
-              "end": 1.805,
-              "confidence": 0.9206
-            },
-            {
-              "word": "左",
-              "start": 1.805,
-              "end": 1.995,
-              "confidence": 0.8492
-            },
-            {
-              "word": "手",
-              "start": 1.995,
-              "end": 2.185,
-              "confidence": 0.9546
-            },
-            {
-              "word": "边",
-              "start": 2.185,
-              "end": 2.325,
-              "confidence": 0.9036
-            },
-            {
-              "word": "的",
-              "start": 2.325,
+              "start": 2.285,
               "end": 2.435,
-              "confidence": 0.921
-            },
-            {
-              "word": "玩",
-              "start": 2.435,
-              "end": 2.615,
-              "confidence": 0.9753
+              "confidence": 0.9704
             },
             {
               "word": "家",
-              "start": 2.615,
-              "end": 2.865,
-              "confidence": 0.9329
+              "start": 2.435,
+              "end": 2.605,
+              "confidence": 0.9758
+            },
+            {
+              "word": "的",
+              "start": 2.605,
+              "end": 2.705,
+              "confidence": 0.8765
             },
             {
               "word": "声",
-              "start": 2.865,
-              "end": 3.045,
-              "confidence": 0.9045
+              "start": 2.705,
+              "end": 2.865,
+              "confidence": 0.8276
             },
             {
               "word": "望",
-              "start": 3.045,
-              "end": 3.235,
-              "confidence": 0.9699
-            },
-            {
-              "word": "值",
-              "start": 3.235,
-              "end": 3.445,
-              "confidence": 0.9059
-            },
-            {
-              "word": "达",
-              "start": 3.445,
-              "end": 3.615,
+              "start": 2.865,
+              "end": 3.035,
               "confidence": 0.9656
             },
             {
+              "word": "值",
+              "start": 3.035,
+              "end": 3.295,
+              "confidence": 0.9116
+            },
+            {
+              "word": "达",
+              "start": 3.295,
+              "end": 3.465,
+              "confidence": 0.982
+            },
+            {
               "word": "到",
-              "start": 3.615,
-              "end": 3.735,
-              "confidence": 0.8141
+              "start": 3.465,
+              "end": 3.595,
+              "confidence": 0.7972
             },
             {
               "word": "15，",
-              "start": 4.265,
-              "end": 4.295,
-              "confidence": 0.214
+              "start": 4.425,
+              "end": 4.455,
+              "confidence": 0.4172
             }
           ]
         },
         {
-          "t": 4.52,
-          "end": 6.795,
+          "t": 4.46,
+          "end": 9.085,
+          "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
+          "words": [
+            {
+              "word": "剩",
+              "start": 4.46,
+              "end": 4.535,
+              "confidence": 0.6626
+            },
+            {
+              "word": "下",
+              "start": 4.535,
+              "end": 4.685,
+              "confidence": 0.8432
+            },
+            {
+              "word": "3",
+              "start": 4.825,
+              "end": 4.855,
+              "confidence": 0.266
+            },
+            {
+              "word": "位",
+              "start": 4.855,
+              "end": 4.985,
+              "confidence": 0.8439
+            },
+            {
+              "word": "玩",
+              "start": 4.985,
+              "end": 5.135,
+              "confidence": 0.9603
+            },
+            {
+              "word": "家",
+              "start": 5.135,
+              "end": 5.425,
+              "confidence": 0.9445
+            },
+            {
+              "word": "各",
+              "start": 5.425,
+              "end": 5.605,
+              "confidence": 0.8292
+            },
+            {
+              "word": "自",
+              "start": 5.605,
+              "end": 5.755,
+              "confidence": 0.8745
+            },
+            {
+              "word": "还",
+              "start": 5.755,
+              "end": 5.935,
+              "confidence": 0.9702
+            },
+            {
+              "word": "有",
+              "start": 5.935,
+              "end": 6.045,
+              "confidence": 0.8606
+            },
+            {
+              "word": "最",
+              "start": 6.045,
+              "end": 6.245,
+              "confidence": 0.957
+            },
+            {
+              "word": "后",
+              "start": 6.245,
+              "end": 6.445,
+              "confidence": 0.9904
+            },
+            {
+              "word": "一",
+              "start": 6.445,
+              "end": 6.525,
+              "confidence": 0.928
+            },
+            {
+              "word": "回",
+              "start": 6.525,
+              "end": 6.695,
+              "confidence": 0.97
+            },
+            {
+              "word": "合",
+              "start": 6.695,
+              "end": 6.865,
+              "confidence": 0.9636
+            },
+            {
+              "word": "可",
+              "start": 6.865,
+              "end": 6.995,
+              "confidence": 0.8344
+            },
+            {
+              "word": "以",
+              "start": 6.995,
+              "end": 7.095,
+              "confidence": 0.7231
+            },
+            {
+              "word": "行",
+              "start": 7.095,
+              "end": 7.315,
+              "confidence": 0.923
+            },
+            {
+              "word": "动，",
+              "start": 7.315,
+              "end": 7.505,
+              "confidence": 0.9885
+            },
+            {
+              "word": "之",
+              "start": 7.825,
+              "end": 7.985,
+              "confidence": 0.9087
+            },
+            {
+              "word": "后",
+              "start": 7.985,
+              "end": 8.215,
+              "confidence": 0.9709
+            },
+            {
+              "word": "游",
+              "start": 8.215,
+              "end": 8.325,
+              "confidence": 0.8019
+            },
+            {
+              "word": "戏",
+              "start": 8.325,
+              "end": 8.495,
+              "confidence": 0.9538
+            },
+            {
+              "word": "才",
+              "start": 8.495,
+              "end": 8.645,
+              "confidence": 0.977
+            },
+            {
+              "word": "结",
+              "start": 8.645,
+              "end": 8.795,
+              "confidence": 0.9454
+            },
+            {
+              "word": "束。",
+              "start": 8.795,
+              "end": 9.085,
+              "confidence": 0.9864
+            }
+          ]
+        },
+        {
+          "t": 9.445,
+          "end": 13.255,
+          "text": "但如果是起始玩家左手边的玩家声望值达到15，",
+          "words": [
+            {
+              "word": "但",
+              "start": 9.445,
+              "end": 9.575,
+              "confidence": 0.9029
+            },
+            {
+              "word": "如",
+              "start": 9.575,
+              "end": 9.735,
+              "confidence": 0.9788
+            },
+            {
+              "word": "果",
+              "start": 9.735,
+              "end": 9.875,
+              "confidence": 0.9825
+            },
+            {
+              "word": "是",
+              "start": 9.875,
+              "end": 10.135,
+              "confidence": 0.9356
+            },
+            {
+              "word": "起",
+              "start": 10.135,
+              "end": 10.365,
+              "confidence": 0.7468
+            },
+            {
+              "word": "始",
+              "start": 10.365,
+              "end": 10.505,
+              "confidence": 0.6895
+            },
+            {
+              "word": "玩",
+              "start": 10.505,
+              "end": 10.655,
+              "confidence": 0.9628
+            },
+            {
+              "word": "家",
+              "start": 10.655,
+              "end": 10.895,
+              "confidence": 0.9338
+            },
+            {
+              "word": "左",
+              "start": 10.895,
+              "end": 11.095,
+              "confidence": 0.8308
+            },
+            {
+              "word": "手",
+              "start": 11.095,
+              "end": 11.295,
+              "confidence": 0.9664
+            },
+            {
+              "word": "边",
+              "start": 11.295,
+              "end": 11.425,
+              "confidence": 0.9334
+            },
+            {
+              "word": "的",
+              "start": 11.425,
+              "end": 11.525,
+              "confidence": 0.9569
+            },
+            {
+              "word": "玩",
+              "start": 11.525,
+              "end": 11.695,
+              "confidence": 0.9691
+            },
+            {
+              "word": "家",
+              "start": 11.695,
+              "end": 11.915,
+              "confidence": 0.9426
+            },
+            {
+              "word": "声",
+              "start": 11.915,
+              "end": 12.095,
+              "confidence": 0.8953
+            },
+            {
+              "word": "望",
+              "start": 12.095,
+              "end": 12.275,
+              "confidence": 0.8953
+            },
+            {
+              "word": "值",
+              "start": 12.275,
+              "end": 12.475,
+              "confidence": 0.8788
+            },
+            {
+              "word": "达",
+              "start": 12.475,
+              "end": 12.625,
+              "confidence": 0.9642
+            },
+            {
+              "word": "到",
+              "start": 12.625,
+              "end": 12.755,
+              "confidence": 0.7773
+            },
+            {
+              "word": "15，",
+              "start": 13.225,
+              "end": 13.255,
+              "confidence": 0.2334
+            }
+          ]
+        },
+        {
+          "t": 13.4,
+          "end": 15.655,
           "text": "就没有人可以行动了，游戏立刻结束。",
           "words": [
             {
               "word": "就",
-              "start": 4.52,
-              "end": 4.665,
-              "confidence": 0.9565
+              "start": 13.4,
+              "end": 13.575,
+              "confidence": 0.925
             },
             {
               "word": "没",
-              "start": 4.665,
-              "end": 4.865,
-              "confidence": 0.9823
+              "start": 13.575,
+              "end": 13.815,
+              "confidence": 0.9832
             },
             {
               "word": "有",
-              "start": 4.865,
-              "end": 4.915,
-              "confidence": 0.9778
+              "start": 13.815,
+              "end": 13.875,
+              "confidence": 0.9672
             },
             {
               "word": "人",
-              "start": 4.915,
-              "end": 5.055,
-              "confidence": 0.9842
+              "start": 13.875,
+              "end": 14.015,
+              "confidence": 0.983
             },
             {
               "word": "可",
-              "start": 5.055,
-              "end": 5.195,
-              "confidence": 0.7943
+              "start": 14.015,
+              "end": 14.155,
+              "confidence": 0.7995
             },
             {
               "word": "以",
-              "start": 5.195,
-              "end": 5.285,
-              "confidence": 0.7628
+              "start": 14.155,
+              "end": 14.245,
+              "confidence": 0.7347
             },
             {
               "word": "行",
-              "start": 5.285,
-              "end": 5.505,
-              "confidence": 0.9489
+              "start": 14.245,
+              "end": 14.435,
+              "confidence": 0.9409
             },
             {
               "word": "动",
-              "start": 5.505,
-              "end": 5.695,
-              "confidence": 0.9722
+              "start": 14.435,
+              "end": 14.625,
+              "confidence": 0.975
             },
             {
               "word": "了，",
-              "start": 5.695,
-              "end": 5.855,
-              "confidence": 0.9698
+              "start": 14.625,
+              "end": 14.765,
+              "confidence": 0.9646
             },
             {
               "word": "游",
-              "start": 6.135,
-              "end": 6.235,
-              "confidence": 0.8325
+              "start": 14.995,
+              "end": 15.115,
+              "confidence": 0.7272
             },
             {
               "word": "戏",
-              "start": 6.235,
-              "end": 6.505,
-              "confidence": 0.9281
+              "start": 15.115,
+              "end": 15.405,
+              "confidence": 0.9641
             },
             {
               "word": "立",
-              "start": 6.505,
-              "end": 6.615,
-              "confidence": 0.8885
+              "start": 15.405,
+              "end": 15.475,
+              "confidence": 0.5694
             },
             {
               "word": "刻",
-              "start": 6.615,
-              "end": 6.675,
-              "confidence": 0.1349
+              "start": 15.475,
+              "end": 15.535,
+              "confidence": 0.1503
             },
             {
               "word": "结",
-              "start": 6.675,
-              "end": 6.735,
-              "confidence": 0.1266
+              "start": 15.535,
+              "end": 15.595,
+              "confidence": 0.1138
             },
             {
               "word": "束。",
-              "start": 6.735,
-              "end": 6.795,
-              "confidence": 0.1919
+              "start": 15.595,
+              "end": 15.655,
+              "confidence": 0.2343
             }
           ]
         }
@@ -18043,10 +17990,10 @@
       "group_path": [
         "4 游戏结束"
       ],
-      "text": "声望值最高的玩家获得胜利。",
+      "text": "第一种情况：声望值最高的玩家获得胜利。比如玩家A有17分，玩家B有14分，A获胜。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
-      "duration": 3.072,
-      "start": 569.11,
+      "duration": 9.024,
+      "start": 565.7,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18054,279 +18001,219 @@
       "subtitles": [
         {
           "t": 0.285,
-          "end": 2.675,
-          "text": "声望值最高的玩家获得胜利。",
+          "end": 3.735,
+          "text": "第一种情况：声望值最高的玩家获得胜利。",
           "words": [
             {
-              "word": "声",
+              "word": "第",
               "start": 0.285,
-              "end": 0.545,
-              "confidence": 0.8587
+              "end": 0.465,
+              "confidence": 0.9693
+            },
+            {
+              "word": "一",
+              "start": 0.465,
+              "end": 0.515,
+              "confidence": 0.9187
+            },
+            {
+              "word": "种",
+              "start": 0.515,
+              "end": 0.675,
+              "confidence": 0.9755
+            },
+            {
+              "word": "情",
+              "start": 0.675,
+              "end": 0.885,
+              "confidence": 0.9248
+            },
+            {
+              "word": "况：",
+              "start": 0.885,
+              "end": 0.915,
+              "confidence": 0.1827
+            },
+            {
+              "word": "声",
+              "start": 1.445,
+              "end": 1.705,
+              "confidence": 0.8949
             },
             {
               "word": "望",
-              "start": 0.545,
-              "end": 0.715,
-              "confidence": 0.9738
+              "start": 1.705,
+              "end": 1.895,
+              "confidence": 0.9537
             },
             {
               "word": "值",
-              "start": 0.715,
-              "end": 0.895,
-              "confidence": 0.852
+              "start": 1.895,
+              "end": 2.105,
+              "confidence": 0.8434
             },
             {
               "word": "最",
-              "start": 0.895,
-              "end": 1.165,
-              "confidence": 0.9617
+              "start": 2.105,
+              "end": 2.305,
+              "confidence": 0.9575
             },
             {
               "word": "高",
-              "start": 1.165,
-              "end": 1.385,
-              "confidence": 0.9748
+              "start": 2.305,
+              "end": 2.485,
+              "confidence": 0.9874
             },
             {
               "word": "的",
-              "start": 1.385,
-              "end": 1.485,
-              "confidence": 0.771
+              "start": 2.485,
+              "end": 2.575,
+              "confidence": 0.7251
             },
             {
               "word": "玩",
-              "start": 1.485,
-              "end": 1.675,
-              "confidence": 0.9067
+              "start": 2.575,
+              "end": 2.735,
+              "confidence": 0.9256
             },
             {
               "word": "家",
-              "start": 1.675,
-              "end": 1.965,
-              "confidence": 0.928
+              "start": 2.735,
+              "end": 3.005,
+              "confidence": 0.8639
             },
             {
               "word": "获",
-              "start": 2.025,
-              "end": 2.165,
-              "confidence": 0.804
+              "start": 3.005,
+              "end": 3.185,
+              "confidence": 0.849
             },
             {
               "word": "得",
-              "start": 2.165,
-              "end": 2.285,
-              "confidence": 0.8712
+              "start": 3.185,
+              "end": 3.305,
+              "confidence": 0.8326
             },
             {
               "word": "胜",
-              "start": 2.285,
-              "end": 2.475,
-              "confidence": 0.8979
+              "start": 3.305,
+              "end": 3.515,
+              "confidence": 0.9452
             },
             {
               "word": "利。",
-              "start": 2.475,
-              "end": 2.675,
-              "confidence": 0.9278
+              "start": 3.515,
+              "end": 3.735,
+              "confidence": 0.9501
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "endgame.tie.001.1",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
-      "audio": "media/tts/full/endgame.tie.001.1.mp3",
-      "duration": 6.264,
-      "start": 572.18,
-      "refs": [
-        "<highest_prestige_wins>",
-        "<fewest_development_cards>"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.315,
-          "end": 5.825,
-          "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。",
+          "t": 4.255,
+          "end": 8.645,
+          "text": "比如玩家A有17分，玩家B有14分，A获胜。",
           "words": [
             {
+              "word": "比",
+              "start": 4.255,
+              "end": 4.375,
+              "confidence": 0.912
+            },
+            {
               "word": "如",
-              "start": 0.315,
-              "end": 0.485,
-              "confidence": 0.9423
-            },
-            {
-              "word": "果",
-              "start": 0.485,
-              "end": 0.635,
-              "confidence": 0.9878
-            },
-            {
-              "word": "有",
-              "start": 0.635,
-              "end": 0.835,
-              "confidence": 0.9126
-            },
-            {
-              "word": "多",
-              "start": 0.835,
-              "end": 1.045,
-              "confidence": 0.9521
-            },
-            {
-              "word": "位",
-              "start": 1.045,
-              "end": 1.185,
-              "confidence": 0.8992
+              "start": 4.375,
+              "end": 4.615,
+              "confidence": 0.9675
             },
             {
               "word": "玩",
-              "start": 1.185,
-              "end": 1.375,
-              "confidence": 0.9371
+              "start": 4.615,
+              "end": 4.765,
+              "confidence": 0.9395
             },
             {
               "word": "家",
-              "start": 1.375,
-              "end": 1.615,
-              "confidence": 0.9529
+              "start": 4.765,
+              "end": 4.985,
+              "confidence": 0.8597
             },
             {
-              "word": "声",
-              "start": 1.615,
-              "end": 1.815,
-              "confidence": 0.9203
+              "word": "A",
+              "start": 4.985,
+              "end": 5.225,
+              "confidence": 0.7881
             },
             {
-              "word": "望",
-              "start": 1.815,
-              "end": 1.985,
+              "word": "有",
+              "start": 5.225,
+              "end": 5.445,
+              "confidence": 0.8012
+            },
+            {
+              "word": "17",
+              "start": 5.825,
+              "end": 5.855,
+              "confidence": 0.1283
+            },
+            {
+              "word": "分，",
+              "start": 5.855,
+              "end": 6.135,
+              "confidence": 0.8954
+            },
+            {
+              "word": "玩",
+              "start": 6.475,
+              "end": 6.565,
               "confidence": 0.9456
             },
             {
-              "word": "值",
-              "start": 1.985,
-              "end": 2.125,
-              "confidence": 0.8465
-            },
-            {
-              "word": "相",
-              "start": 2.125,
-              "end": 2.325,
-              "confidence": 0.9351
-            },
-            {
-              "word": "同，",
-              "start": 2.325,
-              "end": 2.685,
-              "confidence": 0.8913
-            },
-            {
-              "word": "购",
-              "start": 3.025,
-              "end": 3.185,
-              "confidence": 0.8804
-            },
-            {
-              "word": "买",
-              "start": 3.185,
-              "end": 3.375,
-              "confidence": 0.98
-            },
-            {
-              "word": "发",
-              "start": 3.375,
-              "end": 3.545,
-              "confidence": 0.9826
-            },
-            {
-              "word": "展",
-              "start": 3.545,
-              "end": 3.675,
-              "confidence": 0.9023
-            },
-            {
-              "word": "卡",
-              "start": 3.675,
-              "end": 3.875,
-              "confidence": 0.9344
-            },
-            {
-              "word": "牌",
-              "start": 3.875,
-              "end": 4.105,
-              "confidence": 0.9436
-            },
-            {
-              "word": "最",
-              "start": 4.105,
-              "end": 4.295,
-              "confidence": 0.9409
-            },
-            {
-              "word": "少",
-              "start": 4.295,
-              "end": 4.545,
-              "confidence": 0.9542
-            },
-            {
-              "word": "的",
-              "start": 4.545,
-              "end": 4.645,
-              "confidence": 0.9356
-            },
-            {
-              "word": "那",
-              "start": 4.645,
-              "end": 4.775,
-              "confidence": 0.7182
-            },
-            {
-              "word": "名",
-              "start": 4.775,
-              "end": 4.905,
-              "confidence": 0.946
-            },
-            {
-              "word": "玩",
-              "start": 4.905,
-              "end": 5.065,
-              "confidence": 0.9523
-            },
-            {
               "word": "家",
-              "start": 5.065,
-              "end": 5.315,
-              "confidence": 0.8633
+              "start": 6.565,
+              "end": 6.785,
+              "confidence": 0.9462
+            },
+            {
+              "word": "B",
+              "start": 6.785,
+              "end": 7.015,
+              "confidence": 0.718
+            },
+            {
+              "word": "有",
+              "start": 7.015,
+              "end": 7.185,
+              "confidence": 0.7419
+            },
+            {
+              "word": "14",
+              "start": 7.565,
+              "end": 7.595,
+              "confidence": 0.0849
+            },
+            {
+              "word": "分，",
+              "start": 7.595,
+              "end": 7.885,
+              "confidence": 0.9389
+            },
+            {
+              "word": "A",
+              "start": 8.115,
+              "end": 8.235,
+              "confidence": 0.8128
             },
             {
               "word": "获",
-              "start": 5.315,
-              "end": 5.495,
-              "confidence": 0.8304
+              "start": 8.235,
+              "end": 8.425,
+              "confidence": 0.9157
             },
             {
-              "word": "得",
-              "start": 5.495,
-              "end": 5.605,
-              "confidence": 0.8868
-            },
-            {
-              "word": "胜",
-              "start": 5.605,
-              "end": 5.765,
-              "confidence": 0.9409
-            },
-            {
-              "word": "利。",
-              "start": 5.765,
-              "end": 5.825,
-              "confidence": 0.4844
+              "word": "胜。",
+              "start": 8.425,
+              "end": 8.645,
+              "confidence": 0.907
             }
           ]
         }
@@ -18334,198 +18221,671 @@
       "animation": null
     },
     {
-      "id": "endgame.tie.001.2",
+      "id": "endgame.winner.002",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
-      "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
-      "audio": "media/tts/full/endgame.tie.001.2.mp3",
-      "duration": 6.456,
-      "start": 578.45,
+      "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。",
+      "audio": "media/tts/full/endgame.winner.002.mp3",
+      "duration": 12.648,
+      "start": 574.73,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
       ],
       "subtitles": [
         {
-          "t": 0.295,
-          "end": 6.105,
-          "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。",
+          "t": 0.255,
+          "end": 2.855,
+          "text": "第二种情况：如果声望值相同，",
           "words": [
             {
-              "word": "如",
-              "start": 0.295,
-              "end": 0.475,
-              "confidence": 0.9668
+              "word": "第",
+              "start": 0.255,
+              "end": 0.375,
+              "confidence": 0.9561
             },
             {
-              "word": "果",
-              "start": 0.475,
-              "end": 0.625,
-              "confidence": 0.9834
-            },
-            {
-              "word": "有",
-              "start": 0.625,
-              "end": 0.795,
-              "confidence": 0.9607
-            },
-            {
-              "word": "多",
-              "start": 0.795,
-              "end": 1.025,
-              "confidence": 0.9524
-            },
-            {
-              "word": "位",
-              "start": 1.025,
-              "end": 1.155,
-              "confidence": 0.9164
-            },
-            {
-              "word": "玩",
-              "start": 1.155,
-              "end": 1.335,
-              "confidence": 0.9107
-            },
-            {
-              "word": "家",
-              "start": 1.335,
-              "end": 1.565,
-              "confidence": 0.9411
-            },
-            {
-              "word": "声",
-              "start": 1.565,
-              "end": 1.775,
-              "confidence": 0.9161
-            },
-            {
-              "word": "望",
-              "start": 1.775,
-              "end": 1.965,
-              "confidence": 0.9305
-            },
-            {
-              "word": "值",
-              "start": 1.965,
-              "end": 2.255,
-              "confidence": 0.7159
-            },
-            {
-              "word": "和",
-              "start": 2.255,
-              "end": 2.485,
-              "confidence": 0.9414
-            },
-            {
-              "word": "购",
-              "start": 2.485,
-              "end": 2.665,
-              "confidence": 0.9175
-            },
-            {
-              "word": "买",
-              "start": 2.665,
-              "end": 2.825,
-              "confidence": 0.9871
-            },
-            {
-              "word": "发",
-              "start": 2.825,
-              "end": 3.005,
+              "word": "二",
+              "start": 0.375,
+              "end": 0.505,
               "confidence": 0.9806
             },
             {
-              "word": "展",
-              "start": 3.005,
-              "end": 3.125,
-              "confidence": 0.8956
+              "word": "种",
+              "start": 0.505,
+              "end": 0.665,
+              "confidence": 0.9732
             },
             {
-              "word": "卡",
-              "start": 3.125,
-              "end": 3.315,
-              "confidence": 0.9518
+              "word": "情",
+              "start": 0.665,
+              "end": 0.885,
+              "confidence": 0.8878
             },
             {
-              "word": "牌",
-              "start": 3.315,
-              "end": 3.475,
-              "confidence": 0.9622
+              "word": "况：",
+              "start": 1.125,
+              "end": 1.155,
+              "confidence": 0.2002
             },
             {
-              "word": "数",
-              "start": 3.475,
-              "end": 3.695,
-              "confidence": 0.9666
-            },
-            {
-              "word": "量",
-              "start": 3.695,
-              "end": 3.855,
-              "confidence": 0.9731
-            },
-            {
-              "word": "都",
-              "start": 3.855,
-              "end": 4.005,
-              "confidence": 0.9206
-            },
-            {
-              "word": "相",
-              "start": 4.005,
-              "end": 4.205,
-              "confidence": 0.92
-            },
-            {
-              "word": "同，",
-              "start": 4.205,
-              "end": 4.555,
-              "confidence": 0.9441
-            },
-            {
-              "word": "则",
-              "start": 4.845,
-              "end": 5.005,
-              "confidence": 0.8999
-            },
-            {
-              "word": "他",
-              "start": 5.005,
-              "end": 5.165,
-              "confidence": 0.9606
-            },
-            {
-              "word": "们",
-              "start": 5.165,
-              "end": 5.345,
+              "word": "如",
+              "start": 1.395,
+              "end": 1.555,
               "confidence": 0.9598
             },
             {
-              "word": "共",
-              "start": 5.345,
-              "end": 5.505,
-              "confidence": 0.9201
+              "word": "果",
+              "start": 1.555,
+              "end": 1.775,
+              "confidence": 0.971
             },
             {
-              "word": "享",
-              "start": 5.505,
+              "word": "声",
+              "start": 1.775,
+              "end": 1.975,
+              "confidence": 0.9023
+            },
+            {
+              "word": "望",
+              "start": 1.975,
+              "end": 2.145,
+              "confidence": 0.9732
+            },
+            {
+              "word": "值",
+              "start": 2.145,
+              "end": 2.295,
+              "confidence": 0.881
+            },
+            {
+              "word": "相",
+              "start": 2.295,
+              "end": 2.495,
+              "confidence": 0.9614
+            },
+            {
+              "word": "同，",
+              "start": 2.495,
+              "end": 2.855,
+              "confidence": 0.9383
+            }
+          ]
+        },
+        {
+          "t": 3.26,
+          "end": 6.095,
+          "text": "购买发展卡牌最少的那名玩家获得胜利。",
+          "words": [
+            {
+              "word": "购",
+              "start": 3.26,
+              "end": 3.335,
+              "confidence": 0.4301
+            },
+            {
+              "word": "买",
+              "start": 3.335,
+              "end": 3.465,
+              "confidence": 0.7769
+            },
+            {
+              "word": "发",
+              "start": 3.465,
+              "end": 3.635,
+              "confidence": 0.944
+            },
+            {
+              "word": "展",
+              "start": 3.635,
+              "end": 3.755,
+              "confidence": 0.7896
+            },
+            {
+              "word": "卡",
+              "start": 3.755,
+              "end": 3.955,
+              "confidence": 0.945
+            },
+            {
+              "word": "牌",
+              "start": 3.955,
+              "end": 4.195,
+              "confidence": 0.9574
+            },
+            {
+              "word": "最",
+              "start": 4.195,
+              "end": 4.365,
+              "confidence": 0.9385
+            },
+            {
+              "word": "少",
+              "start": 4.365,
+              "end": 4.605,
+              "confidence": 0.9595
+            },
+            {
+              "word": "的",
+              "start": 4.605,
+              "end": 4.715,
+              "confidence": 0.877
+            },
+            {
+              "word": "那",
+              "start": 4.715,
+              "end": 4.835,
+              "confidence": 0.6945
+            },
+            {
+              "word": "名",
+              "start": 4.835,
+              "end": 4.985,
+              "confidence": 0.908
+            },
+            {
+              "word": "玩",
+              "start": 4.985,
+              "end": 5.145,
+              "confidence": 0.9357
+            },
+            {
+              "word": "家",
+              "start": 5.145,
+              "end": 5.385,
+              "confidence": 0.8956
+            },
+            {
+              "word": "获",
+              "start": 5.385,
+              "end": 5.575,
+              "confidence": 0.8458
+            },
+            {
+              "word": "得",
+              "start": 5.575,
               "end": 5.685,
-              "confidence": 0.9636
+              "confidence": 0.9082
             },
             {
               "word": "胜",
               "start": 5.685,
-              "end": 5.935,
-              "confidence": 0.9118
+              "end": 5.895,
+              "confidence": 0.964
             },
             {
               "word": "利。",
-              "start": 5.935,
-              "end": 6.105,
-              "confidence": 0.9108
+              "start": 5.895,
+              "end": 6.095,
+              "confidence": 0.9593
+            }
+          ]
+        },
+        {
+          "t": 6.605,
+          "end": 12.305,
+          "text": "现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。",
+          "words": [
+            {
+              "word": "现",
+              "start": 6.605,
+              "end": 6.835,
+              "confidence": 0.9843
+            },
+            {
+              "word": "在",
+              "start": 6.835,
+              "end": 7.005,
+              "confidence": 0.9821
+            },
+            {
+              "word": "两",
+              "start": 7.005,
+              "end": 7.155,
+              "confidence": 0.9581
+            },
+            {
+              "word": "人",
+              "start": 7.155,
+              "end": 7.325,
+              "confidence": 0.9356
+            },
+            {
+              "word": "都",
+              "start": 7.325,
+              "end": 7.475,
+              "confidence": 0.9535
+            },
+            {
+              "word": "是",
+              "start": 7.475,
+              "end": 7.615,
+              "confidence": 0.7646
+            },
+            {
+              "word": "17",
+              "start": 7.935,
+              "end": 7.965,
+              "confidence": 0.1539
+            },
+            {
+              "word": "分，",
+              "start": 7.965,
+              "end": 8.255,
+              "confidence": 0.9365
+            },
+            {
+              "word": "A",
+              "start": 8.595,
+              "end": 8.775,
+              "confidence": 0.7805
+            },
+            {
+              "word": "有",
+              "start": 8.775,
+              "end": 8.805,
+              "confidence": 0.4704
+            },
+            {
+              "word": "14",
+              "start": 9.185,
+              "end": 9.215,
+              "confidence": 0.1483
+            },
+            {
+              "word": "张",
+              "start": 9.215,
+              "end": 9.395,
+              "confidence": 0.8124
+            },
+            {
+              "word": "牌，",
+              "start": 9.395,
+              "end": 9.765,
+              "confidence": 0.9055
+            },
+            {
+              "word": "B",
+              "start": 9.955,
+              "end": 10.115,
+              "confidence": 0.716
+            },
+            {
+              "word": "只",
+              "start": 10.115,
+              "end": 10.255,
+              "confidence": 0.837
+            },
+            {
+              "word": "有",
+              "start": 10.255,
+              "end": 10.335,
+              "confidence": 0.8063
+            },
+            {
+              "word": "10",
+              "start": 10.335,
+              "end": 10.365,
+              "confidence": 0.1528
+            },
+            {
+              "word": "张",
+              "start": 10.605,
+              "end": 10.755,
+              "confidence": 0.8465
+            },
+            {
+              "word": "牌，",
+              "start": 10.755,
+              "end": 11.115,
+              "confidence": 0.9243
+            },
+            {
+              "word": "所",
+              "start": 11.295,
+              "end": 11.515,
+              "confidence": 0.9697
+            },
+            {
+              "word": "以",
+              "start": 11.515,
+              "end": 11.745,
+              "confidence": 0.9417
+            },
+            {
+              "word": "B",
+              "start": 11.775,
+              "end": 11.895,
+              "confidence": 0.6918
+            },
+            {
+              "word": "获",
+              "start": 11.895,
+              "end": 12.075,
+              "confidence": 0.8881
+            },
+            {
+              "word": "胜。",
+              "start": 12.075,
+              "end": 12.305,
+              "confidence": 0.8593
+            }
+          ]
+        }
+      ],
+      "animation": null
+    },
+    {
+      "id": "endgame.winner.003",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。现在两人都是17分、10张牌，共享胜利。",
+      "audio": "media/tts/full/endgame.winner.003.mp3",
+      "duration": 11.088,
+      "start": 587.38,
+      "refs": [
+        "<highest_prestige_wins>",
+        "<fewest_development_cards>"
+      ],
+      "subtitles": [
+        {
+          "t": 0.275,
+          "end": 4.815,
+          "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，",
+          "words": [
+            {
+              "word": "第",
+              "start": 0.275,
+              "end": 0.405,
+              "confidence": 0.9728
+            },
+            {
+              "word": "三",
+              "start": 0.405,
+              "end": 0.585,
+              "confidence": 0.9828
+            },
+            {
+              "word": "种",
+              "start": 0.585,
+              "end": 0.735,
+              "confidence": 0.9765
+            },
+            {
+              "word": "情",
+              "start": 0.735,
+              "end": 0.955,
+              "confidence": 0.8143
+            },
+            {
+              "word": "况：",
+              "start": 0.955,
+              "end": 0.985,
+              "confidence": 0.1982
+            },
+            {
+              "word": "如",
+              "start": 1.545,
+              "end": 1.685,
+              "confidence": 0.9592
+            },
+            {
+              "word": "果",
+              "start": 1.685,
+              "end": 1.865,
+              "confidence": 0.9715
+            },
+            {
+              "word": "声",
+              "start": 1.865,
+              "end": 2.065,
+              "confidence": 0.8908
+            },
+            {
+              "word": "望",
+              "start": 2.065,
+              "end": 2.215,
+              "confidence": 0.9415
+            },
+            {
+              "word": "值",
+              "start": 2.215,
+              "end": 2.505,
+              "confidence": 0.6942
+            },
+            {
+              "word": "和",
+              "start": 2.505,
+              "end": 2.755,
+              "confidence": 0.9338
+            },
+            {
+              "word": "购",
+              "start": 2.755,
+              "end": 2.945,
+              "confidence": 0.8797
+            },
+            {
+              "word": "买",
+              "start": 2.945,
+              "end": 3.105,
+              "confidence": 0.9877
+            },
+            {
+              "word": "发",
+              "start": 3.105,
+              "end": 3.265,
+              "confidence": 0.9793
+            },
+            {
+              "word": "展",
+              "start": 3.265,
+              "end": 3.395,
+              "confidence": 0.8955
+            },
+            {
+              "word": "卡",
+              "start": 3.395,
+              "end": 3.585,
+              "confidence": 0.9462
+            },
+            {
+              "word": "牌",
+              "start": 3.585,
+              "end": 3.735,
+              "confidence": 0.9614
+            },
+            {
+              "word": "数",
+              "start": 3.735,
+              "end": 3.945,
+              "confidence": 0.9592
+            },
+            {
+              "word": "量",
+              "start": 3.945,
+              "end": 4.135,
+              "confidence": 0.9706
+            },
+            {
+              "word": "都",
+              "start": 4.135,
+              "end": 4.295,
+              "confidence": 0.9287
+            },
+            {
+              "word": "相",
+              "start": 4.295,
+              "end": 4.485,
+              "confidence": 0.9477
+            },
+            {
+              "word": "同，",
+              "start": 4.485,
+              "end": 4.815,
+              "confidence": 0.9481
+            }
+          ]
+        },
+        {
+          "t": 5.17,
+          "end": 6.875,
+          "text": "则这些玩家共享胜利。",
+          "words": [
+            {
+              "word": "则",
+              "start": 5.17,
+              "end": 5.305,
+              "confidence": 0.8649
+            },
+            {
+              "word": "这",
+              "start": 5.305,
+              "end": 5.425,
+              "confidence": 0.9544
+            },
+            {
+              "word": "些",
+              "start": 5.425,
+              "end": 5.575,
+              "confidence": 0.9871
+            },
+            {
+              "word": "玩",
+              "start": 5.575,
+              "end": 5.725,
+              "confidence": 0.9295
+            },
+            {
+              "word": "家",
+              "start": 5.725,
+              "end": 6.005,
+              "confidence": 0.9246
+            },
+            {
+              "word": "共",
+              "start": 6.005,
+              "end": 6.215,
+              "confidence": 0.9147
+            },
+            {
+              "word": "享",
+              "start": 6.215,
+              "end": 6.415,
+              "confidence": 0.9666
+            },
+            {
+              "word": "胜",
+              "start": 6.415,
+              "end": 6.665,
+              "confidence": 0.8855
+            },
+            {
+              "word": "利。",
+              "start": 6.665,
+              "end": 6.875,
+              "confidence": 0.9646
+            }
+          ]
+        },
+        {
+          "t": 7.215,
+          "end": 10.405,
+          "text": "现在两人都是17分、10张牌，共享胜利。",
+          "words": [
+            {
+              "word": "现",
+              "start": 7.215,
+              "end": 7.415,
+              "confidence": 0.9793
+            },
+            {
+              "word": "在",
+              "start": 7.415,
+              "end": 7.685,
+              "confidence": 0.8505
+            },
+            {
+              "word": "两",
+              "start": 7.685,
+              "end": 7.815,
+              "confidence": 0.9203
+            },
+            {
+              "word": "人",
+              "start": 7.815,
+              "end": 7.975,
+              "confidence": 0.9176
+            },
+            {
+              "word": "都",
+              "start": 7.975,
+              "end": 8.135,
+              "confidence": 0.9537
+            },
+            {
+              "word": "是",
+              "start": 8.135,
+              "end": 8.365,
+              "confidence": 0.8999
+            },
+            {
+              "word": "17",
+              "start": 9.265,
+              "end": 9.295,
+              "confidence": 0.0953
+            },
+            {
+              "word": "分、",
+              "start": 9.295,
+              "end": 9.325,
+              "confidence": 0.1034
+            },
+            {
+              "word": "10",
+              "start": 9.325,
+              "end": 9.355,
+              "confidence": 0.157
+            },
+            {
+              "word": "张",
+              "start": 9.355,
+              "end": 9.525,
+              "confidence": 0.8485
+            },
+            {
+              "word": "牌，",
+              "start": 9.525,
+              "end": 9.885,
+              "confidence": 0.9238
+            },
+            {
+              "word": "共",
+              "start": 10.045,
+              "end": 10.205,
+              "confidence": 0.9318
+            },
+            {
+              "word": "享",
+              "start": 10.205,
+              "end": 10.285,
+              "confidence": 0.3524
+            },
+            {
+              "word": "胜",
+              "start": 10.285,
+              "end": 10.345,
+              "confidence": 0.139
+            },
+            {
+              "word": "利。",
+              "start": 10.345,
+              "end": 10.405,
+              "confidence": 0.119
             }
           ]
         }

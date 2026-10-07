@@ -1551,7 +1551,7 @@
         },
         {
           "id": "action.purchase_reserved.002.1.b1",
-          "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌反面，"
+          "text": "按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，"
         },
         {
           "id": "action.purchase_reserved.002.2.b1",
@@ -1596,7 +1596,7 @@
       "beats": [
         {
           "id": "action.summary.002.1.b1",
-          "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，"
+          "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。"
         }
       ]
     },
@@ -1614,10 +1614,6 @@
       ],
       "pause_after": 0.0,
       "beats": [
-        {
-          "id": "action.summary.002.2.b1",
-          "text": "左手边的玩家开始他的回合。"
-        },
         {
           "id": "action.summary.002.2.b2",
           "text": "就这样一直循环，直到整局游戏结束。"
@@ -1657,26 +1653,7 @@
       "beats": [
         {
           "id": "endgame.final_rounds.001.1.b1",
-          "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，"
-        }
-      ]
-    },
-    {
-      "id": "endgame.final_rounds.001.2",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "refs": [
-        "flow:final_turn_cycle",
-        "flow:final_turns",
-        "<no_remaining_players>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "endgame.final_rounds.001.2.b1",
-          "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
+          "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
         }
       ]
     },
@@ -1693,41 +1670,7 @@
       "beats": [
         {
           "id": "endgame.example.001.1.b1",
-          "text": "以4人局为例：如果起始玩家的声望值达到15，"
-        }
-      ]
-    },
-    {
-      "id": "endgame.example.001.2",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "refs": [
-        "<no_remaining_players>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "endgame.example.001.2.b1",
-          "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。"
-        }
-      ]
-    },
-    {
-      "id": "endgame.example.002",
-      "group": "4 游戏结束",
-      "group_path": [
-        "4 游戏结束"
-      ],
-      "refs": [
-        "<no_remaining_players>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "endgame.example.002.b1",
-          "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。"
+          "text": "以4人局为例：如果起始玩家的声望值达到15，剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。"
         }
       ]
     },
@@ -1745,12 +1688,12 @@
       "beats": [
         {
           "id": "endgame.winner.001.b1",
-          "text": "声望值最高的玩家获得胜利。"
+          "text": "第一种情况：声望值最高的玩家获得胜利。比如玩家A有17分，玩家B有14分，A获胜。"
         }
       ]
     },
     {
-      "id": "endgame.tie.001.1",
+      "id": "endgame.winner.002",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -1762,13 +1705,13 @@
       "pause_after": 0.0,
       "beats": [
         {
-          "id": "endgame.tie.001.1.b1",
-          "text": "如果有多位玩家声望值相同，购买发展卡牌最少的那名玩家获得胜利。"
+          "id": "endgame.winner.002.b1",
+          "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。"
         }
       ]
     },
     {
-      "id": "endgame.tie.001.2",
+      "id": "endgame.winner.003",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -1780,8 +1723,8 @@
       "pause_after": 0.0,
       "beats": [
         {
-          "id": "endgame.tie.001.2.b1",
-          "text": "如果有多位玩家声望值和购买发展卡牌数量都相同，则他们共享胜利。"
+          "id": "endgame.winner.003.b1",
+          "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。现在两人都是17分、10张牌，共享胜利。"
         }
       ]
     }

@@ -1,79 +1,217 @@
 [
   {
     "phonemes": [],
-    "text": "声望值最高的玩家获得胜利。",
+    "text": "第一种情况：声望值最高的玩家获得胜利。",
     "words": [
       {
-        "confidence": 0.8587138,
-        "endTime": 0.545,
+        "confidence": 0.9693087,
+        "endTime": 0.465,
         "startTime": 0.285,
+        "word": "第"
+      },
+      {
+        "confidence": 0.9186865,
+        "endTime": 0.515,
+        "startTime": 0.465,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9754832,
+        "endTime": 0.675,
+        "startTime": 0.515,
+        "word": "种"
+      },
+      {
+        "confidence": 0.9247808,
+        "endTime": 0.885,
+        "startTime": 0.675,
+        "word": "情"
+      },
+      {
+        "confidence": 0.1827439,
+        "endTime": 0.915,
+        "startTime": 0.885,
+        "word": "况："
+      },
+      {
+        "confidence": 0.8948839,
+        "endTime": 1.705,
+        "startTime": 1.445,
         "word": "声"
       },
       {
-        "confidence": 0.97383374,
-        "endTime": 0.715,
-        "startTime": 0.545,
+        "confidence": 0.9537466,
+        "endTime": 1.895,
+        "startTime": 1.705,
         "word": "望"
       },
       {
-        "confidence": 0.85197526,
-        "endTime": 0.895,
-        "startTime": 0.715,
+        "confidence": 0.84335196,
+        "endTime": 2.105,
+        "startTime": 1.895,
         "word": "值"
       },
       {
-        "confidence": 0.9616966,
-        "endTime": 1.165,
-        "startTime": 0.895,
+        "confidence": 0.95747215,
+        "endTime": 2.305,
+        "startTime": 2.105,
         "word": "最"
       },
       {
-        "confidence": 0.9748142,
-        "endTime": 1.385,
-        "startTime": 1.165,
+        "confidence": 0.987415,
+        "endTime": 2.485,
+        "startTime": 2.305,
         "word": "高"
       },
       {
-        "confidence": 0.77101225,
-        "endTime": 1.485,
-        "startTime": 1.385,
+        "confidence": 0.7251189,
+        "endTime": 2.575,
+        "startTime": 2.485,
         "word": "的"
       },
       {
-        "confidence": 0.9066831,
-        "endTime": 1.675,
-        "startTime": 1.485,
+        "confidence": 0.925587,
+        "endTime": 2.735,
+        "startTime": 2.575,
         "word": "玩"
       },
       {
-        "confidence": 0.92803466,
-        "endTime": 1.965,
-        "startTime": 1.675,
+        "confidence": 0.86386675,
+        "endTime": 3.005,
+        "startTime": 2.735,
         "word": "家"
       },
       {
-        "confidence": 0.8039597,
-        "endTime": 2.165,
-        "startTime": 2.025,
+        "confidence": 0.84896857,
+        "endTime": 3.185,
+        "startTime": 3.005,
         "word": "获"
       },
       {
-        "confidence": 0.8711647,
-        "endTime": 2.285,
-        "startTime": 2.165,
+        "confidence": 0.8325741,
+        "endTime": 3.305,
+        "startTime": 3.185,
         "word": "得"
       },
       {
-        "confidence": 0.89793104,
-        "endTime": 2.475,
-        "startTime": 2.285,
+        "confidence": 0.94517624,
+        "endTime": 3.515,
+        "startTime": 3.305,
         "word": "胜"
       },
       {
-        "confidence": 0.9278294,
-        "endTime": 2.675,
-        "startTime": 2.475,
+        "confidence": 0.9501414,
+        "endTime": 3.735,
+        "startTime": 3.515,
         "word": "利。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "比如玩家A有17分，玩家B有14分，A获胜。",
+    "words": [
+      {
+        "confidence": 0.9119636,
+        "endTime": 4.375042,
+        "startTime": 4.2550416,
+        "word": "比"
+      },
+      {
+        "confidence": 0.96752757,
+        "endTime": 4.6150417,
+        "startTime": 4.375042,
+        "word": "如"
+      },
+      {
+        "confidence": 0.9394645,
+        "endTime": 4.765042,
+        "startTime": 4.6150417,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.8597243,
+        "endTime": 4.9850416,
+        "startTime": 4.765042,
+        "word": "家"
+      },
+      {
+        "confidence": 0.78808063,
+        "endTime": 5.225042,
+        "startTime": 4.9850416,
+        "word": "A"
+      },
+      {
+        "confidence": 0.80116194,
+        "endTime": 5.4450417,
+        "startTime": 5.225042,
+        "word": "有"
+      },
+      {
+        "confidence": 0.12834999,
+        "endTime": 5.8550415,
+        "startTime": 5.825042,
+        "word": "17"
+      },
+      {
+        "confidence": 0.8954234,
+        "endTime": 6.1350417,
+        "startTime": 5.8550415,
+        "word": "分，"
+      },
+      {
+        "confidence": 0.94559443,
+        "endTime": 6.5650415,
+        "startTime": 6.475042,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9461881,
+        "endTime": 6.785042,
+        "startTime": 6.5650415,
+        "word": "家"
+      },
+      {
+        "confidence": 0.71795875,
+        "endTime": 7.015042,
+        "startTime": 6.785042,
+        "word": "B"
+      },
+      {
+        "confidence": 0.7418795,
+        "endTime": 7.1850414,
+        "startTime": 7.015042,
+        "word": "有"
+      },
+      {
+        "confidence": 0.08494984,
+        "endTime": 7.5950418,
+        "startTime": 7.5650415,
+        "word": "14"
+      },
+      {
+        "confidence": 0.9388847,
+        "endTime": 7.8850417,
+        "startTime": 7.5950418,
+        "word": "分，"
+      },
+      {
+        "confidence": 0.812816,
+        "endTime": 8.235042,
+        "startTime": 8.115042,
+        "word": "A"
+      },
+      {
+        "confidence": 0.915659,
+        "endTime": 8.425041,
+        "startTime": 8.235042,
+        "word": "获"
+      },
+      {
+        "confidence": 0.90699065,
+        "endTime": 8.645042,
+        "startTime": 8.425041,
+        "word": "胜。"
       }
     ]
   }

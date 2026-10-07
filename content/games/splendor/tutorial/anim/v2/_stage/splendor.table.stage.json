@@ -1356,6 +1356,47 @@
       ]
     },
     {
+      "id": "card_l1_ruby_34",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_红_34_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "一级发展卡（红折扣，声望 0，价格 1黑 + 1蓝 + 1绿 + 2白；真卡 id=34）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.220668,
+          "dy": 0.357053,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.3,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
       "id": "card_l1_onyx_3",
       "shape": "card",
       "palette": "card_level_1",
@@ -1766,6 +1807,47 @@
       ]
     },
     {
+      "id": "card_l3_ruby_87",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_红_87_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<ruby>"
+        }
+      ],
+      "note": "三级发展卡（红折扣，声望 3，价格 3黑 + 5蓝 + 3绿 + 3白；真卡 id=87）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.220668,
+          "dy": 0.357053,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.3,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
       "id": "card_l3_onyx_74",
       "shape": "card",
       "palette": "card_level_3",
@@ -1782,6 +1864,47 @@
         }
       ],
       "note": "三级发展卡（黑折扣，声望 5，价格 3黑 + 7红；真卡 id=74）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.220668,
+          "dy": 0.357053,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.3,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
+      "id": "card_l3_onyx_71",
+      "shape": "card",
+      "palette": "card_level_3",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/三级发展卡_黑_71_cutout.png",
+      "back_image": "media/card/三级发展卡_背面_cutout.png",
+      "concept": "development_card_level_3",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "note": "三级发展卡（黑折扣，声望 3，价格 3蓝 + 5绿 + 3红 + 3白；真卡 id=71）",
       "part_anchors": [
         {
           "id": "prestige",
@@ -2668,6 +2791,47 @@
       ]
     },
     {
+      "id": "card_l1_onyx_1",
+      "shape": "card",
+      "palette": "card_level_1",
+      "width": 0.63,
+      "height": 0.88,
+      "sorting_order": 4,
+      "face_image": "media/card/一级发展卡_黑_1_cutout.png",
+      "back_image": "media/card/一级发展卡_背面_cutout.png",
+      "concept": "development_card_level_1",
+      "parts": [
+        {
+          "key": "bonus",
+          "value": "<onyx>"
+        }
+      ],
+      "note": "一级发展卡（黑折扣，声望 0，价格 1蓝 + 1绿 + 1红 + 1白；真卡 id=1）",
+      "part_anchors": [
+        {
+          "id": "prestige",
+          "label": "左上角：声望值",
+          "dx": -0.220668,
+          "dy": 0.357053,
+          "r": 0.075
+        },
+        {
+          "id": "cost",
+          "label": "左下角：价格（宝石种类与数量）",
+          "dx": -0.235,
+          "dy": -0.3,
+          "r": 0.16
+        },
+        {
+          "id": "bonus",
+          "label": "右上角：折扣宝石",
+          "dx": 0.205,
+          "dy": 0.325,
+          "r": 0.085
+        }
+      ]
+    },
+    {
       "id": "card_l2_onyx_909",
       "shape": "card",
       "palette": "card_level_2",
@@ -2969,6 +3133,16 @@
       ],
       "fill": 0.85,
       "desc": "框玩家A的持有/保留/发展区，用于购买保留牌时的连续动作"
+    },
+    {
+      "id": "shot_endgame_compare",
+      "zones": [
+        "player_development",
+        "player_b_development",
+        "player_nobles",
+        "player_b_nobles"
+      ],
+      "fill": 0.82
     }
   ],
   "groups": [
@@ -3027,6 +3201,17 @@
         "h": 0.16
       },
       "note": "Cue66 黄金替代说明专用文字槽：位于玩家 A 发展区上方，左端紧贴放大后的 purchase_card mask 右侧；label 统一使用白字深描边、无背景框。"
+    },
+    {
+      "id": "hint_endgame",
+      "space": "screen",
+      "rect": {
+        "x": 0.395,
+        "y": 0.01,
+        "w": 0.6,
+        "h": 0.39
+      },
+      "note": "结算说明专用文字槽：放在玩家 A 手牌区（player_reserved）与玩家 B 宝石区（player_b_holding）之间的空位；按 shot_endgame_compare 正俯视投影，文字块中心约在屏幕 (0.51, 0.21)，用左对齐起点 x=0.395 补偿左侧文字对齐。槽位加大到 0.60x0.39，② 的三行大字上下不再被裁切。"
     }
   ]
 }

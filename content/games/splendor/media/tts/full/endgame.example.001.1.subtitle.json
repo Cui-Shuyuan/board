@@ -1,121 +1,505 @@
 [
   {
     "phonemes": [],
-    "text": "以4人局为例：如果起始玩家的声望值达到15，\n",
+    "text": "以4人局为例：如果起始玩家的声望值达到15，",
     "words": [
       {
-        "confidence": 0.7231992,
-        "endTime": 0.385,
-        "startTime": 0.275,
+        "confidence": 0.7139254,
+        "endTime": 0.395,
+        "startTime": 0.295,
         "word": "以"
       },
       {
-        "confidence": 0.21564214,
-        "endTime": 0.695,
-        "startTime": 0.665,
+        "confidence": 0.22286744,
+        "endTime": 0.685,
+        "startTime": 0.655,
         "word": "4"
       },
       {
-        "confidence": 0.8396441,
-        "endTime": 0.885,
-        "startTime": 0.695,
+        "confidence": 0.86750335,
+        "endTime": 0.875,
+        "startTime": 0.685,
         "word": "人"
       },
       {
-        "confidence": 0.77372867,
-        "endTime": 1.035,
-        "startTime": 0.885,
+        "confidence": 0.7748714,
+        "endTime": 1.015,
+        "startTime": 0.875,
         "word": "局"
       },
       {
-        "confidence": 0.74301374,
-        "endTime": 1.185,
-        "startTime": 1.035,
+        "confidence": 0.7144858,
+        "endTime": 1.165,
+        "startTime": 1.015,
         "word": "为"
       },
       {
-        "confidence": 0.2726079,
-        "endTime": 1.215,
-        "startTime": 1.185,
+        "confidence": 0.20817624,
+        "endTime": 1.195,
+        "startTime": 1.165,
         "word": "例："
       },
       {
-        "confidence": 0.9818313,
-        "endTime": 1.885,
-        "startTime": 1.745,
+        "confidence": 0.98073196,
+        "endTime": 1.765,
+        "startTime": 1.615,
         "word": "如"
       },
       {
-        "confidence": 0.92149514,
-        "endTime": 2.075,
-        "startTime": 1.885,
+        "confidence": 0.96485204,
+        "endTime": 1.925,
+        "startTime": 1.765,
         "word": "果"
       },
       {
-        "confidence": 0.79320407,
-        "endTime": 2.275,
-        "startTime": 2.075,
+        "confidence": 0.8020569,
+        "endTime": 2.145,
+        "startTime": 1.925,
         "word": "起"
       },
       {
-        "confidence": 0.7246986,
-        "endTime": 2.405,
-        "startTime": 2.275,
+        "confidence": 0.69500417,
+        "endTime": 2.285,
+        "startTime": 2.145,
         "word": "始"
       },
       {
-        "confidence": 0.95803964,
-        "endTime": 2.545,
-        "startTime": 2.405,
+        "confidence": 0.9703542,
+        "endTime": 2.435,
+        "startTime": 2.285,
         "word": "玩"
       },
       {
-        "confidence": 0.97452515,
-        "endTime": 2.715,
-        "startTime": 2.545,
+        "confidence": 0.97584265,
+        "endTime": 2.605,
+        "startTime": 2.435,
         "word": "家"
       },
       {
-        "confidence": 0.9358805,
-        "endTime": 2.795,
-        "startTime": 2.715,
+        "confidence": 0.87648225,
+        "endTime": 2.705,
+        "startTime": 2.605,
         "word": "的"
       },
       {
-        "confidence": 0.8475363,
-        "endTime": 2.955,
-        "startTime": 2.795,
+        "confidence": 0.8275868,
+        "endTime": 2.865,
+        "startTime": 2.705,
         "word": "声"
       },
       {
-        "confidence": 0.9462781,
-        "endTime": 3.125,
-        "startTime": 2.955,
+        "confidence": 0.96558326,
+        "endTime": 3.035,
+        "startTime": 2.865,
         "word": "望"
       },
       {
-        "confidence": 0.8756564,
-        "endTime": 3.395,
-        "startTime": 3.125,
+        "confidence": 0.9116452,
+        "endTime": 3.295,
+        "startTime": 3.035,
         "word": "值"
       },
       {
-        "confidence": 0.9690464,
-        "endTime": 3.545,
-        "startTime": 3.395,
+        "confidence": 0.98199886,
+        "endTime": 3.465,
+        "startTime": 3.295,
         "word": "达"
       },
       {
-        "confidence": 0.91560394,
-        "endTime": 3.655,
-        "startTime": 3.545,
+        "confidence": 0.7971925,
+        "endTime": 3.595,
+        "startTime": 3.465,
         "word": "到"
       },
       {
-        "confidence": 0.11918623,
-        "endTime": 3.685,
-        "startTime": 3.655,
+        "confidence": 0.41724265,
+        "endTime": 4.455,
+        "startTime": 4.425,
         "word": "15，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。",
+    "words": [
+      {
+        "confidence": 0.6625571,
+        "endTime": 4.5350413,
+        "startTime": 4.4600415,
+        "word": "剩"
+      },
+      {
+        "confidence": 0.8432245,
+        "endTime": 4.6850414,
+        "startTime": 4.5350413,
+        "word": "下"
+      },
+      {
+        "confidence": 0.26595426,
+        "endTime": 4.8550415,
+        "startTime": 4.825042,
+        "word": "3"
+      },
+      {
+        "confidence": 0.8438909,
+        "endTime": 4.9850416,
+        "startTime": 4.8550415,
+        "word": "位"
+      },
+      {
+        "confidence": 0.960285,
+        "endTime": 5.1350417,
+        "startTime": 4.9850416,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.944464,
+        "endTime": 5.4250417,
+        "startTime": 5.1350417,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8291815,
+        "endTime": 5.6050415,
+        "startTime": 5.4250417,
+        "word": "各"
+      },
+      {
+        "confidence": 0.87450856,
+        "endTime": 5.7550416,
+        "startTime": 5.6050415,
+        "word": "自"
+      },
+      {
+        "confidence": 0.9702144,
+        "endTime": 5.9350414,
+        "startTime": 5.7550416,
+        "word": "还"
+      },
+      {
+        "confidence": 0.86059815,
+        "endTime": 6.0450416,
+        "startTime": 5.9350414,
+        "word": "有"
+      },
+      {
+        "confidence": 0.9570157,
+        "endTime": 6.2450414,
+        "startTime": 6.0450416,
+        "word": "最"
+      },
+      {
+        "confidence": 0.9903885,
+        "endTime": 6.4450417,
+        "startTime": 6.2450414,
+        "word": "后"
+      },
+      {
+        "confidence": 0.92804563,
+        "endTime": 6.5250416,
+        "startTime": 6.4450417,
+        "word": "一"
+      },
+      {
+        "confidence": 0.97004,
+        "endTime": 6.6950417,
+        "startTime": 6.5250416,
+        "word": "回"
+      },
+      {
+        "confidence": 0.9636321,
+        "endTime": 6.8650417,
+        "startTime": 6.6950417,
+        "word": "合"
+      },
+      {
+        "confidence": 0.8343551,
+        "endTime": 6.995042,
+        "startTime": 6.8650417,
+        "word": "可"
+      },
+      {
+        "confidence": 0.72313577,
+        "endTime": 7.0950413,
+        "startTime": 6.995042,
+        "word": "以"
+      },
+      {
+        "confidence": 0.92297643,
+        "endTime": 7.3150415,
+        "startTime": 7.0950413,
+        "word": "行"
+      },
+      {
+        "confidence": 0.9885106,
+        "endTime": 7.5050416,
+        "startTime": 7.3150415,
+        "word": "动，"
+      },
+      {
+        "confidence": 0.90867555,
+        "endTime": 7.9850416,
+        "startTime": 7.825042,
+        "word": "之"
+      },
+      {
+        "confidence": 0.97089976,
+        "endTime": 8.215042,
+        "startTime": 7.9850416,
+        "word": "后"
+      },
+      {
+        "confidence": 0.8019244,
+        "endTime": 8.325042,
+        "startTime": 8.215042,
+        "word": "游"
+      },
+      {
+        "confidence": 0.9537586,
+        "endTime": 8.495041,
+        "startTime": 8.325042,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.977005,
+        "endTime": 8.645041,
+        "startTime": 8.495041,
+        "word": "才"
+      },
+      {
+        "confidence": 0.94540423,
+        "endTime": 8.795042,
+        "startTime": 8.645041,
+        "word": "结"
+      },
+      {
+        "confidence": 0.98640406,
+        "endTime": 9.085041,
+        "startTime": 8.795042,
+        "word": "束。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "但如果是起始玩家左手边的玩家声望值达到15，",
+    "words": [
+      {
+        "confidence": 0.90289485,
+        "endTime": 9.575083,
+        "startTime": 9.445083,
+        "word": "但"
+      },
+      {
+        "confidence": 0.97877,
+        "endTime": 9.735084,
+        "startTime": 9.575083,
+        "word": "如"
+      },
+      {
+        "confidence": 0.9824541,
+        "endTime": 9.875083,
+        "startTime": 9.735084,
+        "word": "果"
+      },
+      {
+        "confidence": 0.9355778,
+        "endTime": 10.135083,
+        "startTime": 9.875083,
+        "word": "是"
+      },
+      {
+        "confidence": 0.7467985,
+        "endTime": 10.365083,
+        "startTime": 10.135083,
+        "word": "起"
+      },
+      {
+        "confidence": 0.6895054,
+        "endTime": 10.505083,
+        "startTime": 10.365083,
+        "word": "始"
+      },
+      {
+        "confidence": 0.9627635,
+        "endTime": 10.655083,
+        "startTime": 10.505083,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9337655,
+        "endTime": 10.895083,
+        "startTime": 10.655083,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8307948,
+        "endTime": 11.095083,
+        "startTime": 10.895083,
+        "word": "左"
+      },
+      {
+        "confidence": 0.96642107,
+        "endTime": 11.295083,
+        "startTime": 11.095083,
+        "word": "手"
+      },
+      {
+        "confidence": 0.93335,
+        "endTime": 11.425083,
+        "startTime": 11.295083,
+        "word": "边"
+      },
+      {
+        "confidence": 0.956948,
+        "endTime": 11.525084,
+        "startTime": 11.425083,
+        "word": "的"
+      },
+      {
+        "confidence": 0.96911585,
+        "endTime": 11.695084,
+        "startTime": 11.525084,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9425578,
+        "endTime": 11.915083,
+        "startTime": 11.695084,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8953027,
+        "endTime": 12.095083,
+        "startTime": 11.915083,
+        "word": "声"
+      },
+      {
+        "confidence": 0.8952509,
+        "endTime": 12.275084,
+        "startTime": 12.095083,
+        "word": "望"
+      },
+      {
+        "confidence": 0.87879735,
+        "endTime": 12.475083,
+        "startTime": 12.275084,
+        "word": "值"
+      },
+      {
+        "confidence": 0.9641726,
+        "endTime": 12.625083,
+        "startTime": 12.475083,
+        "word": "达"
+      },
+      {
+        "confidence": 0.7773317,
+        "endTime": 12.755083,
+        "startTime": 12.625083,
+        "word": "到"
+      },
+      {
+        "confidence": 0.23338977,
+        "endTime": 13.255083,
+        "startTime": 13.225083,
+        "word": "15，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "就没有人可以行动了，游戏立刻结束。",
+    "words": [
+      {
+        "confidence": 0.92504644,
+        "endTime": 13.575126,
+        "startTime": 13.4001255,
+        "word": "就"
+      },
+      {
+        "confidence": 0.98324096,
+        "endTime": 13.815125,
+        "startTime": 13.575126,
+        "word": "没"
+      },
+      {
+        "confidence": 0.96723473,
+        "endTime": 13.875126,
+        "startTime": 13.815125,
+        "word": "有"
+      },
+      {
+        "confidence": 0.9829619,
+        "endTime": 14.015125,
+        "startTime": 13.875126,
+        "word": "人"
+      },
+      {
+        "confidence": 0.79950887,
+        "endTime": 14.155126,
+        "startTime": 14.015125,
+        "word": "可"
+      },
+      {
+        "confidence": 0.73466396,
+        "endTime": 14.245126,
+        "startTime": 14.155126,
+        "word": "以"
+      },
+      {
+        "confidence": 0.9409347,
+        "endTime": 14.435125,
+        "startTime": 14.245126,
+        "word": "行"
+      },
+      {
+        "confidence": 0.9749753,
+        "endTime": 14.625126,
+        "startTime": 14.435125,
+        "word": "动"
+      },
+      {
+        "confidence": 0.96457076,
+        "endTime": 14.765125,
+        "startTime": 14.625126,
+        "word": "了，"
+      },
+      {
+        "confidence": 0.7272388,
+        "endTime": 15.115126,
+        "startTime": 14.995126,
+        "word": "游"
+      },
+      {
+        "confidence": 0.96413076,
+        "endTime": 15.405126,
+        "startTime": 15.115126,
+        "word": "戏"
+      },
+      {
+        "confidence": 0.569354,
+        "endTime": 15.475125,
+        "startTime": 15.405126,
+        "word": "立"
+      },
+      {
+        "confidence": 0.1503284,
+        "endTime": 15.535126,
+        "startTime": 15.475125,
+        "word": "刻"
+      },
+      {
+        "confidence": 0.11384428,
+        "endTime": 15.595125,
+        "startTime": 15.535126,
+        "word": "结"
+      },
+      {
+        "confidence": 0.23430192,
+        "endTime": 15.655126,
+        "startTime": 15.595125,
+        "word": "束。"
       }
     ]
   }
