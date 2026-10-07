@@ -35,6 +35,8 @@ internal class PlayerOverlayUiState {
     var scrubTarget by mutableStateOf<TimelineTarget?>(null)
     var showChapters by mutableStateOf(false)
     var seekFlash by mutableStateOf<String?>(null)
+    var seekFlashGeneration by mutableIntStateOf(0)
+        private set
     var localVolume by mutableFloatStateOf(1f)
     var volumeDragging by mutableStateOf(false)
 
@@ -97,6 +99,7 @@ internal class PlayerOverlayUiState {
             onCommand("SeekRelative", formatPayload(seconds))
         }
         seekFlash = if (seconds < 0f) "-15s" else "+15s"
+        seekFlashGeneration++
     }
 
     fun jumpToCue(
@@ -282,9 +285,12 @@ internal fun PlayerAutoHideEffect(
 
 @Composable
 internal fun PlayerSeekFlashEffect(uiState: PlayerOverlayUiState) {
-    LaunchedEffect(uiState.seekFlash) {
-        val flash = uiState.seekFlash ?: return@LaunchedEffect
+    // Key on a generation counter, not the text alone.  Every seek must own a
+    // fresh 700 ms clear timer; otherwise a duplicate "+15s" can leave the
+    // overlay stuck if the previous effect was cancelled by a state race.
+    LaunchedEffect(uiState.seekFlashGeneration) {
+        if (uiState.seekFlash == null) return@LaunchedEffect
         delay(700)
-        if (uiState.seekFlash == flash) uiState.seekFlash = null
+        uiState.seekFlash = null
     }
 }
