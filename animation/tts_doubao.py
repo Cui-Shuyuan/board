@@ -68,6 +68,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from validate_timed_script import parse_file  # noqa: E402
+from lrc import format_time, rewrite_tts_lrc as rewrite_lrc  # noqa: E402
 from volcengine_ws_protocols import (  # noqa: E402
     EventType,
     MsgType,
@@ -152,11 +153,6 @@ def apply_provider_defaults(args: argparse.Namespace) -> argparse.Namespace:
 
 def provider_subtitle_mode(provider: str) -> str:
     return "seed2-v3-events" if provider == PROVIDER_SEED2 else "unavailable-standard-v1"
-
-
-def format_time(seconds: float) -> str:
-    total_cs = int(round(max(0.0, seconds) * 100))
-    return f"[{total_cs // 6000:02d}:{(total_cs % 6000) / 100:05.2f}]"
 
 
 def normalize_cue_refs(refs: list[str]) -> str:
@@ -529,73 +525,10 @@ def write_manifest(out_dir: Path, cues: list[dict[str, Any]], results: list[dict
     print(f"[manifest] {out_dir / 'tts_manifest.json'}")
 
 
-def write_tts_lrc(input_lrc: Path, output_lrc: Path, cues: list[dict[str, Any]], results: list[dict[str, Any]], args: argparse.Namespace) -> None:
-    """基于原始 LRC 重写时间，保留原有 group 行和 ref 标签。"""
-    time_re = re.compile(r"^\[(\d{2}):(\d{2}\.\d{2})\]")
-    meta_re = re.compile(r"^\[([A-Za-z_]+):([^\]]*)\]")
-    by_id = {r["id"]: r for r in results}
-    cursor = 0.0
-    out: list[str] = []
-    timing_written = False
-
-    for raw in input_lrc.read_text(encoding="utf-8").splitlines():
-        line = raw.rstrip()
-        if not line:
-            continue
-        if line.startswith("[group:"):
-            out.append(line)
-            continue
-
-        meta = meta_re.match(line)
-        if meta and not time_re.match(line):
-            key = meta.group(1)
-            if key == "timing":
-                continue
-            if key == "length":
-                continue
-            if key == "generator":
-                continue
-            out.append(line)
-            if key == "track":
-                out.append("[timing:tts]")
-                out.append("[generator:animation/tts_doubao.py]")
-                timing_written = True
-            continue
-
-        time_match = time_re.match(line)
-        if not time_match:
-            out.append(line)
-            continue
-
-        rest = line[time_match.end():]
-        tags: list[str] = []
-        while rest.startswith("["):
-            end = rest.find("]")
-            if end < 0:
-                break
-            tag = rest[1:end]
-            if tag.startswith("id:") or tag.startswith("ref:"):
-                tags.append(tag)
-                rest = rest[end + 1:]
-                continue
-            break
-
-        cue_id = next((t[3:] for t in tags if t.startswith("id:")), "")
-        result = by_id.get(cue_id)
-        if result is None:
-            # limit 模式下缺失的 cue 不写入输出。
-            continue
-
-        tag_text = "".join(f"[{tag}]" for tag in tags)
-        out.append(f"{format_time(cursor)}{tag_text}{rest}")
-        cursor += float(result["duration"]) + args.gap
-
-    if not timing_written:
-        out.insert(0, "[timing:tts]")
-    out.append(f"[length:{format_time(cursor)[1:-1]}]")
-    output_lrc.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"[lrc] {output_lrc}")
-
+def write_tts_lrc(input_lrc: Path, output_lrc: Path, cues: list[dict[str, Any]],
+                  results: list[dict[str, Any]], args: argparse.Namespace) -> None:
+    """Compatibility wrapper around :func:`lrc.rewrite_tts_lrc`."""
+    rewrite_lrc(input_lrc, output_lrc, cues, results, args.gap)
 
 
 def print_dry_run(cues: list[dict[str, Any]], args: argparse.Namespace) -> None:
@@ -614,7 +547,7 @@ def print_dry_run(cues: list[dict[str, Any]], args: argparse.Namespace) -> None:
         print(f"{cue['id']}  {len(cue['text']):>3} 字  {cue['text'][:40]}")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     load_dotenv(ROOT / ".env")
     parser = argparse.ArgumentParser(description="LRC-like 口播稿 -> 豆包语音合成音频（默认标准小模型）")
     parser.add_argument("--input", type=Path, default=ROOT / "content/games/splendor/tutorial/full.lrc")
@@ -641,11 +574,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--usage", action="store_true", help="seed2 请求返回计费用量")
     parser.add_argument("--dry-run", action="store_true", help="只打印计划，不调用 API")
     parser.add_argument("--write-lrc", action="store_true", help="合成后生成 full.tts.lrc")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
-def main() -> int:
-    args = apply_provider_defaults(parse_args())
+def main(argv: list[str] | None = None) -> int:
+    args = apply_provider_defaults(parse_args(argv))
     args.input = args.input.resolve()
     args.out_dir = args.out_dir.resolve()
 

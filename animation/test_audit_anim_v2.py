@@ -19,6 +19,13 @@ sys.path.insert(0, str(HERE))
 
 import audit_anim_v2 as audit  # noqa: E402
 
+AUDIT_PROFILE_PATH = (
+    ROOT / "content" / "games" / "splendor"
+    / "tutorial" / "animation" / "audit-profile.json"
+)
+AUDIT_PROFILE = json.loads(AUDIT_PROFILE_PATH.read_text(encoding="utf-8"))
+GEM_COLORS = tuple(AUDIT_PROFILE["inventory"]["gems"]["colors"])
+
 
 def base_components() -> list[dict]:
     components: list[dict] = []
@@ -43,7 +50,7 @@ def base_components() -> list[dict]:
             "Order": index,
             "parts": [],
         })
-    for color in audit.GEM_COLORS:
+    for color in GEM_COLORS:
         for index in range(4):
             components.append({
                 "Id": f"gem_{color}_{index}|gem_{color}#1",
@@ -316,6 +323,15 @@ class AuditAnimV2Tests(unittest.TestCase):
             (base / "full.compiled.json").write_text(
                 json.dumps(compiled_doc, ensure_ascii=False), encoding="utf-8"
             )
+            profile_path = (
+                root / "content" / "games" / "splendor"
+                / "tutorial" / "animation" / "audit-profile.json"
+            )
+            profile_path.parent.mkdir(parents=True, exist_ok=True)
+            profile_path.write_text(
+                json.dumps(AUDIT_PROFILE, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
 
             stdout = io.StringIO()
             stderr = io.StringIO()
@@ -425,6 +441,83 @@ class DemoBranchAuditTests(unittest.TestCase):
         refill_errors = [item for item in result["errors"] if item["check"] == "refill"]
         self.assertEqual(1, len(refill_errors), result)
         self.assertEqual("no_refill.001", refill_errors[0]["cue_id"])
+
+
+class GenericAuditProfileTests(unittest.TestCase):
+    OTHER_PROFILE = {
+        "schema": "tutorial-audit-profile/v1",
+        "game": "fake-game",
+        "start_after_cue_prefix": "intro.",
+        "inventory": {
+            "component_color": {
+                "part_keys": ["color"],
+                "palette_prefix": "token_",
+                "gold_palette": "token_gold",
+                "gold_concepts": ["wild"],
+            },
+            "items": [
+                {"key": "C1", "label": "C1", "expected": 2, "match": {"concept": "contract"}},
+            ],
+            "gems": {
+                "colors": ["sun"],
+                "labels": {"sun": "Sun token"},
+                "expected_per_color": 2,
+            },
+            "gold": {"key": "wild", "label": "Wild", "expected": 1},
+        },
+        "refill": {
+            "market_zone": "offer",
+            "player_zone_prefixes": ["seat_"],
+            "levels": [1],
+            "source_deck_pattern": "^pile_(?P<level>\\d+)$",
+            "source_deck_label": "pile_{level}",
+            "level_patterns": ["contract_level_(?P<level>\\d+)"],
+            "level_labels": {"1": "one"},
+        },
+    }
+
+    def test_non_splendor_profile_runs_without_engine_changes(self):
+        components = [
+            {"Id": "c1|contract#1", "Concept": "contract", "TemplateId": "tpl1",
+             "Palette": "", "ZoneId": "box", "Order": 0, "parts": []},
+            {"Id": "c2|contract#1", "Concept": "contract", "TemplateId": "tpl1",
+             "Palette": "", "ZoneId": "box", "Order": 1, "parts": []},
+            {"Id": "sun1|sun#1", "Concept": "gem", "TemplateId": "sun",
+             "Palette": "token_sun", "ZoneId": "bag", "Order": 0, "parts": []},
+            {"Id": "sun2|sun#1", "Concept": "gem", "TemplateId": "sun",
+             "Palette": "token_sun", "ZoneId": "bag", "Order": 1, "parts": []},
+            {"Id": "w1|wild#1", "Concept": "wild", "TemplateId": "wild",
+             "Palette": "token_gold", "ZoneId": "bag", "Order": 2, "parts": []},
+        ]
+        track_doc = {
+            "game": "fake-game",
+            "track": "quick",
+            "default_tree": "main",
+            "trees": [{"id": "main", "world": "real"}],
+            "cues": [{"id": "play.001", "tree": "main", "entry": "initial"}],
+        }
+        compiled_doc = {
+            "game": "fake-game",
+            "track": "quick",
+            "trees": [{"id": "main", "world": "real"}],
+            "cues": [{
+                "id": "play.001",
+                "tree": "main",
+                "start_state": {"components": copy.deepcopy(components)},
+                "end_state": {"components": copy.deepcopy(components)},
+                "clips": [],
+                "pointer_resolution": [],
+            }],
+        }
+
+        result = audit.audit_documents(
+            track_doc, compiled_doc, game="fake-game", track="quick",
+            profile=self.OTHER_PROFILE,
+        )
+
+        self.assertEqual([], result["errors"], result["errors"])
+        self.assertEqual([], result["warnings"], result["warnings"])
+        self.assertEqual(1, result["stats"]["cues_checked"])
 
 
 if __name__ == "__main__":

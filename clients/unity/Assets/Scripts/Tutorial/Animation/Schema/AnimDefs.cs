@@ -1,63 +1,12 @@
-// v2 data schema definitions.  These are plain serializable data holders; the
-// compiler is allowed to use them for normalized internal representation, while
-// Unity runtime only ever loads the "compiled" subset.
+// Compiled/runtime animation data model loaded by Unity.
+//
+// The source animation schema is owned by the Python compiler and must not be
+// duplicated here: only the compiled subset is part of the Unity contract.
 using System;
 using System.Collections.Generic;
 
 namespace BoardGameTutorial.Animation
 {
-    public static class AnimSchemaV2
-    {
-        public const string Track = "tutorial-anim/v2";
-        public const string Stage = "tutorial-stage/v2";
-        public const string CompiledTrack = "tutorial-anim-compiled/v2";
-        public const string CompiledStage = "tutorial-stage-compiled/v2";
-
-        public static readonly string[] Transitions = { "continue", "overlay", "cut", "world_cut" };
-
-        public static readonly string[] StateOps =
-        {
-            "ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"
-        };
-
-        public static readonly string[] PresentationOps =
-        {
-            "show", "highlight", "point", "shape", "fade", "scale", "wait", "label",
-            "overlay_show", "overlay_hide", "magnifier"
-        };
-
-        public static bool IsStateOp(string op)
-        {
-            if (string.IsNullOrEmpty(op)) return false;
-            foreach (var x in StateOps) if (x == op) return true;
-            return false;
-        }
-
-        public static bool IsPresentationOp(string op)
-        {
-            if (string.IsNullOrEmpty(op)) return false;
-            foreach (var x in PresentationOps) if (x == op) return true;
-            return false;
-        }
-
-        public static bool IsKnownOp(string op) => IsStateOp(op) || IsPresentationOp(op);
-    }
-
-    [Serializable]
-    public sealed class NamedText
-    {
-        public string key;
-        public string text;
-    }
-
-    [Serializable]
-    public sealed class WorldDef
-    {
-        public string id;
-        public string mode;      // isolated | shared
-        public string why;
-    }
-
     [Serializable]
     public sealed class TreeDef
     {
@@ -67,116 +16,6 @@ namespace BoardGameTutorial.Animation
         public string purpose;
         public string initial;
         public string extent_note;
-    }
-
-    [Serializable]
-    public sealed class CameraDef
-    {
-        public List<string> zones = new List<string>();
-        public float fill;
-        public float at;         // cut cues must be 0.0
-    }
-
-    [Serializable]
-    public sealed class ContractItemDef
-    {
-        public string template;
-        public string palette;
-        public int count = 1;
-        public string face;      // up | down | hidden; empty = count only
-    }
-
-    [Serializable]
-    public sealed class ContractZoneDef
-    {
-        public string zone;
-        public List<ContractItemDef> items = new List<ContractItemDef>();
-    }
-
-    [Serializable]
-    public sealed class ContractDef
-    {
-        public string picture;
-        public List<ContractZoneDef> zones = new List<ContractZoneDef>();
-    }
-
-    [Serializable]
-    public sealed class ScriptDef
-    {
-        public string story;
-        public string narration;
-        public string note;
-        public CameraDef camera;
-        public ContractDef enter;
-        public ContractDef exit;
-    }
-
-    [Serializable]
-    public sealed class EventDef
-    {
-        public string op;
-        public float at;
-        public float dur;
-        public float lead;
-        public string easing;
-        public string realizes;
-
-        // selector / state fields
-        public string concept;
-        public string template;
-        public string palette;
-        public List<PartRef> parts = new List<PartRef>();
-        public string zone;
-        public string source;
-        public string destination;
-        public int count = 1;
-        public int quantity;
-        public string to;        // face_up | face_down
-        public int order = -1;   // transfer: explicit destination slot in a row
-        public int slot = -1;    // create: initial order inside the destination zone
-
-        // presentation fields
-        public string part;
-        public string indicator;
-        public string picture;
-        public string shot;
-        public float on = -1f;
-        public float grow;
-        public float peak_alpha = -1f;
-        public float scale;
-        public string scale_mode;
-        public float to_alpha = -1f;
-        public int capacity;
-        public string real_templates;
-        public string pad_template;
-        public bool plain;
-        public float stagger;
-        public bool from_back;
-    }
-
-    [Serializable]
-    public sealed class CueDef
-    {
-        public string id;
-        public string parent;
-        public string tree;
-        public string transition;
-        public List<NamedText> timing = new List<NamedText>();
-        public ScriptDef script;
-        public List<EventDef> events = new List<EventDef>();
-    }
-
-    [Serializable]
-    public sealed class TrackDef
-    {
-        public string schema;
-        public string kind;
-        public string game;
-        public string track;
-        public string default_tree;
-        public List<WorldDef> worlds = new List<WorldDef>();
-        public List<TreeDef> trees = new List<TreeDef>();
-        public List<CueDef> cues = new List<CueDef>();
     }
 
     [Serializable]

@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Deterministic audit for the v2 Splendor tutorial animation.
+"""Deterministic cross-cue audit for a v2 tutorial animation track.
 
 This script deliberately works on the compiled snapshots and the v2 source
-events without changing any animation data.  It covers the three cross-cue
-blind spots of the existing checkers:
+events without changing any animation data.  It covers three cross-cue blind
+spots of the existing checkers:
 
-1. global physical conservation of development cards, nobles, gems and gold;
-2. refill of the card market after a purchase/reserve removes a market card;
+1. global physical conservation of the profile's tracked pieces;
+2. refill of the profile's market zone after pieces are removed from it;
 3. source ``point`` / ``shape`` / ``highlight`` events that never become
    compiled pointer clips.
+
+Game vocabulary lives in
+``content/games/{game}/tutorial/animation/audit-profile.json``; the engine only
+consumes that profile.  New games should not need code changes here.
 
 Usage:
     python3 animation/audit_anim_v2.py --game splendor --track full
@@ -27,7 +31,6 @@ import argparse
 import json
 import re
 import sys
-from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -35,34 +38,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 sys.path.insert(0, str(ROOT / "animation"))
 import anim_schema_v2 as schema  # noqa: E402
+import compiled_state as logical_state  # noqa: E402
 
-GEM_COLORS = ("diamond", "onyx", "emerald", "ruby", "sapphire")
-INVENTORY_ORDER = (
-    "L1",
-    "L2",
-    "L3",
-    "noble",
-    "diamond",
-    "onyx",
-    "emerald",
-    "ruby",
-    "sapphire",
-    "gold",
-)
-INVENTORY_LABELS = {
-    "L1": "L1",
-    "L2": "L2",
-    "L3": "L3",
-    "noble": "贵族",
-    "diamond": "宝石 diamond",
-    "onyx": "宝石 onyx",
-    "emerald": "宝石 emerald",
-    "ruby": "宝石 ruby",
-    "sapphire": "宝石 sapphire",
-    "gold": "黄金",
-}
 CHECK_ORDER = {"boundary": 0, "demo": 1, "conservation": 2, "refill": 3, "pointer": 4}
-LEVEL_CN = {1: "一", 2: "二", 3: "三"}
+AUDIT_PROFILE_REL = Path("tutorial") / "animation" / "audit-profile.json"
 
 
 # ---------------------------------------------------------------------------
@@ -71,6 +50,24 @@ LEVEL_CN = {1: "一", 2: "二", 3: "三"}
 
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_audit_profile(game: str, path: str | Path | None = None) -> dict:
+    """Load a game's audit profile.
+
+    The profile owns game-specific inventory and refill vocabulary; this audit
+    engine must not hardcode Splendor's gem colors, deck sizes or zone names.
+    """
+    if path is not None:
+        profile_path = Path(path)
+    else:
+        profile_path = ROOT / "content" / "games" / str(game) / AUDIT_PROFILE_REL
+    if not profile_path.exists():
+        raise FileNotFoundError(f"missing audit profile: {profile_path}")
+    profile = load_json(profile_path)
+    if not isinstance(profile, dict):
+        raise ValueError(f"audit profile is not an object: {profile_path}")
+    return profile
 
 
 def as_list(value: Any) -> list:
@@ -85,88 +82,174 @@ def _strip_angle(value: Any) -> str:
     return str(value or "").strip().strip("<>").strip()
 
 
-def _component_color(comp: dict) -> str | None:
-    """Return a gem/gold color from ``parts[color]`` or ``Palette``."""
-    for part in comp.get("parts") or []:
-        if isinstance(part, dict) and part.get("key") == "color":
-            return _strip_angle(part.get("value"))
-    palette = str(comp.get("Palette") or "")
-    if palette == "gem_gold":
-        return "gold"
-    if palette.startswith("gem_"):
-        return palette[4:]
-    if str(comp.get("Concept") or "") == "gold":
-        return "gold"
-    return None
+def _profile_inventory(profile: dict) -> dict:
+    return profile.get("inventory") if isinstance(profile.get("inventory"), dict) else {}
 
 
-def _component_development_level(comp: dict) -> int | None:
-    """Infer a development-card level from a compiled component."""
-    concept = str(comp.get("Concept") or "")
-    match = re.search(r"development_card_level_(\d+)", concept)
-    if match:
-        return int(match.group(1))
-    palette = str(comp.get("Palette") or "")
-    match = re.search(r"(?:^|_)card_level_(\d+)$", palette)
-    if match:
-        return int(match.group(1))
-    template = str(comp.get("TemplateId") or "")
-    match = re.search(r"(?:^|_)(?:market_card|blank_card)_(\d+)", template)
-    if match:
-        return int(match.group(1))
-    return None
+def _profile_refill(profile: dict) -> dict:
+    return profile.get("refill") if isinstance(profile.get("refill"), dict) else {}
 
 
-def count_inventory(components: Iterable[dict] | None) -> dict[str, int]:
-    """Count the physical pieces governed by the conservation check.
+def _profile_gold(profile: dict) -> dict:
+    gold = _profile_inventory(profile).get("gold")
+    return gold if isinstance(gold, dict) else {}
 
-    Development cards are counted by level.  Sample/showcase teaching props are
-    excluded, while ``blank_card_*`` placeholders remain counted because they
-    are part of the 40/30/20 deck complement.
+
+def _gold_key(profile: dict) -> str:
+    return str(_profile_gold(profile).get("key") or "gold")
+
+
+def _inventory_order(profile: dict) -> list[str]:
+    inv = _profile_inventory(profile)
+    order = [str(item.get("key")) for item in inv.get("items") or []
+             if isinstance(item, dict) and item.get("key") is not None]
+    for color in (inv.get("gems") or {}).get("colors") or []:
+        color = str(color)
+        if color not in order:
+            order.append(color)
+    gold = _gold_key(profile)
+    if gold not in order:
+        order.append(gold)
+    return order
+
+
+def _inventory_labels(profile: dict) -> dict[str, str]:
+    labels: dict[str, str] = {}
+    for item in _profile_inventory(profile).get("items") or []:
+        if isinstance(item, dict) and item.get("key") is not None:
+            labels[str(item["key"])] = str(item.get("label") or item["key"])
+    gems = _profile_inventory(profile).get("gems") or {}
+    for color in gems.get("colors") or []:
+        labels.setdefault(str(color), str((gems.get("labels") or {}).get(str(color)) or color))
+    gold = _profile_gold(profile)
+    labels[_gold_key(profile)] = str(gold.get("label") or _gold_key(profile))
+    return labels
+
+
+def _match_values(expected: Any) -> list[str]:
+    return [str(value) for value in as_list(expected)]
+
+
+def _component_field(comp: dict, field: str) -> str:
+    attr = {
+        "id": "Id",
+        "concept": "Concept",
+        "template": "TemplateId",
+        "palette": "Palette",
+        "zone": "ZoneId",
+    }.get(field)
+    return str(comp.get(attr) or "") if attr else ""
+
+
+def _component_matches(comp: dict, spec: Any, profile: dict) -> bool:
+    """Return True when every key in ``spec`` matches the component."""
+    if not isinstance(spec, dict) or not spec:
+        return False
+    for key, expected in spec.items():
+        key = str(key)
+        if key == "color":
+            actual = _component_color(comp, profile) or ""
+            if actual not in _match_values(expected):
+                return False
+            continue
+        if key.endswith("_prefix"):
+            actual = _component_field(comp, key[:-len("_prefix")])
+            if not any(actual.startswith(value) for value in _match_values(expected)):
+                return False
+            continue
+        actual = _component_field(comp, key)
+        if actual not in _match_values(expected):
+            return False
+    return True
+
+
+def _component_excluded(comp: dict, spec: Any, profile: dict) -> bool:
+    """Return True when any key in an exclusion spec matches the component."""
+    if not isinstance(spec, dict) or not spec:
+        return False
+    return any(_component_matches(comp, {key: value}, profile)
+               for key, value in spec.items())
+
+
+def _component_color(comp: dict, profile: dict) -> str | None:
+    """Derive the gem/gold color key from a compiled ComponentState.
+
+    The profile controls the authoring vocabulary so a non-Splendor game can
+    use different part keys, palette prefixes or gold concepts.
     """
-    counts = {key: 0 for key in INVENTORY_ORDER}
+    config = _profile_inventory(profile).get("component_color") or {}
+    part_keys = [str(key) for key in (config.get("part_keys") or [])]
+    for key in part_keys:
+        for part in comp.get("parts") or []:
+            if isinstance(part, dict) and str(part.get("key")) == key:
+                value = _strip_angle(part.get("value"))
+                if value:
+                    return value
+    palette = str(comp.get("Palette") or "")
+    gold_palette = str(config.get("gold_palette") or "")
+    if gold_palette and palette == gold_palette:
+        return _gold_key(profile)
+    palette_prefix = str(config.get("palette_prefix") or "")
+    if palette_prefix and palette.startswith(palette_prefix):
+        return palette[len(palette_prefix):]
+    concept = str(comp.get("Concept") or "")
+    if concept in {str(value) for value in config.get("gold_concepts") or []}:
+        return _gold_key(profile)
+    return None
+
+
+def count_inventory(components: Iterable[dict] | None, profile: dict) -> dict[str, int]:
+    """Count the physical pieces governed by the profile's inventory check."""
+    inv = _profile_inventory(profile)
+    item_specs = [item for item in inv.get("items") or [] if isinstance(item, dict)]
+    counts = {key: 0 for key in _inventory_order(profile)}
+    gem_colors = {str(color) for color in (inv.get("gems") or {}).get("colors") or []}
+    gold_key = _gold_key(profile)
+
     for comp in components or []:
         if not isinstance(comp, dict):
             continue
-        concept = str(comp.get("Concept") or "")
-        if concept.startswith("development_card_level_"):
-            template = str(comp.get("TemplateId") or "")
-            zone = str(comp.get("ZoneId") or "")
-            if template.startswith("sample") or zone.startswith("showcase"):
-                pass
-            else:
-                level = _component_development_level(comp)
-                if level in (1, 2, 3):
-                    counts[f"L{level}"] += 1
-        if concept == "noble":
-            counts["noble"] += 1
-
-        color = _component_color(comp)
-        if color in GEM_COLORS:
-            counts[color] += 1
-        elif color == "gold":
-            counts["gold"] += 1
+        for item in item_specs:
+            if _component_matches(comp, item.get("match"), profile) and not _component_excluded(
+                    comp, item.get("exclude"), profile):
+                key = str(item.get("key"))
+                counts[key] = counts.get(key, 0) + 1
+        color = _component_color(comp, profile)
+        if color in gem_colors:
+            counts[color] = counts.get(color, 0) + 1
+        elif color == gold_key:
+            counts[gold_key] = counts.get(gold_key, 0) + 1
     return counts
 
 
-def expected_inventory(nobles: int) -> dict[str, int]:
-    expected = {
-        "L1": 40,
-        "L2": 30,
-        "L3": 20,
-        "noble": int(nobles),
-        "gold": 5,
-    }
-    for color in GEM_COLORS:
-        expected[color] = 4
+def expected_inventory(profile: dict, nobles: int | None = None) -> dict[str, int]:
+    inv = _profile_inventory(profile)
+    expected: dict[str, int] = {}
+    for item in inv.get("items") or []:
+        if isinstance(item, dict) and item.get("key") is not None:
+            expected[str(item["key"])] = int(item.get("expected", 0) or 0)
+    gems = inv.get("gems") or {}
+    per_color = int(gems.get("expected_per_color", 0) or 0)
+    per_color_map = gems.get("expected") if isinstance(gems.get("expected"), dict) else {}
+    for color in gems.get("colors") or []:
+        color = str(color)
+        expected[color] = int(per_color_map.get(color, per_color) or 0)
+    gold = _profile_gold(profile)
+    expected[_gold_key(profile)] = int(gold.get("expected", 0) or 0)
+
+    if nobles is not None:
+        noble_key = str(inv.get("nobles_key") or "noble")
+        if noble_key in expected:
+            expected[noble_key] = int(nobles)
     return expected
 
 
-def format_inventory_counts(counts: dict[str, int], reference: dict[str, int]) -> str:
+def format_inventory_counts(counts: dict[str, int], reference: dict[str, int], profile: dict) -> str:
+    labels = _inventory_labels(profile)
     parts = []
-    for key in INVENTORY_ORDER:
+    for key in _inventory_order(profile):
         if counts.get(key, 0) != reference.get(key, 0):
-            parts.append(f"{INVENTORY_LABELS[key]} {counts.get(key, 0)}/{reference.get(key, 0)}")
+            parts.append(f"{labels.get(key, key)} {counts.get(key, 0)}/{reference.get(key, 0)}")
     return "、".join(parts) if parts else "无差异"
 
 
@@ -174,17 +257,14 @@ def format_inventory_delta(
     previous: dict[str, int],
     current: dict[str, int],
     reference: dict[str, int],
+    profile: dict,
 ) -> str:
-    """Describe only the count keys that changed in this cue.
-
-    This keeps the report focused on the first point where a total drifts and
-    on later changes, instead of repeating every accumulating error at every
-    subsequent cue.
-    """
+    """Describe only the count keys that changed in this cue."""
+    labels = _inventory_labels(profile)
     parts = []
-    for key in INVENTORY_ORDER:
+    for key in _inventory_order(profile):
         if current.get(key, 0) != previous.get(key, 0):
-            parts.append(f"{INVENTORY_LABELS[key]} {current.get(key, 0)}/{reference.get(key, 0)}")
+            parts.append(f"{labels.get(key, key)} {current.get(key, 0)}/{reference.get(key, 0)}")
     return "、".join(parts) if parts else "无差异"
 
 
@@ -213,12 +293,16 @@ def _sort_findings(findings: list[dict]) -> list[dict]:
 # input selection
 
 
-def resolve_start_index(cues: list[dict], from_cue: str | None) -> int:
+def resolve_start_index(
+    cues: list[dict],
+    from_cue: str | None,
+    start_after_cue_prefix: str = "setup.",
+) -> int:
     """Return the first compiled cue to audit.
 
-    Without ``--from-cue`` the audit starts after the last cue whose id begins
-    with ``setup.`` -- i.e. from the first post-setup state.  With
-    ``--from-cue`` that cue becomes the first checkpoint.
+    Without ``--from-cue`` the audit starts after the last cue whose id matches
+    the game's configured setup prefix.  With ``--from-cue`` that cue becomes
+    the first checkpoint.
     """
     if from_cue:
         for idx, cue in enumerate(cues):
@@ -228,7 +312,7 @@ def resolve_start_index(cues: list[dict], from_cue: str | None) -> int:
 
     last_setup = -1
     for idx, cue in enumerate(cues):
-        if str(cue.get("id") or "").startswith("setup."):
+        if str(cue.get("id") or "").startswith(start_after_cue_prefix):
             last_setup = idx
     return last_setup + 1
 
@@ -281,40 +365,18 @@ def build_state_graph(track_doc: dict, compiled_doc: dict) -> tuple[dict, dict, 
 
     for idx, cue in enumerate(source_cues):
         cid = str(cue.get("id"))
-        entry = cue.get("entry")
         parent = cue.get("parent")
-        transition = cue.get("transition", "continue")
-        if entry:
-            if str(entry) == "initial":
-                source_kind = "initial"
-                source_id = None
-                source_label = "entry:initial"
-            else:
-                source_kind = "cue"
-                source_id = str(entry)
-                source_label = f"entry:{entry}"
-        elif transition in ("cut", "world_cut"):
-            source_kind = "initial"
-            source_id = None
-            source_label = "cut:initial"
-        elif parent and str(parent) in source_by_id:
-            source_kind = "cue"
-            source_id = str(parent)
-            source_label = f"parent:{parent}"
-        elif idx > 0:
-            source_kind = "cue"
-            source_id = str(source_cues[idx - 1].get("id"))
-            source_label = f"prev:{source_id}"
-        elif idx == 0:
-            # A single-cue document starts from an implicit initial root;
-            # multi-cue tracks declare entry/parent explicitly.
-            source_kind = "initial"
-            source_id = None
-            source_label = "implicit:initial"
-        else:
-            source_kind = "none"
-            source_id = None
-            source_label = "none"
+        entry = cue.get("entry")
+        prev_id = str(source_cues[idx - 1].get("id")) if idx > 0 else None
+        source = logical_state.resolve_effective_state_source(
+            cue,
+            by_id=source_by_id,
+            prev_id=prev_id,
+            implicit_initial=(idx == 0),
+        )
+        source_kind = source["kind"]
+        source_id = source["id"]
+        source_label = source["label"]
 
         is_demo = bool(cue.get("demo"))
         source_cue = source_by_id.get(source_id or "")
@@ -395,6 +457,7 @@ def check_conservation(
     selected_start_indices: list[int],
     graph: dict[str, dict],
     expected: dict[str, int],
+    profile: dict,
     errors: list[dict],
     stats: dict,
 ) -> None:
@@ -412,8 +475,8 @@ def check_conservation(
         info = graph.get(cue_id) or {}
         start_state = (cue.get("start_state") or {}).get("components") or []
         end_state = (cue.get("end_state") or {}).get("components") or []
-        start_counts = count_inventory(start_state)
-        end_counts = count_inventory(end_state)
+        start_counts = count_inventory(start_state, profile)
+        end_counts = count_inventory(end_state, profile)
 
         if not info.get("canonical"):
             stats["noncanonical_cues_skipped"] += 1
@@ -427,20 +490,20 @@ def check_conservation(
             # Boundary equality makes this equivalent to comparing against the
             # source cue's end_state, without relying on track order.
             if end_counts != start_counts:
-                changed = format_inventory_delta(start_counts, end_counts, expected)
+                changed = format_inventory_delta(start_counts, end_counts, expected, profile)
                 errors.append(_finding(
                     "ERR", "conservation", index, cue_id,
                     f"实物守恒变化: {changed}",
                 ))
         else:
-            baseline_bad = format_inventory_counts(start_counts, expected)
+            baseline_bad = format_inventory_counts(start_counts, expected, profile)
             if baseline_bad != "无差异":
                 errors.append(_finding(
                     "ERR", "conservation", index, cue_id,
                     f"守恒基线: 起始状态 {baseline_bad}（期望总数）",
                 ))
             if end_counts != start_counts:
-                changed = format_inventory_delta(start_counts, end_counts, expected)
+                changed = format_inventory_delta(start_counts, end_counts, expected, profile)
                 errors.append(_finding(
                     "ERR", "conservation", index, cue_id,
                     f"实物守恒变化: {changed}",
@@ -449,11 +512,40 @@ def check_conservation(
 
 
 # ---------------------------------------------------------------------------
-# check 2: card_market refill
+# check 2: market refill
 
 
-def infer_event_development_level(event: dict) -> int | None:
-    """Infer level 1/2/3 from a v2 transfer event."""
+def _refill_levels(profile: dict) -> list[int]:
+    raw = _profile_refill(profile).get("levels") or [1, 2, 3]
+    return [int(value) for value in raw]
+
+
+def _level_patterns(profile: dict) -> list[re.Pattern]:
+    raw = _profile_refill(profile).get("level_patterns") or []
+    return [re.compile(str(pattern)) for pattern in raw]
+
+
+def _level_from_match(match: re.Match) -> int | None:
+    group = match.groupdict().get("level")
+    if group is not None:
+        return int(group)
+    if match.groups():
+        return int(match.group(1))
+    return None
+
+
+def _extract_level(text: str, patterns: list[re.Pattern]) -> int | None:
+    for pattern in patterns:
+        match = pattern.search(text)
+        if match:
+            level = _level_from_match(match)
+            if level is not None:
+                return level
+    return None
+
+
+def infer_event_development_level(event: dict, profile: dict) -> int | None:
+    """Infer a development-card level from a v2 transfer event."""
     texts: list[str] = []
     for key in ("concept", "palette", "template", "source", "destination"):
         texts.extend(str(value) for value in as_list(event.get(key)))
@@ -463,44 +555,63 @@ def infer_event_development_level(event: dict) -> int | None:
         else:
             texts.append(str(part))
 
+    patterns = _level_patterns(profile)
     for text in texts:
-        match = re.search(r"development_card_level_(\d+)", text)
-        if match:
-            return int(match.group(1))
-        match = re.search(r"(?:card_level_|deck_level_|market_card_|blank_card_)(\d+)", text)
-        if match:
-            return int(match.group(1))
+        level = _extract_level(text, patterns)
+        if level is not None:
+            return level
     return None
 
 
-def infer_source_deck_level(event: dict) -> int | None:
-    for source in as_list(event.get("source")):
-        match = re.fullmatch(r"deck_level_(\d+)", str(source))
-        if match:
-            return int(match.group(1))
-    return infer_event_development_level(event)
+def infer_source_deck_level(event: dict, profile: dict) -> int | None:
+    pattern = _profile_refill(profile).get("source_deck_pattern")
+    if pattern:
+        compiled = re.compile(str(pattern))
+        for source in as_list(event.get("source")):
+            match = compiled.fullmatch(str(source))
+            if match:
+                level = _level_from_match(match)
+                if level is not None:
+                    return level
+    return infer_event_development_level(event, profile)
 
 
-def component_market_level(comp: dict) -> int | None:
-    return _component_development_level(comp)
+def component_development_level(comp: dict, profile: dict) -> int | None:
+    """Infer a development-card level from a compiled component."""
+    patterns = _level_patterns(profile)
+    for text in (comp.get("Concept"), comp.get("Palette"), comp.get("TemplateId")):
+        level = _extract_level(str(text or ""), patterns)
+        if level is not None:
+            return level
+    return None
 
 
-def card_market_counts(components: Iterable[dict] | None) -> dict[int, int]:
-    counts: dict[int, int] = defaultdict(int)
+def component_market_level(comp: dict, profile: dict) -> int | None:
+    return component_development_level(comp, profile)
+
+
+def market_counts(components: Iterable[dict] | None, profile: dict) -> dict[int, int]:
+    levels = _refill_levels(profile)
+    market_zone = str(_profile_refill(profile).get("market_zone") or "")
+    counts: dict[int, int] = {level: 0 for level in levels}
+    if not market_zone:
+        return counts
     for comp in components or []:
-        if not isinstance(comp, dict) or comp.get("ZoneId") != "card_market":
+        if not isinstance(comp, dict) or comp.get("ZoneId") != market_zone:
             continue
-        level = component_market_level(comp)
-        if level in (1, 2, 3):
+        level = component_market_level(comp, profile)
+        if level in counts:
             counts[level] += 1
-    return dict(counts)
+    return counts
 
 
-def _empty_refill_pending() -> dict[int, list[tuple[int, str]]]:
-    return {1: [], 2: [], 3: []}
+def _empty_refill_pending(profile: dict) -> dict[int, list[tuple[int, str]]]:
+    return {level: [] for level in _refill_levels(profile)}
 
 
-def _copy_refill_pending(pending: dict[int, list[tuple[int, str]]]) -> dict[int, list[tuple[int, str]]]:
+def _copy_refill_pending(
+    pending: dict[int, list[tuple[int, str]]],
+) -> dict[int, list[tuple[int, str]]]:
     return {level: list(entries) for level, entries in pending.items()}
 
 
@@ -511,11 +622,22 @@ def check_refill(
     graph: dict[str, dict],
     source_by_id: dict[str, dict],
     index_by_id: dict[str, int],
+    profile: dict,
     errors: list[dict],
     warnings: list[dict],
     stats: dict,
 ) -> None:
     """Refill audit along the state graph, branch-locally."""
+    refill_cfg = _profile_refill(profile)
+    levels = _refill_levels(profile)
+    market_zone = str(refill_cfg.get("market_zone") or "")
+    player_prefixes = tuple(str(prefix) for prefix in refill_cfg.get("player_zone_prefixes") or [])
+    level_labels = refill_cfg.get("level_labels") if isinstance(refill_cfg.get("level_labels"), dict) else {}
+    deck_label = str(refill_cfg.get("source_deck_label") or "{level}")
+    if not market_zone:
+        stats["refill_final_market"] = {}
+        return
+
     memo: dict[str, dict[int, list[tuple[int, str]]]] = {}
     visiting: set[str] = set()
 
@@ -524,13 +646,13 @@ def check_refill(
         if cid in memo:
             return _copy_refill_pending(memo[cid])
         if cid in visiting:
-            return _empty_refill_pending()
+            return _empty_refill_pending(profile)
         visiting.add(cid)
         info = graph.get(cid) or {}
         if info.get("source_kind") == "cue" and info.get("source_id"):
             pending = pending_for(str(info["source_id"]))
         else:
-            pending = _empty_refill_pending()
+            pending = _empty_refill_pending(profile)
 
         cue = source_by_id.get(cid) or {}
         index = index_by_id.get(cid, -1)
@@ -542,23 +664,23 @@ def check_refill(
             quantity = max(1, int(event.get("quantity") or 1))
 
             # Move out of the market into a player area -> expect a future
-            # same-branch deck_level_N -> card_market refill.
-            if source == "card_market" and isinstance(destination, str) and destination.startswith("player_"):
-                level = infer_event_development_level(event)
-                if level in (1, 2, 3):
+            # same-branch deck -> market refill.
+            if source == market_zone and isinstance(destination, str) and destination.startswith(player_prefixes):
+                level = infer_event_development_level(event, profile)
+                if level in levels:
                     for _ in range(quantity):
                         pending[level].append((index, cid))
                 else:
                     warnings.append(_finding(
                         "WARN", "refill", index, cid,
-                        f"无法解析 card_market -> {destination} 的发展卡等级，未纳入补牌审计",
+                        f"无法解析 {market_zone} -> {destination} 的发展卡等级，未纳入补牌审计",
                     ))
 
             # Refill event.  Only pending removals on this same branch can be
             # satisfied; sibling branches keep their own copies of the state.
-            if isinstance(destination, str) and destination == "card_market":
-                level = infer_source_deck_level(event)
-                if level in (1, 2, 3) and pending[level]:
+            if isinstance(destination, str) and destination == market_zone:
+                level = infer_source_deck_level(event, profile)
+                if level in levels and pending[level]:
                     for _ in range(min(quantity, len(pending[level]))):
                         pending[level].pop(0)
 
@@ -581,17 +703,17 @@ def check_refill(
         if cid not in child_ids and not (graph.get(cid) or {}).get("is_demo")
     ]
 
-    final_market = card_market_counts(final_market_components)
-    stats["refill_final_market"] = {str(level): final_market.get(level, 0) for level in (1, 2, 3)}
+    final_market = market_counts(final_market_components, profile)
+    stats["refill_final_market"] = {str(level): final_market.get(level, 0) for level in levels}
     for leaf_id in leaf_ids:
         pending = pending_for(leaf_id)
-        for level in (1, 2, 3):
+        for level in levels:
             for index, cue_id in pending[level]:
                 stats["refill_missing"] += 1
                 errors.append(_finding(
                     "ERR", "refill", index, cue_id,
-                    f"缺{LEVEL_CN[level]}级补牌：从 card_market 移出后没有在后续事件用 "
-                    f"deck_level_{level} -> card_market 补回；最终 card_market L{level} 数量="
+                    f"缺{level_labels.get(str(level), level)}级补牌：从 {market_zone} 移出后没有在后续事件用 "
+                    f"{deck_label.format(level=level)} -> {market_zone} 补回；最终 {market_zone} L{level} 数量="
                     f"{final_market.get(level, 0)}",
                 ))
 
@@ -695,14 +817,21 @@ def audit_documents(
     track_doc: dict,
     compiled_doc: dict,
     from_cue: str | None = None,
-    nobles: int = 3,
-    game: str = "splendor",
-    track: str = "full",
+    nobles: int | None = None,
+    game: str | None = None,
+    track: str | None = None,
+    profile: dict | None = None,
 ) -> dict:
+    game = str(game or compiled_doc.get("game") or track_doc.get("game") or "")
+    track = str(track or compiled_doc.get("track") or track_doc.get("track") or "")
+    if profile is None:
+        profile = load_audit_profile(game)
+
     cues = compiled_doc.get("cues") or []
     if not cues:
         raise ValueError("compiled track has no cues")
-    start_index = resolve_start_index(cues, from_cue)
+    start_after = str(profile.get("start_after_cue_prefix") or "setup.")
+    start_index = resolve_start_index(cues, from_cue, start_after)
     if start_index >= len(cues):
         raise ValueError("no cue to audit after setup")
 
@@ -710,6 +839,7 @@ def audit_documents(
     selected_start_indices = list(range(start_index, len(cues)))
     index_by_id = {str(cue.get("id")): idx for idx, cue in enumerate(cues) if cue.get("id")}
     _, graph, compiled_by_id, source_by_id = build_state_graph(track_doc, compiled_doc)
+    expected = expected_inventory(profile, nobles=nobles)
 
     errors: list[dict] = []
     warnings: list[dict] = []
@@ -744,7 +874,8 @@ def audit_documents(
         selected_cues,
         selected_start_indices,
         graph,
-        expected_inventory(nobles),
+        expected,
+        profile,
         errors,
         stats,
     )
@@ -758,6 +889,7 @@ def audit_documents(
         graph,
         source_by_id,
         index_by_id,
+        profile,
         errors,
         warnings,
         stats,
@@ -802,14 +934,53 @@ def _print_findings(result: dict) -> None:
         print(f"WARN {item.get('index')} {item.get('cue_id')} {item.get('message')}")
 
 
+def _discover_audit_games() -> list[str]:
+    games = set()
+    for path in (ROOT / "content" / "games").glob(f"*/{AUDIT_PROFILE_REL.as_posix()}"):
+        try:
+            games.add(path.relative_to(ROOT / "content" / "games").parts[0])
+        except (OSError, ValueError):
+            continue
+    return sorted(games)
+
+
+def _discover_audit_tracks(game: str) -> list[str]:
+    v2 = ROOT / "content" / "games" / game / "tutorial" / "anim" / "v2"
+    return sorted(
+        path.name[: -len(".anim.json")]
+        for path in v2.glob("*.anim.json")
+        if not path.name.startswith("_")
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--game", default="splendor")
-    parser.add_argument("--track", default="full")
+    parser.add_argument("--game", default=None)
+    parser.add_argument("--track", default=None)
+    parser.add_argument("--profile", default=None, help="override audit-profile.json path")
     parser.add_argument("--from-cue", default=None)
-    parser.add_argument("--nobles", type=int, default=3)
+    parser.add_argument("--nobles", type=int, default=None, help="override the profile's noble count")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
+
+    if args.game is None:
+        games = _discover_audit_games()
+        if len(games) != 1:
+            print(
+                f"ERR  input: --game is required; candidate games: {', '.join(games) or '(none)'}",
+                file=sys.stderr,
+            )
+            return 2
+        args.game = games[0]
+    if args.track is None:
+        tracks = _discover_audit_tracks(args.game)
+        if len(tracks) != 1:
+            print(
+                f"ERR  input: --track is required; candidate tracks: {', '.join(tracks) or '(none)'}",
+                file=sys.stderr,
+            )
+            return 2
+        args.track = tracks[0]
 
     base = ROOT / "content" / "games" / args.game / "tutorial" / "anim" / "v2"
     source_path = base / f"{args.track}.anim.json"
@@ -826,6 +997,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
+        profile = load_audit_profile(args.game, args.profile)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERR  audit profile: {exc}", file=sys.stderr)
+        return 2
+
+    try:
         result = audit_documents(
             track_doc,
             compiled_doc,
@@ -833,6 +1010,7 @@ def main(argv: list[str] | None = None) -> int:
             nobles=args.nobles,
             game=args.game,
             track=args.track,
+            profile=profile,
         )
     except ValueError as exc:
         print(f"ERR  input: {exc}", file=sys.stderr)

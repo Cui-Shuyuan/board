@@ -23,6 +23,8 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "animation"))
+from compiled_state import iter_renderable_states  # noqa: E402
 
 
 def load(p: Path):
@@ -91,19 +93,9 @@ def main() -> int:
     checked = 0
     for cue in compiled.get("cues") or []:
         cid = cue.get("id", "?")
-        components = [dict(c) for c in ((cue.get("start_state") or {}).get("components") or [])]
-        check_state(rep, f"{cid} start", components, by_template)
-        checked += 1
-        for op in cue.get("state_ops") or []:
-            if op.get("op") == "put" and (op.get("item") or {}).get("Id"):
-                item = op["item"]
-                components = [c for c in components if c.get("Id") != item.get("Id")]
-                components.append(item)
-            elif op.get("op") == "remove" and op.get("item_id"):
-                components = [c for c in components if c.get("Id") != op.get("item_id")]
-            else:
-                continue
-            check_state(rep, f"{cid} t={op.get('at', 0):g}", components, by_template)
+        for at, components, is_start in iter_renderable_states(cue):
+            where = f"{cid} start" if is_start else f"{cid} t={at:g}"
+            check_state(rep, where, [dict(c) for c in components], by_template)
             checked += 1
 
     if rep:

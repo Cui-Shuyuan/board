@@ -1,0 +1,108 @@
+{
+  "schema": "tutorial-audit-profile/v1",
+  "game": "splendor",
+  "start_after_cue_prefix": "setup.",
+  "inventory": {
+    "component_color": {
+      "part_keys": [
+        "color"
+      ],
+      "palette_prefix": "gem_",
+      "gold_palette": "gem_gold",
+      "gold_concepts": [
+        "gold"
+      ]
+    },
+    "items": [
+      {
+        "key": "L1",
+        "label": "L1",
+        "expected": 40,
+        "match": {
+          "concept": "development_card_level_1"
+        },
+        "exclude": {
+          "template_prefix": "sample",
+          "zone_prefix": "showcase"
+        }
+      },
+      {
+        "key": "L2",
+        "label": "L2",
+        "expected": 30,
+        "match": {
+          "concept": "development_card_level_2"
+        },
+        "exclude": {
+          "template_prefix": "sample",
+          "zone_prefix": "showcase"
+        }
+      },
+      {
+        "key": "L3",
+        "label": "L3",
+        "expected": 20,
+        "match": {
+          "concept": "development_card_level_3"
+        },
+        "exclude": {
+          "template_prefix": "sample",
+          "zone_prefix": "showcase"
+        }
+      },
+      {
+        "key": "noble",
+        "label": "贵族",
+        "expected": 3,
+        "match": {
+          "concept": "noble"
+        }
+      }
+    ],
+    "nobles_key": "noble",
+    "gems": {
+      "colors": [
+        "diamond",
+        "onyx",
+        "emerald",
+        "ruby",
+        "sapphire"
+      ],
+      "labels": {
+        "diamond": "宝石 diamond",
+        "onyx": "宝石 onyx",
+        "emerald": "宝石 emerald",
+        "ruby": "宝石 ruby",
+        "sapphire": "宝石 sapphire"
+      },
+      "expected_per_color": 4
+    },
+    "gold": {
+      "key": "gold",
+      "label": "黄金",
+      "expected": 5
+    }
+  },
+  "refill": {
+    "market_zone": "card_market",
+    "player_zone_prefixes": [
+      "player_"
+    ],
+    "levels": [
+      1,
+      2,
+      3
+    ],
+    "source_deck_pattern": "^deck_level_(?P<level>\\d+)$",
+    "source_deck_label": "deck_level_{level}",
+    "level_patterns": [
+      "development_card_level_(?P<level>\\d+)",
+      "(?:card_level_|deck_level_|market_card_|blank_card_)(?P<level>\\d+)"
+    ],
+    "level_labels": {
+      "1": "一",
+      "2": "二",
+      "3": "三"
+    }
+  }
+}

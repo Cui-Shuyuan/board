@@ -473,6 +473,101 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertAlmostEqual(0.269841, clip["part_w"], places=6)
         self.assertAlmostEqual(0.193182, clip["part_h"], places=6)
 
+    def test_stage_part_anchors_override_legacy_part_geometry(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "label",
+                "at": 0.3,
+                "dur": 0.0,
+                "text": "stage anchor override",
+                "space": "world",
+                "part": "bonus",
+                "target": {
+                    "space": "entity",
+                    "zone": "showcase",
+                    "template": "sample_card_1",
+                },
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            stage_path = Path(tmp) / "_schema_example.stage.json"
+            stage = json.loads(stage_path.read_text(encoding="utf-8"))
+            for template in stage.get("templates") or []:
+                if template.get("id") == "sample_card_1":
+                    template["part_anchors"] = [{
+                        "id": "bonus",
+                        "dx": 0.0,
+                        "dy": 0.0,
+                        "r": 0.1,
+                    }]
+                    break
+            else:
+                raise AssertionError("sample_card_1 missing")
+            stage_path.write_text(json.dumps(stage, ensure_ascii=False, indent=2), encoding="utf-8")
+
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "label" and c.get("text")]
+        self.assertEqual(1, len(clips), clips)
+        clip = clips[0]
+        self.assertAlmostEqual(0.5, clip["part_u"], places=6)
+        self.assertAlmostEqual(0.5, clip["part_v"], places=6)
+        self.assertAlmostEqual(round(2.0 * 0.1 / 0.63, 6), clip["part_w"], places=6)
+        self.assertAlmostEqual(round(2.0 * 0.1 / 0.88, 6), clip["part_h"], places=6)
+
+    def test_screen_overlay_template_uses_stage_part_anchors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            show_event = {
+                "op": "show",
+                "at": 0.1,
+                "dur": 0.0,
+                "rect": {"x": 0.2, "y": 0.1, "w": 0.3, "h": 0.6},
+                "target": {"space": "screen", "id": "card_slot"},
+                "template": "sample_card_1",
+            }
+            track_path, _ = write_schema_track(Path(tmp), show_event)
+            stage_path = Path(tmp) / "_schema_example.stage.json"
+            stage = json.loads(stage_path.read_text(encoding="utf-8"))
+            for template in stage.get("templates") or []:
+                if template.get("id") == "sample_card_1":
+                    template["part_anchors"] = [{
+                        "id": "bonus",
+                        "dx": 0.0,
+                        "dy": 0.0,
+                        "r": 0.1,
+                    }]
+                    break
+            else:
+                raise AssertionError("sample_card_1 missing")
+            stage_path.write_text(json.dumps(stage, ensure_ascii=False, indent=2), encoding="utf-8")
+
+            doc = json.loads(track_path.read_text(encoding="utf-8"))
+            events = doc["cues"][0]["events"]
+            latest = max((float(event.get("at", 0.0) or 0.0) for event in events),
+                         default=0.0)
+            events[-1]["at"] = latest + 0.2
+            events.append({
+                "op": "shape",
+                "at": latest + 0.3,
+                "dur": 0.0,
+                "shape": "box",
+                "part": "bonus",
+                "target": {"space": "screen", "id": "card_slot"},
+            })
+            track_path.write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
+
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        clips = [c for c in cue["clips"] if c.get("kind") == "shape"]
+        self.assertEqual(1, len(clips), clips)
+        clip = clips[0]
+        self.assertEqual("card_slot", clip["overlay"])
+        self.assertAlmostEqual(0.5, clip["part_u"], places=6)
+        self.assertAlmostEqual(0.5, clip["part_v"], places=6)
+        self.assertAlmostEqual(round(2.0 * 0.1 / 0.63, 6), clip["part_w"], places=6)
+        self.assertAlmostEqual(round(2.0 * 0.1 / 0.88, 6), clip["part_h"], places=6)
+
     def test_screen_shape_uses_mapping_offset_as_spatial_nudge(self):
         with tempfile.TemporaryDirectory() as tmp:
             event = {

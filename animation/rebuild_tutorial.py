@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """
+已弃用：请优先使用 `animation/compile_tutorial.py`。
+
+旧入口保留一个版本，便于对比/迁移；它仍然是“从 estimated LRC 全量重建”
+流程，不等同于 compile_tutorial 的增量编译。
+
 一条命令跑完讲规口播制作链。
 
 默认流程：
@@ -34,6 +39,11 @@ def main() -> int:
     parser.add_argument("--track", default="full")
     parser.add_argument("--skip-tts", action="store_true", help="只从 source JSON 生成 estimated LRC，不重跑 TTS")
     args = parser.parse_args()
+    print(
+        "DEPRECATED: animation/rebuild_tutorial.py；请改用 "
+        "animation/compile_tutorial.py --game ... --track ...（增量编译）",
+        file=sys.stderr,
+    )
 
     game = args.game
     track = args.track

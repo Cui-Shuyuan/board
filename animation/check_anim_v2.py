@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "animation"))
 import anim_schema_v2 as schema  # noqa: E402
 import anim_geometry_v2 as geom  # noqa: E402
+from compiled_state import apply_state_ops  # noqa: E402
 
 
 def load(p: Path):
@@ -108,18 +109,6 @@ def camera_at(cue: dict, t: float):
         if op.get("frame"):
             frame = op.get("frame")
     return frame
-
-
-def apply_state_ops(start_state: dict, ops: list, t: float = 1e9):
-    items = {c.get("Id"): c for c in (start_state or {}).get("components") or []}
-    for op in ops or []:
-        if op.get("at", 0.0) > t + 1e-9:
-            break
-        if op.get("op") == "put" and (op.get("item") or {}).get("Id"):
-            items[op["item"]["Id"]] = op["item"]
-        elif op.get("op") == "remove" and op.get("item_id"):
-            items.pop(op["item_id"], None)
-    return items
 
 
 def check_camera_ops(rep, compiled: dict):

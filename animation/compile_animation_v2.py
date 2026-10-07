@@ -31,6 +31,7 @@ sys.path.insert(0, str(ROOT / "animation"))
 
 import anim_geometry_v2 as geom  # noqa: E402
 import anim_schema_v2 as schema  # noqa: E402
+import compiled_state as logical_state  # noqa: E402
 
 
 # Shuffle feel: all decks share these constants.  Kept in the compiler so the
@@ -115,9 +116,12 @@ def selector_from_event(ev: dict) -> dict:
 # the compiler writes it as a normalized (u, v) position in the target rect so
 # Unity does not need to know card layout.  (0,0) is top-left in a GUI/screen
 # rect and +z is "up" on the stage plane.
-# Canonical development-card geometry.  Every development card template uses
-# the same 0.63 x 0.88 card face, and its `part_anchors` define these positions
-# in card-local units (dx, dy, r).  Normalized to the card rect:
+# Legacy fallback geometry for old source data.  New source/stage data should
+# put per-template ``part_anchors`` on the stage template; the compiler
+# normalizes those with the template's width/height into the same local (u, v)
+# coordinates.  These constants are only used when the resolved template has no
+# matching part anchor.
+#
 #   u = 0.5 + dx / width, v = 0.5 - dy / height
 #   part_w = 2*r / width, part_h = 2*r / height
 CARD_PART_ANCHORS = {
@@ -160,6 +164,109 @@ CARD_PART_SIZES = {
 SHAPE_KINDS = {"arrow", "circle", "cross", "forbid", "box"}
 
 
+def _stage_template(stage: dict | None, template_id: str) -> dict | None:
+    template_id = norm(template_id)
+    if not template_id:
+        return None
+    for template in (stage or {}).get("templates") or []:
+        if isinstance(template, dict) and norm(template.get("id")) == template_id:
+            return template
+    return None
+
+
+def _template_width_height(template: dict | None) -> tuple[float, float]:
+    """Return a source/compiled stage template's declared card size.
+
+    Source stage files normally use ``width``/``height`` directly.  A compiled
+    stage or an older stage may carry ``world_size`` as a dict/object instead.
+    """
+    template = template or {}
+    width = float(template.get("width", 0.0) or 0.0)
+    height = float(template.get("height", 0.0) or 0.0)
+    world_size = template.get("world_size")
+    if isinstance(world_size, dict):
+        width = width or float(world_size.get("w", 0.0) or 0.0)
+        height = height or float(world_size.get("h", 0.0) or 0.0)
+    return width, height
+
+
+def _stage_part_geometry(
+    stage: dict | None,
+    template_id: str,
+    part: str,
+) -> tuple[tuple[float, float] | None, tuple[float, float] | None]:
+    """Resolve one part's normalized anchor and box from stage data.
+
+    Returns ``(uv, size)`` where missing values fall back to the legacy maps.
+    The stage template is the single authoring source for the target card's
+    dimensions; the global constants remain for old templates/parts that have
+    no matching anchor yet.
+    """
+    template = _stage_template(stage, template_id)
+    if template is None:
+        return None, None
+    part = norm(part).lower()
+    anchor = None
+    for candidate in template.get("part_anchors") or []:
+        if isinstance(candidate, dict) and norm(candidate.get("id")).lower() == part:
+            anchor = candidate
+            break
+    if anchor is None:
+        return None, None
+
+    if anchor.get("u") is not None or anchor.get("v") is not None:
+        u = float(anchor.get("u", 0.5) if anchor.get("u") is not None else 0.5)
+        v = float(anchor.get("v", 0.5) if anchor.get("v") is not None else 0.5)
+    else:
+        width, height = _template_width_height(template)
+        if width <= 0.0 or height <= 0.0:
+            return None, None
+        dx = float(anchor.get("dx", 0.0) or 0.0)
+        dy = float(anchor.get("dy", 0.0) or 0.0)
+        u = 0.5 + dx / width
+        v = 0.5 - dy / height
+    uv = (round(u, 6), round(v, 6))
+
+    size = None
+    if anchor.get("part_w") is not None or anchor.get("part_h") is not None:
+        size = (
+            float(anchor.get("part_w", 0.0) or 0.0),
+            float(anchor.get("part_h", 0.0) or 0.0),
+        )
+    elif anchor.get("w") is not None or anchor.get("h") is not None:
+        size = (
+            float(anchor.get("w", 0.0) or 0.0),
+            float(anchor.get("h", 0.0) or 0.0),
+        )
+    elif anchor.get("r") is not None:
+        width, height = _template_width_height(template)
+        if width > 0.0 and height > 0.0:
+            radius = float(anchor.get("r", 0.0) or 0.0)
+            size = (round(2.0 * radius / width, 6), round(2.0 * radius / height, 6))
+    return uv, size
+
+
+def part_uv(ev: dict, stage: dict | None = None, template_id: str | None = None) -> tuple[float, float]:
+    pu = ev.get("part_u")
+    pv = ev.get("part_v")
+    if pu is not None or pv is not None:
+        return (float(pu) if pu is not None else 0.5,
+                float(pv) if pv is not None else 0.5)
+    part = norm(ev.get("part")).lower()
+    stage_uv, _ = _stage_part_geometry(stage, norm(template_id or ev.get("template")), part)
+    if stage_uv is not None:
+        return stage_uv
+    return CARD_PART_ANCHORS.get(part, (0.5, 0.5))
+
+
+def part_size(ev: dict, stage: dict | None = None, template_id: str | None = None) -> tuple[float, float] | None:
+    part = norm(ev.get("part")).lower()
+    _, stage_size = _stage_part_geometry(stage, norm(template_id or ev.get("template")), part)
+    if stage_size is not None:
+        return stage_size
+    return CARD_PART_SIZES.get(part)
+
+
 def annotation_space_of(ev: dict) -> str:
     """Return the annotation coordinate space: ``world`` or ``screen``.
 
@@ -171,16 +278,6 @@ def annotation_space_of(ev: dict) -> str:
     if space in ("world", "screen"):
         return space
     return "screen" if norm(ev.get("space")).lower() == "screen" else "world"
-
-
-def part_uv(ev: dict) -> tuple[float, float]:
-    pu = ev.get("part_u")
-    pv = ev.get("part_v")
-    if pu is not None or pv is not None:
-        return (float(pu) if pu is not None else 0.5,
-                float(pv) if pv is not None else 0.5)
-    part = norm(ev.get("part")).lower()
-    return CARD_PART_ANCHORS.get(part, (0.5, 0.5))
 
 
 def nudge_xy(ev: dict) -> tuple[float, float]:
@@ -239,13 +336,14 @@ def _annotation_style(ev: dict, defaults: dict | None = None) -> dict:
 
 
 def event_annotation_fields(ev: dict, stage: dict | None = None,
-                            style_defaults: dict | None = None) -> dict:
+                            style_defaults: dict | None = None,
+                            template_id: str | None = None) -> dict:
     """Compiled clip fields shared by every annotation primitive.
 
     ``annotation_space`` is the explicit authoring answer to "is this anchored
     to the table (world) or to the viewport/mask (screen)?".
     """
-    u, v = part_uv(ev)
+    u, v = part_uv(ev, stage, template_id)
     nx, ny = nudge_xy(ev)
     out = {
         "annotation_space": annotation_space_of(ev),
@@ -262,7 +360,7 @@ def event_annotation_fields(ev: dict, stage: dict | None = None,
     # event value always wins.  For shape=box this is the rectangle; for
     # point/circle/arrow it is the fixed marker size around the anchor.
     part = out["part"].lower()
-    default_size = CARD_PART_SIZES.get(part)
+    default_size = part_size(ev, stage, template_id)
     for key, default in (("part_w", default_size[0] if default_size else None),
                          ("part_h", default_size[1] if default_size else None)):
         value = ev.get(key)
@@ -614,6 +712,22 @@ def fnv32(s: str, seed: int = 0) -> int:
 def hash01(s: str, salt: int) -> float:
     """Deterministic [0,1) value; replay and compiled clips always agree."""
     return fnv32(s, salt) / 4294967296.0
+
+
+class EventContext:
+    """Mutable per-event compiler context shared by the ``_compile_*`` handlers."""
+
+    __slots__ = (
+        "cue", "cue_id", "event_index", "ev", "op", "at", "dur", "lead", "easing",
+        "sel", "zone", "before", "state", "clips", "state_ops", "camera_ops",
+        "pointer_resolution", "overlay_templates", "stage_id", "stage",
+        "stage_slots", "manual_state_ops", "manual_state_item_ids",
+        "affected_ids", "forbid_at", "first_state", "skip",
+    )
+
+    def __init__(self, **kw):
+        for key in self.__slots__:
+            setattr(self, key, kw.get(key))
 
 
 # ── compiler ────────────────────────────────────────────────────────────────
@@ -995,33 +1109,17 @@ class Compiler:
     def state_source_ref(self, cue: dict, tree: dict, by_id: dict) -> tuple:
         """Resolve the effective state-inheritance edge for one cue.
 
-        ``tree`` selects stage/visibility, not a state partition:
-
-        * ``entry`` is authoritative and may cross tree/world.
-        * otherwise ``parent`` is the state source regardless of tree;
-        * otherwise the previous cue in track order is the source;
-        * explicit ``cut`` / ``world_cut`` without ``entry`` resets to initial.
+        ``tree`` selects stage/visibility, not a state partition.  The actual
+        entry -> cut -> parent -> previous -> initial order lives in the shared
+        :mod:`compiled_state` helper used by the audit as well.
         """
-        cid = cue.get("id")
-        entry = cue.get("entry")
-        if entry:
-            if entry == "initial":
-                return ("initial", None)
-            if entry not in by_id:
-                raise ValueError(f"cue {cid}: entry source {entry!r} does not exist")
-            return ("cue", entry)
-        transition = cue.get("transition", "continue")
-        if transition in ("cut", "world_cut"):
-            return ("initial", None)
-        parent_id = cue.get("parent")
-        if parent_id:
-            if parent_id not in by_id:
-                raise ValueError(f"cue {cid}: parent {parent_id!r} does not exist")
-            return ("cue", parent_id)
-        prev_id = self.prev_cue.get(str(cid))
-        if prev_id and prev_id in by_id:
-            return ("cue", prev_id)
-        return ("initial", None)
+        source = logical_state.resolve_effective_state_source(
+            cue,
+            by_id=by_id,
+            prev_id=self.prev_cue.get(str(cue.get("id"))),
+            strict=True,
+        )
+        return (source["kind"], source["id"])
 
     def compile(self) -> dict:
         self.load()
@@ -1204,631 +1302,1343 @@ class Compiler:
           is <= 0.
         * pointer_resolution records every source point/highlight resolution so
           the audit can compare source events one-by-one.
+
+        Per-op logic lives in the ``_compile_*`` handlers below; each handler
+        mutates the same :class:`EventContext` and the shared finalizer emits
+        state diffs / tracking markers in a single place.
         """
         clips: list = []
         state_ops: list = []
         camera_ops: list = []
         first_state = None
         pointer_resolution: list = []
+        # Active screen overlay -> explicit template mapping.  A part event that
+        # targets the same screen slot can then use that template's stage
+        # part_anchors/size instead of the legacy global fallback.
+        overlay_templates: dict[str, str] = {}
         stage_id = stage_id or tree["stage"]
         stage = self.stages[stage_id]
         stage_slots = {z["zone"]: z["slots"] for z in self.compiled_stages[stage_id]["zones"]}
         cue_id = cue.get("id")
+
+        handlers = {
+            "camera": self._compile_camera,
+            "magnifier": self._compile_magnifier,
+            "show": self._compile_show,
+            "hide": self._compile_hide,
+            "create": self._compile_create,
+            "ensure": self._compile_ensure,
+            "destroy": self._compile_destroy,
+            "transfer": self._compile_transfer,
+            "stack": self._compile_stack,
+            "shuffle": self._compile_shuffle,
+            "set_face": self._compile_set_face,
+            "move_order": self._compile_move_order,
+            "set_order": self._compile_set_order,
+            "highlight": self._compile_highlight,
+            "point": self._compile_pointer,
+            "shape": self._compile_pointer,
+            "overlay_show": self._compile_overlay_show,
+            "overlay_hide": self._compile_overlay_hide,
+            "label": self._compile_label,
+            "fade": self._compile_fade,
+            "scale": self._compile_scale,
+            "wait": self._compile_wait,
+        }
+
         for event_index, ev in enumerate(cue.get("events") or []):
             op = ev.get("op")
-            at = self.event_at(ev, cue_id)
-            dur = float(ev.get("dur", 0.0) or 0.0)
-            lead = float(ev.get("lead", 0.0) or 0.0)
-            easing = ev.get("easing") or "easeOutCubic"
-            sel = selector_from_event(ev)
-            zone = norm(ev.get("zone"))
-            before = state.component_map()
-            manual_state_ops = None
-            manual_state_item_ids = set()
-            affected_ids = []
-            forbid_at = None
-            if op == "camera":
-                shot_id = norm(ev.get("shot"))
-                if not shot_id:
-                    raise ValueError(f"cue {cue_id}: camera needs shot")
-                frame = self.shot_frame(stage_id, shot_id, visible_zones=self.visible_zone_set(state))
-                camera_ops.append({
-                    "at": at + max(0.0, lead),
-                    "dur": dur,
-                    "easing": easing,
-                    "shot": shot_id,
-                    "frame": frame,
-                })
-            elif op == "magnifier":
-                rect = ev.get("rect") or {}
-                rx = float(rect.get("x", 0.58) or 0.58)
-                ry = float(rect.get("y", 0.18) or 0.18)
-                rw = float(rect.get("w", 0.36) or 0.36)
-                rh = float(rect.get("h", 0.36) or 0.36)
-                matched = state.matching(zone, sel)
-                if not matched:
-                    raise ValueError(f"cue {cue_id}: magnifier needs at least one target item")
-                overlay_id = norm(ev.get("id") or ev.get("overlay") or "magnifier")
-                pointer_resolution.append({
-                    "event_index": event_index,
-                    "op": op,
-                    "object_space": "screen",
-                    "overlay": overlay_id,
-                    "zone": zone,
-                    "order": ev.get("order"),
-                    "matched_count": len(matched),
-                    "item_ids": [it["id"] for it in matched],
-                })
-                xs = []
-                zs = []
-                for it in matched:
-                    x, z = self.position(stage_slots, it["zone"], it["order"])
-                    r = self.template_radius(stage_id, it["template"])
-                    xs.extend([x - r, x + r])
-                    zs.extend([z - r, z + r])
-                pad = float(ev.get("padding", 0.12) or 0.12)
-                minx, maxx = min(xs) - pad, max(xs) + pad
-                minz, maxz = min(zs) - pad, max(zs) + pad
-                shape = norm(ev.get("shape") or "circle").lower()
-                if shape not in ("circle", "box"):
-                    raise ValueError(f"cue {cue_id}: unknown magnifier shape {shape!r}")
-                mask_mode = norm(ev.get("mask") or "items").lower()
-                if mask_mode not in ("items", "full"):
-                    raise ValueError(f"cue {cue_id}: unknown magnifier mask {mask_mode!r}")
-                if shape == "circle":
-                    # Circle always resolves to a square window; this also
-                    # lets full mask draw an opaque table-coloured disc.
-                    lens_aspect = 1.0
-                else:
-                    lens_aspect = (rw * 16.0) / max(0.001, rh * 9.0)
-                half_w = (maxx - minx) * 0.5
-                half_h = (maxz - minz) * 0.5
-                zoom = float(ev.get("zoom", 1.2) or 1.2)
-                center_x = (minx + maxx) * 0.5
-                center_z = (minz + maxz) * 0.5
-                ortho = max(0.32, half_h, half_w / max(0.2, lens_aspect)) / max(0.05, zoom)
-                # Optional explicit world framing.  Cues that must keep the
-                # exact same lens while their target set changes use this to
-                # pin the same center/ortho as a sibling cue.
-                if ev.get("view_center_x") is not None:
-                    center_x = float(ev["view_center_x"])
-                if ev.get("view_center_z") is not None:
-                    center_z = float(ev["view_center_z"])
-                if ev.get("view_ortho_size") is not None:
-                    ortho = float(ev["view_ortho_size"])
-                    if ortho <= 0.0:
-                        raise ValueError(f"cue {cue_id}: view_ortho_size must be > 0")
-                c = self.base_clip("magnifier_show", at, dur, lead, easing)
-                c.update({
-                    "object_space": "screen",
-                    "overlay": overlay_id,
-                    "mag_x": round(rx, 6), "mag_y": round(ry, 6),
-                    "mag_w": round(rw, 6), "mag_h": round(rh, 6),
-                    "mag_center_x": round(center_x, 6),
-                    "mag_center_z": round(center_z, 6),
-                    "mag_ortho_size": round(ortho, 6),
-                    "mag_shape": shape,
-                    "mag_mask": mask_mode,
-                    "mag_item_ids": [it["id"] for it in matched],
-                    "layer": int(ev.get("layer", 10) or 10),
-                })
-                clips.append(c)
-            elif op == "show":
-                if ev.get("space") == "entity":
-                    for it in self.select_items(state, zone, sel, ev.get("order")):
-                        clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
-                                                            to_alpha=1.0))
-                else:
-                    clips.append(self.clip("picture", at, dur, lead, easing,
-                                           picture=ev.get("picture"), picture_on=ev.get("picture") is not None))
-            elif op == "hide":
-                if ev.get("space") != "entity":
-                    raise ValueError(f"cue {cue_id}: hide without screen target must use entity target")
-                for it in self.select_items(state, zone, sel, ev.get("order")):
-                    clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
-                                                        to_alpha=0.0))
-            elif op in ("create",):
-                tpl = norm(ev.get("template"))
-                pal = norm(ev.get("palette"))
-                if not tpl:
-                    raise ValueError(f"cue {cue_id}: create needs template")
-                count = int(ev.get("count", 1) or 1)
-                face = face_int(ev.get("to") or "face_down")
-                concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
-                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
-                affected_ids = [it["id"] for it in added]
-                if ev.get("slot") is not None:
-                    base = int(ev.get("slot") or 0)
-                    for off, it in enumerate(added):
-                        state.move_order(it, zone, base + off)
-                if not ev.get("setup"):
-                    for it in added:
-                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
-            elif op == "ensure":
-                tpl = norm(ev.get("template"))
-                pal = norm(ev.get("palette"))
-                if not tpl:
-                    raise ValueError(f"cue {cue_id}: ensure needs template")
-                count = int(ev.get("count", 1) or 1)
-                face = face_int(ev.get("to"))
-                concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
-                added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
-                affected_ids = [it["id"] for it in added]
-                if not ev.get("setup"):
-                    for it in added:
-                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
-            elif op == "destroy":
-                count = int(ev.get("count", 0) or 0)
-                victims = state.destroy(zone, sel, count, from_back=bool(ev.get("from_back")))
-                affected_ids = [it["id"] for it in victims]
-                if not ev.get("setup"):
-                    for it in victims:
-                        clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
-            elif op == "transfer":
-                quantity = int(ev.get("quantity", ev.get("count", 1)) or 1)
-                raw_src = ev.get("source")
-                sources = raw_src if isinstance(raw_src, list) else [raw_src]
-                sources = [norm(x) for x in sources if norm(x)]
-                dest = norm(ev.get("destination"))
-                is_setup = bool(ev.get("setup"))
-                flip = self.flip_options(ev, cue_id)
-
-                # 先收齐所有转移记录，再决定时间：
-                # 非 setup 的多枚宝石默认逐枚短间隔飞出，避免整把同时位移。
-                records = []
-                for source in sources:
-                    records.extend(state.transfer(
-                        sel, source, dest, quantity, ev.get("to"),
-                        int(ev.get("order", -1)), ev.get("layer"),
-                        from_top=bool(ev.get("from_top", True)),
-                        to_top=bool(ev.get("to_top", True)),
-                    ))
-
-                explicit_stagger = ev.get("stagger")
-                if is_setup:
-                    stagger = float(explicit_stagger or 0.0)
-                elif explicit_stagger is not None:
-                    stagger = float(explicit_stagger or 0.0)
-                elif len(records) > 1 and all(is_gem_item(rec["item"]) for rec in records):
-                    stagger = DEFAULT_GEM_STAGGER
-                else:
-                    stagger = 0.0
-
-                records_with_times = []
-                for index, rec in enumerate(records):
-                    # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
-                    # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
-                    record_at = at + max(0.0, lead) + index * stagger
-                    if not is_setup:
-                        if flip:
-                            clips.append(self.flip_record_clip(
-                                rec, record_at, dur, 0.0, easing, stage_slots,
-                                stage_id, ev.get("to"), flip,
-                            ))
-                        else:
-                            clips.append(self.move_clip(
-                                rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to"),
-                            ))
-                    records_with_times.append((record_at, rec["item"]["id"]))
-                    manual_state_item_ids.add(rec["item"]["id"])
-
-                if records_with_times:
-                    after_map = state.component_map()
-                    manual_state_ops = [
-                        {"op": "put", "at": record_at, "item": after_map[item_id]}
-                        for record_at, item_id in records_with_times
-                        if item_id in after_map
-                    ]
-                    affected_ids = [item_id for _, item_id in records_with_times]
-                    if ev.get("forbid"):
-                        last_start = at + max(0.0, lead) + max(0, len(records_with_times) - 1) * stagger
-                        forbid_at = last_start + max(0.0, dur)
-            elif op == "stack":
-                dest = norm(ev.get("destination"))
-                capacity = int(ev.get("capacity", 40) or 40)
-                real = [x.strip() for x in norm(ev.get("real_templates")).split(",") if x.strip()]
-                pad = norm(ev.get("pad_template"))
-                face = face_int(ev.get("to") or "face_down")
-                pad_count = max(0, capacity - len(real)) if pad else 0
-                # Deck and gem-supply piles share one construction path: both
-                # are just ordered spawns into a display.mode=stack zone.
-                # Order is bottom-to-top.  Lay the padding first (deep/bottom
-                # orders), then lay real templates from the END of the list
-                # backwards, so real_templates[0] ends up at the highest order
-                # (top / first drawn), matching the authored draw order.
-                if pad and pad_count:
-                    concept, parts, pal = self.infer_meta(stage, pad, "")
-                    for _ in range(pad_count):
-                        added = state.spawn(pad, pal, concept, dest, 1, face, parts)
-                        for it in added:
-                            clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
-                # Reverse the authored top-first list so the first template
-                # (first to be drawn) is spawned last and receives the highest
-                # order = the visible/current top.
-                for tpl in reversed(real):
-                    pal = norm(ev.get("palette"))
-                    concept, parts, pal = self.infer_meta(stage, tpl, pal)
-                    added = state.spawn(tpl, pal, concept, dest, 1, face, parts)
-                    for it in added:
-                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
-            elif op == "shuffle":
-                # Visual-only jitter.  `shuffle` means the deck is being mixed,
-                # but the tutorial's draw order is already authored in
-                # `real_templates` and must stay stable across seek/replay.
-                # Permuting state here would desync end_state and scripted
-                # selectors, so emit deterministic jitter and leave state alone.
-                strength = float(ev.get("amount", ev.get("strength", 1.0)) or 1.0)
-                for it in state.matching(zone, {}):
-                    bx, bz = self.position(stage_slots, zone, it["order"])
-                    r1 = hash01(it["id"], 1)
-                    r2 = hash01(it["id"], 2)
-                    r3 = hash01(it["id"], 3)
-                    r4 = hash01(it["id"], 4)
-                    amp = (SHUFFLE_AMP_MIN + (SHUFFLE_AMP_MAX - SHUFFLE_AMP_MIN) * r1) * strength
-                    c = self.base_clip("shuffle", at, dur, lead, easing)
-                    c.update({
-                        "item_id": it["id"], "template": it["template"], "palette": it["palette"],
-                        "from_zone": zone, "from_order": it["order"],
-                        "to_zone": zone, "to_order": it["order"],
-                        "from_x": bx, "from_z": bz, "to_x": bx, "to_z": bz,
-                        "sh_amp": amp,
-                        "sh_freq": SHUFFLE_FREQ_MIN + (SHUFFLE_FREQ_MAX - SHUFFLE_FREQ_MIN) * r2,
-                        "sh_phase": r3 * 2.0 * math.pi,
-                        "sh_zamp": amp * (SHUFFLE_DEPTH_MIN + (SHUFFLE_DEPTH_MAX - SHUFFLE_DEPTH_MIN) * r4),
-                        "sh_env": SHUFFLE_ENVELOPE_POWER,
-                    })
-                    clips.append(c)
-            elif op == "set_face":
-                face = face_int(ev.get("to"))
-                flip = self.flip_options(ev, cue_id)
-                affected = state.matching(zone, sel)
-                affected_ids = [it["id"] for it in affected]
-                if flip and flip["destination"]:
-                    # Flip into a destination slot: this is logically the same
-                    # as transfer(..., to=face) but rendered as one continuous
-                    # hinge turn from the source slot to the destination slot.
-                    if not affected:
-                        raise ValueError(
-                            f"cue {cue_id}: set_face flip destination found no items "
-                            f"in zone {zone!r}"
-                        )
-                    records = state.transfer(
-                        sel, zone, flip["destination"], len(affected),
-                        ev.get("to"), flip["order"], ev.get("layer"),
-                    )
-                    affected = [rec["item"] for rec in records]
-                    affected_ids = [it["id"] for it in affected]
-                    for rec in records:
-                        clips.append(self.flip_record_clip(
-                            rec, at, dur, lead, easing, stage_slots, stage_id,
-                            ev.get("to"), flip,
-                        ))
-                else:
-                    old_faces = {it["id"]: int(it.get("face", 1) or 1) for it in affected}
-                    state.set_face(sel, zone, face)
-                    for it in affected:
-                        if flip:
-                            x, z = self.position(stage_slots, it["zone"], it["order"])
-                            span = self.flip_span(stage_id, it["template"], flip["axis"])
-                            clips.append(self.flip_clip(
-                                it, at, dur, lead, easing, ev.get("to"),
-                                from_face=old_faces.get(it["id"]),
-                                axis=flip["axis"], direction=flip["direction"],
-                                from_x=x, from_z=z, to_x=x, to_z=z,
-                                span=span, mode="center",
-                                from_layer=int(it.get("layer", 0) or 0),
-                                to_layer=int(it.get("layer", 0) or 0),
-                            ))
-                        else:
-                            clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
-            elif op == "move_order":
-                arr = state.matching(zone, sel)
-                if arr:
-                    state.move_order(arr[0], zone, int(ev.get("index", ev.get("order", 0)) or 0))
-            elif op == "set_order":
-                # Absolute order/slot assignment.  Unlike move_order this does
-                # not compact the whole zone, which is required for
-                # color_stack layouts where order is the (color, rank) key.
-                slot = ev.get("slot", ev.get("order"))
-                if slot is None:
-                    raise ValueError(f"cue {cue_id}: set_order needs slot/order")
-                arr = state.matching(zone, sel)
-                if len(arr) != 1:
-                    raise ValueError(
-                        f"cue {cue_id}: set_order needs exactly one matched item, got {len(arr)}")
-                arr[0]["order"] = int(slot)
-                # Optional absolute cover layer.  Tidying a color_stack by
-                # setting only the rank can leave rank and layer out of sync,
-                # which makes later cards hide earlier ones.  Setting both
-                # keeps the visible stack order equal to the authored rank.
-                layer = ev.get("layer")
-                if layer is not None:
-                    arr[0]["layer"] = int(layer)
-            elif op == "highlight":
-                if ev.get("space") == "screen":
-                    overlay_id = norm(ev.get("overlay"))
-                    if not overlay_id:
-                        raise ValueError(f"cue {cue_id}: screen highlight needs overlay id")
-                    grow = float(ev.get("grow", 1.16) or 1.16)
-                    clips.append(self.screen_presentation_clip(
-                        "highlight", overlay_id, at, dur, lead, easing, to_scale=grow))
-                    pointer_resolution.append({
-                        "event_index": event_index,
-                        "op": op,
-                        "object_space": "screen",
-                        "overlay": overlay_id,
-                        "matched_count": 1,
-                        "item_ids": [overlay_id],
-                    })
-                else:
-                    matched = self.select_items(state, zone, sel, ev.get("order"))
-                    item_ids = [it["id"] for it in matched]
-                    pointer_resolution.append({
-                        "event_index": event_index,
-                        "op": op,
-                        "object_space": "entity",
-                        "zone": zone,
-                        "order": ev.get("order"),
-                        "matched_count": len(matched),
-                        "item_ids": item_ids,
-                    })
-                    if not item_ids:
-                        self.rep.warn(
-                            f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
-                            f"zone={zone!r} order={ev.get('order')!r} "
-                            f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
-                        )
-                    for it in matched:
-                        clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
-                                                            to_scale=float(ev.get("grow", 1.16) or 1.16)))
-            elif op in ("point", "shape"):
-                ann_space = annotation_space_of(ev)
-                kind = norm(ev.get("indicator")) if op == "point" else (
-                    norm(ev.get("shape")) or norm(ev.get("indicator")) or "circle")
-                if op == "point" and not kind:
-                    kind = "circle"
-                if op == "shape" and kind not in SHAPE_KINDS:
-                    raise ValueError(
-                        f"cue {cue_id}: unknown shape {kind!r}; expected one of {sorted(SHAPE_KINDS)}")
-                if ann_space == "screen":
-                    overlay_id = norm(ev.get("overlay"))
-                    if not overlay_id:
-                        raise ValueError(f"cue {cue_id}: screen {op} needs overlay id")
-                    c = self.screen_presentation_clip(
-                        "point" if op == "point" else "shape",
-                        overlay_id, at, dur, lead, easing,
-                        part=norm(ev.get("part")), indicator=kind)
-                    c.update(event_annotation_fields(ev, stage, self.annotation_style))
-                    clips.append(c)
-                    pointer_resolution.append({
-                        "event_index": event_index,
-                        "op": op,
-                        "object_space": "screen",
-                        "annotation_space": "screen",
-                        "overlay": overlay_id,
-                        "matched_count": 1,
-                        "item_ids": [overlay_id],
-                    })
-                else:
-                    matched = self.select_items(state, zone, sel, ev.get("order"))
-                    selected = matched[:1]
-                    item_ids = [it["id"] for it in selected]
-                    pointer_resolution.append({
-                        "event_index": event_index,
-                        "op": op,
-                        "object_space": "entity",
-                        "annotation_space": "world",
-                        "zone": zone,
-                        "order": ev.get("order"),
-                        "matched_count": len(matched),
-                        "item_ids": item_ids,
-                    })
-                    if not item_ids:
-                        self.rep.warn(
-                            f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
-                            f"zone={zone!r} order={ev.get('order')!r} "
-                            f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
-                        )
-                    if selected:
-                        c = self.presentation_clip(
-                            "point" if op == "point" else "shape", selected[0],
-                            at, dur, lead, easing,
-                            part=norm(ev.get("part")), indicator=kind)
-                        c.update(event_annotation_fields(ev, stage, self.annotation_style))
-                        clips.append(c)
-            elif op == "overlay_show":
-                overlay_id = norm(ev.get("overlay"))
-                if not overlay_id:
-                    raise ValueError(f"cue {cue_id}: overlay_show needs overlay")
-                tpl = norm(ev.get("template"))
-                pal = norm(ev.get("palette"))
-                image = norm(ev.get("image"))
-                face_image = image
-                back_image = ""
-                if not face_image and tpl:
-                    meta = self.find_asset_meta(tpl, pal)
-                    face_image = meta["face_image"]
-                    back_image = meta["back_image"]
-                rect = ev.get("rect") if isinstance(ev.get("rect"), dict) else {}
-                c = self.base_clip("overlay_show", at, dur, lead, easing)
-                c.update({
-                    "object_space": "screen",
-                    "overlay": overlay_id,
-                    "template": tpl,
-                    "palette": pal,
-                    "face_image": face_image,
-                    "back_image": back_image,
-                    "mask": norm(ev.get("mask")),
-                    "background": norm(ev.get("background")),
-                    "source_item_id": norm(ev.get("source_item_id")),
-                    "persist_on_source_missing": bool(ev.get("persist_on_source_missing", True)),
-                    "layer": int(ev.get("layer", 0) or 0),
-                    "label_x": float(rect["x"]) if rect.get("x") is not None else 0.03,
-                    "label_y": float(rect["y"]) if rect.get("y") is not None else 0.10,
-                    "label_w": float(rect["w"]) if rect.get("w") is not None else 0.28,
-                    "label_h": float(rect["h"]) if rect.get("h") is not None else 0.62,
-                    "screen_space": True,
-                    "from_alpha": 1.0,
-                    "to_alpha": 1.0,
-                })
-                clips.append(c)
-            elif op == "overlay_hide":
-                overlay_id = norm(ev.get("overlay"))
-                if not overlay_id:
-                    raise ValueError(f"cue {cue_id}: overlay_hide needs overlay")
-                c = self.base_clip("overlay_hide", at, dur, lead, easing)
-                c["object_space"] = "screen"
-                c["overlay"] = overlay_id
-                clips.append(c)
-            elif op == "label":
-                overlay_id = norm(ev.get("overlay"))
-                ann_space = annotation_space_of(ev)
-                overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
-                            if isinstance(o, dict) and o.get("id")}
-                if ann_space == "world" and not overlay_id:
-                    # World label anchored to a concrete entity.  This is the
-                    # "text follows the table card" case; the runtime resolves
-                    # the current item each frame and projects it through the
-                    # live camera, so camera moves keep the text attached.
-                    matched = self.select_items(state, zone, sel, ev.get("order"))
-                    selected = matched[:1]
-                    if not selected:
-                        self.rep.warn(
-                            f"unresolved label: cue={cue_id} event_index={event_index} "
-                            f"zone={zone!r} order={ev.get('order')!r} "
-                            f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
-                        )
-                        continue
-                    c = self.presentation_clip("label", selected[0], at, dur, lead, easing)
-                    c.update({
-                        "text": str(ev.get("text") or ""),
-                        "screen_space": False,
-                        "label_x": 0.0, "label_y": 0.0,
-                        "label_w": 0.0, "label_h": 0.0,
-                    })
-                    c.update(event_annotation_fields(ev, stage, self.annotation_style))
-                    clips.append(c)
-                elif overlay_id:
-                    overlay = overlays.get(overlay_id)
-                    if overlay is None:
-                        raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
-                    overlay_space = norm(overlay.get("space") or "screen").lower()
-                    c = self.base_clip("label", at, dur, lead, easing)
-                    c.update({
-                        "overlay": overlay_id,
-                        "text": str(ev.get("text") or ""),
-                    })
-                    if overlay_space == "world" or ann_space == "world":
-                        center = overlay.get("center") or {}
-                        c.update({
-                            "annotation_space": "world",
-                            "screen_space": False,
-                            "world_x": float(center.get("x", 0.0) or 0.0),
-                            "world_z": float(center.get("z", 0.0) or 0.0),
-                            "nudge_x": nudge_xy(ev)[0],
-                            "nudge_y": nudge_xy(ev)[1],
-                        })
-                    else:
-                        rect = overlay.get("rect") or {}
-                        c.update({
-                            "annotation_space": "screen",
-                            "screen_space": True,
-                            "label_x": float(rect.get("x", 0.0) or 0.0),
-                            "label_y": float(rect.get("y", 0.0) or 0.0),
-                            "label_w": float(rect.get("w", 0.3) or 0.3),
-                            "label_h": float(rect.get("h", 0.1) or 0.1),
-                        })
-                        c.update(event_annotation_fields(ev, stage, self.annotation_style))
-                    clips.append(c)
-                else:
-                    raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")
-            elif op == "fade":
-                if ev.get("space") == "screen":
-                    overlay_id = norm(ev.get("overlay"))
-                    if not overlay_id:
-                        raise ValueError(f"cue {cue_id}: screen fade needs overlay id")
-                    clips.append(self.screen_presentation_clip(
-                        "fade", overlay_id, at, dur, lead, easing,
-                        to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
-                else:
-                    for it in self.select_items(state, zone, sel, ev.get("order")):
-                        clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
-                                                            to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
-            elif op == "scale":
-                if ev.get("space") == "screen":
-                    overlay_id = norm(ev.get("overlay"))
-                    if not overlay_id:
-                        raise ValueError(f"cue {cue_id}: screen scale needs overlay id")
-                    clips.append(self.screen_presentation_clip(
-                        "scale", overlay_id, at, dur, lead, easing,
-                        to_scale=float(ev.get("scale", 1.0) or 1.0)))
-                else:
-                    for it in self.select_items(state, zone, sel, ev.get("order")):
-                        clips.append(self.presentation_clip("scale", it, at, dur, lead, easing,
-                                                            to_scale=float(ev.get("scale", 1.0) or 1.0)))
-            elif op == "wait":
-                pass
-            else:
+            handler = handlers.get(op) if isinstance(op, str) else None
+            if handler is None:
                 raise ValueError(f"cue {cue_id}: unsupported op {op!r}")
+            ctx = EventContext(
+                cue=cue, cue_id=cue_id, event_index=event_index, ev=ev, op=op,
+                at=self.event_at(ev, cue_id),
+                dur=float(ev.get("dur", 0.0) or 0.0),
+                lead=float(ev.get("lead", 0.0) or 0.0),
+                easing=ev.get("easing") or "easeOutCubic",
+                sel=selector_from_event(ev), zone=norm(ev.get("zone")),
+                before=state.component_map(), state=state,
+                clips=clips, state_ops=state_ops, camera_ops=camera_ops,
+                pointer_resolution=pointer_resolution,
+                overlay_templates=overlay_templates,
+                stage_id=stage_id, stage=stage, stage_slots=stage_slots,
+                manual_state_ops=None, manual_state_item_ids=set(),
+                affected_ids=[], forbid_at=None, first_state=first_state,
+                skip=False,
+            )
+            handler(ctx)
+            if ctx.skip:
+                continue
+            self._finalize_event(ctx)
+            first_state = ctx.first_state
 
-            # Effective time of this event's state step.  Spawn/create/move/
-            # destroy logical changes happen when the visual action starts
-            # (destroy with dur>0 leaves the item until the end).
-            op_time = at + max(0.0, lead)
-            if op == "destroy" and dur > 0:
-                op_time += dur
-            if op != "camera":
-                after = state.component_map()
-                handled_ids = manual_state_item_ids if manual_state_ops is not None else set()
-                for iid, comp in after.items():
-                    if iid in handled_ids:
-                        continue
-                    if before.get(iid) != comp:
-                        state_ops.append({"op": "put", "at": op_time, "item": comp})
-                for iid in sorted(set(before) - set(after)):
-                    if iid in handled_ids:
-                        continue
-                    state_ops.append({"op": "remove", "at": op_time, "item_id": iid})
-                if manual_state_ops:
-                    state_ops.extend(manual_state_ops)
-            if ev.get("forbid"):
-                if forbid_at is None:
-                    forbid_at = at + max(0.0, lead) + max(0.0, dur)
-                indicator = ev.get("forbid") if isinstance(ev.get("forbid"), str) else "forbid"
-                overlay_id = norm(ev.get("overlay"))
-                if overlay_id:
-                    overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
-                                if isinstance(o, dict) and o.get("id")}
-                    overlay = overlays.get(overlay_id)
-                    if overlay is None:
-                        raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
-                    if norm(overlay.get("space") or "screen").lower() != "world":
-                        raise ValueError(
-                            f"cue {cue_id}: forbid overlay {overlay_id!r} must be space='world' "
-                            f"(screen-space markers are not supported yet)"
-                        )
-                    center = overlay.get("center") or {}
-                    size = overlay.get("size") or {}
-                    mx = float(center.get("x", 0.0) or 0.0)
-                    mz = float(center.get("z", 0.0) or 0.0)
-                    mr = max(float(size.get("w", 0.0) or 0.0), float(size.get("h", 0.0) or 0.0)) * 0.5
-                    if mr <= 0.0:
-                        mr = 0.25
-                else:
-                    mx, mz, mr = self.marker_geometry(stage_id, stage_slots, state, affected_ids)
-                clips.append(self.marker_clip(forbid_at, indicator or "forbid", mx, mz, mr))
-            if op_time <= 1e-9:
-                first_state = state.snapshot()
-
-        # Stable chronological order; camera ops are already naturally ordered
-        # but explicit sorting keeps the runtime/evaluator independent of source
-        # event ordering edge cases.
         # Stable chronological order.  Python's sort is stable, so same-time
         # ops keep source event order (important for conflicting ops).
         state_ops.sort(key=lambda x: x["at"])
         camera_ops.sort(key=lambda x: x["at"])
         return clips, state_ops, camera_ops, first_state, pointer_resolution
 
+
+    def _finalize_event(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        first_state = ctx.first_state
+        # Effective time of this event's state step.  Spawn/create/move/
+        # destroy logical changes happen when the visual action starts
+        # (destroy with dur>0 leaves the item until the end).
+        op_time = at + max(0.0, lead)
+        if op == "destroy" and dur > 0:
+            op_time += dur
+        if op != "camera":
+            after = state.component_map()
+            handled_ids = manual_state_item_ids if manual_state_ops is not None else set()
+            for iid, comp in after.items():
+                if iid in handled_ids:
+                    continue
+                if before.get(iid) != comp:
+                    state_ops.append({"op": "put", "at": op_time, "item": comp})
+            for iid in sorted(set(before) - set(after)):
+                if iid in handled_ids:
+                    continue
+                state_ops.append({"op": "remove", "at": op_time, "item_id": iid})
+            if manual_state_ops:
+                state_ops.extend(manual_state_ops)
+        if ev.get("forbid"):
+            if forbid_at is None:
+                forbid_at = at + max(0.0, lead) + max(0.0, dur)
+            indicator = ev.get("forbid") if isinstance(ev.get("forbid"), str) else "forbid"
+            overlay_id = norm(ev.get("overlay"))
+            if overlay_id:
+                overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
+                            if isinstance(o, dict) and o.get("id")}
+                overlay = overlays.get(overlay_id)
+                if overlay is None:
+                    raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
+                if norm(overlay.get("space") or "screen").lower() != "world":
+                    raise ValueError(
+                        f"cue {cue_id}: forbid overlay {overlay_id!r} must be space='world' "
+                        f"(screen-space markers are not supported yet)"
+                    )
+                center = overlay.get("center") or {}
+                size = overlay.get("size") or {}
+                mx = float(center.get("x", 0.0) or 0.0)
+                mz = float(center.get("z", 0.0) or 0.0)
+                mr = max(float(size.get("w", 0.0) or 0.0), float(size.get("h", 0.0) or 0.0)) * 0.5
+                if mr <= 0.0:
+                    mr = 0.25
+            else:
+                mx, mz, mr = self.marker_geometry(stage_id, stage_slots, state, affected_ids)
+            clips.append(self.marker_clip(forbid_at, indicator or "forbid", mx, mz, mr))
+        if op_time <= 1e-9:
+            first_state = state.snapshot()
+        ctx.first_state = first_state
+        ctx.forbid_at = forbid_at
+
+    def _compile_camera(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        shot_id = norm(ev.get("shot"))
+        if not shot_id:
+            raise ValueError(f"cue {cue_id}: camera needs shot")
+        frame = self.shot_frame(stage_id, shot_id, visible_zones=self.visible_zone_set(state))
+        camera_ops.append({
+            "at": at + max(0.0, lead),
+            "dur": dur,
+            "easing": easing,
+            "shot": shot_id,
+            "frame": frame,
+        })
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_magnifier(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        rect = ev.get("rect") or {}
+        rx = float(rect.get("x", 0.58) or 0.58)
+        ry = float(rect.get("y", 0.18) or 0.18)
+        rw = float(rect.get("w", 0.36) or 0.36)
+        rh = float(rect.get("h", 0.36) or 0.36)
+        matched = state.matching(zone, sel)
+        if not matched:
+            raise ValueError(f"cue {cue_id}: magnifier needs at least one target item")
+        overlay_id = norm(ev.get("id") or ev.get("overlay") or "magnifier")
+        pointer_resolution.append({
+            "event_index": event_index,
+            "op": op,
+            "object_space": "screen",
+            "overlay": overlay_id,
+            "zone": zone,
+            "order": ev.get("order"),
+            "matched_count": len(matched),
+            "item_ids": [it["id"] for it in matched],
+        })
+        xs = []
+        zs = []
+        for it in matched:
+            x, z = self.position(stage_slots, it["zone"], it["order"])
+            r = self.template_radius(stage_id, it["template"])
+            xs.extend([x - r, x + r])
+            zs.extend([z - r, z + r])
+        pad = float(ev.get("padding", 0.12) or 0.12)
+        minx, maxx = min(xs) - pad, max(xs) + pad
+        minz, maxz = min(zs) - pad, max(zs) + pad
+        shape = norm(ev.get("shape") or "circle").lower()
+        if shape not in ("circle", "box"):
+            raise ValueError(f"cue {cue_id}: unknown magnifier shape {shape!r}")
+        mask_mode = norm(ev.get("mask") or "items").lower()
+        if mask_mode not in ("items", "full"):
+            raise ValueError(f"cue {cue_id}: unknown magnifier mask {mask_mode!r}")
+        if shape == "circle":
+            # Circle always resolves to a square window; this also
+            # lets full mask draw an opaque table-coloured disc.
+            lens_aspect = 1.0
+        else:
+            lens_aspect = (rw * 16.0) / max(0.001, rh * 9.0)
+        half_w = (maxx - minx) * 0.5
+        half_h = (maxz - minz) * 0.5
+        zoom = float(ev.get("zoom", 1.2) or 1.2)
+        center_x = (minx + maxx) * 0.5
+        center_z = (minz + maxz) * 0.5
+        ortho = max(0.32, half_h, half_w / max(0.2, lens_aspect)) / max(0.05, zoom)
+        # Optional explicit world framing.  Cues that must keep the
+        # exact same lens while their target set changes use this to
+        # pin the same center/ortho as a sibling cue.
+        if ev.get("view_center_x") is not None:
+            center_x = float(ev["view_center_x"])
+        if ev.get("view_center_z") is not None:
+            center_z = float(ev["view_center_z"])
+        if ev.get("view_ortho_size") is not None:
+            ortho = float(ev["view_ortho_size"])
+            if ortho <= 0.0:
+                raise ValueError(f"cue {cue_id}: view_ortho_size must be > 0")
+        c = self.base_clip("magnifier_show", at, dur, lead, easing)
+        c.update({
+            "object_space": "screen",
+            "overlay": overlay_id,
+            "mag_x": round(rx, 6), "mag_y": round(ry, 6),
+            "mag_w": round(rw, 6), "mag_h": round(rh, 6),
+            "mag_center_x": round(center_x, 6),
+            "mag_center_z": round(center_z, 6),
+            "mag_ortho_size": round(ortho, 6),
+            "mag_shape": shape,
+            "mag_mask": mask_mode,
+            "mag_item_ids": [it["id"] for it in matched],
+            "layer": int(ev.get("layer", 10) or 10),
+        })
+        clips.append(c)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_show(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        if ev.get("space") == "entity":
+            for it in self.select_items(state, zone, sel, ev.get("order")):
+                clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
+                                                    to_alpha=1.0))
+        else:
+            clips.append(self.clip("picture", at, dur, lead, easing,
+                                   picture=ev.get("picture"), picture_on=ev.get("picture") is not None))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_hide(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        if ev.get("space") != "entity":
+            raise ValueError(f"cue {cue_id}: hide without screen target must use entity target")
+        for it in self.select_items(state, zone, sel, ev.get("order")):
+            clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
+                                                to_alpha=0.0))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_create(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        tpl = norm(ev.get("template"))
+        pal = norm(ev.get("palette"))
+        if not tpl:
+            raise ValueError(f"cue {cue_id}: create needs template")
+        count = int(ev.get("count", 1) or 1)
+        face = face_int(ev.get("to") or "face_down")
+        concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
+        added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
+        affected_ids = [it["id"] for it in added]
+        if ev.get("slot") is not None:
+            base = int(ev.get("slot") or 0)
+            for off, it in enumerate(added):
+                state.move_order(it, zone, base + off)
+        if not ev.get("setup"):
+            for it in added:
+                clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_ensure(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        tpl = norm(ev.get("template"))
+        pal = norm(ev.get("palette"))
+        if not tpl:
+            raise ValueError(f"cue {cue_id}: ensure needs template")
+        count = int(ev.get("count", 1) or 1)
+        face = face_int(ev.get("to"))
+        concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
+        added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
+        affected_ids = [it["id"] for it in added]
+        if not ev.get("setup"):
+            for it in added:
+                clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_destroy(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        count = int(ev.get("count", 0) or 0)
+        victims = state.destroy(zone, sel, count, from_back=bool(ev.get("from_back")))
+        affected_ids = [it["id"] for it in victims]
+        if not ev.get("setup"):
+            for it in victims:
+                clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_transfer(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        quantity = int(ev.get("quantity", ev.get("count", 1)) or 1)
+        raw_src = ev.get("source")
+        sources = raw_src if isinstance(raw_src, list) else [raw_src]
+        sources = [norm(x) for x in sources if norm(x)]
+        dest = norm(ev.get("destination"))
+        is_setup = bool(ev.get("setup"))
+        flip = self.flip_options(ev, cue_id)
+
+        # 先收齐所有转移记录，再决定时间：
+        # 非 setup 的多枚宝石默认逐枚短间隔飞出，避免整把同时位移。
+        records = []
+        for source in sources:
+            records.extend(state.transfer(
+                sel, source, dest, quantity, ev.get("to"),
+                int(ev.get("order", -1)), ev.get("layer"),
+                from_top=bool(ev.get("from_top", True)),
+                to_top=bool(ev.get("to_top", True)),
+            ))
+
+        explicit_stagger = ev.get("stagger")
+        if is_setup:
+            stagger = float(explicit_stagger or 0.0)
+        elif explicit_stagger is not None:
+            stagger = float(explicit_stagger or 0.0)
+        elif len(records) > 1 and all(is_gem_item(rec["item"]) for rec in records):
+            stagger = DEFAULT_GEM_STAGGER
+        else:
+            stagger = 0.0
+
+        records_with_times = []
+        for index, rec in enumerate(records):
+            # 一个 transfer record = 一个节点：逻辑转移与视觉飞行共用同一个 at。
+            # setup premise 只改状态，不生成动作动画；它只在 cue 起点静默成立。
+            record_at = at + max(0.0, lead) + index * stagger
+            if not is_setup:
+                if flip:
+                    clips.append(self.flip_record_clip(
+                        rec, record_at, dur, 0.0, easing, stage_slots,
+                        stage_id, ev.get("to"), flip,
+                    ))
+                else:
+                    clips.append(self.move_clip(
+                        rec, record_at, dur, 0.0, easing, stage_slots, ev.get("to"),
+                    ))
+            records_with_times.append((record_at, rec["item"]["id"]))
+            manual_state_item_ids.add(rec["item"]["id"])
+
+        if records_with_times:
+            after_map = state.component_map()
+            manual_state_ops = [
+                {"op": "put", "at": record_at, "item": after_map[item_id]}
+                for record_at, item_id in records_with_times
+                if item_id in after_map
+            ]
+            affected_ids = [item_id for _, item_id in records_with_times]
+            if ev.get("forbid"):
+                last_start = at + max(0.0, lead) + max(0, len(records_with_times) - 1) * stagger
+                forbid_at = last_start + max(0.0, dur)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_stack(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        dest = norm(ev.get("destination"))
+        capacity = int(ev.get("capacity", 40) or 40)
+        real = [x.strip() for x in norm(ev.get("real_templates")).split(",") if x.strip()]
+        pad = norm(ev.get("pad_template"))
+        face = face_int(ev.get("to") or "face_down")
+        pad_count = max(0, capacity - len(real)) if pad else 0
+        # Deck and gem-supply piles share one construction path: both
+        # are just ordered spawns into a display.mode=stack zone.
+        # Order is bottom-to-top.  Lay the padding first (deep/bottom
+        # orders), then lay real templates from the END of the list
+        # backwards, so real_templates[0] ends up at the highest order
+        # (top / first drawn), matching the authored draw order.
+        if pad and pad_count:
+            concept, parts, pal = self.infer_meta(stage, pad, "")
+            for _ in range(pad_count):
+                added = state.spawn(pad, pal, concept, dest, 1, face, parts)
+                for it in added:
+                    clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+        # Reverse the authored top-first list so the first template
+        # (first to be drawn) is spawned last and receives the highest
+        # order = the visible/current top.
+        for tpl in reversed(real):
+            pal = norm(ev.get("palette"))
+            concept, parts, pal = self.infer_meta(stage, tpl, pal)
+            added = state.spawn(tpl, pal, concept, dest, 1, face, parts)
+            for it in added:
+                clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_shuffle(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        # Visual-only jitter.  `shuffle` means the deck is being mixed,
+        # but the tutorial's draw order is already authored in
+        # `real_templates` and must stay stable across seek/replay.
+        # Permuting state here would desync end_state and scripted
+        # selectors, so emit deterministic jitter and leave state alone.
+        strength = float(ev.get("amount", ev.get("strength", 1.0)) or 1.0)
+        for it in state.matching(zone, {}):
+            bx, bz = self.position(stage_slots, zone, it["order"])
+            r1 = hash01(it["id"], 1)
+            r2 = hash01(it["id"], 2)
+            r3 = hash01(it["id"], 3)
+            r4 = hash01(it["id"], 4)
+            amp = (SHUFFLE_AMP_MIN + (SHUFFLE_AMP_MAX - SHUFFLE_AMP_MIN) * r1) * strength
+            c = self.base_clip("shuffle", at, dur, lead, easing)
+            c.update({
+                "item_id": it["id"], "template": it["template"], "palette": it["palette"],
+                "from_zone": zone, "from_order": it["order"],
+                "to_zone": zone, "to_order": it["order"],
+                "from_x": bx, "from_z": bz, "to_x": bx, "to_z": bz,
+                "sh_amp": amp,
+                "sh_freq": SHUFFLE_FREQ_MIN + (SHUFFLE_FREQ_MAX - SHUFFLE_FREQ_MIN) * r2,
+                "sh_phase": r3 * 2.0 * math.pi,
+                "sh_zamp": amp * (SHUFFLE_DEPTH_MIN + (SHUFFLE_DEPTH_MAX - SHUFFLE_DEPTH_MIN) * r4),
+                "sh_env": SHUFFLE_ENVELOPE_POWER,
+            })
+            clips.append(c)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_set_face(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        face = face_int(ev.get("to"))
+        flip = self.flip_options(ev, cue_id)
+        affected = state.matching(zone, sel)
+        affected_ids = [it["id"] for it in affected]
+        if flip and flip["destination"]:
+            # Flip into a destination slot: this is logically the same
+            # as transfer(..., to=face) but rendered as one continuous
+            # hinge turn from the source slot to the destination slot.
+            if not affected:
+                raise ValueError(
+                    f"cue {cue_id}: set_face flip destination found no items "
+                    f"in zone {zone!r}"
+                )
+            records = state.transfer(
+                sel, zone, flip["destination"], len(affected),
+                ev.get("to"), flip["order"], ev.get("layer"),
+            )
+            affected = [rec["item"] for rec in records]
+            affected_ids = [it["id"] for it in affected]
+            for rec in records:
+                clips.append(self.flip_record_clip(
+                    rec, at, dur, lead, easing, stage_slots, stage_id,
+                    ev.get("to"), flip,
+                ))
+        else:
+            old_faces = {it["id"]: int(it.get("face", 1) or 1) for it in affected}
+            state.set_face(sel, zone, face)
+            for it in affected:
+                if flip:
+                    x, z = self.position(stage_slots, it["zone"], it["order"])
+                    span = self.flip_span(stage_id, it["template"], flip["axis"])
+                    clips.append(self.flip_clip(
+                        it, at, dur, lead, easing, ev.get("to"),
+                        from_face=old_faces.get(it["id"]),
+                        axis=flip["axis"], direction=flip["direction"],
+                        from_x=x, from_z=z, to_x=x, to_z=z,
+                        span=span, mode="center",
+                        from_layer=int(it.get("layer", 0) or 0),
+                        to_layer=int(it.get("layer", 0) or 0),
+                    ))
+                else:
+                    clips.append(self.face_clip(it, at, dur, lead, easing, ev.get("to")))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_move_order(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        arr = state.matching(zone, sel)
+        if arr:
+            state.move_order(arr[0], zone, int(ev.get("index", ev.get("order", 0)) or 0))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_set_order(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        # Absolute order/slot assignment.  Unlike move_order this does
+        # not compact the whole zone, which is required for
+        # color_stack layouts where order is the (color, rank) key.
+        slot = ev.get("slot", ev.get("order"))
+        if slot is None:
+            raise ValueError(f"cue {cue_id}: set_order needs slot/order")
+        arr = state.matching(zone, sel)
+        if len(arr) != 1:
+            raise ValueError(
+                f"cue {cue_id}: set_order needs exactly one matched item, got {len(arr)}")
+        arr[0]["order"] = int(slot)
+        # Optional absolute cover layer.  Tidying a color_stack by
+        # setting only the rank can leave rank and layer out of sync,
+        # which makes later cards hide earlier ones.  Setting both
+        # keeps the visible stack order equal to the authored rank.
+        layer = ev.get("layer")
+        if layer is not None:
+            arr[0]["layer"] = int(layer)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_highlight(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        if ev.get("space") == "screen":
+            overlay_id = norm(ev.get("overlay"))
+            if not overlay_id:
+                raise ValueError(f"cue {cue_id}: screen highlight needs overlay id")
+            grow = float(ev.get("grow", 1.16) or 1.16)
+            clips.append(self.screen_presentation_clip(
+                "highlight", overlay_id, at, dur, lead, easing, to_scale=grow))
+            pointer_resolution.append({
+                "event_index": event_index,
+                "op": op,
+                "object_space": "screen",
+                "overlay": overlay_id,
+                "matched_count": 1,
+                "item_ids": [overlay_id],
+            })
+        else:
+            matched = self.select_items(state, zone, sel, ev.get("order"))
+            item_ids = [it["id"] for it in matched]
+            pointer_resolution.append({
+                "event_index": event_index,
+                "op": op,
+                "object_space": "entity",
+                "zone": zone,
+                "order": ev.get("order"),
+                "matched_count": len(matched),
+                "item_ids": item_ids,
+            })
+            if not item_ids:
+                self.rep.warn(
+                    f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
+                    f"zone={zone!r} order={ev.get('order')!r} "
+                    f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                )
+            for it in matched:
+                clips.append(self.presentation_clip("highlight", it, at, dur, lead, easing,
+                                                    to_scale=float(ev.get("grow", 1.16) or 1.16)))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_pointer(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        ann_space = annotation_space_of(ev)
+        kind = norm(ev.get("indicator")) if op == "point" else (
+            norm(ev.get("shape")) or norm(ev.get("indicator")) or "circle")
+        if op == "point" and not kind:
+            kind = "circle"
+        if op == "shape" and kind not in SHAPE_KINDS:
+            raise ValueError(
+                f"cue {cue_id}: unknown shape {kind!r}; expected one of {sorted(SHAPE_KINDS)}")
+        if ann_space == "screen":
+            overlay_id = norm(ev.get("overlay"))
+            if not overlay_id:
+                raise ValueError(f"cue {cue_id}: screen {op} needs overlay id")
+            c = self.screen_presentation_clip(
+                "point" if op == "point" else "shape",
+                overlay_id, at, dur, lead, easing,
+                part=norm(ev.get("part")), indicator=kind)
+            c.update(event_annotation_fields(
+                ev, stage, self.annotation_style,
+                template_id=overlay_templates.get(overlay_id) or norm(ev.get("template"))))
+            clips.append(c)
+            pointer_resolution.append({
+                "event_index": event_index,
+                "op": op,
+                "object_space": "screen",
+                "annotation_space": "screen",
+                "overlay": overlay_id,
+                "matched_count": 1,
+                "item_ids": [overlay_id],
+            })
+        else:
+            matched = self.select_items(state, zone, sel, ev.get("order"))
+            selected = matched[:1]
+            item_ids = [it["id"] for it in selected]
+            pointer_resolution.append({
+                "event_index": event_index,
+                "op": op,
+                "object_space": "entity",
+                "annotation_space": "world",
+                "zone": zone,
+                "order": ev.get("order"),
+                "matched_count": len(matched),
+                "item_ids": item_ids,
+            })
+            if not item_ids:
+                self.rep.warn(
+                    f"unresolved pointer: cue={cue_id} event_index={event_index} op={op} "
+                    f"zone={zone!r} order={ev.get('order')!r} "
+                    f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                )
+            if selected:
+                c = self.presentation_clip(
+                    "point" if op == "point" else "shape", selected[0],
+                    at, dur, lead, easing,
+                    part=norm(ev.get("part")), indicator=kind)
+                c.update(event_annotation_fields(
+                    ev, stage, self.annotation_style,
+                    template_id=selected[0].get("template")))
+                clips.append(c)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_overlay_show(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        overlay_id = norm(ev.get("overlay"))
+        if not overlay_id:
+            raise ValueError(f"cue {cue_id}: overlay_show needs overlay")
+        tpl = norm(ev.get("template"))
+        pal = norm(ev.get("palette"))
+        image = norm(ev.get("image"))
+        if tpl:
+            overlay_templates[overlay_id] = tpl
+        else:
+            overlay_templates.pop(overlay_id, None)
+        face_image = image
+        back_image = ""
+        if not face_image and tpl:
+            meta = self.find_asset_meta(tpl, pal)
+            face_image = meta["face_image"]
+            back_image = meta["back_image"]
+        rect = ev.get("rect") if isinstance(ev.get("rect"), dict) else {}
+        c = self.base_clip("overlay_show", at, dur, lead, easing)
+        c.update({
+            "object_space": "screen",
+            "overlay": overlay_id,
+            "template": tpl,
+            "palette": pal,
+            "face_image": face_image,
+            "back_image": back_image,
+            "mask": norm(ev.get("mask")),
+            "background": norm(ev.get("background")),
+            "source_item_id": norm(ev.get("source_item_id")),
+            "persist_on_source_missing": bool(ev.get("persist_on_source_missing", True)),
+            "layer": int(ev.get("layer", 0) or 0),
+            "label_x": float(rect["x"]) if rect.get("x") is not None else 0.03,
+            "label_y": float(rect["y"]) if rect.get("y") is not None else 0.10,
+            "label_w": float(rect["w"]) if rect.get("w") is not None else 0.28,
+            "label_h": float(rect["h"]) if rect.get("h") is not None else 0.62,
+            "screen_space": True,
+            "from_alpha": 1.0,
+            "to_alpha": 1.0,
+        })
+        clips.append(c)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_overlay_hide(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        overlay_id = norm(ev.get("overlay"))
+        if not overlay_id:
+            raise ValueError(f"cue {cue_id}: overlay_hide needs overlay")
+        c = self.base_clip("overlay_hide", at, dur, lead, easing)
+        c["object_space"] = "screen"
+        c["overlay"] = overlay_id
+        clips.append(c)
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_label(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        overlay_id = norm(ev.get("overlay"))
+        ann_space = annotation_space_of(ev)
+        overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
+                    if isinstance(o, dict) and o.get("id")}
+        if ann_space == "world" and not overlay_id:
+            # World label anchored to a concrete entity.  This is the
+            # "text follows the table card" case; the runtime resolves
+            # the current item each frame and projects it through the
+            # live camera, so camera moves keep the text attached.
+            matched = self.select_items(state, zone, sel, ev.get("order"))
+            selected = matched[:1]
+            if not selected:
+                self.rep.warn(
+                    f"unresolved label: cue={cue_id} event_index={event_index} "
+                    f"zone={zone!r} order={ev.get('order')!r} "
+                    f"anchor={ev.get('anchor')!r} offset={ev.get('offset')!r}"
+                )
+                ctx.skip = True
+                return
+            c = self.presentation_clip("label", selected[0], at, dur, lead, easing)
+            c.update({
+                "text": str(ev.get("text") or ""),
+                "screen_space": False,
+                "label_x": 0.0, "label_y": 0.0,
+                "label_w": 0.0, "label_h": 0.0,
+            })
+            c.update(event_annotation_fields(
+                ev, stage, self.annotation_style,
+                template_id=selected[0].get("template")))
+            clips.append(c)
+        elif overlay_id:
+            overlay = overlays.get(overlay_id)
+            if overlay is None:
+                raise ValueError(f"cue {cue_id}: unknown overlay {overlay_id!r}")
+            overlay_space = norm(overlay.get("space") or "screen").lower()
+            c = self.base_clip("label", at, dur, lead, easing)
+            c.update({
+                "overlay": overlay_id,
+                "text": str(ev.get("text") or ""),
+            })
+            if overlay_space == "world" or ann_space == "world":
+                center = overlay.get("center") or {}
+                c.update({
+                    "annotation_space": "world",
+                    "screen_space": False,
+                    "world_x": float(center.get("x", 0.0) or 0.0),
+                    "world_z": float(center.get("z", 0.0) or 0.0),
+                    "nudge_x": nudge_xy(ev)[0],
+                    "nudge_y": nudge_xy(ev)[1],
+                })
+            else:
+                rect = overlay.get("rect") or {}
+                c.update({
+                    "annotation_space": "screen",
+                    "screen_space": True,
+                    "label_x": float(rect.get("x", 0.0) or 0.0),
+                    "label_y": float(rect.get("y", 0.0) or 0.0),
+                    "label_w": float(rect.get("w", 0.3) or 0.3),
+                    "label_h": float(rect.get("h", 0.1) or 0.1),
+                })
+                c.update(event_annotation_fields(
+                    ev, stage, self.annotation_style,
+                    template_id=overlay_templates.get(overlay_id) or norm(ev.get("template"))))
+            clips.append(c)
+        else:
+            raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_fade(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        if ev.get("space") == "screen":
+            overlay_id = norm(ev.get("overlay"))
+            if not overlay_id:
+                raise ValueError(f"cue {cue_id}: screen fade needs overlay id")
+            clips.append(self.screen_presentation_clip(
+                "fade", overlay_id, at, dur, lead, easing,
+                to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
+        else:
+            for it in self.select_items(state, zone, sel, ev.get("order")):
+                clips.append(self.presentation_clip("fade", it, at, dur, lead, easing,
+                                                    to_alpha=float(ev.get("to_alpha", ev.get("alpha", 0.0)) or 0.0)))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_scale(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        if ev.get("space") == "screen":
+            overlay_id = norm(ev.get("overlay"))
+            if not overlay_id:
+                raise ValueError(f"cue {cue_id}: screen scale needs overlay id")
+            clips.append(self.screen_presentation_clip(
+                "scale", overlay_id, at, dur, lead, easing,
+                to_scale=float(ev.get("scale", 1.0) or 1.0)))
+        else:
+            for it in self.select_items(state, zone, sel, ev.get("order")):
+                clips.append(self.presentation_clip("scale", it, at, dur, lead, easing,
+                                                    to_scale=float(ev.get("scale", 1.0) or 1.0)))
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
+
+
+    def _compile_wait(self, ctx):
+        ev = ctx.ev
+        at = ctx.at
+        dur = ctx.dur
+        lead = ctx.lead
+        easing = ctx.easing
+        sel = ctx.sel
+        zone = ctx.zone
+        before = ctx.before
+        cue_id = ctx.cue_id
+        event_index = ctx.event_index
+        op = ctx.op
+        state = ctx.state
+        stage = ctx.stage
+        stage_id = ctx.stage_id
+        stage_slots = ctx.stage_slots
+        overlay_templates = ctx.overlay_templates
+        clips = ctx.clips
+        state_ops = ctx.state_ops
+        camera_ops = ctx.camera_ops
+        pointer_resolution = ctx.pointer_resolution
+        manual_state_ops = ctx.manual_state_ops
+        manual_state_item_ids = ctx.manual_state_item_ids
+        affected_ids = ctx.affected_ids
+        forbid_at = ctx.forbid_at
+        pass
+        ctx.manual_state_ops = manual_state_ops
+        ctx.manual_state_item_ids = manual_state_item_ids
+        ctx.affected_ids = affected_ids
+        ctx.forbid_at = forbid_at
     # ── clip builders ─────────────────────────────────────────────────────
     @staticmethod
     def flip_options(ev: dict, cue_id=None):
@@ -2100,14 +2910,14 @@ def json_canonical(doc) -> str:
     return json.dumps(doc, ensure_ascii=False, separators=(",", ":"), sort_keys=False) + "\n"
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--game", default="splendor")
     ap.add_argument("--track", default="_schema_example")
     ap.add_argument("--source")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--stdout", action="store_true")
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
 
     src = source_path(a.game, a.track, a.source)
     if not src.exists():

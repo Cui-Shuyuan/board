@@ -35,6 +35,10 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "animation"))
 
 import anim_schema_v2 as schema  # noqa: E402
+import compile_animation_v2 as animation_compiler  # noqa: E402
+import lrc as lrc_utils  # noqa: E402
+import qa_anim_ask  # noqa: E402
+import validate_anim_rules_v2 as rule_ledger  # noqa: E402
 from build_tutorial_runtime import build_runtime  # noqa: E402
 from tutorial_script_tool import rebuild_lrc  # noqa: E402
 from validate_timed_script import parse_file  # noqa: E402
@@ -47,6 +51,33 @@ def load_json(path: Path):
 def save_json(path: Path, doc):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def normalize_manifest_path(path_value: str) -> str:
+    """Normalize manifest paths to forward slashes for cross-platform reads."""
+    return str(path_value or "").replace("\\", "/")
+
+
+def normalize_manifest_paths(manifest: dict) -> dict:
+    """Normalize the file fields in-place and return the manifest."""
+    for cue in manifest.get("cues") or []:
+        if not isinstance(cue, dict):
+            continue
+        for key in ("file", "subtitle_file"):
+            value = cue.get(key)
+            if isinstance(value, str):
+                cue[key] = normalize_manifest_path(value)
+    return manifest
+
+
+def manifest_audio_ok(manifest_cue: dict, root: Path | None = None) -> bool:
+    """Return True when a manifest cue's audio file exists after path normalization."""
+    if not isinstance(manifest_cue, dict):
+        return False
+    rel = normalize_manifest_path(manifest_cue.get("file", ""))
+    if not rel:
+        return False
+    return ((root or ROOT) / rel).exists()
 
 
 def cue_text(cue: dict) -> str:
@@ -78,61 +109,20 @@ def recompute_starts(manifest: dict):
 
 def write_tts_lrc(game_dir: Path, track: str, script: dict, manifest: dict) -> Path:
     """Write {track}.tts.lrc from script order + manifest durations."""
-    lrc_path = game_dir / "tutorial" / f"{track}.tts.lrc"
-    manifest_by = {c["id"]: c for c in manifest.get("cues") or []}
-    lines = [
-        f"[ti:{script.get('title','')}]",
-        f"[game:{script.get('game_id','')}]",
-        f"[track:{script.get('track','')}]",
-        "[timing:tts]",
-        "[generator:animation/compile_tutorial.py]",
-    ]
-    if script.get("version"):
-        lines.append(f"[version:{script['version']}]")
-
-    cursor = 0.0
-    last_path = []
-    gap = float(manifest.get("gap_seconds", 0.0) or 0.0)
-    for cue in script.get("cues") or []:
-        cid = cue.get("id")
-        if not cid:
-            continue
-        m = manifest_by.get(cid)
-        if m is None:
-            raise SystemExit(f"manifest missing cue: {cid}")
-        path = cue.get("group_path") or ([cue.get("group")] if cue.get("group") else [])
-        common = 0
-        while common < len(path) and common < len(last_path) and path[common] == last_path[common]:
-            common += 1
-        for title in path[common:]:
-            lines.append(f"[group:{title}]")
-        last_path = path
-        start = float(m.get("start", cursor) or 0.0)
-        cs = int(round(start * 100))
-        stamp = f"[{cs // 6000:02d}:{(cs % 6000) / 100:05.2f}]"
-        refs = cue.get("refs") or []
-        ref_tag = f"[ref:{'|'.join(refs)}]" if refs else ""
-        lines.append(f"{stamp}[id:{cid}]{ref_tag}{cue_text(cue)}")
-        cursor = start + float(m.get("duration", 0.0) or 0.0) + gap
-    cs = int(round(cursor * 100))
-    lines.append(f"[length:{cs // 6000:02d}:{(cs % 6000) / 100:05.2f}]")
-    lrc_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return lrc_path
+    return lrc_utils.write_manifest_tts_lrc(game_dir, track, script, manifest)
 
 
-def write_delta_lrc(path: Path, cues: list[dict], refs_by_id: dict):
-    lines = ["[ti:delta]", "[game:splendor]", "[track:full]", "[timing:estimated]"]
-    last_group = None
-    for cue in cues:
-        group = cue.get("group") or ""
-        if group != last_group:
-            lines.append(f"[group:{group}]")
-            last_group = group
-        refs = refs_by_id.get(cue["id"]) or []
-        ref_tag = f"[ref:{'|'.join(refs)}]" if refs else ""
-        lines.append(f"[00:00.00][id:{cue['id']}]{ref_tag}{cue_text(cue)}")
-    lines.append("[length:23:59.99]")
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+def tts_asset_rel(game: str, track: str, cue_id: str, ext: str) -> str:
+    """Repository-relative manifest path for one generated TTS asset."""
+    return f"content/games/{game}/media/tts/{track}/{cue_id}{ext}"
+
+
+def qa_questions_path(game: str) -> Path:
+    return ROOT / "content" / "games" / game / "tutorial" / "anim" / "_qa" / "questions.json"
+
+
+def write_delta_lrc(path: Path, cues: list[dict], refs_by_id: dict, game: str, track: str):
+    lrc_utils.write_delta_lrc(path, cues, refs_by_id, game, track)
 
 
 def _load_dotenv_if_present() -> None:
@@ -156,7 +146,7 @@ def _current_tts_provider() -> str:
     return (os.environ.get("DOUBAO_TTS_PROVIDER", "") or "standard").strip().lower()
 
 
-def run_tts_delta(game_dir: Path, track: str, script: dict, manifest: dict,
+def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest: dict,
                   changed: list[dict], tts_python: str, dry_run: bool):
     if not changed:
         return manifest
@@ -169,7 +159,7 @@ def run_tts_delta(game_dir: Path, track: str, script: dict, manifest: dict,
     delta_dir.mkdir(parents=True, exist_ok=True)
     lrc = delta_dir / "delta.lrc"
     media = delta_dir / "media"
-    write_delta_lrc(lrc, changed, {c["id"]: c.get("refs") or [] for c in script.get("cues") or []})
+    write_delta_lrc(lrc, changed, {c["id"]: c.get("refs") or [] for c in script.get("cues") or []}, game, track)
     provider = _current_tts_provider()
     manifest_provider = (manifest.get("provider") or "").strip().lower()
     if manifest_provider not in {"standard", "seed2"}:
@@ -192,6 +182,8 @@ def run_tts_delta(game_dir: Path, track: str, script: dict, manifest: dict,
         if manifest.get("resource_id"):
             cmd += ["--resource-id", str(manifest["resource_id"])]
 
+    # Keep TTS in a subprocess: --tts-python may deliberately point at a
+    # different interpreter/venv that owns the provider SDK and credentials.
     print("[tts] " + " ".join(cmd))
     subprocess.run(cmd, cwd=ROOT, check=True)
     delta_manifest = load_json(media / "tts_manifest.json")
@@ -215,8 +207,8 @@ def run_tts_delta(game_dir: Path, track: str, script: dict, manifest: dict,
             "group": dm.get("group", ""),
             "start": 0.0,
             "duration": round(float(dm.get("duration", 0.0) or 0.0), 3),
-            "file": f"content/games/splendor/media/tts/{track}/{cid}.mp3",
-            "subtitle_file": f"content/games/splendor/media/tts/{track}/{cid}.subtitle.json",
+            "file": tts_asset_rel(game, track, cid, ".mp3"),
+            "subtitle_file": tts_asset_rel(game, track, cid, ".subtitle.json"),
             "refs": dm.get("refs") or [],
         }
     manifest["cues"] = [by_id[c["id"]] for c in script.get("cues") or [] if c["id"] in by_id]
@@ -245,21 +237,10 @@ def prune_removed(game_dir: Path, track: str, script: dict, manifest: dict, dry_
 
 
 def update_lrc_refs(lrc_path: Path, script: dict):
-    script_by = {c["id"]: c for c in script.get("cues") or []}
-    lines = lrc_path.read_text(encoding="utf-8").splitlines()
-    out = []
-    for line in lines:
-        m = re.match(r'^(\[[0-9:.]+\]\[id:([^\]]+)\])(?:\[ref:[^\]]*\])?(.*)$', line)
-        if m and m.group(2) in script_by:
-            refs = script_by[m.group(2)].get("refs") or []
-            ref_tag = f"[ref:{'|'.join(refs)}]" if refs else ""
-            out.append(m.group(1) + ref_tag + m.group(3))
-        else:
-            out.append(line)
-    lrc_path.write_text("\n".join(out) + "\n", encoding="utf-8")
+    lrc_utils.update_lrc_refs(lrc_path, script)
 
 
-def run_qa_gate(ids: list[str] | None = None) -> int:
+def run_qa_gate(game: str, track: str, ids: list[str] | None = None) -> int:
     """Ask BoardAI the handwritten QA questions before compiling.
 
     ids=None -> all questions; ids=[...] -> only questions belonging to those
@@ -267,7 +248,7 @@ def run_qa_gate(ids: list[str] | None = None) -> int:
     """
     import os
     import tempfile
-    qa_path = ROOT / "content" / "games" / "splendor" / "tutorial" / "anim" / "_qa" / "questions.json"
+    qa_path = qa_questions_path(game)
     if not qa_path.exists():
         print(f"[qa] missing questions file: {qa_path}", file=sys.stderr)
         return 2
@@ -285,12 +266,16 @@ def run_qa_gate(ids: list[str] | None = None) -> int:
     try:
         tmp.write_text(json.dumps({"note": "compile gate", "asks": selected}, ensure_ascii=False, indent=2),
                        encoding="utf-8")
-        env = os.environ.copy()
-        env.setdefault("BOARDAI_API", "http://localhost:5000/api/chat")
-        cmd = [sys.executable, str(ROOT / "animation" / "qa_anim_ask.py"),
+        cmd = ["--game", game, "--track", track,
                "--in", str(tmp), "--jobs", "4", "--tag", "compile_validation", "--strict"]
         print(f"[qa] validating {len(selected)} question(s) via BoardAI ...")
-        rc = subprocess.run(cmd, cwd=ROOT, env=env).returncode
+        had_api = os.environ.get("BOARDAI_API")
+        os.environ.setdefault("BOARDAI_API", "http://localhost:5000/api/chat")
+        try:
+            rc = qa_anim_ask.main(cmd)
+        finally:
+            if had_api is None and "BOARDAI_API" in os.environ:
+                del os.environ["BOARDAI_API"]
         if rc != 0:
             print(f"[qa] validation failed (rc={rc}); compile aborted", file=sys.stderr)
             return rc
@@ -299,9 +284,37 @@ def run_qa_gate(ids: list[str] | None = None) -> int:
         tmp.unlink(missing_ok=True)
 
 
+def games_with_track(track: str) -> list[str]:
+    """Return games that have the complete source/generated set for a track."""
+    games = ROOT / "content" / "games"
+    found = []
+    for game_dir in sorted(games.iterdir() if games.exists() else []):
+        if not game_dir.is_dir():
+            continue
+        has_script = (game_dir / "tutorial" / f"script.{track}.json").exists()
+        has_anim = (game_dir / "tutorial" / "anim" / "v2" / f"{track}.anim.json").exists()
+        has_manifest = (game_dir / "media" / "tts" / track / "tts_manifest.json").exists()
+        if has_script and has_anim and has_manifest:
+            found.append(game_dir.name)
+    return sorted(found)
+
+
+def resolve_game(game: str | None, track: str) -> str:
+    """Use --game when given, otherwise pick the unique game that has the track."""
+    if game:
+        return game
+    candidates = games_with_track(track)
+    if len(candidates) == 1:
+        return candidates[0]
+    if not candidates:
+        raise SystemExit(f"找不到包含 track {track!r} 的游戏；请用 --game 指定")
+    raise SystemExit(
+        f"检测到多个候选游戏 {', '.join(candidates)}；请用 --game 指定")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--game", default="splendor")
+    ap.add_argument("--game", default=None, help="游戏 id；未指定时自动发现唯一的 track 来源")
     ap.add_argument("--track", default="full")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--skip-tts", action="store_true")
@@ -311,6 +324,12 @@ def main() -> int:
     ap.add_argument("--validate-qa-all", action="store_true", help="run the full handwritten QA set before compiling")
     args = ap.parse_args()
     _load_dotenv_if_present()
+
+    try:
+        args.game = resolve_game(args.game, args.track)
+    except SystemExit as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
 
     game_dir = ROOT / "content" / "games" / args.game
     tutorial = game_dir / "tutorial"
@@ -323,7 +342,7 @@ def main() -> int:
         return 2
 
     script = load_json(script_path)
-    manifest = load_json(manifest_path)
+    manifest = normalize_manifest_paths(load_json(manifest_path))
     tts_text = read_current_tts_text(tts_lrc_path)
     manifest_by = {c["id"]: c for c in manifest.get("cues") or []}
 
@@ -337,7 +356,7 @@ def main() -> int:
         refs = cue.get("refs") or []
         old_text = tts_text.get(cid)
         m = manifest_by.get(cid)
-        audio_ok = bool(m) and (ROOT / m.get("file", "")).exists()
+        audio_ok = manifest_audio_ok(m)
         if args.force_full_tts or old_text is None or old_text != text or not audio_ok:
             changed.append(cue)
         elif (m.get("refs") or []) != refs:
@@ -349,7 +368,7 @@ def main() -> int:
             if qa_ids == []:
                 pass
             else:
-                rc = run_qa_gate(qa_ids)
+                rc = run_qa_gate(args.game, args.track, qa_ids)
                 if rc != 0:
                     return rc
 
@@ -358,7 +377,7 @@ def main() -> int:
         if args.skip_tts:
             print(f"[tts] {len(changed)} cue(s) need regeneration, but --skip-tts is set", file=sys.stderr)
             return 1
-        manifest = run_tts_delta(game_dir, args.track, script, manifest, changed, args.tts_python, args.dry_run)
+        manifest = run_tts_delta(game_dir, args.game, args.track, script, manifest, changed, args.tts_python, args.dry_run)
 
     # Ref-only changes still need manifest update.
     script_by = {c["id"]: c for c in script.get("cues") or []}
@@ -389,12 +408,14 @@ def main() -> int:
         build_runtime(args.game, args.track, force=True)
 
     # Animation compiler (cheap; always deterministic for the whole track).
-    subprocess.run([sys.executable, str(ROOT / "animation" / "compile_animation_v2.py"),
-                    "--game", args.game, "--track", args.track], check=True)
+    rc = animation_compiler.main(["--game", args.game, "--track", args.track])
+    if rc != 0:
+        return rc
 
     # Lightweight checks.
-    subprocess.run([sys.executable, str(ROOT / "animation" / "validate_anim_rules_v2.py"),
-                    "--game", args.game, "--track", args.track], check=True)
+    rc = rule_ledger.main(["--game", args.game, "--track", args.track])
+    if rc != 0:
+        return rc
     print(f"OK   compiled {args.game}/{args.track}: tts_regenerated={len(changed)} removed={len(removed)}")
     return 0
 

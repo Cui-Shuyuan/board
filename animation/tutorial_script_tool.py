@@ -37,18 +37,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from validate_timed_script import parse_file  # noqa: E402
-
-CPS = 5.0
-CUE_PAUSE = 0.2
-
-
-def format_time(seconds: float) -> str:
-    total_cs = int(round(max(0.0, seconds) * 100))
-    return f"[{total_cs // 6000:02d}:{(total_cs % 6000) / 100:05.2f}]"
-
-
-def count_chars(text: str) -> int:
-    return len(re.findall(r"[\u4e00-\u9fffA-Za-z0-9]", text))
+from lrc import CPS, CUE_PAUSE, count_chars, format_time, write_estimated_lrc  # noqa: E402
 
 
 def split_beats(text: str) -> list[str]:
@@ -128,41 +117,8 @@ def validate_source(data: dict[str, Any]) -> list[str]:
 
 
 def rebuild_lrc(data: dict[str, Any], out_path: Path | None = None) -> str:
-    lines: list[str] = []
-    lines.append(f"[ti:{data.get('title', '')}]")
-    lines.append(f"[game:{data.get('game_id', '')}]")
-    lines.append(f"[track:{data.get('track', '')}]")
-    lines.append("[timing:estimated]")
-    if data.get("version"):
-        lines.append(f"[version:{data['version']}]")
-    lines.append("[generator:tutorial_script_tool.py]")
-
-    cursor = 0.0
-    last_path: list[str] = []
-    for cue in data.get("cues", []):
-        path = cue.get("group_path") or ([cue["group"]] if cue.get("group") else [])
-        common = 0
-        while common < len(path) and common < len(last_path) and path[common] == last_path[common]:
-            common += 1
-        for title in path[common:]:
-            lines.append(f"[group:{title}]")
-        last_path = path
-
-        text = "".join((beat.get("text") or "") for beat in cue.get("beats", []))
-        if not text:
-            continue
-        refs = cue.get("refs", [])
-        ref_tag = f"[ref:{'|'.join(refs)}]" if refs else ""
-        lines.append(f"{format_time(cursor)}[id:{cue['id']}]{ref_tag}{text}")
-        cursor += max(1.0, count_chars(text) / CPS) + CUE_PAUSE + float(cue.get("pause_after", 0) or 0)
-
-    lines.append(f"[length:{format_time(cursor)[1:-1]}]")
-    output = "\n".join(lines) + "\n"
-    if out_path is not None:
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(output, encoding="utf-8")
-        print(f"[lrc] {out_path}")
-    return output
+    """Compatibility wrapper around :func:`lrc.write_estimated_lrc`."""
+    return write_estimated_lrc(data, out_path)
 
 
 def cmd_import(args: argparse.Namespace) -> int:

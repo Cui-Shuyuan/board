@@ -1,7 +1,8 @@
 // BoardGameTutorial
-// 临时移动端触控控制层：底部半透明面板 + 大尺寸触控按钮。
+// 临时触控控制层：底部半透明面板 + 大尺寸触控按钮。
 //
-// 仅用于 Unity 验证 APK 的真机交互验收；不是原生 Android UI，也不接后端。
+// 仅用于 Unity Editor / Desktop 调试。Android UaaL 正式客户端由 Compose
+// 控件负责播放控制；Android 构建不应挂载本组件（见 clients/android/README.md）。
 // 触摸输入优先走 Input System 的 Pointer.current；无 Input System 时回退到
 // Input 轮询。按钮由 OnGUI 绘制，但点击判定不依赖 GUI.Button，避免 Android
 // 触摸事件在 IMGUI 下不生效。
