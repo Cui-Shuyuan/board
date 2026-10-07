@@ -328,6 +328,29 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertAlmostEqual(
             clips[0]["mag_ortho_size"], clips[1]["mag_ortho_size"], places=6)
 
+    def test_set_order_can_pin_absolute_layer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            event = {
+                "op": "set_order",
+                "at": 0.2,
+                "slot": 2,
+                "layer": 7,
+                "target": {
+                    "space": "entity",
+                    "zone": "showcase",
+                    "template": "sample_card_1",
+                },
+            }
+            track_path, _ = write_schema_track(Path(tmp), event)
+            compiled = compile_anim.Compiler(track_path).compile()
+            cue = _compiled_cue(compiled, "example.show.001")
+
+        comps = [c for c in cue["end_state"]["components"]
+                 if c.get("ZoneId") == "showcase"]
+        self.assertEqual(1, len(comps), comps)
+        self.assertEqual(2, comps[0]["Order"])
+        self.assertEqual(7, comps[0]["Layer"])
+
     def test_camera_shot_view_offset_shifts_frame_center(self):
         stage = {
             "id": "offset_test",

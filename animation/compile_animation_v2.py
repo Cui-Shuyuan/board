@@ -915,7 +915,7 @@ class Compiler:
 
     def _warn_display_zone_state_ops(self):
         """Warn when a state event targets a zone that has no logical mapping."""
-        state_ops = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
+        state_ops = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_order", "set_face"}
         seen = set()
         for cue in self.doc.get("cues") or []:
             if not isinstance(cue, dict):
@@ -1341,8 +1341,9 @@ class Compiler:
                     base = int(ev.get("slot") or 0)
                     for off, it in enumerate(added):
                         state.move_order(it, zone, base + off)
-                for it in added:
-                    clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+                if not ev.get("setup"):
+                    for it in added:
+                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "ensure":
                 tpl = norm(ev.get("template"))
                 pal = norm(ev.get("palette"))
@@ -1353,14 +1354,16 @@ class Compiler:
                 concept, parts, pal = self.infer_meta(stage, tpl, pal, norm(ev.get("concept")), parts_norm(ev.get("parts")))
                 added = state.ensure_at_least(tpl, pal, concept, zone, count, face, parts, ev.get("layer"))
                 affected_ids = [it["id"] for it in added]
-                for it in added:
-                    clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
+                if not ev.get("setup"):
+                    for it in added:
+                        clips.append(self.spawn_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "destroy":
                 count = int(ev.get("count", 0) or 0)
                 victims = state.destroy(zone, sel, count, from_back=bool(ev.get("from_back")))
                 affected_ids = [it["id"] for it in victims]
-                for it in victims:
-                    clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
+                if not ev.get("setup"):
+                    for it in victims:
+                        clips.append(self.destroy_clip(it, at, dur, lead, easing, stage_slots))
             elif op == "transfer":
                 quantity = int(ev.get("quantity", ev.get("count", 1)) or 1)
                 raw_src = ev.get("source")
@@ -1522,6 +1525,25 @@ class Compiler:
                 arr = state.matching(zone, sel)
                 if arr:
                     state.move_order(arr[0], zone, int(ev.get("index", ev.get("order", 0)) or 0))
+            elif op == "set_order":
+                # Absolute order/slot assignment.  Unlike move_order this does
+                # not compact the whole zone, which is required for
+                # color_stack layouts where order is the (color, rank) key.
+                slot = ev.get("slot", ev.get("order"))
+                if slot is None:
+                    raise ValueError(f"cue {cue_id}: set_order needs slot/order")
+                arr = state.matching(zone, sel)
+                if len(arr) != 1:
+                    raise ValueError(
+                        f"cue {cue_id}: set_order needs exactly one matched item, got {len(arr)}")
+                arr[0]["order"] = int(slot)
+                # Optional absolute cover layer.  Tidying a color_stack by
+                # setting only the rank can leave rank and layer out of sync,
+                # which makes later cards hide earlier ones.  Setting both
+                # keeps the visible stack order equal to the authored rank.
+                layer = ev.get("layer")
+                if layer is not None:
+                    arr[0]["layer"] = int(layer)
             elif op == "highlight":
                 if ev.get("space") == "screen":
                     overlay_id = norm(ev.get("overlay"))

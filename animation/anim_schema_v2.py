@@ -25,7 +25,7 @@ COMPILED_TRACK_SCHEMA = "tutorial-anim-compiled/v2"
 COMPILED_STAGE_SCHEMA = "tutorial-stage-compiled/v2"
 
 TRANSITIONS = {"continue", "overlay", "cut", "world_cut"}
-STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_face"}
+STATE_OPS = {"ensure", "create", "destroy", "transfer", "stack", "shuffle", "move_order", "set_order", "set_face"}
 # Semantic action macros.  They are source-level sugar and are lowered to the
 # primitive STATE_OPS above by resolve_track(), so the compiler, validators and
 # audit tools only ever see the primitive event stream.
@@ -483,6 +483,17 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: move_order needs zone")
             if "index" not in ev and "order" not in ev:
                 report.error(f"{where}: move_order needs index/order")
+        elif op == "set_order":
+            _check_selector(report, where, ev, required=True)
+            if not ev.get("zone"):
+                report.error(f"{where}: set_order needs zone")
+            if "slot" not in ev and "order" not in ev:
+                report.error(f"{where}: set_order needs slot/order")
+            if ev.get("layer") is not None:
+                try:
+                    int(ev["layer"])
+                except (TypeError, ValueError):
+                    report.error(f"{where}: set_order layer must be an integer")
         elif op == "set_face":
             _check_selector(report, where, ev, required=False)
             if not ev.get("zone"):

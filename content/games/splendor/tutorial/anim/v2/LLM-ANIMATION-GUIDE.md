@@ -132,7 +132,10 @@
 规则：
 
 - `create` / `ensure` / `destroy` / `transfer` / `stack` /
-  `move_order` / `set_face` 改变逻辑状态，只实现实体对象。
+  `move_order` / `set_order` / `set_face` 改变逻辑状态，只实现实体对象。
+- `set_order` 用于按绝对槽位重排单个对象，不重编号整个 zone；适合 `color_stack` 这种
+  用 `order` 编码“颜色列 + rank”的布局。selector 必须唯一命中一个对象，`slot` 即目标 order；
+  可选 `layer` 同时指定该件的绝对压叠层，调 rank 时一起写，保证可见叠放顺序与 rank 一致。
 - `set_face` 可加 `"flip"` 和 `dur`：卡牌会真正翻面，`t=0` 与 `t=end` 时缩放
   恢复为 1，中点为 0（侧对镜头，正反都看不到）；翻转前半程显示翻前的面，中点后
   切到 `to` 面。`flip` 有两种写法：
@@ -198,7 +201,8 @@
   - `setup: true` 的静默前提状态若语义匹配通用动词，写对应动词 + `setup:true`
     （例如“玩家已经拿过两枚金” = `take`，只改状态不出动作）；只有纯清场/复位
     （`deck→offstage`、`player→offstage`、`offstage→noble_market` 等）才用底层
-    `transfer`。
+    `transfer`。底层 `create` / `destroy` 加 `setup:true` 时同样只改状态、不生成
+    出现/消失 clip，用于“cue 开始前就应该是这样”的前提。
 - `show` / `hide` / `highlight` / `point` / `shape` / `fade` / `scale` 是对象表现原语，
   实体和屏幕空间都实现。
 - **费用框按宝石种类数选择 `part`**：发展卡左下角的价格是一列彩色圆盘，一个颜色一个
