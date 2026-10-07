@@ -8,6 +8,7 @@
    - `project-overview.md` — 定位、功能、阶段
    - `architecture.md` — 本体 / Runtime / 检索 / Android 与语音接口
    - `tutorial-animation.md` — 讲规动画 v3
+   - `animation-refactor-todo.md` — 动画代码重构待办（新会话开工前读）
    - `game-status.md` — 九款游戏状态
    - `conventions.md` — JSON / 本体 / pipeline 规范
    - `tools.md` — 服务、脚本、校验、编译命令

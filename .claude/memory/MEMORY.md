@@ -11,6 +11,7 @@
 7. [tools.md](tools.md) — 服务、规则 freshness、后端测试、语音桥、Android、编译命令
 8. [user-preferences.md](user-preferences.md) — 用户偏好与协作方式
 9. [flow-guide.md](flow-guide.md) — 讲规动画之后的 Flow Guide 方向
+10. [animation-refactor-todo.md](animation-refactor-todo.md) — 动画工具链 / Unity Runtime 重构待办；新会话动手前先读
 
 ## 默认不读
 

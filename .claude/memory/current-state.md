@@ -40,6 +40,8 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前优先待办
 
+> 动画相关代码重构（跨平台 path bug、去 Splendor 硬编码、god function / C# Runtime 拆分等）已整理到 [animation-refactor-todo.md](animation-refactor-todo.md)；新会话从该文档开工。
+
 1. **Splendor full 重新过动画（真卡身份阻塞已解除，下一步逐 cue 重审）**
    - 4 张补扫真卡（红 34 / 红 87 / 黑 1 / 黑 71）已完成去白边、登记 registry/facts、补进 table stage，并把 `action.nobles.source.001` 的 B 区替换为专属真卡。
    - 当前检查结果：`check_card_identity_v2.py` 569 个中间状态 0 error；`validate_anim_rules_v2.py` 83 cues / 0 warnings；`check_anim_v2.py` 83 cues / 0 warnings；`audit_anim_v2.py` 53 cues / 0 error / 0 warning。
@@ -49,6 +51,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 2. **其余 8 款游戏 catalog / manifest**：补 `content/catalog/{game}.json` 与 `content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已有 v1。
 3. **Android 真机端到端验收**：验证 PTT → ASR → 提问 → 回答 TTS → 回到动画/继续播放的完整链路，以及打断后回跳重播。
 4. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
+   - 已知 `compile_tutorial --dry-run` 在 WSL 下误报 57 条文本变化，属于 manifest 路径分隔符 bug；优先按 [animation-refactor-todo.md](animation-refactor-todo.md) 的 P0-1 修复。
 5. **动画检查现状**：`check_anim_v2.py` 83 cues / 0 warnings，`validate_anim_rules_v2.py` 83 cues / 0 warnings，`audit_anim_v2.py` 53 cues / 0 error / 0 warning；此前 2 条 stage 重叠 warning 已不再报出。
 6. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
 
