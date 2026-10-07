@@ -4,135 +4,135 @@
     "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，",
     "words": [
       {
-        "confidence": 0.9417079,
-        "endTime": 0.485,
+        "confidence": 0.9170323,
+        "endTime": 0.455,
         "startTime": 0.285,
         "word": "和"
       },
       {
-        "confidence": 0.9704145,
-        "endTime": 0.655,
-        "startTime": 0.485,
+        "confidence": 0.95999986,
+        "endTime": 0.625,
+        "startTime": 0.455,
         "word": "宝"
       },
       {
-        "confidence": 0.96533626,
-        "endTime": 0.835,
-        "startTime": 0.655,
+        "confidence": 0.9276757,
+        "endTime": 0.815,
+        "startTime": 0.625,
         "word": "石"
       },
       {
-        "confidence": 0.93593067,
-        "endTime": 0.955,
-        "startTime": 0.835,
+        "confidence": 0.9303087,
+        "endTime": 0.935,
+        "startTime": 0.815,
         "word": "不"
       },
       {
-        "confidence": 0.96500283,
-        "endTime": 1.145,
-        "startTime": 0.955,
+        "confidence": 0.95832163,
+        "endTime": 1.135,
+        "startTime": 0.935,
         "word": "同"
       },
       {
-        "confidence": 0.9495721,
-        "endTime": 1.265,
-        "startTime": 1.145,
+        "confidence": 0.9583948,
+        "endTime": 1.245,
+        "startTime": 1.135,
         "word": "的"
       },
       {
-        "confidence": 0.8949577,
-        "endTime": 1.655,
-        "startTime": 1.265,
+        "confidence": 0.9047528,
+        "endTime": 1.595,
+        "startTime": 1.245,
         "word": "是，"
       },
       {
-        "confidence": 0.9486206,
-        "endTime": 1.985,
-        "startTime": 1.875,
+        "confidence": 0.93690956,
+        "endTime": 1.905,
+        "startTime": 1.805,
         "word": "玩"
       },
       {
-        "confidence": 0.964564,
-        "endTime": 2.185,
-        "startTime": 1.985,
+        "confidence": 0.9666811,
+        "endTime": 2.105,
+        "startTime": 1.905,
         "word": "家"
       },
       {
-        "confidence": 0.9079731,
-        "endTime": 2.285,
-        "startTime": 2.185,
+        "confidence": 0.9334865,
+        "endTime": 2.205,
+        "startTime": 2.105,
         "word": "一"
       },
       {
-        "confidence": 0.973126,
-        "endTime": 2.465,
-        "startTime": 2.285,
+        "confidence": 0.963154,
+        "endTime": 2.385,
+        "startTime": 2.205,
         "word": "回"
       },
       {
-        "confidence": 0.9786103,
-        "endTime": 2.715,
-        "startTime": 2.465,
+        "confidence": 0.975328,
+        "endTime": 2.645,
+        "startTime": 2.385,
         "word": "合"
       },
       {
-        "confidence": 0.96595603,
-        "endTime": 2.865,
-        "startTime": 2.715,
+        "confidence": 0.9739374,
+        "endTime": 2.805,
+        "startTime": 2.645,
         "word": "只"
       },
       {
-        "confidence": 0.98566514,
-        "endTime": 3.025,
-        "startTime": 2.865,
+        "confidence": 0.97819877,
+        "endTime": 2.985,
+        "startTime": 2.805,
         "word": "能"
       },
       {
-        "confidence": 0.98049325,
-        "endTime": 3.185,
-        "startTime": 3.025,
+        "confidence": 0.97933,
+        "endTime": 3.145,
+        "startTime": 2.985,
         "word": "购"
       },
       {
-        "confidence": 0.96817416,
-        "endTime": 3.345,
-        "startTime": 3.185,
+        "confidence": 0.9582694,
+        "endTime": 3.285,
+        "startTime": 3.145,
         "word": "买"
       },
       {
-        "confidence": 0.92401314,
-        "endTime": 3.545,
-        "startTime": 3.345,
+        "confidence": 0.90237117,
+        "endTime": 3.495,
+        "startTime": 3.285,
         "word": "一"
       },
       {
-        "confidence": 0.9718827,
-        "endTime": 3.735,
-        "startTime": 3.545,
+        "confidence": 0.9714261,
+        "endTime": 3.705,
+        "startTime": 3.495,
         "word": "张"
       },
       {
-        "confidence": 0.98026764,
-        "endTime": 3.925,
-        "startTime": 3.735,
+        "confidence": 0.98346865,
+        "endTime": 3.885,
+        "startTime": 3.705,
         "word": "发"
       },
       {
-        "confidence": 0.88648605,
-        "endTime": 4.055,
-        "startTime": 3.925,
+        "confidence": 0.8829697,
+        "endTime": 4.015,
+        "startTime": 3.885,
         "word": "展"
       },
       {
-        "confidence": 0.9489551,
-        "endTime": 4.255,
-        "startTime": 4.055,
+        "confidence": 0.953917,
+        "endTime": 4.215,
+        "startTime": 4.015,
         "word": "卡"
       },
       {
-        "confidence": 0.9650314,
-        "endTime": 4.595,
-        "startTime": 4.255,
+        "confidence": 0.95540345,
+        "endTime": 4.585,
+        "startTime": 4.215,
         "word": "牌，"
       }
     ]
@@ -142,123 +142,123 @@
     "text": "但玩家总计可以购买的发展卡牌数量没有上限。",
     "words": [
       {
-        "confidence": 0.7015917,
-        "endTime": 5.225042,
-        "startTime": 5.0100417,
+        "confidence": 0.7275406,
+        "endTime": 5.085042,
+        "startTime": 4.930042,
         "word": "但"
       },
       {
-        "confidence": 0.8606437,
-        "endTime": 5.375042,
-        "startTime": 5.225042,
+        "confidence": 0.9144532,
+        "endTime": 5.245042,
+        "startTime": 5.085042,
         "word": "玩"
       },
       {
-        "confidence": 0.9336306,
-        "endTime": 5.5850415,
-        "startTime": 5.375042,
+        "confidence": 0.8885442,
+        "endTime": 5.4850416,
+        "startTime": 5.245042,
         "word": "家"
       },
       {
-        "confidence": 0.96446085,
-        "endTime": 5.7750416,
-        "startTime": 5.5850415,
+        "confidence": 0.9571166,
+        "endTime": 5.7150416,
+        "startTime": 5.4850416,
         "word": "总"
       },
       {
-        "confidence": 0.8086533,
-        "endTime": 5.9850416,
-        "startTime": 5.7750416,
+        "confidence": 0.80318165,
+        "endTime": 5.935042,
+        "startTime": 5.7150416,
         "word": "计"
       },
       {
-        "confidence": 0.8562317,
-        "endTime": 6.1350417,
-        "startTime": 5.9850416,
+        "confidence": 0.8634121,
+        "endTime": 6.085042,
+        "startTime": 5.935042,
         "word": "可"
       },
       {
-        "confidence": 0.80509484,
-        "endTime": 6.265042,
-        "startTime": 6.1350417,
+        "confidence": 0.84399754,
+        "endTime": 6.2150416,
+        "startTime": 6.085042,
         "word": "以"
       },
       {
-        "confidence": 0.88814133,
-        "endTime": 6.4250417,
-        "startTime": 6.265042,
+        "confidence": 0.92423713,
+        "endTime": 6.375042,
+        "startTime": 6.2150416,
         "word": "购"
       },
       {
-        "confidence": 0.98020494,
-        "endTime": 6.6150417,
-        "startTime": 6.4250417,
+        "confidence": 0.97814107,
+        "endTime": 6.5650415,
+        "startTime": 6.375042,
         "word": "买"
       },
       {
-        "confidence": 0.9837657,
-        "endTime": 6.745042,
-        "startTime": 6.6150417,
+        "confidence": 0.95582664,
+        "endTime": 6.705042,
+        "startTime": 6.5650415,
         "word": "的"
       },
       {
-        "confidence": 0.9846336,
-        "endTime": 6.915042,
-        "startTime": 6.745042,
+        "confidence": 0.98486984,
+        "endTime": 6.875042,
+        "startTime": 6.705042,
         "word": "发"
       },
       {
-        "confidence": 0.9007057,
-        "endTime": 7.035042,
-        "startTime": 6.915042,
+        "confidence": 0.87278146,
+        "endTime": 7.005042,
+        "startTime": 6.875042,
         "word": "展"
       },
       {
-        "confidence": 0.9418434,
-        "endTime": 7.2250414,
-        "startTime": 7.035042,
+        "confidence": 0.9362376,
+        "endTime": 7.185042,
+        "startTime": 7.005042,
         "word": "卡"
       },
       {
-        "confidence": 0.95477927,
-        "endTime": 7.3650417,
-        "startTime": 7.2250414,
+        "confidence": 0.9648801,
+        "endTime": 7.3450418,
+        "startTime": 7.185042,
         "word": "牌"
       },
       {
-        "confidence": 0.96922773,
-        "endTime": 7.6150417,
-        "startTime": 7.3650417,
+        "confidence": 0.9768993,
+        "endTime": 7.575042,
+        "startTime": 7.3450418,
         "word": "数"
       },
       {
-        "confidence": 0.9523898,
-        "endTime": 7.805042,
-        "startTime": 7.6150417,
+        "confidence": 0.9619039,
+        "endTime": 7.755042,
+        "startTime": 7.575042,
         "word": "量"
       },
       {
-        "confidence": 0.28098342,
-        "endTime": 7.875042,
-        "startTime": 7.805042,
+        "confidence": 0.22048333,
+        "endTime": 7.8150415,
+        "startTime": 7.755042,
         "word": "没"
       },
       {
-        "confidence": 0.13888597,
-        "endTime": 7.9050417,
-        "startTime": 7.875042,
+        "confidence": 0.13819616,
+        "endTime": 7.8450418,
+        "startTime": 7.8150415,
         "word": "有"
       },
       {
-        "confidence": 0.048898935,
-        "endTime": 7.9650416,
-        "startTime": 7.9050417,
+        "confidence": 0.0600319,
+        "endTime": 7.9050417,
+        "startTime": 7.8450418,
         "word": "上"
       },
       {
-        "confidence": 0.10449562,
-        "endTime": 8.025042,
-        "startTime": 7.9650416,
+        "confidence": 0.07747478,
+        "endTime": 7.965042,
+        "startTime": 7.9050417,
         "word": "限。"
       }
     ]

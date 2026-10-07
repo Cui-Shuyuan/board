@@ -4,111 +4,111 @@
     "text": "举个例子：现在我已经购买了1张白宝石牌，",
     "words": [
       {
-        "confidence": 0.8520721,
+        "confidence": 0.8025021,
         "endTime": 0.455,
-        "startTime": 0.305,
+        "startTime": 0.295,
         "word": "举"
       },
       {
-        "confidence": 0.85793495,
-        "endTime": 0.565,
+        "confidence": 0.88141775,
+        "endTime": 0.555,
         "startTime": 0.455,
         "word": "个"
       },
       {
-        "confidence": 0.7608502,
+        "confidence": 0.807041,
         "endTime": 0.705,
-        "startTime": 0.565,
+        "startTime": 0.555,
         "word": "例"
       },
       {
-        "confidence": 0.17454769,
+        "confidence": 0.13955383,
         "endTime": 0.735,
         "startTime": 0.705,
         "word": "子："
       },
       {
-        "confidence": 0.98383355,
-        "endTime": 1.515,
-        "startTime": 1.305,
+        "confidence": 0.98132694,
+        "endTime": 1.425,
+        "startTime": 1.205,
         "word": "现"
       },
       {
-        "confidence": 0.95786303,
-        "endTime": 1.725,
-        "startTime": 1.515,
+        "confidence": 0.96138394,
+        "endTime": 1.665,
+        "startTime": 1.425,
         "word": "在"
       },
       {
-        "confidence": 0.94726133,
-        "endTime": 1.845,
-        "startTime": 1.725,
+        "confidence": 0.8878709,
+        "endTime": 1.785,
+        "startTime": 1.665,
         "word": "我"
       },
       {
-        "confidence": 0.96193916,
-        "endTime": 1.945,
-        "startTime": 1.845,
+        "confidence": 0.9248909,
+        "endTime": 1.885,
+        "startTime": 1.785,
         "word": "已"
       },
       {
-        "confidence": 0.97762203,
-        "endTime": 2.095,
-        "startTime": 1.945,
+        "confidence": 0.95890325,
+        "endTime": 2.055,
+        "startTime": 1.885,
         "word": "经"
       },
       {
-        "confidence": 0.97294647,
-        "endTime": 2.255,
-        "startTime": 2.095,
+        "confidence": 0.9585939,
+        "endTime": 2.235,
+        "startTime": 2.055,
         "word": "购"
       },
       {
-        "confidence": 0.9776428,
-        "endTime": 2.435,
-        "startTime": 2.255,
+        "confidence": 0.9779553,
+        "endTime": 2.415,
+        "startTime": 2.235,
         "word": "买"
       },
       {
-        "confidence": 0.51403105,
-        "endTime": 2.555,
-        "startTime": 2.435,
+        "confidence": 0.53572744,
+        "endTime": 2.535,
+        "startTime": 2.415,
         "word": "了"
       },
       {
-        "confidence": 0.19881956,
-        "endTime": 2.605,
-        "startTime": 2.555,
+        "confidence": 0.16877803,
+        "endTime": 2.565,
+        "startTime": 2.535,
         "word": "1"
       },
       {
-        "confidence": 0.782784,
+        "confidence": 0.70997876,
         "endTime": 2.855,
-        "startTime": 2.605,
+        "startTime": 2.565,
         "word": "张"
       },
       {
-        "confidence": 0.9351993,
+        "confidence": 0.9666675,
         "endTime": 3.025,
         "startTime": 2.855,
         "word": "白"
       },
       {
-        "confidence": 0.9703361,
+        "confidence": 0.96787614,
         "endTime": 3.175,
         "startTime": 3.025,
         "word": "宝"
       },
       {
-        "confidence": 0.93515617,
-        "endTime": 3.345,
+        "confidence": 0.9237239,
+        "endTime": 3.355,
         "startTime": 3.175,
         "word": "石"
       },
       {
-        "confidence": 0.9284838,
-        "endTime": 3.715,
-        "startTime": 3.345,
+        "confidence": 0.9456686,
+        "endTime": 3.685,
+        "startTime": 3.355,
         "word": "牌，"
       }
     ]
@@ -118,87 +118,87 @@
     "text": "那么下一回合我想购买这张牌时，",
     "words": [
       {
-        "confidence": 0.7484176,
-        "endTime": 4.0050416,
-        "startTime": 3.9300416,
+        "confidence": 0.93085366,
+        "endTime": 4.055042,
+        "startTime": 3.9600418,
         "word": "那"
       },
       {
-        "confidence": 0.74691945,
-        "endTime": 4.1750417,
-        "startTime": 4.0050416,
+        "confidence": 0.94510436,
+        "endTime": 4.145042,
+        "startTime": 4.055042,
         "word": "么"
       },
       {
-        "confidence": 0.9258432,
-        "endTime": 4.3750415,
-        "startTime": 4.1750417,
+        "confidence": 0.92984176,
+        "endTime": 4.335042,
+        "startTime": 4.145042,
         "word": "下"
       },
       {
-        "confidence": 0.827501,
-        "endTime": 4.4650416,
-        "startTime": 4.3750415,
+        "confidence": 0.8372283,
+        "endTime": 4.4250417,
+        "startTime": 4.335042,
         "word": "一"
       },
       {
-        "confidence": 0.9730031,
-        "endTime": 4.6350417,
-        "startTime": 4.4650416,
+        "confidence": 0.9737177,
+        "endTime": 4.5950418,
+        "startTime": 4.4250417,
         "word": "回"
       },
       {
-        "confidence": 0.93947375,
-        "endTime": 4.9050417,
-        "startTime": 4.6350417,
+        "confidence": 0.944831,
+        "endTime": 4.8650417,
+        "startTime": 4.5950418,
         "word": "合"
       },
       {
-        "confidence": 0.959938,
-        "endTime": 5.0150414,
-        "startTime": 4.9050417,
+        "confidence": 0.92982656,
+        "endTime": 4.955042,
+        "startTime": 4.8650417,
         "word": "我"
       },
       {
-        "confidence": 0.98588955,
-        "endTime": 5.2250414,
-        "startTime": 5.0150414,
+        "confidence": 0.985255,
+        "endTime": 5.1450415,
+        "startTime": 4.955042,
         "word": "想"
       },
       {
-        "confidence": 0.9332781,
-        "endTime": 5.3750415,
-        "startTime": 5.2250414,
+        "confidence": 0.943381,
+        "endTime": 5.305042,
+        "startTime": 5.1450415,
         "word": "购"
       },
       {
-        "confidence": 0.9786648,
-        "endTime": 5.535042,
-        "startTime": 5.3750415,
+        "confidence": 0.9754373,
+        "endTime": 5.4650416,
+        "startTime": 5.305042,
         "word": "买"
       },
       {
-        "confidence": 0.8775109,
-        "endTime": 5.6550417,
-        "startTime": 5.535042,
+        "confidence": 0.8815532,
+        "endTime": 5.5950418,
+        "startTime": 5.4650416,
         "word": "这"
       },
       {
-        "confidence": 0.9665298,
-        "endTime": 5.8050413,
-        "startTime": 5.6550417,
+        "confidence": 0.9646269,
+        "endTime": 5.745042,
+        "startTime": 5.5950418,
         "word": "张"
       },
       {
-        "confidence": 0.95114815,
-        "endTime": 5.9850416,
-        "startTime": 5.8050413,
+        "confidence": 0.9320218,
+        "endTime": 5.955042,
+        "startTime": 5.745042,
         "word": "牌"
       },
       {
-        "confidence": 0.95055586,
-        "endTime": 6.3550415,
-        "startTime": 5.9850416,
+        "confidence": 0.9626303,
+        "endTime": 6.3150415,
+        "startTime": 5.955042,
         "word": "时，"
       }
     ]
@@ -208,63 +208,63 @@
     "text": "只需要支付2枚白宝石、",
     "words": [
       {
-        "confidence": 0.8763424,
-        "endTime": 6.695083,
-        "startTime": 6.550083,
+        "confidence": 0.8574025,
+        "endTime": 6.635083,
+        "startTime": 6.5200834,
         "word": "只"
       },
       {
-        "confidence": 0.9757717,
-        "endTime": 6.835083,
-        "startTime": 6.695083,
+        "confidence": 0.9580536,
+        "endTime": 6.7850833,
+        "startTime": 6.635083,
         "word": "需"
       },
       {
-        "confidence": 0.87746435,
-        "endTime": 6.985083,
-        "startTime": 6.835083,
+        "confidence": 0.9368494,
+        "endTime": 6.9150834,
+        "startTime": 6.7850833,
         "word": "要"
       },
       {
-        "confidence": 0.9714056,
-        "endTime": 7.1850834,
-        "startTime": 6.985083,
+        "confidence": 0.9779656,
+        "endTime": 7.095083,
+        "startTime": 6.9150834,
         "word": "支"
       },
       {
-        "confidence": 0.802965,
-        "endTime": 7.465083,
-        "startTime": 7.1850834,
+        "confidence": 0.7661841,
+        "endTime": 7.3550835,
+        "startTime": 7.095083,
         "word": "付"
       },
       {
-        "confidence": 0.2665855,
-        "endTime": 7.6450834,
-        "startTime": 7.615083,
+        "confidence": 0.25205508,
+        "endTime": 7.5350833,
+        "startTime": 7.5050836,
         "word": "2"
       },
       {
-        "confidence": 0.94373757,
-        "endTime": 7.855083,
-        "startTime": 7.6450834,
+        "confidence": 0.9113079,
+        "endTime": 7.7550836,
+        "startTime": 7.5350833,
         "word": "枚"
       },
       {
-        "confidence": 0.93897873,
-        "endTime": 8.015083,
-        "startTime": 7.855083,
+        "confidence": 0.9628784,
+        "endTime": 7.9150834,
+        "startTime": 7.7550836,
         "word": "白"
       },
       {
-        "confidence": 0.8659552,
-        "endTime": 8.165083,
-        "startTime": 8.015083,
+        "confidence": 0.80997807,
+        "endTime": 8.085083,
+        "startTime": 7.9150834,
         "word": "宝"
       },
       {
-        "confidence": 0.12603197,
-        "endTime": 8.195084,
-        "startTime": 8.165083,
+        "confidence": 0.1489544,
+        "endTime": 8.405084,
+        "startTime": 8.375084,
         "word": "石、"
       }
     ]
@@ -274,81 +274,81 @@
     "text": "1枚蓝宝石和1枚黑宝石即可。",
     "words": [
       {
-        "confidence": 0.29997283,
-        "endTime": 8.845124,
-        "startTime": 8.8151245,
+        "confidence": 0.23285009,
+        "endTime": 8.755125,
+        "startTime": 8.725125,
         "word": "1"
       },
       {
-        "confidence": 0.8564175,
-        "endTime": 9.055124,
-        "startTime": 8.845124,
+        "confidence": 0.86125195,
+        "endTime": 8.975125,
+        "startTime": 8.755125,
         "word": "枚"
       },
       {
-        "confidence": 0.83560985,
-        "endTime": 9.185124,
-        "startTime": 9.055124,
+        "confidence": 0.86639714,
+        "endTime": 9.105125,
+        "startTime": 8.975125,
         "word": "蓝"
       },
       {
-        "confidence": 0.95765597,
-        "endTime": 9.415125,
-        "startTime": 9.185124,
+        "confidence": 0.95765966,
+        "endTime": 9.325126,
+        "startTime": 9.105125,
         "word": "宝"
       },
       {
-        "confidence": 0.93312776,
-        "endTime": 9.735125,
-        "startTime": 9.415125,
+        "confidence": 0.9211924,
+        "endTime": 9.655126,
+        "startTime": 9.325126,
         "word": "石"
       },
       {
-        "confidence": 0.602667,
-        "endTime": 10.025125,
-        "startTime": 9.765124,
+        "confidence": 0.6468597,
+        "endTime": 9.945126,
+        "startTime": 9.685125,
         "word": "和"
       },
       {
-        "confidence": 0.17163095,
-        "endTime": 10.055124,
-        "startTime": 10.025125,
+        "confidence": 0.16604403,
+        "endTime": 9.975125,
+        "startTime": 9.945126,
         "word": "1"
       },
       {
-        "confidence": 0.785078,
-        "endTime": 10.245125,
-        "startTime": 10.055124,
+        "confidence": 0.8173637,
+        "endTime": 10.155126,
+        "startTime": 9.975125,
         "word": "枚"
       },
       {
-        "confidence": 0.9409589,
-        "endTime": 10.435124,
-        "startTime": 10.245125,
+        "confidence": 0.94102985,
+        "endTime": 10.355125,
+        "startTime": 10.155126,
         "word": "黑"
       },
       {
-        "confidence": 0.506842,
-        "endTime": 10.525125,
-        "startTime": 10.435124,
+        "confidence": 0.45368975,
+        "endTime": 10.435125,
+        "startTime": 10.355125,
         "word": "宝"
       },
       {
-        "confidence": 0.13943923,
-        "endTime": 10.585125,
-        "startTime": 10.525125,
+        "confidence": 0.13124993,
+        "endTime": 10.495125,
+        "startTime": 10.435125,
         "word": "石"
       },
       {
-        "confidence": 0.08950196,
-        "endTime": 10.645124,
-        "startTime": 10.585125,
+        "confidence": 0.09573128,
+        "endTime": 10.555125,
+        "startTime": 10.495125,
         "word": "即"
       },
       {
-        "confidence": 0.20455022,
-        "endTime": 10.705125,
-        "startTime": 10.645124,
+        "confidence": 0.1546655,
+        "endTime": 10.615126,
+        "startTime": 10.555125,
         "word": "可。"
       }
     ]
