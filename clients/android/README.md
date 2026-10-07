@@ -1,16 +1,16 @@
-# UaaL Android 正式客户端骨架
+# UaaL Android 客户端
 
-原生 Android 壳 + Unity 导出的 `unityLibrary`，用于验证 Unity as a Library（UaaL）的正式客户端结构。
+原生 Android 壳 + Unity 导出的 `unityLibrary`；首页、资源管理、教程播放与语音问答都走 Compose 控制层，Unity 负责底层动画与音频的确定性播放。
 
-本阶段把 POC 的 Java + `Button` 控制层替换为：
+当前客户端已经把 POC 的 Java + `Button` 控制层替换为：
 
-- Kotlin `MainActivity`；
-- Jetpack Compose 控制层；
-- Unity 视图仍作为底层渲染区域；
-- Compose 原生控制层只占顶部安全区，不永久遮挡 Unity 字幕；
+- Kotlin `MainActivity` + Jetpack Compose 全屏控制层，Unity 仍作为底层渲染区域；
+- 首页游戏目录 / 搜索 / 历史 / 资源管理，manifest 驱动的本地内容仓库与增量下载 / 断点续传 v1；
+- 教程播放器控制层（时间轴 / 章节 / 播放控制）与 Unity 状态回传；
+- 问答面板、按住说话 PTT、ASR 回填、回答 TTS、自动播报 / 重播 / 继续播放；
 - 通过固定 GameObject `AndroidTutorialBridge` 的字符串协议控制播放。
 
-本阶段已接入内容 manifest / 本地内容仓库 / 增量下载 v1；仍不做 ASR/TTS/问答、不拆仓、不改游戏 JSON / animation / compiled 语义。
+不变的是：不拆仓、不改游戏 JSON / animation / compiled 语义，Unity 仍只负责确定性播放。
 
 ## 目录
 
@@ -28,11 +28,13 @@ clients/android/
     src/debug/AndroidManifest.xml          debug 明文 HTTP 配置
     src/main/java/com/boardai/tutorial/uaal/MainActivity.kt
     src/main/java/com/boardai/tutorial/uaal/UnityBridgeCallback.kt
-    src/main/java/com/boardai/tutorial/uaal/content/
-      ContentManifest.kt                  manifest JSON 模型
-      ContentStore.kt                     本地版本仓库 / active.json
-      ContentUpdater.kt                   manifest 拉取、SHA-256、增量下载
-      ContentUpdateState.kt               Compose 更新状态
+    src/main/java/com/boardai/tutorial/uaal/content/      manifest 模型 / 本地版本仓库 / 增量下载 / 断点续传
+    src/main/java/com/boardai/tutorial/uaal/catalog/      游戏目录拉取与搜索
+    src/main/java/com/boardai/tutorial/uaal/home/         首页 / 搜索 / 历史 / 资源管理
+    src/main/java/com/boardai/tutorial/uaal/player/       播放控制 / 时间轴 / 章节 / Unity 状态
+    src/main/java/com/boardai/tutorial/uaal/qa/           问答面板 / 会话 / 问答 TTS
+    src/main/java/com/boardai/tutorial/uaal/timeline/     播放时间轴模型
+    src/main/java/com/boardai/tutorial/uaal/voice/        ASR / TTS / 录音与回答播放
 ```
 
 Unity 侧：
@@ -118,6 +120,17 @@ Unity 脚本检查：
 python3 tools/ops/check_unity_scripts.py
 ```
 
+### JVM 单元测试
+
+当前 7 个测试文件覆盖内容状态 / 更新器 / 首页协调 / 播放会话 / 时间轴 / Unity 加载队列 / 问答语音控制器：
+
+```bat
+cd D:\workspace\board\clients\android
+gradlew.bat testDebugUnitTest
+```
+
+该命令需要已导出的 `unityLibrary`、`local.properties` 中的 Android SDK 与可用 JDK；文档更新时未重新执行 Android 测试，真机验收范围也待复测。
+
 ### 旧 Unity 独立 APK 构建入口
 
 旧入口仍在：
@@ -155,19 +168,19 @@ D:\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe ^
 
 控制层实现：
 
-- `ComposeView` 通过 `android.R.id.content.addView` 叠加在 Unity SurfaceView 上方；
-- ComposeView 高度为 `WRAP_CONTENT`，位于顶部安全区；
-- 背景半透明黑色，底角圆角；
-- 大按钮 56dp 高，横向均分；
-- 按钮：暂停/继续、-15 秒、+15 秒、音量 -、音量 +；
-- 状态：播放中/已暂停、cue `当前/总数 · id`、音量百分比；
-- 本轮已移除 `android:hardwareAccelerated=false`，让 Unity Surface 和 Compose 都走硬件加速；控制按钮暂时仍保留无 ripple 的 Compose 自定义实现，Material ripple 留作后续单独验证。
+- `ComposeView` 通过 `android.R.id.content.addView` 全屏叠加在 Unity SurfaceView 上方；画面区域触摸透传给 Unity，只有实际控件接收 Compose 手势；
+- 顶部 `PlayerTopBar` 提供返回首页与当前章节路径；
+- 底部 `PlayerTransportBar` 集中了合并时间轴 / 章节分段 / 进度与播放头（`PlayerTimelineBar`）、cue 文本、上一 cue / 下一 cue、中央播放 / 暂停、-15 秒 / +15 秒、音量、章节列表、提问入口与 debug 调试开关；
+- 单击画面显示 / 隐藏控制层，双击左 / 右半屏相对快退 / 快进，进度条支持拖动 seek；
+- 打开问答时暂停动画并淡出控制层，关闭后按原播放状态继续或重播；
+- 控制按钮暂时保留无 ripple 的 Compose 自定义实现，Material ripple 留作后续单独验证。
 
 Unity ready 握手：
 
 - `AndroidTutorialBridge` 在 `Start()` 后通过状态 JSON 上报 `unityReady`；
-- `MainActivity` 通过观察 `UnityStatusHolder.status` 发送 Unity 命令，不使用固定 `postDelayed`；
-- 收到 `unityReady=true` 后只执行一次 `SetUnityTouchControlsEnabled("false")` 和 `checkContentUpdate()`；
+- `MainActivity` / `PlayerSessionController` 观察 `UnityStatusHolder.status`，不使用固定 `postDelayed`；
+- `UnityLoadQueue.onUnityReady()` 只执行一次：关闭 Unity 旧触控层、执行 pending unload/load（`LoadGameWithRoot` / `LoadGame` / `UnloadGame`）、发送 `RequestStatus`；
+- `MainActivity.onUnityReady()` 再发送 `SetDebugBuild`（debug 下附带 `SetDebugOverlay`）；
 - Unity 未就绪时控制条状态显示“等待 Unity…”。
 
 字幕避让：
@@ -203,7 +216,7 @@ public const string GameObjectName = "AndroidTutorialBridge";
 | `LoadGameWithRoot` | `{gameId}|{versionRoot}` | 正式流程：设置 `gameId` 和 `tutorialRoot`（`versionRoot`）后 `ReloadGame`；`versionRoot` 为 `context.filesDir/board-content/versions/{version}` |
 | `SetContentRoot` | version 目录 | 旧接口兼容；Unity 仍会拼接 `gameId`，正式流程使用 `LoadGameWithRoot` |
 | `ReloadGame` | `""` | 停止当前播放，重新 ResolveGameRoot + LoadAndPlay |
-| `CheckContentUpdate` | `""` | 协议占位；更新由 Compose 原生层触发 |
+| `CheckContentUpdate` | `""` | 协议占位；内容检查由 Compose 原生层在首页/资源管理打开时触发 |
 | `SetUnityTouchControlsEnabled` | `"true"` / `"false"` | 启用/禁用旧 Unity IMGUI 触控层 |
 | `SetDebugBuild` | `"1"` / `"0"` | 原生告知 Unity 当前是否是 debug 可调包包；release 显式关闭调试门禁 |
 | `SetDebugOverlay` | `"1"` / `"0"` | 打开/关闭当前 cue 信息和 on-stage zone 范围框 |
@@ -460,7 +473,7 @@ ping -n 20 127.0.0.1 >nul
 
 ## 下一步建议
 
-- 把 `UnityBridgeCallback` 的状态字段扩展到进度条和章节树；
-- 后续可做内容版本回滚和更积极的旧版本清理；
+- 完成真机端到端验收：PTT → ASR → `/api/chat` → 回答 TTS，以及问答结束后回到动画 / 重播的完整链路；
+- 继续完善内容版本回滚和更积极的旧版本清理；
 - 将 Unity 状态回传节流策略改为事件驱动，降低每 0.5 秒的 JNI 调用频率；
-- 后续可在较新 Android 版本上单独恢复 Material ripple 并做对比验证。
+- 在较新 Android 版本上单独恢复 Material ripple 并做对比验证。

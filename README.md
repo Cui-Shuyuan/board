@@ -89,7 +89,7 @@ _stage/*.stage.json（zone / template / 机位）
 
 ```text
 backend/
-  BoardAI.Api/            .NET 9 Web API（规则、Chat、Content、ASR/TTS）
+  BoardAI.Api/            .NET 9 Web API（Chat、Rules、Catalog、Content、ASR/TTS）
   BoardAI.Api.Tests/      xUnit 测试
 clients/
   android/                UaaL 原生 Android 壳 + Kotlin + Jetpack Compose
@@ -197,7 +197,7 @@ python3 tools/voice/tts_once.py \
 
 ## 讲规动画
 
-当前试点：**Splendor full**，约 110 cue，TTS / runtime / compiled / Unity 播放器 / 采样对账链已跑通。
+当前试点：**Splendor full**，83 cue；口播、TTS / runtime / compiled / Unity 播放器 / 采样对账链已跑通，发展卡真卡身份与终局 cue 已收口。
 
 ### 关键文件
 
@@ -272,7 +272,7 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 | 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放 |
 | 动画审计 | `python3 animation/audit_anim_v2.py --game splendor --track full` | 跨 cue 守恒 / 补牌 / pointer |
 | 卡身份 | `python3 animation/check_card_identity_v2.py --game splendor --track full` | 同一 state 无重复真卡 |
-| Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 110 cue 状态对账 |
+| Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 83 cue 状态对账 |
 | 单元测试 | `python3 -m unittest animation/test_compile_animation_v2.py animation/test_audit_anim_v2.py` | 动画工具测试 |
 
 ## 开发约定
@@ -298,9 +298,9 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 
 - 后端服务化拆分完成，xUnit 75/75。
 - 9 款游戏有规则数据，8 款有 `flow.json`；Splendor 是 Runtime + 动画试点。
-- Splendor full 约 110 cue；QA、time_anchors、compiled、Unity 采样链可运行。
+- Splendor full 83 cue；QA、time_anchors、compiled、Unity 采样链可运行，终局与真卡身份已收口。
 - Android UaaL / 内容更新 / 播放器 / 问答语音首版已落地；完整真机端到端验收待复测。
-- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 动画，逐 cue 看真卡画面。
+- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 83 cue，逐 cue 看真卡画面。
 - 其余 8 款游戏 catalog / manifest 待补。
 - Flow Guide 尚未开始；动画 Quick 版尚未开始。
 

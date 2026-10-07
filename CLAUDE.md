@@ -17,7 +17,7 @@
 
 ## 当前状态
 
-见 `.claude/memory/current-state.md`。一句话：Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，75 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 进入收尾/暂停状态，Flow Guide 是动画收口后的下一产品方向。
+见 `.claude/memory/current-state.md`。一句话：Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，75 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 已完成终局与真卡身份收口，下一步逐 cue 重审，Flow Guide 是动画收口后的下一产品方向。
 
 ## 关键文件
 

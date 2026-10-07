@@ -26,16 +26,15 @@
    schema 校验会直接报错，而不是等到 Unity 里肉眼发现脏帧。
 
 3. **`clips`** — 纯视觉插值。
-   位置/缩放/透明度/翻转（轴向、方向、落点）/洗混。**不得再写 ZoneId/Order/Face**：逻辑状态只由
+   位置/缩放/透明度/翻转（轴向、方向、落点）/洗混。**不得再写 ZoneId/Order/Face**：逻辑状态只由 `state_ops` 决定。
    `move` / `take` / `pay` / `flip` / `draw` 是编译期展开的通用薄宏，写法见 LLM-ANIMATION-GUIDE.md。
-   `state_ops` 决定。
 
 ## 时间锚点（全量）
 
 空间有 `zone + order -> x/z`，时间也有同样的映射层：`anchor + offset -> at`。
 
 - 轨道顶层 `time_anchors` 是“时间坐标声明”，一开始就全部写好；
-  当前 full 轨道有 468 个锚点，覆盖每条 cue 的 start/end 和每个 beat 的 start/end。
+  当前 full 轨道有 388 个锚点，覆盖每条 cue 的 start/end 和每个 beat 的 start/end。
 - 所有事件写 `anchor`；只有原始时间点没有正好落在锚点上时，
   才补一个相对 `offset`。
 - 编译器从 `script.{track}.json` 的 beat 文本 + `{track}.runtime.json` 的
@@ -111,8 +110,8 @@
 `setup.starting_player.001.2` 连 `tree`、`transition`、`enter/exit` 都不写，自动继承父节点，
 镜头也自然保持 `shot_holding`。
 
-`full.anim.json` 已按这套规则做过一次确定性最小化：当前文件里 110 条 cue 中，
-91 条没有写 `enter`、73 条没有写 `exit`、99 条没有写 `tree/transition`——都是继承，不是遗漏。
+`full.anim.json` 已按这套规则做过一次确定性最小化：当前文件里 83 条 cue 中，
+38 条没有写 `enter`、30 条没有写 `exit`、72 条没有写 `transition`；`tree` 因当前跨 stage/展示树结构全部显式写出——缺省值都是继承，不是遗漏。
 
 ## 全景 shot
 

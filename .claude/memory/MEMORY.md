@@ -2,7 +2,7 @@
 
 新会话按顺序读：
 
-1. [current-state.md](current-state.md) — 截至 2026-09-30，含 HEAD `1a636be`、后端服务化状态、发展卡身份保真、工作区/待办
+1. [current-state.md](current-state.md) — 截至 2026-10-07 的当前进度（HEAD 以 git log 为准）、工作区状态、待办与不做事项
 2. [project-overview.md](project-overview.md) — 项目定位、功能、阶段、技术选型
 3. [architecture.md](architecture.md) — Runtime 服务拆分、自动 freshness、检索、Android/语音接口
 4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3：time_anchors / QA 同置 / 发展卡身份保真 / 当前动画遗留

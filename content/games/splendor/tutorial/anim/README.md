@@ -1,24 +1,36 @@
-# 讲规动画 v2
+# 讲规动画生产说明（Splendor）
 
-## 唯一权威链路
+> LLM/人编写动画前先读 [v2/LLM-ANIMATION-GUIDE.md](v2/LLM-ANIMATION-GUIDE.md)。
+>
+> 数据模型细节与字段说明见 [v2/README.md](v2/README.md)。
+
+## 数据链路
 
 ```text
-content/games/splendor/tutorial/script.full.json / full.lrc     口播编辑源
+script.full.json                                          口播文字 / cue 切分 / beats / refs（文字唯一编辑源）
                 │
-content/games/splendor/tutorial/full.runtime.json               音频/字幕/时长
-                │
-content/games/splendor/tutorial/anim/v2/full.anim.json          手写动画源：
-  script.story/note/camera/enter/exit                   文字脚本 + 契约
-  tree / transition                                     树与世界切换
-  events                                                原语执行层
+animation/compile_tutorial.py                             总控：增量 TTS → runtime → compiled
+  ├─ full.runtime.json                                    音频 / 字幕 / 时长
+  └─ anim/v2/full.anim.json                               手写动画源：
+       script.story/note/camera/enter/exit                文字与契约
+       tree / transition                                  树与舞台
+       events                                             原语执行层
                 │
 animation/compile_animation_v2.py                          确定性编译器
   animation/anim_geometry_v2.py                            唯一几何源
                 ▼
-content/games/splendor/tutorial/anim/v2/full.compiled.json       运行时只读 compiled
+anim/v2/full.compiled.json                                 Unity 只读 compiled
                 ▼
-BoardGameTutorial.Animation.TutorialAnimPlayer           Unity 薄适配
+Unity TutorialAnimPlayer                                  Unity 薄适配
 ```
+
+## 生产顺序
+
+1. 先改 `script.full.json` 的口播文字 / cue 切分，再改 `full.anim.json` 的 `script`、契约与 `events`；
+2. 对改到规则事实的 cue，按改动点手写最小合法性 QA（cue 的 `qa` 字段或 `_qa/questions.json`）；
+3. 跑总控编译：`python3 animation/compile_tutorial.py --game splendor --track full`；
+4. 跑静态、编译、规则与采样检查；
+5. 视觉验收通过后再定稿。
 
 ## 检查命令
 
@@ -44,12 +56,4 @@ python3 tools/ops/check_unity_scripts.py
 python3 animation/check_anim_v2_sample.py --game splendor --track full
 ```
 
-## 生产约定
-
-新建/修改动画必须：
-
-1. 先改 `full.anim.json` 的 `script.story/note/tree/transition/camera/enter/exit`；
-2. 用 BoardAI API 确认规则合法性；
-3. 再套 `events` 原语；
-4. 跑静态/编译/规则/采样对账；
-5. 视觉验收通过后再定稿。
+当前 Splendor full 为 83 cue，检查基线为 `check_anim_v2` / `validate_anim_rules_v2` 83 cues 0 warnings、`audit_anim_v2` 53 cues 0 errors。

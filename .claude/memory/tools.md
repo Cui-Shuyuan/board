@@ -125,13 +125,14 @@ Android 真机端到端验证步骤见 `docs/ops/start-services.md`。
 - `clients/android/build-uaal.bat`：Unity 导出 `unityLibrary` → Gradle `assembleDebug` 的固定顺序入口。
 - `clients/android/gradlew.bat`：原生壳构建入口。
 
-已存在的 6 个 JVM 测试：
+已存在的 7 个 JVM 测试：
 
 ```text
 clients/android/app/src/test/java/com/boardai/tutorial/uaal/content/ContentStatusTest.kt
 clients/android/app/src/test/java/com/boardai/tutorial/uaal/content/ContentUpdaterTest.kt
 clients/android/app/src/test/java/com/boardai/tutorial/uaal/home/HomeContentCoordinatorTest.kt
 clients/android/app/src/test/java/com/boardai/tutorial/uaal/player/PlayerSessionControllerTest.kt
+clients/android/app/src/test/java/com/boardai/tutorial/uaal/player/PlayerTimelineBarTest.kt
 clients/android/app/src/test/java/com/boardai/tutorial/uaal/player/UnityLoadQueueTest.kt
 clients/android/app/src/test/java/com/boardai/tutorial/uaal/qa/QaVoiceControllerTest.kt
 ```
@@ -143,7 +144,7 @@ cd D:\workspace\board\clients\android
 gradlew.bat testDebugUnitTest
 ```
 
-该命令需要已导出的 `unityLibrary`、`local.properties` 中的 Android SDK 与可用 JDK；本次文档同步未重新执行 Android 测试，真机验收范围也待复测。
+该命令需要已导出的 `unityLibrary`、`local.properties` 中的 Android SDK 与可用 JDK；文档更新时未重新执行 Android 测试，真机验收范围也待复测。
 
 ## 7. 讲规动画
 

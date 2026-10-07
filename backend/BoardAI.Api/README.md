@@ -1,9 +1,11 @@
 # BoardAI.Api
 
-桌游规则 AI 的最小后端服务。目前包含两个部分：
+桌游规则 AI Runtime 的后端服务，对外提供四组能力：
 
-1. **Chat 接口**：接收客人文字，转发给 LLM，返回回答。
-2. **Rules 接口**：读取 `content/ontology/` 和 `content/games/splendor/` 下的 JSON 规则文件，按概念 ID / 类型 / 关键词返回结构化信息。
+1. **Chat 接口**：接收 `game_id` 和完整 `messages`（可带 Android 播放 context），LLM 生成 `execute_plan`，服务端执行规则查询并返回 TTS 友好回答。
+2. **Rules 接口**：读取 `content/ontology/` 与 `content/games/` 下的结构化规则，提供类型 / 概念 / 检索 / action 条件 / 查询计划 / 索引重建。
+3. **Catalog / Content 接口**：提供 Android 首页游戏目录，以及 manifest 驱动的版本化内容下载、缓存与断点续传。
+4. **ASR / TTS 接口**：通过 `tools/voice/` 下的 Python 短进程桥接火山引擎，Android 不接触服务密钥。
 
 ## 运行
 
@@ -42,24 +44,15 @@ dotnet run --urls "http://0.0.0.0:5000"
 
 ## 配置 LLM
 
-修改 `appsettings.json`：
-
-```json
-{
-  "LLM": {
-    "Provider": "DeepSeek",
-    "BaseUrl": "https://api.deepseek.com/v1/",
-    "Model": "deepseek-v4-pro",
-    "ApiKey": "sk-xxxxxxxx"
-  }
-}
-```
-
-或通过环境变量（推荐，避免把 key 提交到仓库）：
+`appsettings.json` 只保存 Provider / BaseUrl / Model / SystemPrompt，`LLM:ApiKey` 保持空串；密钥只走环境变量（推荐，避免把 key 提交到仓库）：
 
 ```bash
 set LLM__ApiKey=sk-xxxxxxxx
+:: 兼容旧变量名
+set DEEPSEEK_API_KEY=sk-xxxxxxxx
 ```
+
+当前模型为 `deepseek-v4-flash`，以 `appsettings.json` 为准。
 
 ## 调用示例
 
@@ -68,7 +61,7 @@ set LLM__ApiKey=sk-xxxxxxxx
 ```bash
 curl -X POST http://localhost:5000/api/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "Splendor 怎么玩？"}'
+  -d '{"game_id":"splendor","messages":[{"role":"user","content":"贵族怎么获得？"}]}'
 ```
 
 返回：
@@ -79,7 +72,23 @@ curl -X POST http://localhost:5000/api/chat \
 }
 ```
 
+Android 教程播放器还会在请求里带可选 `context`（`cue_id` / `cue_index` / `cue_text` / `group_path` / `recent_cues` 等），让 LLM 结合当前讲规进度回答；普通规则问答省略即可。
+
 ### Rules 接口
+
+主要路由：
+
+```text
+GET  /api/rules/games
+GET  /api/rules/games/{game}/types
+GET  /api/rules/games/{game}/concepts?type=...
+GET  /api/rules/games/{game}/concepts/{id}
+GET  /api/rules/games/{game}/actions/{actionId}/conditions
+GET  /api/rules/games/{game}/search?q=...
+POST /api/rules/games/{game}/execute-plan
+POST /api/rules/admin/rebuild-index/{game}
+POST /api/rules/admin/rebuild-all
+```
 
 列出所有概念类型：
 
@@ -128,16 +137,20 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 ## 项目结构
 
 - `Controllers/ChatController.cs`：Chat HTTP 入口
-- `Controllers/RulesController.cs`：规则查询 HTTP 入口
+- `Controllers/RulesController.cs`：规则查询 / `execute_plan` / 索引重建 HTTP 入口
+- `Controllers/CatalogController.cs`：Android 首页游戏目录
 - `Controllers/ContentController.cs`：manifest / 内容文件只读接口
+- `Controllers/AsrController.cs` / `Controllers/TtsController.cs`：语音接口
 - `Infrastructure/BoardPaths.cs`：可移植仓库路径解析
-- `Services/ILLMService.cs`：LLM 抽象
-- `Services/DeepSeekLLMService.cs`：DeepSeek v4 Pro 实现
-- `Services/GameRulesService.cs`：读取 ontology / game JSON 规则
+- `Services/ILLMService.cs` / `Services/OpenAICompatibleLLMService.cs` / `Services/DeepSeekLLMService.cs`：LLM 抽象与实现
+- `Services/GameRulesService.cs`：薄 facade；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`
+- `Services/ChatOrchestratorService.cs`：查询计划循环与回答组织
+- `Services/VectorSearchService.cs` / `Services/EmbeddingService.cs`：Qdrant / ONNX 检索
+- `Services/AsrService.cs` / `Services/TtsService.cs` / `Services/VoiceProcessRunner.cs`：语音桥
 - `Models/`：请求/响应/配置模型
 
 ## 后续扩展方向
 
-1. 在 `ILLMService` 之上加入工具调用循环（Tool Use / ReAct）。
-2. 让 LLM 能够调用规则查询接口，再组织自然语言回答。
-3. 增加意图分类层，把客人问题路由到不同处理流程。
+1. 按 `.claude/memory/current-state.md` 推进：Splendor full 逐 cue 重审、其余 8 款游戏 catalog / manifest。
+2. Flow Guide（下一产品方向）：程序维护流程游标，条件判断交玩家回答；首个目标是 Civolution 顶层时代/阶段循环与终局计分助手。
+3. 语音 / Android 真机端到端验收，以及问答打断后回到动画的完整链路复测。
