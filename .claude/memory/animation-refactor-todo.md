@@ -207,25 +207,29 @@ metadata:
 
 ## P3 工具链与测试缺口
 
-### [ ] P3-1 修 `check_unity_scripts.py` 在当前 WSL 环境的路径失败
+### [x] P3-1 修 `check_unity_scripts.py` 在当前 WSL 环境的路径失败
 
-- 当前环境（WSL + `/mnt/d` + 指向 `dotnet.exe` 的 `~/.dotnet/dotnet`）运行会报 23 个 `CS1504` access denied，原因是临时工程在 `/tmp`，Windows dotnet 走 UNC 路径访问源码失败。
-- 建议：检测 Windows dotnet.exe 后把临时工程放到 Windows 可访问目录，或直接生成 Windows 风格路径；至少在失败时给出明确报错，不要伪装成“编译错误”。
+- 复现：当前 WSL + Windows `dotnet.exe`（`~/.dotnet/dotnet -> /mnt/d/dotnet/dotnet.exe`）在修复前 `--json` 只返回 `{"ok": false, "files": 34, "errors": []}`；人工输出是临时工程位于 `/tmp` 时 Windows 编译器访问 `\\wsl.localhost\...` 源码报 `CS1504`，旧解析器未提取该格式。
+- 修复：新增 `is_windows_executable` / `running_in_wsl` / `choose_project_parent` 纯函数；Windows dotnet + WSL 时临时工程放到 `ROOT/.tmp/check_unity_scripts`，并把 `--dir` 下 C# 文件复制进项目以避免任意 WSL 路径不可见；编译错误映射回原文件；未定位的 `CS*` 错误和 raw output tail 也会进入诊断；重复错误去重；`.tmp/` 加入 `.gitignore`。
+- 测试：新增 `animation/test_check_unity_scripts.py` 15 条纯函数测试，覆盖 WSL 检测、路径选择、复制判定、错误映射和格式解析。
+- 验收：`python3 tools/ops/check_unity_scripts.py` → `OK 34 个 C# 文件编译通过`；`--json` → `ok:true, files:34, errors:[]`。用 `mktemp -d` 构造语法错误再以 `--dir` 指向该目录，输出 `Broken.cs:9:21 CS1525`，不再是空 errors。
+- 回归：`python3 -m unittest discover -s animation -p 'test_*.py'` 当时 117/117 通过（新增 15 条）。
 
-### [ ] P3-2 补 checker / geometry / orchestration 单测
+### [x] P3-2 补 checker / geometry / orchestration 单测
 
-- 当前只有 `test_compile_animation_v2.py`、`test_audit_anim_v2.py`。
-- 建议补：
-  - `anim_geometry_v2` 的 slot/camera 边界；
-  - `check_anim_v2` 的 state_ops/camera/dirty frame；
-  - `check_anim_v2_sample` 的契约对账；
-  - `compile_tutorial` dry-run 与路径处理；
-  - `qa_anim_ask` 的 expect/verdict 解析。
+- 已补：
+  - `animation/test_anim_geometry_v2.py`：14 条，覆盖 slot 网格/row/block/stack 边界、容量 0、越界 overflow、zone_box 零尺寸、union/offstage、board/named-zone 相机、缺失 zone fallback，以及 part anchor 的 legacy fallback、stage 覆盖、event `part_u/v` 优先、零尺寸模板回退。
+  - `animation/test_check_anim_v2.py`：9 条，直接测 `camera_at`、`picture_at`、`check_camera_ops`、`check_state_ops`、`check_dirty_boundaries`、`camera_eq`，覆盖排序、缺失 frame、负 at、put/remove 状态重放、脏帧命中与同机位/物体存活不命中。
+  - `animation/test_check_anim_v2_sample.py`：6 条，抽出 `reconcile_sample()` 后覆盖缺失 sample、多余 sample（新增 fail-closed）、picture 不一致、state-sync 不一致、count-only/items 两种契约、face 与 visible 结构。
+  - `animation/test_compile_tutorial.py`：新增 6 条，覆盖 dry-run 无变更不改写、dry-run 有文本变更时仍以 `dry_run=True` 调用 TTS 路径、缺失源返回 2、`prune_removed` dry-run/实际删除、Windows 分隔符规范化。
+  - `animation/test_qa_anim_ask.py`：新增 8 条，覆盖空回复、非预期词、expect 词族选择、多个候选取最后 standalone、否定短语、自纠正、cue `qa` 单条/对象/列表/mixed 及 questions.json 原样加载。
+- 验收：新增文件先逐个运行通过；`python3 -m unittest discover -s animation -p 'test_*.py'` 全量 160/160 通过。随后 `compile_animation_v2 --check`、`check_anim_v2`、`validate_anim_rules_v2`、`audit_anim_v2`、`check_card_identity_v2`、`compile_tutorial --dry-run` 全绿（dry-run `changed text cues: 0`）。
 
-### [ ] P3-3 归档一次性迁移脚本
+### [x] P3-3 归档一次性迁移脚本
 
-- `migrate_time_anchors_v2.py`、`migrate_object_targets_v2.py` 已完成迁移使命。
-- 可移到 `animation/archive/` 或删除，减少“看起来还在用”的入口。
+- 将 `animation/migrate_time_anchors_v2.py`、`animation/migrate_object_targets_v2.py` 移到 `animation/archive/`，新增 `animation/archive/README.md` 说明用途、完成状态与不应再运行的原因；未直接删除。
+- 窄范围检查 `animation/`、`tools/`、`clients/unity/`、`docs/`、`.claude/memory/`：无运行时 import/调用依赖；文档中的旧顶层路径已更新为 `animation/archive/...`。
+- 验收：两个脚本不再出现在 `animation/` 顶层；`python3 -m unittest discover -s animation -p 'test_*.py'` 160/160 全绿；`compile_animation_v2 --check`、四组 checker、`compile_tutorial --dry-run`、`check_unity_scripts --json` 均通过。
 
 ## 建议执行顺序
 
@@ -233,7 +237,7 @@ metadata:
 2. P0-3（audit profile）-> P0-4/P0-5（schema / part anchors 单源）。
 3. P1-1 -> P1-2 -> P1-4 -> P1-3 -> P1-5。
 4. P2-1（C# 测试）-> P2-2 -> P2-3 -> P2-4。
-5. P3 按需穿插。
+5. P3-1 路径修复 -> P3-2 补单测 -> P3-3 归档；均已完成，见上方验收记录。
 
 ## 每次重构的验收命令
 
