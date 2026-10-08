@@ -24,6 +24,7 @@ data class QaAnswerEvidence(
     val unresolvedCount: Int = 0,
     val noMatchCount: Int = 0,
     val unsupportedCount: Int = 0,
+    val pendingCount: Int = 0,
     val queries: List<QaEvidenceQuery> = emptyList()
 ) {
     val missingQueries: List<QaEvidenceQuery>
@@ -38,12 +39,13 @@ data class QaEvidenceQuery(
     val source: String = "",
     val message: String? = null,
     val hasData: Boolean = false,
+    val resolvedByQueryIndex: Int? = null,
     val matched: List<QaEvidenceConcept> = emptyList(),
     val candidates: List<QaEvidenceConcept> = emptyList(),
     val references: List<QaEvidenceConcept> = emptyList()
 ) {
     val isMissing: Boolean
-        get() = when (status.lowercase()) {
+        get() = if (resolvedByQueryIndex != null) false else when (status.lowercase()) {
             "unresolved", "no_match", "unsupported" -> true
             "ok" -> !hasData && candidates.isEmpty()
             else -> true
@@ -121,7 +123,16 @@ private fun parseAnswerEvidence(json: JSONObject): QaAnswerEvidence {
         unresolvedCount = json.intValue("unresolvedCount", "UnresolvedCount"),
         noMatchCount = json.intValue("noMatchCount", "NoMatchCount"),
         unsupportedCount = json.intValue("unsupportedCount", "UnsupportedCount"),
-        queries = queries
+        pendingCount = json.intValue("pendingCount", "PendingCount"),
+        queries = queries.mapIndexed { index, query ->
+            val later = query.resolvedByQueryIndex?.let { queries.getOrNull(it) }
+            val validRecovery = query.resolvedByQueryIndex?.let { it > index } == true
+                && query.status == "unresolved" && later?.status == "ok" && later.hasData
+                && (later.relation == query.relation || (query.relation == "identify" && later.relation == "explain"))
+                && query.candidates.map { it.id }.distinct().size == 1
+                && later.matched.any { it.id == query.candidates.singleOrNull()?.id }
+            if (validRecovery) query else query.copy(resolvedByQueryIndex = null)
+        }
     )
 }
 
@@ -143,6 +154,8 @@ private fun parseEvidenceQuery(json: JSONObject): QaEvidenceQuery {
         source = json.stringValue("source", "Source").orEmpty(),
         message = json.stringValue("message", "Message"),
         hasData = hasData,
+        resolvedByQueryIndex = (json.valueOfAny("resolvedByQueryIndex", "ResolvedByQueryIndex") as? Number)
+            ?.toInt()?.takeIf { it >= 0 },
         matched = matched,
         candidates = candidates,
         references = references

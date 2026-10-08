@@ -98,6 +98,25 @@ public sealed class Rev08AnswerEvidenceTests
     }
 
     [Fact]
+    public async Task ProcessWithEvidenceAsync_IdentifyThenExactExplain_RecoversWithTrace()
+    {
+        using var fixture = new RulesFixture();
+        fixture.WriteGameConcepts("白色组件", "执行动作");
+        using var rules = fixture.CreateService();
+        var llm = new FakeLlm(call => call.Index switch
+        {
+            1 => ToolCall(Plan("""{ "relation": "identify", "entity": "白色组件" }""")),
+            2 => ToolCall(Plan("""{ "relation": "explain", "entity": "widget" }""")),
+            _ => Final("已确认的小装置")
+        });
+        var result = await CreateService(llm, rules).ProcessWithEvidenceAsync("testgame", History());
+        Assert.Equal("tier1", result.Evidence.Tier);
+        Assert.Equal(0, result.Evidence.PendingCount);
+        Assert.Equal(1, result.Evidence.UnresolvedCount);
+        Assert.Equal(1, result.Evidence.Queries[0].ResolvedByQueryIndex);
+    }
+
+    [Fact]
     public async Task ChatController_Post_ReturnsEvidenceWithoutBreakingReply()
     {
         using var fixture = new RulesFixture();

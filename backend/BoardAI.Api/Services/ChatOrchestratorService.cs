@@ -536,9 +536,9 @@ public class ChatOrchestratorService
 
     /// <summary>
     /// 按 query 收集证据。一次 execute_plan 的所有 query 都会记录；最终 tier
-    /// 由整组 query 的最坏状态决定，任一 no_match/unresolved/unsupported 都不会整体判为 tier1。
+    /// 保留历史状态；仅同版本、单一候选被后续精确同关系查询（identify → explain 也允许）确认时恢复。
     /// </summary>
-    private sealed class AnswerEvidenceCollector
+    internal sealed class AnswerEvidenceCollector
     {
         public List<QueryEvidence> Queries { get; } = new();
         public string? RulesVersion { get; private set; }
@@ -576,6 +576,7 @@ public class ChatOrchestratorService
 
         public AnswerEvidence Build()
         {
+            ResolveCandidateQueries();
             var evidence = new AnswerEvidence
             {
                 RulesVersion = RulesVersion,
@@ -586,11 +587,12 @@ public class ChatOrchestratorService
                 UnresolvedCount = Queries.Count(q => q.Status == "unresolved"),
                 NoMatchCount = Queries.Count(q => q.Status == "no_match"),
                 UnsupportedCount = Queries.Count(q => q.Status == "unsupported"),
+                PendingCount = Queries.Count(q => !q.HasData && q.ResolvedByQueryIndex == null),
                 Queries = Queries.ToList()
             };
 
             evidence.IsComplete = evidence.QueryCount > 0
-                && evidence.OkCount == evidence.QueryCount
+                && evidence.PendingCount == 0
                 && evidence.HasData;
 
             evidence.Tier = evidence.IsComplete
@@ -602,6 +604,31 @@ public class ChatOrchestratorService
                         : "tier3";
 
             return evidence;
+        }
+
+        private void ResolveCandidateQueries()
+        {
+            for (var i = 0; i < Queries.Count; i++)
+            {
+                var query = Queries[i];
+                query.ResolvedByQueryIndex = null;
+                if (query.Status != "unresolved" || string.IsNullOrEmpty(query.RulesVersion)) continue;
+                var candidates = query.Candidates.Select(c => c.Id).Where(id => !string.IsNullOrEmpty(id))
+                    .Distinct(StringComparer.Ordinal).ToArray();
+                // 多候选可能表示一组问题；查到其中一个不能证明其余需求已覆盖。
+                if (candidates.Length != 1) continue;
+                for (var j = i + 1; j < Queries.Count; j++)
+                {
+                    var later = Queries[j];
+                    var sameRelation = later.Relation == query.Relation
+                        || (query.Relation == "identify" && later.Relation == "explain");
+                    if (!sameRelation || later.RulesVersion != query.RulesVersion || !later.HasData
+                        || later.Status != "ok" || later.Source is not ("exact_id" or "exact_name_zh")) continue;
+                    if (!later.Matched.Any(c => c.Id == candidates[0])) continue;
+                    query.ResolvedByQueryIndex = j;
+                    break;
+                }
+            }
         }
 
         public string GetTier()

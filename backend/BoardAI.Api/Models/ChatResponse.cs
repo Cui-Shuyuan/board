@@ -16,7 +16,7 @@ public class ChatResponse
 /// <summary>一次回答的证据汇总：按 query 记录，而不是见到任意一条 ok 就把整条回答判为完全有据。</summary>
 public class AnswerEvidence
 {
-    /// <summary>tier1 = 所有查询都命中规则数据；partial = 有命中也有缺失/未解决；tier2 = 只有候选兜底；tier3 = 无数据。</summary>
+    /// <summary>tier1 = 查询已命中或经后续精确查询恢复；partial = 仍有未解决查询；tier2 = 只有候选；tier3 = 无数据。不是答案真实性判定。</summary>
     public string Tier { get; set; } = "tier3";
 
     public bool HasData { get; set; }
@@ -28,6 +28,8 @@ public class AnswerEvidence
     public int UnresolvedCount { get; set; }
     public int NoMatchCount { get; set; }
     public int UnsupportedCount { get; set; }
+    /// <summary>历史查询中仍未解决的数量；上述状态计数继续保留历史原貌。</summary>
+    public int PendingCount { get; set; }
     public List<QueryEvidence> Queries { get; set; } = new();
 }
 
@@ -40,6 +42,10 @@ public class QueryEvidence
     public string? RulesVersion { get; set; }
     public string? Message { get; set; }
     public bool HasData { get; set; }
+
+    /// <summary>候选被后续精确查询确认时，指向 Queries 中该查询的零基索引；不覆盖原 Status。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? ResolvedByQueryIndex { get; set; }
 
     /// <summary>已命中概念（explain/condition/ordering/boundary/flow 的 Matched）。</summary>
     public List<EvidenceConcept> Matched { get; set; } = new();

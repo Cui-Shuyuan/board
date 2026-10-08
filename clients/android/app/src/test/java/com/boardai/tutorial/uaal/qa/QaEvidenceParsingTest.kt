@@ -32,6 +32,33 @@ class QaEvidenceParsingTest {
     }
 
     @Test
+    fun recoveredCandidateKeepsHistoryWithoutMissingNotice() {
+        val body = """{"reply":"激活骰","evidence":{"tier":"tier1","isComplete":true,"pendingCount":0,
+            "unresolvedCount":1,"queries":[
+              {"relation":"identify","status":"unresolved","resolvedByQueryIndex":1,"candidates":[{"id":"activation_die"}]},
+              {"relation":"explain","status":"ok","hasData":true,"matched":[{"id":"activation_die"}]}
+            ]}}"""
+        val evidence = parseQaChatResponse(body).evidence!!
+        assertEquals("unresolved", evidence.queries[0].status)
+        assertEquals(1, evidence.queries[0].resolvedByQueryIndex)
+        assertTrue(evidence.missingQueries.isEmpty())
+        assertNull(qaEvidenceNotice(evidence))
+    }
+
+    @Test
+    fun invalidRecoveryIndexDoesNotHideMissingQuery() {
+        for (index in listOf(-1, 0, 99)) {
+            val body = """{"reply":"回复","evidence":{"tier":"partial","queries":[
+                {"relation":"identify","entity":"白色骰子","status":"unresolved","resolvedByQueryIndex":$index,
+                 "candidates":[{"id":"activation_die"}]}
+            ]}}"""
+            val evidence = parseQaChatResponse(body).evidence!!
+            assertEquals(1, evidence.missingQueries.size)
+            assertTrue(qaEvidenceNotice(evidence)!!.contains("白色骰子"))
+        }
+    }
+
+    @Test
     fun missingEvidenceKeepsReplyOnly() {
         val result = parseQaChatResponse("""{"reply":"旧后端回答"}""")
 
