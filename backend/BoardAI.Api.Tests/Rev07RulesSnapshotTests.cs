@@ -120,11 +120,16 @@ public sealed class Rev07RulesSnapshotTests : IDisposable
         var writerDone = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var exceptions = new ConcurrentBag<Exception>();
         var sawVersions = new ConcurrentDictionary<int, byte>();
+        using var firstRead = new ManualResetEventSlim(false);
 
         var writer = Task.Run(() =>
         {
             try
             {
+                // Do not let the writer finish before at least one reader has exercised the
+                // cache-hit path; otherwise this becomes a pure writer benchmark and can pass
+                // vacuously on a fast machine.
+                firstRead.Wait(TimeSpan.FromSeconds(5));
                 for (var version = 1; version <= 500; version++)
                 {
                     service.SetDocumentForTesting(
@@ -132,6 +137,8 @@ public sealed class Rev07RulesSnapshotTests : IDisposable
                         BuildConceptsJson(version));
                     if (version % 10 == 0)
                         Thread.Yield();
+                    if (version % 50 == 0)
+                        Thread.Sleep(1);
                 }
             }
             finally
@@ -149,7 +156,10 @@ public sealed class Rev07RulesSnapshotTests : IDisposable
                     {
                         var version = await ExecutePlanAndReadVersion(service);
                         if (version.HasValue)
+                        {
                             sawVersions.TryAdd(version.Value, 0);
+                            firstRead.Set();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -181,6 +191,79 @@ public sealed class Rev07RulesSnapshotTests : IDisposable
 
         var second = await ExecutePlanAndReadVersion(service);
         Assert.Equal(2, second);
+    }
+
+    [Fact]
+    public async Task ConcurrentRealDiskWrites_DoNotThrowOrMixVersionsWithinOneRequest()
+    {
+        using var fixture = new RulesFixture();
+        using var service = fixture.CreateService();
+
+        var exceptions = new ConcurrentBag<Exception>();
+        var sawVersions = new ConcurrentDictionary<int, byte>();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+
+        var writer = Task.Run(() =>
+        {
+            var version = 1000;
+            try
+            {
+                while (!cts.IsCancellationRequested)
+                {
+                    File.WriteAllText(fixture.GameConceptsPath, BuildConceptsJson(version++));
+                }
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex) { exceptions.Add(ex); }
+        });
+
+        var readers = Enumerable.Range(0, Math.Max(4, Environment.ProcessorCount))
+            .Select(_ => Task.Run(() =>
+            {
+                try
+                {
+                    while (!cts.IsCancellationRequested)
+                    {
+                        using var scope = service.BeginRequestScope("testgame");
+                        var summaries = service.ListConcepts("testgame", "objects");
+                        var raw = service.GetConcept("testgame", "widget");
+
+                        var versions = new List<int>();
+                        foreach (var summary in summaries)
+                        {
+                            var parsed = ParseVersion(summary.Name);
+                            if (parsed.HasValue) versions.Add(parsed.Value);
+                        }
+
+                        if (raw.HasValue
+                            && raw.Value.TryGetProperty("name", out var name)
+                            && name.TryGetProperty("zh", out var zh)
+                            && zh.ValueKind == JsonValueKind.String)
+                        {
+                            var parsed = ParseVersion(zh.GetString() ?? "");
+                            if (parsed.HasValue) versions.Add(parsed.Value);
+                        }
+
+                        if (versions.Distinct().Count() > 1)
+                        {
+                            exceptions.Add(new InvalidOperationException(
+                                "single request mixed disk versions: " + string.Join(",", versions)));
+                        }
+
+                        foreach (var version in versions)
+                            sawVersions.TryAdd(version, 0);
+                    }
+                }
+                catch (OperationCanceledException) { }
+                catch (Exception ex) { exceptions.Add(ex); }
+            }))
+            .ToArray();
+
+        await Task.WhenAll(readers.Append(writer));
+
+        Assert.True(exceptions.IsEmpty,
+            string.Join("\n---\n", exceptions.Take(10).Select(e => e.ToString())));
+        Assert.NotEmpty(sawVersions);
     }
 
     private static async Task<int?> ExecutePlanAndReadVersion(GameRulesService service)

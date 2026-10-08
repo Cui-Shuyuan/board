@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 
 namespace BoardAI.Api.Services;
@@ -11,8 +12,8 @@ namespace BoardAI.Api.Services;
 public sealed class RulesDocumentStore : IDisposable
 {
     private const int MaxRetiredDocuments = 16;
-    private const int ReadRetryCount = 5;
-    private const int ReadRetryDelayMilliseconds = 15;
+    private const int ReadRetryCount = 50;
+    private const int ReadRetryDelayMilliseconds = 10;
 
     private readonly Action? _onDocumentChanged;
     private readonly object _gate = new();
@@ -163,8 +164,7 @@ public sealed class RulesDocumentStore : IDisposable
             return cached.Document;
         }
 
-        var json = ReadAllTextWithRetry(absolutePath);
-        var document = ParseDocument(json);
+        var loaded = ReadDocumentWithRetry(absolutePath);
 
         var replaced = _documents.TryGetValue(absolutePath, out var old);
         if (replaced)
@@ -173,15 +173,15 @@ public sealed class RulesDocumentStore : IDisposable
         _documents[absolutePath] = new Entry
         {
             Path = absolutePath,
-            Length = info.Length,
-            LastWriteTimeUtc = info.LastWriteTimeUtc,
-            Document = document
+            Length = loaded.Length,
+            LastWriteTimeUtc = loaded.LastWriteTimeUtc,
+            Document = loaded.Document
         };
         _revision++;
         if (replaced)
             _onDocumentChanged?.Invoke();
 
-        return document;
+        return loaded.Document;
     }
 
     private static JsonDocument ParseDocument(string json)
@@ -190,18 +190,57 @@ public sealed class RulesDocumentStore : IDisposable
             AllowTrailingCommas = true
         });
 
-    private static string ReadAllTextWithRetry(string absolutePath)
+    private sealed record LoadedDocument(long Length, DateTime LastWriteTimeUtc, JsonDocument Document);
+
+    private static LoadedDocument ReadDocumentWithRetry(string absolutePath)
     {
         Exception? last = null;
         for (var attempt = 0; attempt <= ReadRetryCount; attempt++)
         {
             try
             {
-                return File.ReadAllText(absolutePath);
+                var before = new FileInfo(absolutePath);
+                if (!before.Exists)
+                    throw new FileNotFoundException($"Could not find file '{absolutePath}'.", absolutePath);
+
+                string json;
+                // Open with read/write sharing so an external editor or publisher can replace the
+                // file while requests are in flight. The parser retry below handles the truncate /
+                // write window on Windows, where a reader may otherwise observe an empty or partial file.
+                using (var stream = new FileStream(
+                    absolutePath,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.ReadWrite | FileShare.Delete))
+                using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+                {
+                    json = reader.ReadToEnd();
+                }
+
+                var after = new FileInfo(absolutePath);
+                if (!after.Exists)
+                    throw new FileNotFoundException($"Could not find file '{absolutePath}'.", absolutePath);
+
+                var document = ParseDocument(json);
+
+                // If the file changed during the read, keep the pre-read timestamp/size so the next
+                // freshness probe reloads instead of trusting a document whose metadata may already
+                // describe a newer write. A successful JSON parse still gives this request a coherent
+                // snapshot; a partial/truncated write is retried by the JsonException path below.
+                var length = after.Length == before.Length && after.LastWriteTimeUtc == before.LastWriteTimeUtc
+                    ? after.Length
+                    : before.Length;
+                var lastWriteTimeUtc = after.LastWriteTimeUtc == before.LastWriteTimeUtc
+                    ? after.LastWriteTimeUtc
+                    : before.LastWriteTimeUtc;
+
+                return new LoadedDocument(length, lastWriteTimeUtc, document);
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException && attempt < ReadRetryCount)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
             {
                 last = ex;
+                if (attempt == ReadRetryCount)
+                    break;
                 Thread.Sleep(ReadRetryDelayMilliseconds);
             }
         }
