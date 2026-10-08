@@ -101,7 +101,7 @@ public class CatalogController : ControllerBase
     /// treated as tutorial-ready so existing Splendor caches keep working.
     /// A rules-only game must not inherit tutorial_track="full".
     /// </summary>
-    private static void NormalizeCapabilities(CatalogGame game)
+    private void NormalizeCapabilities(CatalogGame game)
     {
         var rawTracks = new List<string>();
         if (game.TutorialTracks != null)
@@ -128,12 +128,36 @@ public class CatalogController : ControllerBase
             game.TutorialReady = false;
         }
 
-        game.RulesReady ??= true; // Existing catalog games are rule-capable.
+        // Do not default rules_ready to true: a catalog entry without runtime
+        // rule data must not expose a rules-only QA entry.  Explicit catalog
+        // declarations still win; omissions are inferred from the actual
+        // content/games/{id}/concepts.json runtime file.
+        game.RulesReady ??= HasRulePackage(game.Id);
 
         game.TutorialTracks = tracks;
         game.TutorialTrack = game.TutorialReady == true
             ? tracks.FirstOrDefault()
             : null;
+    }
+
+    private bool HasRulePackage(string gameId)
+    {
+        var conceptsPath = Path.Combine(
+            _contentRoot, "content", "games", gameId, "concepts.json");
+        try
+        {
+            var file = new FileInfo(conceptsPath);
+            return file.Exists && file.Length > 0;
+        }
+        catch (IOException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Could not inspect rules content for catalog game {GameId}: {ConceptsPath}",
+                gameId,
+                conceptsPath);
+            return false;
+        }
     }
 
     /// <summary>

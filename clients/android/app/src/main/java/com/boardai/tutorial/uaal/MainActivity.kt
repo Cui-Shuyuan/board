@@ -398,7 +398,8 @@ class MainActivity : UnityPlayerGameActivity() {
                                 requestRecordPermission = { callback ->
                                     requestRecordPermission(callback)
                                 },
-                                onClose = { closeRulesQa() }
+                                onClose = { closeRulesQa() },
+                                isRulesOnly = true
                             )
                         }
 

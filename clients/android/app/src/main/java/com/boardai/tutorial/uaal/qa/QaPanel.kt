@@ -72,6 +72,10 @@ private const val QA_VOICE_TAG = "BoardAI-QaVoice"
 private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
 
+/** Rules-only QA is opened from the home screen, so closing returns there. */
+internal fun closeLabelForQaMode(isRulesOnly: Boolean): String =
+    if (isRulesOnly) "返回" else "继续播放"
+
 /**
  * Full-height text QA panel with the composer pinned to the bottom.
  *
@@ -92,7 +96,8 @@ fun QaPanel(
     hasRecordPermission: () -> Boolean,
     requestRecordPermission: (onResult: (Boolean) -> Unit) -> Unit,
     onClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isRulesOnly: Boolean = false
 ) {
     val currentContext = buildQaContext(game, status, timeline)
     val session = QaSessionHolder.sessionState.value
@@ -221,7 +226,8 @@ fun QaPanel(
                     voiceController.stopPlayback()
                     onClose()
                 },
-                onNewSession = { startNewSession() }
+                onNewSession = { startNewSession() },
+                isRulesOnly = isRulesOnly
             )
 
             if (messages.isEmpty() && !sending) {
@@ -280,7 +286,8 @@ fun QaPanel(
 private fun QaTopBar(
     gameName: String,
     onClose: () -> Unit,
-    onNewSession: () -> Unit
+    onNewSession: () -> Unit,
+    isRulesOnly: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -292,7 +299,7 @@ private fun QaTopBar(
             modifier = Modifier.align(Alignment.CenterStart)
         ) {
             Text(
-                text = "继续播放",
+                text = closeLabelForQaMode(isRulesOnly),
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium

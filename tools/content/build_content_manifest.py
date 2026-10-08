@@ -159,6 +159,19 @@ def _is_file_reference_key(key: str) -> bool:
     return key in FILE_REFERENCE_KEYS or key.endswith("_image") or key.endswith("_audio")
 
 
+def _looks_like_runtime_path(raw: str) -> bool:
+    """Return True when a non-media string is intended as a local file path.
+
+    Some explicit reference keys (notably ``background``) may carry colors or
+    CSS-ish values.  Those are not paths.  Everything else with a path shape
+    is validated instead of silently ignored so a mistyped ``subtitle_file``
+    cannot disappear from the package.
+    """
+    if not raw or raw.startswith("#") or raw.lower().startswith("data:"):
+        return False
+    return "/" in raw or "\\" in raw or bool(Path(raw).suffix)
+
+
 def _walk_references(
     value: Any,
     source: Path,
@@ -180,20 +193,31 @@ def _walk_references(
         return
 
     raw = value.strip()
+    if not raw:
+        return
+
+    is_file_key = _is_file_reference_key(key)
     suffix = Path(raw).suffix.lower()
-    if suffix not in RUNTIME_MEDIA_SUFFIXES:
+    if suffix in RUNTIME_MEDIA_SUFFIXES:
+        pass
+    elif is_file_key and _looks_like_runtime_path(raw):
+        # Explicit file-reference keys may point at non-media runtime files
+        # (e.g. subtitle_file -> *.subtitle.json).  Do not silently drop them:
+        # package the file when it exists, otherwise fail closed below.
+        pass
+    else:
         return
 
     relative = _normalize_reference(raw)
     if relative is None:
-        if _is_file_reference_key(key):
+        if is_file_key:
             raise FileNotFoundError(
                 f"{source}: unsafe runtime file reference under key '{key}': {raw!r}"
             )
         return
 
     if is_excluded_path(relative):
-        if _is_file_reference_key(key):
+        if is_file_key:
             raise FileNotFoundError(
                 f"{source}: runtime reference points at excluded path: {relative}"
             )
@@ -202,7 +226,7 @@ def _walk_references(
     candidate = game_dir / relative
     if candidate.is_file():
         found.add(relative)
-    elif _is_file_reference_key(key):
+    elif is_file_key:
         raise FileNotFoundError(
             f"{source}: referenced runtime file not found: {relative}"
         )

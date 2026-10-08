@@ -39,6 +39,7 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
    - catalog + runtime-only manifest 驱动 Android 首页、内容下载、增量更新、断点续传。
    - `tools/content/build_content_manifest.py` 只按 Unity/Android 运行依赖白名单打包，不包含 QA 日志、动画源、文档、脚本、`.pyc`、`.lrc` 等非运行文件；version 只由 package 内 `path + sha256` 决定。
    - manifest 指向 `content/releases/{game}/{version}/` 不可变发布目录；已发布的同 version URL 永不改变字节。
+   - `content/manifests/*.json` 与 `content/releases/` 均为生成物、**不入 Git**；`tools/ops/sync_workspaces.sh` 只同步 Git 提交。生产 API 主机必须在本机用 `python3 tools/content/build_content_manifest.py --game <game>` 生成这两个目录，或单独部署已校验的发布目录；只同步代码不能发布新内容。
    - 后端只读提供 `/api/catalog/games`、`/api/content/games/{game}/manifest` 与版本化文件接口。
    - catalog 显式声明 `rules_ready` / `tutorial_ready` / `tutorial_tracks`；规则-only 游戏不提供教程下载/播放入口，但可从首页直接进入规则问答。
 

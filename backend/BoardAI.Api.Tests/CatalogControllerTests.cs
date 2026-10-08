@@ -19,6 +19,7 @@ public sealed class CatalogControllerTests : IDisposable
             Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path.Combine(_root, "content", "catalog"));
         Directory.CreateDirectory(Path.Combine(_root, "content", "manifests"));
+        Directory.CreateDirectory(Path.Combine(_root, "content", "games"));
     }
 
     [Fact]
@@ -68,6 +69,7 @@ public sealed class CatalogControllerTests : IDisposable
           "tutorial_track": "full"
         }
         """);
+        WriteConcepts("legacy");
         WriteManifest("legacy", "deadbeef", fileCount: 1, fileSize: 4096);
         var controller = CreateController();
 
@@ -79,6 +81,54 @@ public sealed class CatalogControllerTests : IDisposable
         Assert.Equal("deadbeef", game.GetProperty("content_version").GetString());
         Assert.Equal(1, game.GetProperty("content_file_count").GetInt32());
         Assert.Equal(4096, game.GetProperty("content_size_bytes").GetInt64());
+    }
+
+    [Fact]
+    public void GetGames_OmittedRulesReadyWithoutConceptsFile_DefaultsToFalse()
+    {
+        WriteCatalog("notready", """
+        {
+          "id": "notready",
+          "released": true,
+          "name_zh": "未就绪",
+          "name_en": "Not Ready",
+          "aliases": [],
+          "search_keys": [],
+          "min_players": 2,
+          "max_players": 4
+        }
+        """);
+        var controller = CreateController();
+
+        var game = ReadSingleGame(controller);
+
+        Assert.False(game.GetProperty("rules_ready").GetBoolean());
+        Assert.False(game.GetProperty("tutorial_ready").GetBoolean());
+    }
+
+    [Fact]
+    public void GetGames_OmittedRulesReadyWithConceptsFile_InfersTrue()
+    {
+        WriteCatalog("ready", """
+        {
+          "id": "ready",
+          "released": true,
+          "name_zh": "规则就绪",
+          "name_en": "Ready",
+          "aliases": [],
+          "search_keys": [],
+          "min_players": 2,
+          "max_players": 4,
+          "rules_ready": null
+        }
+        """);
+        WriteConcepts("ready");
+        var controller = CreateController();
+
+        var game = ReadSingleGame(controller);
+
+        Assert.True(game.GetProperty("rules_ready").GetBoolean());
+        Assert.False(game.GetProperty("tutorial_ready").GetBoolean());
     }
 
     private JsonElement ReadSingleGame(CatalogController controller)
@@ -104,6 +154,15 @@ public sealed class CatalogControllerTests : IDisposable
                 HttpContext = new DefaultHttpContext()
             }
         };
+    }
+
+    private void WriteConcepts(string game)
+    {
+        var gameDirectory = Path.Combine(_root, "content", "games", game);
+        Directory.CreateDirectory(gameDirectory);
+        File.WriteAllText(
+            Path.Combine(gameDirectory, "concepts.json"),
+            """{"game":"...","concepts":[]}""");
     }
 
     private void WriteCatalog(string game, string json)

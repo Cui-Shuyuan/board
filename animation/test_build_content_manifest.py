@@ -194,6 +194,35 @@ class BuildContentManifestTest(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             bcm.build_manifest(self.game, self.root)
 
+    def test_explicit_non_media_reference_is_packaged(self) -> None:
+        subtitle = self.game_dir / "media" / "tts" / "full" / "one.subtitle.json"
+        subtitle.write_text('{"events": []}', encoding="utf-8")
+        runtime = json.loads(self.runtime_path.read_text(encoding="utf-8"))
+        runtime["cues"][0]["subtitle_file"] = "media/tts/full/one.subtitle.json"
+        self.runtime_path.write_text(json.dumps(runtime), encoding="utf-8")
+
+        manifest = bcm.build_manifest(self.game, self.root)
+        paths = [entry["path"] for entry in manifest["files"]]
+
+        self.assertIn("media/tts/full/one.subtitle.json", paths)
+
+    def test_missing_explicit_non_media_reference_fails_loudly(self) -> None:
+        runtime = json.loads(self.runtime_path.read_text(encoding="utf-8"))
+        runtime["cues"][0]["subtitle_file"] = "media/tts/full/missing.subtitle.json"
+        self.runtime_path.write_text(json.dumps(runtime), encoding="utf-8")
+
+        with self.assertRaises(FileNotFoundError):
+            bcm.build_manifest(self.game, self.root)
+
+    def test_excluded_explicit_non_media_reference_fails_loudly(self) -> None:
+        (self.game_dir / "tutorial" / "full.lrc").write_text("[00:00]hi\n", encoding="utf-8")
+        runtime = json.loads(self.runtime_path.read_text(encoding="utf-8"))
+        runtime["cues"][0]["subtitle_file"] = "tutorial/full.lrc"
+        self.runtime_path.write_text(json.dumps(runtime), encoding="utf-8")
+
+        with self.assertRaises(FileNotFoundError):
+            bcm.build_manifest(self.game, self.root)
+
 
 if __name__ == "__main__":
     unittest.main()

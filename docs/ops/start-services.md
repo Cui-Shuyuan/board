@@ -17,6 +17,22 @@ dotnet run
 
 或者 dotnet run --rebuild-index <game_name>
 
+# 内容发布（不可变 manifest / release）
+
+`content/manifests/*.json` 和 `content/releases/` 是生成物，不入 Git；
+`tools/ops/sync_workspaces.sh` 只搬 Git 提交，不会同步这两个目录。
+
+生产 API 主机在内容源更新后必须执行：
+
+```bash
+python3 tools/content/build_content_manifest.py --game <game_name>
+```
+
+该命令生成 `content/manifests/{game}.json` 与 `content/releases/{game}/{version}/`，
+版本化接口只读取 release 目录。若生产机不方便运行构建，则必须把已校验的
+`content/manifests/{game}.json` 和对应的 `content/releases/{game}/{version}/`
+单独部署到 API 仓库根目录下；只同步代码不会让客户端拿到新内容。
+
 # 语音服务配置（标准 TTS + 一句话 ASR）
 
 语音服务默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**；
