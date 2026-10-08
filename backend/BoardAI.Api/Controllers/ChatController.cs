@@ -20,8 +20,17 @@ public class ChatController : ControllerBase
     {
         try
         {
-            var reply = await _orchestrator.ProcessAsync(request.GameId, request.Messages, request.Context);
+            var reply = await _orchestrator.ProcessAsync(
+                request.GameId,
+                request.Messages,
+                request.Context,
+                HttpContext.RequestAborted);
             return Ok(new ChatResponse { Reply = reply });
+        }
+        catch (OperationCanceledException)
+        {
+            // 客户端断开或请求预算到点时，保持 ASP.NET Core 的取消语义，不在控制器里包装成 500。
+            throw;
         }
         catch (Exception ex)
         {

@@ -62,8 +62,8 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
 
     public Task<SearchConceptsResult> SearchConceptsAsync(
-        string game, string query, string searchMode = "full")
-        => _searchService.SearchConceptsAsync(game, query, searchMode);
+        string game, string query, string searchMode = "full", CancellationToken cancellationToken = default)
+        => _searchService.SearchConceptsAsync(game, query, searchMode, cancellationToken);
 
 
     public IReadOnlyList<ConceptSummary> KeywordSearch(
@@ -99,8 +99,8 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
 
     public Task<PlanExecutionResult> ExecutePlanAsync(
-        string game, JsonElement plan, string question = "")
-        => _planService.ExecutePlanAsync(game, plan, question);
+        string game, JsonElement plan, string question = "", CancellationToken cancellationToken = default)
+        => _planService.ExecutePlanAsync(game, plan, question, cancellationToken);
 
 
     public IReadOnlyList<ConceptIndexItem> GetIndexItems(string game)

@@ -86,8 +86,14 @@ public sealed class RulesPlanService
     /// flow/list 不需要实体。question 为客人问题原文——实体解析失败时程序直接扫原文
     /// 找概念名（「广播」第二站），不依赖 LLM 的转述质量。
     /// </summary>
-    public async Task<PlanExecutionResult> ExecutePlanAsync(string game, JsonElement plan, string question = "")
+    public async Task<PlanExecutionResult> ExecutePlanAsync(
+        string game,
+        JsonElement plan,
+        string question = "",
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var result = new PlanExecutionResult();
         if (!plan.TryGetProperty("queries", out var queries) || queries.ValueKind != JsonValueKind.Array)
         {
@@ -97,10 +103,12 @@ public sealed class RulesPlanService
 
         foreach (var q in queries.EnumerateArray())
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (q.ValueKind != JsonValueKind.Object) continue;
             var relation = q.TryGetProperty("relation", out var rp) ? rp.GetString() ?? "" : "";
             var entity = q.TryGetProperty("entity", out var ep) ? ep.GetString() ?? "" : "";
-            result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity, question));
+            result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity, question, cancellationToken));
+            cancellationToken.ThrowIfCancellationRequested();
         }
 
         if (result.Results.Any(r => r.Status is "unresolved" or "unsupported" or "no_match"))
@@ -136,8 +144,15 @@ public sealed class RulesPlanService
     private const float SemanticCandidateThreshold = 0.50f;
 
 
-    private async Task<PlanItemResult> ExecutePlanQueryAsync(string game, string relation, string entity, string question = "")
+    private async Task<PlanItemResult> ExecutePlanQueryAsync(
+        string game,
+        string relation,
+        string entity,
+        string question,
+        CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (!PlanRelations.Contains(relation))
         {
             return new PlanItemResult
@@ -155,9 +170,11 @@ public sealed class RulesPlanService
         {
             var qhits = ResolveFromQuestion(game, question, out var qsource);
             if (qhits.Count > 0)
-                return BuildOkResult(game, relation, entity, qhits, qsource, question);
+                return BuildOkResult(game, relation, entity, qhits, qsource, question, cancellationToken);
 
-            var search = await _searchService.SearchConceptsAsync(game, entity);
+            var search = await _searchService.SearchConceptsAsync(
+                game, entity, cancellationToken: cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             return new PlanItemResult
             {
                 Relation = relation,
@@ -188,7 +205,9 @@ public sealed class RulesPlanService
         }
 
         // 实体解析：精确 id → 精确名/别名/基名（直呼工具）→ 名称包含候选
+        cancellationToken.ThrowIfCancellationRequested();
         var matched = ResolvePlanEntity(game, entity, out var candidates, out var source);
+        cancellationToken.ThrowIfCancellationRequested();
         if (matched.Count == 0)
         {
             // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
@@ -208,8 +227,11 @@ public sealed class RulesPlanService
                 // 仍一律走名称索引。
                 var explainDescriptive = relation == "explain" && entity.Length > 6;
                 var semantic = explainDescriptive
-                    ? await _searchService.SearchConceptsAsync(game, entity)
-                    : await _searchService.SearchConceptsAsync(game, entity, searchMode: "name");
+                    ? await _searchService.SearchConceptsAsync(
+                        game, entity, cancellationToken: cancellationToken)
+                    : await _searchService.SearchConceptsAsync(
+                        game, entity, searchMode: "name", cancellationToken: cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
                 var semItems = semantic.Results
                     .Where(r => r.Score >= SemanticCandidateThreshold)
                     .OrderByDescending(r => r.Score)
@@ -245,7 +267,7 @@ public sealed class RulesPlanService
                     .Where(el => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(el)))
                     .ToList();
                 if (qhits.Count > 0)
-                    return BuildOkResult(game, relation, entity, qhits, qsource, question);
+                    return BuildOkResult(game, relation, entity, qhits, qsource, question, cancellationToken);
             }
 
             if (merged.Count > 0)
@@ -263,7 +285,7 @@ public sealed class RulesPlanService
                 {
                     var autoMatched = _catalog.GetConcepts(game, autoTop.Id).ToList();
                     if (autoMatched.Count > 0)
-                        return BuildOkResult(game, relation, entity, autoMatched, "auto_semantic", question);
+                        return BuildOkResult(game, relation, entity, autoMatched, "auto_semantic", question, cancellationToken);
                 }
 
                 return new PlanItemResult
@@ -288,7 +310,7 @@ public sealed class RulesPlanService
             };
         }
 
-        return BuildOkResult(game, relation, entity, matched, source, question);
+        return BuildOkResult(game, relation, entity, matched, source, question, cancellationToken);
     }
 
 
@@ -298,8 +320,16 @@ public sealed class RulesPlanService
     /// 多命中（基名/别名/问题直呼）时 Matched 返回全部命中概念，Related 为各概念
     /// 直接引用的并集——多概念共享的事实（如播种与谷物）一次性给全。
     /// </summary>
-    private PlanItemResult BuildOkResult(string game, string relation, string entity, List<JsonElement> matched, string source = "", string question = "")
+    private PlanItemResult BuildOkResult(
+        string game,
+        string relation,
+        string entity,
+        List<JsonElement> matched,
+        string source,
+        string question,
+        CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var resolvedId = RulesTextUtils.GetElementId(matched[0]);
 
         var item = new PlanItemResult
@@ -312,8 +342,10 @@ public sealed class RulesPlanService
             Related = _referenceService.ExpandRelated(game, matched, light: source == "question_hit")
         };
 
+        cancellationToken.ThrowIfCancellationRequested();
         var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
         _flowService.GetFlowPositions(game).TryGetValue(localId, out var pos);
+        cancellationToken.ThrowIfCancellationRequested();
 
         // 流程位置链（flow 节点才有）：回答「在哪个阶段/回合」类语境
         if (pos != null)
@@ -360,6 +392,7 @@ public sealed class RulesPlanService
         if (!string.IsNullOrWhiteSpace(question))
             item.Facts = _factService.ExtractFacts(game, matched, question);
 
+        cancellationToken.ThrowIfCancellationRequested();
         return item;
     }
 

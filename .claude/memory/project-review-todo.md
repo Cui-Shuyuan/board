@@ -27,11 +27,13 @@ metadata:
 - 实施记录（2026-10-08）：采用方案 A，新布局为 `versions/{game}/{version}` / `versions/{game}/{version}.partial`；旧扁平布局 `versions/{version}/...` 提供只读兼容与安全清理，存量单游戏设备无需清数据。`cleanupOldVersions`、`deleteLocalContent`、`deletePaused`、`deleteStalePartials`、`buildReusableIndex` 均按 game 限定候选；共享 legacy 目录和其他 game 的 active root 会被跳过，partial 不进入完整版本清理候选。
 - 验收记录（2026-10-08）：先写复现测试，修复前 `ContentStoreCleanupTest.cleanupForGameADoesNotDeleteLegacyGameBVersion` 因 A cleanup 删除 B 失败；修复后通过。新增多游戏 complete/partial/active、keep=2、activate A、deleteLocalContent A、legacy 共享目录等 JVM 覆盖；`gradlew.bat testDebugUnitTest` 共 8 个测试文件 69 tests，0 failures / 0 errors。未执行多游戏真机验收。
 
-### [ ] REV-02 为问答设置停止条件并贯通取消（已确认缺失）
+### [x] REV-02 为问答设置停止条件并贯通取消（已确认缺失）
 
 - 证据：backend/BoardAI.Api/Services/ChatOrchestratorService.cs 的 MaxToolRounds 为 int.MaxValue；Controllers/ChatController.cs 未向 ProcessAsync 传递请求取消信号。
 - 修改：配置工具轮数、总耗时、重复失败阈值及上下文预算；将取消信号贯通 LLM、计划执行与检索；达到限制时返回已有事实或明确的未完成状态。
 - 验收：用假 LLM 模拟持续调用、重复错误与超时；请求在预算内结束；客户端取消后不再产生后续 LLM 请求；正常多步查询仍可完成。
+- 实施记录（2026-10-08）：`LLMOptions` 新增 `MaxToolRounds=6`、`MaxRequestSeconds=60`、`MaxRepeatedFailures=3`、`MaxConversationMessages=40`；`ChatOrchestratorService` 删除 `int.MaxValue`，使用 linked `CancellationTokenSource` + `CancelAfter` 作为总预算，按轮数、连续 tool error、相同 tool name+arguments、相同 failure signature 停止，达到限制后只发一次无工具总结；`ChatController` 传递 `HttpContext.RequestAborted` 并保留 `OperationCanceledException`；`RulesPlanService.ExecutePlanAsync`、`RulesSearchService.SearchConceptsAsync`、`VectorSearchService.SearchAsync`、`GameRulesService` wrapper 增加 CancellationToken 并向下传（Qdrant 查询透传 token，关键词扫描/embedding 同步段在关键边界检查）。
+- 验收记录（2026-10-08）：新增 `ChatOrchestratorServiceTests` 6 条 Fake LLM 测试，覆盖轮数上限、重复失败阈值、LLM 等待中外部取消、总超时、正常多步查询、Controller 层 RequestAborted 传递；另加 `RulesPlanServiceTests.ExecutePlanAsync_PreCancelledToken_ThrowsBeforeExecuting` 验证计划执行边界；`TMPDIR="/mnt/d/workspace/board/.tmp-dotnet" dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 共 82 tests，0 failures / 0 errors。未使用真实 LLM key，未做真实设备断连集成测试。
 
 ## P1：可靠性与验收
 

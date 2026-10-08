@@ -16,8 +16,14 @@ public sealed class RulesSearchService
         _vectorSearch = vectorSearch;
     }
 
-    public async Task<SearchConceptsResult> SearchConceptsAsync(string game, string query, string searchMode = "full")
+    public async Task<SearchConceptsResult> SearchConceptsAsync(
+        string game,
+        string query,
+        string searchMode = "full",
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (string.IsNullOrWhiteSpace(query))
             return new SearchConceptsResult { Results = new List<ConceptSummary>(), Query = query };
 
@@ -30,9 +36,11 @@ public sealed class RulesSearchService
         // 并行：每个子句同时跑向量搜索 + 关键词搜索（批次带子句标记，供逐词分数记账）
         async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> VectorChannelAsync(string q, string mode)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             // topK 与合并结果的 top-15 对齐——5 会把原始相似度第 6 名开外的概念
             // 的向量分截成 0（激活骰被 favor_test 等挤出 top-5 的教训，2026-08-13）
-            var items = await VectorSearchAsync(game, q, topK: 15, searchMode: mode);
+            var items = await VectorSearchAsync(game, q, topK: 15, searchMode: mode, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             // 同一 concept_id 可能来自多个来源（ontology 通用概念 + 游戏层具体实现，
             // 如 public_board），批次内去重取最高分——否则合并求和会重复计分
             var deduped = items
@@ -44,7 +52,7 @@ public sealed class RulesSearchService
 
         async Task<(string SubQuery, bool IsVector, List<(ConceptSummary Summary, float Score)> Items)> KeywordChannelAsync(string q)
         {
-            var items = await KeywordSearchWithScoreAsync(game, q);
+            var items = await KeywordSearchWithScoreAsync(game, q, cancellationToken);
             return (q, false, items);
         }
 
@@ -64,6 +72,7 @@ public sealed class RulesSearchService
         }
 
         var allBatches = await Task.WhenAll(tasks);
+        cancellationToken.ThrowIfCancellationRequested();
 
         // 合并去重：同一概念累加各通道分数（AND 语义——匹配子词越多得分越高）；
         // 同时按子词分别记账 vector/keyword 双通道分数，供 LLM 判断每个词匹配强弱
@@ -114,7 +123,7 @@ public sealed class RulesSearchService
             .ToList();
 
         // 向量搜索结果没有 description，从概念数据中补上
-        PopulateDescriptions(game, results);
+        PopulateDescriptions(game, results, cancellationToken);
 
         return new SearchConceptsResult
         {
@@ -135,10 +144,11 @@ public sealed class RulesSearchService
     }
 
 
-    private void PopulateDescriptions(string game, List<ConceptSummary> results)
+    private void PopulateDescriptions(string game, List<ConceptSummary> results, CancellationToken cancellationToken)
     {
         foreach (var r in results)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!string.IsNullOrEmpty(r.Description)) continue;
             var detail = _catalog.GetConcept(game, r.Id);
             if (detail.HasValue)
@@ -173,15 +183,22 @@ public sealed class RulesSearchService
 
 
     private async Task<List<(ConceptSummary Summary, float Score)>> VectorSearchAsync(
-        string game, string query, int topK, string searchMode = "full")
+        string game, string query, int topK, string searchMode, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         try
         {
-            var results = await _vectorSearch!.SearchAsync(game, query, topK: topK, searchMode: searchMode);
+            var results = await _vectorSearch!.SearchAsync(
+                game, query, topK: topK, searchMode: searchMode, cancellationToken: cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
             return results.Select(r => (
                 new ConceptSummary { Id = r.ConceptId, Name = r.NameZh, Type = r.Type },
                 r.Score
             )).ToList();
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -192,11 +209,15 @@ public sealed class RulesSearchService
 
 
     private Task<List<(ConceptSummary Summary, float Score)>> KeywordSearchWithScoreAsync(
-        string game, string query)
+        string game, string query, CancellationToken cancellationToken)
     {
+        // 关键词通道是同步内存扫描；Task.Run 能响应调度前的取消，扫描中途无法强制中断，
+        // 但每个子查询通常很小。若以后关键词集合继续增长，应把 Token 深入扫描循环。
         return Task.Run(() =>
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var results = KeywordSearch(game, query);
+            cancellationToken.ThrowIfCancellationRequested();
             return results.Select(r =>
             {
                 // 关键词匹配只作小幅加成，不主导排序（2026-08-16 实测：内容命中 0.90 的
@@ -212,7 +233,7 @@ public sealed class RulesSearchService
                     score = 0.05f;
                 return (r, score);
             }).ToList();
-        });
+        }, cancellationToken);
     }
 
 

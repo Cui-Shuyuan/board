@@ -158,6 +158,27 @@ public sealed class RulesPlanServiceTests
         Assert.Equal("widget", GetId(item.Matched[0]));
     }
 
+    [Fact]
+    public async Task ExecutePlanAsync_PreCancelledToken_ThrowsBeforeExecuting()
+    {
+        using var fixture = new RulesFixture();
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var document = JsonDocument.Parse(
+            """
+            {
+              "queries": [
+                { "relation": "explain", "entity": "widget" }
+              ]
+            }
+            """);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => plan.ExecutePlanAsync("testgame", document.RootElement, cancellationToken: cts.Token));
+    }
+
     private static RulesPlanService CreateService(RulesContentStore content)
     {
         var catalog = new RulesConceptCatalog(content);

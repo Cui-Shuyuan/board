@@ -105,22 +105,29 @@ public class VectorSearchService : IDisposable
     /// 每个游戏独享 collection，无需 game_id 过滤。
     /// </summary>
     public async Task<IReadOnlyList<SearchResult>> SearchAsync(
-        string gameId, string query, int topK = 10, float threshold = 0.55f, string searchMode = "full")
+        string gameId, string query, int topK = 10, float threshold = 0.55f, string searchMode = "full",
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var collection = searchMode == "name"
             ? CollectionName(gameId) + "_name"
             : CollectionName(gameId);
         // 查询侧不加 BGE 官方指令前缀：短概念名查询加前缀会整体降低 top1 分数
         // 并让排序变差（2026-08-16 实测）。
         var queryVec = _embedder.Embed(query);
+        cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
+            // Qdrant.Client 的 SearchAsync 支持 CancellationToken；在途 gRPC 查询会随 token 取消。
             var results = await _client.SearchAsync(
                 collection,
                 queryVec.ToArray(),
                 limit: (ulong)topK,
-                scoreThreshold: threshold);
+                scoreThreshold: threshold,
+                cancellationToken: cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
 
             return results.Select(r => new SearchResult
             {
@@ -132,6 +139,10 @@ public class VectorSearchService : IDisposable
                     ? nameVal.StringValue : "",
                 Score = r.Score,
             }).ToList();
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {

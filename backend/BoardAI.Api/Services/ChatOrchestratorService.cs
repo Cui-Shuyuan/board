@@ -14,7 +14,10 @@ public class ChatOrchestratorService
     private readonly GameRulesService _rulesService;
     private readonly string _systemPromptTemplate;
     private readonly ILogger<ChatOrchestratorService> _logger;
-    private const int MaxToolRounds = int.MaxValue;
+    private readonly int _maxToolRounds;
+    private readonly TimeSpan _maxRequestTimeout;
+    private readonly int _maxRepeatedFailures;
+    private readonly int _maxConversationMessages;
 
     private static readonly JsonSerializerOptions PrettyLogOptions = new()
     {
@@ -37,8 +40,14 @@ public class ChatOrchestratorService
     {
         _llmService = llmService;
         _rulesService = rulesService;
-        _systemPromptTemplate = options.Value.SystemPrompt;
         _logger = logger;
+
+        var llmOptions = options.Value;
+        _systemPromptTemplate = llmOptions.SystemPrompt;
+        _maxToolRounds = Math.Max(1, llmOptions.MaxToolRounds);
+        _maxRequestTimeout = TimeSpan.FromSeconds(Math.Max(1, llmOptions.MaxRequestSeconds));
+        _maxRepeatedFailures = Math.Max(1, llmOptions.MaxRepeatedFailures);
+        _maxConversationMessages = Math.Max(2, llmOptions.MaxConversationMessages);
     }
 
     public async Task<string> ProcessAsync(
@@ -69,7 +78,8 @@ public class ChatOrchestratorService
             messages.Add(new() { Role = "system", Content = contextMessage });
         }
 
-        messages.AddRange(history);
+        var trimmedHistory = TrimHistory(history, _maxConversationMessages);
+        messages.AddRange(trimmedHistory);
 
         var latestUser = history.LastOrDefault(m => m.Role == "user");
         var question = latestUser?.Content ?? "";
@@ -80,72 +90,276 @@ public class ChatOrchestratorService
 
         var tools = BuildTools(gameId);
         var evidence = new AnswerEvidence();
+        var roundsExecuted = 0;
+        string? stopReason = null;
 
-        for (int round = 0; round < MaxToolRounds; round++)
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        linkedCts.CancelAfter(_maxRequestTimeout);
+        var effectiveToken = linkedCts.Token;
+
+        try
         {
-            var response = await _llmService.ChatWithMessagesAsync(messages, tools, cancellationToken);
-            var assistantMessage = response.Choices!.First().Message!;
+            var consecutiveToolFailures = 0;
+            var repeatedCallCount = 0;
+            var repeatedFailureCount = 0;
+            string? lastToolCallSignature = null;
+            string? lastFailureSignature = null;
 
-            if (!string.IsNullOrWhiteSpace(assistantMessage.ReasoningContent))
+            for (var round = 0; round < _maxToolRounds; round++)
             {
-                _logger.LogInformation("[Chat] Game {GameId}, Round {Round} reasoning:\n{Reasoning}", gameId, round + 1, assistantMessage.ReasoningContent);
-            }
+                effectiveToken.ThrowIfCancellationRequested();
+                roundsExecuted = round + 1;
 
-            // If LLM returned a final answer (no tool calls)
-            if (assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0)
-            {
-                var reply = assistantMessage.Content ?? string.Empty;
-                sw.Stop();
-                _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
-                    gameId, round + 1, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
-                return reply;
-            }
+                var response = await _llmService.ChatWithMessagesAsync(messages, tools, effectiveToken);
+                var assistantMessage = response.Choices?.FirstOrDefault()?.Message
+                    ?? throw new InvalidOperationException("LLM returned empty response.");
 
-            _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
-                gameId,
-                round + 1,
-                string.Join("\n", assistantMessage.ToolCalls.Select(t =>
-                    $"  {t.Function.Name}({FormatForLog(t.Function.Arguments)})")));
-
-            // Add assistant message with tool calls
-            messages.Add(assistantMessage);
-
-            // Execute each tool call and add results
-            foreach (var toolCall in assistantMessage.ToolCalls)
-            {
-                var result = await ExecuteToolAsync(toolCall, gameId, question, cancellationToken);
-                _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}", gameId, toolCall.Function.Name, FormatForLog(result));
-                if (toolCall.Function.Name == "execute_plan")
-                    UpdateEvidence(result, evidence);
-                messages.Add(new ChatMessage
+                if (!string.IsNullOrWhiteSpace(assistantMessage.ReasoningContent))
                 {
-                    Role = "tool",
-                    ToolCallId = toolCall.Id,
-                    Content = result
-                });
+                    _logger.LogInformation("[Chat] Game {GameId}, Round {Round} reasoning:\n{Reasoning}",
+                        gameId, roundsExecuted, assistantMessage.ReasoningContent);
+                }
+
+                // If LLM returned a final answer (no tool calls)
+                if (assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0)
+                {
+                    var reply = assistantMessage.Content ?? string.Empty;
+                    sw.Stop();
+                    _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
+                        gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
+                    return reply;
+                }
+
+                _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
+                    gameId,
+                    roundsExecuted,
+                    string.Join("\n", assistantMessage.ToolCalls.Select(t =>
+                        $"  {t.Function.Name}({FormatForLog(t.Function.Arguments)})")));
+
+                // Add assistant message with tool calls
+                messages.Add(assistantMessage);
+
+                for (var toolIndex = 0; toolIndex < assistantMessage.ToolCalls.Count; toolIndex++)
+                {
+                    effectiveToken.ThrowIfCancellationRequested();
+
+                    var toolCall = assistantMessage.ToolCalls[toolIndex];
+                    var toolCallSignature = BuildToolCallSignature(toolCall);
+
+                    if (toolCallSignature == lastToolCallSignature)
+                    {
+                        repeatedCallCount++;
+                    }
+                    else
+                    {
+                        repeatedCallCount = 1;
+                        lastToolCallSignature = toolCallSignature;
+                    }
+
+                    var result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
+                    effectiveToken.ThrowIfCancellationRequested();
+
+                    _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}",
+                        gameId, toolCall.Function.Name, FormatForLog(result));
+                    if (toolCall.Function.Name == "execute_plan")
+                        UpdateEvidence(result, evidence);
+
+                    if (TryGetToolError(result, out var errorText))
+                    {
+                        consecutiveToolFailures++;
+                        var failureSignature = toolCallSignature + "\n" + errorText;
+                        if (failureSignature == lastFailureSignature)
+                        {
+                            repeatedFailureCount++;
+                        }
+                        else
+                        {
+                            repeatedFailureCount = 1;
+                            lastFailureSignature = failureSignature;
+                        }
+                    }
+                    else
+                    {
+                        consecutiveToolFailures = 0;
+                        repeatedFailureCount = 0;
+                        lastFailureSignature = null;
+                    }
+
+                    messages.Add(new ChatMessage
+                    {
+                        Role = "tool",
+                        ToolCallId = toolCall.Id,
+                        Content = result
+                    });
+
+                    stopReason = GetToolStopReason(consecutiveToolFailures, repeatedCallCount, repeatedFailureCount);
+                    if (stopReason != null)
+                    {
+                        AppendSkippedToolResults(messages, assistantMessage.ToolCalls, toolIndex + 1, stopReason);
+                        break;
+                    }
+                }
+
+                if (stopReason != null)
+                {
+                    _logger.LogInformation(
+                        "[Chat] Game {GameId}, tool loop stopped: reason={Reason}, rounds={Rounds}, elapsed={Elapsed:F0}ms, consecutiveFailures={ConsecutiveFailures}, repeatedCalls={RepeatedCalls}, repeatedFailures={RepeatedFailures}",
+                        gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds,
+                        consecutiveToolFailures, repeatedCallCount, repeatedFailureCount);
+                    break;
+                }
+            }
+
+            if (stopReason == null)
+                stopReason = "max_tool_rounds";
+
+            return await RequestFinalAnswerAsync(gameId, messages, evidence, stopReason, roundsExecuted, sw, effectiveToken);
+        }
+        catch (OperationCanceledException) when (effectiveToken.IsCancellationRequested)
+        {
+            sw.Stop();
+            var cancellationReason = cancellationToken.IsCancellationRequested ? "client_cancelled" : "request_timeout";
+            _logger.LogInformation(
+                "[Chat] Game {GameId}, canceled: reason={Reason}, rounds={Rounds}, elapsed={Elapsed:F0}ms",
+                gameId, cancellationReason, roundsExecuted, sw.Elapsed.TotalMilliseconds);
+            throw;
+        }
+        finally
+        {
+            sw.Stop();
+        }
+    }
+
+    private static List<ChatMessage> TrimHistory(List<ChatMessage> history, int maxMessages)
+    {
+        if (history.Count <= maxMessages) return history;
+        return history.Skip(history.Count - maxMessages).ToList();
+    }
+
+    private static string BuildToolCallSignature(ToolCall toolCall)
+    {
+        var arguments = (toolCall.Function.Arguments ?? string.Empty).Trim();
+        return toolCall.Function.Name + "|" + arguments;
+    }
+
+    private static bool TryGetToolError(string result, out string errorText)
+    {
+        errorText = string.Empty;
+        try
+        {
+            using var doc = JsonDocument.Parse(result);
+            if (doc.RootElement.ValueKind == JsonValueKind.Object
+                && doc.RootElement.TryGetProperty("error", out var error))
+            {
+                errorText = error.ValueKind == JsonValueKind.String
+                    ? error.GetString() ?? string.Empty
+                    : error.GetRawText();
+                return true;
             }
         }
+        catch (JsonException)
+        {
+            // 非 JSON 的工具结果不按 error 处理；当前 ExecuteToolAsync 总会返回 JSON。
+        }
 
-        // Max rounds reached, force a final answer without tools
+        return false;
+    }
+
+    private string? GetToolStopReason(int consecutiveToolFailures, int repeatedCallCount, int repeatedFailureCount)
+    {
+        if (consecutiveToolFailures >= _maxRepeatedFailures)
+            return "consecutive_tool_failures";
+        if (repeatedCallCount >= _maxRepeatedFailures)
+            return "repeated_tool_call";
+        if (repeatedFailureCount >= _maxRepeatedFailures)
+            return "repeated_failure_signature";
+        return null;
+    }
+
+    private static void AppendSkippedToolResults(
+        List<ChatMessage> messages,
+        List<ToolCall> toolCalls,
+        int startIndex,
+        string stopReason)
+    {
+        for (var i = startIndex; i < toolCalls.Count; i++)
+        {
+            messages.Add(new ChatMessage
+            {
+                Role = "tool",
+                ToolCallId = toolCalls[i].Id,
+                Content = "{\"error\": \"工具调用因达到停止条件（" + stopReason + "）未执行。\"}"
+            });
+        }
+    }
+
+    private async Task<string> RequestFinalAnswerAsync(
+        string gameId,
+        List<ChatMessage> messages,
+        AnswerEvidence evidence,
+        string stopReason,
+        int roundsExecuted,
+        Stopwatch sw,
+        CancellationToken cancellationToken)
+    {
         messages.Add(new ChatMessage
         {
             Role = "user",
             Content = "请基于以上工具查询结果直接给出最终回答，不要再调用工具。"
+                + "如果可用事实不足以完整回答，请明确说明未能完成查询，并请客人缩小问题范围或换一种问法；不要编造规则事实。"
         });
 
-        var finalResponse = await _llmService.ChatWithMessagesAsync(messages, null, cancellationToken);
-        var finalMessage = finalResponse.Choices!.First().Message!;
-
-        if (!string.IsNullOrWhiteSpace(finalMessage.ReasoningContent))
+        try
         {
-            _logger.LogInformation("[Chat] Game {GameId}, Final reasoning:\n{Reasoning}", gameId, finalMessage.ReasoningContent);
-        }
+            var finalResponse = await _llmService.ChatWithMessagesAsync(messages, null, cancellationToken);
+            var finalMessage = finalResponse.Choices?.FirstOrDefault()?.Message;
+            var finalReply = finalMessage?.Content ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(finalReply))
+            {
+                _logger.LogWarning("[Chat] Game {GameId}, final summary returned empty content", gameId);
+                finalReply = BuildIncompleteReply(stopReason, evidence);
+            }
 
-        var finalReply = finalMessage.Content ?? string.Empty;
-        sw.Stop();
-        _logger.LogInformation("[Chat] Game {GameId}, Final reply after {Rounds} rounds ({Elapsed:F0}ms, {Tier}): {Reply}",
-            gameId, MaxToolRounds, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), finalReply);
-        return finalReply;
+            sw.Stop();
+            _logger.LogInformation(
+                "[Chat] Game {GameId}, final reply after stop={StopReason}, rounds={Rounds}, elapsed={Elapsed:F0}ms, {Tier}: {Reply}",
+                gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), finalReply);
+            return finalReply;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            sw.Stop();
+            _logger.LogInformation(
+                "[Chat] Game {GameId}, final summary canceled: stop={StopReason}, rounds={Rounds}, elapsed={Elapsed:F0}ms",
+                gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds);
+            throw;
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            _logger.LogWarning(ex,
+                "[Chat] Game {GameId}, final summary failed: stop={StopReason}, rounds={Rounds}, elapsed={Elapsed:F0}ms",
+                gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds);
+            return BuildIncompleteReply(stopReason, evidence);
+        }
+    }
+
+    private static string BuildIncompleteReply(string stopReason, AnswerEvidence evidence)
+    {
+        var reasonText = stopReason switch
+        {
+            "max_tool_rounds" => "已达到本次查询的工具调用轮数上限",
+            "consecutive_tool_failures" => "工具连续返回错误",
+            "repeated_tool_call" => "工具调用重复",
+            "repeated_failure_signature" => "工具连续以相同方式失败",
+            _ => "本次查询未能完成"
+        };
+
+        var evidenceText = evidence.SawData
+            ? "我已经查到部分规则事实，但信息还不够完整。"
+            : "我还没有拿到足够的规则事实。";
+
+        return "抱歉，" + reasonText + "，" + evidenceText + "请缩小问题范围，或者换一种更具体的问法。";
     }
 
     private string? BuildContextMessage(ChatContext? context)
@@ -381,8 +595,20 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
         };
     }
 
-    private async Task<string> ExecuteToolAsync(ToolCall toolCall, string gameId, string question, CancellationToken cancellationToken)
+    private async Task<string> ExecuteToolAsync(
+        ToolCall toolCall,
+        string gameId,
+        string question,
+        CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        string Finish(string value)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return value;
+        }
+
         try
         {
             JsonElement args;
@@ -392,7 +618,7 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
             }
             catch (JsonException)
             {
-                return "{\"error\": \"arguments 不是合法 JSON——请严格按函数 schema 输出 {\\\"plan\\\":{\\\"queries\\\":[{\\\"relation\\\":\\\"...\\\",\\\"entity\\\":\\\"...\\\"}]}} 形状的工具参数。\"}";
+                return Finish("{\"error\":\"arguments 不是合法 JSON，请严格按函数 schema 输出 {\\\"plan\\\":{\\\"queries\\\":[{\\\"relation\\\":\\\"...\\\",\\\"entity\\\":\\\"...\\\"}]}} 形状的工具参数。\"}");
             }
 
             // 自愈：模型偶尔把参数包成 {"arguments": "<json 字符串>"} 的 OpenAI 风格外壳
@@ -420,55 +646,71 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
                         var searchMode = "full";
                         if (args.TryGetProperty("search_mode", out var modeProp))
                             searchMode = modeProp.GetString() ?? "full";
-                        var results = await _rulesService.SearchConceptsAsync(gameId, query, searchMode);
-                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(results, ToolResultOptions), gameId);
+                        var results = await _rulesService.SearchConceptsAsync(
+                            gameId, query, searchMode, cancellationToken);
+                        return Finish(_rulesService.AnnotateReferences(
+                            JsonSerializer.Serialize(results, ToolResultOptions), gameId));
                     }
 
                 case "get_concept":
                     {
                         var conceptId = args.GetProperty("concept_id").GetString() ?? string.Empty;
+                        cancellationToken.ThrowIfCancellationRequested();
                         var result = _rulesService.GetConceptsWithExpansion(gameId, conceptId);
-                        return result.Matched.Count > 0
-                            ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId)
-                            : $"{{\"error\": \"Concept '{conceptId}' not found\"}}";
+                        return Finish(result.Matched.Count > 0
+                            ? _rulesService.AnnotateReferences(
+                                JsonSerializer.Serialize(result, ToolResultOptions), gameId)
+                            : $"{{\"error\": \"Concept '{conceptId}' not found\"}}");
                     }
 
                 case "execute_plan":
                     {
                         if (!args.TryGetProperty("plan", out var plan))
-                            return "{\"error\": \"plan is required——arguments 顶层必须有 plan 键：{\\\"plan\\\":{\\\"queries\\\":[{\\\"relation\\\":\\\"...\\\",\\\"entity\\\":\\\"...\\\"}]}}\"}";
-                        var planResult = await _rulesService.ExecutePlanAsync(gameId, plan, question);
-                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(planResult, ToolResultOptions), gameId);
+                            return Finish("{\"error\":\"plan is required，arguments 顶层必须有 plan 键。\"}");
+                        var planResult = await _rulesService.ExecutePlanAsync(
+                            gameId, plan, question, cancellationToken);
+                        return Finish(_rulesService.AnnotateReferences(
+                            JsonSerializer.Serialize(planResult, ToolResultOptions), gameId));
                     }
 
                 case "get_game_flow":
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         var concepts = _rulesService.GetConcepts(gameId, "game");
-                        return concepts.Count > 0
-                            ? _rulesService.AnnotateReferences(JsonSerializer.Serialize(concepts, ToolResultOptions), gameId)
-                            : $"{{\"error\": \"Game flow concept 'game' not found for '{gameId}'\"}}";
+                        return Finish(concepts.Count > 0
+                            ? _rulesService.AnnotateReferences(
+                                JsonSerializer.Serialize(concepts, ToolResultOptions), gameId)
+                            : $"{{\"error\": \"Game flow concept 'game' not found for '{gameId}'\"}}");
                     }
 
                 case "get_action_conditions":
                     {
                         var actionId = args.GetProperty("action_id").GetString() ?? string.Empty;
+                        cancellationToken.ThrowIfCancellationRequested();
                         var conditions = _rulesService.GetActionConditions(gameId, actionId);
-                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(conditions, ToolResultOptions), gameId);
+                        return Finish(_rulesService.AnnotateReferences(
+                            JsonSerializer.Serialize(conditions, ToolResultOptions), gameId));
                     }
 
                 case "list_concept_ids":
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         var result = _rulesService.ListAllConceptIds(gameId);
-                        return _rulesService.AnnotateReferences(JsonSerializer.Serialize(result, ToolResultOptions), gameId);
+                        return Finish(_rulesService.AnnotateReferences(
+                            JsonSerializer.Serialize(result, ToolResultOptions), gameId));
                     }
 
                 default:
-                    return $"{{\"error\": \"Unknown tool '{toolCall.Function.Name}'\"}}";
+                    return Finish($"{{\"error\": \"Unknown tool '{toolCall.Function.Name}'\"}}");
             }
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {
-            return $"{{\"error\": \"{ex.Message}\"}}";
+            return Finish($"{{\"error\": \"{ex.Message}\"}}");
         }
     }
 
