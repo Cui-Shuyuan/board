@@ -21,6 +21,18 @@
 | `content/games/splendor/tutorial/full.runtime.json` | 编译产物：音频、时长、字级字幕 timing |
 | `content/games/splendor/tutorial/anim/v2/full.compiled.json` | 编译产物，Unity 只读 |
 
+## 1.1 story / note 的写法
+
+- `script.story`：本条讲规要点，与当前口播含义一致。完整口播及 beat 切分以
+  `script.full.json` 为准。
+- `script.note`：当前画面、演示前提、为什么这样演，以及必要的制作约束。
+  区分屏幕展示图与真实组件；错误示例说明错误点，分支示例说明入口及恢复方式。
+- 动作、数量、时序、取景及继承关系以 `events`、`enter/exit`、
+  stage 和 `parent/entry` 的结构声明为准。说明文字应与这些声明一致，
+  无需重复全部参数或写死旧秒数。
+- 修改历史与已解决的待办放入归档。整理前的原文见
+  [Splendor full story/note 历史快照](../../../../../../.claude/archive/animation/2026-10-08/splendor-full-story-note.json)。
+
 ## 1.5 tree、状态继承与 demo 分支
 
 ### tree 是舞台边界，不是状态边界
