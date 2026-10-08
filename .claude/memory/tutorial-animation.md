@@ -71,7 +71,7 @@ metadata:
   表达卡面语义锚点，mapping 形式的 `offset`/`nudge` 表示屏幕比例微调。
 - 全局原语：`camera`、`wait`、无 target 的整幅图 `show`。
 - 常用原语：`move` / `take` / `pay` / `flip` / `draw` 是 `transfer` 的编译期薄宏；`set_order` 按绝对槽位重排单个对象并可选 `layer`；edge flip 支持 `axis` / `direction` / `destination`，`draw` 不写 `dur` 时默认 0.6s。
-- 旧数据迁移：`python3 animation/migrate_object_targets_v2.py <track>.anim.json --write`。
+- 旧数据迁移：`python3 animation/archive/migrate_object_targets_v2.py <track>.anim.json --write  # 历史一次性脚本`。
 
 ## 时间锚点 `time_anchors`
 
@@ -80,7 +80,7 @@ metadata:
 - 锚点命名：`<cue_id>.start`、`<cue_id>.end`、`<beat_id>.start`、`<beat_id>.end`。
 - 解析来源：`script.{track}.json` 的 beats + `{track}.runtime.json` 的 TTS 字级 timing。
 - 迁移与提交状态：`38971d4` 已把 `time_anchors` 全量迁移并 commit；`full.runtime.json` / `full.compiled.json` 输出数值 `at`，源数据保留 anchor。
-- 一次性迁移/重生成：`animation/migrate_time_anchors_v2.py`。
+- 一次性迁移/重生成：`animation/archive/migrate_time_anchors_v2.py`。
 - LLM 编写规范见 `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`。
 
 ## 父子 cue、tree 与状态继承

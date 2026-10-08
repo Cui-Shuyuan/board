@@ -182,7 +182,7 @@ python3 tools/ops/check_unity_scripts.py
 `time_anchors` 已迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。一次性迁移/重生成：
 
 ```bash
-python3 animation/migrate_time_anchors_v2.py
+python3 animation/archive/migrate_time_anchors_v2.py  # 历史一次性脚本，不再需要运行
 ```
 
 ### Unity 采样对账

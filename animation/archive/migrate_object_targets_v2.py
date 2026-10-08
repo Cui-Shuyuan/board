@@ -19,7 +19,7 @@ in the destination row (market refill, etc.), not a source item.  If it is
 present inside `target`, this script moves it back to the event.
 
 Usage:
-    python3 animation/migrate_object_targets_v2.py <track.anim.json> [--write]
+    python3 animation/archive/migrate_object_targets_v2.py <track.anim.json> [--write]
 """
 from __future__ import annotations
 
