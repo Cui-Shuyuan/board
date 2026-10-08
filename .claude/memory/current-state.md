@@ -65,7 +65,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 已知未做 / 未闭环
 
-- 2026-10-08 全项目审查的 8 项 REV-01～REV-08 均已完成并本地提交。2026-10-09 用户确认本轮执行 fast-forward push，push 完成后 `origin/main` 将包含 REV-01～REV-08；规则请求快照与缓存并发一致性、逐查询回答证据均已落地；证据元数据只用于追溯/评测。本轮（2026-10-08）REV-07 补了 Windows 真实磁盘覆盖写并发回归，REV-08 补了 Android 对 Evidence 的消费与缺失项提示；真实 LLM/真机 Evidence 展示未执行。各项证据、残余与验收记录见 [project-review-todo.md](project-review-todo.md)。
+- 2026-10-08 全项目审查的 8 项 REV-01～REV-08 均已完成并本地提交。2026-10-09 用户确认并对 `origin/main` 执行 fast-forward push：`origin/main` 已从 `f340373` 推进，包含此前 25 个本地提交、发布记录提交 `4798c82` 与本 push 状态补记；最终远端 hash 以 `git ls-remote origin refs/heads/main` 为准。规则请求快照与缓存并发一致性、逐查询回答证据均已落地；证据元数据只用于追溯/评测。本轮（2026-10-08）REV-07 补了 Windows 真实磁盘覆盖写并发回归，REV-08 补了 Android 对 Evidence 的消费与缺失项提示；真实 LLM/真机 Evidence 展示未执行。各项证据、残余与验收记录见 [project-review-todo.md](project-review-todo.md)。
 
 - Splendor 真卡身份与合并 cue TTS 已收口（`check_card_identity_v2` 0 error），但**还没有从头到尾重新逐 cue 过一遍动画**；画面观感待本轮重审。
 - Unity 视觉验收此前被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环。

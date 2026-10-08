@@ -9,7 +9,7 @@ metadata:
 
 状态：REV-01～REV-08 已完成；本轮（2026-10-08）对 REV-07/REV-08 做了独立复核、真实磁盘并发补测与 Android 客户端证据消费补缺。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
 
-本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并确认对 `origin/main` 做 fast-forward push。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。
+本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并对 `origin/main` 执行 fast-forward push（已从 `f340373` 推进，包含此前 25 个本地提交、发布记录提交 `4798c82` 与本补记；最终远端 hash 以 `git ls-remote origin refs/heads/main` 为准）。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。
 
 ## 审查基线与范围
 
