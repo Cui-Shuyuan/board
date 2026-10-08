@@ -93,7 +93,7 @@ public sealed class Rev08AnswerEvidenceTests
         Assert.False(evidence.HasData);
         Assert.True(evidence.HasCandidates);
         var query = Assert.Single(evidence.Queries);
-        Assert.Equal("ok", query.Status);
+        Assert.Equal("unresolved", query.Status);
         Assert.Contains(query.Candidates, candidate => candidate.Id == "widget");
     }
 

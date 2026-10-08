@@ -132,7 +132,7 @@ public sealed class RulesPlanServiceTests
     }
 
     [Fact]
-    public async Task ExecutePlanAsync_Identify_QuestionHit_ReturnsMatchedConcept()
+    public async Task ExecutePlanAsync_Identify_QuestionNameIsOnlyAFallbackCandidate()
     {
         using var fixture = new RulesFixture();
         using var content = new RulesContentStore(fixture.Root);
@@ -152,10 +152,10 @@ public sealed class RulesPlanServiceTests
             question: "小装置在哪里");
 
         var item = Assert.Single(result.Results);
-        Assert.Equal("ok", item.Status);
-        Assert.Equal("question_hit", item.Source);
-        Assert.Single(item.Matched);
-        Assert.Equal("widget", GetId(item.Matched[0]));
+        Assert.Equal("unresolved", item.Status);
+        Assert.Equal("", item.Source);
+        Assert.Empty(item.Matched);
+        Assert.Equal("widget", Assert.Single(item.Candidates!).Id);
     }
 
     [Fact]
@@ -177,6 +177,28 @@ public sealed class RulesPlanServiceTests
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
             () => plan.ExecutePlanAsync("testgame", document.RootElement, cancellationToken: cts.Token));
+    }
+
+
+    [Fact]
+    public async Task Identify_ColorQualifierIsNotReplacedByGenericQuestionName()
+    {
+        using var fixture = new RulesFixture();
+        File.WriteAllText(fixture.GameConceptsPath,
+            """
+            {"objects":[
+              {"id":"dice","name":{"zh":"骰子"},"description":{"zh":"产生随机数的组件"}},
+              {"id":"activation_die","name":{"zh":"激活骰"},"description":{"zh":"白色的六面骰子，用来激活模组"}}
+            ]}
+            """);
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var doc = JsonDocument.Parse("""{"queries":[{"relation":"identify","entity":"白色 骰子"}]}""");
+        var result = await plan.ExecutePlanAsync("testgame", doc.RootElement, "白色骰子");
+        var item = Assert.Single(result.Results);
+        Assert.Equal("unresolved", item.Status);
+        Assert.Empty(item.Matched);
+        Assert.Equal("activation_die", item.Candidates![0].Id);
     }
 
     private static RulesPlanService CreateService(RulesContentStore content)

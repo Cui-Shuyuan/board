@@ -17,12 +17,11 @@ public class RequestIdMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        // 从 TraceIdentifier 取后 6 位作为短请求 ID（唯一性足够用于日志区分）
-        var traceId = context.TraceIdentifier;
-        var shortId = traceId.Length > 6 ? traceId[^6..] : traceId;
+        // 保留连接和请求序号；只取末六位会让不同连接都显示为 000001。
+        var requestId = context.TraceIdentifier;
 
         // 注入 log scope：后续同一请求内的所有 ILogger 输出都会携带这个 ID
-        using (_logger.BeginScope("rid:{RequestId}", shortId))
+        using (_logger.BeginScope("rid:{RequestId}", requestId))
         {
             await _next(context);
         }

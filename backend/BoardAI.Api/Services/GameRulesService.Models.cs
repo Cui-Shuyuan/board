@@ -15,8 +15,14 @@ public class ConceptSummary
     public Dictionary<string, JsonElement>? Media { get; set; }
     /// <summary>每个切分词的双通道匹配分（仅 search_concepts 返回时填充；单词查询时该词即整句，FullQueryScore 为 null）。</summary>
     public Dictionary<string, ChannelScores>? TermScores { get; set; }
-    /// <summary>整句查询的双通道匹配分（多词查询时存在；整句参与总分，补上它才能与 Score 对账）。</summary>
+    /// <summary>整句查询的双通道匹配分（多词查询时存在；整句主导排序，配合 SubqueryBoost 与 Score 对账）。</summary>
     public ChannelScores? FullQueryScore { get; set; }
+    /// <summary>完整查询的匹配证据；自动解析只检查此项，不把子词加分当成置信度。</summary>
+    public ChannelScores? PhraseScore { get; set; }
+    /// <summary>子查询的小幅补充分；Score = PhraseScore.Vector + PhraseScore.Keyword + SubqueryBoost。</summary>
+    public float SubqueryBoost { get; set; }
+    /// <summary>仅名称补充候选的原始分。计划里的 Score 以 0.55 为上限，PhraseScore 留空，不参与自动解析。</summary>
+    public float? NameMatchScore { get; set; }
 }
 
 /// <summary>单个查询（切分词或整句）在向量/关键词两通道上的匹配分。</summary>
@@ -32,7 +38,7 @@ public class SearchConceptsResult
     public int Count => Results.Count;
     public string Query { get; set; } = string.Empty;
     public List<string> SplitTerms { get; set; } = new();
-    public string Strategy { get; set; } = "hybrid_vector_keyword";
+    public string Strategy { get; set; } = "phrase_first_vector_keyword";
     public string Note { get; set; } = "Top results only — NOT exhaustive. If you need to see ALL concepts (e.g., to browse what exists), use list_concept_ids.";
 }
 

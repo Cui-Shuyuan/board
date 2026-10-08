@@ -140,6 +140,26 @@ public sealed class RulesSearchServiceTests
         Assert.Equal("A useful widget", widget.Description);
     }
 
+
+    [Fact]
+    public async Task SearchConceptsAsync_FullKeywordQueryRequiresAllTermsInOneConcept()
+    {
+        var catalog = new FakeRulesConceptCatalog(
+            conceptsByType: new Dictionary<string, IReadOnlyList<ConceptSummary>>
+            {
+                ["objects"] = new[] { new ConceptSummary { Id = "aid", Name = "辅助卡", Type = "objects" } }
+            },
+            details: new Dictionary<string, string>
+            {
+                ["aid"] = """{"description":{"zh":"用于查看规则摘要的卡"}}"""
+            });
+        var service = new RulesSearchService(catalog, vectorSearch: null);
+        var result = await service.SearchConceptsAsync("testgame", "point bonus 卡");
+        var aid = Assert.Single(result.Results);
+        Assert.Equal(0, aid.PhraseScore!.Keyword);
+        Assert.True(aid.Score < .05f);
+    }
+
     private static ConceptSummary Widget() => new()
     {
         Id = "widget",

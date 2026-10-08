@@ -27,8 +27,6 @@ public sealed class RulesSearchService
         if (string.IsNullOrWhiteSpace(query))
             return new SearchConceptsResult { Results = new List<ConceptSummary>(), Query = query };
 
-        var useNameOnly = searchMode == "name";
-
         // 把 query 拆成子查询，加上原句一起并行搜
         var subQueries = SplitQuery(query);
         var allQueries = new HashSet<string>(subQueries) { query };
@@ -74,54 +72,9 @@ public sealed class RulesSearchService
         var allBatches = await Task.WhenAll(tasks);
         cancellationToken.ThrowIfCancellationRequested();
 
-        // 合并去重：同一概念累加各通道分数（AND 语义——匹配子词越多得分越高）；
-        // 同时按子词分别记账 vector/keyword 双通道分数，供 LLM 判断每个词匹配强弱
-        var merged = new Dictionary<string, AccumulatedSearch>();
-        foreach (var (subQuery, isVector, items) in allBatches)
-        {
-            foreach (var (summary, score) in items)
-            {
-                var key = string.IsNullOrEmpty(summary.Path) ? summary.Id : summary.Path;
-                if (!merged.TryGetValue(key, out var acc))
-                {
-                    acc = new AccumulatedSearch { Summary = summary };
-                    merged[key] = acc;
-                }
-                acc.Total += score;
-                var byTerm = isVector ? acc.VectorByTerm : acc.KeywordByTerm;
-                byTerm[subQuery] = byTerm.GetValueOrDefault(subQuery) + score;
-            }
-        }
-
-        // 按子词数量归一化：匹配词越多的概念得分越高（排名算法不变）
-        var divisor = Math.Max(subQueries.Length, 1);
-        var hasFullQuery = !subQueries.Contains(query);
-        var results = merged.Values
-            .Select(acc => new { acc, RawScore = acc.Total / divisor })
-            .OrderByDescending(x => x.RawScore)
-            .Take(15)
-            .Select(x =>
-            {
-                var summary = x.acc.Summary;
-                summary.Score = MathF.Round(x.RawScore, 2);
-                summary.TermScores = subQueries.ToDictionary(
-                    t => t,
-                    t => new ChannelScores
-                    {
-                        Vector = MathF.Round(x.acc.VectorByTerm.GetValueOrDefault(t), 2),
-                        Keyword = MathF.Round(x.acc.KeywordByTerm.GetValueOrDefault(t), 2)
-                    });
-                if (hasFullQuery)
-                {
-                    summary.FullQueryScore = new ChannelScores
-                    {
-                        Vector = MathF.Round(x.acc.VectorByTerm.GetValueOrDefault(query), 2),
-                        Keyword = MathF.Round(x.acc.KeywordByTerm.GetValueOrDefault(query), 2)
-                    };
-                }
-                return summary;
-            })
-            .ToList();
+        var results = RulesSearchRanking.Rank(query, subQueries,
+            allBatches.Select(batch => new RulesSearchRanking.Batch(
+                batch.SubQuery, batch.IsVector, batch.Items)));
 
         // 向量搜索结果没有 description，从概念数据中补上
         PopulateDescriptions(game, results, cancellationToken);
@@ -132,16 +85,6 @@ public sealed class RulesSearchService
             Query = query,
             SplitTerms = subQueries.ToList()
         };
-    }
-
-
-    /// <summary>搜索合并过程中的单概念累计分数（按子词分通道记账）。</summary>
-    private sealed class AccumulatedSearch
-    {
-        public ConceptSummary Summary = null!;
-        public float Total;
-        public readonly Dictionary<string, float> VectorByTerm = new();
-        public readonly Dictionary<string, float> KeywordByTerm = new();
     }
 
 
@@ -232,6 +175,11 @@ public sealed class RulesSearchService
                 // 固定分把「描述里提到该词」的无关概念顶上榜首，盖过向量语义分）。
                 // 向量语义分是排序主体；关键词加成只用于打破同分与弱向量时的微调。
                 var terms = Tokenize(query).ToList();
+                var detail = _catalog.GetConcept(game, string.IsNullOrEmpty(r.Path) ? r.Id : r.Path);
+                // 完整查询要求每个词在同一概念中出现；子词的部分命中另行留账。
+                if (!terms.All(t => MatchesSummary(r, t)
+                    || (detail.HasValue && ContainsTerm(detail.Value, t))))
+                    return (r, 0f);
                 float score;
                 if (terms.Any(t => r.Id.Equals(t, StringComparison.InvariantCultureIgnoreCase)))
                     score = 0.5f;
@@ -240,7 +188,7 @@ public sealed class RulesSearchService
                 else
                     score = 0.05f;
                 return (r, score);
-            }).ToList();
+            }).Where(x => x.Item2 > 0).ToList();
         }, cancellationToken);
     }
 

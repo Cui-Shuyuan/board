@@ -44,7 +44,7 @@ public sealed class RulesPlanService
     {
         ["condition"] = new[] { "actions", "triggers", "conditions", "flow" },
         ["ordering"] = new[] { "flow", "triggers", "actions" },
-        ["boundary"] = new[] { "triggers", "conditions", "flow" },
+        ["boundary"] = new[] { "objects", "ontology", "concepts", "slot", "top_level_refs", "triggers", "conditions", "flow" },
     };
 
 
@@ -147,15 +147,7 @@ public sealed class RulesPlanService
     };
 
 
-    /// <summary>语义候选的最低可信分数——低于此分数视为「规则库查不到」（tier 3）。
-    /// 分数为多通道累加归一化值（向量余弦 + 关键词小幅加成）。关键词加成已降级
-    /// （名字命中 +0.3、内容命中 +0.05），仅凭关键词无法过阈值——过线的概念必须
-    /// 有真实向量语义支撑。实测校准（2026-08-16，name 集合，bge-base-zh-v1.5 量化版）：
-    /// 噪声带 0.36–0.47（无意义词「小精灵」top=0.466 全是无关概念），可靠匹配 ≥0.53
-    /// （「钱币」=0.701、「招募官」=0.638、转述「领工人的角色」→ worker=0.672）。
-    /// 经典版别名（杜布隆/市长/殖民者/探矿者）语义匹配全部失败——这类映射必须走
-    /// 数据层 aliases 精确匹配，向量兜底只对自然语言转述有效。阈值取 0.50：
-    /// 噪声与信号的实测分界，宁漏勿错。</summary>
+    /// <summary>候选显示门槛。混合分只作排序，不作为自动解析的置信概率。</summary>
     private const float SemanticCandidateThreshold = 0.50f;
 
 
@@ -179,24 +171,35 @@ public sealed class RulesPlanService
             };
         }
 
-        // identify：客人用外观/位置描述某物时，按描述搜索候选概念（带定义）。
-        // 问题原文直接命名了已知概念时（含别名/基名），直接返回该概念——比候选列表更确定
+        // 外观识别保留完整描述。问题里出现通用名，不代表已识别具体组件。
         if (relation == "identify")
         {
-            var qhits = ResolveFromQuestion(game, question, out var qsource);
-            if (qhits.Count > 0)
-                return BuildOkResult(game, relation, entity, qhits, qsource, question, cancellationToken);
+            var exact = ResolvePlanEntity(game, entity, out _, out var exactSource);
+            if (exact.Count > 0 && exactSource == "exact_id")
+                return BuildOkResult(game, relation, entity, exact, exactSource, question, cancellationToken);
 
             var search = await _searchService.SearchConceptsAsync(
                 game, entity, cancellationToken: cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
+            if (search.Results.Count == 0)
+            {
+                // 名称线索只能作为候选；不能替代颜色/位置等限定词。
+                var hints = ResolveFromQuestion(game, question, out _);
+                foreach (var hint in hints)
+                    search.Results.Add(new ConceptSummary
+                    {
+                        Id = RulesTextUtils.GetElementId(hint),
+                        Name = hint.TryGetProperty("name", out var hintName) && hintName.TryGetProperty("zh", out var hintZh)
+                            ? hintZh.GetString() ?? "" : RulesTextUtils.GetElementId(hint),
+                        Description = RulesTextUtils.ExtractDescriptionZh(hint)
+                    });
+            }
             return new PlanItemResult
             {
-                Relation = relation,
-                Entity = entity,
-                Status = "ok",
+                Relation = relation, Entity = entity,
+                Status = search.Results.Count > 0 ? "unresolved" : "no_match",
                 Candidates = search.Results,
-                Message = "按描述匹配的候选概念（含定义与匹配分数）。请挑出与客人描述最吻合的一个，用其 id 或中文名发起 explain/condition 查询；若都不吻合，请继续向客人确认细节。"
+                Message = "按完整描述检索的候选概念（含定义与匹配分数）。请核对颜色、形状和位置，再用确切 id 发起 explain；通用概念命中不能证明已识别客人描述的组件。"
             };
         }
 
@@ -234,17 +237,20 @@ public sealed class RulesPlanService
             for (var i = 0; i < merged.Count; i++) indexById[merged[i].Id] = i;
             if (_vectorSearch != null)
             {
-                // 名称索引擅长 action/短实体的消歧；完整索引擅长颜色/外观/描述型问法。
-                // 两条路都不要滥用：entity 型（condition/ordering/boundary）走名称索引，
-                // 描述型 explain 才走完整索引。
-                // explain 里短实体多是概念名转述（走名称索引），长实体才更像
-                // 颜色/外观/描述型问法（走完整索引）；condition/ordering/boundary
-                // 仍一律走名称索引。
-                var explainDescriptive = relation == "explain" && entity.Length > 6;
-                var semantic = explainDescriptive
-                    ? await _searchService.SearchConceptsAsync(
-                        game, entity, cancellationToken: cancellationToken)
-                    : await _searchService.SearchConceptsAsync(
+                // 自然语言解释联合召回全文与名称；全文主导，名称只补漏。
+                // 不能看到任意一个全文候选就丢掉名称索引的正确目标。
+                SearchConceptsResult semantic;
+                if (relation == "explain")
+                {
+                    var fullTask = _searchService.SearchConceptsAsync(game, entity, cancellationToken: cancellationToken);
+                    var nameTask = _searchService.SearchConceptsAsync(game, entity, searchMode: "name", cancellationToken: cancellationToken);
+                    await Task.WhenAll(fullTask, nameTask);
+                    semantic = await fullTask;
+                    semantic.Results = RulesSearchRanking.SupplementNames(
+                        semantic.Results, (await nameTask).Results);
+                }
+                else
+                    semantic = await _searchService.SearchConceptsAsync(
                         game, entity, searchMode: "name", cancellationToken: cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 var semItems = semantic.Results
@@ -267,7 +273,7 @@ public sealed class RulesPlanService
                     {
                         indexById[c.Id] = merged.Count;
                         merged.Add(c);
-                        if (merged.Count >= 8) break;
+                        if (merged.Count >= 15) break;
                     }
                 }
             }
@@ -287,16 +293,9 @@ public sealed class RulesPlanService
 
             if (merged.Count > 0)
             {
-                // 高置信语义候选直接解析为命中（2026-08-16 QA 实测）：LLM 对 tier2 候选
-                // 常不重新查询、直接凭记忆作答（18/55 题 C 类）。程序自己判定：top1 显著
-                // 领先且过线时无需 LLM 二次确认，直接取 top1 概念的数据——「程序自己推理」
-                // 的比重由此扩大。阈值用 QA 全量候选分布校准：低分或胶着区间不得自动解析
-                // （错把 scoring_pad 当计分、错把 accumulation_refill 当累积空间都是胶着区间）。
+                // 自动解析必须同时有整句语义和名称/ID 文字证据。
                 var autoTop = merged[0];
-                var autoGap = merged.Count > 1 ? autoTop.Score - merged[1].Score : float.PositiveInfinity;
-                if ((autoTop.Score >= 0.72f && autoGap >= 0.08f)
-                    || (autoGap >= 0.15f && autoTop.Score >= 0.60f)
-                    || (autoTop.Score >= 1.0f && autoGap >= 0.05f))
+                if (RulesSearchRanking.CanAutoResolve(merged))
                 {
                     var autoMatched = _catalog.GetConcepts(game, autoTop.Id).ToList();
                     if (autoMatched.Count > 0)
