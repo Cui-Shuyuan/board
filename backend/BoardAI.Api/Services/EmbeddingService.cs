@@ -69,6 +69,10 @@ public class EmbeddingService : IDisposable
             var attn = encoding.AttentionMask;
             maskTensor[0, i] = attn != null && i < attn.Count ? attn[i] : 1;
         }
+        // BGE's new CLS profile follows HF truncation: keep the final special token.
+        // Legacy mean retains its existing coordinates for rollback compatibility.
+        if (Pooling == "cls" && ids.Count > MaxLength)
+            inputIdsTensor[0, seqLen - 1] = ids[ids.Count - 1];
 
         // Run inference
         var inputs = new List<NamedOnnxValue>
