@@ -11,7 +11,9 @@ import android.os.SystemClock
 data class QaMessage(
     val role: String,
     val content: String,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    /** Optional answer evidence; never sent to the backend. */
+    val evidence: QaAnswerEvidence? = null
 ) {
     companion object {
         const val ROLE_USER = "user"

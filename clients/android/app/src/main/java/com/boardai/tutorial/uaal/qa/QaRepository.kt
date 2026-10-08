@@ -47,7 +47,7 @@ class QaRepository(
         gameId: String,
         messages: List<QaMessage>,
         context: QaContext
-    ): Result<String> = withContext(Dispatchers.IO) {
+    ): Result<QaChatResult> = withContext(Dispatchers.IO) {
         val requestGeneration = cancelGeneration
         try {
             val requestBody = buildRequestBody(gameId, messages, context)
@@ -84,8 +84,11 @@ class QaRepository(
                 val body = connection.inputStream
                     .bufferedReader(Charsets.UTF_8)
                     .use { it.readText() }
-                val reply = JSONObject(body).optString("reply", "")
-                Result.success(reply)
+                // Evidence is optional metadata. A malformed evidence object must never
+                // turn a valid reply into a chat failure; parseQaChatResponse isolates
+                // evidence parsing and falls back to a reply-only result.
+                Result.success(runCatching { parseQaChatResponse(body) }
+                    .getOrElse { QaChatResult(reply = JSONObject(body).optString("reply", "")) })
             } finally {
                 activeConnections -= connection
                 connection.disconnect()

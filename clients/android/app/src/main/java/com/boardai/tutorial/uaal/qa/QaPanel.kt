@@ -205,11 +205,20 @@ fun QaPanel(
                 return@launch
             }
 
-            result.onSuccess { reply ->
-                val replyText = reply.trim().ifBlank { "（未收到回答）" }
+            result.onSuccess { chat ->
+                val replyText = chat.reply.trim().ifBlank { "（未收到回答）" }
+                val evidence = chat.evidence
+                if (evidence != null && (evidence.tier == "partial" || evidence.missingQueries.isNotEmpty())) {
+                    Log.d(
+                        QA_VOICE_TAG,
+                        "answer evidence: tier=${evidence.tier}, missing=" +
+                            evidence.missingQueries.joinToString("、") { "${it.relation}:${it.entity}:${it.status}" }
+                    )
+                }
                 val replyMessage = QaMessage(
                     role = QaMessage.ROLE_ASSISTANT,
-                    content = replyText
+                    content = replyText,
+                    evidence = evidence
                 )
                 if (!QaSessionHolder.appendMessage(replyMessage, context, sessionGeneration)) {
                     Log.d(QA_VOICE_TAG, "stale chat reply ignored: session changed")
@@ -365,6 +374,7 @@ private fun QaMessageBubble(
     onReplay: () -> Unit
 ) {
     val isUser = message.role == QaMessage.ROLE_USER
+    val evidenceNotice = qaEvidenceNotice(message.evidence)
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
@@ -408,6 +418,16 @@ private fun QaMessageBubble(
                     color = if (canReplay) QaAccentYellow else QaAccentYellow.copy(alpha = 0.45f),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
+                )
+            }
+
+            if (evidenceNotice != null) {
+                Text(
+                    text = evidenceNotice,
+                    color = QaAccentYellow.copy(alpha = 0.92f),
+                    fontSize = 11.sp,
+                    lineHeight = 15.sp,
+                    modifier = Modifier.padding(start = 2.dp, top = 1.dp, end = 2.dp)
                 )
             }
         }
