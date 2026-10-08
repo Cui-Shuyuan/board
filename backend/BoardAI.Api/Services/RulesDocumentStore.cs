@@ -4,14 +4,22 @@ namespace BoardAI.Api.Services;
 
 /// <summary>
 /// 规则 JSON 文档缓存：以绝对路径为 key，按文件长度与最后写入时间自动失效。
-/// 被替换的文档进入 retired 列表延迟释放，避免并发请求仍持有其 JsonElement。
+/// 每次实际加载/替换/删除都会推进 Revision，供上层构建不可变规则快照。
+/// 被替换的原始文档只保留有限个用于紧急兜底；快照使用深拷贝，不依赖
+/// retired 文档，因此长期热更新不会把旧文档积压到 Dispose。
 /// </summary>
 public sealed class RulesDocumentStore : IDisposable
 {
+    private const int MaxRetiredDocuments = 16;
+    private const int ReadRetryCount = 5;
+    private const int ReadRetryDelayMilliseconds = 15;
+
     private readonly Action? _onDocumentChanged;
     private readonly object _gate = new();
     private readonly Dictionary<string, Entry> _documents = new(StringComparer.Ordinal);
-    private readonly List<JsonDocument> _retired = new();
+    private readonly Queue<JsonDocument> _retired = new();
+    private readonly HashSet<string> _syntheticPaths = new(StringComparer.Ordinal);
+    private long _revision;
     private bool _disposed;
 
     public RulesDocumentStore(Action? onDocumentChanged = null)
@@ -19,49 +27,74 @@ public sealed class RulesDocumentStore : IDisposable
         _onDocumentChanged = onDocumentChanged;
     }
 
+    /// <summary>当前内容代次；任何已缓存文档的首次加载/替换/删除都会推进。</summary>
+    public long Revision => Interlocked.Read(ref _revision);
+
+    /// <summary>当前保留的 retired 原始文档数，仅用于测试/诊断。</summary>
+    public int RetiredDocumentCount
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _retired.Count;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 在 store 锁内执行一段需要读取多份文档的一致性操作。回调内可再次调用
+    /// <see cref="GetDocument"/> / <see cref="GetDocumentIfExists"/>（同一线程锁可重入）。
+    /// </summary>
+    public T ReadConsistent<T>(Func<T> action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        lock (_gate)
+        {
+            ThrowIfDisposed();
+            return action();
+        }
+    }
+
     /// <summary>
     /// 返回指定绝对路径的 JsonDocument；文件 mtime 或 size 变化时重新读取并解析。
     /// </summary>
     public JsonDocument GetDocument(string absolutePath)
     {
+        absolutePath = NormalizePath(absolutePath);
         lock (_gate)
         {
-            if (_disposed)
-                throw new ObjectDisposedException(nameof(RulesDocumentStore));
+            ThrowIfDisposed();
+            return GetDocumentCore(absolutePath);
+        }
+    }
+
+    /// <summary>
+    /// 可选文档读取：文件不存在时返回 null；如果之前有缓存而文件被删除，会移除缓存并推进 Revision。
+    /// </summary>
+    public JsonDocument? GetDocumentIfExists(string absolutePath)
+    {
+        absolutePath = NormalizePath(absolutePath);
+        lock (_gate)
+        {
+            ThrowIfDisposed();
+
+            if (_syntheticPaths.Contains(absolutePath) && _documents.TryGetValue(absolutePath, out var synthetic))
+                return synthetic.Document;
 
             var info = new FileInfo(absolutePath);
             if (!info.Exists)
-                throw new FileNotFoundException($"Could not find file '{absolutePath}'.", absolutePath);
-
-            if (_documents.TryGetValue(absolutePath, out var cached)
-                && info.Length == cached.Length
-                && info.LastWriteTimeUtc == cached.LastWriteTimeUtc)
             {
-                return cached.Document;
+                if (_documents.Remove(absolutePath, out var removed))
+                {
+                    Retire(removed.Document);
+                    _revision++;
+                    _onDocumentChanged?.Invoke();
+                }
+                return null;
             }
 
-            var json = File.ReadAllText(absolutePath);
-            var document = JsonDocument.Parse(json, new JsonDocumentOptions
-            {
-                AllowTrailingCommas = true
-            });
-
-            if (_documents.TryGetValue(absolutePath, out var old))
-            {
-                // 不立即释放被替换的文档：已构建的派生缓存仍可能引用其 JsonElement。
-                _retired.Add(old.Document);
-                _onDocumentChanged?.Invoke();
-            }
-
-            _documents[absolutePath] = new Entry
-            {
-                Path = absolutePath,
-                Length = info.Length,
-                LastWriteTimeUtc = info.LastWriteTimeUtc,
-                Document = document
-            };
-
-            return document;
+            return GetDocumentCore(absolutePath, info);
         }
     }
 
@@ -73,13 +106,123 @@ public sealed class RulesDocumentStore : IDisposable
 
             foreach (var entry in _documents.Values)
                 entry.Document.Dispose();
-            foreach (var document in _retired)
-                document.Dispose();
+            while (_retired.Count > 0)
+                _retired.Dequeue().Dispose();
 
             _documents.Clear();
-            _retired.Clear();
+            _syntheticPaths.Clear();
             _disposed = true;
         }
+    }
+
+    /// <summary>测试注入：不访问磁盘，直接用 JSON 文本替换指定路径的文档并推进 Revision。</summary>
+    internal void SetDocumentForTesting(string absolutePath, string json)
+    {
+        absolutePath = NormalizePath(absolutePath);
+        lock (_gate)
+        {
+            ThrowIfDisposed();
+            var document = ParseDocument(json);
+            if (_documents.TryGetValue(absolutePath, out var old))
+                Retire(old.Document);
+
+            _documents[absolutePath] = new Entry
+            {
+                Path = absolutePath,
+                Length = System.Text.Encoding.UTF8.GetByteCount(json),
+                LastWriteTimeUtc = DateTime.UtcNow,
+                Document = document
+            };
+            _syntheticPaths.Add(absolutePath);
+            _revision++;
+            _onDocumentChanged?.Invoke();
+        }
+    }
+
+    private JsonDocument GetDocumentCore(string absolutePath)
+    {
+        if (_syntheticPaths.Contains(absolutePath) && _documents.TryGetValue(absolutePath, out var synthetic))
+            return synthetic.Document;
+
+        var info = new FileInfo(absolutePath);
+        if (!info.Exists)
+            throw new FileNotFoundException($"Could not find file '{absolutePath}'.", absolutePath);
+
+        return GetDocumentCore(absolutePath, info);
+    }
+
+    private JsonDocument GetDocumentCore(string absolutePath, FileInfo info)
+    {
+        if (_syntheticPaths.Contains(absolutePath) && _documents.TryGetValue(absolutePath, out var synthetic))
+            return synthetic.Document;
+
+        if (_documents.TryGetValue(absolutePath, out var cached)
+            && info.Length == cached.Length
+            && info.LastWriteTimeUtc == cached.LastWriteTimeUtc)
+        {
+            return cached.Document;
+        }
+
+        var json = ReadAllTextWithRetry(absolutePath);
+        var document = ParseDocument(json);
+
+        var replaced = _documents.TryGetValue(absolutePath, out var old);
+        if (replaced)
+            Retire(old.Document);
+
+        _documents[absolutePath] = new Entry
+        {
+            Path = absolutePath,
+            Length = info.Length,
+            LastWriteTimeUtc = info.LastWriteTimeUtc,
+            Document = document
+        };
+        _revision++;
+        if (replaced)
+            _onDocumentChanged?.Invoke();
+
+        return document;
+    }
+
+    private static JsonDocument ParseDocument(string json)
+        => JsonDocument.Parse(json, new JsonDocumentOptions
+        {
+            AllowTrailingCommas = true
+        });
+
+    private static string ReadAllTextWithRetry(string absolutePath)
+    {
+        Exception? last = null;
+        for (var attempt = 0; attempt <= ReadRetryCount; attempt++)
+        {
+            try
+            {
+                return File.ReadAllText(absolutePath);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException && attempt < ReadRetryCount)
+            {
+                last = ex;
+                Thread.Sleep(ReadRetryDelayMilliseconds);
+            }
+        }
+
+        throw last!;
+    }
+
+    private void Retire(JsonDocument document)
+    {
+        _retired.Enqueue(document);
+        while (_retired.Count > MaxRetiredDocuments)
+            _retired.Dequeue().Dispose();
+    }
+
+    private static string NormalizePath(string path)
+        => Path.GetFullPath(path);
+
+    private void ThrowIfDisposed()
+    {
+        if (_disposed)
+            throw new ObjectDisposedException(nameof(RulesDocumentStore));
     }
 
     private sealed class Entry

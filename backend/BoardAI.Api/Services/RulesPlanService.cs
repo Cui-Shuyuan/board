@@ -50,13 +50,23 @@ public sealed class RulesPlanService
 
     private Dictionary<string, string> GetConceptTypeMap(string game)
     {
+        var snapshot = RulesSnapshotScope.Current;
+        if (snapshot != null && snapshot.Game == game)
+            return snapshot.GetOrAdd("concept-type-map", () => BuildConceptTypeMap(game));
+
         if (_conceptTypeMaps.TryGetValue(game, out var cached)) return cached;
+        var map = BuildConceptTypeMap(game);
+        _conceptTypeMaps[game] = map;
+        return map;
+    }
+
+    private Dictionary<string, string> BuildConceptTypeMap(string game)
+    {
         var map = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var type in _catalog.GetConceptTypes(game))
             foreach (var summary in _catalog.ListConcepts(game, type))
                 if (!string.IsNullOrEmpty(summary.Id))
                     map[summary.Id] = type;
-        _conceptTypeMaps[game] = map;
         return map;
     }
 

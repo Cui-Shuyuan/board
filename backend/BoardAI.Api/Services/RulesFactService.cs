@@ -73,11 +73,28 @@ public sealed class RulesFactService
     /// <summary>flow 终局计分里的结构化计分表（缓存；规则 JSON 变化时自动失效）。</summary>
     private JsonElement? GetScoreTable(string game)
     {
-        if (_scoreTableGame == game && _scoreTable.HasValue) return _scoreTable;
-        var flow = _content.LoadGameFlow(game);
+        var snapshot = RulesSnapshotScope.Current;
+        if (snapshot != null && snapshot.Game == game)
+            return snapshot.GetOrAdd("score-table", () => new ScoreTableCache
+            {
+                Table = BuildScoreTable(game)
+            }).Table;
+
+        if (_scoreTableGame == game) return _scoreTable;
         _scoreTableGame = game;
-        _scoreTable = flow == null ? null : FindKeyInTree(flow.RootElement, "score_table");
+        _scoreTable = BuildScoreTable(game);
         return _scoreTable;
+    }
+
+    private JsonElement? BuildScoreTable(string game)
+    {
+        var flow = _content.LoadGameFlow(game);
+        return flow == null ? null : FindKeyInTree(flow.RootElement, "score_table");
+    }
+
+    private sealed class ScoreTableCache
+    {
+        public JsonElement? Table { get; init; }
     }
 
 

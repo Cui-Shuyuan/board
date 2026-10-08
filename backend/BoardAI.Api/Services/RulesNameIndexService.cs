@@ -27,7 +27,18 @@ public sealed class RulesNameIndexService
     /// <summary>游戏概念 id → zh 名（概念目录 + 游戏流 + 本体流）。</summary>
     public IReadOnlyDictionary<string, string> GetNameMap(string game)
     {
+        var snapshot = RulesSnapshotScope.Current;
+        if (snapshot != null && snapshot.Game == game)
+            return snapshot.GetOrAdd("name-map", () => BuildNameMap(game));
+
         if (_nameMaps.TryGetValue(game, out var cached)) return cached;
+        var map = BuildNameMap(game);
+        _nameMaps[game] = map;
+        return map;
+    }
+
+    private Dictionary<string, string> BuildNameMap(string game)
+    {
         var map = new Dictionary<string, string>();
 
         foreach (var type in _catalog.GetConceptTypes(game))
@@ -45,7 +56,6 @@ public sealed class RulesNameIndexService
         var ontologyFlow = _content.LoadOntologyFlow();
         if (ontologyFlow != null) WalkFlowForNames(ontologyFlow.RootElement, map);
 
-        _nameMaps[game] = map;
         return map;
     }
 
@@ -84,8 +94,18 @@ public sealed class RulesNameIndexService
     /// </summary>
     public IReadOnlyDictionary<string, IReadOnlyList<ExactNameMatch>> GetExactLookup(string game)
     {
-        if (_exactLookups.TryGetValue(game, out var cached)) return cached;
+        var snapshot = RulesSnapshotScope.Current;
+        if (snapshot != null && snapshot.Game == game)
+            return snapshot.GetOrAdd("exact-lookup", () => BuildExactLookup(game));
 
+        if (_exactLookups.TryGetValue(game, out var cached)) return cached;
+        var lookup = BuildExactLookup(game);
+        _exactLookups[game] = lookup;
+        return lookup;
+    }
+
+    private Dictionary<string, IReadOnlyList<ExactNameMatch>> BuildExactLookup(string game)
+    {
         var map = new Dictionary<string, List<ExactNameMatch>>(StringComparer.OrdinalIgnoreCase);
         void Add(string key, string id, string kind)
         {
@@ -136,7 +156,6 @@ public sealed class RulesNameIndexService
             kv => (IReadOnlyList<ExactNameMatch>)kv.Value.AsReadOnly(),
             StringComparer.OrdinalIgnoreCase);
 
-        _exactLookups[game] = frozen;
         return frozen;
     }
 

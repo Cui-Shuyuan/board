@@ -31,15 +31,25 @@ public sealed class RulesFlowService
 
     public IReadOnlyDictionary<string, FlowPosition> GetFlowPositions(string game)
     {
+        var snapshot = RulesSnapshotScope.Current;
+        if (snapshot != null && snapshot.Game == game)
+            return snapshot.GetOrAdd("flow-positions", () => BuildFlowPositions(game));
+
         if (_flowPositionsByGame.TryGetValue(game, out var cached))
             return cached;
 
+        var result = BuildFlowPositions(game);
+        _flowPositionsByGame[game] = result;
+        return result;
+    }
+
+    private Dictionary<string, FlowPosition> BuildFlowPositions(string game)
+    {
         var result = new Dictionary<string, FlowPosition>();
         var flow = _content.LoadGameFlow(game);
         if (flow != null)
             WalkFlowPositions(flow.RootElement, new List<string>(), null, -1, null, result);
 
-        _flowPositionsByGame[game] = result;
         return result;
     }
 
