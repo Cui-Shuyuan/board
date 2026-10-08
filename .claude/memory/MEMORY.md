@@ -2,7 +2,7 @@
 
 新会话按顺序读：
 
-1. [current-state.md](current-state.md) — 截至 2026-10-07 的当前进度（HEAD 以 git log 为准）、工作区状态、待办与不做事项
+1. [current-state.md](current-state.md) — 截至 2026-10-08 的当前进度（HEAD 以 git log 为准）、工作区状态、待办与不做事项
 2. [project-overview.md](project-overview.md) — 项目定位、功能、阶段、技术选型
 3. [architecture.md](architecture.md) — Runtime 服务拆分、自动 freshness、检索、Android/语音接口
 4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3：time_anchors / QA 同置 / 发展卡身份保真 / 当前动画遗留
@@ -12,6 +12,7 @@
 8. [user-preferences.md](user-preferences.md) — 用户偏好与协作方式
 9. [flow-guide.md](flow-guide.md) — 讲规动画之后的 Flow Guide 方向
 10. [animation-refactor-todo.md](animation-refactor-todo.md) — 动画工具链 / Unity Runtime 重构待办；新会话动手前先读
+11. [project-review-todo.md](project-review-todo.md) — 2026-10-08 项目审查：8 项运行可靠性待办、验收标准及问题解决后的产品优先级
 
 ## 默认不读
 

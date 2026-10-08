@@ -7,7 +7,7 @@ metadata:
 
 # 项目审查待办（2026-10-08）
 
-状态：REV-01 / REV-02 / REV-04 / REV-05 已完成；REV-03、REV-06、REV-07、REV-08 未实现。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
+状态：REV-01 / REV-02 / REV-04 / REV-05 / REV-06 已完成；REV-03、REV-07、REV-08 未实现。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
 
 ## 审查基线与范围
 
@@ -34,6 +34,7 @@ metadata:
 - 验收：用假 LLM 模拟持续调用、重复错误与超时；请求在预算内结束；客户端取消后不再产生后续 LLM 请求；正常多步查询仍可完成。
 - 实施记录（2026-10-08）：`LLMOptions` 新增 `MaxToolRounds=6`、`MaxRequestSeconds=60`、`MaxRepeatedFailures=3`、`MaxConversationMessages=40`；`ChatOrchestratorService` 删除 `int.MaxValue`，使用 linked `CancellationTokenSource` + `CancelAfter` 作为总预算，按轮数、连续 tool error、相同 tool name+arguments、相同 failure signature 停止，达到限制后只发一次无工具总结；`ChatController` 传递 `HttpContext.RequestAborted` 并保留 `OperationCanceledException`；`RulesPlanService.ExecutePlanAsync`、`RulesSearchService.SearchConceptsAsync`、`VectorSearchService.SearchAsync`、`GameRulesService` wrapper 增加 CancellationToken 并向下传（Qdrant 查询透传 token，关键词扫描/embedding 同步段在关键边界检查）。
 - 验收记录（2026-10-08）：新增 `ChatOrchestratorServiceTests` 6 条 Fake LLM 测试，覆盖轮数上限、重复失败阈值、LLM 等待中外部取消、总超时、正常多步查询、Controller 层 RequestAborted 传递；另加 `RulesPlanServiceTests.ExecutePlanAsync_PreCancelledToken_ThrowsBeforeExecuting` 验证计划执行边界；`TMPDIR="/mnt/d/workspace/board/.tmp-dotnet" dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 共 82 tests，0 failures / 0 errors。未使用真实 LLM key，未做真实设备断连集成测试。
+- 残余收口（2026-10-08）：区分取消语义——客户端 `RequestAborted` 仍抛 `OperationCanceledException`，仅内部总预算到点返回 `request_timeout` 的正常未完成 reply，不再让在线客户端收到 500/连接中断。新增 `MaxToolCallsPerRound=4`、`MaxTotalToolCalls=12`：单轮或总数超限时只执行上限内调用，为剩余 tool call 补齐“未执行”结果后只发一次无工具总结。新增超时语义、单轮 tool call 上限、总 tool call 上限 3 条测试；当前后端 xUnit 93/93 通过。
 
 ## P1：可靠性与验收
 
@@ -68,11 +69,14 @@ metadata:
   - Android：`gradlew.bat testDebugUnitTest` 73 tests，0 failures；新增 rules-only 状态/点击不进教程、直接打开问答、禁止下载等回归。
   - Python：`python3 tools/content/validate_rules.py --errors-only` 0 errors / 72 warnings；`git diff --check` 通过。
   - 未执行：真实 Android 设备/界面验收；规则-only 首页直接问答已由 JVM 状态层覆盖，但未做真机端到端。
-### [ ] REV-06 隔离新旧问答会话及 ASR 结果（已确认竞态路径）
+- 残余收口（2026-10-08）：catalog 省略 `rules_ready` 时不再默认 true，改为按 `content/games/{id}/concepts.json` 是否存在/非空推导，显式 catalog 声明仍优先；规则-only 模式 QaPanel 关闭按钮改为“返回”，教程模式保持“继续播放”。`build_content_manifest._walk_references` 对显式 file-reference key 的非媒体路径不再静默忽略：`.subtitle.json` 等实际存在的运行时文件会被打包，缺失、越界或落在排除目录时 fail closed。README 与 `docs/ops/start-services.md` 明确 `content/manifests` / `content/releases` 不入 Git，生产 API 主机需本机构建或单独部署。当前 Python 102/102、xUnit 93/93、Android JVM 75/75。
+### [x] REV-06 隔离新旧问答会话及 ASR 结果（已确认竞态路径）
 
 - 证据：QaPanel 在请求期间允许新建会话，旧请求返回后直接向当前 QaSessionHolder 追加；QaVoiceController 的 ASR 无会话代际检查。TTS 已有 generation，可作为实现参考。
 - 修改：会话 ID/代际贯通 chat、ASR、TTS；跟踪并取消任务，提交结果前确认所属会话与请求；取消阻塞网络时关闭连接；清理录音/回答音频的生命周期。
 - 验收：旧请求延迟返回、新建会话、切换游戏、返回首页与连续录音交错时，旧结果不进入新会话、不覆盖新输入、不意外播音；当前有效结果正常显示。
+- 实施记录（2026-10-08）：`QaSession` 增加 holder 分配的 generation；`QaSessionHolder` 的 `appendMessage` 必须携带 generation，active session 变化后旧回调直接拒绝；切换游戏与 clear 后旧 generation 全部失效。QaPanel 为每次发送保留 session generation、active chat Job 和 stale 检查，新建会话/关闭面板/切换游戏时取消 Job 并断开 `QaRepository` 阻塞连接；旧 reply/error 不写当前消息、不改输入、不启动 TTS。QaVoiceController 为 ASR/TTS 增加 generation、Job 跟踪与引擎级 `cancelActiveRequests()`：新会话/新 PTT 会取消旧录音、ASR、TTS 并断开 HTTP 连接，迟到的转写/合成结果被忽略，临时 wav 与回答音频在会话结束/关闭时清理；MainActivity 在 close/return/switch 路径同步断开 chat 连接。
+- 验收记录（2026-10-08）：新增 `QaSessionHolderTest` 4 条（同游戏上下文更新保持 generation、新会话清空并换代、stale append 拒绝、切换游戏失效旧 owner），`QaVoiceControllerTest` 新增 4 条（新会话丢弃迟到 ASR 并删 wav、新 PTT 丢弃前一录音 ASR、PTT 取消迟到自动 TTS、启动新会话删除缓存回答音频），`QaRepositoryTest` 1 条（cancelActiveRequests 断开阻塞 chat 请求并抛 cancellation）。Android JVM `:app:testDebugUnitTest` 共 84 tests，0 failures / 0 errors。未执行真机端到端；JVM 覆盖的是状态机与连接取消，未覆盖 MediaPlayer/AudioRecord 驱动行为。
 
 ### [ ] REV-07 规则缓存并发与版本一致性（代码显示风险，需补并发复现）
 
