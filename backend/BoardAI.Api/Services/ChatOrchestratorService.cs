@@ -554,17 +554,19 @@ public class ChatOrchestratorService
                 var root = doc.RootElement;
                 if (root.ValueKind != JsonValueKind.Object) return;
 
+                string? planVersion = null;
                 if (root.TryGetProperty("RulesVersion", out var versionProp)
                     && versionProp.ValueKind == JsonValueKind.String)
                 {
-                    RulesVersion ??= versionProp.GetString();
+                    planVersion = versionProp.GetString();
+                    RulesVersion ??= planVersion;
                 }
 
                 if (!root.TryGetProperty("Results", out var results) || results.ValueKind != JsonValueKind.Array)
                     return;
 
                 foreach (var item in results.EnumerateArray())
-                    Queries.Add(ParseQueryEvidence(item, RulesVersion));
+                    Queries.Add(ParseQueryEvidence(item, planVersion));
             }
             catch
             {
