@@ -5,13 +5,13 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-09 · 基线见 git log · 索引契约与检索排序收口：后端 xUnit 133/133、Python animation 165/165；Android JVM 未改动的上次基线 89/89 · Splendor runtime 已发布 `59989b16fd96479f`（133 files），尚需部署到生产 API 主机
+> 最后更新：2026-10-09 · 基线见 git log · CLS 检索/事实核查/证据恢复：后端 xUnit 161/161、Python animation 165/165、检索实验 5/5；Android JVM 91/91 · Splendor runtime 已发布 `59989b16fd96479f`（133 files），尚需部署到生产 API 主机
 
 # 当前状态（2026-10-09）
 
 ## 一句话
 
-Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class 已完成服务化拆分，108 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 已完成终局与真卡身份收口，下一步逐 cue 重审，Flow Guide 是动画收口后的下一产品方向。
+Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class 已完成服务化拆分，161 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 已完成终局与真卡身份收口，下一步逐 cue 重审，Flow Guide 是动画收口后的下一产品方向。
 
 ## 当前工作区状态
 
@@ -27,7 +27,9 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 - **检索排序实测（2026-10-09）**：修复整句被逐词融合压低、关键词来源重复加分、外观 identify 被通用名截断、boundary 过滤对象；explain 保留名称补漏，自动语义确认更谨慎。既有 gold：77 直接命中 + 8 候选前三，0 wrong / no_match；新增 7 条回归全部前三。真实 API 重放相同 71 次聊天，0 HTTP 错误，白色骰子 6/6 查到 activation_die（旧版 4/6）；未宣称 FAQ 整体答案正确。完整结论与待改项见 `docs/reviews/retrieval-ranking-2026-10-09.md` 和 `project-review-todo.md`。
 
-- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、请求快照 scope 与 public wrapper；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。规则请求按 Revision/内容哈希深拷贝不可变快照并通过 AsyncLocal 绑定整轮调用，派生缓存随快照重建，旧快照可回收；`ChatResponse` 附加逐 query 的 `Evidence`（tier/规则版本/status/source/matched/candidates/message），旧客户端可忽略。后端 xUnit 测试 133/133 全绿（2026-10-09 索引契约与检索排序收口）；`RulesDocumentStore` 读取改为 Windows 共享写友好的 `FileShare.ReadWrite | FileShare.Delete` + 有界 JSON/IO 重试，避免外部编辑覆盖时 reader 解析截断文件或 block writer。
+- **检索后续（2026-10-09）**：新增 53 条带来源的自然问句；冻结后比较整段/片段、mean/CLS、指令、RRF、两种 cross encoder。CLS 整段在 28 条 holdout 中首位 6→17、前三 17→23；复杂方案未稳定改善，未接生产。默认改为 CLS，本地九款 18 个 active alias 已迁移，旧索引保留；profile 不一致时向量通道拒绝查询。85 条 gold 仍 77 直接命中，8 候选全部第一；7 条回归全部第一。81 次实际聊天 0 HTTP 错误，包含一条 60 秒预算结束回复，不能算全部答对。规则书核查补齐 Civolution 当前模组升级后下一回合才可使用新等级的限定，当前 Civolution CLS=`2fbdea8f273e564e`（434/412）。见 `docs/reviews/retrieval-followup-2026-10-09.md`；本轮提交未 push，其他主机未部署。
+
+- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、请求快照 scope 与 public wrapper；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。规则请求按 Revision/内容哈希深拷贝不可变快照并通过 AsyncLocal 绑定整轮调用，派生缓存随快照重建，旧快照可回收；`ChatResponse` 附加逐 query 的 `Evidence`（tier/规则版本/status/source/matched/candidates/message），旧客户端可忽略；新增 pendingCount / resolvedByQueryIndex 保留历史诊断并恢复同版本单候选的后续精确查询，Android 同步消费；多候选仍保守提示 partial，tier1 不是答案正确证明。后端 xUnit 测试 161/161 全绿（2026-10-09）；`RulesDocumentStore` 读取改为 Windows 共享写友好的 `FileShare.ReadWrite | FileShare.Delete` + 有界 JSON/IO 重试，避免外部编辑覆盖时 reader 解析截断文件或 block writer。
 - **规则数据与检索**：9 款游戏目录，8 款有 `flow.json`，Splendor 是 Runtime + 动画试点；Qdrant + `bge-base-zh-v1.5` ONNX 检索链可用；全文/name 两套索引统一为版本化 collection + 稳定 alias（`board_{game}__active[_name]`），Python CLI 与 C# API 共用 `IndexContract` 的提取、身份路径、点 ID 与版本行，九款真实规则数据的版本 hash 已在 xUnit/Python 双端回归中逐一对齐；局部槽位使用 `<owner>.<slot_id>` 身份路径，`id/name/material` 元数据不再被误提取为槽位，同名全局概念与局部槽位不互相覆盖；构建校验后原子切换，失败保留旧索引；`validate_rules.py --errors-only` 为 0 errors / 72 warnings；2026-10-09 已在 Qdrant 1.18.3 实际重建九款索引并原子切换 alias（Civolution 434/412，其余见测试/待办记录）；`tools/qa/retrieval_gold.jsonl` 85 条。
 - **动画 tree/状态模型（2026-09-30 修正）**：tree 只决定 stage/可见性，不是状态边界；cue 默认按 `entry -> parent -> 轨道前一条` 继承完整状态，允许跨 tree。当前 stage 缺少的 zone 不渲染，组件仍保留在逻辑状态中，切回对应 tree 后恢复显示。full 轨道现只有 `main` 一棵 tree，其它展示内容改走 screen 对象；该机制仍保留给多树轨道/其它游戏。
 - **动画全脚本继承关系（2026-09-30）**：tree 切换默认继承上一条 cue 的完整状态；仅在盒面/卡牌/宝石/贵族/标记等显式 demo 返回点用 `entry` 跳回 canonical 快照。full 现在只有 main，旧展示树切换点已收口。

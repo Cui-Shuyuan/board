@@ -65,7 +65,7 @@ hook 会调用当前入口 `tools/content/validate_rules.py --errors-only`，不
 D:\dotnet\dotnet.exe test D:\workspace\board\backend\BoardAI.Api.Tests\BoardAI.Api.Tests.csproj --nologo
 ```
 
-当前为 133/133 全绿（2026-10-09 检索排序修改）。测试项目：`backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj`。
+当前为 161/161 全绿（2026-10-09 CLS、事实核查、证据恢复）。Android JVM 为 91/91。测试项目：`backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj`。
 
 Python animation/索引纯提取回归：
 
@@ -80,12 +80,14 @@ python3 -m unittest discover -s animation -p 'test_*.py'
 ```bash
 python tools/indexing/rebuild_index.py --all
 python tools/indexing/rebuild_index.py --game splendor
+python tools/indexing/rebuild_index.py --all --pooling cls --no-switch
 ```
 
 - 每次构建生成版本化 collection `board_{game}__v{version}[_name]`，先写入并校验完整点数，再用一次 alias 请求原子切换 `board_{game}__active[_name]`；失败会清理临时 collection，旧 alias 继续服务。
 - Python CLI 与 C# `IndexContract` 共用 `source + 身份路径` 身份：普通概念为 `concept_id`，局部槽位为 `<owner>.<slot_id>`。`id/name/material` 是显式槽位元数据，不会生成虚假槽位键。
 - 模型目录：`backend/BoardAI.Api/ml_models/`（gitignore）。
-- 当前模型：`bge-base-zh-v1.5-fp32`，768 维。
+- 当前模型：`bge-base-zh-v1.5-fp32`，768 维；默认读取 appsettings 的 `Embedding:Pooling=cls`，环境变量 `Embedding__Pooling` 可覆盖。CLS profile=`bge-base-zh-v1.5-fp32/cls-v1`；mean 回滚必须同步恢复/重建 mean alias。不能只切查询端池化。
+- `--no-switch` 只构建/校验，保留现有 alias。查询端校验物理 collection 的 embedding profile，坐标不匹配时拒绝向量结果并记录 warning。
 - 冷启动顺序：Qdrant → 重建索引 → 启动 API。
 - API 侧等价入口：`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all`。
 
@@ -94,13 +96,16 @@ python tools/indexing/rebuild_index.py --game splendor
 ```bash
 python tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_gold.jsonl --api http://localhost:5000
 python tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_regressions.jsonl --api http://localhost:5000
+python tools/indexing/eval_natural_retrieval.py --api http://localhost:5000 --out .tmp/live-natural
+python tools/indexing/retrieval_lab.py --out .tmp/retrieval-lab --reranker backend/BoardAI.Api/ml_models/bge-reranker-base
 ```
 
 - Gold set：`tools/qa/retrieval_gold.jsonl`，当前 85 条，覆盖 9 款游戏。
 - 直接调用 `POST /api/rules/games/{game}/execute-plan`，不经过 LLM 回答。
 - 指标：resolved_hit / resolved_wrong / candidate_top1 / candidate_top3 / unresolved / no_match。
-- 2026-10-09 实测：既有 85 条中 77 直接命中，8 条返回候选且预期目标均在前三（7 条第一），wrong=0、no_match=0；比旧版 82 直接命中更谨慎，目标未丢失。
-- 新增自然语言回归 7 条：全部候选前三命中、5 条第一，wrong=0、no_match=0。候选命中不等于答案准确率；同题 71 次聊天与 65 个查询排名对比见 `docs/reviews/retrieval-ranking-2026-10-09.md`。
+- 2026-10-09 最新 CLS 实测：既有 85 条中 77 直接命中，8 条候选全部第一，wrong=0、no_match=0；比最初 82 直接命中更谨慎，目标未丢失。7 条描述性回归全部候选第一。
+- 新增自然问句 `tools/qa/retrieval_questions.jsonl` 53 条（48 正例、3 虚构、2 歧义），带来源指针与按主题拆分的 dev/holdout；真实 API 正例首位 29/48、前三 41/48，五条负例未自动确认。规则事实手写验收见 `rule_fact_regressions.jsonl`，不能以组件命中代替答案忠实度。
+- `retrieval_lab.py` 只读本地模型/规则，不修改 Qdrant，不隐式下载；reranker 参数可省略。片段/RRF/reranker 未稳定优于整段 CLS，当前未接正式查询。81 次真实聊天含一条预算结束回复；指标和剩余问题见 `docs/reviews/retrieval-followup-2026-10-09.md`，首轮历史见 `retrieval-ranking-2026-10-09.md`。
 
 ## 5. 后端语音桥
 

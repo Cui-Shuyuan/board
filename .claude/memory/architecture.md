@@ -121,15 +121,16 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 ## 4. 检索架构
 
 - Qdrant：独立 Windows 进程，按游戏分版本化 collection `board_{gameId}__v{version}[_name]`，查询走 alias `board_{gameId}__active[_name]`；重建失败/中断不会破坏旧 alias。
-- Embedding：`bge-base-zh-v1.5` fp32 ONNX，768 维；模型目录 `ml_models/` 不进 Git。
+- Embedding：`bge-base-zh-v1.5` fp32 ONNX，768 维，默认 CLS pooling + L2 归一化；`Embedding:Pooling` / `Embedding__Pooling` 可设 mean 回滚。CLS profile=`模型目录名/cls-v1`，mean 保留旧目录名；版本哈希包括 profile，查询核查物理 collection 的 profile，不能混用向量坐标。C# CLS 超长输入保留末尾分隔 token，与 Python 512 token 截断对齐；模型目录 `ml_models/` 不进 Git。
 - 索引内容：ontology 概念、游戏 concepts、flow 递归节点、合法局部槽位；显式槽位元数据（id/name/material）不生成索引键。
 - 身份路径：全局概念 = `concept_id`；局部槽位 = `<owner_concept_path>.<slot_id>`。Point ID、版本行和 payload 均使用该路径，同名全局概念/局部槽位不会静默覆盖。
 - 重建：`tools/indexing/rebuild_index.py`，先构建临时 collection 并精确校验 count，再原子切换 alias；Python CLI 与 C# API 的版本 hash 已对九款真实规则数据回归对齐。
 - 搜索排序：整句向量 + 整句关键词 + 0.02 × 子查询平均分；同一身份路径/查询/通道取最大值，整句关键词必须全部分词在同一概念中匹配。PhraseScore / SubqueryBoost / TermScores 记录来源，混合分不是概率。
-- 向量子查询路由：≤2 字走名称索引，其余走全文；explain 同时查全文与名称，名称补漏封顶 0.55 并保留 NameMatchScore，弱全文重复不能阻挡名称补漏。identify 外观描述走全文候选，不因 question 命中通用名而提前确认；精确 ID 可直达。
+- 向量子查询路由：≤2 字走名称索引，其余走全文；explain 同时查全文与名称，全文召回底线 CLS=0.50 / mean=0.55，名称补漏封顶为该底线并保留 NameMatchScore，弱全文重复不能阻挡名称补漏。identify 外观描述走全文候选；所有关系的 question 名称线索只补候选，不自动确认未知实体；精确 ID 可直达。
 - execute-plan 最多保留 15 个候选；boundary 可查询对象、本体、局部槽位等实体。自动语义确认要求整句 vector≥0.72、keyword≥0.30、总分≥0.80、领先第二名≥0.10；名称补漏不能自动确认。
 - namespace：`ontology::concept_id` 限定本体概念；局部槽位在无歧义时也可用 `owner.slot` 路径精确解析，避免与同名全局概念混用。
-- 检索回归：`tools/qa/retrieval_gold.jsonl`（85 条）+ `tools/qa/retrieval_regressions.jsonl`（7 条）+ `tools/indexing/eval_retrieval.py`；实测见 `docs/reviews/retrieval-ranking-2026-10-09.md`。
+- 检索回归：`tools/qa/retrieval_gold.jsonl`（85 条）+ `tools/qa/retrieval_regressions.jsonl`（7 条）+ `tools/indexing/eval_retrieval.py`；自然问句 `retrieval_questions.jsonl`（53 条）由 `eval_natural_retrieval.py` 重放。`retrieval_lab.py` 只读比较片段/池化/RRF/本地 reranker，未将后者接正式查询。两轮实测见 `docs/reviews/retrieval-ranking-2026-10-09.md`、`retrieval-followup-2026-10-09.md`。
+- Evidence：保留历史 status/count，新增 pendingCount / resolvedByQueryIndex。仅同规则版本、单候选、后续精确 ID/中文名同关系（或 identify→explain）恢复；多候选不自动认定全覆盖。Android 隐去已恢复项的缺失提示；tier1 描述数据覆盖，不保证回答忠实。
 
 ## 5. 交互模型
 

@@ -2,7 +2,7 @@
 
 新会话按顺序读：
 
-1. [current-state.md](current-state.md) — 截至 2026-10-08 的当前进度（HEAD 以 git log 为准）、工作区状态、待办与不做事项
+1. [current-state.md](current-state.md) — 截至 2026-10-09 的当前进度（HEAD 以 git log 为准）、工作区状态、待办与不做事项
 2. [project-overview.md](project-overview.md) — 项目定位、功能、阶段、技术选型
 3. [architecture.md](architecture.md) — Runtime 服务拆分、自动 freshness、检索、Android/语音接口
 4. [tutorial-animation.md](tutorial-animation.md) — 讲规动画 v3：time_anchors / QA 同置 / 发展卡身份保真 / 当前动画遗留
@@ -26,6 +26,6 @@
 - 当前游戏目录：`content/catalog/`
 - 当前内容 manifest：`content/manifests/`（生成物，不入 Git）
 - 当前动画数据：`content/games/splendor/tutorial/anim/v2/`
-- 当前检索基准：`tools/qa/retrieval_gold.jsonl`
+- 当前检索基准：`tools/qa/retrieval_gold.jsonl`、`retrieval_regressions.jsonl`、`retrieval_questions.jsonl`；回答事实要求见 `rule_fact_regressions.jsonl`
 - 语音桥：`tools/voice/README.md`、`docs/ops/start-services.md`
 - 遇到文档与代码/数据冲突，以代码和 JSON 数据为准，并顺手更新本目录。
