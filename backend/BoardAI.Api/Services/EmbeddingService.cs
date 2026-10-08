@@ -15,6 +15,9 @@ public class EmbeddingService : IDisposable
     private readonly int _dimension;
     private const int MaxLength = 512;
 
+    /// <summary>部署侧模型目录名，用于索引版本元数据（同一目录名意味着同一发布模型）。</summary>
+    public string ModelId { get; }
+
     public EmbeddingService(string modelDir)
     {
         var onnxPath = Path.Combine(modelDir, "model.onnx");
@@ -26,6 +29,7 @@ public class EmbeddingService : IDisposable
             throw new FileNotFoundException($"Tokenizer not found: {tokenizerPath}");
 
         _session = new InferenceSession(onnxPath);
+        ModelId = Path.GetFileName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(modelDir)));
 
         // 从模型输出中获取实际维度
         _dimension = _session.OutputMetadata["last_hidden_state"].Dimensions[2];

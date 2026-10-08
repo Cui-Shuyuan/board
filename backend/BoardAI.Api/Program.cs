@@ -119,8 +119,15 @@ public class Program
     {
         var (rulesService, _, _) = CreateRebuildServices();
         Console.WriteLine($"Rebuilding index for '{gameId}'...");
-        await rulesService.BuildEmbeddingIndexAsync(gameId);
-        Console.WriteLine("Done.");
+        var result = await rulesService.BuildEmbeddingIndexAsync(gameId);
+        if (result == null)
+        {
+            Console.WriteLine("Vector search is not configured; index not rebuilt.");
+            return;
+        }
+        Console.WriteLine(
+            $"Done. version={result.Version} full={result.FullCollection} ({result.FullCount}) " +
+            $"name={result.NameCollection} ({result.NameCount}) reused={result.ReusedExistingCollections}");
     }
 
     private static (GameRulesService, EmbeddingService, VectorSearchService) CreateRebuildServices()

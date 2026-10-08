@@ -4,6 +4,13 @@
 用法:
     python rebuild_index.py --all
     python rebuild_index.py --game civolution
+    QDRANT_URL=http://host:6333 python rebuild_index.py --game civolution
+
+契约:
+    与 backend/BoardAI.Api 的 RebuildIndexAsync 共用 IndexContract：
+    version = schema + game + model_dir_name + dimension + 全部索引条目哈希；
+    具体 collection 写入 board_{game}__v{version}[__name] 并校验点数后，
+    一次性原子切换 board_{game}__active[_name] 别名；失败保留旧别名。
 
 依赖:
     pip install onnxruntime transformers requests
@@ -27,8 +34,9 @@ from transformers import AutoTokenizer
 # ---- 配置 ----
 BOARD_ROOT = Path(__file__).resolve().parent.parent.parent
 MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5-fp32"
-QDRANT_URL = "http://localhost:6333"
+QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333").rstrip("/")
 BATCH_SIZE = 100
+INDEX_SCHEMA = "board-index/v1"
 
 # 概念引用正则——与后端 AnnotateReferences 同一模式
 REF_PATTERN = re.compile(r"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>")
@@ -186,7 +194,9 @@ def extract_concepts(file_path: Path) -> list[dict[str, Any]]:
     for key, value in data.items():
         if key in array_types or key == "concepts":
             continue
-        if isinstance(value, dict) and "id" not in value:
+        if isinstance(value, dict):
+            # 顶层 dict 与 C# RulesIndexService 的 top_level_refs 契约保持一致：
+            # 即使元素自带 id 也按 key 身份索引（真实数据中多为无 id 的聚合引用）。
             results.append({
                 "concept_id": key,
                 "type": "top_level_ref",
@@ -279,14 +289,81 @@ def collection_name(game_id: str) -> str:
     return f"board_{game_id}"
 
 
+def active_alias(game_id: str, name_only: bool = False) -> str:
+    base = f"{collection_name(game_id)}__active"
+    return f"{base}_name" if name_only else base
+
+
+def versioned_collection(game_id: str, version: str, name_only: bool = False) -> str:
+    base = f"{collection_name(game_id)}__v{version}"
+    return f"{base}__name" if name_only else base
+
+
 def qdrant_put(path: str, body: dict | None = None):
     r = requests.put(f"{QDRANT_URL}{path}", json=body, timeout=30)
     r.raise_for_status()
 
 
+def qdrant_post(path: str, body: dict | None = None):
+    r = requests.post(f"{QDRANT_URL}{path}", json=body, timeout=30)
+    r.raise_for_status()
+    return r
+
+
 def qdrant_delete(path: str):
     r = requests.delete(f"{QDRANT_URL}{path}", timeout=30)
     r.raise_for_status()
+
+
+def collection_exists(name: str) -> bool:
+    r = requests.get(f"{QDRANT_URL}/collections/{name}", timeout=30)
+    if r.status_code == 404:
+        return False
+    r.raise_for_status()
+    return True
+
+
+def collection_count(name: str) -> int:
+    r = requests.post(
+        f"{QDRANT_URL}/collections/{name}/points/count",
+        json={"exact": True},
+        timeout=30,
+    )
+    r.raise_for_status()
+    return int(r.json()["result"]["count"])
+
+
+def compute_index_version(game_id: str, items: list[dict]) -> str:
+    """Canonical version line shared with IndexContract.ComputeIndexVersion in C#."""
+    sorted_items = sorted(
+        items,
+        key=lambda c: (
+            c.get("source", ""),
+            c["concept_id"],
+            c["type"],
+            c.get("name_zh") or "",
+            c.get("name_en") or "",
+            c.get("name_text") or "",
+            strip_refs(c["search_text"]),
+        ),
+    )
+    lines = [INDEX_SCHEMA, game_id, MODEL_DIR.name, str(dimension)]
+    for c in sorted_items:
+        lines.append(
+            "\t".join(
+                [
+                    c.get("source", ""),
+                    c["concept_id"],
+                    c["type"],
+                    c.get("name_zh") or "",
+                    c.get("name_en") or "",
+                    c.get("name_text") or "",
+                    strip_refs(c["search_text"]),
+                ]
+            )
+        )
+    payload = "\n".join(lines) + "\n"
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
 def rebuild_game(game_id: str):
@@ -335,67 +412,109 @@ def rebuild_game(game_id: str):
     for c in items:
         c["name_text"] = (c["name_zh"] or c["name_en"] or "").strip()
 
-    # ---- full-text collection (id + name + description) ----
-    name_full = collection_name(game_id)
+    # ---- versioned collections + stable query aliases ----
+    version = compute_index_version(game_id, items)
+    full_collection = versioned_collection(game_id, version)
+    name_collection = versioned_collection(game_id, version, name_only=True)
+    full_alias = active_alias(game_id)
+    name_alias = active_alias(game_id, name_only=True)
+    expected_full = len(items)
+    expected_name = sum(1 for c in items if c["name_text"])
+    created: list[str] = []
+
+    def prepare(collection: str, expected: int) -> bool:
+        if collection_exists(collection) and collection_count(collection) == expected:
+            print(f"  reusing {collection} ({expected} points)")
+            return False
+        if collection_exists(collection):
+            qdrant_delete(f"/collections/{collection}")
+        qdrant_put(
+            f"/collections/{collection}",
+            {"vectors": {"size": dimension, "distance": "Cosine"}},
+        )
+        created.append(collection)
+        return True
+
     try:
-        qdrant_delete(f"/collections/{name_full}")
-    except requests.HTTPError:
-        pass
-    qdrant_put(f"/collections/{name_full}", {
-        "vectors": {"size": dimension, "distance": "Cosine"}
-    })
+        need_full = prepare(full_collection, expected_full)
+        need_name = prepare(name_collection, expected_name)
 
-    # ---- name-only collection ----
-    name_name = f"{collection_name(game_id)}_name"
-    try:
-        qdrant_delete(f"/collections/{name_name}")
-    except requests.HTTPError:
-        pass
-    qdrant_put(f"/collections/{name_name}", {
-        "vectors": {"size": dimension, "distance": "Cosine"}
-    })
-
-    for i in range(0, len(items), BATCH_SIZE):
-        batch = items[i:i + BATCH_SIZE]
-        # 嵌入前剥离 <> 引用——概念引用不参与相似度计算
-        full_vectors = [embed(strip_refs(c["search_text"])).tolist() for c in batch]
-        name_batch = [c for c in batch if c["name_text"]]
-        name_vectors = [embed(c["name_text"]).tolist() for c in name_batch]
-
-        full_points = []
-        name_points = []
-        for j, c in enumerate(batch):
-            payload = {
-                "concept_id": c["concept_id"],
-                "type": c["type"],
-                "name_zh": c["name_zh"],
-                "name_en": c["name_en"],
-            }
-            full_points.append({
-                "id": make_uuid(f"{game_id}::{c.get('source', '')}::{c['concept_id']}"),
-                "vector": full_vectors[j],
-                "payload": payload,
-            })
-        for c, vec in zip(name_batch, name_vectors):
-            payload = {
-                "concept_id": c["concept_id"],
-                "type": c["type"],
-                "name_zh": c["name_zh"],
-                "name_en": c["name_en"],
-            }
-            name_points.append({
-                "id": make_uuid(f"{game_id}::{c.get('source', '')}::{c['concept_id']}_name"),
-                "vector": vec,
-                "payload": payload,
-            })
-
-        qdrant_put(f"/collections/{name_full}/points", {"points": full_points})
-        qdrant_put(f"/collections/{name_name}/points", {"points": name_points})
-        batch_num = i // BATCH_SIZE + 1
         total_batches = (len(items) + BATCH_SIZE - 1) // BATCH_SIZE
-        print(f"  [{batch_num}/{total_batches}] {len(batch)} concepts")
+        for i in range(0, len(items), BATCH_SIZE):
+            batch = items[i:i + BATCH_SIZE]
+            # 嵌入前剥离 <> 引用——概念引用不参与相似度计算
+            full_points = []
+            if need_full:
+                full_vectors = [embed(strip_refs(c["search_text"])).tolist() for c in batch]
+                for j, c in enumerate(batch):
+                    full_points.append({
+                        "id": make_uuid(
+                            f"{game_id}::{c.get('source', '')}::{c['concept_id']}"
+                        ),
+                        "vector": full_vectors[j],
+                        "payload": {
+                            "concept_id": c["concept_id"],
+                            "type": c["type"],
+                            "name_zh": c["name_zh"],
+                            "name_en": c["name_en"],
+                        },
+                    })
 
-    print(f"  OK {game_id}: {len(items)} concepts in '{name_full}' + '{name_name}'")
+            name_points = []
+            if need_name:
+                name_batch = [c for c in batch if c["name_text"]]
+                name_vectors = [embed(c["name_text"]).tolist() for c in name_batch]
+                for c, vec in zip(name_batch, name_vectors):
+                    name_points.append({
+                        "id": make_uuid(
+                            f"{game_id}::{c.get('source', '')}::{c['concept_id']}_name"
+                        ),
+                        "vector": vec,
+                        "payload": {
+                            "concept_id": c["concept_id"],
+                            "type": c["type"],
+                            "name_zh": c["name_zh"],
+                            "name_en": c["name_en"],
+                        },
+                    })
+
+            if full_points:
+                qdrant_put(f"/collections/{full_collection}/points?wait=true", {"points": full_points})
+            if name_points:
+                qdrant_put(f"/collections/{name_collection}/points?wait=true", {"points": name_points})
+            batch_num = i // BATCH_SIZE + 1
+            print(f"  [{batch_num}/{total_batches}] {len(batch)} concepts")
+
+        # 切换前严格校验：不完整的新索引绝不允许顶替旧索引。
+        actual_full = collection_count(full_collection)
+        actual_name = collection_count(name_collection)
+        if actual_full != expected_full or actual_name != expected_name:
+            raise RuntimeError(
+                f"index verification failed: full={actual_full}/{expected_full}, "
+                f"name={actual_name}/{expected_name}"
+            )
+
+        # Qdrant 在一个 update_aliases 请求内原子执行以下操作。
+        actions = []
+        for alias, collection in ((full_alias, full_collection), (name_alias, name_collection)):
+            actions.append({"delete_alias": {"alias_name": alias}})
+            actions.append({"create_alias": {"collection_name": collection, "alias_name": alias}})
+        qdrant_post("/collections/aliases", {"actions": actions})
+
+        print(
+            f"  OK {game_id}: version={version} full='{full_collection}' "
+            f"({actual_full}) + name='{name_collection}' ({actual_name}); "
+            f"aliases '{full_alias}' / '{name_alias}' switched atomically"
+        )
+    except Exception:
+        # 切换前失败：删除本次新建的临时 collection，旧别名继续服务。
+        for collection in created:
+            try:
+                if collection_exists(collection):
+                    qdrant_delete(f"/collections/{collection}")
+            except Exception as cleanup_error:
+                print(f"  warning: cleanup of '{collection}' failed: {cleanup_error}")
+        raise
 
 
 # ---- CLI ----

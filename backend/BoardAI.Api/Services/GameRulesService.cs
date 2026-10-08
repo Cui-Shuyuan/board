@@ -107,7 +107,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         => _indexService.GetIndexItems(game);
 
 
-    public Task BuildEmbeddingIndexAsync(string game)
+    public Task<IndexBuildResult?> BuildEmbeddingIndexAsync(string game)
         => _indexService.BuildEmbeddingIndexAsync(game);
 
 

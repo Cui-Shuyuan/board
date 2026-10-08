@@ -1,5 +1,14 @@
 # embedding （确保qdrant进程正在运行）
 
+CLI 与后端 `POST /api/rules/admin/rebuild-index/{game}` 共用同一索引契约：
+先写 `board_{game}__v{version}` / `...__name` 两个具体 collection，校验点数后
+原子切换 `board_{game}__active` / `..._active_name` 别名；失败保留旧索引。
+Python CLI 默认连 `http://localhost:6333`，可用环境变量指向其他实例：
+
+```bash
+QDRANT_URL=http://<host>:6333 python3 tools/indexing/rebuild_index.py --game <game_name>
+```
+
 ## 单个游戏
 D:\Python\Python312\python.exe D:\workspace\board\tools\indexing\rebuild_index.py --game <game_name>
 

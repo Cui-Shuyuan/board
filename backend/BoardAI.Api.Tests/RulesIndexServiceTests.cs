@@ -31,10 +31,14 @@ public sealed class RulesIndexServiceTests : IDisposable
         var ontology = Assert.Single(items, i => i.Type == "ontology" && i.ConceptId == "ontology_widget");
         Assert.Equal("本体小装置", ontology.NameZh);
         Assert.Equal("Ontology Widget", ontology.NameEn);
+        Assert.Equal("ontology", ontology.Source);
+        Assert.Equal("本体小装置", ontology.NameText);
 
         var objects = Assert.Single(items, i => i.Type == "objects" && i.ConceptId == "widget");
         Assert.Equal("小装置", objects.NameZh);
         Assert.Equal("Widget", objects.NameEn);
+        Assert.Equal("game", objects.Source);
+        Assert.Equal("小装置", objects.NameText);
 
         var actions = Assert.Single(items, i => i.Type == "actions" && i.ConceptId == "use_widget");
         Assert.Equal("使用小装置", actions.NameZh);
@@ -42,6 +46,8 @@ public sealed class RulesIndexServiceTests : IDisposable
         var effects = Assert.Single(items, i => i.Type == "effects" && i.ConceptId == "bonus_effect");
         Assert.Equal("奖励效果", effects.NameZh);
         Assert.Equal("Bonus Effect", effects.NameEn);
+        Assert.Equal("instances", effects.Source);
+        Assert.Equal("奖励效果", effects.NameText);
 
         var topLevelRef = Assert.Single(items, i => i.Type == "top_level_ref" && i.ConceptId == "turn_structure");
         Assert.Equal("回合结构", topLevelRef.NameZh);
@@ -49,6 +55,8 @@ public sealed class RulesIndexServiceTests : IDisposable
 
         var ontologyFlow = Assert.Single(items, i => i.Type == "flow" && i.ConceptId == "ontology_pipeline_node");
         Assert.Equal("本体管道节点", ontologyFlow.NameZh);
+        Assert.Equal("ontology_flow", ontologyFlow.Source);
+        Assert.Equal("本体管道节点", ontologyFlow.NameText);
     }
 
     [Fact]
@@ -86,6 +94,8 @@ public sealed class RulesIndexServiceTests : IDisposable
             .Where(i => i.Type == "flow")
             .ToList();
 
+        var mainFlow = Assert.Single(flowItems, i => i.ConceptId == "main_proc");
+        Assert.Equal("game_flow", mainFlow.Source);
         Assert.Contains(flowItems, i => i.ConceptId == "main_proc");
         Assert.Contains(flowItems, i => i.ConceptId == "nested_standalone");
         Assert.Contains(flowItems, i => i.ConceptId == "trigger_ext");
@@ -125,6 +135,7 @@ public sealed class RulesIndexServiceTests : IDisposable
         var slot = Assert.Single(items, i => i.Type == "slot" && i.ConceptId == "population");
         Assert.Equal("", slot.NameZh);
         Assert.Equal("", slot.NameEn);
+        Assert.Equal("", slot.NameText);
         Assert.Contains("population", slot.SearchText);
         Assert.Contains("人口", slot.SearchText);
         Assert.Contains("深层效果描述", slot.SearchText);
@@ -139,9 +150,39 @@ public sealed class RulesIndexServiceTests : IDisposable
         using var content = new RulesContentStore(_root);
         var service = new RulesIndexService(new RulesConceptCatalog(content), content, null);
 
-        await service.BuildEmbeddingIndexAsync("testgame");
+        var result = await service.BuildEmbeddingIndexAsync("testgame");
 
+        Assert.Null(result);
         Assert.True(service.GetIndexItems("testgame").Count > 0);
+    }
+
+    [Fact]
+    public void GetIndexItems_UsesGameSpecificDefinition_WhenIdCollidesWithOntology()
+    {
+        WriteJson(
+            Path.Combine("content", "games", "collisiongame", "concepts.json"),
+            """
+            {
+              "objects": [
+                {
+                  "id": "ontology_widget",
+                  "name": { "zh": "游戏层小装置", "en": "Game Widget" },
+                  "description": { "zh": "游戏层专属定义", "en": "Game-specific definition" }
+                }
+              ],
+              "actions": [], "triggers": [], "conditions": []
+            }
+            """);
+
+        using var content = new RulesContentStore(_root);
+        var service = new RulesIndexService(new RulesConceptCatalog(content), content, null);
+
+        var item = Assert.Single(service.GetIndexItems("collisiongame"),
+            i => i.Type == "objects" && i.ConceptId == "ontology_widget");
+
+        Assert.Equal("game", item.Source);
+        Assert.Contains("游戏层专属定义", item.SearchText);
+        Assert.DoesNotContain("本体描述", item.SearchText);
     }
 
     [Fact]

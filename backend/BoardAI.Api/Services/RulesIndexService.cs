@@ -8,7 +8,6 @@ namespace BoardAI.Api.Services;
 /// </summary>
 public sealed class RulesIndexService
 {
-    private readonly IRulesConceptCatalog _catalog;
     private readonly RulesContentStore _content;
     private readonly VectorSearchService? _vectorSearch;
 
@@ -17,7 +16,10 @@ public sealed class RulesIndexService
         RulesContentStore content,
         VectorSearchService? vectorSearch)
     {
-        _catalog = catalog;
+        // Kept for constructor compatibility with existing call sites; index
+        // extraction intentionally reads raw JSON so the CLI/API contract is
+        // not altered by catalog-side id resolution.
+        _ = catalog;
         _content = content;
         _vectorSearch = vectorSearch;
     }
@@ -29,100 +31,46 @@ public sealed class RulesIndexService
     {
         var result = new List<ConceptIndexItem>();
 
-        // ontology 概念（不限定 game）
-        foreach (var c in _catalog.ListConcepts(game, "ontology"))
-        {
-            var detail = _catalog.GetConcept(game, c.Id);
-            result.Add(new ConceptIndexItem
-            {
-                ConceptId = c.Id,
-                Type = "ontology",
-                NameZh = c.Name,
-                NameEn = ExtractEnName(detail),
-                SearchText = BuildSearchText(c, detail),
-            });
-            if (detail.HasValue) ExtractSlots(detail.Value, result);
-        }
+        // Raw JSON extraction, matching tools/indexing/rebuild_index.py.
+        ExtractConceptItems(_content.LoadOntology(), "ontology", result);
+        ExtractConceptItems(_content.LoadGameConcepts(game), "game", result);
+        ExtractInstanceItems(_content.LoadGameInstances(game), result);
 
-        foreach (var type in RulesConceptTypes.ConceptArrayTypes)
-        {
-            foreach (var c in _catalog.ListConcepts(game, type))
-            {
-                var detail = _catalog.GetConcept(game, c.Id);
-                result.Add(new ConceptIndexItem
-                {
-                    ConceptId = c.Id,
-                    Type = type,
-                    NameZh = c.Name,
-                    NameEn = ExtractEnName(detail),
-                    SearchText = BuildSearchText(c, detail),
-                });
-                if (detail.HasValue) ExtractSlots(detail.Value, result);
-            }
-        }
-
-        // instances.json 实例
-        foreach (var type in RulesConceptTypes.InstanceArrayTypes)
-        {
-            foreach (var c in _catalog.ListConcepts(game, type))
-            {
-                var detail = _catalog.GetConcept(game, c.Id);
-                result.Add(new ConceptIndexItem
-                {
-                    ConceptId = c.Id,
-                    Type = type,
-                    NameZh = c.Name,
-                    NameEn = ExtractEnName(detail),
-                    SearchText = BuildSearchText(c, detail),
-                });
-                if (detail.HasValue) ExtractSlots(detail.Value, result);
-            }
-        }
-
-        // 顶层引用
-        foreach (var c in _catalog.ListConcepts(game, "top_level_refs"))
-        {
-            var detail = _catalog.GetConcept(game, c.Id);
-            result.Add(new ConceptIndexItem
-            {
-                ConceptId = c.Id,
-                Type = "top_level_ref",
-                NameZh = c.Name,
-                NameEn = ExtractEnName(detail),
-                SearchText = BuildSearchText(c, detail),
-            });
-            if (detail.HasValue) ExtractSlots(detail.Value, result);
-        }
+        // Top-level references are indexed by their JSON key; Python does the
+        // same for both ontology and game files.
+        ExtractTopLevelRefs(_content.LoadGameConcepts(game), "game", result);
+        ExtractTopLevelRefs(_content.LoadOntology(), "ontology", result);
 
         // content/ontology/flow.json
         var ontologyFlow = _content.LoadOntologyFlow();
         if (ontologyFlow != null)
         {
-            ExtractFlowItems(ontologyFlow.RootElement, result);
+            ExtractFlowItems(ontologyFlow.RootElement, result, "ontology_flow");
         }
 
         // flow.json 流程
         var flow = _content.LoadGameFlow(game);
         if (flow != null)
         {
-            ExtractFlowItems(flow.RootElement, result);
+            ExtractFlowItems(flow.RootElement, result, "game_flow");
         }
 
-        return result;
+        // 通用流程容器概念不参与语义检索（与 rebuild_index.py 一致）。
+        return result.Where(item => item.ConceptId != "game").ToList();
     }
 
     /// <summary>
     /// 为指定游戏重建向量索引。
     /// </summary>
-    public async Task BuildEmbeddingIndexAsync(string game)
+    public async Task<IndexBuildResult?> BuildEmbeddingIndexAsync(string game)
     {
-        if (_vectorSearch == null) return;
+        if (_vectorSearch == null) return null;
         var items = GetIndexItems(game);
-        await _vectorSearch.RebuildIndexAsync(game, items);
+        return await _vectorSearch.RebuildIndexAsync(game, items);
     }
 
     /// <summary>递归提取 slots 元素 (裸键槽名如 population/expansion 作为概念, 与 Python rebuild_index 一致)</summary>
-    private static void ExtractSlots(JsonElement node, List<ConceptIndexItem> result)
+    private static void ExtractSlots(JsonElement node, List<ConceptIndexItem> result, string source)
     {
         if (node.ValueKind == JsonValueKind.Object)
         {
@@ -141,20 +89,24 @@ public sealed class RulesIndexService
                         {
                             ConceptId = prop.Name,
                             Type = "slot",
+                            Source = source,
                             NameZh = "",
                             NameEn = "",
-                            SearchText = string.Join(" ", parts),
+                            NameText = "",
+                            // <> 引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
+                            SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
+                                string.Join(" ", parts.Where(part => !string.IsNullOrEmpty(part))), ""),
                         });
                     }
                 }
             }
             foreach (var prop in node.EnumerateObject())
-                ExtractSlots(prop.Value, result);
+                ExtractSlots(prop.Value, result, source);
         }
         else if (node.ValueKind == JsonValueKind.Array)
         {
             foreach (var item in node.EnumerateArray())
-                ExtractSlots(item, result);
+                ExtractSlots(item, result, source);
         }
     }
 
@@ -190,7 +142,7 @@ public sealed class RulesIndexService
         }
     }
 
-    private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result)
+    private static void ExtractFlowItems(JsonElement root, List<ConceptIndexItem> result, string source)
     {
         // 游戏 flow.json：procedures 树 + triggers 组
         foreach (var arrayKey in new[] { "procedures", "triggers" })
@@ -198,7 +150,7 @@ public sealed class RulesIndexService
             if (!root.TryGetProperty(arrayKey, out var arr)) continue;
             foreach (var item in arr.EnumerateArray())
             {
-                WalkFlowNode(item, result);
+                WalkFlowNode(item, result, source);
             }
         }
 
@@ -208,12 +160,12 @@ public sealed class RulesIndexService
         {
             foreach (var opt in options.EnumerateArray())
             {
-                WalkFlowNode(opt, result);
+                WalkFlowNode(opt, result, source);
             }
         }
     }
 
-    private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result)
+    private static void WalkFlowNode(JsonElement node, List<ConceptIndexItem> result, string source)
     {
         // 游戏 flow 的 options 中可能存在 <concept_id> 字符串引用；
         // 跳过非对象节点，保持与 rebuild_index.py 相同的下钻语义。
@@ -238,13 +190,18 @@ public sealed class RulesIndexService
             if (node.TryGetProperty("description", out var desc) && desc.TryGetProperty("zh", out var dzh))
                 zhParts.Add(dzh.GetString()!);
 
+            var flowNameZh = node.TryGetProperty("name", out var nm) && nm.TryGetProperty("zh", out var nz)
+                ? nz.GetString() : id;
+            var flowNameEn = node.TryGetProperty("name", out var nmEn) && nmEn.TryGetProperty("en", out var nen)
+                ? nen.GetString() : null;
             result.Add(new ConceptIndexItem
             {
                 ConceptId = id,
                 Type = "flow",
-                NameZh = node.TryGetProperty("name", out var nm) && nm.TryGetProperty("zh", out var nz)
-                    ? nz.GetString() : id,
-                NameEn = null,
+                Source = source,
+                NameZh = flowNameZh,
+                NameEn = flowNameEn,
+                NameText = !string.IsNullOrWhiteSpace(flowNameZh) ? flowNameZh : (flowNameEn ?? ""),
                 // <> 引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
                 SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
                     string.Join(" ", zhParts.Where(p => !string.IsNullOrEmpty(p))), ""),
@@ -258,7 +215,7 @@ public sealed class RulesIndexService
         {
             foreach (var evt in events.EnumerateArray())
             {
-                WalkFlowNode(evt, result);
+                WalkFlowNode(evt, result, source);
             }
         }
 
@@ -266,7 +223,7 @@ public sealed class RulesIndexService
         {
             foreach (var opt in opts.EnumerateArray())
             {
-                WalkFlowNode(opt, result);
+                WalkFlowNode(opt, result, source);
             }
         }
 
@@ -278,41 +235,178 @@ public sealed class RulesIndexService
             "<ontology::continuous_effect>", "<ontology::effect>" })
         {
             if (node.TryGetProperty(containerKey, out var container) && container.ValueKind == JsonValueKind.Object)
-                WalkFlowNode(container, result);
+                WalkFlowNode(container, result, source);
         }
     }
 
     // ---- 私有辅助 ----
 
-    private static string BuildSearchText(ConceptSummary summary, JsonElement? detail)
+    private static void ExtractConceptItems(
+        JsonDocument? document,
+        string source,
+        List<ConceptIndexItem> result)
     {
-        var parts = new List<string> { summary.Id, summary.Name };
-        if (detail.HasValue)
+        if (document == null) return;
+
+        var root = document.RootElement;
+        if (root.TryGetProperty("concepts", out var concepts) && concepts.ValueKind == JsonValueKind.Array)
         {
-            var detailEl = detail.Value;
-            if (detailEl.TryGetProperty("name", out var name))
-            {
-                if (name.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString()!);
-                if (name.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
-            }
-            if (detailEl.TryGetProperty("description", out var def))
-            {
-                if (def.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString()!);
-                if (def.TryGetProperty("en", out var en)) parts.Add(en.GetString()!);
-            }
+            foreach (var element in concepts.EnumerateArray())
+                AddRawConceptItem(element, "ontology", source, includeSlots: true, result);
         }
-        // <> 包裹的概念引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
-        return RulesJsonUtils.ConceptRefRegex.Replace(string.Join(" ", parts.Where(p => !string.IsNullOrEmpty(p))), "");
+
+        foreach (var type in RulesConceptTypes.ConceptArrayTypes)
+        {
+            if (!root.TryGetProperty(type, out var array) || array.ValueKind != JsonValueKind.Array)
+                continue;
+            foreach (var element in array.EnumerateArray())
+                AddRawConceptItem(element, type, source, includeSlots: true, result);
+        }
     }
 
-    private static string? ExtractEnName(JsonElement? element)
+    private static void ExtractInstanceItems(
+        JsonDocument? document,
+        List<ConceptIndexItem> result)
     {
-        if (element.HasValue
-            && element.Value.TryGetProperty("name", out var name)
-            && name.TryGetProperty("en", out var en))
+        if (document == null) return;
+
+        var root = document.RootElement;
+        foreach (var type in RulesConceptTypes.InstanceArrayTypes)
         {
-            return en.GetString();
+            if (!root.TryGetProperty(type, out var array) || array.ValueKind != JsonValueKind.Array)
+                continue;
+            foreach (var element in array.EnumerateArray())
+                AddRawConceptItem(element, type, "instances", includeSlots: false, result);
         }
-        return null;
     }
+
+    private static void ExtractTopLevelRefs(
+        JsonDocument? document,
+        string source,
+        List<ConceptIndexItem> result)
+    {
+        if (document == null) return;
+
+        foreach (var property in document.RootElement.EnumerateObject())
+        {
+            if (property.Name == "concepts" || RulesConceptTypes.ConceptArrayTypes.Contains(property.Name))
+                continue;
+            if (property.Value.ValueKind != JsonValueKind.Object)
+                continue;
+
+            AddRawTopLevelRefItem(property.Value, property.Name, source, result);
+        }
+    }
+
+    private static void AddRawTopLevelRefItem(
+        JsonElement element,
+        string key,
+        string source,
+        List<ConceptIndexItem> result)
+    {
+        if (element.ValueKind != JsonValueKind.Object)
+            return;
+
+        var nameZh = "";
+        var nameEn = "";
+        if (element.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
+        {
+            if (name.TryGetProperty("zh", out var zh)) nameZh = zh.GetString() ?? "";
+            if (name.TryGetProperty("en", out var en)) nameEn = en.GetString() ?? "";
+        }
+
+        var parts = new List<string>();
+        // Python 的 build_search_text 使用 value["id"]，而不是 JSON key。
+        if (element.TryGetProperty("id", out var id) && id.ValueKind == JsonValueKind.String)
+            parts.Add(id.GetString() ?? "");
+        if (!string.IsNullOrEmpty(nameZh)) parts.Add(nameZh);
+        if (!string.IsNullOrEmpty(nameEn)) parts.Add(nameEn);
+        if (element.TryGetProperty("description", out var description)
+            && description.ValueKind == JsonValueKind.Object)
+        {
+            if (description.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString() ?? "");
+            if (description.TryGetProperty("en", out var en)) parts.Add(en.GetString() ?? "");
+        }
+
+        result.Add(new ConceptIndexItem
+        {
+            ConceptId = key,
+            Type = "top_level_ref",
+            Source = source,
+            NameZh = nameZh,
+            NameEn = nameEn,
+            NameText = !string.IsNullOrWhiteSpace(nameZh) ? nameZh : nameEn,
+            SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
+                string.Join(" ", parts.Where(part => !string.IsNullOrEmpty(part))), ""),
+        });
+
+        ExtractSlots(element, result, source);
+    }
+
+    private static void AddRawConceptItem(
+        JsonElement element,
+        string type,
+        string source,
+        bool includeSlots,
+        List<ConceptIndexItem> result)
+    {
+        if (element.ValueKind != JsonValueKind.Object)
+            return;
+
+        var conceptId = element.TryGetProperty("id", out var id)
+            && id.ValueKind == JsonValueKind.String
+            ? id.GetString() ?? ""
+            : "";
+
+        AddRawConceptItem(element, conceptId, type, source, includeSlots, result);
+    }
+
+    private static void AddRawConceptItem(
+        JsonElement element,
+        string conceptId,
+        string type,
+        string source,
+        bool includeSlots,
+        List<ConceptIndexItem> result)
+    {
+        if (element.ValueKind != JsonValueKind.Object)
+            return;
+
+        var nameZh = "";
+        var nameEn = "";
+        if (element.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
+        {
+            if (name.TryGetProperty("zh", out var zh)) nameZh = zh.GetString() ?? "";
+            if (name.TryGetProperty("en", out var en)) nameEn = en.GetString() ?? "";
+        }
+
+        var parts = new List<string>();
+        if (!string.IsNullOrEmpty(conceptId)) parts.Add(conceptId);
+        if (!string.IsNullOrEmpty(nameZh)) parts.Add(nameZh);
+        if (!string.IsNullOrEmpty(nameEn)) parts.Add(nameEn);
+        if (element.TryGetProperty("description", out var description)
+            && description.ValueKind == JsonValueKind.Object)
+        {
+            if (description.TryGetProperty("zh", out var zh)) parts.Add(zh.GetString() ?? "");
+            if (description.TryGetProperty("en", out var en)) parts.Add(en.GetString() ?? "");
+        }
+
+        var nameText = !string.IsNullOrWhiteSpace(nameZh) ? nameZh : nameEn;
+        result.Add(new ConceptIndexItem
+        {
+            ConceptId = conceptId,
+            Type = type,
+            Source = source,
+            NameZh = nameZh,
+            NameEn = nameEn,
+            NameText = nameText,
+            // <> 引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
+            SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
+                string.Join(" ", parts.Where(part => !string.IsNullOrEmpty(part))), ""),
+        });
+
+        if (includeSlots)
+            ExtractSlots(element, result, source);
+    }
+
 }

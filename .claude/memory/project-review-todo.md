@@ -7,7 +7,7 @@ metadata:
 
 # 项目审查待办（2026-10-08）
 
-状态：REV-01 / REV-02 / REV-04 / REV-05 / REV-06 已完成；REV-03、REV-07、REV-08 未实现。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
+状态：REV-01 / REV-02 / REV-03 / REV-04 / REV-05 / REV-06 已完成；REV-07、REV-08 未实现。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
 
 ## 审查基线与范围
 
@@ -38,11 +38,18 @@ metadata:
 
 ## P1：可靠性与验收
 
-### [ ] REV-03 统一索引重建契约与原子切换（已确认行为差异）
+### [x] REV-03 统一索引重建契约与原子切换（已确认行为差异）
 
 - 证据：tools/indexing/rebuild_index.py 同时生成全文与名称集合，条目身份包含来源；VectorSearchService.RebuildIndexAsync 只重建全文，条目身份只有 game + concept_id。名称查询可能继续读取过期数据，同 ID 不同来源也可能覆盖。
 - 修改：统一两入口的提取、来源身份、模型/维度和检索文本；索引记录规则版本、模型版本和构建状态；先构建新集合、校验完整，再切换当前索引。
 - 验收：同一数据由 CLI/API 生成的两类索引条目一致；重复 ID 的各来源保留；规则改名后两集合均更新；构建失败保留旧索引，查询持续可用。
+- 实施记录（2026-10-08）：新增 `IndexContract` 统一 schema/版本行与 Python 兼容 UUID（点 ID = `game::source::concept_id`，name 集合追加 `_name`；不同来源同名概念不再互相覆盖）。C# `RulesIndexService` 改为直接读原始 `concepts/instances/flow` JSON，输出 `Source` 与 `NameText`，与 `rebuild_index.py` 的提取、ref stripping、name-only 文本一致；修复了同 ID 游戏概念被 `_catalog.GetConcept` 解析回本体定义的问题（新增回归）。`VectorSearchService` 每次构建 `board_{game}__v{version}` / `...__name` 两个新 collection，版本行包含 schema、game、模型目录名、维度与全部条目；写完后按精确 count 校验，再用一次 `UpdateAliasesAsync` 原子切换稳定别名 `board_{game}__active` / `board_{game}__active_name`；切换前失败会清掉临时 collection，旧别名不动；查询优先走别名，未迁移的旧主机回退 `board_{game}` / `board_{game}_name`。Python CLI 采用同命名/同 alias/同版本行，并支持 `QDRANT_URL` 覆盖。
+- 验收记录（2026-10-08）：
+  - 契约一致性：用同一份仓库数据分别跑 Python 与 C# 提取，对 9 款游戏（agricola / ark-nova / brass-birmingham / castles-of-burgundy / civolution / puerto-rico / seasons / splendor / wingspan）逐条比较 `(source, concept_id, type, name_zh, name_en, name_text, strip_refs(search_text))`，全部一致（splendor 156、civolution 438 等）。
+  - 端到端：Splendor Python CLI 构建 `version=61472231f3d454ae` 后，C# `--rebuild-index splendor` 识别为同一版本并复用两个 collection（156 / 151），随后原子切换别名；通过 Qdrant alias 查询 `宝石` 命中 `gem`。
+  - 失败保留旧索引：临时注入 name collection 同名 alias 冲突，C# 构建在已完成 full 临时 collection 后失败；失败后旧别名仍可搜索到旧概念，临时 full collection 被清理为 404。
+  - 单元测试：xUnit 新增 `IndexContractTests` 3 条与 `RulesIndexService` 来源/name_text/同 ID 冲突回归，共 97/97 通过；Python animation 套件 102/102 通过（`rebuild_index.py` 依赖 ONNX/transformers，未纳入该套件）。
+- 未执行：没有用“停 Qdrant / 中断 upsert”的方式做破坏性验证；上述失败注入覆盖了切换前的异常路径。
 
 ### [x] REV-04 修复动画 QA 与规则校验门禁（已确认漏检）
 

@@ -89,8 +89,15 @@ public class RulesController : ControllerBase
     [HttpPost("admin/rebuild-index/{game}")]
     public async Task<IActionResult> RebuildIndex(string game)
     {
-        await _rulesService.BuildEmbeddingIndexAsync(game);
-        return Ok(new { message = $"Index rebuilt for '{game}'" });
+        var result = await _rulesService.BuildEmbeddingIndexAsync(game);
+        if (result == null)
+            return Ok(new { message = $"Vector search is not configured; index not rebuilt for '{game}'" });
+
+        return Ok(new
+        {
+            message = $"Index rebuilt for '{game}'",
+            index = result
+        });
     }
 
     /// <summary>
@@ -100,10 +107,13 @@ public class RulesController : ControllerBase
     public async Task<IActionResult> RebuildAll()
     {
         var games = _rulesService.GetGames();
+        var indexes = new List<object>();
         foreach (var game in games)
         {
-            await _rulesService.BuildEmbeddingIndexAsync(game);
+            var result = await _rulesService.BuildEmbeddingIndexAsync(game);
+            if (result != null)
+                indexes.Add(result);
         }
-        return Ok(new { rebuilt = games, message = $"Rebuilt {games.Count} game(s)" });
+        return Ok(new { rebuilt = games, indexes, message = $"Rebuilt {games.Count} game(s)" });
     }
 }

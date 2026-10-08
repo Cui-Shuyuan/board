@@ -90,6 +90,13 @@ POST /api/rules/admin/rebuild-index/{game}
 POST /api/rules/admin/rebuild-all
 ```
 
+### 索引重建契约（全文 / name 双集合）
+
+- Python `tools/indexing/rebuild_index.py` 与后端 `POST /api/rules/admin/rebuild-index/{game}` 共用同一份契约：来源（`ontology` / `ontology_flow` / `game` / `instances` / `game_flow`）、ref stripping、name-only 文本、点 UUID 和版本行。
+- 每次重建先写 `board_{game}__v{version}` 与 `board_{game}__v{version}__name` 两个具体 collection，精确校验点数后，用一次 Qdrant aliases 请求原子切换 `board_{game}__active` / `board_{game}__active_name`。
+- 构建或校验失败时不会切换别名，旧索引继续可查；未迁移过的旧主机查询时回退到 `board_{game}` / `board_{game}_name`。
+- Python CLI 可用 `QDRANT_URL=http://host:6333` 指向非本机 Qdrant。
+
 列出所有概念类型：
 
 ```bash
