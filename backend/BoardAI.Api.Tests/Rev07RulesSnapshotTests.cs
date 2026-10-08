@@ -39,6 +39,38 @@ public sealed class Rev07RulesSnapshotTests : IDisposable
     }
 
     [Fact]
+    public void SnapshotCache_WhenContentChanges_ReleasesOldSnapshotForGc()
+    {
+        var ontologyPath = Path.Combine(_tempRoot, "content", "ontology", "concepts.json");
+        var gamePath = Path.Combine(_tempRoot, "content", "games", "testgame", "concepts.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(ontologyPath)!);
+        Directory.CreateDirectory(Path.GetDirectoryName(gamePath)!);
+        File.WriteAllText(ontologyPath, """{ "concepts": [] }""");
+        File.WriteAllText(gamePath, BuildConceptsJson(1));
+
+        using var content = new RulesContentStore(_tempRoot);
+        var weak = CaptureSnapshotWeakReference(content, "testgame");
+
+        File.WriteAllText(gamePath, BuildConceptsJson(2));
+        var second = content.GetSnapshot("testgame");
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        Assert.False(weak.IsAlive);
+        GC.KeepAlive(second);
+    }
+
+    [System.Runtime.CompilerServices.MethodImpl(
+        System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+    private static WeakReference CaptureSnapshotWeakReference(RulesContentStore content, string game)
+    {
+        var snapshot = content.GetSnapshot(game);
+        return new WeakReference(snapshot);
+    }
+
+    [Fact]
     public async Task AddedAndDeletedGameConcepts_RefreshSnapshot()
     {
         var ontologyPath = Path.Combine(_tempRoot, "content", "ontology", "concepts.json");
