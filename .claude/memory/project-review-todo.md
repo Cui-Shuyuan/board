@@ -1,13 +1,15 @@
 ---
 name: project-review-todo
-description: 2026-10-08 项目审查待办——运行边界、索引一致性、内容版本与验收门禁
+description: 2026-10-08 项目审查待办 + 2026-10-09 发布/push 收口——运行边界、索引一致性、内容版本与验收门禁
 metadata:
   type: project
 ---
 
-# 项目审查待办（2026-10-08）
+# 项目审查待办（2026-10-08 审查；2026-10-09 发布/push 收口）
 
 状态：REV-01～REV-08 已完成；本轮（2026-10-08）对 REV-07/REV-08 做了独立复核、真实磁盘并发补测与 Android 客户端证据消费补缺。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
+
+本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并确认对 `origin/main` 做 fast-forward push。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。
 
 ## 审查基线与范围
 
@@ -70,6 +72,7 @@ metadata:
 - 实施记录（2026-10-08）：
   - Splendor 实际清点从旧 366 files / 133,132,243 bytes 降为 133 files / 85,824,919 bytes；package 为 83 个 TTS mp3、46 个 card 运行图、`media/box.png`、`media/marker/...clean_cutout.png`、`tutorial/full.runtime.json`、`tutorial/anim/v2/full.compiled.json`。旧包中 QA 日志、`checks/ledger.py`/`.pyc`、anim 源/stage/schema/sample、README/guide、`.lrc`、未引用 raw 扫描图等均被排除。
   - 实际 release `content/releases/splendor/1964d531eedcae5f/` 133 files；重复发布同 version 幂等复用，校验通过。
+  - 2026-10-09 发布新版本：`python3 tools/content/build_content_manifest.py --game splendor` → `version=59989b16fd96479f` / 133 files，release `content/releases/splendor/59989b16fd96479f/`；已逐 path/size/sha256 校验（133/133），重复 builder 幂等复用同 version，旧 `1964d531eedcae5f` 保留。生成物不入 Git；**仍需部署到生产 API 主机**，否则设备继续拿旧 release。
 - 验收记录（2026-10-08）：
   - Python：`python3 -m unittest discover -s animation -p 'test_*.py'` 99 tests，0 failures；新增 7 条 builder 回归覆盖 QA/pyc/文档不改 version、runtime 改动改 version、只含白名单、发布失败保留旧 manifest/release、重复同 version 不同内容失败。
   - C#：`dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 89 tests，0 failures；新增 ContentController 5 条（release 200+immutable、source 修改仍回 release 旧字节、version mismatch 409、缺文件 404、release 目录缺失不回退）和 CatalogController 2 条（规则-only 不暴露下载元数据、旧 `tutorial_track` 兼容推断）。
