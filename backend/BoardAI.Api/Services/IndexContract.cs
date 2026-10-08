@@ -27,6 +27,13 @@ public static class IndexContract
         return nameOnly ? $"{name}__name" : name;
     }
 
+    /// <summary>
+    /// 稳定索引身份：局部槽位使用 owner.slot 路径；普通概念使用 concept_id。
+    /// Point ID / 版本行 / payload path 均以它为准，避免同名局部槽位覆盖全局概念。
+    /// </summary>
+    public static string IdentityOf(ConceptIndexItem item) =>
+        string.IsNullOrEmpty(item.Path) ? item.ConceptId : item.Path;
+
     public static string ComputeIndexVersion(
         string gameId,
         string modelId,
@@ -41,6 +48,7 @@ public static class IndexContract
 
         foreach (var item in items
                      .OrderBy(item => item.Source, StringComparer.Ordinal)
+                     .ThenBy(IdentityOf, StringComparer.Ordinal)
                      .ThenBy(item => item.ConceptId, StringComparer.Ordinal)
                      .ThenBy(item => item.Type, StringComparer.Ordinal)
                      .ThenBy(item => item.NameZh ?? "", StringComparer.Ordinal)
@@ -50,6 +58,7 @@ public static class IndexContract
         {
             builder
                 .Append(item.Source).Append('\t')
+                .Append(IdentityOf(item)).Append('\t')
                 .Append(item.ConceptId).Append('\t')
                 .Append(item.Type).Append('\t')
                 .Append(item.NameZh ?? "").Append('\t')
@@ -66,8 +75,9 @@ public static class IndexContract
     /// <summary>
     /// Python-compatible UUID: SHA-256, first 16 bytes, version/variant bits,
     /// rendered in big-endian byte order (same as Python uuid.UUID(bytes=...)).
-    /// The point id includes both source and concept id so the same concept in
-    /// ontology/game/instance/flow sources cannot overwrite another source.
+    /// Callers pass the stable identity (IdentityOf): source + concept id for
+    /// global concepts, source + owner.slot for local slots. This keeps both
+    /// cross-source and global-vs-local collisions distinct.
     /// </summary>
     public static string ComputePointId(string gameId, string source, string conceptId, bool nameOnly)
     {

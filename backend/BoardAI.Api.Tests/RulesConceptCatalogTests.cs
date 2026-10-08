@@ -43,7 +43,19 @@ public sealed class RulesConceptCatalogTests : IDisposable
                 {
                   "id": "widget",
                   "name": { "zh": "小装置" },
-                  "description": { "zh": "测试对象" }
+                  "description": { "zh": "测试对象" },
+                  "slots": [
+                    {
+                      "population": {
+                        "name": { "zh": "人口" },
+                        "description": { "zh": "人口槽位" }
+                      }
+                    },
+                    {
+                      "id": "named_slot",
+                      "name": { "zh": "命名槽位", "en": "Named Slot" }
+                    }
+                  ]
                 }
               ],
               "actions": [
@@ -196,6 +208,44 @@ public sealed class RulesConceptCatalogTests : IDisposable
         Assert.Equal("condition_ready", condition.GetProperty("id").GetString());
         Assert.Equal("条件就绪", condition.GetProperty("name").GetProperty("zh").GetString());
         Assert.Empty(catalog.GetActionConditions("testgame", "missing_action"));
+    }
+
+    [Fact]
+    public void ListConcepts_Slots_ReturnsOwnerSlotPaths()
+    {
+        using var content = new RulesContentStore(_root);
+        var catalog = new RulesConceptCatalog(content);
+
+        var slots = catalog.ListConcepts("testgame", "slots");
+
+        var population = Assert.Single(slots, s => s.Path == "widget.population");
+        Assert.Equal("widget.population", population.Id);
+        Assert.Equal("人口", population.Name);
+        Assert.Equal("slot", population.Type);
+        Assert.Equal("人口槽位", population.Description);
+
+        var named = Assert.Single(slots, s => s.Path == "widget.named_slot");
+        Assert.Equal("widget.named_slot", named.Id);
+        Assert.Equal("命名槽位", named.Name);
+    }
+
+    [Fact]
+    public void GetConcepts_SlotPath_ReturnsLocalSlot_AndPlainUniqueSlotIdStillWorks()
+    {
+        using var content = new RulesContentStore(_root);
+        var catalog = new RulesConceptCatalog(content);
+
+        var byPath = catalog.GetConcepts("testgame", "widget.population");
+        var population = Assert.Single(byPath);
+        Assert.Equal("人口", population.GetProperty("name").GetProperty("zh").GetString());
+
+        var plain = catalog.GetConcepts("testgame", "named_slot");
+        var named = Assert.Single(plain);
+        Assert.Equal("named_slot", named.GetProperty("id").GetString());
+
+        var explicitPath = catalog.GetConcepts("testgame", "widget.named_slot");
+        var namedByPath = Assert.Single(explicitPath);
+        Assert.Equal("named_slot", namedByPath.GetProperty("id").GetString());
     }
 
     public void Dispose()

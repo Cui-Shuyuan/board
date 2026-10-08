@@ -28,6 +28,16 @@ public sealed class IndexContractTests
     }
 
     [Fact]
+    public void ComputePointId_KeepsGlobalConceptAndSameNamedLocalSlotDistinct()
+    {
+        var global = IndexContract.ComputePointId("civolution", "game", "stage_partition", false);
+        var local = IndexContract.ComputePointId(
+            "civolution", "game", "final_scoring_area_hex.stage_partition", false);
+
+        Assert.NotEqual(global, local);
+    }
+
+    [Fact]
     public void ComputeIndexVersion_IsDeterministicAndChangesWithContent()
     {
         var first = IndexContract.ComputeIndexVersion("testgame", "bge-base-zh-v1.5-fp32", 768, new[]
@@ -67,7 +77,7 @@ public sealed class IndexContractTests
             }
         });
 
-        Assert.Equal("15364129b9e78411", first);
+        Assert.Equal("a84d97eb85b6cfc8", first);
         Assert.Equal(first, second);
         Assert.NotEqual(first, changed);
     }

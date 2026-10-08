@@ -44,7 +44,7 @@ public sealed class RulesSearchService
             // 同一 concept_id 可能来自多个来源（ontology 通用概念 + 游戏层具体实现，
             // 如 public_board），批次内去重取最高分——否则合并求和会重复计分
             var deduped = items
-                .GroupBy(x => x.Summary.Id)
+                .GroupBy(x => string.IsNullOrEmpty(x.Summary.Path) ? x.Summary.Id : x.Summary.Path)
                 .Select(g => g.OrderByDescending(x => x.Score).First())
                 .ToList();
             return (q, true, deduped);
@@ -81,10 +81,11 @@ public sealed class RulesSearchService
         {
             foreach (var (summary, score) in items)
             {
-                if (!merged.TryGetValue(summary.Id, out var acc))
+                var key = string.IsNullOrEmpty(summary.Path) ? summary.Id : summary.Path;
+                if (!merged.TryGetValue(key, out var acc))
                 {
                     acc = new AccumulatedSearch { Summary = summary };
-                    merged[summary.Id] = acc;
+                    merged[key] = acc;
                 }
                 acc.Total += score;
                 var byTerm = isVector ? acc.VectorByTerm : acc.KeywordByTerm;
@@ -150,7 +151,8 @@ public sealed class RulesSearchService
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (!string.IsNullOrEmpty(r.Description)) continue;
-            var detail = _catalog.GetConcept(game, r.Id);
+            var lookupId = string.IsNullOrEmpty(r.Path) ? r.Id : r.Path;
+            var detail = _catalog.GetConcept(game, lookupId);
             if (detail.HasValue)
             {
                 r.Description = RulesTextUtils.ExtractDescriptionZh(detail.Value);
@@ -192,7 +194,13 @@ public sealed class RulesSearchService
                 game, query, topK: topK, searchMode: searchMode, cancellationToken: cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             return results.Select(r => (
-                new ConceptSummary { Id = r.ConceptId, Name = r.NameZh, Type = r.Type },
+                new ConceptSummary
+                {
+                    Id = string.IsNullOrEmpty(r.Path) ? r.ConceptId : r.Path,
+                    Path = string.IsNullOrEmpty(r.Path) ? r.ConceptId : r.Path,
+                    Name = r.NameZh,
+                    Type = r.Type
+                },
                 r.Score
             )).ToList();
         }

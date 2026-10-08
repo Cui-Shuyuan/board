@@ -158,6 +158,14 @@ public class VectorSearchService : IDisposable
             {
                 ConceptId = r.Payload.TryGetValue("concept_id", out var idVal)
                     ? idVal.StringValue : "",
+                Path = r.Payload.TryGetValue("path", out var pathVal)
+                    && !string.IsNullOrEmpty(pathVal.StringValue)
+                    ? pathVal.StringValue
+                    : r.Payload.TryGetValue("concept_id", out var fallbackId)
+                        ? fallbackId.StringValue
+                        : "",
+                OwnerPath = r.Payload.TryGetValue("owner_path", out var ownerVal)
+                    ? ownerVal.StringValue : "",
                 Type = r.Payload.TryGetValue("type", out var typeVal)
                     ? typeVal.StringValue : "",
                 NameZh = r.Payload.TryGetValue("name_zh", out var nameVal)
@@ -229,17 +237,20 @@ public class VectorSearchService : IDisposable
                 continue;
 
             var text = nameOnly ? c.NameText! : c.SearchText;
+            var identity = IndexContract.IdentityOf(c);
             var embedding = _embedder.Embed(text);
             points.Add(new PointStruct
             {
                 Id = new PointId
                 {
-                    Uuid = IndexContract.ComputePointId(gameId, c.Source, c.ConceptId, nameOnly)
+                    Uuid = IndexContract.ComputePointId(gameId, c.Source, identity, nameOnly)
                 },
                 Vectors = embedding,
                 Payload =
                 {
                     ["concept_id"] = new Value { StringValue = c.ConceptId },
+                    ["path"] = new Value { StringValue = identity },
+                    ["owner_path"] = new Value { StringValue = c.OwnerPath ?? "" },
                     ["type"] = new Value { StringValue = c.Type },
                     ["name_zh"] = new Value { StringValue = c.NameZh ?? "" },
                     ["name_en"] = new Value { StringValue = c.NameEn ?? "" },
@@ -349,6 +360,14 @@ public class VectorSearchService : IDisposable
 public record ConceptIndexItem
 {
     public required string ConceptId { get; init; }
+    /// <summary>
+    /// 稳定寻址路径：普通概念等于 ConceptId；局部槽位为
+    /// &lt;owner_concept_path&gt;.&lt;slot_id&gt;。Point ID 使用该路径，
+    /// 因此同名全局概念与局部槽位不会互相覆盖。
+    /// </summary>
+    public string? Path { get; init; }
+    /// <summary>局部槽位的所属概念路径；普通概念为空。</summary>
+    public string? OwnerPath { get; init; }
     public required string Type { get; init; }
     /// <summary>来源：ontology / ontology_flow / game / instances / game_flow。</summary>
     public string Source { get; init; } = "game";
@@ -366,6 +385,10 @@ public record ConceptIndexItem
 public record SearchResult
 {
     public required string ConceptId { get; init; }
+    /// <summary>稳定寻址路径；旧 collection 无该 payload 时回退为 ConceptId。</summary>
+    public string Path { get; init; } = "";
+    /// <summary>局部槽位的所属概念路径；普通概念为空。</summary>
+    public string OwnerPath { get; init; } = "";
     public required string Type { get; init; }
     public required string NameZh { get; init; }
     public float Score { get; init; }

@@ -9,7 +9,7 @@ metadata:
 
 状态：REV-01～REV-08 已完成；本轮（2026-10-08）对 REV-07/REV-08 做了独立复核、真实磁盘并发补测与 Android 客户端证据消费补缺。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
 
-本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并对 `origin/main` 执行 fast-forward push（已从 `f340373` 推进，包含此前 25 个本地提交、发布记录提交 `4798c82` 与本补记；最终远端 hash 以 `git ls-remote origin refs/heads/main` 为准）。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。
+本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并对 `origin/main` 执行 fast-forward push（已从 `f340373` 推进，包含此前 25 个本地提交、发布记录提交 `4798c82` 与本补记；最终远端 hash 以 `git ls-remote origin refs/heads/main` 为准）。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。2026-10-09 补充收口：REV-03a、pre-commit 路径、过期文档同步已完成；Python animation 165/165、.NET xUnit 121/121；Android JVM 本轮未改动。
 
 ## 审查基线与范围
 
@@ -119,26 +119,41 @@ metadata:
 
 ## 2026-10-09 ontology 修改后的补充复现
 
-### [ ] REV-03a 修复同来源槽位与概念的索引键冲突
+### [x] REV-03a 修复同来源槽位与概念的索引键冲突
 
 - 实际复现：更新 ontology 后执行 tools/indexing/rebuild_index.py --all，前四款游戏通过；Civolution 提取 438 条 full 记录，写入后只有 431 个点，完整性校验失败；name 408/408。失败清理了本次临时集合，未切换 Civolution 旧索引。
 - 根因证据：同一 source=game 内，stage_partition 同时被提取为局部 slot 与全局 object；槽位元数据 name、material 各被误提取四次。点 ID 仅含 game/source/concept_id，以上记录互相覆盖。九款游戏中此次仅 Civolution 出现重复点键。
 - 修复范围：对齐 Python 与 C# 的槽位提取和身份规则，区分元数据与真实槽位，明确局部槽位的所属路径及与全局概念的寻址关系；同步索引版本/点 ID 契约与查询解析。不要仅放宽数量校验或机械保留最后条目来掩盖冲突。
 - 验收：用九款真实规则数据比较 CLI/API 提取项与键；元数据不入槽位索引，合法局部槽位可准确寻址，同名全局概念不被覆盖；两套索引点数校验通过并原子切换。补覆盖 Civolution 的回归。
 - 本轮保留：ontology 修改已通过规则校验（0 errors / 72 warnings）与后端 108/108；索引问题另行收口，不修改已交给其他模型维护的检索代码。
+- 实施记录（2026-10-09）：
+  - 身份契约改为 `source + 身份路径`：普通概念 `concept_id`；局部槽位 `<owner>.<slot_id>`。Point ID、版本行和 payload 都使用身份路径，因此 `stage_partition` 全局 object 与 `final_scoring_area_hex.stage_partition` 局部槽位不再互相覆盖。
+  - Python `_extract_slots` 与 C# `ExtractSlots` 均改为识别显式 `slot_spec.id`：带字符串 `id` 的槽位整体入库，`id/name/material` 只作元数据；裸键槽位仍以 key 为 slot_id；`<concept>` 引用键不重复入库。两侧均新增 `source + path` 唯一性 fail-closed 检查，重复身份直接拒绝写入。
+  - `RulesConceptCatalog` 的 `slots` 列表/路径查询和 `RulesSearchService` 的检索去重改为使用稳定路径；`get_concept` 支持 `owner.slot` 地址，同名全局概念仍优先按原 id 解析。
+  - Python 提取函数改为延迟加载 ONNX，新增 `animation/test_index_extraction.py`；C# 新增 `IndexRealContentContractTests` 与槽位/路径回归。
+- 验收记录（2026-10-09）：
+  - 九款真实规则数据：Python CLI 与 C# API 的 `IndexContract` 版本 hash 逐游戏一致（agricola/ark-nova/brass-birmingham/castles-of-burgundy/civolution/puerto-rico/seasons/splendor/wingspan）；Civolution 修复后 434 条 full / 412 条 name，身份路径 434/434 唯一；旧问题为 438 条记录仅 431 个点。
+  - `civolution` 显式 `settlement_slot_*` 4 个槽位正确入库，`id/name/material` 无虚假槽位；全局 `stage_partition` 与局部槽位路径均保留。
+  - `python3 -m unittest discover -s animation -p 'test_*.py'`：165/165 通过；`dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo`：121/121 通过；`validate_rules.py --errors-only`：0 errors / 72 warnings。
+  - 未执行：本机未启动 Qdrant，因此没有实际写入九款 collection/切换 alias；原子切换路径仍由既有 REV-03 的 API/CLI 测试与失败保留逻辑覆盖，真实环境需在有 Qdrant 的机器上跑一次 `rebuild_index.py --all`。
 
-### [ ] 修正本地 pre-commit 规则校验脚本路径
+### [x] 修正本地 pre-commit 规则校验脚本路径
 
 - 本次提交实测：.git/hooks/pre-commit 仍调用已不存在的 scripts/validate_rules.py，打印 can't open file 后继续提交，因此其“校验完成”不代表真正跑过校验。
 - 修改：本地 hook 调用 tools/content/validate_rules.py，并检查安装/同步 hook 的入口，避免后续恢复旧路径；是否阻止提交仍遵循既有工作约定。
 - 验收：实际触发 hook 时可看到当前校验器的执行结果。本轮已独立运行现行校验器，0 errors / 72 warnings。
+- 实施记录（2026-10-09）：新增跟踪入口 `tools/ops/pre-commit` 与 `tools/ops/install_git_hooks.sh`；本地 `.git/hooks/pre-commit` 通过 installer 改为调用 `tools/ops/pre-commit`，后者调用 `tools/content/validate_rules.py --errors-only`，不再引用 `scripts/validate_rules.py`。hook 仍只报告不阻止提交。
+- 验收记录（2026-10-09）：`sh tools/ops/install_git_hooks.sh` 成功；`sh .git/hooks/pre-commit` 实际输出 `共 0 个错误, 72 个警告` 和 `commit not blocked`。
 
 ## 执行与收口
 
 - 建议顺序：REV-01 → REV-02 → REV-03 → REV-04 → REV-05 → REV-06 → REV-07 → REV-08。REV-01 完成后再开放多游戏资源。
 - 每项以触发条件、实际修改和验收记录收口，风险项先补复现；不因其他 checker 全绿而自动勾选。
-- [ ] 同步过期文档：current-state 已撤下完成的跨平台 path bug 待办；后续更新索引入口、QA 门禁和缓存语义的文档，统一“问答后重播/精确恢复”的产品行为说明。
+- [x] 同步过期文档：current-state 已撤下完成的跨平台 path bug 待办；后续更新索引入口、QA 门禁和缓存语义的文档，统一“问答后重播/精确恢复”的产品行为说明。
+  - 实施记录（2026-10-09）：更新 `current-state.md`、`architecture.md`、`tools.md`、`README.md`、`project-overview.md`、`docs/ops/start-services.md`；索引身份路径、版本化 alias、pre-commit 入口和九款规则 hash 对齐已写入。产品行为统一为：进入问答前正在播放则先暂停，Unity 确认后记录 `cueId + cue 内位置`，继续播放用 `PlayCueAt` 精确恢复；问答前本就暂停则不自动播放。
 - [ ] 完成已有交付验收：full 逐 cue 视觉重审、PTT → ASR → chat → TTS → 回到动画，以及多设备长时间使用；范围见 [current-state.md](current-state.md)。
+  - 2026-10-09 自动门禁：`check_anim_v2` 83 cues / 0 warnings、`validate_anim_rules_v2` 83 cues / 0 warnings、`audit_anim_v2` 53 cues / 0 errors / 0 warnings、`check_card_identity_v2` 569 states 0 error；Android JVM 上次基线 89/89，本轮未改 Android 代码。
+  - 未完成：full 逐 cue 真人视觉、PTT → ASR → chat → TTS → 回到动画真机链路、多设备/长时间使用仍需在 Unity/Android 真机和实际服务上人工执行；当前工作区无可用 Android 设备与 Unity 播放环境，不能据此勾选。
 
 ## 已知问题解决后的工作优先级（建议，非已批准排期）
 

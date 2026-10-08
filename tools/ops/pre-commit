@@ -1,0 +1,37 @@
+#!/bin/sh
+# Board AI pre-commit: run the current rules validator and report only.
+# The user convention keeps git as a recovery safety net, so this hook never
+# blocks a commit; it just makes sure "validation finished" really ran the
+# current tools/content/validate_rules.py.
+
+ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+[ -n "$ROOT" ] || exit 0
+cd "$ROOT" || exit 0
+
+VALIDATOR="tools/content/validate_rules.py"
+if [ ! -f "$VALIDATOR" ]; then
+  echo "--- [pre-commit] WARNING: $VALIDATOR not found; rules validation skipped ---" >&2
+  exit 0
+fi
+
+# Prefer an explicitly configured interpreter, then the developer's known
+# Windows/WSL installations, then PATH.
+PY=""
+for candidate in "${PYTHON:-}" "D:/Python/Python312/python.exe" "/mnt/d/Python/Python312/python.exe" "python.exe" "python3" "python"; do
+  [ -n "$candidate" ] || continue
+  if command -v "$candidate" >/dev/null 2>&1 || [ -f "$candidate" ] || [ -x "$candidate" ]; then
+    PY="$candidate"
+    break
+  fi
+done
+
+if [ -z "$PY" ]; then
+  echo "--- [pre-commit] WARNING: no Python interpreter found; rules validation skipped ---" >&2
+  exit 0
+fi
+
+echo "--- [pre-commit] rules validation: $PY $VALIDATOR --errors-only ---"
+"$PY" "$VALIDATOR" --errors-only 2>&1
+STATUS=$?
+echo "--- [pre-commit] validation finished (exit=$STATUS); commit not blocked ---"
+exit 0

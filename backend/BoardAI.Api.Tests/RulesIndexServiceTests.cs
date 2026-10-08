@@ -133,15 +133,51 @@ public sealed class RulesIndexServiceTests : IDisposable
         var items = service.GetIndexItems("testgame");
 
         var slot = Assert.Single(items, i => i.Type == "slot" && i.ConceptId == "population");
-        Assert.Equal("", slot.NameZh);
-        Assert.Equal("", slot.NameEn);
-        Assert.Equal("", slot.NameText);
+        Assert.Equal("widget.population", slot.Path);
+        Assert.Equal("widget", slot.OwnerPath);
+        Assert.Equal("人口", slot.NameZh);
+        Assert.Equal("Population", slot.NameEn);
+        Assert.Equal("人口", slot.NameText);
         Assert.Contains("population", slot.SearchText);
         Assert.Contains("人口", slot.SearchText);
         Assert.Contains("深层效果描述", slot.SearchText);
 
         Assert.DoesNotContain(items, i => i.Type == "slot" && i.ConceptId.StartsWith("<"));
         Assert.DoesNotContain(items, i => i.Type == "slot" && i.ConceptId == "condition_ref");
+    }
+
+    [Fact]
+    public void GetIndexItems_DistinguishesLocalSlotPathFromGlobalConcept_AndSkipsExplicitSlotMetadata()
+    {
+        using var content = new RulesContentStore(_root);
+        var service = new RulesIndexService(new RulesConceptCatalog(content), content, null);
+
+        var items = service.GetIndexItems("testgame");
+
+        var global = Assert.Single(items, i => i.Type == "objects" && i.ConceptId == "stage_partition");
+        Assert.Equal("stage_partition", global.Path);
+        Assert.Equal("全局层级分区", global.NameZh);
+
+        var local = Assert.Single(items, i => i.Type == "slot" && i.Path == "widget.stage_partition");
+        Assert.Equal("stage_partition", local.ConceptId);
+        Assert.Equal("widget", local.OwnerPath);
+        Assert.Contains("本地阶段分区槽位", local.SearchText);
+
+        Assert.NotEqual(
+            IndexContract.ComputePointId("testgame", "game", global.Path!, false),
+            IndexContract.ComputePointId("testgame", "game", local.Path!, false));
+
+        var named = Assert.Single(items, i => i.Type == "slot" && i.ConceptId == "named_slot");
+        Assert.Equal("widget.named_slot", named.Path);
+        Assert.Equal("widget", named.OwnerPath);
+        Assert.Equal("命名槽位", named.NameZh);
+        Assert.Equal("Named Slot", named.NameEn);
+        Assert.Equal("命名槽位", named.NameText);
+        Assert.Contains("木头", named.SearchText);
+
+        // 显式 slot 的 id/name/material 是元数据，不得被当成三个槽位键。
+        Assert.DoesNotContain(items, i => i.Type == "slot"
+            && (i.ConceptId == "id" || i.ConceptId == "name" || i.ConceptId == "material"));
     }
 
     [Fact]
@@ -278,8 +314,25 @@ public sealed class RulesIndexServiceTests : IDisposable
                         "id": "condition_ref",
                         "name": { "zh": "跳过条件" }
                       }
+                    },
+                    {
+                      "stage_partition": {
+                        "<ontology::effect>": {
+                          "description": { "zh": "本地阶段分区槽位", "en": "Local stage partition slot" }
+                        }
+                      }
+                    },
+                    {
+                      "id": "named_slot",
+                      "name": { "zh": "命名槽位", "en": "Named Slot" },
+                      "material": { "zh": "木头", "en": "Wood" }
                     }
                   ]
+                },
+                {
+                  "id": "stage_partition",
+                  "name": { "zh": "全局层级分区", "en": "Stage Partition" },
+                  "description": { "zh": "全局对象", "en": "Global object" }
                 }
               ],
               "actions": [

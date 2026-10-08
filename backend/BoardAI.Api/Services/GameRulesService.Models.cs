@@ -6,6 +6,8 @@ namespace BoardAI.Api.Services;
 public class ConceptSummary
 {
     public string Id { get; set; } = string.Empty;
+    /// <summary>稳定寻址路径；局部槽位为 owner.slot，普通概念与 Id 相同。</summary>
+    public string Path { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public float Score { get; set; }

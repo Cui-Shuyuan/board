@@ -46,11 +46,11 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
 4. **讲规动画**
    - 口播稿主导，TTS 冻结后再编译动画时间轴。
    - 静态资源 + 数据驱动 2D/2.5D sprite 动画，Unity as a Library（UaaL）。
-   - 支持播放、字幕、分段跳转、问答打断后从当前小节重播。
+   - 支持播放、字幕、分段跳转、问答打断后精确恢复到进入问答时的 cue 内位置。
 
 5. **语音链路**
    - 后端 Python 短进程桥接火山引擎 ASR / TTS，Android 不接触服务密钥。
-   - Android 端已有 PTT、识别文本回填、回答 TTS、重播/继续播放；完整真机验收待复测。
+   - Android 端已有 PTT、识别文本回填、回答 TTS、重播/继续播放；继续播放会先停回答音频，再按记录的 cueId + 位置精确恢复。完整真机验收待复测。
 
 6. **Flow Guide（下一步）**
    - 程序维护流程游标，条件判断交玩家回答；不做 CV，不获取实时棋盘状态。
@@ -272,7 +272,7 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 |---|---|---|
 | 规则 JSON | `python3 tools/content/validate_rules.py --errors-only` | 9 款游戏规则数据校验 |
 | 密钥扫描 | `python3 tools/ops/check_no_secrets.py` | 防止明文密钥入库 |
-| 后端 | `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` | 当前 75/75 |
+| 后端 | `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` | 当前 121/121 |
 | 动画契约 | `python3 animation/check_anim_v2.py --game splendor --track full` | 契约 vs compiled |
 | 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放 |
 | 动画审计 | `python3 animation/audit_anim_v2.py --game splendor --track full` | 跨 cue 守恒 / 补牌 / pointer |
@@ -301,7 +301,7 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 
 简要状态：
 
-- 后端服务化拆分完成，xUnit 75/75。
+- 后端服务化拆分完成，xUnit 121/121；索引契约已对九款真实规则数据做 CLI/API 版本 hash 回归。
 - 9 款游戏有规则数据，8 款有 `flow.json`；Splendor 是 Runtime + 动画试点。
 - Splendor full 83 cue；QA、time_anchors、compiled、Unity 采样链可运行，终局与真卡身份已收口。
 - Android UaaL / 内容更新 / 播放器 / 问答语音首版已落地；完整真机端到端验收待复测。

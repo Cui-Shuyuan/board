@@ -56,7 +56,20 @@ public sealed class RulesIndexService
         }
 
         // 通用流程容器概念不参与语义检索（与 rebuild_index.py 一致）。
-        return result.Where(item => item.ConceptId != "game").ToList();
+        var items = result.Where(item => item.ConceptId != "game").ToList();
+
+        // fail closed：同一 source + 身份路径必须唯一，否则 Qdrant 会静默覆盖。
+        var duplicate = items
+            .GroupBy(item => (item.Source, Identity: IndexContract.IdentityOf(item)))
+            .FirstOrDefault(g => g.Count() > 1);
+        if (duplicate != null)
+        {
+            throw new InvalidOperationException(
+                $"Duplicate index identity for game '{game}': source='{duplicate.Key.Source}', " +
+                $"path='{duplicate.Key.Identity}'. 槽位提取或 source 标记冲突，拒绝写入不完整索引。");
+        }
+
+        return items;
     }
 
     /// <summary>
@@ -69,8 +82,13 @@ public sealed class RulesIndexService
         return await _vectorSearch.RebuildIndexAsync(game, items);
     }
 
-    /// <summary>递归提取 slots 元素 (裸键槽名如 population/expansion 作为概念, 与 Python rebuild_index 一致)</summary>
-    private static void ExtractSlots(JsonElement node, List<ConceptIndexItem> result, string source)
+    /// <summary>
+    /// 递归提取真实 slots，与 Python rebuild_index._extract_slots 保持一致：
+    /// 显式 slot_spec（含字符串 id）整体是一个槽位，id/name/material 是元数据；
+    /// 裸键槽位以 key 为局部 slot_id；&lt;concept&gt; 键是已有全局概念引用，不重复入库。
+    /// 局部槽位 Path = &lt;owner&gt;.&lt;slot_id&gt;，同名全局概念与槽位互不覆盖。
+    /// </summary>
+    private static void ExtractSlots(JsonElement node, List<ConceptIndexItem> result, string source, string ownerPath)
     {
         if (node.ValueKind == JsonValueKind.Object)
         {
@@ -79,36 +97,92 @@ public sealed class RulesIndexService
                 foreach (var slot in slots.EnumerateArray())
                 {
                     if (slot.ValueKind != JsonValueKind.Object) continue;
+
+                    // 显式 slot_spec：{"id": "...", "name": {...}, "material": {...}}。
+                    // 旧代码把 id/name/material 当成三个槽位键，产生了错误且重复的点。
+                    if (slot.TryGetProperty("id", out var idProp)
+                        && idProp.ValueKind == JsonValueKind.String
+                        && !string.IsNullOrEmpty(idProp.GetString()))
+                    {
+                        var slotId = idProp.GetString()!;
+                        var slotPath = JoinPath(ownerPath, slotId);
+                        var nameZh = "";
+                        var nameEn = "";
+                        if (slot.TryGetProperty("name", out var name)
+                            && name.ValueKind == JsonValueKind.Object)
+                        {
+                            if (name.TryGetProperty("zh", out var zh)) nameZh = zh.GetString() ?? "";
+                            if (name.TryGetProperty("en", out var en)) nameEn = en.GetString() ?? "";
+                        }
+                        var parts = new List<string> { slotId };
+                        CollectIndexText(slot, parts);
+                        result.Add(new ConceptIndexItem
+                        {
+                            ConceptId = slotId,
+                            Path = slotPath,
+                            OwnerPath = ownerPath,
+                            Type = "slot",
+                            Source = source,
+                            NameZh = nameZh,
+                            NameEn = nameEn,
+                            NameText = !string.IsNullOrWhiteSpace(nameZh) ? nameZh : nameEn,
+                            SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
+                                string.Join(" ", parts.Where(part => !string.IsNullOrEmpty(part))), ""),
+                        });
+                        // 嵌套 slots 归属显式槽位路径。
+                        ExtractSlots(slot, result, source, slotPath);
+                        continue;
+                    }
+
                     foreach (var prop in slot.EnumerateObject())
                     {
                         // 裸键 = 槽位名 (可索引); <概念> 键 = 已有定义的概念引用, 跳过
                         if (prop.Name.StartsWith("<") || prop.Value.ValueKind != JsonValueKind.Object) continue;
-                        var parts = new List<string>();
+                        var slotPath = JoinPath(ownerPath, prop.Name);
+                        var slotNameZh = "";
+                        var slotNameEn = "";
+                        if (prop.Value.TryGetProperty("name", out var bareName)
+                            && bareName.ValueKind == JsonValueKind.Object)
+                        {
+                            if (bareName.TryGetProperty("zh", out var bareZh)) slotNameZh = bareZh.GetString() ?? "";
+                            if (bareName.TryGetProperty("en", out var bareEn)) slotNameEn = bareEn.GetString() ?? "";
+                        }
+                        var parts = new List<string> { prop.Name };
                         CollectIndexText(prop.Value, parts);
                         result.Add(new ConceptIndexItem
                         {
                             ConceptId = prop.Name,
+                            Path = slotPath,
+                            OwnerPath = ownerPath,
                             Type = "slot",
                             Source = source,
-                            NameZh = "",
-                            NameEn = "",
-                            NameText = "",
+                            NameZh = slotNameZh,
+                            NameEn = slotNameEn,
+                            NameText = !string.IsNullOrWhiteSpace(slotNameZh) ? slotNameZh : slotNameEn,
                             // <> 引用不参与相似度计算（与 rebuild_index.py 的 strip_refs 一致）
                             SearchText = RulesJsonUtils.ConceptRefRegex.Replace(
                                 string.Join(" ", parts.Where(part => !string.IsNullOrEmpty(part))), ""),
                         });
+                        // 嵌套 slots 归属裸键槽位路径。
+                        ExtractSlots(prop.Value, result, source, slotPath);
                     }
                 }
             }
             foreach (var prop in node.EnumerateObject())
-                ExtractSlots(prop.Value, result, source);
+            {
+                if (prop.Name == "slots") continue; // 已按 owner 处理，避免重复
+                ExtractSlots(prop.Value, result, source, ownerPath);
+            }
         }
         else if (node.ValueKind == JsonValueKind.Array)
         {
             foreach (var item in node.EnumerateArray())
-                ExtractSlots(item, result, source);
+                ExtractSlots(item, result, source, ownerPath);
         }
     }
+
+    private static string JoinPath(string ownerPath, string slotId) =>
+        string.IsNullOrEmpty(ownerPath) ? slotId : $"{ownerPath}.{slotId}";
 
     /// <summary>递归收集 id/name/description 文本 (slots 深层效果描述)</summary>
     private static void CollectIndexText(JsonElement node, List<string> parts)
@@ -124,7 +198,8 @@ public sealed class RulesIndexService
                     if (prop.Value.TryGetProperty("zh", out var z)) parts.Add(z.GetString() ?? "");
                     if (prop.Value.TryGetProperty("en", out var e)) parts.Add(e.GetString() ?? "");
                 }
-                else if (prop.Name == "description" && prop.Value.ValueKind == JsonValueKind.Object)
+                else if ((prop.Name == "description" || prop.Name == "material")
+                         && prop.Value.ValueKind == JsonValueKind.Object)
                 {
                     if (prop.Value.TryGetProperty("zh", out var z)) parts.Add(z.GetString() ?? "");
                     if (prop.Value.TryGetProperty("en", out var e)) parts.Add(e.GetString() ?? "");
@@ -197,6 +272,8 @@ public sealed class RulesIndexService
             result.Add(new ConceptIndexItem
             {
                 ConceptId = id,
+                Path = id,
+                OwnerPath = "",
                 Type = "flow",
                 Source = source,
                 NameZh = flowNameZh,
@@ -331,6 +408,8 @@ public sealed class RulesIndexService
         result.Add(new ConceptIndexItem
         {
             ConceptId = key,
+            Path = key,
+            OwnerPath = "",
             Type = "top_level_ref",
             Source = source,
             NameZh = nameZh,
@@ -340,7 +419,7 @@ public sealed class RulesIndexService
                 string.Join(" ", parts.Where(part => !string.IsNullOrEmpty(part))), ""),
         });
 
-        ExtractSlots(element, result, source);
+        ExtractSlots(element, result, source, key);
     }
 
     private static void AddRawConceptItem(
@@ -395,6 +474,8 @@ public sealed class RulesIndexService
         result.Add(new ConceptIndexItem
         {
             ConceptId = conceptId,
+            Path = conceptId,
+            OwnerPath = "",
             Type = type,
             Source = source,
             NameZh = nameZh,
@@ -406,7 +487,7 @@ public sealed class RulesIndexService
         });
 
         if (includeSlots)
-            ExtractSlots(element, result, source);
+            ExtractSlots(element, result, source, conceptId);
     }
 
 }

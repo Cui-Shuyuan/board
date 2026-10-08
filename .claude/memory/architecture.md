@@ -62,10 +62,10 @@ L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 
 - `RulesContentStore`：统一解析 ontology / 游戏 concepts / flow / instances 路径并读取；内部持有 `RulesDocumentStore`。
 - `RulesDocumentStore`：按文件 `Length + LastWriteTimeUtc` 自动失效；文档变化时回调清派生缓存。
-- `RulesConceptCatalog`：概念类型、列表、概念详情、action conditions。
+- `RulesConceptCatalog`：概念类型、列表、概念详情、action conditions；局部槽位支持 `<owner>.<slot_id>` 路径解析。
 - `RulesNameIndexService`：id → 中文名映射与精确名称/别名查找，按 game 缓存。
-- `RulesSearchService`：关键词/向量混合检索、查询切分、名称短路。
-- `RulesIndexService`：从概念目录、实例、顶层引用、flow 提取索引条目并触发向量索引重建。
+- `RulesSearchService`：关键词/向量混合检索、查询切分、名称短路；按稳定身份路径去重，局部槽位可被精确寻回。
+- `RulesIndexService`：从概念目录、实例、顶层引用、flow 提取索引条目并触发向量索引重建；显式槽位 `id/name/material` 按元数据处理，局部槽位身份为 `<owner>.<slot_id>`。
 - `RulesFlowService`：flow 节点 id → 祖先链、同级顺序、位置、最近 loop，按 game 缓存。
 - `RulesReferenceService`：概念引用注解、一层 related 扩展、Plan ok 结果的引用扩展。
 - `RulesFactService`：数量/容量/计分结构化事实，负责 score_table 等缓存。
@@ -115,17 +115,19 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 - `RulesDocumentStore` 以文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务。
 - 规则文档变化时，`ClearDerivedCaches()` 清名称索引、Plan 类型缓存、Flow 位置缓存、Fact score 缓存。
 - 语义检索仍需重建 Qdrant 索引（`POST /api/rules/admin/rebuild-index/{game}` / `rebuild-all` 或 `tools/indexing/rebuild_index.py`）。
+- 语义索引使用版本化 collection + 稳定 alias `board_{game}__active[_name]`；Python CLI 与 C# API 共用 `IndexContract` 的身份路径、点 ID 和版本行，构建校验后原子切换，失败保留旧索引。
 - 模型配置：`LLM:Thinking` 当前 `low`。
 
 ## 4. 检索架构
 
-- Qdrant：独立 Windows 进程，按游戏分 collection `board_{gameId}`。
+- Qdrant：独立 Windows 进程，按游戏分版本化 collection `board_{gameId}__v{version}[_name]`，查询走 alias `board_{gameId}__active[_name]`；重建失败/中断不会破坏旧 alias。
 - Embedding：`bge-base-zh-v1.5` fp32 ONNX，768 维；模型目录 `ml_models/` 不进 Git。
-- 索引内容：ontology 概念、游戏 concepts、flow 递归节点。
-- 重建：`tools/indexing/rebuild_index.py`，默认增量同步；模型或提取逻辑大改时 `--full`。
+- 索引内容：ontology 概念、游戏 concepts、flow 递归节点、合法局部槽位；显式槽位元数据（id/name/material）不生成索引键。
+- 身份路径：全局概念 = `concept_id`；局部槽位 = `<owner_concept_path>.<slot_id>`。Point ID、版本行和 payload 均使用该路径，同名全局概念/局部槽位不会静默覆盖。
+- 重建：`tools/indexing/rebuild_index.py`，先构建临时 collection 并精确校验 count，再原子切换 alias；Python CLI 与 C# API 的版本 hash 已对九款真实规则数据回归对齐。
 - 搜索路由：向量优先 + 关键词降级。
 - 短查询（≤2 字）走名称索引，长查询/整句走完整索引。
-- namespace：`ontology::concept_id` 限定本体概念，避免与游戏层重名冲突。
+- namespace：`ontology::concept_id` 限定本体概念；局部槽位在无歧义时也可用 `owner.slot` 路径精确解析，避免与同名全局概念混用。
 - 检索回归门禁：`tools/qa/retrieval_gold.jsonl` + `tools/indexing/eval_retrieval.py`。
 
 ## 5. 交互模型

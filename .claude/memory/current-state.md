@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-09 · 基线见 git log · 本轮后端 xUnit 108/108、Python 102/102、Android JVM 89/89 · Splendor runtime 已发布 `59989b16fd96479f`（133 files），尚需部署到生产 API 主机
+> 最后更新：2026-10-09 · 基线见 git log · 本轮索引契约收口：后端 xUnit 121/121、Python animation 165/165；Android JVM 未改动的上次基线 89/89 · Splendor runtime 已发布 `59989b16fd96479f`（133 files），尚需部署到生产 API 主机
 
 # 当前状态（2026-10-09）
 
@@ -18,15 +18,15 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - 本文档基线提交为 `3a00608`；当前 HEAD 以 `git log` 为准。基线前最近提交的工作包括：Splendor 终局计分 / 合法性 / 真卡扫描收口（`be4f88c`）、合并 cue 的 seed2 TTS 重生成（`7d84df4`）、`set_order` 与静默 setup 片段（`6afd1d2`）、Android seek flash 修复（`95487f3`）。
 - `full.anim.json` 的 cue id 已语义化（如 `action.purchase_reserved.001`），旧文档里的 cue 数字编号只作历史对照。
 - 动画对象原语统一为 `target` 接口（`entity` / `screen`）；新增 edge flip（axis/direction/destination）、`draw` 默认 duration、`set_order`、magnifier world-view pinning 等能力。
-- 本轮改动前工作区已无已跟踪文件改动；仅剩未跟踪的 `archive/tools/`。此前 5 个 Unity 编辑器回写的 Settings/ProjectSettings 文件已由 `627401d` 提交。
+- 本轮改动前工作区已无已跟踪文件改动；仅剩未跟踪的 `archive/tools/`。此前 5 个 Unity 编辑器回写的 Settings/ProjectSettings 文件已由 `627401d` 提交。pre-commit 已改为调用 `tools/content/validate_rules.py --errors-only`，并提供 `tools/ops/install_git_hooks.sh` 作为本地 hook 安装/同步入口，不再引用已删除的 `scripts/validate_rules.py`。
 - Android 代码已到 `95487f3`（每次 seek 独立重置快进 flash 计时）；APK 产出路径为 `clients/android/app/build/outputs/apk/debug/app-debug.apk`。内容版本以本地生成的 `content/manifests/splendor.json` 为准，状态文档不再记某个设备上的旧版本号。
 - `full` 轨道当前 83 cue / 388 个 `time_anchors`，源数据保留 `anchor`，`full.compiled.json` 输出数值 `at`。
 - 2026-09-23 记录的动画待收口项已由后续提交收口（time_anchors 见 `38971d4`）；`.claude/archive/memory/2026-09-23/` 只用于追溯历史，不作为现状依据。
 
 ## 当前已具备的能力
 
-- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、请求快照 scope 与 public wrapper；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。规则请求按 Revision/内容哈希深拷贝不可变快照并通过 AsyncLocal 绑定整轮调用，派生缓存随快照重建，旧快照可回收；`ChatResponse` 附加逐 query 的 `Evidence`（tier/规则版本/status/source/matched/candidates/message），旧客户端可忽略。后端 xUnit 测试 108/108 全绿（2026-10-08 本轮）；`RulesDocumentStore` 读取改为 Windows 共享写友好的 `FileShare.ReadWrite | FileShare.Delete` + 有界 JSON/IO 重试，避免外部编辑覆盖时 reader 解析截断文件或 block writer。
-- **规则数据与检索**：9 款游戏目录，8 款有 `flow.json`，Splendor 是 Runtime + 动画试点；Qdrant + `bge-base-zh-v1.5` ONNX 检索链可用；全文/name 两套索引统一为版本化 collection + 稳定 alias（`board_{game}__active[_name]`），Python CLI 与 C# API 共用 `IndexContract` 的提取/点 ID/版本行，构建校验后原子切换，失败保留旧索引；`validate_rules.py --errors-only` 为 0 errors / 72 warnings；`tools/qa/retrieval_gold.jsonl` 85 条。
+- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、请求快照 scope 与 public wrapper；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。规则请求按 Revision/内容哈希深拷贝不可变快照并通过 AsyncLocal 绑定整轮调用，派生缓存随快照重建，旧快照可回收；`ChatResponse` 附加逐 query 的 `Evidence`（tier/规则版本/status/source/matched/candidates/message），旧客户端可忽略。后端 xUnit 测试 121/121 全绿（2026-10-09 索引契约收口）；`RulesDocumentStore` 读取改为 Windows 共享写友好的 `FileShare.ReadWrite | FileShare.Delete` + 有界 JSON/IO 重试，避免外部编辑覆盖时 reader 解析截断文件或 block writer。
+- **规则数据与检索**：9 款游戏目录，8 款有 `flow.json`，Splendor 是 Runtime + 动画试点；Qdrant + `bge-base-zh-v1.5` ONNX 检索链可用；全文/name 两套索引统一为版本化 collection + 稳定 alias（`board_{game}__active[_name]`），Python CLI 与 C# API 共用 `IndexContract` 的提取、身份路径、点 ID 与版本行，九款真实规则数据的版本 hash 已在 xUnit/Python 双端回归中逐一对齐；局部槽位使用 `<owner>.<slot_id>` 身份路径，`id/name/material` 元数据不再被误提取为槽位，同名全局概念与局部槽位不互相覆盖；构建校验后原子切换，失败保留旧索引；`validate_rules.py --errors-only` 为 0 errors / 72 warnings；`tools/qa/retrieval_gold.jsonl` 85 条。
 - **动画 tree/状态模型（2026-09-30 修正）**：tree 只决定 stage/可见性，不是状态边界；cue 默认按 `entry -> parent -> 轨道前一条` 继承完整状态，允许跨 tree。当前 stage 缺少的 zone 不渲染，组件仍保留在逻辑状态中，切回对应 tree 后恢复显示。full 轨道现只有 `main` 一棵 tree，其它展示内容改走 screen 对象；该机制仍保留给多树轨道/其它游戏。
 - **动画全脚本继承关系（2026-09-30）**：tree 切换默认继承上一条 cue 的完整状态；仅在盒面/卡牌/宝石/贵族/标记等显式 demo 返回点用 `entry` 跳回 canonical 快照。full 现在只有 main，旧展示树切换点已收口。
 - **动画对象接口（2026-10-01）**：所有对象原语通过 `target` 接口选择接收者；编译器展开为 flat 字段，Unity 用 `IAnimVisualObject` 同时执行实体和屏幕对象的表现原语。源数据统一写 `show/hide`；编译产物里屏幕对象使用 `overlay_show/overlay_hide` 作为 clip kind。迁移工具 `animation/archive/migrate_object_targets_v2.py` 已完成使命。

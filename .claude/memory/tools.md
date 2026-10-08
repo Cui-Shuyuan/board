@@ -51,24 +51,39 @@ python tools/ops/check_no_secrets.py                   # 扫描已跟踪文件�
 
 当前全库：0 errors / 72 warnings。
 
+安装/同步本地 pre-commit（只报告、不阻止提交）：
+
+```bash
+sh tools/ops/install_git_hooks.sh
+```
+
+hook 会调用当前入口 `tools/content/validate_rules.py --errors-only`，不再引用旧的 `scripts/validate_rules.py`。
+
 后端 xUnit：
 
 ```bat
 D:\dotnet\dotnet.exe test D:\workspace\board\backend\BoardAI.Api.Tests\BoardAI.Api.Tests.csproj --nologo
 ```
 
-当前为 75/75 全绿。测试项目：`backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj`。
+当前为 121/121 全绿。测试项目：`backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj`。
+
+Python animation/索引纯提取回归：
+
+```bash
+python3 -m unittest discover -s animation -p 'test_*.py'
+```
+
+当前为 165/165 全绿；其中 `animation/test_index_extraction.py` 覆盖九款规则数据的身份路径唯一性、Civolution 槽位冲突修复，以及 Python/C# 版本行 hash 对齐。
 
 ## 3. 向量索引
 
 ```bash
 python tools/indexing/rebuild_index.py --all
 python tools/indexing/rebuild_index.py --game splendor
-python tools/indexing/rebuild_index.py --all --full
 ```
 
-- 默认增量同步，按 `content_hash + model_tag` diff。
-- 模型/提取逻辑大改时用 `--full`。
+- 每次构建生成版本化 collection `board_{game}__v{version}[_name]`，先写入并校验完整点数，再用一次 alias 请求原子切换 `board_{game}__active[_name]`；失败会清理临时 collection，旧 alias 继续服务。
+- Python CLI 与 C# `IndexContract` 共用 `source + 身份路径` 身份：普通概念为 `concept_id`，局部槽位为 `<owner>.<slot_id>`。`id/name/material` 是显式槽位元数据，不会生成虚假槽位键。
 - 模型目录：`backend/BoardAI.Api/ml_models/`（gitignore）。
 - 当前模型：`bge-base-zh-v1.5-fp32`，768 维。
 - 冷启动顺序：Qdrant → 重建索引 → 启动 API。

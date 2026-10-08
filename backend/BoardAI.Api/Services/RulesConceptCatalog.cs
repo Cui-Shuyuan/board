@@ -87,7 +87,32 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
         if (type == "slots")
         {
             var results = new List<ConceptSummary>();
-            void CollectSlots(JsonElement node)
+            var seenPaths = new HashSet<string>(StringComparer.Ordinal);
+
+            void AddSlot(string slotId, string slotPath, JsonElement value)
+            {
+                if (!seenPaths.Add(slotPath)) return;
+                var name = "";
+                if (value.ValueKind == JsonValueKind.Object
+                    && value.TryGetProperty("name", out var nameProp)
+                    && nameProp.ValueKind == JsonValueKind.Object
+                    && nameProp.TryGetProperty("zh", out var zh))
+                {
+                    name = zh.GetString() ?? "";
+                }
+                results.Add(new ConceptSummary
+                {
+                    Id = slotPath,
+                    Path = slotPath,
+                    Name = name,
+                    Type = "slot",
+                    Description = value.ValueKind == JsonValueKind.Object
+                        ? RulesTextUtils.ExtractDescriptionZh(value)
+                        : null
+                });
+            }
+
+            void CollectSlots(JsonElement node, string ownerPath)
             {
                 if (node.ValueKind == JsonValueKind.Object)
                 {
@@ -96,25 +121,58 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
                         foreach (var slot in slots.EnumerateArray())
                         {
                             if (slot.ValueKind != JsonValueKind.Object) continue;
+                            if (slot.TryGetProperty("id", out var idProp)
+                                && idProp.ValueKind == JsonValueKind.String
+                                && !string.IsNullOrEmpty(idProp.GetString()))
+                            {
+                                var slotId = idProp.GetString()!;
+                                var slotPath = JoinPath(ownerPath, slotId);
+                                AddSlot(slotId, slotPath, slot);
+                                CollectSlots(slot, slotPath);
+                                continue;
+                            }
+
                             foreach (var prop in slot.EnumerateObject())
                             {
-                                if (prop.Name.StartsWith("<")) continue;
-                                results.Add(new ConceptSummary { Id = prop.Name, Name = "", Type = "slot" });
+                                if (prop.Name.StartsWith("<") || prop.Value.ValueKind != JsonValueKind.Object)
+                                    continue;
+                                var slotPath = JoinPath(ownerPath, prop.Name);
+                                AddSlot(prop.Name, slotPath, prop.Value);
+                                CollectSlots(prop.Value, slotPath);
                             }
                         }
                     }
                     foreach (var prop in node.EnumerateObject())
-                        CollectSlots(prop.Value);
+                    {
+                        if (prop.Name == "slots") continue;
+                        CollectSlots(prop.Value, ownerPath);
+                    }
                 }
                 else if (node.ValueKind == JsonValueKind.Array)
                 {
                     foreach (var item in node.EnumerateArray())
-                        CollectSlots(item);
+                        CollectSlots(item, ownerPath);
                 }
             }
-            CollectSlots(concepts.RootElement);
-            var inst = _content.LoadGameInstances(game);
-            if (inst != null) CollectSlots(inst.RootElement);
+
+            foreach (var typeName in RulesConceptTypes.ConceptArrayTypes)
+            {
+                if (!concepts.RootElement.TryGetProperty(typeName, out var arr)
+                    || arr.ValueKind != JsonValueKind.Array) continue;
+                foreach (var el in arr.EnumerateArray())
+                {
+                    var id = RulesTextUtils.GetElementId(el);
+                    if (!string.IsNullOrEmpty(id)) CollectSlots(el, id);
+                }
+            }
+
+            foreach (var prop in concepts.RootElement.EnumerateObject())
+            {
+                if (RulesConceptTypes.ConceptArrayTypes.Contains(prop.Name)) continue;
+                if (prop.Value.ValueKind != JsonValueKind.Object) continue;
+                CollectSlots(prop.Value, prop.Name);
+            }
+
             return results;
         }
 
@@ -179,8 +237,10 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
             // Search slots (bare-key slot names within concepts, e.g. population/expansion)
             if (concepts != null)
             {
-                var slot = FindSlot(concepts.RootElement, localId);
-                if (slot.HasValue)
+                // 支持局部槽位路径（owner.slot）与无歧义的普通 slot id；
+                // 若同名全局概念已命中，则只有显式路径才继续返回槽位，避免混入两个结果。
+                var slot = FindSlotByAddress(concepts.RootElement, "", localId);
+                if (slot.HasValue && (localId.Contains('.') || results.Count == 0))
                     results.Add(slot.Value);
             }
         }
@@ -189,26 +249,61 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
     }
 
 
-    /// <summary>递归在 slots 数组中查找裸键槽位 (与 Python rebuild_index 的 slot 提取一致)</summary>
-    private static JsonElement? FindSlot(JsonElement node, string slotId)
+    /// <summary>
+    /// 按稳定路径查找局部槽位：显式 slot id 与裸键槽位使用 &lt;owner&gt;.&lt;slot_id&gt;；
+    /// 也保留无歧义普通 slot id 的旧查询兼容（target 不含点时按 slot_id 匹配）。
+    /// </summary>
+    private static JsonElement? FindSlotByAddress(JsonElement node, string ownerPath, string target)
     {
         if (node.ValueKind == JsonValueKind.Object)
         {
+            var currentOwner = ownerPath;
+            if (string.IsNullOrEmpty(ownerPath)
+                && node.TryGetProperty("id", out var nodeId)
+                && nodeId.ValueKind == JsonValueKind.String
+                && !string.IsNullOrEmpty(nodeId.GetString()))
+            {
+                currentOwner = nodeId.GetString()!;
+            }
+
             if (node.TryGetProperty("slots", out var slots) && slots.ValueKind == JsonValueKind.Array)
             {
                 foreach (var slot in slots.EnumerateArray())
                 {
                     if (slot.ValueKind != JsonValueKind.Object) continue;
+
+                    if (slot.TryGetProperty("id", out var idProp)
+                        && idProp.ValueKind == JsonValueKind.String
+                        && !string.IsNullOrEmpty(idProp.GetString()))
+                    {
+                        var slotId = idProp.GetString()!;
+                        var slotPath = JoinPath(currentOwner, slotId);
+                        if (string.Equals(slotPath, target, StringComparison.Ordinal)
+                            || (!target.Contains('.') && string.Equals(slotId, target, StringComparison.Ordinal)))
+                            return slot;
+                        var nested = FindSlotByAddress(slot, slotPath, target);
+                        if (nested.HasValue) return nested;
+                        continue;
+                    }
+
                     foreach (var prop in slot.EnumerateObject())
                     {
-                        if (prop.Name == slotId)
+                        if (prop.Name.StartsWith("<") || prop.Value.ValueKind != JsonValueKind.Object)
+                            continue;
+                        var slotPath = JoinPath(currentOwner, prop.Name);
+                        if (string.Equals(slotPath, target, StringComparison.Ordinal)
+                            || (!target.Contains('.') && string.Equals(prop.Name, target, StringComparison.Ordinal)))
                             return prop.Value;
+                        var nested = FindSlotByAddress(prop.Value, slotPath, target);
+                        if (nested.HasValue) return nested;
                     }
                 }
             }
+
             foreach (var prop in node.EnumerateObject())
             {
-                var found = FindSlot(prop.Value, slotId);
+                if (prop.Name == "slots") continue;
+                var found = FindSlotByAddress(prop.Value, currentOwner, target);
                 if (found.HasValue) return found;
             }
         }
@@ -216,12 +311,15 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
         {
             foreach (var item in node.EnumerateArray())
             {
-                var found = FindSlot(item, slotId);
+                var found = FindSlotByAddress(item, ownerPath, target);
                 if (found.HasValue) return found;
             }
         }
         return null;
     }
+
+    private static string JoinPath(string ownerPath, string slotId) =>
+        string.IsNullOrEmpty(ownerPath) ? slotId : $"{ownerPath}.{slotId}";
 
 
     public JsonElement? GetConcept(string game, string id)
