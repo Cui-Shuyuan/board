@@ -16,7 +16,7 @@ class DefaultLocalContentLoader(
         val timeline = loadTimeline(gameRoot, game.tutorialTrack) ?: return null
         return LoadedLocalContent(
             version = active.version,
-            versionRoot = contentStore.versionDir(active.version),
+            versionRoot = contentStore.versionRoot(active.version, game.id),
             timeline = timeline
         )
     }

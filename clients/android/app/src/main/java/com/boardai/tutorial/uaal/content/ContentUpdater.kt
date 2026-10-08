@@ -92,7 +92,7 @@ class ContentUpdater(
             onStatus(status)
             return ContentUpdateResult(
                 status = status,
-                versionRoot = version.takeIf { it.isNotBlank() }?.let(store::versionDir),
+                versionRoot = version.takeIf { it.isNotBlank() }?.let { store.versionDir(it, game) },
                 gameRoot = version.takeIf { it.isNotBlank() }?.let { store.gameRoot(it, game) },
                 changed = false
             )
@@ -110,7 +110,6 @@ class ContentUpdater(
             version = manifest.version
             totalFiles = manifest.files.size
             totalBytes = manifest.files.sumOf { it.size }
-            val versionDirectory = store.versionDir(version)
             val active = store.readActiveValid(game)
 
             // Already complete and active: nothing to do.
@@ -121,7 +120,7 @@ class ContentUpdater(
                 onStatus(status)
                 return ContentUpdateResult(
                     status = status,
-                    versionRoot = versionDirectory,
+                    versionRoot = store.versionRoot(version, game),
                     gameRoot = store.gameRoot(version, game),
                     changed = false
                 )
@@ -136,7 +135,7 @@ class ContentUpdater(
                 onStatus(status)
                 return ContentUpdateResult(
                     status = status,
-                    versionRoot = versionDirectory,
+                    versionRoot = store.versionRoot(version, game),
                     gameRoot = activated.root,
                     changed = true
                 )
@@ -148,7 +147,7 @@ class ContentUpdater(
             // mixed with the current manifest.
             store.deleteStalePartials(game, version)
 
-            val partialDirectory = store.partialDir(version)
+            val partialDirectory = store.partialDir(version, game)
             val gamePartial = store.partialGameDir(version, game)
             if (!gamePartial.isDirectory && !gamePartial.mkdirs()) {
                 throw IOException("cannot create partial game directory: ${gamePartial.absolutePath}")
@@ -266,7 +265,7 @@ class ContentUpdater(
 
             // The partial marker must never end up in the active version
             // directory.  Resume state is only relevant while downloading.
-            store.progressFile(version).delete()
+            store.progressFile(version, game).delete()
             File(partialDirectory, "progress.json.tmp").delete()
 
             onStatus(
@@ -278,7 +277,7 @@ class ContentUpdater(
                     currentPath = currentPath
                 )
             )
-            val finalDirectory = store.versionDir(version)
+            val finalDirectory = store.versionDir(version, game)
             if (finalDirectory.exists() && !finalDirectory.deleteRecursively()) {
                 throw IOException("cannot clear incomplete version directory: ${finalDirectory.absolutePath}")
             }
@@ -297,7 +296,7 @@ class ContentUpdater(
             onStatus(status)
             ContentUpdateResult(
                 status = status,
-                versionRoot = finalDirectory,
+                versionRoot = store.versionRoot(version, game),
                 gameRoot = activated.root,
                 changed = true
             )
@@ -355,8 +354,9 @@ class ContentUpdater(
     private fun cleanupQuietly(game: String) {
         try {
             store.cleanupOldVersions(game, keep = 2)
-        } catch (_: Throwable) {
+        } catch (t: Throwable) {
             // Cleanup is best-effort; a failure must never break playback.
+            Log.w(TAG, "cleanupOldVersions failed for game=$game; active content is unchanged", t)
         }
     }
 

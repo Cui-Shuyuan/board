@@ -122,7 +122,7 @@ python3 tools/ops/check_unity_scripts.py
 
 ### JVM 单元测试
 
-当前 7 个测试文件覆盖内容状态 / 更新器 / 首页协调 / 播放会话 / 时间轴 / Unity 加载队列 / 问答语音控制器：
+当前 8 个测试文件覆盖内容状态 / 版本清理 / 更新器 / 首页协调 / 播放会话 / 时间轴 / Unity 加载队列 / 问答语音控制器：
 
 ```bat
 cd D:\workspace\board\clients\android
@@ -340,27 +340,29 @@ GET /api/content/games/{game}/files/{**filePath}   # 无版本兼容 URL
 board-content/
   active.json
   versions/
-    {version}/
-      complete.json
-      splendor/
-        tutorial/
-        media/
-        concepts.json
-        ...
-    {version}.partial/
-      progress.json
-      splendor/
-        ...
-        media/marker/xxx.jpg.part
+    {game}/
+      {version}/
+        complete.json
+        {game}/
+          tutorial/
+          media/
+          concepts.json
+          ...
+      {version}.partial/
+        progress.json
+        {game}/
+          ...
+          media/marker/xxx.jpg.part
 ```
 
 - `complete.json` 记录版本、game 和已校验文件；
-- 更新先写 `versions/{version}.partial`，全部文件 SHA-256 校验通过并写 `complete.json` 后，原子 rename 为 `versions/{version}`；
+- 更新先写 `versions/{game}/{version}.partial`，全部文件 SHA-256 校验通过并写 `complete.json` 后，原子 rename 为 `versions/{game}/{version}`；
 - `active.json` 先写 `active.json.tmp`，再原子 rename；失败时保留旧 active，不删除旧版本；
 - 下载循环开始前一次性建立旧版本复用索引（`path -> sha256 -> File`）；每个旧版本只读取、解析一次 `complete.json`，循环内只查索引，网络只下载新增/变化文件；
 - 下载使用同目录 `*.part` + HTTP Range 续传；`progress.json` 只用于 UI 显示“已暂停 xx%”，实际断点以 `.part` 文件长度为准；
-- 下载开始时若服务端 manifest 版本与 partial 目录版本不一致，会清理 stale partial；
-- 默认保留当前版本和上一版本；旧的外部 `getExternalFilesDir(null)/board-content` 在 `ContentStore` 初始化时直接删除，不做迁移。
+- 下载开始时若服务端 manifest 版本与 partial 目录版本不一致，会清理当前 game 的 stale partial，不影响其他游戏；
+- 默认保留当前版本和上一版本；旧的外部 `getExternalFilesDir(null)/board-content` 在 `ContentStore` 初始化时直接删除，不做迁移；
+- 新布局按游戏隔离，更新 A 的清理不会候选到 B 的版本或 partial；旧扁平布局 `versions/{version}/...` 仍可读取和清理，不会要求用户清数据重装。
 
 ### 配置服务端地址与 adb reverse
 
@@ -400,7 +402,7 @@ App 访问 `http://127.0.0.1:5000` 即转发到 PC `5000` 端口。使用真机�
 LoadGameWithRoot("{gameId}|{versionRoot}")
 ```
 
-其中 `versionRoot = context.filesDir/board-content/versions/{version}`，Unity 直接读取内部私有目录，不依赖 `Application.persistentDataPath`。
+其中 `versionRoot = context.filesDir/board-content/versions/{game}/{version}`；旧扁平布局设备会回退到 `context.filesDir/board-content/versions/{version}`。Unity 直接读取内部私有目录，不依赖 `Application.persistentDataPath`。
 
 ### 手动内容 fallback
 

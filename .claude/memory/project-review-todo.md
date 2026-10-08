@@ -19,11 +19,13 @@ metadata:
 
 ## P0：优先修复
 
-### [ ] REV-01 按游戏隔离旧版本清理（已确认逻辑缺陷）
+### [x] REV-01 按游戏隔离旧版本清理（已确认逻辑缺陷）
 
 - 证据：clients/android/.../content/ContentStore.kt 的 cleanupOldVersions(game) 枚举所有完整版本，保留集合却只针对当前游戏，最后删除所有不在集合中的目录。更新游戏 A 会误删游戏 B 的资源；目前只有 Splendor，尚未在多游戏真机上复现。
 - 修改：清理候选必须限定所属游戏；建议版本目录按游戏隔离。保留其他游戏的 active 指针及其资源，并保护当前正在使用的版本。
 - 验收：先安装 A/B，再更新 A；B 的目录、active 指针与离线播放仍有效；暂停、失败和清理重试不影响 B。
+- 实施记录（2026-10-08）：采用方案 A，新布局为 `versions/{game}/{version}` / `versions/{game}/{version}.partial`；旧扁平布局 `versions/{version}/...` 提供只读兼容与安全清理，存量单游戏设备无需清数据。`cleanupOldVersions`、`deleteLocalContent`、`deletePaused`、`deleteStalePartials`、`buildReusableIndex` 均按 game 限定候选；共享 legacy 目录和其他 game 的 active root 会被跳过，partial 不进入完整版本清理候选。
+- 验收记录（2026-10-08）：先写复现测试，修复前 `ContentStoreCleanupTest.cleanupForGameADoesNotDeleteLegacyGameBVersion` 因 A cleanup 删除 B 失败；修复后通过。新增多游戏 complete/partial/active、keep=2、activate A、deleteLocalContent A、legacy 共享目录等 JVM 覆盖；`gradlew.bat testDebugUnitTest` 共 8 个测试文件 69 tests，0 failures / 0 errors。未执行多游戏真机验收。
 
 ### [ ] REV-02 为问答设置停止条件并贯通取消（已确认缺失）
 

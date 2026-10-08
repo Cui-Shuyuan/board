@@ -48,15 +48,23 @@ data class PausedContent(
  *
  *   context.filesDir/board-content/
  *
- * Layout:
+ * Current layout:
  *   active.json
+ *   versions/{game}/{version}/complete.json
+ *   versions/{game}/{version}/{game}/...
+ *   versions/{game}/{version}.partial/{game}/...
+ *   versions/{game}/{version}.partial/progress.json
+ *
+ * Older builds used a flat layout:
  *   versions/{version}/complete.json
  *   versions/{version}/{game}/...
  *   versions/{version}.partial/{game}/...
- *   versions/{version}.partial/progress.json
  *
- * The external app-specific directory used by older builds is deleted once on
- * construction.  Nothing in this class reads from or writes to external storage.
+ * The old layout is still readable and cleanup-safe, so an installed single-game
+ * device keeps working without clearing app data.  New downloads use the
+ * game-scoped layout.  The external app-specific directory used by older builds
+ * is deleted once on construction.  Nothing in this class reads from or writes
+ * to external storage.
  */
 class ContentStore private constructor(
     val contentRoot: File
@@ -72,21 +80,60 @@ class ContentStore private constructor(
 
     fun versionDir(version: String): File = File(versionsDir, version)
 
-    fun partialDir(version: String): File = File(versionsDir, "$version.partial")
+    /** Game-scoped complete version root: versions/{game}/{version}. */
+    fun versionDir(version: String, game: String): File = File(gameVersionsDir(game), version)
 
-    fun partialGameDir(version: String, game: String): File = File(partialDir(version), game)
+    fun gameVersionsDir(game: String): File = File(versionsDir, game)
+
+    fun partialDir(version: String): File = File(versionsDir, "$version$PARTIAL_SUFFIX")
+
+    fun partialDir(version: String, game: String): File =
+        File(gameVersionsDir(game), "$version$PARTIAL_SUFFIX")
+
+    fun partialGameDir(version: String, game: String): File = File(partialDir(version, game), game)
 
     fun progressFile(version: String): File = File(partialDir(version), PROGRESS_MARKER)
 
-    override fun gameRoot(version: String, gameId: String): File = File(versionDir(version), gameId)
+    fun progressFile(version: String, game: String): File =
+        File(partialDir(version, game), PROGRESS_MARKER)
+
+    /** Version root for [game], including the legacy flat layout. */
+    fun versionRoot(version: String, game: String): File {
+        val scoped = versionDir(version, game)
+        if (isCompleteAt(scoped, version, game)) return scoped
+        val legacy = versionDir(version)
+        if (isCompleteAt(legacy, version, game)) return legacy
+        return scoped
+    }
+
+    override fun gameRoot(version: String, gameId: String): File =
+        File(versionRoot(version, gameId), gameId)
 
     fun completeMarker(version: String): File = File(versionDir(version), COMPLETE_MARKER)
 
+    fun completeMarker(version: String, game: String): File =
+        File(versionDir(version, game), COMPLETE_MARKER)
+
     override fun isVersionComplete(version: String, gameId: String?): Boolean {
-        val directory = versionDir(version)
+        if (gameId != null) {
+            if (isCompleteAt(versionDir(version, gameId), version, gameId)) return true
+            if (isCompleteAt(versionDir(version), version, gameId)) return true
+            return false
+        }
+
+        if (isCompleteAt(versionDir(version), version, null)) return true
+        return versionsDir.listFiles()
+            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.any { scopedGameDir ->
+                isCompleteAt(File(scopedGameDir, version), version, scopedGameDir.name)
+            }
+            ?: false
+    }
+
+    private fun isCompleteAt(directory: File, version: String, gameId: String?): Boolean {
         if (!directory.isDirectory) return false
 
-        val marker = completeMarker(version)
+        val marker = File(directory, COMPLETE_MARKER)
         if (!marker.isFile) return false
 
         return try {
@@ -101,7 +148,6 @@ class ContentStore private constructor(
             false
         }
     }
-
     /** Active pointer plus the complete marker and real game directory. */
     override fun readActiveValid(gameId: String): ActiveContent? {
         val active = readActive(gameId) ?: return null
@@ -114,7 +160,7 @@ class ContentStore private constructor(
     fun writeCompleteMarker(
         manifest: ContentManifest,
         game: String,
-        directory: File = versionDir(manifest.version)
+        directory: File = versionDir(manifest.version, game)
     ) {
         if (!directory.isDirectory && !directory.mkdirs()) {
             throw IOException("cannot create version directory: ${directory.absolutePath}")
@@ -243,13 +289,8 @@ class ContentStore private constructor(
      * returned so the UI still reports PAUSED and the `.part` files can resume.
      */
     override fun readPaused(gameId: String): PausedContent? {
-        val directories = versionsDir.listFiles()
-            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
-            ?: return null
-
         var best: PausedContent? = null
-        for (directory in directories) {
-            val version = directory.name.removeSuffix(PARTIAL_SUFFIX)
+        for ((directory, version) in pausedDirectoriesFor(gameId)) {
             if (version.isBlank()) continue
 
             val marker = readProgressMarker(directory)
@@ -270,6 +311,29 @@ class ContentStore private constructor(
         return best
     }
 
+    private fun pausedDirectoriesFor(gameId: String): List<Pair<File, String>> {
+        val result = ArrayList<Pair<File, String>>()
+
+        // New layout: versions/{game}/{version}.partial.
+        gameVersionsDir(gameId).listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.forEach { directory ->
+                result += directory to directory.name.removeSuffix(PARTIAL_SUFFIX)
+            }
+
+        // Legacy layout: versions/{version}.partial/{game}.
+        versionsDir.listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.forEach { directory ->
+                val marker = readProgressMarker(directory)
+                if (marker?.game == gameId || File(directory, gameId).isDirectory) {
+                    result += directory to directory.name.removeSuffix(PARTIAL_SUFFIX)
+                }
+            }
+
+        return result
+    }
+
     /**
      * Writes progress.json via progress.json.tmp + atomic rename.  This is
      * intentionally best-effort: the real `.part` files remain the source of
@@ -284,7 +348,7 @@ class ContentStore private constructor(
         totalBytes: Long,
         currentPath: String
     ): PausedContent? {
-        val partial = partialDir(version)
+        val partial = partialDir(version, game)
         if (!partial.isDirectory && !partial.mkdirs()) return null
 
         val updatedAt = System.currentTimeMillis()
@@ -302,7 +366,7 @@ class ContentStore private constructor(
         return try {
             val temp = File(partial, "$PROGRESS_MARKER.tmp")
             temp.writeText(payload.toString(), Charsets.UTF_8)
-            if (!moveAtomically(temp, progressFile(version))) {
+            if (!moveAtomically(temp, progressFile(version, game))) {
                 temp.delete()
                 return null
             }
@@ -323,41 +387,89 @@ class ContentStore private constructor(
 
     /** Deletes partial directories/markers belonging to [game]. */
     override fun deletePaused(gameId: String) {
-        val directories = versionsDir.listFiles()
+        // New layout: versions/{game} owns its versions and partials entirely.
+        gameVersionsDir(gameId).listFiles()
             ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
-            ?: return
-
-        for (directory in directories) {
-            val marker = readProgressMarker(directory)
-            val gameDir = File(directory, gameId)
-            if (marker?.game != gameId && !gameDir.isDirectory) continue
-
-            if (gameDir.isDirectory) gameDir.deleteRecursively()
-            if (marker?.game == gameId) {
-                File(directory, PROGRESS_MARKER).delete()
+            ?.forEach { directory ->
+                deleteRecursivelyQuietly(
+                    directory = directory,
+                    game = gameId,
+                    version = directory.name.removeSuffix(PARTIAL_SUFFIX),
+                    description = "paused partial"
+                )
             }
-            File(directory, "$PROGRESS_MARKER.tmp").delete()
-            if (directory.listFiles().isNullOrEmpty()) directory.delete()
-        }
+
+        // Legacy layout: only remove this game's slice of a shared partial dir.
+        deleteLegacyPausedForGame(gameId, keepVersion = null)
     }
 
     /** Removes partials for [game] whose version is not [currentVersion]. */
     fun deleteStalePartials(game: String, currentVersion: String) {
-        val directories = versionsDir.listFiles()
-            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
-            ?: return
-
         val keepName = "$currentVersion$PARTIAL_SUFFIX"
-        for (directory in directories) {
-            if (directory.name == keepName) continue
-            val marker = readProgressMarker(directory)
-            val gameDir = File(directory, game)
-            if (marker?.game != game && !gameDir.isDirectory) continue
 
-            if (gameDir.isDirectory) gameDir.deleteRecursively()
-            if (marker?.game == game) File(directory, PROGRESS_MARKER).delete()
-            File(directory, "$PROGRESS_MARKER.tmp").delete()
-            if (directory.listFiles().isNullOrEmpty()) directory.delete()
+        gameVersionsDir(game).listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.forEach { directory ->
+                if (directory.name == keepName) {
+                    Log.d(
+                        TAG,
+                        "content-cleanup keep partial game=$game version=$currentVersion dir=${directory.absolutePath}"
+                    )
+                    return@forEach
+                }
+                deleteRecursivelyQuietly(
+                    directory = directory,
+                    game = game,
+                    version = directory.name.removeSuffix(PARTIAL_SUFFIX),
+                    description = "stale partial"
+                )
+            }
+
+        deleteLegacyPausedForGame(game, keepVersion = currentVersion)
+    }
+
+    private fun deleteLegacyPausedForGame(game: String, keepVersion: String?) {
+        versionsDir.listFiles()
+            ?.filter { it.isDirectory && it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.forEach { directory ->
+                if (keepVersion != null && directory.name == "$keepVersion$PARTIAL_SUFFIX") return@forEach
+                deleteLegacyPausedGame(directory, game)
+            }
+    }
+
+    private fun deleteLegacyPausedGame(directory: File, game: String) {
+        val marker = readProgressMarker(directory)
+        val gameDirectory = File(directory, game)
+        val owned = marker?.game == game || gameDirectory.isDirectory
+        if (!owned) {
+            Log.d(
+                TAG,
+                "content-cleanup keep partial game=$game dir=${directory.absolutePath} reason=not-owned"
+            )
+            return
+        }
+
+        val version = directory.name.removeSuffix(PARTIAL_SUFFIX)
+        if (gameDirectory.isDirectory) {
+            deleteRecursivelyQuietly(
+                directory = gameDirectory,
+                game = game,
+                version = version,
+                description = "legacy paused partial game directory"
+            )
+        }
+        if (marker?.game == game) {
+            File(directory, PROGRESS_MARKER).delete()
+        }
+        File(directory, "$PROGRESS_MARKER.tmp").delete()
+        if (directory.listFiles().isNullOrEmpty()) {
+            val deleted = directory.delete()
+            if (deleted) {
+                Log.i(
+                    TAG,
+                    "content-cleanup deleted legacy partial shell game=$game version=$version dir=${directory.absolutePath}"
+                )
+            }
         }
     }
 
@@ -366,14 +478,28 @@ class ContentStore private constructor(
      * active pointer.  No other game's files are touched.
      */
     override fun deleteLocalContent(gameId: String) {
-        val versionDirectories = versionsDir.listFiles()
-            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
-            ?: emptyList()
+        // New layout is game-scoped all the way down.
+        val scopedGameDirectory = gameVersionsDir(gameId)
+        if (scopedGameDirectory.isDirectory) {
+            deleteRecursivelyQuietly(
+                directory = scopedGameDirectory,
+                game = gameId,
+                version = "*",
+                description = "game content root"
+            )
+        }
 
-        for (directory in versionDirectories) {
-            val markerGame = readCompleteMarkerGame(directory)
-            if (markerGame != gameId && !File(directory, gameId).isDirectory) continue
-            directory.deleteRecursively()
+        // Legacy layout: delete only complete version dirs owned by this game.
+        // Shared legacy directories are intentionally left in place so another
+        // game's files cannot disappear.
+        for (owned in listOwnedCompleteVersions(gameId, includeSharedLegacy = false)) {
+            if (!owned.legacy) continue
+            deleteRecursivelyQuietly(
+                directory = owned.directory,
+                game = gameId,
+                version = owned.version,
+                description = "legacy complete version"
+            )
         }
 
         deletePaused(gameId)
@@ -392,18 +518,12 @@ class ContentStore private constructor(
     fun buildReusableIndex(targetVersion: String, game: String): ReusableContentIndex {
         val byPath = HashMap<String, MutableMap<String, File>>()
 
-        val candidates = versionsDir.listFiles()
-            ?.asSequence()
-            ?.filter {
-                it.isDirectory &&
-                    !it.name.endsWith(PARTIAL_SUFFIX) &&
-                    it.name != targetVersion
-            }
-            ?.sortedByDescending { it.lastModified() }
-            ?.toList()
-            ?: emptyList()
+        val candidates = listOwnedCompleteVersions(game, includeSharedLegacy = true)
+            .filter { it.version != targetVersion }
+            .sortedByDescending { it.directory.lastModified() }
 
-        for (versionDirectory in candidates) {
+        for (owned in candidates) {
+            val versionDirectory = owned.directory
             val marker = File(versionDirectory, COMPLETE_MARKER)
             if (!marker.isFile) continue
 
@@ -414,7 +534,7 @@ class ContentStore private constructor(
                 continue
             }
 
-            if (markerJson.optString("version", "") != versionDirectory.name) continue
+            if (markerJson.optString("version", "") != owned.version) continue
             if (markerJson.optString("game", "") != game) continue
 
             val recordedFiles = markerJson.optJSONArray("files") ?: continue
@@ -446,31 +566,191 @@ class ContentStore private constructor(
 
     /**
      * Retains the active version plus the most recent previous complete
-     * version.  Versions older than that are removed to avoid unbounded disk
-     * growth.  Failure to clean up is intentionally non-fatal.
+     * version for [game].  Versions older than that are removed to avoid
+     * unbounded disk growth.  Failure to clean up is intentionally non-fatal,
+     * and directories belonging to other games are never candidates.
      */
     fun cleanupOldVersions(game: String, keep: Int = 2) {
         if (keep < 1) return
+
         val activeVersion = readActiveValid(game)?.version
-        val all = versionsDir.listFiles()
-            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
-            ?.sortedByDescending { it.lastModified() }
-            ?: return
+        val candidates = listOwnedCompleteVersions(game, includeSharedLegacy = false)
+
+        if (candidates.isEmpty()) {
+            Log.d(TAG, "content-cleanup nothing game=$game")
+            return
+        }
+
+        val newestByVersion = LinkedHashMap<String, OwnedVersion>()
+        for (candidate in candidates) {
+            val existing = newestByVersion[candidate.version]
+            if (existing == null ||
+                candidate.directory.lastModified() > existing.directory.lastModified()
+            ) {
+                newestByVersion[candidate.version] = candidate
+            }
+        }
 
         val keepVersions = LinkedHashSet<String>()
         if (activeVersion != null) keepVersions += activeVersion
-        for (directory in all) {
+        for (candidate in newestByVersion.values.sortedByDescending { it.directory.lastModified() }) {
             if (keepVersions.size >= keep) break
-            if (isVersionComplete(directory.name, game)) keepVersions += directory.name
+            keepVersions += candidate.version
         }
 
-        for (directory in all) {
-            if (directory.name !in keepVersions) {
-                directory.deleteRecursively()
+        for (candidate in candidates) {
+            if (candidate.version in keepVersions) {
+                Log.d(
+                    TAG,
+                    "content-cleanup keep game=$game version=${candidate.version} dir=${candidate.directory.absolutePath}"
+                )
+                continue
             }
+
+            if (candidate.legacy && legacyVersionIsShared(candidate.directory, game)) {
+                Log.w(
+                    TAG,
+                    "content-cleanup skip shared legacy version game=$game version=${candidate.version} dir=${candidate.directory.absolutePath}"
+                )
+                continue
+            }
+
+            if (readActiveRootsForOtherGames(game).any { isUnderRoot(it, candidate.directory) }) {
+                Log.w(
+                    TAG,
+                    "content-cleanup skip version referenced by another active pointer game=$game version=${candidate.version} dir=${candidate.directory.absolutePath}"
+                )
+                continue
+            }
+
+            deleteRecursivelyQuietly(
+                directory = candidate.directory,
+                game = game,
+                version = candidate.version,
+                description = "old complete version"
+            )
         }
     }
 
+    private data class OwnedVersion(
+        val directory: File,
+        val version: String,
+        val legacy: Boolean,
+        val shared: Boolean
+    )
+
+    private fun listOwnedCompleteVersions(
+        game: String,
+        includeSharedLegacy: Boolean
+    ): List<OwnedVersion> {
+        val result = ArrayList<OwnedVersion>()
+
+        gameVersionsDir(game).listFiles()
+            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.forEach { directory ->
+                val version = directory.name
+                if (!VERSION_ID_RE.matches(version)) return@forEach
+                if (isCompleteAt(directory, version, game)) {
+                    result += OwnedVersion(
+                        directory = directory,
+                        version = version,
+                        legacy = false,
+                        shared = false
+                    )
+                }
+            }
+
+        versionsDir.listFiles()
+            ?.filter { it.isDirectory && !it.name.endsWith(PARTIAL_SUFFIX) }
+            ?.forEach { directory ->
+                val version = directory.name
+                if (!VERSION_ID_RE.matches(version)) return@forEach
+                if (!isCompleteAt(directory, version, game)) return@forEach
+
+                val shared = legacyVersionIsShared(directory, game)
+                if (shared && !includeSharedLegacy) {
+                    Log.w(
+                        TAG,
+                        "content-cleanup skip shared legacy version game=$game version=$version dir=${directory.absolutePath}"
+                    )
+                    return@forEach
+                }
+                result += OwnedVersion(
+                    directory = directory,
+                    version = version,
+                    legacy = true,
+                    shared = shared
+                )
+            }
+
+        return result
+    }
+
+    private fun legacyVersionIsShared(directory: File, game: String): Boolean {
+        val containsOtherGameDirectory = directory.listFiles()
+            ?.any { it.isDirectory && it.name != game && !it.name.endsWith(PARTIAL_SUFFIX) }
+            ?: false
+        if (containsOtherGameDirectory) return true
+
+        return readActiveRootsForOtherGames(game).any { isUnderRoot(it, directory) }
+    }
+
+    private fun readActiveRootsForOtherGames(game: String): List<String> {
+        if (!activeFile.isFile) return emptyList()
+
+        return try {
+            val json = JSONObject(activeFile.readText(Charsets.UTF_8))
+            val games = json.optJSONArray("games") ?: return emptyList()
+            val roots = ArrayList<String>()
+            for (i in 0 until games.length()) {
+                val entry = games.optJSONObject(i) ?: continue
+                if (entry.optString("game", "") == game) continue
+                val root = entry.optString("root", "")
+                if (root.isNotBlank()) roots += root
+            }
+            roots
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun isUnderRoot(root: String, directory: File): Boolean {
+        val rootPath = runCatching { File(root).canonicalFile.toPath() }.getOrNull() ?: return false
+        val directoryPath = runCatching { directory.canonicalFile.toPath() }.getOrNull() ?: return false
+        return rootPath.startsWith(directoryPath)
+    }
+
+    private fun deleteRecursivelyQuietly(
+        directory: File,
+        game: String,
+        version: String,
+        description: String
+    ) {
+        if (!directory.exists()) return
+
+        val deleted = try {
+            directory.deleteRecursively()
+        } catch (t: Throwable) {
+            Log.w(
+                TAG,
+                "content-cleanup failed to delete $description game=$game version=$version dir=${directory.absolutePath}",
+                t
+            )
+            false
+        }
+
+        if (deleted) {
+            Log.i(
+                TAG,
+                "content-cleanup deleted $description game=$game version=$version dir=${directory.absolutePath}"
+            )
+        } else {
+            Log.w(
+                TAG,
+                "content-cleanup could not delete $description game=$game version=$version dir=${directory.absolutePath}"
+            )
+        }
+    }
     private fun readProgressMarker(partialDirectory: File): PausedContent? {
         val marker = File(partialDirectory, PROGRESS_MARKER)
         if (!marker.isFile) return null
@@ -497,18 +777,6 @@ class ContentStore private constructor(
         }
     }
 
-    private fun readCompleteMarkerGame(versionDirectory: File): String? {
-        val marker = File(versionDirectory, COMPLETE_MARKER)
-        if (!marker.isFile) return null
-        return try {
-            JSONObject(marker.readText(Charsets.UTF_8))
-                .optString("game", "")
-                .takeIf { it.isNotBlank() }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
     private fun deleteStaleExternalRoot(context: Context) {
         try {
             val externalRoot = context.getExternalFilesDir(null) ?: return
@@ -530,6 +798,7 @@ class ContentStore private constructor(
         private const val PROGRESS_MARKER = "progress.json"
         private const val PROGRESS_SCHEMA = "board-content-progress/v1"
         private const val PARTIAL_SUFFIX = ".partial"
+        private val VERSION_ID_RE = Regex("^[0-9a-fA-F]{8,64}$")
 
         internal fun forTesting(root: File): ContentStore = ContentStore(root)
     }
