@@ -9,6 +9,9 @@ Thumbs.db
 # Local toolchain (dotnet SDK installed under repo during migration)
 .tools/
 
+# Local scratch (temporary compile projects, generated probes)
+.tmp/
+
 # Node / Python / C#
 node_modules/
 __pycache__/

@@ -925,6 +925,66 @@ def find_dotnet():
     return None
 
 
+def is_windows_executable(path: Path) -> bool:
+    """Return True when *path* points at a Windows PE executable (e.g. dotnet.exe)."""
+    try:
+        resolved = Path(path).resolve()
+    except OSError:
+        resolved = Path(path)
+    return resolved.suffix.lower() == ".exe"
+
+
+def running_in_wsl() -> bool:
+    """Best-effort WSL detection that is also easy to unit test."""
+    if os.environ.get("WSL_DISTRO_NAME"):
+        return True
+    if os.environ.get("WSL_INTEROP"):
+        return True
+    try:
+        proc_version = Path("/proc/version").read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    return "microsoft" in proc_version.lower()
+
+
+def choose_project_parent(root: Path, dotnet_path: Path | None = None,
+                          wsl: bool | None = None) -> Path:
+    r"""Pick a temp-project parent that the compiler can actually read.
+
+    A Windows ``dotnet.exe`` running under WSL cannot read projects created in
+    the Linux ``/tmp`` (it resolves them through ``\wsl.localhost\...``).
+    Put those scratch projects under the repository on drvfs instead.  Native
+    Linux dotnet keeps using the normal platform temp directory.
+    """
+    if wsl is None:
+        wsl = running_in_wsl()
+    if dotnet_path is not None and is_windows_executable(dotnet_path) and wsl:
+        parent = Path(root) / ".tmp" / "check_unity_scripts"
+        parent.mkdir(parents=True, exist_ok=True)
+        return parent
+    return Path(tempfile.gettempdir())
+
+
+def should_copy_sources(dotnet_path: Path | None, wsl: bool | None = None) -> bool:
+    """Windows dotnet under WSL gets source copies inside the drvfs temp project.
+
+    That avoids passing WSL-only paths (including arbitrary ``--dir /tmp``
+    inputs) to a Windows compiler, which turns them into unreadable UNC paths.
+    """
+    if wsl is None:
+        wsl = running_in_wsl()
+    return bool(dotnet_path is not None and is_windows_executable(dotnet_path) and wsl)
+
+
+def format_error_file(raw_file: str, source_map: dict[str, str] | None = None) -> str:
+    """Map a compiler-reported copied path back to the user's original file."""
+    if not source_map:
+        return raw_file
+    normalized = raw_file.replace("\\", "/")
+    basename = normalized.rsplit("/", 1)[-1]
+    return source_map.get(basename, raw_file)
+
+
 def read_csproj_template():
     return """<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
@@ -949,29 +1009,71 @@ def read_csproj_template():
 """
 
 
-def build_project(tmp: Path, files):
+def build_project(tmp: Path, files, copy_sources: bool = False):
+    """Write the throwaway project and return a copied-path -> original-path map.
+
+    When *copy_sources* is true the C# files are copied into ``tmp/src`` so a
+    Windows dotnet.exe never has to open a WSL-only path.  The returned map is
+    keyed by the copied basename used in compiler diagnostics.
+    """
     (tmp / "stubs").mkdir(parents=True, exist_ok=True)
     (tmp / "stubs" / "UnityStubs.cs").write_text(UNITY_STUBS, encoding="utf-8")
 
     items = []
-    for f in files:
-        rel = Path(os.path.relpath(f, tmp)).as_posix()
-        items.append(f'    <Compile Include="{rel}" />')
+    source_map: dict[str, str] = {}
+    if copy_sources:
+        src_dir = tmp / "src"
+        src_dir.mkdir(parents=True, exist_ok=True)
+        for i, f in enumerate(files, 1):
+            copied = src_dir / f"{i:04d}_{Path(f).name}"
+            shutil.copyfile(f, copied)
+            source_map[copied.name] = str(f)
+            items.append(f'    <Compile Include="src/{copied.name}" />')
+    else:
+        for f in files:
+            rel = Path(os.path.relpath(f, tmp)).as_posix()
+            items.append(f'    <Compile Include="{rel}" />')
     (tmp / "Check.csproj").write_text(read_csproj_template().format(items="\n".join(items)), encoding="utf-8")
+    return source_map
 
 
-def parse_errors(output: str, root: Path):
+def parse_errors(output: str, root: Path | None = None,
+                 source_map: dict[str, str] | None = None):
+    """Parse C# compiler diagnostics and map copied files back to originals.
+
+    Structured diagnostics are kept when possible.  If the compiler fails with
+    only an unlocated error (for example an access-denied CS1504 emitted by
+    dotnet.exe under WSL), keep that line too, so a failed build never reports
+    ``ok:false`` with an empty ``errors`` list again.
+    """
     errors = []
+    seen = set()
     for line in output.splitlines():
         m = re.match(r"^(.*)\((\d+),(\d+)\): error (CS\d+): (.*)$", line.strip())
         if m:
-            errors.append({
-                "file": m.group(1),
+            error = {
+                "file": format_error_file(m.group(1), source_map),
                 "line": int(m.group(2)),
                 "column": int(m.group(3)),
                 "code": m.group(4),
                 "message": m.group(5),
-            })
+            }
+        else:
+            m = re.search(r"error (CS\d+):\s*(.*)", line)
+            if not m:
+                continue
+            error = {
+                "file": "",
+                "line": 0,
+                "column": 0,
+                "code": m.group(1),
+                "message": line.strip(),
+            }
+        key = (error["file"], error["line"], error["column"],
+               error["code"], error["message"])
+        if key not in seen:
+            seen.add(key)
+            errors.append(error)
     return errors
 
 
@@ -1009,9 +1111,12 @@ def main():
         print(f"no .cs files under {scripts_dir}", file=sys.stderr)
         return 2
 
-    tmp = Path(tempfile.mkdtemp(prefix="board-game-unity-check-"))
+    tmp_parent = choose_project_parent(ROOT, dotnet)
+    tmp = Path(tempfile.mkdtemp(prefix="board-game-unity-check-", dir=str(tmp_parent)))
     try:
-        build_project(tmp, files)
+        source_map = build_project(
+            tmp, files, copy_sources=should_copy_sources(dotnet)
+        )
         env = dict(os.environ)
         env["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1"
         env["DOTNET_NOLOGO"] = "1"
@@ -1020,20 +1125,34 @@ def main():
             cwd=str(tmp), env=env, capture_output=True, text=True,
         )
         output = (proc.stdout or "") + (proc.stderr or "")
-        errors = parse_errors(output, tmp)
+        errors = parse_errors(output, tmp, source_map)
         ok = proc.returncode == 0 and not errors
 
         if args.json:
-            print(json.dumps({"ok": ok, "files": len(files), "errors": errors}, ensure_ascii=False, indent=2))
+            payload = {"ok": ok, "files": len(files), "errors": errors}
+            if not ok:
+                payload["exit_code"] = proc.returncode
+                payload["raw_output_tail"] = output[-4000:].strip()
+            print(json.dumps(payload, ensure_ascii=False, indent=2))
         else:
             if ok:
                 print(f"OK  {len(files)} 个 C# 文件编译通过")
-            else:
+            elif errors:
                 print(f"FAIL  {len(errors)} 个编译错误（{len(files)} 个文件）")
                 for e in errors:
-                    print(f"  {Path(e['file']).name}:{e['line']}:{e['column']}  {e['code']}  {e['message']}")
-                if not errors:
-                    print(output[-2000:])
+                    file_label = Path(e["file"]).name if e["file"] else "<compiler>"
+                    print(f"  {file_label}:{e['line']}:{e['column']}  {e['code']}  {e['message']}")
+                if output.strip():
+                    print("--- compiler output (tail) ---")
+                    print(output[-2000:].strip())
+            else:
+                print(
+                    f"FAIL dotnet build exited with {proc.returncode}, "
+                    f"but no structured C# error was parsed（{len(files)} 个文件）"
+                )
+                if output.strip():
+                    print("--- compiler output (tail) ---")
+                    print(output[-2000:].strip())
         return 0 if ok else 1
     finally:
         if args.keep:
