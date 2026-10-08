@@ -1,3 +1,4 @@
+using Grpc.Core;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
 
@@ -97,7 +98,7 @@ public class VectorSearchService : IDisposable
                 ReusedExistingCollections = reused
             };
         }
-        catch
+        catch (Exception ex)
         {
             // 索引切换之前失败：清掉本次新建的临时 collection，旧别名不动。
             foreach (var collection in createdCollections)
@@ -114,6 +115,13 @@ public class VectorSearchService : IDisposable
                     _logger.LogWarning(cleanupEx,
                         "Failed to clean up temporary index collection '{Collection}'", collection);
                 }
+            }
+
+            if (ex is RpcException rpc && rpc.StatusCode == StatusCode.Cancelled
+                && cancellationToken.IsCancellationRequested)
+            {
+                throw new OperationCanceledException(
+                    "Index rebuild cancelled while building temporary collections.", ex, cancellationToken);
             }
             throw;
         }
@@ -160,6 +168,11 @@ public class VectorSearchService : IDisposable
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled
+                                     && cancellationToken.IsCancellationRequested)
+        {
+            throw new OperationCanceledException($"Qdrant search cancelled for game '{gameId}'.", ex, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -291,6 +304,11 @@ public class VectorSearchService : IDisposable
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.Cancelled
+                                     && cancellationToken.IsCancellationRequested)
+        {
+            throw new OperationCanceledException($"Index alias resolution cancelled for game '{gameId}'.", ex, cancellationToken);
         }
         catch (Exception ex)
         {
