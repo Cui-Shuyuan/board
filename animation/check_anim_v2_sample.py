@@ -28,23 +28,19 @@ def face_num(v):
     if v is None or v=='' : return None
     return FACE.get(v)
 
-def main():
-    ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--game',default='splendor')
-    ap.add_argument('--track',default='full')
-    ap.add_argument('--source')
-    ap.add_argument('--sample')
-    a=ap.parse_args()
-    src=Path(a.source) if a.source else ROOT/'content'/'games'/a.game/'tutorial'/'anim'/'v2'/f'{a.track}.anim.json'
-    smp=Path(a.sample) if a.sample else src.with_name(f'{a.track}.v2sample.json')
-    if not src.exists() or not smp.exists():
-        print(f'missing source or sample: {src} / {smp}',file=sys.stderr); return 2
-    track=schema.resolve_track(load(src)); sdoc=load(smp)
-    compiled_path=src.with_name(src.name.replace('.anim.json','.compiled.json'))
-    compiled=load(compiled_path) if compiled_path.exists() else {'cues':[]}
+
+def reconcile_sample(track, compiled, sample_doc):
+    """Reconcile one Unity v2 sample against the track and compiled end states.
+
+    Extracted from ``main`` so the field/structure comparison can be unit
+    tested without launching Unity or touching repository data.
+    """
     end_by={c['id']:c for c in compiled.get('cues') or []}
-    sample={c['cue']:c for c in sdoc.get('cues') or []}
+    sample={c['cue']:c for c in sample_doc.get('cues') or []}
     errors=[]
+    track_ids={cue.get('id') for cue in track.get('cues') or [] if cue.get('id')}
+    for extra in sorted(set(sample) - track_ids):
+        errors.append(f'{extra}: extra sample')
     for cue in track.get('cues') or []:
         cid=cue.get('id'); sc=sample.get(cid)
         if sc is None:
@@ -89,6 +85,25 @@ def main():
                     bad=[it for it in matched if it.get('face')!={'2':'up','1':'down','0':'hidden'}.get(str(fn))]
                     if bad:
                         errors.append(f'{cid} {zone}.items[{i}].face: want {w.get("face")} got {len(bad)} mismatches')
+    return errors
+
+
+def main():
+    ap=argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--game',default='splendor')
+    ap.add_argument('--track',default='full')
+    ap.add_argument('--source')
+    ap.add_argument('--sample')
+    a=ap.parse_args()
+    src=Path(a.source) if a.source else ROOT/'content'/'games'/a.game/'tutorial'/'anim'/'v2'/f'{a.track}.anim.json'
+    smp=Path(a.sample) if a.sample else src.with_name(f'{a.track}.v2sample.json')
+    if not src.exists() or not smp.exists():
+        print(f'missing source or sample: {src} / {smp}',file=sys.stderr); return 2
+    track=schema.resolve_track(load(src)); sdoc=load(smp)
+    compiled_path=src.with_name(src.name.replace('.anim.json','.compiled.json'))
+    compiled=load(compiled_path) if compiled_path.exists() else {'cues':[]}
+    sample={c['cue']:c for c in sdoc.get('cues') or []}
+    errors=reconcile_sample(track, compiled, sdoc)
     for e in errors: print('ERR  '+e)
     if errors:
         print(f'FAIL {src.name}: {len(errors)} sample mismatches',file=sys.stderr); return 1

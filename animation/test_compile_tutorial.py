@@ -3,6 +3,9 @@
 """Unit tests for compile_tutorial path handling and game/track parameters."""
 from __future__ import annotations
 
+import contextlib
+import io
+import json
 import sys
 import tempfile
 import unittest
@@ -93,6 +96,120 @@ class CompileTutorialPathTests(unittest.TestCase):
             "content/games/fake-game/tutorial/anim/_qa/questions.json",
             path.as_posix()[len(str(root)) + 1:],
         )
+
+
+class CompileTutorialDryRunTests(unittest.TestCase):
+    def _write_fixture(self, root: Path, *, script_text="hello", manifest_extra=None):
+        game_dir = root / "content" / "games" / "fake"
+        tutorial = game_dir / "tutorial"
+        anim_v2 = tutorial / "anim" / "v2"
+        manifest_dir = game_dir / "media" / "tts" / "full"
+        anim_v2.mkdir(parents=True)
+        manifest_dir.mkdir(parents=True)
+        script = {
+            "cues": [{
+                "id": "cue.1",
+                "beats": [{"text": script_text}],
+                "refs": [],
+            }]
+        }
+        manifest = {"cues": [{
+            "id": "cue.1",
+            "file": "content/games/fake/media/tts/full/cue.1.mp3",
+            "duration": 1.0,
+            "refs": [],
+        }]}
+        if manifest_extra:
+            manifest["cues"].append(manifest_extra)
+        (tutorial / "script.full.json").write_text(
+            json.dumps(script, ensure_ascii=False), encoding="utf-8")
+        (anim_v2 / "full.anim.json").write_text("{}", encoding="utf-8")
+        (manifest_dir / "tts_manifest.json").write_text(
+            json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+        return game_dir, script, manifest
+
+    def test_main_dry_run_with_no_changes_reports_zero_and_does_not_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            game_dir, _script, manifest = self._write_fixture(root)
+            manifest_path = game_dir / "media" / "tts" / "full" / "tts_manifest.json"
+            before = manifest_path.read_text(encoding="utf-8")
+            out = io.StringIO()
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct, "read_current_tts_text", return_value={"cue.1": "hello"}),                  mock.patch.object(ct, "manifest_audio_ok", return_value=True),                  mock.patch.object(sys, "argv", [
+                     "compile_tutorial.py", "--game", "fake", "--track", "full", "--dry-run"
+                 ]),                  contextlib.redirect_stdout(out):
+                rc = ct.main()
+            self.assertEqual(rc, 0)
+            self.assertIn("changed text cues: 0", out.getvalue())
+            self.assertEqual(manifest_path.read_text(encoding="utf-8"), before)
+
+    def test_main_dry_run_with_text_change_calls_tts_in_dry_run_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._write_fixture(root, script_text="new text")
+            out = io.StringIO()
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct, "read_current_tts_text", return_value={"cue.1": "old text"}),                  mock.patch.object(ct, "manifest_audio_ok", return_value=True),                  mock.patch.object(ct, "run_tts_delta") as run_tts,                  mock.patch.object(sys, "argv", [
+                     "compile_tutorial.py", "--game", "fake", "--track", "full", "--dry-run"
+                 ]),                  contextlib.redirect_stdout(out):
+                run_tts.side_effect = lambda game_dir, game, track, script, manifest, changed, tts_python, dry_run: manifest
+                rc = ct.main()
+            self.assertEqual(rc, 0)
+            self.assertIn("changed text cues: 1", out.getvalue())
+            run_tts.assert_called_once()
+            self.assertTrue(run_tts.call_args.args[-1])
+
+    def test_main_missing_sources_returns_two(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            err = io.StringIO()
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(sys, "argv", [
+                     "compile_tutorial.py", "--game", "fake", "--track", "full", "--dry-run"
+                 ]),                  contextlib.redirect_stderr(err):
+                rc = ct.main()
+            self.assertEqual(rc, 2)
+            self.assertIn("missing source", err.getvalue())
+
+    def test_prune_removed_dry_run_keeps_files_and_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            game_dir = Path(tmp)
+            media = game_dir / "media" / "tts" / "full"
+            media.mkdir(parents=True)
+            (media / "old.mp3").write_bytes(b"")
+            (media / "old.subtitle.json").write_text("{}", encoding="utf-8")
+            manifest = {"cues": [{"id": "keep"}, {"id": "old"}]}
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                new_manifest, removed = ct.prune_removed(
+                    game_dir, "full", {"cues": [{"id": "keep"}]}, manifest, True)
+            self.assertEqual(removed, ["old"])
+            self.assertEqual(new_manifest, manifest)
+            self.assertTrue((media / "old.mp3").exists())
+            self.assertIn("[dry-run] TTS would prune: old", out.getvalue())
+
+    def test_prune_removed_actual_deletes_media_and_filters_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            game_dir = Path(tmp)
+            media = game_dir / "media" / "tts" / "full"
+            media.mkdir(parents=True)
+            (media / "old.mp3").write_bytes(b"")
+            (media / "old.subtitle.json").write_text("{}", encoding="utf-8")
+            manifest = {"cues": [{"id": "keep"}, {"id": "old"}]}
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                new_manifest, removed = ct.prune_removed(
+                    game_dir, "full", {"cues": [{"id": "keep"}]}, manifest, False)
+            self.assertEqual(removed, ["old"])
+            self.assertEqual(new_manifest["cues"], [{"id": "keep"}])
+            self.assertFalse((media / "old.mp3").exists())
+            self.assertFalse((media / "old.subtitle.json").exists())
+            self.assertIn("pruned 1 cue", out.getvalue())
+
+    def test_normalize_manifest_path_is_separator_agnostic(self):
+        self.assertEqual(
+            ct.normalize_manifest_path(r"content\games\fake\a.mp3"),
+            "content/games/fake/a.mp3",
+        )
+        self.assertEqual(ct.normalize_manifest_path(""), "")
 
 
 if __name__ == "__main__":
