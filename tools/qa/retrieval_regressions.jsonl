@@ -1,0 +1,7 @@
+{"game":"civolution","relation":"identify","entity":"白色骰子","question":"白色骰子","expected":["activation_die"],"note":"外观限定词必须保留，通用 dice 命中不能拍板"}
+{"game":"civolution","relation":"identify","entity":"白色 骰子","question":"白色 骰子","expected":["activation_die"],"note":"分词不应让通用骰子压过白色具体组件"}
+{"game":"civolution","relation":"explain","entity":"白色骰子","question":"白色骰子是什么？","expected":["activation_die"],"note":"短外观描述也必须查全文，名称索引只补漏"}
+{"game":"civolution","relation":"explain","entity":"Favor 测试","question":"Favor 测试如何进行？何时使用命运骰？","expected":["favor_test"],"note":"整句检定不能被部分词命中的恩惠标记替代"}
+{"game":"civolution","relation":"explain","entity":"point bonus 卡","question":"终局计分中的 point bonus 卡怎么算？","expected":["final_scoring_area_hex.point_bonus"],"note":"终局分数奖励槽位应在前三；玩家辅助卡不是目标"}
+{"game":"civolution","relation":"boundary","entity":"分数轨道","question":"分数轨道跑完一圈怎么办？","expected":["score_track"],"note":"boundary 不能过滤掉对象实体"}
+{"game":"agricola","relation":"explain","entity":"收获喂养","question":"收获阶段的喂养是怎么结算的？","expected":["harvest_feeding"],"note":"全文弱候选不能阻断名称索引的正确目标"}
