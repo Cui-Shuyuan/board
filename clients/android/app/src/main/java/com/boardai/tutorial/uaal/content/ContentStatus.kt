@@ -7,6 +7,7 @@ import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
  */
 sealed interface ContentStatus {
     data object NoServerResource : ContentStatus
+    data object RulesOnly : ContentStatus
     data object NotDownloaded : ContentStatus
     data class Paused(val progress: PausedContent) : ContentStatus
     data class InstalledOffline(val version: String) : ContentStatus
@@ -26,6 +27,7 @@ sealed interface ContentStatus {
 val ContentStatus.hasLocalContent: Boolean
     get() = when (this) {
         ContentStatus.NoServerResource,
+        ContentStatus.RulesOnly,
         ContentStatus.NotDownloaded,
         is ContentStatus.Paused -> false
         is ContentStatus.InstalledOffline,
@@ -36,6 +38,7 @@ val ContentStatus.hasLocalContent: Boolean
 
 fun ContentStatus.shortCardText(): String = when (this) {
     ContentStatus.NoServerResource -> "暂无资源"
+    ContentStatus.RulesOnly -> "仅规则问答"
     ContentStatus.NotDownloaded -> "未下载"
     is ContentStatus.Paused -> "已暂停 ${progress.percent}%"
     is ContentStatus.InstalledOffline -> "已安装"
@@ -46,6 +49,7 @@ fun ContentStatus.shortCardText(): String = when (this) {
 
 fun ContentStatus.resourceStatusText(): String = when (this) {
     ContentStatus.NoServerResource -> "暂无教程资源"
+    ContentStatus.RulesOnly -> "仅规则问答（教程未提供）"
     ContentStatus.NotDownloaded -> "未下载"
     is ContentStatus.Paused -> "已暂停 ${progress.percent}%"
     is ContentStatus.InstalledOffline -> "已安装（服务端当前无资源信息）"
@@ -58,15 +62,18 @@ fun ContentStatus.localVersionText(): String = when (this) {
     ContentStatus.NoServerResource,
     ContentStatus.NotDownloaded,
     is ContentStatus.Paused -> "未安装"
+    ContentStatus.RulesOnly -> "无需下载"
     is ContentStatus.InstalledOffline -> "v${version.take(8)}"
     is ContentStatus.InstalledCurrent -> "v${version.take(8)}"
     is ContentStatus.UpdateAvailable -> "v${localVersion.take(8)}"
     is ContentStatus.UpdatePaused -> "v${localVersion.take(8)}"
 }
 
-fun ContentStatus.serverVersionText(game: GameCatalogEntry): String =
-    game.contentVersion?.takeIf { it.isNotBlank() }?.let { "v${it.take(8)}" }
+fun ContentStatus.serverVersionText(game: GameCatalogEntry): String = when (this) {
+    ContentStatus.RulesOnly -> "规则问答"
+    else -> game.contentVersion?.takeIf { it.isNotBlank() }?.let { "v${it.take(8)}" }
         ?: "暂无教程资源"
+}
 
 /**
  * Determines the UI status from the fresh catalog entry and the local content
@@ -77,6 +84,14 @@ fun resolveContentStatus(
     game: GameCatalogEntry,
     store: ContentStatusSource
 ): ContentStatus {
+    if (!game.tutorialReady || game.tutorialTracks.isEmpty()) {
+        return if (game.rulesReady) {
+            ContentStatus.RulesOnly
+        } else {
+            ContentStatus.NoServerResource
+        }
+    }
+
     val serverVersion = game.contentVersion?.trim()?.takeIf { it.isNotBlank() }
     val active = store.readActiveValid(game.id)
     val localVersion = active?.version

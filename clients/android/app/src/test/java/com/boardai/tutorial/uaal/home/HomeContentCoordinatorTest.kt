@@ -80,6 +80,52 @@ class HomeContentCoordinatorTest {
     }
 
     @Test
+    fun onGameClickRulesOnlyOpensQaAndNeverOffersTutorialDownloadOrPlayback() {
+        val rulesOnly = game(
+            id = "rules-only",
+            contentVersion = null,
+            tutorialReady = false,
+            tutorialTrack = ""
+        )
+        val entered = mutableListOf<GameCatalogEntry>()
+        val qaOpened = mutableListOf<GameCatalogEntry>()
+        val coordinator = coordinator(
+            onEnterGame = { entered += it },
+            onOpenRulesQa = { qaOpened += it }
+        )
+
+        coordinator.onGameClick(rulesOnly)
+
+        assertEquals(listOf(rulesOnly), qaOpened)
+        assertTrue(entered.isEmpty())
+        assertNull(coordinator.state.value.gamePrompt)
+        assertFalse(coordinator.hasActiveDownload())
+        assertEquals(
+            ContentStatus.RulesOnly,
+            coordinator.state.value.contentStatuses[rulesOnly.id]
+        )
+    }
+
+    @Test
+    fun startDownloadRulesOnlyShowsToastAndDoesNotInvokeUpdater() {
+        val rulesOnly = game(
+            id = "rules-only-download",
+            contentVersion = null,
+            tutorialReady = false,
+            tutorialTrack = ""
+        )
+        val updater = FakeContentUpdateExecutor()
+        val toasts = mutableListOf<String>()
+        val coordinator = coordinator(updater = updater, onToast = { toasts += it })
+
+        coordinator.startDownload(rulesOnly)
+
+        assertTrue(updater.calls.isEmpty())
+        assertFalse(coordinator.hasActiveDownload())
+        assertTrue(toasts.single().contains(rulesOnly.nameZh))
+    }
+
+    @Test
     fun clickingAnotherGameWhileDownloadingOnlyShowsToast() {
         val first = game("first", contentVersion = "v1")
         val second = game("second", contentVersion = "v1")
@@ -360,6 +406,7 @@ class HomeContentCoordinatorTest {
         scheduler: HomeContentScheduler = DirectHomeContentScheduler(),
         onEnterGame: (GameCatalogEntry) -> Unit = {},
         onToast: (String) -> Unit = {},
+        onOpenRulesQa: (GameCatalogEntry) -> Unit = {},
         selectedGameIdProvider: () -> String? = { null },
         onSelectedGameUnavailable: () -> Unit = {}
     ): HomeContentCoordinator =
@@ -371,12 +418,19 @@ class HomeContentCoordinatorTest {
             scheduler = scheduler,
             onEnterGame = onEnterGame,
             onToast = onToast,
+            onOpenRulesQa = onOpenRulesQa,
             log = { _, _ -> },
             selectedGameIdProvider = selectedGameIdProvider,
             onSelectedGameUnavailable = onSelectedGameUnavailable
         )
 
-    private fun game(id: String, contentVersion: String? = "v1"): GameCatalogEntry =
+    private fun game(
+        id: String,
+        contentVersion: String? = "v1",
+        tutorialReady: Boolean = true,
+        rulesReady: Boolean = true,
+        tutorialTrack: String = "full"
+    ): GameCatalogEntry =
         GameCatalogEntry(
             id = id,
             released = true,
@@ -386,8 +440,15 @@ class HomeContentCoordinatorTest {
             searchKeys = emptyList(),
             minPlayers = 1,
             maxPlayers = 4,
-            tutorialTrack = "full",
-            contentVersion = contentVersion
+            tutorialTrack = tutorialTrack,
+            contentVersion = contentVersion,
+            rulesReady = rulesReady,
+            tutorialReady = tutorialReady,
+            tutorialTracks = if (tutorialReady && tutorialTrack.isNotBlank()) {
+                listOf(tutorialTrack)
+            } else {
+                emptyList()
+            }
         )
 
     private fun active(gameId: String, version: String): ActiveContent =

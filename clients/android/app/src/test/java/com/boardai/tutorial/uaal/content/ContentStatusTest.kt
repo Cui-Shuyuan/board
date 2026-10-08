@@ -12,6 +12,35 @@ import java.io.File
 class ContentStatusTest {
 
     @Test
+    fun rulesOnlyGameDoesNotResolveDownloadOrInstalledTutorialStatus() {
+        val source = FakeContentStatusSource()
+
+        assertEquals(
+            ContentStatus.RulesOnly,
+            resolveContentStatus(
+                game(contentVersion = null, tutorialReady = false, tutorialTrack = ""),
+                source
+            )
+        )
+    }
+
+    @Test
+    fun rulesOnlyGameWithCompleteLocalContentStillRulesOnly() {
+        val source = FakeContentStatusSource(
+            activeVersion = "v1",
+            completeVersions = setOf("v1")
+        )
+
+        assertEquals(
+            ContentStatus.RulesOnly,
+            resolveContentStatus(
+                game(contentVersion = "v1", tutorialReady = false, tutorialTrack = ""),
+                source
+            )
+        )
+    }
+
+    @Test
     fun noServerVersionWithCompleteLocalContentIsInstalledOffline() {
         val source = FakeContentStatusSource(
             activeVersion = "v1",
@@ -136,7 +165,12 @@ class ContentStatusTest {
         )
     }
 
-    private fun game(contentVersion: String?): GameCatalogEntry =
+    private fun game(
+        contentVersion: String?,
+        tutorialReady: Boolean = true,
+        rulesReady: Boolean = true,
+        tutorialTrack: String = "full"
+    ): GameCatalogEntry =
         GameCatalogEntry(
             id = GAME_ID,
             released = true,
@@ -146,8 +180,15 @@ class ContentStatusTest {
             searchKeys = emptyList(),
             minPlayers = 1,
             maxPlayers = 4,
-            tutorialTrack = "full",
-            contentVersion = contentVersion
+            tutorialTrack = tutorialTrack,
+            contentVersion = contentVersion,
+            rulesReady = rulesReady,
+            tutorialReady = tutorialReady,
+            tutorialTracks = if (tutorialReady && tutorialTrack.isNotBlank()) {
+                listOf(tutorialTrack)
+            } else {
+                emptyList()
+            }
         )
 
     private fun paused(version: String): PausedContent =

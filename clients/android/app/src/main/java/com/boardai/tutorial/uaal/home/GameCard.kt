@@ -138,5 +138,6 @@ private fun statusTextColor(statusText: String): Color = when {
     statusText == "已是最新" || statusText == "已安装" -> Color(0xFF9AD29A)
     statusText.startsWith("可更新") -> Color(0xFFFFB86B)
     statusText == "暂无资源" -> Color(0xFF98A2B3)
+    statusText == "仅规则问答" -> Color(0xFFB7C4D8)
     else -> Color(0xFF8AB4F8)
 }

@@ -318,9 +318,12 @@ python3 tools/content/build_content_manifest.py --game splendor
 
 ```text
 content/manifests/splendor.json
+content/releases/splendor/{version}/...
 ```
 
-manifest 记录每个可运行文件的 `path / size / sha256 / url`；`version` 只由内容决定，文件不变则版本不变。生成物不入 Git。
+builder 只收集 Unity/Android 真正运行依赖：`tutorial/{track}.runtime.json`、`tutorial/anim/v2/{track}.compiled.json`，以及 JSON 中实际引用的音频/图片等媒体。QA 日志、`.pyc`、动画源、stage 源、文档、脚本、`.lrc` 均不进入 package，也不会影响 `version`。`version` 只由 package 内 `path + sha256` 决定。生成物不入 Git。
+
+发布采用 `{version}.tmp` 暂存、逐文件 size/sha256 校验、原子 rename，然后 manifest 也通过 `.tmp + atomic rename` 切换。已存在的同 version release 字节不一致时明确失败，永不覆盖；服务端保留当前 + 最近 2 个历史 release。
 
 ### 后端接口
 
@@ -330,7 +333,9 @@ GET /api/content/games/{game}/files/{version}/{**filePath}
 GET /api/content/games/{game}/files/{**filePath}   # 无版本兼容 URL
 ```
 
-后端从 `content/manifests/{game}.json` 和 `content/games/{game}/...` 实时读取，不经过 Qdrant，manifest 文件变化无需重启 API。manifest 里的文件 URL 已升级为 versioned URL，成功响应返回 `Cache-Control: public, max-age=31536000, immutable` + 基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；version 过期返回 `409 Conflict`，客户端会重新拉 manifest。无版本 URL 走兼容路径，返回 `no-cache, must-revalidate`。
+后端 manifest 仍从 `content/manifests/{game}.json` 实时读取，不经过 Qdrant；versioned URL 从 `content/releases/{game}/{version}/` 读取，缺文件直接 404，不回退到可修改的 `content/games`。成功响应返回 `Cache-Control: public, max-age=31536000, immutable` + 基于 `Length + LastWriteTimeUtc.Ticks` 的 `ETag`，支持 `If-None-Match` 304；version 过期或不是当前 manifest 时返回 `409 Conflict`。无版本 URL 才走 `content/games` 兼容路径，返回 `no-cache, must-revalidate`。
+
+catalog 额外返回 `rules_ready` / `tutorial_ready` / `tutorial_tracks`。Android 首页据此处理：`tutorial_ready=false` 且 `rules_ready=true` 的游戏显示“仅规则问答”，点击直接打开问答面板，不显示下载/更新/教程播放入口；`tutorial_track` 只保留为旧缓存兼容字段。
 
 ### Android 本地仓库
 

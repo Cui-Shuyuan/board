@@ -7,7 +7,7 @@ metadata:
 
 # 项目审查待办（2026-10-08）
 
-状态：以下条目均未实现。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
+状态：REV-01 / REV-02 / REV-04 / REV-05 已完成；REV-03、REV-06、REV-07、REV-08 未实现。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
 
 ## 审查基线与范围
 
@@ -51,14 +51,23 @@ metadata:
 - 验收：只改动作也触发校验；内置 QA 被执行；缺失/失效问题明确失败；含 ERROR 的规则校验退出非零，仅 warning 仍可通过；新增回归进入统一检查入口。
 - 实施记录（2026-10-08）：已实现统一 QA 合并/失效检测/按 cue 变更选门禁，`validate_rules --errors-only` 已 fail closed；新增 mock 回归覆盖上述路径。真实 Board API 定向 6/6 通过；全量 43 问在不同轮次会因 `setup.gems.004`（教学临时摆 7 颗后收回）或 `action.nobles.repeat.001.1`（多贵族时序）出现 1 条可疑回答，留作 QA 文案复核，未当作代码回归。
 
-### [ ] REV-05 固定内容发布版本并收紧打包范围（已确认设计缺口）
+### [x] REV-05 固定内容发布版本并收紧打包范围（已确认设计缺口）
 
 - 证据：ContentController 的版本 URL 校验当前 manifest 后，读取可修改的 content/games/{game}，却声明一年 immutable。修改文件而未发布 manifest 时，同版本 URL 可能返回不同字节。
 - 证据：build_content_manifest.content_files 递归打包整个游戏目录；本次枚举 370 个文件，包含 50 个 QA 文件和 1 个 Python 字节码文件，非运行数据会改变内容版本。
-- 修改：按运行依赖白名单收集文件，排除 QA、文档、脚本、字节码及临时目录；生成不可变发布目录，完成校验后切换当前 manifest/指针；明确旧版本下载与回滚保留策略。
-- 修改：catalog 分开声明规则问答/教程及可用 track 的能力；其余游戏只有规则时，不显示可播放教程，不以单补 manifest 作为教程就绪。
-- 验收：写 QA 日志或生成字节码不改变内容版本；同版本 URL 字节始终一致；发布中途失败保留旧内容；旧版本下载/恢复行为与策略一致；规则独立游戏可问答且无无效播放入口。
-
+- 修改：`build_content_manifest.py` 改为显式 runtime dependency collector：`tutorial/{track}.runtime.json`、`tutorial/anim/v2/{track}.compiled.json`，以及两份 JSON 中实际引用的音频/图片/字幕；缺引用或引用到排除路径时 fail closed。明确排除 `_qa/**`、`checks/**`、`animation/**`、`*.md`、`*.py`、`*.pyc`、`__pycache__/**`、`*.lrc`、`*.tmp`、`*.log`、`*.exitstate.json`、`*.v2sample.json`、未引用媒体等。version 只由 package 内 `path + sha256` 决定。
+- 修改：发布新增不可变目录 `content/releases/{game}/{version}/`。流程为计算 version → 写 `{version}.tmp` → 校验每个文件存在/size/sha256 → 原子 rename → 校验 release 与 manifest 一致 → manifest `.tmp + atomic rename` 切换。同 version 已存在但字节不一致时明确失败，不覆盖。清理策略为当前 + 最近 2 个历史 release；回滚可通过恢复旧源文件后重跑 builder 复用已校验 release。
+- 修改：`ContentController` versioned route 只从 `content/releases/{game}/{version}` 读取，缺文件直接 404，不回退 mutable `content/games`；旧 `/files/{**filePath}` 兼容路由保留并从 `content/games` 实时读取、返回 no-cache，不参与 immutable 承诺。
+- 修改：catalog/manifest/Android 增加 `rules_ready` / `tutorial_ready` / `tutorial_tracks`；Android 规则-only 游戏显示“仅规则问答”，点击直接打开问答面板，不显示教程下载/更新/播放入口。旧缓存仍按 `tutorial_track` 兼容推断。
+- 实施记录（2026-10-08）：
+  - Splendor 实际清点从旧 366 files / 133,132,243 bytes 降为 133 files / 85,824,919 bytes；package 为 83 个 TTS mp3、46 个 card 运行图、`media/box.png`、`media/marker/...clean_cutout.png`、`tutorial/full.runtime.json`、`tutorial/anim/v2/full.compiled.json`。旧包中 QA 日志、`checks/ledger.py`/`.pyc`、anim 源/stage/schema/sample、README/guide、`.lrc`、未引用 raw 扫描图等均被排除。
+  - 实际 release `content/releases/splendor/1964d531eedcae5f/` 133 files；重复发布同 version 幂等复用，校验通过。
+- 验收记录（2026-10-08）：
+  - Python：`python3 -m unittest discover -s animation -p 'test_*.py'` 99 tests，0 failures；新增 7 条 builder 回归覆盖 QA/pyc/文档不改 version、runtime 改动改 version、只含白名单、发布失败保留旧 manifest/release、重复同 version 不同内容失败。
+  - C#：`dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 89 tests，0 failures；新增 ContentController 5 条（release 200+immutable、source 修改仍回 release 旧字节、version mismatch 409、缺文件 404、release 目录缺失不回退）和 CatalogController 2 条（规则-only 不暴露下载元数据、旧 `tutorial_track` 兼容推断）。
+  - Android：`gradlew.bat testDebugUnitTest` 73 tests，0 failures；新增 rules-only 状态/点击不进教程、直接打开问答、禁止下载等回归。
+  - Python：`python3 tools/content/validate_rules.py --errors-only` 0 errors / 72 warnings；`git diff --check` 通过。
+  - 未执行：真实 Android 设备/界面验收；规则-only 首页直接问答已由 JVM 状态层覆盖，但未做真机端到端。
 ### [ ] REV-06 隔离新旧问答会话及 ASR 结果（已确认竞态路径）
 
 - 证据：QaPanel 在请求期间允许新建会话，旧请求返回后直接向当前 QaSessionHolder 追加；QaVoiceController 的 ASR 无会话代际检查。TTS 已有 generation，可作为实现参考。

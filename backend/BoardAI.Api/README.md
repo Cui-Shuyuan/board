@@ -131,8 +131,14 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 ```
 
 - `manifest` 与旧文件 URL 返回 `Cache-Control: no-cache, must-revalidate` + ETag，支持 `If-None-Match` 304。
-- `files/{version}/...` 是 versioned URL：version 必须与当前 manifest.version 一致，否则返回 `409 Conflict` 并提示重新拉 manifest。成功返回 `Cache-Control: public, max-age=31536000, immutable` + ETag，可长期缓存/接 CDN。
-- 旧 `/files/{**filePath}` 路由保留给旧客户端兼容，继续使用 `no-cache, must-revalidate`，后续版本可删除。
+- `files/{version}/...` 是 versioned URL：version 必须与当前 manifest.version 一致，否则返回 `409 Conflict` 并提示重新拉 manifest。文件从 `content/releases/{game}/{version}/` 不可变目录读取，缺文件返回 404，绝不回退到可修改的 `content/games/{game}`。成功返回 `Cache-Control: public, max-age=31536000, immutable` + ETag，可长期缓存/接 CDN。
+- 旧 `/files/{**filePath}` 路由保留给旧客户端兼容，仍从 `content/games` 实时读取，继续使用 `no-cache, must-revalidate`，不提供不可变承诺，后续版本可删除。
+
+`GET /api/catalog/games` 在 catalog JSON 基础上补齐能力字段：
+
+- `rules_ready` / `tutorial_ready`：规则问答与教程是否可用；
+- `tutorial_tracks`：可播放 track 列表（例如 `["full"]`）；
+- 旧字段 `tutorial_track` 仅作兼容；只有 `rules_ready=true` 且 `tutorial_ready=false` 的规则-only 游戏不会暴露教程下载元数据。
 
 ## 项目结构
 

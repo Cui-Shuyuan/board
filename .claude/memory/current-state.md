@@ -34,7 +34,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - **规则文件 freshness**：`RulesDocumentStore` 按文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务；`ClearDerivedCaches()` 会清名称索引、Plan 类型缓存、Flow 位置缓存、Fact score 缓存；语义检索仍需要重建 Qdrant 索引（`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all` 或 `python tools/indexing/rebuild_index.py ...`）。
 - **Android 客户端**：已有 Unity as a Library（UaaL）原生 Android 壳、Kotlin + Jetpack Compose 控制层、首页游戏目录/搜索/历史/资源管理、manifest → 本地内容仓库 → 增量下载/断点续传 v1、教程播放器 Compose 控制层与 Unity 状态回传、问答面板、按住说话 PTT、ASR、回答 TTS、自动播放/重播/继续播放。已有 7 个 Android JVM 测试文件（ContentStatusTest、ContentUpdaterTest、HomeContentCoordinatorTest、PlayerSessionControllerTest、PlayerTimelineBarTest、UnityLoadQueueTest、QaVoiceControllerTest）；真机结论只保留已有记录部分，完整范围待复测。
 - **语音链路**：后端运行时走 Python 短进程桥 `tools/voice/asr_once.py` / `tools/voice/tts_once.py`，对外接口 `POST /api/asr/once`、`POST /api/tts`；默认 TTS provider 是 `standard`（豆包标准语音合成小模型 v1），`--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 可切回旧 2.0；standard 路径没有字级 subtitle，旧 seed2 路径有；已存在 Splendor full 音频 manifest 来源为 seed2（`zh_female_vv_uranus_bigtts` / `seed-tts-2.0`）。Android 不直接接触火山凭证，密钥只在仓库根 `.env`（git-ignored）。
-- **Catalog / Manifest**：`content/catalog/splendor.json` 已入 Git；`content/manifests/splendor.json` 为生成物、不入 Git（已由 `.gitignore` 排除），当前只有 Splendor 一套。`/api/catalog/games` 是 Android 首页来源，`/api/content/games/{game}/manifest` 和 `/api/content/games/{game}/files/...` 提供 manifest 拉取与内容文件。
+- **Catalog / Manifest**：`content/catalog/splendor.json` 已入 Git，并显式声明 `rules_ready=true` / `tutorial_ready=true` / `tutorial_tracks=["full"]`；`content/manifests/splendor.json` 与 `content/releases/splendor/{version}/` 为生成物、不入 Git，当前只有 Splendor 一套。manifest builder 已改为 runtime-only 白名单（runtime/compiled + 实际引用媒体；排除 QA/文档/脚本/pyc/lrc/动画源），version 只由 package 内 `path + sha256` 决定；发布使用 `{version}.tmp` + 逐文件校验 + 原子 rename，versioned URL 只从 release 读取，缺文件 404，不回退到 mutable source。catalog 能力字段已贯通后端与 Android：规则-only 游戏显示“仅规则问答”并直接进入问答，不显示教程下载/播放入口。
 - **动画 full**：Splendor full 83 cue（cue id 已语义化），当前 388 个 `time_anchors`，已全量迁移并 commit（`38971d4`）；早期样卡/桌面可见性问题已按 tree/stage 机制修正（`7ad18e5`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
 - **发展卡身份保真（方案 B）**：Splendor 28 个独立 face-up 发展卡卡位各有一张真卡模板/扫描件；`content/games/splendor/card_registry.json` 是真卡身份表，`check_card_identity_v2.py` 检查任一 state 内不出现两张同一真卡（当前 569 个中间状态 0 error）。Android 真机此前已验证 83 cue 内容可下载并正常播放；合并后的终局说明同时展示玩家 A/B 双方发展区与贵族。
 
@@ -48,7 +48,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
    - 需要从头到尾重新过一遍 Splendor full 83 cue：真实播放/真机观看，逐段确认画面、卡面、镜头、字幕和口播仍然一致。
    - 重点：`action.cards.*` / `action.nobles.*` / `action.reserve.*` / `action.purchase_reserved.001` 的市场与玩家发展区卡面是否都是对应真卡、无重复；贵族放大镜 demo（`action.nobles.choice.001.1`、`action.nobles.repeat.001.1`）；`setup.gems.003.2` / `setup.gems.004` 演示后 `setup.gems.005.1` 的宝石数量复位；`endgame.example.001.1` 的终局说明是否同时展示 A/B 双方发展区与贵族。
    - 产出逐 cue 问题清单；能当场改的改，需要用户裁决的记录待办。
-2. **其余 8 款游戏 catalog / manifest**：补 `content/catalog/{game}.json` 与 `content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已有 v1。
+2. **其余游戏目录与能力声明**：能力字段与 Android rules-only 路径已就绪；后续补 catalog 时必须逐游戏显式声明 `rules_ready` / `tutorial_ready` / `tutorial_tracks`，补 manifest 不等于教程可播放。目前仅 Splendor 有 runtime，实际条目仍待补。完整第二款游戏的交付优先级见 project-review-todo。
 3. **Android 真机端到端验收**：验证 PTT → ASR → 提问 → 回答 TTS → 回到动画/继续播放的完整链路，以及打断后回跳重播。
 4. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
    - 已知 `compile_tutorial --dry-run` 在 WSL 下误报 57 条文本变化，属于 manifest 路径分隔符 bug；优先按 [animation-refactor-todo.md](animation-refactor-todo.md) 的 P0-1 修复。
@@ -68,7 +68,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - Splendor 真卡身份与合并 cue TTS 已收口（`check_card_identity_v2` 0 error），但**还没有从头到尾重新逐 cue 过一遍动画**；画面观感待本轮重审。
 - Unity 视觉验收此前被用户主动跳过；观感仍靠截图迭代，正式视觉验收未闭环。
 - Android UaaL 与 Compose 代码已有；完整真机范围（店内平板规模、PTT → 回答 → 回到动画、打断后回跳重播）待复测，不能写成已验收。
-- 仅 Splendor 有 catalog / manifest；其余 8 款待补。
+- 仅 Splendor 有 catalog / manifest；其余 8 款待补。能力模型已支持规则-only，不得再默认 `tutorial_track="full"`，补 catalog 条目也不等于教程可播放。
 - 语义检索仍需重建 Qdrant 索引；规则文件本身由 `RulesDocumentStore` 自动刷新，无需重新启动 API 服务。
 - 动画 Quick 版未开始；真实增量 TTS、cue_graph 总控接入、编辑回归自动化仍待完成。
 

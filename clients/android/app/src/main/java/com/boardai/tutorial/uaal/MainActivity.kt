@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.catalog.GameCatalogRepository
 import com.boardai.tutorial.uaal.content.ContentStore
 import com.boardai.tutorial.uaal.content.ContentUpdateStatus
@@ -38,6 +39,7 @@ import com.boardai.tutorial.uaal.home.ResourceManagerOverlay
 import com.boardai.tutorial.uaal.player.DefaultLocalContentLoader
 import com.boardai.tutorial.uaal.player.PlayerSessionController
 import com.boardai.tutorial.uaal.player.TutorialPlayerOverlay
+import com.boardai.tutorial.uaal.qa.QaPanel
 import com.boardai.tutorial.uaal.qa.QaSessionHolder
 import com.boardai.tutorial.uaal.qa.QaRepository
 import com.boardai.tutorial.uaal.qa.buildQaContext
@@ -70,6 +72,7 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private val searchQuery = mutableStateOf("")
     private val qaOpen = mutableStateOf(false)
+    private val rulesQaGame = mutableStateOf<GameCatalogEntry?>(null)
     private val debugOverlayEnabled = mutableStateOf(BuildConfig.DEBUG)
 
     private var qaWasPlayingBeforeQuestion = false
@@ -100,6 +103,10 @@ class MainActivity : UnityPlayerGameActivity() {
                 playerSession.enterGame(game)
             },
             onToast = { message -> showToast(message) },
+            onOpenRulesQa = { game ->
+                rulesQaGame.value = game
+                QaSessionHolder.ensureSession(buildQaContext(game, null, null))
+            },
             log = { message, throwable ->
                 if (throwable == null) {
                     Log.w(TAG, message)
@@ -212,6 +219,10 @@ class MainActivity : UnityPlayerGameActivity() {
     private fun handleBackRequest(): Boolean {
         val homeState = homeContent.state.value
         return when {
+            rulesQaGame.value != null -> {
+                closeRulesQa()
+                true
+            }
             qaOpen.value -> {
                 closeQa()
                 true
@@ -291,6 +302,7 @@ class MainActivity : UnityPlayerGameActivity() {
                         val timeline = playerState.timeline
                         val selected = playerState.selectedGame
                         val showPlayer = selected != null && playerState.playerActive
+                        val rulesQa = rulesQaGame.value
 
                         val keepScreenOn = shouldKeepScreenOn()
                         LaunchedEffect(keepScreenOn) {
@@ -371,6 +383,22 @@ class MainActivity : UnityPlayerGameActivity() {
                                 onOpenResourceManager = {
                                     homeContent.openResourceManager()
                                 }
+                            )
+                        }
+
+                        if (!showPlayer && rulesQa != null) {
+                            QaPanel(
+                                game = rulesQa,
+                                status = null,
+                                timeline = null,
+                                repository = qaRepository,
+                                asrRepository = asrRepository,
+                                ttsRepository = ttsRepository,
+                                hasRecordPermission = { hasRecordPermission() },
+                                requestRecordPermission = { callback ->
+                                    requestRecordPermission(callback)
+                                },
+                                onClose = { closeRulesQa() }
                             )
                         }
 
@@ -503,9 +531,15 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private fun clearQaState() {
         qaOpen.value = false
+        rulesQaGame.value = null
         qaWasPlayingBeforeQuestion = false
         qaResumeCueId = null
         qaResumePositionInCue = 0f
+        QaSessionHolder.clear()
+    }
+
+    private fun closeRulesQa() {
+        rulesQaGame.value = null
         QaSessionHolder.clear()
     }
 

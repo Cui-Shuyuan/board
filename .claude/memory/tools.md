@@ -232,10 +232,15 @@ python3 animation/cue_graph_v2.py --help
 
 ## 10. Content / Catalog / Manifest
 
-- `content/catalog/{game}.json`：Android 首页游戏目录来源，当前只有 `content/catalog/splendor.json`，且已入 Git。
-- `content/manifests/{game}.json`：内容文件清单与版本；当前只有生成的 `content/manifests/splendor.json`，在 `.gitignore` 中，不入 Git。
-- `tools/content/build_content_manifest.py --game splendor`：构建 manifest。
-- 内容更新接口为 `/api/content/games/{game}/manifest` 与 `/api/content/games/{game}/files/...`，无需重新启动 API 服务。
+- `content/catalog/{game}.json`：Android 首页游戏目录来源，当前只有 `content/catalog/splendor.json`，且已入 Git。条目显式声明：
+  - `rules_ready`：有可问答规则数据；
+  - `tutorial_ready`：有完整教程 runtime 包（补 manifest 不等于教程就绪）；
+  - `tutorial_tracks`：可播放 track 列表，无教程则为空；
+  - `tutorial_track` 仅作为旧客户端/旧缓存兼容字段。
+- `content/manifests/{game}.json`：当前 runtime-only package 清单与版本；生成物，不入 Git。
+- `content/releases/{game}/{version}/`：不可变发布目录。构建入口 `python3 tools/content/build_content_manifest.py --game splendor` 只收集 `tutorial/{track}.runtime.json`、`tutorial/anim/v2/{track}.compiled.json` 及其实际引用的媒体；排除 `_qa/**`、`checks/**`、`animation/**`、`*.md`、`*.py`、`*.pyc`、`__pycache__/**`、`*.lrc`、`*.tmp`、`*.log`、`*.exitstate.json`、`*.v2sample.json` 等非运行数据。
+- version 只由 package 内 `path + sha256` 决定；QA 日志、pyc、文档、动画源变化不改变 version。发布通过 `{version}.tmp` 暂存、size/sha256 校验、原子 rename；manifest 再用 `.tmp + atomic rename` 切换。同 version 已存在但内容不一致时失败，不覆盖；保留当前 + 最近 2 个历史 release。
+- 内容更新接口为 `/api/content/games/{game}/manifest` 与 `/api/content/games/{game}/files/...`，无需重新启动 API 服务。versioned URL 从 release 目录读取且缺文件 404；无版本 `/files/...` 才继续从 `content/games` 读并返回 no-cache。
 
 ## 11. 工作区同步与 Unity
 

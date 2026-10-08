@@ -9,6 +9,8 @@ class DefaultLocalContentLoader(
     private val contentStore: ContentStore
 ) : LocalContentLoader {
     override fun load(game: GameCatalogEntry): LoadedLocalContent? {
+        if (!game.tutorialReady || game.tutorialTrack.isBlank()) return null
+
         val active = contentStore.readActiveValid(game.id) ?: return null
         val gameRoot = contentStore.gameRoot(active.version, game.id)
         if (!gameRoot.isDirectory) return null

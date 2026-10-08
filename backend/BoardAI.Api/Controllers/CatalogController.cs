@@ -70,6 +70,7 @@ public class CatalogController : ControllerBase
 
                 game.Aliases ??= new List<string>();
                 game.SearchKeys ??= new List<string>();
+                NormalizeCapabilities(game);
                 PopulateContentInfo(game);
                 games.Add(game);
             }
@@ -93,12 +94,64 @@ public class CatalogController : ControllerBase
     }
 
     /// <summary>
+    /// Normalizes the rules/tutorial capability declaration.
+    ///
+    /// New catalog entries carry explicit rules_ready/tutorial_ready/
+    /// tutorial_tracks.  Legacy entries that only have tutorial_track are
+    /// treated as tutorial-ready so existing Splendor caches keep working.
+    /// A rules-only game must not inherit tutorial_track="full".
+    /// </summary>
+    private static void NormalizeCapabilities(CatalogGame game)
+    {
+        var rawTracks = new List<string>();
+        if (game.TutorialTracks != null)
+            rawTracks.AddRange(game.TutorialTracks);
+        if (!string.IsNullOrWhiteSpace(game.TutorialTrack))
+            rawTracks.Add(game.TutorialTrack);
+
+        var tracks = rawTracks
+            .Select(track => track.Trim())
+            .Where(track => !string.IsNullOrWhiteSpace(track) && SafeGameId.IsMatch(track))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        // Explicit false wins.  Legacy entries without tutorial_ready infer
+        // readiness from a non-empty tutorial_track.
+        game.TutorialReady ??= tracks.Count > 0;
+        if (game.TutorialReady != true)
+        {
+            game.TutorialReady = false;
+            tracks.Clear();
+        }
+        else if (tracks.Count == 0)
+        {
+            game.TutorialReady = false;
+        }
+
+        game.RulesReady ??= true; // Existing catalog games are rule-capable.
+
+        game.TutorialTracks = tracks;
+        game.TutorialTrack = game.TutorialReady == true
+            ? tracks.FirstOrDefault()
+            : null;
+    }
+
+    /// <summary>
     /// Reads content/manifests/{gameId}.json on every request and exposes the
     /// version, total byte size and file count.  A missing/invalid manifest
     /// leaves the three fields null and never fails the whole catalog.
+    ///
+    /// Content metadata is only exposed for tutorial-capable packages; a
+    /// rules-only game may have no runtime manifest at all, and adding an
+    /// unrelated/empty manifest must not create a downloadable tutorial.
     /// </summary>
     private void PopulateContentInfo(CatalogGame game)
     {
+        if (game.TutorialReady != true)
+        {
+            return;
+        }
+
         var manifestPath = Path.Combine(
             _contentRoot, "content", "manifests", $"{game.Id}.json");
 
@@ -168,6 +221,11 @@ public class CatalogController : ControllerBase
                 totalBytes = checked(totalBytes + size);
             }
 
+            if (game.TutorialReady != true || fileCount == 0)
+            {
+                return;
+            }
+
             game.ContentVersion = version.ToLowerInvariant();
             game.ContentSizeBytes = totalBytes;
             game.ContentFileCount = fileCount;
@@ -224,8 +282,17 @@ public class CatalogController : ControllerBase
         [JsonPropertyName("max_players")]
         public int MaxPlayers { get; set; }
 
+        [JsonPropertyName("rules_ready")]
+        public bool? RulesReady { get; set; }
+
+        [JsonPropertyName("tutorial_ready")]
+        public bool? TutorialReady { get; set; }
+
+        [JsonPropertyName("tutorial_tracks")]
+        public List<string>? TutorialTracks { get; set; }
+
         [JsonPropertyName("tutorial_track")]
-        public string TutorialTrack { get; set; } = "full";
+        public string? TutorialTrack { get; set; }
 
         [JsonPropertyName("content_version")]
         public string? ContentVersion { get; set; }

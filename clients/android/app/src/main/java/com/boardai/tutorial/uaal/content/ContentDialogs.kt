@@ -64,6 +64,7 @@ fun GameContentPromptDialog(
 
     val message = when (val status = state.status) {
         ContentStatus.NoServerResource -> "暂无教程资源"
+        ContentStatus.RulesOnly -> "该游戏当前仅支持规则问答，教程尚未提供。"
         ContentStatus.NotDownloaded -> buildString {
             append("《${game.nameZh}》需要下载")
             if (sizeText != null) append("约 $sizeText")
@@ -86,6 +87,12 @@ fun GameContentPromptDialog(
         ) {
             when (state.status) {
                 ContentStatus.NoServerResource -> {
+                    Button(onClick = { onAction(GamePromptAction.CANCEL) }) {
+                        Text("知道了")
+                    }
+                }
+
+                ContentStatus.RulesOnly -> {
                     Button(onClick = { onAction(GamePromptAction.CANCEL) }) {
                         Text("知道了")
                     }

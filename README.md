@@ -36,8 +36,11 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
    - 当前已有 9 款游戏规则数据；Splendor 是 Runtime 与动画首个试点。
 
 3. **内容分发**
-   - catalog + manifest 驱动 Android 首页、内容下载、增量更新、断点续传。
+   - catalog + runtime-only manifest 驱动 Android 首页、内容下载、增量更新、断点续传。
+   - `tools/content/build_content_manifest.py` 只按 Unity/Android 运行依赖白名单打包，不包含 QA 日志、动画源、文档、脚本、`.pyc`、`.lrc` 等非运行文件；version 只由 package 内 `path + sha256` 决定。
+   - manifest 指向 `content/releases/{game}/{version}/` 不可变发布目录；已发布的同 version URL 永不改变字节。
    - 后端只读提供 `/api/catalog/games`、`/api/content/games/{game}/manifest` 与版本化文件接口。
+   - catalog 显式声明 `rules_ready` / `tutorial_ready` / `tutorial_tracks`；规则-only 游戏不提供教程下载/播放入口，但可从首页直接进入规则问答。
 
 4. **讲规动画**
    - 口播稿主导，TTS 冻结后再编译动画时间轴。
@@ -99,6 +102,7 @@ content/
   games/{game}/           每款游戏规则、流程、素材、教程、动画
   catalog/{game}.json     Android 首页游戏目录（当前仅 Splendor）
   manifests/{game}.json   内容同步生成物，不入 Git
+  releases/{game}/{ver}/  runtime-only 不可变内容发布目录，不入 Git
 animation/                动画生产链工具（schema / 编译 / time anchors / TTS / QA）
 tools/
   content/                规则校验、内容 manifest 生成

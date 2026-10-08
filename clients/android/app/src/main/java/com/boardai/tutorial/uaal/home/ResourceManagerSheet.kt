@@ -225,6 +225,7 @@ private fun ResourceManagerRow(
                     }
 
                     ContentStatus.NoServerResource,
+                    ContentStatus.RulesOnly,
                     is ContentStatus.InstalledOffline,
                     is ContentStatus.InstalledCurrent -> Unit
                 }
@@ -264,5 +265,6 @@ private fun statusColor(status: ContentStatus): Color = when (status) {
     is ContentStatus.InstalledCurrent,
     is ContentStatus.InstalledOffline -> Color(0xFF9AD29A)
     ContentStatus.NoServerResource -> Color(0xFF98A2B3)
+    ContentStatus.RulesOnly -> Color(0xFFB7C4D8)
     ContentStatus.NotDownloaded -> Color(0xFF8AB4F8)
 }

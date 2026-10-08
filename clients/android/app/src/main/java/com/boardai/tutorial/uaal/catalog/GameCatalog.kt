@@ -22,7 +22,11 @@ data class GameCatalogEntry(
     val tutorialTrack: String,
     val contentVersion: String? = null,
     val contentSizeBytes: Long? = null,
-    val contentFileCount: Int? = null
+    val contentFileCount: Int? = null,
+    val rulesReady: Boolean = true,
+    val tutorialReady: Boolean = tutorialTrack.isNotBlank(),
+    val tutorialTracks: List<String> =
+        if (tutorialTrack.isNotBlank()) listOf(tutorialTrack) else emptyList()
 ) {
     fun toJson(): JSONObject {
         val json = JSONObject()
@@ -34,7 +38,12 @@ data class GameCatalogEntry(
             .put("search_keys", JSONArray(searchKeys))
             .put("min_players", minPlayers)
             .put("max_players", maxPlayers)
-            .put("tutorial_track", tutorialTrack)
+            .put("rules_ready", rulesReady)
+            .put("tutorial_ready", tutorialReady)
+            .put("tutorial_tracks", JSONArray(tutorialTracks))
+        if (tutorialReady && tutorialTrack.isNotBlank()) {
+            json.put("tutorial_track", tutorialTrack)
+        }
         contentVersion?.let { json.put("content_version", it) }
         contentSizeBytes?.let { json.put("content_size_bytes", it) }
         contentFileCount?.let { json.put("content_file_count", it) }
@@ -48,6 +57,32 @@ data class GameCatalogEntry(
 
             val aliases = json.optJSONArray("aliases").toStringList()
             val searchKeys = json.optJSONArray("search_keys").toStringList()
+
+            val hasExplicitTracks = json.has("tutorial_tracks")
+            val explicitTracks = if (hasExplicitTracks) {
+                json.optJSONArray("tutorial_tracks").toStringList()
+            } else {
+                emptyList()
+            }
+            val legacyTrack = json.optString("tutorial_track", "").trim()
+            val rawTracks = if (hasExplicitTracks) {
+                explicitTracks
+            } else if (legacyTrack.isNotBlank()) {
+                listOf(legacyTrack)
+            } else {
+                emptyList()
+            }
+            val tutorialReady = if (json.has("tutorial_ready")) {
+                json.optBoolean("tutorial_ready", false)
+            } else {
+                rawTracks.isNotEmpty()
+            }
+            val tutorialTracks = if (tutorialReady) rawTracks else emptyList()
+            val rulesReady = if (json.has("rules_ready")) {
+                json.optBoolean("rules_ready", true)
+            } else {
+                true
+            }
 
             val contentVersion = if (json.has("content_version") && !json.isNull("content_version")) {
                 json.optString("content_version", "").trim().takeIf { it.isNotBlank() }
@@ -74,12 +109,13 @@ data class GameCatalogEntry(
                 searchKeys = searchKeys,
                 minPlayers = json.optInt("min_players", 0).coerceAtLeast(0),
                 maxPlayers = json.optInt("max_players", 0).coerceAtLeast(0),
-                tutorialTrack = json.optString("tutorial_track", "full")
-                    .trim()
-                    .ifBlank { "full" },
+                tutorialTrack = tutorialTracks.firstOrNull().orEmpty(),
                 contentVersion = contentVersion,
                 contentSizeBytes = contentSizeBytes,
-                contentFileCount = contentFileCount
+                contentFileCount = contentFileCount,
+                rulesReady = rulesReady,
+                tutorialReady = tutorialReady && tutorialTracks.isNotEmpty(),
+                tutorialTracks = tutorialTracks
             )
         }
     }

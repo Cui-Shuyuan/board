@@ -36,6 +36,7 @@ class HomeContentCoordinator(
     private val onEnterGame: (GameCatalogEntry) -> Unit,
     private val onToast: (String) -> Unit,
     private val log: (String, Throwable?) -> Unit,
+    private val onOpenRulesQa: (GameCatalogEntry) -> Unit = {},
     private val selectedGameIdProvider: () -> String? = { null },
     private val onSelectedGameUnavailable: () -> Unit = {},
     private val onBeforeDownload: () -> Unit = {},
@@ -144,6 +145,14 @@ class HomeContentCoordinator(
 
         val status = resolveContentStatus(game, contentStore)
         updateState { it.copy(contentStatuses = it.contentStatuses + (game.id to status)) }
+
+        // Rules-only games open the question panel directly.  They must never
+        // enter the tutorial download/playback path.
+        if (status == ContentStatus.RulesOnly) {
+            onOpenRulesQa(game)
+            return
+        }
+
         when (status) {
             ContentStatus.NoServerResource -> {
                 updateState { it.copy(gamePrompt = GamePromptState(game, status)) }
@@ -188,6 +197,11 @@ class HomeContentCoordinator(
     }
 
     fun startDownload(game: GameCatalogEntry, redownload: Boolean = false) {
+        if (!game.tutorialReady) {
+            onToast("《${game.nameZh}》仅提供规则问答，暂无教程可下载")
+            return
+        }
+
         if (activeDownloadGameId != null) {
             val name = _state.value.activeDownload?.game?.nameZh ?: "其他游戏"
             onToast("正在下载《$name》，请稍后")

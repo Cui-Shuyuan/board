@@ -15,5 +15,10 @@
   ],
   "min_players": 2,
   "max_players": 4,
-  "tutorial_track": "full"
+  "tutorial_track": "full",
+  "rules_ready": true,
+  "tutorial_ready": true,
+  "tutorial_tracks": [
+    "full"
+  ]
 }
