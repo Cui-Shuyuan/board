@@ -3,12 +3,15 @@ package com.boardai.tutorial.uaal.qa
 import android.util.Log
 import com.boardai.tutorial.uaal.BuildConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Small /api/chat client used by the text QA panel.
@@ -20,6 +23,18 @@ class QaRepository(
     baseUrl: String = BuildConfig.BOARD_API_BASE_URL
 ) {
     private val baseUrl = baseUrl.trimEnd('/')
+    private val activeConnections = ConcurrentHashMap.newKeySet<HttpURLConnection>()
+
+    @Volatile
+    private var cancelGeneration = 0L
+
+    /** Disconnect any in-flight request so new sessions cannot receive stale replies. */
+    fun cancelActiveRequests() {
+        cancelGeneration += 1
+        activeConnections.toList().forEach { connection ->
+            runCatching { connection.disconnect() }
+        }
+    }
 
     /**
      * Sends the complete conversation and the latest playback context.
@@ -33,6 +48,7 @@ class QaRepository(
         messages: List<QaMessage>,
         context: QaContext
     ): Result<String> = withContext(Dispatchers.IO) {
+        val requestGeneration = cancelGeneration
         try {
             val requestBody = buildRequestBody(gameId, messages, context)
             val connection = (URL("$baseUrl/api/chat").openConnection() as HttpURLConnection).apply {
@@ -45,8 +61,13 @@ class QaRepository(
                 setRequestProperty("Accept", "application/json")
                 setRequestProperty("Cache-Control", "no-cache")
             }
+            activeConnections += connection
 
             try {
+                if (requestGeneration != cancelGeneration) {
+                    throw kotlinx.coroutines.CancellationException("qa chat request cancelled before start")
+                }
+
                 connection.outputStream.use { output ->
                     output.write(requestBody.toByteArray(Charsets.UTF_8))
                 }
@@ -66,10 +87,14 @@ class QaRepository(
                 val reply = JSONObject(body).optString("reply", "")
                 Result.success(reply)
             } finally {
+                activeConnections -= connection
                 connection.disconnect()
             }
         } catch (t: Throwable) {
             if (t is kotlinx.coroutines.CancellationException) throw t
+            if (!currentCoroutineContext().isActive || requestGeneration != cancelGeneration) {
+                throw kotlinx.coroutines.CancellationException("qa chat request cancelled")
+            }
             Log.w(TAG, "chat request failed", t)
             Result.failure(t)
         }

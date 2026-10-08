@@ -3,12 +3,15 @@ package com.boardai.tutorial.uaal.voice
 import android.util.Log
 import com.boardai.tutorial.uaal.BuildConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * POSTs a recorded WAV to BoardAI.Api /api/asr/once and parses the returned
@@ -19,8 +22,20 @@ class AsrRepository(
     baseUrl: String = BuildConfig.BOARD_API_BASE_URL
 ) : QaAsrEngine {
     private val baseUrl = baseUrl.trimEnd('/')
+    private val activeConnections = ConcurrentHashMap.newKeySet<HttpURLConnection>()
+
+    @Volatile
+    private var cancelGeneration = 0L
+
+    override fun cancelActiveRequests() {
+        cancelGeneration += 1
+        activeConnections.toList().forEach { connection ->
+            runCatching { connection.disconnect() }
+        }
+    }
 
     override suspend fun transcribe(wavFile: File): Result<String> = withContext(Dispatchers.IO) {
+        val requestGeneration = cancelGeneration
         try {
             val wavBytes = wavFile.readBytes()
             if (wavBytes.isEmpty()) {
@@ -38,8 +53,13 @@ class AsrRepository(
                 setRequestProperty("Accept", "application/json")
                 setRequestProperty("Cache-Control", "no-cache")
             }
+            activeConnections += connection
 
             try {
+                if (requestGeneration != cancelGeneration) {
+                    throw kotlinx.coroutines.CancellationException("asr request cancelled before start")
+                }
+
                 connection.outputStream.use { output ->
                     output.write(wavBytes)
                 }
@@ -63,10 +83,14 @@ class AsrRepository(
 
                 Result.success(text)
             } finally {
+                activeConnections -= connection
                 connection.disconnect()
             }
         } catch (t: Throwable) {
             if (t is kotlinx.coroutines.CancellationException) throw t
+            if (!currentCoroutineContext().isActive || requestGeneration != cancelGeneration) {
+                throw kotlinx.coroutines.CancellationException("asr request cancelled")
+            }
             Log.w(TAG, "ASR request failed", t)
             Result.failure(t)
         }

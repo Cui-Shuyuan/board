@@ -24,6 +24,7 @@ data class QaMessage(
   */
 data class QaSession(
     val gameId: String,
+    val generation: Long,
     val createdAt: Long = SystemClock.elapsedRealtime(),
     val messages: List<QaMessage> = emptyList(),
     val context: QaContext

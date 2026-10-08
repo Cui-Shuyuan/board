@@ -150,6 +150,102 @@ class QaVoiceControllerTest {
     }
 
     @Test
+    fun newSessionDropsInFlightAsrResultAndDeletesTempWav() = runTest {
+        val recording = tempFile("stale-asr")
+        val recorder = FakeAudioRecorder().apply { stopResult = recording }
+        val deferred = CompletableDeferred<Result<String>>()
+        val asr = FakeAsrEngine().apply { suspendCall = deferred }
+        val recognized = mutableListOf<String>()
+        val controller = createController(
+            scope = this,
+            recorder = recorder,
+            asr = asr,
+            hasPermission = { true },
+            onRecognizedText = { recognized += it }
+        )
+
+        controller.onPttDown()
+        controller.onPttUp()
+        runCurrent()
+        assertEquals(1, asr.files.size)
+
+        controller.startNewSession()
+        deferred.complete(Result.success("stale answer"))
+        advanceUntilIdle()
+
+        assertTrue(recognized.isEmpty())
+        assertFalse(recording.exists())
+    }
+
+    @Test
+    fun newRecordingDropsPreviousAsrResult() = runTest {
+        val recording = tempFile("asr-interleaved")
+        val recorder = FakeAudioRecorder().apply { stopResult = recording }
+        val deferred = CompletableDeferred<Result<String>>()
+        val asr = FakeAsrEngine().apply { suspendCall = deferred }
+        val recognized = mutableListOf<String>()
+        val controller = createController(
+            scope = this,
+            recorder = recorder,
+            asr = asr,
+            hasPermission = { true },
+            onRecognizedText = { recognized += it }
+        )
+
+        controller.onPttDown()
+        controller.onPttUp()
+        runCurrent()
+
+        controller.onPttDown()
+        deferred.complete(Result.success("previous recording"))
+        advanceUntilIdle()
+
+        assertTrue(recognized.isEmpty())
+        assertTrue(controller.state.value.isRecording)
+    }
+
+    @Test
+    fun startingRecordingCancelsInFlightAutoTtsPlayback() = runTest {
+        val ttsFile = tempFile("late-auto-tts")
+        val deferred = CompletableDeferred<Result<File>>()
+        val tts = FakeTtsEngine().apply { suspendCall = deferred }
+        val player = FakeAnswerPlayer()
+        val controller = createController(
+            scope = this,
+            tts = tts,
+            player = player,
+            hasPermission = { true }
+        )
+
+        controller.onAssistantReply(message())
+        runCurrent()
+        assertEquals("正在合成语音…", controller.state.value.voiceStatus)
+
+        controller.onPttDown()
+        deferred.complete(Result.success(ttsFile))
+        advanceUntilIdle()
+
+        assertEquals(0, player.playCalls)
+        assertFalse(controller.state.value.ttsBusy)
+        assertTrue(controller.state.value.isRecording)
+    }
+
+    @Test
+    fun startNewSessionDeletesCachedAnswerAudio() = runTest {
+        val ttsFile = tempFile("cached-answer")
+        val tts = FakeTtsEngine().apply { nextResult = Result.success(ttsFile) }
+        val controller = createController(scope = this, tts = tts, player = FakeAnswerPlayer())
+
+        controller.replayAnswer(message())
+        advanceUntilIdle()
+        assertTrue(ttsFile.exists())
+
+        controller.startNewSession()
+
+        assertFalse(ttsFile.exists())
+    }
+
+    @Test
     fun pttWithoutPermissionRequestsPermissionAndUpdatesStatus() = runTest {
         val recorder = FakeAudioRecorder()
         val controller = createController(
@@ -300,10 +396,16 @@ class QaVoiceControllerTest {
     private class FakeAsrEngine : QaAsrEngine {
         val files = mutableListOf<File>()
         var result: Result<String> = Result.success("")
+        var suspendCall: CompletableDeferred<Result<String>>? = null
+        var cancelCalls = 0
 
         override suspend fun transcribe(wavFile: File): Result<String> {
             files += wavFile
-            return result
+            return suspendCall?.await() ?: result
+        }
+
+        override fun cancelActiveRequests() {
+            cancelCalls += 1
         }
     }
 
@@ -311,6 +413,7 @@ class QaVoiceControllerTest {
         var callCount = 0
         var nextResult: Result<File> = Result.failure(IOException("no result configured"))
         var suspendCall: CompletableDeferred<Result<File>>? = null
+        var cancelCalls = 0
 
         override suspend fun synthesize(
             text: String,
@@ -319,6 +422,10 @@ class QaVoiceControllerTest {
         ): Result<File> {
             callCount += 1
             return suspendCall?.await() ?: nextResult
+        }
+
+        override fun cancelActiveRequests() {
+            cancelCalls += 1
         }
     }
 

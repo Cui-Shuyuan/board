@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.boardai.tutorial.uaal.BuildConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.File
@@ -11,6 +13,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
+import java.util.concurrent.ConcurrentHashMap
 
 const val DEFAULT_TTS_VOICE = "BV700_streaming"
 
@@ -23,12 +26,24 @@ class TtsRepository(
     baseUrl: String = BuildConfig.BOARD_API_BASE_URL
 ) : QaTtsEngine {
     private val baseUrl = baseUrl.trimEnd('/')
+    private val activeConnections = ConcurrentHashMap.newKeySet<HttpURLConnection>()
+
+    @Volatile
+    private var cancelGeneration = 0L
+
+    override fun cancelActiveRequests() {
+        cancelGeneration += 1
+        activeConnections.toList().forEach { connection ->
+            runCatching { connection.disconnect() }
+        }
+    }
 
     override suspend fun synthesize(
         text: String,
         voice: String,
         speed: Double
     ): Result<File> = withContext(Dispatchers.IO) {
+        val requestGeneration = cancelGeneration
         try {
             val normalizedText = text.trim()
             if (normalizedText.isBlank()) {
@@ -51,8 +66,13 @@ class TtsRepository(
                 setRequestProperty("Accept", "audio/mpeg")
                 setRequestProperty("Cache-Control", "no-cache")
             }
+            activeConnections += connection
 
             try {
+                if (requestGeneration != cancelGeneration) {
+                    throw kotlinx.coroutines.CancellationException("tts request cancelled before start")
+                }
+
                 connection.outputStream.use { output ->
                     output.write(requestBody.toByteArray(Charsets.UTF_8))
                 }
@@ -76,10 +96,14 @@ class TtsRepository(
                 file.writeBytes(bytes)
                 Result.success(file)
             } finally {
+                activeConnections -= connection
                 connection.disconnect()
             }
         } catch (t: Throwable) {
             if (t is kotlinx.coroutines.CancellationException) throw t
+            if (!currentCoroutineContext().isActive || requestGeneration != cancelGeneration) {
+                throw kotlinx.coroutines.CancellationException("tts request cancelled")
+            }
             Log.w(TAG, "TTS request failed", t)
             Result.failure(t)
         }

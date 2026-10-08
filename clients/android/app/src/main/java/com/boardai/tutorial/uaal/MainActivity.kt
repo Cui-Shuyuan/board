@@ -509,6 +509,7 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private fun closeQa() {
         if (!qaOpen.value) return
+        qaRepository.cancelActiveRequests()
         qaOpen.value = false
 
         if (qaWasPlayingBeforeQuestion) {
@@ -531,6 +532,7 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     private fun clearQaState() {
+        qaRepository.cancelActiveRequests()
         qaOpen.value = false
         rulesQaGame.value = null
         qaWasPlayingBeforeQuestion = false
@@ -540,6 +542,7 @@ class MainActivity : UnityPlayerGameActivity() {
     }
 
     private fun closeRulesQa() {
+        qaRepository.cancelActiveRequests()
         rulesQaGame.value = null
         QaSessionHolder.clear()
     }

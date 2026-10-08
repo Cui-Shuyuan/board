@@ -6,6 +6,7 @@ import com.boardai.tutorial.uaal.voice.QaAsrEngine
 import com.boardai.tutorial.uaal.voice.QaAudioRecorder
 import com.boardai.tutorial.uaal.voice.QaTtsEngine
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,11 +42,16 @@ class QaVoiceController(
     private var ttsMessageInFlight: Long? = null
     private var answerAudioFiles: Map<Long, File> = emptyMap()
     private var recordingToken = 0
+    private var asrGeneration = 0L
+    private var asrJob: Job? = null
+    private var ttsJob: Job? = null
 
     fun onPttDown(): QaPttStartResult {
         log("PTT down: isRecording=${_state.value.isRecording}")
         if (_state.value.isRecording) return QaPttStartResult.ALREADY_RECORDING
         stopPlayback()
+        cancelAsrRequest()
+        cancelTtsRequest()
         setVoiceStatus(null)
 
         if (!hasRecordPermission()) {
@@ -80,13 +86,10 @@ class QaVoiceController(
     fun setAutoTtsEnabled(enabled: Boolean) {
         _state.value = _state.value.copy(autoTtsEnabled = enabled)
         autoTtsStore.setEnabled(enabled)
-        ttsGeneration += 1
+        cancelTtsRequest()
 
         if (!enabled) {
             stopPlayback()
-            if (isTtsVoiceStatus(_state.value.voiceStatus)) {
-                setVoiceStatus(null)
-            }
         }
 
         log("auto TTS enabled=$enabled")
@@ -112,13 +115,14 @@ class QaVoiceController(
     }
 
     fun startNewSession() {
-        ttsGeneration += 1
-        activeTtsRequestId = null
-        ttsMessageInFlight = null
-        setTtsBusy(false)
+        cancelAsrRequest()
+        cancelTtsRequest()
+        recorder.cancel()
+        setRecording(false)
         stopPlayback()
-        answerAudioFiles = emptyMap()
+        clearAnswerAudioFiles()
         setVoiceStatus(null)
+        log("new QA voice session started")
     }
 
     fun stopPlayback() {
@@ -127,8 +131,40 @@ class QaVoiceController(
     }
 
     fun close() {
+        cancelAsrRequest()
+        cancelTtsRequest()
         recorder.cancel()
-        player.stop()
+        setRecording(false)
+        stopPlayback()
+        clearAnswerAudioFiles()
+    }
+
+    private fun cancelAsrRequest() {
+        asrGeneration += 1
+        asrJob?.cancel()
+        asrJob = null
+        asr.cancelActiveRequests()
+        if (_state.value.voiceStatus == "识别中…") {
+            setVoiceStatus(null)
+        }
+    }
+
+    private fun cancelTtsRequest() {
+        ttsGeneration += 1
+        ttsJob?.cancel()
+        ttsJob = null
+        activeTtsRequestId = null
+        ttsMessageInFlight = null
+        tts.cancelActiveRequests()
+        setTtsBusy(false)
+        if (isTtsVoiceStatus(_state.value.voiceStatus)) {
+            setVoiceStatus(null)
+        }
+    }
+
+    private fun clearAnswerAudioFiles() {
+        answerAudioFiles.values.forEach { file -> runCatching { file.delete() } }
+        answerAudioFiles = emptyMap()
     }
 
     private fun beginRecording(): QaPttStartResult {
@@ -166,9 +202,15 @@ class QaVoiceController(
 
         log("ASR request starting, wavBytes=${file.length()}")
         setVoiceStatus("识别中…")
-        scope.launch {
+        val requestGeneration = asrGeneration
+        asrJob = scope.launch {
             try {
                 asr.transcribe(file).onSuccess { recognized ->
+                    if (requestGeneration != asrGeneration) {
+                        log("stale ASR result ignored: new recording/session")
+                        return@onSuccess
+                    }
+
                     val text = recognized.trim()
                     if (text.isBlank()) {
                         log("ASR success but text blank")
@@ -179,6 +221,11 @@ class QaVoiceController(
                         setVoiceStatus(null)
                     }
                 }.onFailure { error ->
+                    if (requestGeneration != asrGeneration) {
+                        log("stale ASR failure ignored: new recording/session")
+                        return@onFailure
+                    }
+
                     log("ASR failed: ${error.javaClass.simpleName}: ${error.message}")
                     setVoiceStatus("识别失败，可键盘输入")
                 }
@@ -236,35 +283,37 @@ class QaVoiceController(
             log("auto TTS request starting, textLength=${message.content.length}")
         }
 
-        scope.launch {
+        ttsJob = scope.launch {
             tts.synthesize(
                 text = message.content,
                 voice = DEFAULT_TTS_VOICE,
                 speed = 1.0
             ).onSuccess { file ->
                 val isOwner = activeTtsRequestId == requestId
+                val generationCurrent = requestGeneration == ttsGeneration
 
                 if (isOwner) {
                     activeTtsRequestId = null
                     ttsMessageInFlight = null
                     setTtsBusy(false)
+                    ttsJob = null
                     if (_state.value.voiceStatus == "正在合成语音…") {
                         setVoiceStatus(null)
                     }
                 }
 
-                answerAudioFiles = answerAudioFiles + (message.timestamp to file)
-
-                val generationCurrent = requestGeneration == ttsGeneration
-                val canPlay = isOwner &&
-                    generationCurrent &&
-                    (!autoPlay || _state.value.autoTtsEnabled)
-
-                if (canPlay) {
-                    playAnswerFile(message, file)
+                if (isOwner && generationCurrent) {
+                    answerAudioFiles = answerAudioFiles + (message.timestamp to file)
+                    val canPlay = !autoPlay || _state.value.autoTtsEnabled
+                    if (canPlay) {
+                        playAnswerFile(message, file)
+                    } else {
+                        log("auto playback skipped after synthesis: toggle off")
+                    }
                 } else {
+                    val deleted = file.delete()
                     log(
-                        "stale TTS synthesis ignored: autoPlay=$autoPlay owner=$isOwner generationCurrent=$generationCurrent"
+                        "stale TTS synthesis ignored: autoPlay=$autoPlay owner=$isOwner generationCurrent=$generationCurrent deleted=$deleted"
                     )
                 }
             }.onFailure {
@@ -274,6 +323,7 @@ class QaVoiceController(
                     activeTtsRequestId = null
                     ttsMessageInFlight = null
                     setTtsBusy(false)
+                    ttsJob = null
                 }
 
                 if (isOwner && requestGeneration == ttsGeneration) {

@@ -65,6 +65,7 @@ import com.boardai.tutorial.uaal.voice.AnswerAudioPlayer
 import com.boardai.tutorial.uaal.voice.AsrRepository
 import com.boardai.tutorial.uaal.voice.AudioRecorder
 import com.boardai.tutorial.uaal.voice.TtsRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private const val QA_VOICE_TAG = "BoardAI-QaVoice"
@@ -105,6 +106,7 @@ fun QaPanel(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val appContext = LocalContext.current.applicationContext
+    val activeChatJob = remember { mutableStateOf<Job?>(null) }
 
     val audioRecorder = remember { AudioRecorder(appContext) }
     val answerPlayer = remember { AnswerAudioPlayer() }
@@ -153,13 +155,20 @@ fun QaPanel(
 
     DisposableEffect(Unit) {
         onDispose {
+            activeChatJob.value?.cancel()
+            activeChatJob.value = null
+            repository.cancelActiveRequests()
             voiceController.close()
         }
     }
 
     fun startNewSession() {
+        val context = buildQaContext(game, status, timeline)
+        QaSessionHolder.startNewSession(context)
+        activeChatJob.value?.cancel()
+        activeChatJob.value = null
+        repository.cancelActiveRequests()
         voiceController.startNewSession()
-        QaSessionHolder.startNewSession(buildQaContext(game, status, timeline))
         input = ""
         sendState = QaSendState.Idle
     }
@@ -167,43 +176,59 @@ fun QaPanel(
     fun sendQuestion() {
         val question = input.trim()
         if (question.isBlank() || sending) return
-        if (QaSessionHolder.session == null) {
-            QaSessionHolder.ensureSession(buildQaContext(game, status, timeline))
-        }
-        val activeSession = QaSessionHolder.session ?: return
         val context = buildQaContext(game, status, timeline)
+        val activeSession = QaSessionHolder.ensureSession(context)
+        val sessionGeneration = activeSession.generation
         val userMessage = QaMessage(
             role = QaMessage.ROLE_USER,
             content = question
         )
-        QaSessionHolder.appendMessage(userMessage, context)
+        if (!QaSessionHolder.appendMessage(userMessage, context, sessionGeneration)) {
+            Log.d(QA_VOICE_TAG, "chat send ignored: session changed while composing")
+            return
+        }
         input = ""
         sendState = QaSendState.Sending
-        val history = QaSessionHolder.session?.messages.orEmpty()
+        val history = QaSessionHolder.session
+            ?.takeIf { it.generation == sessionGeneration }
+            ?.messages
+            .orEmpty()
 
-        scope.launch {
+        activeChatJob.value = scope.launch {
             val result = repository.send(
                 gameId = activeSession.gameId.ifBlank { context.gameId },
                 messages = history,
                 context = context
             )
+            if (!QaSessionHolder.isCurrent(sessionGeneration)) {
+                Log.d(QA_VOICE_TAG, "stale chat result ignored: session changed")
+                return@launch
+            }
+
             result.onSuccess { reply ->
                 val replyText = reply.trim().ifBlank { "（未收到回答）" }
                 val replyMessage = QaMessage(
                     role = QaMessage.ROLE_ASSISTANT,
                     content = replyText
                 )
-                QaSessionHolder.appendMessage(replyMessage, context)
+                if (!QaSessionHolder.appendMessage(replyMessage, context, sessionGeneration)) {
+                    Log.d(QA_VOICE_TAG, "stale chat reply ignored: session changed")
+                    return@onSuccess
+                }
                 sendState = QaSendState.Idle
                 voiceController.onAssistantReply(replyMessage)
-            }.onFailure {
-                QaSessionHolder.appendMessage(
-                    QaMessage(
-                        role = QaMessage.ROLE_ASSISTANT,
-                        content = QA_NETWORK_ERROR_MESSAGE
-                    ),
-                    context
+            }.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) {
+                    return@onFailure
+                }
+                val errorMessage = QaMessage(
+                    role = QaMessage.ROLE_ASSISTANT,
+                    content = QA_NETWORK_ERROR_MESSAGE
                 )
+                if (!QaSessionHolder.appendMessage(errorMessage, context, sessionGeneration)) {
+                    Log.d(QA_VOICE_TAG, "stale chat failure ignored: session changed")
+                    return@onFailure
+                }
                 sendState = QaSendState.Error(QA_NETWORK_ERROR_MESSAGE)
             }
         }

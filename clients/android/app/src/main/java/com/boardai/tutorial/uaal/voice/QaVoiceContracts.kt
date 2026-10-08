@@ -19,6 +19,9 @@ interface QaAnswerPlayer {
 
 interface QaAsrEngine {
     suspend fun transcribe(wavFile: File): Result<String>
+
+    /** Cancel any in-flight blocking HTTP request so a stale result cannot surface. */
+    fun cancelActiveRequests() {}
 }
 
 interface QaTtsEngine {
@@ -27,4 +30,7 @@ interface QaTtsEngine {
         voice: String,
         speed: Double
     ): Result<File>
+
+    /** Cancel any in-flight blocking HTTP request; generation checks still ignore late results. */
+    fun cancelActiveRequests() {}
 }
