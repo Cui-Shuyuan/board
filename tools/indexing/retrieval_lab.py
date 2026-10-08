@@ -22,6 +22,11 @@ ROOT = index.BOARD_ROOT
 INSTRUCTION = "为这个句子生成表示以用于检索相关文章："
 
 
+def file_hash(path):
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
 def walk(node, pointer=""):
     yield node, pointer
     if isinstance(node, dict):
@@ -73,7 +78,9 @@ def project(game):
         identity = {k: r[k] for k in ("path", "file", "pointer", "source")}
         title = " ".join(x for x in [r["name_zh"], r["name_en"]] if x)
         raw = index.strip_refs(r["search_text"])
-        whole.append({**identity, "text": raw})
+        root_description = r["node"].get("description", {})
+        context = root_description.get("zh", "") if isinstance(root_description, dict) else ""
+        whole.append({**identity, "text": raw, "context": title + "。" + expand(context)})
         named.append({**identity, "text": " ".join([r["concept_id"], title])})
         snippets = []
         for node, p in walk(r["node"], r["pointer"]):
@@ -132,8 +139,8 @@ class Encoder:
         options.intra_op_num_threads = 4
         self.session = ort.InferenceSession(str(model / "model.onnx"), sess_options=options)
         self.inputs = {i.name for i in self.session.get_inputs()}
-        self.model_hash = hashlib.sha256((model / "model.onnx").read_bytes()).hexdigest()
-        self.tokenizer_hash = hashlib.sha256((model / "tokenizer.json").read_bytes()).hexdigest()
+        self.model_hash = file_hash(model / "model.onnx")
+        self.tokenizer_hash = file_hash(model / "tokenizer.json")
         self.cache = sqlite3.connect(cache)
         self.cache.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, mean BLOB, cls BLOB)")
         self.cache.execute("CREATE TABLE IF NOT EXISTS reranks (key TEXT PRIMARY KEY, score REAL)")
@@ -203,7 +210,7 @@ class Reranker:
         self.torch, self.cache = torch, cache
         self.tokenizer = AutoTokenizer.from_pretrained(str(directory), local_files_only=True)
         self.model = AutoModelForSequenceClassification.from_pretrained(str(directory), local_files_only=True, trust_remote_code=False).eval()
-        self.model_hash = hashlib.sha256((directory / "model.safetensors").read_bytes()).hexdigest()
+        self.model_hash = file_hash(directory / "model.safetensors")
 
     def rank(self, query, documents):
         scores, missing = {}, []
@@ -232,6 +239,7 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--model", type=Path, default=index.MODEL_DIR)
     parser.add_argument("--reranker", type=Path)
+    parser.add_argument("--cache", type=Path, help="Optional shared experiment cache; never a production index")
     parser.add_argument("--validate-only", action="store_true")
     args = parser.parse_args()
     rows = [json.loads(line) for line in args.questions.read_text(encoding="utf-8-sig").splitlines() if line.strip()]
@@ -240,7 +248,7 @@ def main():
         print(f"Validated {len(rows)} source-anchored questions")
         return
     args.out.mkdir(parents=True, exist_ok=True)
-    encoder = Encoder(args.model, args.out / "embeddings.sqlite")
+    encoder = Encoder(args.model, args.cache or args.out / "embeddings.sqlite")
     corpora = {game: project(game) for game in sorted({r["game"] for r in rows})}
     all_texts = [doc["text"] for corpus in corpora.values() for documents in corpus for doc in documents]
     all_texts += [p + r["query"] for r in rows for p in ("", INSTRUCTION)]
@@ -272,6 +280,17 @@ def main():
         fixed_context = [fact_by_id.get(d["path"], d) for d in fixed]
         if reranker:
             strategies["cross_encoder"] = reranker.rank(row["query"], fixed_context)
+            # Same IDs and order, more context: avoid a visual fragment hiding the component's rule.
+            descriptions = {}
+            for document in whole:
+                if document["source"] != "ontology" or document["path"] not in descriptions:
+                    descriptions[document["path"]] = document["context"]
+            with_context = []
+            for document in fixed_context:
+                context = descriptions.get(document["path"], "")
+                text = context if document["text"] in context else context + "\n" + document["text"]
+                with_context.append({**document, "text": text})
+            strategies["cross_encoder_context"] = reranker.rank(row["query"], with_context)
         traces.append({**row, "fixedPoolContainsAllRequired": set(row["required"]) <= {d["path"] for d in fixed},
                        "strategies": {k: {"metrics": metrics(row, v), "top": v[:30]} for k, v in strategies.items()}})
         (args.out / "traces.json").write_text(json.dumps(traces, ensure_ascii=False, indent=2), encoding="utf-8")
