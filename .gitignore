@@ -34,8 +34,10 @@ doc/
 # Runtime logs & QA artifacts
 backend/api_run.log
 
-# Generated content manifests (README documents the build command)
+# Generated content manifests and immutable release packages
 content/manifests/*.json
+content/manifests/*.json.tmp
+content/releases/
 
 # Local content repository mirror / downloaded versions
 board-content/

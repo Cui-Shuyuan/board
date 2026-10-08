@@ -106,11 +106,17 @@ public class ContentController : ControllerBase
             });
         }
 
-        if (!TryResolveGameFile(game, filePath!, out var fullPath, out var pathError))
+        // Read only from the immutable release directory.  There is no fallback
+        // to content/games/{game}: a missing release/file is a 404, because a
+        // versioned URL must never be served from mutable source bytes.
+        if (!TryResolveReleaseFile(game, currentVersion, filePath!, out var fullPath, out var pathError))
             return BadRequest(new { message = pathError });
 
         if (!System.IO.File.Exists(fullPath))
-            return NotFound(new { message = $"Content file was not found: {filePath}" });
+            return NotFound(new
+            {
+                message = $"Content file was not found in release '{version}': {filePath}"
+            });
 
         var info = new FileInfo(fullPath);
         var etag = BuildEtag(info);
@@ -265,9 +271,33 @@ public class ContentController : ControllerBase
         return true;
     }
 
+    private bool TryResolveReleaseFile(
+        string game,
+        string version,
+        string filePath,
+        out string fullPath,
+        out string error)
+    {
+        var releaseRoot = Path.GetFullPath(
+            Path.Combine(_contentRoot, "content", "releases", game, version));
+        return TryResolveFile(releaseRoot, filePath, "release content directory", out fullPath, out error);
+    }
+
     private bool TryResolveGameFile(
         string game,
         string filePath,
+        out string fullPath,
+        out string error)
+    {
+        var gameRoot = Path.GetFullPath(
+            Path.Combine(_contentRoot, "content", "games", game));
+        return TryResolveFile(gameRoot, filePath, "game content directory", out fullPath, out error);
+    }
+
+    private static bool TryResolveFile(
+        string rootDirectory,
+        string filePath,
+        string rootLabel,
         out string fullPath,
         out string error)
     {
@@ -323,15 +353,14 @@ public class ContentController : ControllerBase
             }
         }
 
-        var gameRoot = Path.GetFullPath(Path.Combine(_contentRoot, "content", "games", game));
-        var candidate = Path.GetFullPath(Path.Combine(gameRoot, Path.Combine(segments)));
-        var rootPrefix = gameRoot.EndsWith(Path.DirectorySeparatorChar)
-            ? gameRoot
-            : gameRoot + Path.DirectorySeparatorChar;
+        var candidate = Path.GetFullPath(Path.Combine(rootDirectory, Path.Combine(segments)));
+        var rootPrefix = rootDirectory.EndsWith(Path.DirectorySeparatorChar)
+            ? rootDirectory
+            : rootDirectory + Path.DirectorySeparatorChar;
 
         if (!candidate.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            error = "resolved path escapes the game content directory";
+            error = $"resolved path escapes the {rootLabel}";
             return false;
         }
 
