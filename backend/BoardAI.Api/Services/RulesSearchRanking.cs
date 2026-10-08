@@ -67,10 +67,11 @@ internal static class RulesSearchRanking
 
     /// <summary>名称索引补漏；不同索引的相似度不能直接相加，也不能盖过全文语义候选。</summary>
     internal static List<ConceptSummary> SupplementNames(
-        IReadOnlyList<ConceptSummary> full, IReadOnlyList<ConceptSummary> names)
+        IReadOnlyList<ConceptSummary> full, IReadOnlyList<ConceptSummary> names,
+        float fullRecallThreshold = 0.55f)
     {
         var results = full.ToList();
-        var seen = full.Where(x => x.Score >= 0.55f)
+        var seen = full.Where(x => x.Score >= fullRecallThreshold)
             .Select(x => string.IsNullOrEmpty(x.Path) ? x.Id : x.Path)
             .ToHashSet(StringComparer.Ordinal);
         foreach (var name in names.Where(x => x.Score >= 0.50f))
@@ -83,8 +84,8 @@ internal static class RulesSearchRanking
             {
                 Id = name.Id, Path = name.Path, Name = name.Name, Type = name.Type,
                 Description = name.Description, Media = name.Media,
-                // 0.55 是全文向量通道的召回底线，名称补漏不压过过线的整句匹配。
-                Score = Math.Min(name.Score, 0.55f),
+                // 名称补漏不能压过当前编码配置下过线的整句匹配。
+                Score = Math.Min(name.Score, fullRecallThreshold),
                 NameMatchScore = name.Score,
                 TermScores = name.TermScores, FullQueryScore = name.FullQueryScore
             });

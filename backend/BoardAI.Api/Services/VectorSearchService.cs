@@ -21,6 +21,9 @@ public class VectorSearchService : IDisposable
     private const int BatchSize = 100;
     private readonly ConcurrentDictionary<string, bool> _verifiedProfiles = new();
 
+    // 召回门槛随编码坐标变化；它只决定候选是否展示，不代表实体已确认。
+    public float RecallThreshold => _embedder.Pooling == "cls" ? 0.50f : 0.55f;
+
     public VectorSearchService(
         string host, int port,
         EmbeddingService embedder,
@@ -135,7 +138,7 @@ public class VectorSearchService : IDisposable
     /// 历史 collection 名称，保证升级期间查询不断。
     /// </summary>
     public async Task<IReadOnlyList<SearchResult>> SearchAsync(
-        string gameId, string query, int topK = 10, float threshold = 0.55f, string searchMode = "full",
+        string gameId, string query, int topK = 10, float? threshold = null, string searchMode = "full",
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -153,7 +156,7 @@ public class VectorSearchService : IDisposable
                 collection,
                 queryVec.ToArray(),
                 limit: (ulong)topK,
-                scoreThreshold: threshold,
+                scoreThreshold: threshold ?? RecallThreshold,
                 cancellationToken: cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
 

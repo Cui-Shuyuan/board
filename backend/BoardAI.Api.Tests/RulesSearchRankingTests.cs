@@ -107,4 +107,19 @@ public sealed class RulesSearchRankingTests
         Assert.False(RulesSearchRanking.CanAutoResolve(result));
     }
 
+    [Fact]
+    public void ClsRecallFloorKeepsFullPhraseAndCapsNameOnlyCandidates()
+    {
+        var full = Concept("component"); full.Score = .52f;
+        full.PhraseScore = new ChannelScores { Vector = .52f };
+        var duplicate = Concept("component"); duplicate.Score = .85f;
+        var generic = Concept("generic"); generic.Score = .90f;
+        var result = RulesSearchRanking.SupplementNames(new[] { full }, new[] { generic, duplicate }, .50f);
+        Assert.Equal("component", result[0].Id);
+        Assert.Same(full, result[0]);
+        Assert.Equal(.50f, result[1].Score);
+        Assert.Equal(.90f, result[1].NameMatchScore);
+        Assert.False(RulesSearchRanking.CanAutoResolve(result));
+    }
+
 }

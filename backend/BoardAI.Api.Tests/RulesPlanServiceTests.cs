@@ -201,6 +201,25 @@ public sealed class RulesPlanServiceTests
         Assert.Equal("activation_die", item.Candidates![0].Id);
     }
 
+    [Theory]
+    [InlineData("explain", "小装置的量子护盾怎么使用")]
+    [InlineData("condition", "使用小装置后能启动量子护盾吗")]
+    public async Task UnknownEntity_QuestionNameOnlySuppliesCandidates(string relation, string question)
+    {
+        using var fixture = new RulesFixture();
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var doc = JsonDocument.Parse(JsonSerializer.Serialize(new
+        {
+            queries = new[] { new { relation, entity = "量子护盾" } }
+        }));
+        var item = Assert.Single((await plan.ExecutePlanAsync("testgame", doc.RootElement, question)).Results);
+        Assert.Equal("unresolved", item.Status);
+        Assert.Equal("", item.Source);
+        Assert.Empty(item.Matched);
+        Assert.NotEmpty(item.Candidates!);
+    }
+
     private static RulesPlanService CreateService(RulesContentStore content)
     {
         var catalog = new RulesConceptCatalog(content);

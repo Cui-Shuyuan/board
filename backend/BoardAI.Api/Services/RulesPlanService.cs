@@ -247,7 +247,7 @@ public sealed class RulesPlanService
                     await Task.WhenAll(fullTask, nameTask);
                     semantic = await fullTask;
                     semantic.Results = RulesSearchRanking.SupplementNames(
-                        semantic.Results, (await nameTask).Results);
+                        semantic.Results, (await nameTask).Results, _vectorSearch.RecallThreshold);
                 }
                 else
                     semantic = await _searchService.SearchConceptsAsync(
@@ -280,15 +280,26 @@ public sealed class RulesPlanService
             // 更新/合并后重新排序，保证候选列表按分数降序呈现给 LLM
             merged = merged.OrderByDescending(c => c.Score).ToList();
 
-            // 语义候选可用时以语义结果为实体；语义弱/为空时才启用
-            // 问题级直呼作为兜底。
+            // 问题中的名称只能补充上下文候选，不能证明查询实体已被识别。
+            // 例如未知能力的问句提到“模组”，不能把未知能力确认成某个模组。
             if (merged.Count == 0 || merged[0].Score < 0.55f)
             {
-                var qhits = ResolveFromQuestion(game, question, out var qsource)
+                var qhits = ResolveFromQuestion(game, question, out _)
                     .Where(el => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(el)))
                     .ToList();
-                if (qhits.Count > 0)
-                    return BuildOkResult(game, relation, entity, qhits, qsource, question, cancellationToken);
+                foreach (var hint in qhits)
+                {
+                    var id = RulesTextUtils.GetElementId(hint);
+                    if (merged.Any(c => c.Id == id)) continue;
+                    merged.Add(new ConceptSummary
+                    {
+                        Id = id,
+                        Name = hint.TryGetProperty("name", out var name) && name.TryGetProperty("zh", out var zh)
+                            ? zh.GetString() ?? id : id,
+                        Description = RulesTextUtils.ExtractDescriptionZh(hint)
+                    });
+                }
+                merged = merged.OrderByDescending(c => c.Score).Take(15).ToList();
             }
 
             if (merged.Count > 0)
