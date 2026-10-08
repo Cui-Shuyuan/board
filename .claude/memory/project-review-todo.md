@@ -91,7 +91,7 @@ metadata:
 - 修改：按规则版本构建不可变快照并原子切换；一次请求绑定一个版本，名称、流程、事实使用同一快照；通过明确所有权/引用生命周期释放旧文档。仅换成 ConcurrentDictionary 不足以保证整次请求一致性。
 - 验收：多请求与连续热更新交错，无并发异常或混合版本；新增/删除文件和缓存命中路径能刷新；长期更新后旧快照内存可回收。
 - 实施记录（2026-10-08）：新增 `RulesGameSnapshot`（按游戏深拷贝本体/游戏 concepts/instances/flow，带内容哈希 Version）与 `RulesSnapshotScope`（AsyncLocal 请求作用域）。`RulesContentStore.GetSnapshot(game)` 在 store 锁内探测文件增删改、按 Revision 缓存并对旧快照自然换出；快照一旦被请求捕获，整条调用链（包含 `RulesSearchService` 的 Task.Run 子任务）读取同一版本。名称/精确名/流程/Plan 类型/计分表缓存均改为“快照内一次性构建”，普通 Dictionary 路径只保留给直接构造协作类的旧单测。`RulesDocumentStore` 每次实际加载/替换/删除推进 Revision；retired 原始 JsonDocument 改为有界队列（最多 16 个），读取增加短暂重试；快照使用独立 `JsonDocument`，不再依赖 retired 生命周期。`ChatOrchestratorService` 在整轮 Chat 进入 `BeginRequestScope`，同一轮内多个 execute_plan/注解也不会跨版本。
-- 验收记录（2026-10-08）：新增 `Rev07RulesSnapshotTests` 4 条：200 次热更新后 retired 文档数有界；真实文件新增/删除 game concepts 后快照刷新；4 个并发请求与 500 次内存热更新交错无异常、无单请求混合版本；缓存命中后一次内存更新即重建派生缓存。修复前临时复现已观察到 retired count 200、`RulesFlowService` 并发 `IndexOutOfRangeException`/文件 `IOException` 与版本混用；修复后 `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 101/101 通过。
+- 验收记录（2026-10-08）：新增 `Rev07RulesSnapshotTests` 5 条：200 次热更新后 retired 文档数有界；真实文件新增/删除 game concepts 后快照刷新；4 个并发请求与 500 次内存热更新交错无异常、无单请求混合版本；缓存命中后一次内存更新即重建派生缓存；版本切换后旧快照可被 GC 回收。修复前临时复现已观察到 retired count 200、`RulesFlowService` 并发 `IndexOutOfRangeException`/文件 `IOException` 与版本混用；修复后 `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 107/107 通过。
 
 ### [x] REV-08 逐查询记录回答证据（设计改进）
 
@@ -99,7 +99,7 @@ metadata:
 - 修改：逐查询记录规则版本、命中来源、引用与未解决项，响应显式携带；部分缺失时清楚区分已查到事实与待确认信息。证据元数据用于追溯与评测，不视为对 LLM 最终每句话的自动真实性证明。
 - 验收：复合问题一部分命中、一部分 no_match 时不会整体标为完全有据；客户端和日志可定位缺失项；正常规则回答可追溯到对应数据版本。
 - 实施记录（2026-10-08）：`ChatResponse` 新增可空 `Evidence` 字段（`[JsonIgnore(WhenWritingNull)]`，旧客户端忽略），`Reply` 保持原字段。证据模型为 `AnswerEvidence` / `QueryEvidence` / `EvidenceConcept`：逐 query 记录 relation、entity、status、source、规则版本、message、matched、candidates、一层 references 与 flow_context。`PlanExecutionResult` 新增 `RulesVersion`，由 `RulesPlanService` 从请求 scope 的规则快照写入；Chat 整轮复用同一 `RulesVersion`。`ChatOrchestratorService` 改为逐条 execute_plan 结果累计证据，不再“看到一次 Matched 即停止”；最终 tier 按整组 query 判定：全部 ok 且有数据=tier1，有数据但有 unresolved/no_match/unsupported=partial，仅候选=tier2，无数据=tier3；日志同步输出 partial。Controller 通过新增 `ProcessWithEvidenceAsync` 返回 Reply+Evidence，`ProcessAsync` 保留为只取 Reply 的兼容入口。证据只用于追溯/评测，不宣称 LLM 每句话自动为真。
-- 验收记录（2026-10-08）：新增 `Rev08AnswerEvidenceTests` 5 条：正常命中 tier1 且 RulesVersion/source/matched 可追溯；复合 explain 命中 + no_match 为 partial 且缺失 query 带 message；identify 仅候选为 tier2；Controller 返回 Reply+Evidence；无 Evidence 的 ChatResponse 序列化仍只有 Reply。`dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 106/106 通过。未做真实 LLM/Android 客户端展示验收；Evidence 为附加字段，旧客户端可忽略。
+- 验收记录（2026-10-08）：新增 `Rev08AnswerEvidenceTests` 5 条：正常命中 tier1 且 RulesVersion/source/matched 可追溯；复合 explain 命中 + no_match 为 partial 且缺失 query 带 message；identify 仅候选为 tier2；Controller 返回 Reply+Evidence；无 Evidence 的 ChatResponse 序列化仍只有 Reply。`dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 107/107 通过。未做真实 LLM/Android 客户端展示验收；Evidence 为附加字段，旧客户端可忽略。
 
 ## 执行与收口
 

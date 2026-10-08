@@ -5,13 +5,13 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-08 · 基线见 git log · 本轮后端 xUnit 106/106、Python 102/102、Android JVM 84/84
+> 最后更新：2026-10-08 · 基线见 git log · 本轮后端 xUnit 107/107、Python 102/102、Android JVM 84/84
 
 # 当前状态（2026-10-08）
 
 ## 一句话
 
-Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class 已完成服务化拆分，106 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 已完成终局与真卡身份收口，下一步逐 cue 重审，Flow Guide 是动画收口后的下一产品方向。
+Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class 已完成服务化拆分，107 条 xUnit 全绿；当前工程活跃面还包括 Android UaaL 客户端、内容更新 v1、语音问答 v1；动画 full 已完成终局与真卡身份收口，下一步逐 cue 重审，Flow Guide 是动画收口后的下一产品方向。
 
 ## 当前工作区状态
 
@@ -25,7 +25,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 ## 当前已具备的能力
 
-- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、请求快照 scope 与 public wrapper；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。规则请求按 Revision/内容哈希深拷贝不可变快照并通过 AsyncLocal 绑定整轮调用，派生缓存随快照重建，旧快照可回收；`ChatResponse` 附加逐 query 的 `Evidence`（tier/规则版本/status/source/matched/candidates/message），旧客户端可忽略。后端 xUnit 测试 106/106 全绿（2026-10-08 本轮）。
+- **后端服务化**：`GameRulesService` 已是薄 facade，只负责构造协作类、请求快照 scope 与 public wrapper；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`。规则请求按 Revision/内容哈希深拷贝不可变快照并通过 AsyncLocal 绑定整轮调用，派生缓存随快照重建，旧快照可回收；`ChatResponse` 附加逐 query 的 `Evidence`（tier/规则版本/status/source/matched/candidates/message），旧客户端可忽略。后端 xUnit 测试 107/107 全绿（2026-10-08 本轮）。
 - **规则数据与检索**：9 款游戏目录，8 款有 `flow.json`，Splendor 是 Runtime + 动画试点；Qdrant + `bge-base-zh-v1.5` ONNX 检索链可用；全文/name 两套索引统一为版本化 collection + 稳定 alias（`board_{game}__active[_name]`），Python CLI 与 C# API 共用 `IndexContract` 的提取/点 ID/版本行，构建校验后原子切换，失败保留旧索引；`validate_rules.py --errors-only` 为 0 errors / 72 warnings；`tools/qa/retrieval_gold.jsonl` 85 条。
 - **动画 tree/状态模型（2026-09-30 修正）**：tree 只决定 stage/可见性，不是状态边界；cue 默认按 `entry -> parent -> 轨道前一条` 继承完整状态，允许跨 tree。当前 stage 缺少的 zone 不渲染，组件仍保留在逻辑状态中，切回对应 tree 后恢复显示。full 轨道现只有 `main` 一棵 tree，其它展示内容改走 screen 对象；该机制仍保留给多树轨道/其它游戏。
 - **动画全脚本继承关系（2026-09-30）**：tree 切换默认继承上一条 cue 的完整状态；仅在盒面/卡牌/宝石/贵族/标记等显式 demo 返回点用 `entry` 跳回 canonical 快照。full 现在只有 main，旧展示树切换点已收口。
