@@ -114,13 +114,34 @@ def api_url():
     return "http://localhost:5000/api/chat"
 
 
-def verdict_of(reply):
-    # Take the *last* verdict token.  Some LLM answers start with a wrong
-    # "不允许/有问题" and then self-correct to "允许/合法" in the same reply;
-    # the final sentence is the operative answer.  Normalize negated problem
-    # phrases first: "没有问题" contains "有问题" but is a positive verdict.
+def _verdict_pattern(expected: str | None = None) -> str:
+    """Use the hand-written exact-vocabulary family when it is known."""
+    if expected in ("允许", "不允许"):
+        return r"(不允许|允许)"
+    if expected in ("合法", "有问题"):
+        return r"(不合法|合法|有问题)"
+    return r"(不合法|合法|有问题|不允许|允许)"
+
+
+def verdict_of(reply, expected: str | None = None):
+    # Take the *last standalone* verdict token.  Some LLM answers start with a
+    # wrong "不允许/有问题" and then self-correct to "允许/合法" in the same
+    # reply; the final sentence is the operative answer.  Standalone means the
+    # token is followed by punctuation/end, which prevents explanatory phrases
+    # such as "被玩家B合法拿走" from overriding an opening "有问题。".
+    # When the hand-written ask declares its expected vocabulary, only parse
+    # that family ("允许/不允许" vs "合法/有问题") so a later explanatory
+    # "动作合法" does not override the opening "允许。".
+    # Normalize negated problem phrases first: "没有问题" contains "有问题"
+    # but is a positive verdict.
     reply = reply.replace("没有问题", "合法").replace("没有不合法", "合法")
-    matches = list(re.finditer(r"不合法|合法|有问题|不允许|允许", reply))
+    family = _verdict_pattern(expected)
+    standalone = rf"{family}(?=$|[\s。！？，、；：,.!?…）】」』\"'])"
+    matches = list(re.finditer(standalone, reply))
+    if not matches:
+        matches = list(re.finditer(family, reply))
+    if not matches and expected is not None:
+        matches = list(re.finditer(r"不合法|合法|有问题|不允许|允许", reply))
     return matches[-1].group(0) if matches else "?"
 
 
@@ -204,7 +225,7 @@ def main(argv: list[str] | None = None) -> int:
         except Exception as e:                           # noqa: BLE001
             reply = f"<失败：{e}>"
         row = dict(it, reply=reply, seconds=round(time.time() - t0, 1),
-                   verdict=verdict_of(reply))
+                   verdict=verdict_of(reply, it.get("expect")))
         return i, row
 
     rows_by_idx = {}

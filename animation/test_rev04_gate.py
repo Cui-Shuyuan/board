@@ -237,6 +237,26 @@ class QaGateTests(unittest.TestCase):
         self.assertEqual("合法", by_q["same question"]["expect"])
         self.assertEqual("cue.2", by_q["external only"]["cue"])
 
+    def test_gate_closes_temp_fd_and_removes_temp_file(self):
+        doc = {"cues": [{
+            "id": "cue.1", "parent": "initial", "events": [],
+            "qa": [{"q": "builtin question", "expect": "合法"}],
+        }]}
+        captured, fake_main = self._capture_api_asks()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fake_tmp = root / "compile_qa_fake.json"
+            with mock.patch.object(ct, "ROOT", root), \
+                    mock.patch.object(tempfile, "mkstemp",
+                                      return_value=(123, str(fake_tmp))), \
+                    mock.patch.object(ct.os, "close") as close_mock, \
+                    mock.patch.object(ct.qa_anim_ask, "main", side_effect=fake_main):
+                rc = ct.run_qa_gate("fake", "full", ["cue.1"], track_doc=doc)
+            self.assertEqual(0, rc)
+            close_mock.assert_called_once_with(123)
+            self.assertFalse(fake_tmp.exists())
+            self.assertEqual(1, len(captured["asks"]))
+
 
 class ValidateRulesExitCodeTests(unittest.TestCase):
     def _run(self, issues):
@@ -262,6 +282,21 @@ class ValidateRulesExitCodeTests(unittest.TestCase):
         rc, output = self._run([])
         self.assertEqual(0, rc)
         self.assertIn("全部通过", output)
+
+
+class QaVerdictTests(unittest.TestCase):
+    def test_expected_vocabulary_ignores_later_explanatory_synonym(self):
+        self.assertEqual("允许", qa.verdict_of(
+            "允许。拿取宝石动作本身不检查上限，所以动作合法。", "允许"))
+        self.assertEqual("有问题", qa.verdict_of(
+            "有问题。被玩家B合法拿走后就归B所有。", "有问题"))
+
+    def test_expected_vocabulary_prefers_last_standalone_self_correction(self):
+        self.assertEqual("允许", qa.verdict_of(
+            "不允许，我一开始看错了；按规则这是允许。", "允许"))
+
+    def test_expected_vocabulary_normalizes_negated_problem_phrase(self):
+        self.assertEqual("合法", qa.verdict_of("没有问题，这样合法。", "合法"))
 
 
 class QaAnimAskLoaderTests(unittest.TestCase):

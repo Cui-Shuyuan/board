@@ -45,7 +45,7 @@ metadata:
 - 证据：tools/content/validate_rules.py 的 --errors-only 分支发现 ERROR 后仍返回 0；已用内存模拟确认。
 - 修改：按 script/events/state/contract 的相关变化选择 QA；统一 cue 内 QA 与历史外置问题的读取、去重和来源；必需问题缺失时失败；错误校验返回非零。保持手写问题和独立裁判层，不自动生成答案口径。
 - 验收：只改动作也触发校验；内置 QA 被执行；缺失/失效问题明确失败；含 ERROR 的规则校验退出非零，仅 warning 仍可通过；新增回归进入统一检查入口。
-- 实施记录（2026-10-08）：已实现统一 QA 合并/失效检测/按 cue 变更选门禁，`validate_rules --errors-only` 已 fail closed；新增 mock 回归覆盖上述路径。真实 Board API 全量 QA 未在本轮执行。
+- 实施记录（2026-10-08）：已实现统一 QA 合并/失效检测/按 cue 变更选门禁，`validate_rules --errors-only` 已 fail closed；新增 mock 回归覆盖上述路径。真实 Board API 已跑定向 6/6 通过；全量 43 问中 `setup.gems.004` 对“教学临时摆 7 颗、稍后收回”的中间状态存在合法/有问题两种模型回答，留作 QA 文案复核，未当作代码回归。
 
 ### [ ] REV-05 固定内容发布版本并收紧打包范围（已确认设计缺口）
 

@@ -533,7 +533,9 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
         print("[qa] no matching questions; skip")
         return 0
 
-    tmp = Path(tempfile.mkstemp(prefix="compile_qa_", suffix=".json")[1])
+    fd, tmp_name = tempfile.mkstemp(prefix="compile_qa_", suffix=".json")
+    os.close(fd)  # Windows: close the handle before qa_anim_ask opens/writes it
+    tmp = Path(tmp_name)
     try:
         tmp.write_text(json.dumps({"note": "compile gate", "asks": selected},
                                   ensure_ascii=False, indent=2), encoding="utf-8")
