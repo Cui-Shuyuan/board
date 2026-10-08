@@ -1054,8 +1054,8 @@
       "type": "integer",
       "default": 10,
       "description": {
-        "zh": "宝石持有上限，固定为 10。<ontology::player>持有的<gem>和<gold>总数达到 10 时，回合开始时不可再执行「拿取宝石」<ontology::action>，必须先通过购买<development_card>消耗至 10 以下。",
-        "en": "Gem holding limit, fixed at 10. When a <ontology::player>'s total <gem> and <gold> count reaches 10, they cannot perform the 'take gems' <ontology::action> at the start of their turn and must first spend down below 10 by purchasing a <development_card>."
+        "zh": "宝石持有数量上限，固定为 10，<gem> 与 <gold> 合计计算。已持有 10 颗不会因此禁止「拿取宝石」<ontology::action>；获取后若超限，按 <discard_excess_gems> 归还超额宝石或黄金至合计 10 颗。数量上限与超限归还的处理分别由本字段和该 <ontology::trigger> 表达。",
+        "en": "Gem holding limit, fixed at 10, counting <gem> and <gold> together. Holding 10 does not by itself prohibit the take-gems <ontology::action>; if acquisition exceeds the limit, follow <discard_excess_gems> to return excess gems or gold until the total is 10. This field states the numeric limit, while that <ontology::trigger> states how excess is resolved."
       }
     },
     "<ontology::ownership>": {

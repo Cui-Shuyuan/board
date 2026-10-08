@@ -37,7 +37,7 @@
 
 ## 工作约定
 
-- 新增概念前先查两个 v0 文档和 `conventions.md`，确认是本体扩展还是游戏层实例。
+- 新增概念前先查当前 ontology JSON 和 `conventions.md`，确认是本体扩展还是游戏层实例；两个 v0 文档仅供追溯早期设计。
 - 写完规则 JSON 必跑 `python tools/content/validate_rules.py`。
 - 改规则文件后由 `RulesDocumentStore` 自动失效，无需重新启动 API 服务；语义检索需重建 Qdrant 索引（admin/rebuild-index 或 `tools/indexing/rebuild_index.py`）。
 - 每个满意节点用 git commit。

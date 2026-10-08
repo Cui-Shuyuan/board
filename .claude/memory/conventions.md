@@ -27,10 +27,10 @@ JSON 格式：
 文件：`content/ontology/concepts.json`。
 
 每个概念包含：
-- `id`、`name`（zh/en）、`abstract`、`definition`、`constraints`。
-- 字段声明在顶层：字段名即 JSON key，如 `"owner": { ... }`。
-- `constraints.required` / `optional` 是子类需实现的字段 ID 列表。
-- `id` 字段由 Object 定义，所有实例隐式拥有，不在概念顶层声明。
+- `id`、`name`（zh/en）、`abstract`、`description`、`constraints`。
+- 有 required/optional 的字段在相应条目中完整声明（id/type/default/description）；顶层可绑定继承字段，不在同一概念的顶层与 constraints 中重复声明同一字段。
+- `constraints.required` / `optional` 是字段声明对象列表，条目包含 `id`，可带 `type`、`default`、`description`；具体化时沿父链继承约束，普通引用无需复制目标字段。
+- `id` 在 Object、Zone、Procedure 等根概念中各自声明；实例用顶层 `id` 标识自身。
 
 三种层级关系：
 - `extends`：结构扩展，增加父概念没有的字段。
@@ -46,6 +46,7 @@ JSON 格式：
 - 字段 key 本身是 `<concept_id>` 时，不重复写 `type`；只有语义化 key 或需要窄化类型时才写 `type`。
 - 可空性由 `constraints.optional` 或 `default: null` 表达；`type` 不写 `| null`。
 - `concept_ref` 已弃用，统一用 `<concept_id>`。
+- constraints 条目的 type 使用原始类型；概念身份通过 extends/specifies/instance_of 表达。track_kind 的值以引用字符串指向既有轨道形态，不新增概念身份。
 - `definition` 和 `description` 中用 `<concept_id>` 标交叉引用。
 - 引用条目是纯引用且语义相同时可省略 description；不同语境下含义不同时才写 description。
 
@@ -74,12 +75,12 @@ JSON 格式：
 
 - `<pipeline>` 是唯一流程结构原语，round/turn/phase 多步骤时都用它。
 - 单内容不套 pipeline；直接持有对应概念。
-- Pipeline 四要素：`options`、`type`、`do_after`、`loop`。
+- Pipeline 负责 `options`、`type`、`do_after`；`loop` 属于 procedure 顶层。
 - 步骤级 condition 不成立 = 阻断；候选级 condition 不成立 = 排除。
 - `loop` 挂在 procedure 顶层：
   - `{ "count": N }`：定次循环。
   - `{ "until": <condition> }`：条件循环。
-- Round 缺省无 loop = 1 次 = 每位玩家按座次各行动一轮。
+- Round 缺省无 loop = 执行一次所声明的内容；参与玩家、每人 turn 数量及行动顺序由游戏流程定义。
 - 一个动作不叫 pipeline；直接写 `"<ontology::action>": { "options": [...], "type": "CHOOSE_ONE" }`。
 - Pipeline / Trigger / Action 结构不写 `children` / `actor` / `start` / `end`。
 
@@ -88,10 +89,10 @@ JSON 格式：
 - 终结形态平级并列：`content` 下 `instant_content` + `continuous_content` 可平级并列；cost/effect 同理。
 - 多选：`options` 必含 `type`（引用 `<multiple_choice_enum>`）和 `items`。
 - 轨道：
-  - `track` extends zone，`slots` 必填（数值轨写范围字符串，槽位轨写对象数组）。
+  - `track` extends zone，`slots` 必填，现行声明采用 parts 槽位结构；游戏数据中尚有旧式范围字符串/声明对象，读取兼容不等于新格式约定。
   - `linear_track` 有终点，挂 overflow/underflow compensation。
   - `circular_track` 无终点，挂 lap_event。
-  - `score_track` extends circular_track。
+  - `score_track` extends track，用可选 `track_kind` 引用 `<ontology::linear_track>` / `<ontology::circular_track>` 描述同一个分轨的形态；slots 及相应边界事件仍挂在分轨上，不新增轨道实例或组合类。
 - 替代/视为：用 `<substitution>`，声明在对象定义处，scope 写路径式定位，不在使用处重复。
 - 升级：`<upgrade>` specifies `<state_change>`，attribute 固定为 level。
 - Lose / Gain：对象失去/获得 property，作为 Event 子类。
@@ -110,6 +111,9 @@ JSON 格式：
 
 - FAQ 只当测试，不当真理来源。好坏程序不需要 FAQ 也应能推理出正确答案。
 - 数据口径以规则书 + 用户裁决为准。
+- 问答优先解释判断方法，让玩家对照实物检查；核验具体局面时才询问必要信息，不默认收集完整实时状态。
+- 数量上限只表达数量，达到/超过上限的限制、归还等处理由游戏规则独立表达。
+- 玩家区域表达 ownership，信息是否公开由 information_visibility 独立表达。
 - 禁止为了 FAQ 通过把答案口径塞进 description（过拟合）。
 - QA 答错时只修真实数据 bug（有规则书支持）或检索层（aliases/正则）。
 - FAQ 与规则书/用户冲突时，FAQ 可能错，以规则书/用户为准。

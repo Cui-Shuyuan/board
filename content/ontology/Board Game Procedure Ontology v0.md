@@ -1,5 +1,8 @@
 # Board Game Procedure Ontology v0.1
 
+> 历史设计草稿：保留用于追溯概念来源，不作为现行类型、字段或默认规则的规范。当前定义以 [concepts.json](concepts.json)、[flow.json](flow.json) 和 [编写规范](../../.claude/memory/conventions.md) 为准。
+> 当前约定：数量上限与超限处理分开；玩家区域表达归属而非保密；分轨继承 track，并可引用已有轨道形态；round 不固定每人的 turn 数量；board 是否转移或易主由游戏规则决定。
+
 ## 设计目标
 
 本体用于描述现代桌面游戏中的流程时序概念。

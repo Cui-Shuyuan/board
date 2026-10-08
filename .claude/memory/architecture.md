@@ -31,7 +31,7 @@ L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 - 规则核心模型：
   - Action、Effect、Trigger 统一为 `condition → cost → target → content` 的递归调度器。
   - `instant_content` 是边沿语义，`continuous_content` 是电平语义。
-  - `<pipeline>` 是流程唯一结构原语，负责 options、do_after、loop。
+  - `<pipeline>` 是流程唯一结构原语，负责 options、type、do_after；loop 在 procedure 顶层。
 - 详细编写规范见 `conventions.md`；历史设计推演见 `.claude/archive/memory/2026-09-23/ontology-design.md`。
 
 ## 3. Runtime 服务
@@ -131,7 +131,7 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 ## 5. 交互模型
 
 - Runtime 不追踪棋盘状态、不做 CV；Flow Guide 是后续产品方向。
-- 对依赖状态的问题，LLM 向客人反问所需状态，程序只做规则解释。
+- 对依赖实物信息的问题，优先解释判断方法，让玩家对照检查；核验具体局面时再询问必要信息，不默认收集完整棋盘状态。
 - LLM 负责：理解语言、生成查询计划、组织答案。
 - 程序负责：实体解析、规则查询、条件/顺序/边界判断。
 - 回答风格：一到两句、汉字数字、无 markdown、TTS 友好。

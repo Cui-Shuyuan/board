@@ -2302,7 +2302,8 @@
           "en": "Track slots: 101 spaces from 0 to 100; 0 and 100 are the same space (the 0/100 start)."
         }
       },
-      "<ontology::lap_event>": "<vp_track_lap>"
+      "<ontology::lap_event>": "<vp_track_lap>",
+      "track_kind": "<ontology::circular_track>"
     },
     {
       "id": "bridge",

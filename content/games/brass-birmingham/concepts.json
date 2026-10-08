@@ -298,7 +298,8 @@
           "en": "This track holds all players' VP markers."
         }
       },
-      "slots": "0–100"
+      "slots": "0–100",
+      "track_kind": "<ontology::circular_track>"
     },
     {
       "id": "income_track",
