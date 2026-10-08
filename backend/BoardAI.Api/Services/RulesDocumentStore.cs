@@ -168,7 +168,7 @@ public sealed class RulesDocumentStore : IDisposable
 
         var replaced = _documents.TryGetValue(absolutePath, out var old);
         if (replaced)
-            Retire(old.Document);
+            Retire(old!.Document);
 
         _documents[absolutePath] = new Entry
         {

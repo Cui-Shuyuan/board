@@ -67,6 +67,9 @@ public class ChatOrchestratorService
             throw new ArgumentException("game_id is required", nameof(gameId));
         }
 
+        // 一轮 Chat 可能执行多个 execute_plan / 注解；整轮绑定同一规则版本。
+        using var rulesScope = _rulesService.BeginRequestScope(gameId);
+
         var systemPrompt = _systemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
 
         var messages = new List<ChatMessage>();

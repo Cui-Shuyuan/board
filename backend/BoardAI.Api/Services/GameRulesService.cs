@@ -150,6 +150,12 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     }
 
 
+    /// <summary>
+    /// 将一次上层请求（如一轮 Chat）绑定到同一规则版本；内部嵌套同游戏调用会复用该 scope。
+    /// </summary>
+    public IDisposable BeginRequestScope(string game) => UseSnapshot(game);
+
+
     /// <summary>测试注入：将规则文档放入 content store 的内存快照源。</summary>
     internal void SetDocumentForTesting(string relativePath, string json)
         => _content.SetDocumentForTesting(relativePath, json);
