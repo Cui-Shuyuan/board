@@ -50,7 +50,8 @@ class RetrievalLabTests(unittest.TestCase):
                 node = node[int(key)] if isinstance(node, list) else node[key]
             self.assertIsInstance(node, str)
             self.assertTrue(node)
-        self.assertEqual({d["path"] for d in whole}, {d["path"] for d in names})
+        self.assertEqual(412, len(names))
+        self.assertTrue({d["path"] for d in names} <= {d["path"] for d in whole})
 
 
 if __name__ == "__main__":

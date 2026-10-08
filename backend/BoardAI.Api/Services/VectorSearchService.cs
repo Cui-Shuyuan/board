@@ -1,4 +1,5 @@
 using Grpc.Core;
+using System.Collections.Concurrent;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
 
@@ -18,6 +19,7 @@ public class VectorSearchService : IDisposable
     private readonly EmbeddingService _embedder;
     private readonly ILogger<VectorSearchService> _logger;
     private const int BatchSize = 100;
+    private readonly ConcurrentDictionary<string, bool> _verifiedProfiles = new();
 
     public VectorSearchService(
         string host, int port,
@@ -146,6 +148,7 @@ public class VectorSearchService : IDisposable
 
         try
         {
+            await VerifyEmbeddingProfileAsync(collection, cancellationToken);
             var results = await _client.SearchAsync(
                 collection,
                 queryVec.ToArray(),
@@ -254,6 +257,7 @@ public class VectorSearchService : IDisposable
                     ["type"] = new Value { StringValue = c.Type },
                     ["name_zh"] = new Value { StringValue = c.NameZh ?? "" },
                     ["name_en"] = new Value { StringValue = c.NameEn ?? "" },
+                    ["embedding_model"] = new Value { StringValue = _embedder.ModelId },
                 },
             });
         }
@@ -309,8 +313,10 @@ public class VectorSearchService : IDisposable
         var alias = IndexContract.ActiveAlias(gameId, nameOnly);
         try
         {
-            if (await AliasExistsAsync(alias, cancellationToken))
-                return alias;
+            var aliases = await _client.ListAliasesAsync(cancellationToken);
+            var active = aliases.FirstOrDefault(a => a.AliasName == alias);
+            if (active != null)
+                return active.CollectionName; // pin the immutable collection while checking its profile
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -328,6 +334,21 @@ public class VectorSearchService : IDisposable
         }
 
         return IndexContract.LegacyCollectionName(gameId, nameOnly);
+    }
+
+    private async Task VerifyEmbeddingProfileAsync(string collection, CancellationToken cancellationToken)
+    {
+        if (_verifiedProfiles.ContainsKey(collection)) return;
+        var response = await _client.ScrollAsync(collection, limit: 1,
+            payloadSelector: true, cancellationToken: cancellationToken);
+        var points = response.Result;
+        var stored = points.FirstOrDefault()?.Payload;
+        var modelId = stored != null && stored.TryGetValue("embedding_model", out var profile)
+            ? profile.StringValue : null;
+        if (points.Count == 0 || !EmbeddingProfile.IsCompatible(modelId, _embedder.ModelDirectoryName, _embedder.Pooling))
+            throw new InvalidOperationException(
+                $"Index '{collection}' embedding profile '{modelId ?? "legacy mean"}' does not match '{_embedder.ModelId}'; rebuild this game's indexes before querying.");
+        _verifiedProfiles.TryAdd(collection, true);
     }
 
     private async Task SwitchAliasesAsync(

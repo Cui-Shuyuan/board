@@ -34,6 +34,14 @@ MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-
 QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333").rstrip("/")
 BATCH_SIZE = 100
 INDEX_SCHEMA = "board-index/v1"
+POOLING = "mean"  # import-only callers keep the legacy version contract
+SWITCH_ALIASES = True
+
+
+def embedding_model_id(directory_name: str, pooling: str) -> str:
+    if pooling not in ("mean", "cls"):
+        raise ValueError("Embedding pooling must be mean or cls")
+    return directory_name if pooling == "mean" else directory_name + "/cls-v1"
 
 # 概念引用正则——与后端 AnnotateReferences 同一模式
 REF_PATTERN = re.compile(r"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?)>")
@@ -79,7 +87,7 @@ def _load_model():
 
 
 def embed(text: str):
-    """文本 → L2 归一化向量（mean pooling，跟 C# 端完全一致）"""
+    """文本 → L2 归一化向量；pooling 与 C# 配置一致并进入索引版本。"""
     import numpy as np
 
     _load_model()
@@ -96,7 +104,7 @@ def embed(text: str):
     mask = encoded["attention_mask"][0]  # [seq_len]
 
     # Mean pooling over real tokens
-    emb = (hidden[0] * mask[:, None]).sum(axis=0) / mask.sum()
+    emb = hidden[0, 0].copy() if POOLING == "cls" else (hidden[0] * mask[:, None]).sum(axis=0) / mask.sum()
     # L2 normalize
     norm = np.linalg.norm(emb)
     if norm > 1e-8:
@@ -398,7 +406,7 @@ def compute_index_version(game_id: str, items: list[dict]) -> str:
             strip_refs(c["search_text"]),
         ),
     )
-    lines = [INDEX_SCHEMA, game_id, MODEL_DIR.name, str(dimension)]
+    lines = [INDEX_SCHEMA, game_id, embedding_model_id(MODEL_DIR.name, POOLING), str(dimension)]
     for c in sorted_items:
         lines.append(
             "\t".join(
@@ -528,6 +536,7 @@ def rebuild_game(game_id: str):
                             "type": c["type"],
                             "name_zh": c["name_zh"],
                             "name_en": c["name_en"],
+                            "embedding_model": embedding_model_id(MODEL_DIR.name, POOLING),
                         },
                     })
 
@@ -549,6 +558,7 @@ def rebuild_game(game_id: str):
                             "type": c["type"],
                             "name_zh": c["name_zh"],
                             "name_en": c["name_en"],
+                            "embedding_model": embedding_model_id(MODEL_DIR.name, POOLING),
                         },
                     })
 
@@ -567,6 +577,10 @@ def rebuild_game(game_id: str):
                 f"index verification failed: full={actual_full}/{expected_full}, "
                 f"name={actual_name}/{expected_name}"
             )
+
+        if not SWITCH_ALIASES:
+            print(f"  VERIFIED (not activated) {game_id}: {version} full={actual_full}, name={actual_name}")
+            return
 
         # Qdrant 在一个 update_aliases 请求内原子执行以下操作。
         actions = []
@@ -593,11 +607,23 @@ def rebuild_game(game_id: str):
 
 # ---- CLI ----
 def main():
+    global POOLING, MODEL_DIR, SWITCH_ALIASES
     parser = argparse.ArgumentParser(description="Rebuild vector index (offline)")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--all", action="store_true")
     group.add_argument("--game", type=str)
+    parser.add_argument("--pooling", choices=("mean", "cls"), help="Default: Embedding:Pooling in appsettings, overridden by Embedding__Pooling")
+    parser.add_argument("--no-switch", action="store_true", help="Build and verify new collections without changing active aliases")
     args = parser.parse_args()
+    config = load_json(BOARD_ROOT / "backend/BoardAI.Api/appsettings.json")
+    POOLING = (args.pooling or os.environ.get("Embedding__Pooling") or config.get("Embedding", {}).get("Pooling", "mean")).strip().lower()
+    configured_model = os.environ.get("Embedding__ModelDir") or config.get("Embedding", {}).get("ModelDir")
+    if configured_model:
+        MODEL_DIR = Path(configured_model)
+        if not MODEL_DIR.is_absolute():
+            MODEL_DIR = BOARD_ROOT / MODEL_DIR
+    SWITCH_ALIASES = not args.no_switch
+    embedding_model_id(MODEL_DIR.name, POOLING)  # reject invalid values before writing anything
 
     if args.all:
         games_dir = BOARD_ROOT / "content" / "games"

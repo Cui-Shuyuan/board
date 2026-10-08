@@ -81,7 +81,9 @@ def project(game):
         root_description = r["node"].get("description", {})
         context = root_description.get("zh", "") if isinstance(root_description, dict) else ""
         whole.append({**identity, "text": raw, "context": title + "。" + expand(context)})
-        named.append({**identity, "text": " ".join([r["concept_id"], title])})
+        name_text = (r["name_zh"] or r["name_en"] or "").strip()
+        if name_text:
+            named.append({**identity, "text": name_text})
         snippets = []
         for node, p in walk(r["node"], r["pointer"]):
             if not isinstance(node, dict):

@@ -43,7 +43,8 @@ public class Program
         var modelDir = BoardPaths.ResolveModelDir(
             builder.Configuration.GetValue<string>("Embedding:ModelDir"),
             boardBase);
-        var embedder = new EmbeddingService(modelDir);
+        var embedder = new EmbeddingService(modelDir,
+            builder.Configuration.GetValue<string>("Embedding:Pooling") ?? "mean");
         builder.Services.AddSingleton(embedder);
 
         var qdrantHost = builder.Configuration.GetValue<string>("Qdrant:Host") ?? "localhost";
@@ -138,6 +139,7 @@ public class Program
         var config = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false)
+            .AddEnvironmentVariables()
             .Build();
 
         var rulesOptions = Options.Create(new RulesOptions
@@ -148,7 +150,8 @@ public class Program
         var modelDir = BoardPaths.ResolveModelDir(
             config.GetValue<string>("Embedding:ModelDir"),
             boardBase);
-        var embedder = new EmbeddingService(modelDir);
+        var embedder = new EmbeddingService(modelDir,
+            config.GetValue<string>("Embedding:Pooling") ?? "mean");
 
         var qdrantHost = config.GetValue<string>("Qdrant:Host") ?? "localhost";
         var qdrantPort = config.GetValue<int?>("Qdrant:Port") ?? 6334;
