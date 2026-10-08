@@ -104,7 +104,12 @@ public sealed class RulesPlanService
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var result = new PlanExecutionResult();
+        var result = new PlanExecutionResult
+        {
+            RulesVersion = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
+                ? snapshot.Version
+                : null
+        };
         if (!plan.TryGetProperty("queries", out var queries) || queries.ValueKind != JsonValueKind.Array)
         {
             result.Note = "plan 缺少 queries 数组。";

@@ -46,6 +46,8 @@ public class PlanExecutionResult
 {
     public List<PlanItemResult> Results { get; set; } = new();
     public string Note { get; set; } = "";
+    /// <summary>本次 execute_plan 绑定的规则内容版本（快照哈希）；直接构造 plan 服务且无请求 scope 时为 null。</summary>
+    public string? RulesVersion { get; set; }
 }
 
 public class PlanItemResult

@@ -20,12 +20,16 @@ public class ChatController : ControllerBase
     {
         try
         {
-            var reply = await _orchestrator.ProcessAsync(
+            var result = await _orchestrator.ProcessWithEvidenceAsync(
                 request.GameId,
                 request.Messages,
                 request.Context,
                 HttpContext.RequestAborted);
-            return Ok(new ChatResponse { Reply = reply });
+            return Ok(new ChatResponse
+            {
+                Reply = result.Reply,
+                Evidence = result.Evidence
+            });
         }
         catch (OperationCanceledException)
         {

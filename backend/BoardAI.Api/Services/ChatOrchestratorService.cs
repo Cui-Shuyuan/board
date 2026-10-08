@@ -59,6 +59,13 @@ public class ChatOrchestratorService
         List<ChatMessage> history,
         ChatContext? context = null,
         CancellationToken cancellationToken = default)
+        => (await ProcessWithEvidenceAsync(gameId, history, context, cancellationToken)).Reply;
+
+    public async Task<ChatProcessResult> ProcessWithEvidenceAsync(
+        string gameId,
+        List<ChatMessage> history,
+        ChatContext? context = null,
+        CancellationToken cancellationToken = default)
     {
         var sw = Stopwatch.StartNew();
 
@@ -96,7 +103,7 @@ public class ChatOrchestratorService
             history.Count);
 
         var tools = BuildTools(gameId);
-        var evidence = new AnswerEvidence();
+        var evidence = new AnswerEvidenceCollector();
         var roundsExecuted = 0;
         string? stopReason = null;
 
@@ -135,7 +142,7 @@ public class ChatOrchestratorService
                     sw.Stop();
                     _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
                         gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
-                    return reply;
+                    return new ChatProcessResult(reply, evidence.Build());
                 }
 
                 _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
@@ -185,7 +192,7 @@ public class ChatOrchestratorService
                     _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}",
                         gameId, toolCall.Function.Name, FormatForLog(result));
                     if (toolCall.Function.Name == "execute_plan")
-                        UpdateEvidence(result, evidence);
+                        evidence.AddPlanResult(result);
 
                     if (TryGetToolError(result, out var errorText))
                     {
@@ -236,7 +243,8 @@ public class ChatOrchestratorService
             if (stopReason == null)
                 stopReason = "max_tool_rounds";
 
-            return await RequestFinalAnswerAsync(gameId, messages, evidence, stopReason, roundsExecuted, sw, effectiveToken);
+            var finalReply = await RequestFinalAnswerAsync(gameId, messages, evidence, stopReason, roundsExecuted, sw, effectiveToken);
+            return new ChatProcessResult(finalReply, evidence.Build());
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -252,7 +260,7 @@ public class ChatOrchestratorService
             _logger.LogInformation(
                 "[Chat] Game {GameId}, request timeout: rounds={Rounds}, elapsed={Elapsed:F0}ms",
                 gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds);
-            return BuildIncompleteReply("request_timeout", evidence);
+            return new ChatProcessResult(BuildIncompleteReply("request_timeout", evidence), evidence.Build());
         }
         finally
         {
@@ -326,7 +334,7 @@ public class ChatOrchestratorService
     private async Task<string> RequestFinalAnswerAsync(
         string gameId,
         List<ChatMessage> messages,
-        AnswerEvidence evidence,
+        AnswerEvidenceCollector evidence,
         string stopReason,
         int roundsExecuted,
         Stopwatch sw,
@@ -374,7 +382,7 @@ public class ChatOrchestratorService
         }
     }
 
-    private static string BuildIncompleteReply(string stopReason, AnswerEvidence evidence)
+    private static string BuildIncompleteReply(string stopReason, AnswerEvidenceCollector evidence)
     {
         var reasonText = stopReason switch
         {
@@ -526,50 +534,176 @@ public class ChatOrchestratorService
         return value[..maxLength] + "…";
     }
 
-    /// <summary>回答证据分级：tier1 = 有 ok 数据支撑；tier2 = 只有候选兜底；tier3 = 无任何数据（自行发挥）。</summary>
-    private sealed class AnswerEvidence
+    /// <summary>
+    /// 按 query 收集证据。一次 execute_plan 的所有 query 都会记录；最终 tier
+    /// 由整组 query 的最坏状态决定，任一 no_match/unresolved/unsupported 都不会整体判为 tier1。
+    /// </summary>
+    private sealed class AnswerEvidenceCollector
     {
-        public bool SawData;
-        public bool SawCandidates;
+        public List<QueryEvidence> Queries { get; } = new();
+        public string? RulesVersion { get; private set; }
 
-        public string GetTier() =>
-            SawData ? "tier1-数据回答" : SawCandidates ? "tier2-候选兜底" : "tier3-无数据自行发挥";
-    }
+        public bool SawData => Queries.Any(q => q.HasData);
+        public bool SawCandidates => Queries.Any(q => q.Candidates.Count > 0);
 
-    /// <summary>从 execute_plan 结果中提取证据：ok + 非空 Matched → tier1；unresolved + 非空 Candidates → tier2。
-    /// no_match / 空结果不产生任何证据——最终若两者皆无则判为 tier3。</summary>
-    private static void UpdateEvidence(string toolResult, AnswerEvidence evidence)
-    {
-        if (evidence.SawData) return;
-        try
+        public void AddPlanResult(string toolResult)
         {
-            using var doc = JsonDocument.Parse(toolResult);
-            if (!doc.RootElement.TryGetProperty("Results", out var results) || results.ValueKind != JsonValueKind.Array)
-                return;
-            foreach (var item in results.EnumerateArray())
+            try
             {
-                var status = item.TryGetProperty("Status", out var sp) ? sp.GetString() : null;
-                if (status == "ok"
-                    && item.TryGetProperty("Matched", out var m)
-                    && m.ValueKind == JsonValueKind.Array
-                    && m.GetArrayLength() > 0)
+                using var doc = JsonDocument.Parse(toolResult);
+                var root = doc.RootElement;
+                if (root.ValueKind != JsonValueKind.Object) return;
+
+                if (root.TryGetProperty("RulesVersion", out var versionProp)
+                    && versionProp.ValueKind == JsonValueKind.String)
                 {
-                    evidence.SawData = true;
+                    RulesVersion ??= versionProp.GetString();
+                }
+
+                if (!root.TryGetProperty("Results", out var results) || results.ValueKind != JsonValueKind.Array)
                     return;
-                }
-                if (status == "unresolved"
-                    && item.TryGetProperty("Candidates", out var c)
-                    && c.ValueKind == JsonValueKind.Array
-                    && c.GetArrayLength() > 0)
-                {
-                    evidence.SawCandidates = true;
-                }
+
+                foreach (var item in results.EnumerateArray())
+                    Queries.Add(ParseQueryEvidence(item, RulesVersion));
+            }
+            catch
+            {
+                // 非 plan 结果或解析失败——不参与 tier 判定
             }
         }
-        catch
+
+        public AnswerEvidence Build()
         {
-            // 非 plan 结果或解析失败——不参与 tier 判定
+            var evidence = new AnswerEvidence
+            {
+                RulesVersion = RulesVersion,
+                QueryCount = Queries.Count,
+                HasData = SawData,
+                HasCandidates = SawCandidates,
+                OkCount = Queries.Count(q => q.Status == "ok"),
+                UnresolvedCount = Queries.Count(q => q.Status == "unresolved"),
+                NoMatchCount = Queries.Count(q => q.Status == "no_match"),
+                UnsupportedCount = Queries.Count(q => q.Status == "unsupported"),
+                Queries = Queries.ToList()
+            };
+
+            evidence.IsComplete = evidence.QueryCount > 0
+                && evidence.OkCount == evidence.QueryCount
+                && evidence.HasData;
+
+            evidence.Tier = evidence.IsComplete
+                ? "tier1"
+                : evidence.HasData
+                    ? "partial"
+                    : evidence.HasCandidates
+                        ? "tier2"
+                        : "tier3";
+
+            return evidence;
         }
+
+        public string GetTier()
+        {
+            var tier = Build().Tier;
+            return tier switch
+            {
+                "tier1" => "tier1-数据回答",
+                "tier2" => "tier2-候选兜底",
+                "partial" => "partial-部分有据",
+                _ => "tier3-无数据自行发挥"
+            };
+        }
+    }
+
+    private static QueryEvidence ParseQueryEvidence(JsonElement item, string? rulesVersion)
+    {
+        var status = item.TryGetProperty("Status", out var sp) ? sp.GetString() ?? "" : "";
+        var query = new QueryEvidence
+        {
+            Relation = item.TryGetProperty("Relation", out var rp) ? rp.GetString() ?? "" : "",
+            Entity = item.TryGetProperty("Entity", out var ep) ? ep.GetString() ?? "" : "",
+            Status = status,
+            Source = item.TryGetProperty("Source", out var src) ? src.GetString() ?? "" : "",
+            RulesVersion = rulesVersion,
+            Message = item.TryGetProperty("Message", out var mp) ? mp.GetString() : null,
+            Matched = ParseMatchedArray(item, "Matched"),
+            Candidates = ParseCandidateArray(item, "Candidates"),
+            References = ParseMatchedArray(item, "Related")
+        };
+
+        if (item.TryGetProperty("FlowContext", out var flow) && flow.ValueKind == JsonValueKind.Array)
+        {
+            query.FlowContext = flow.EnumerateArray()
+                .Where(x => x.ValueKind == JsonValueKind.String)
+                .Select(x => x.GetString() ?? "")
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToList();
+        }
+
+        var hasCatalog = item.TryGetProperty("Catalog", out var catalog)
+            && catalog.ValueKind == JsonValueKind.Object;
+        query.HasData = status == "ok" && (query.Matched.Count > 0 || hasCatalog);
+
+        return query;
+    }
+
+    private static List<EvidenceConcept> ParseMatchedArray(JsonElement item, string property)
+    {
+        var result = new List<EvidenceConcept>();
+        if (!item.TryGetProperty(property, out var array) || array.ValueKind != JsonValueKind.Array)
+            return result;
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var element in array.EnumerateArray())
+        {
+            var id = element.TryGetProperty("id", out var idProp) ? idProp.GetString() ?? "" : "";
+            if (string.IsNullOrEmpty(id) || !seen.Add(id)) continue;
+            result.Add(new EvidenceConcept
+            {
+                Id = id,
+                Name = ExtractNameZh(element)
+            });
+        }
+
+        return result;
+    }
+
+    private static List<EvidenceConcept> ParseCandidateArray(JsonElement item, string property)
+    {
+        var result = new List<EvidenceConcept>();
+        if (!item.TryGetProperty(property, out var array) || array.ValueKind != JsonValueKind.Array)
+            return result;
+
+        foreach (var element in array.EnumerateArray())
+        {
+            var id = element.TryGetProperty("Id", out var idProp) ? idProp.GetString() ?? "" : "";
+            if (string.IsNullOrEmpty(id)) continue;
+            var candidate = new EvidenceConcept
+            {
+                Id = id,
+                Name = element.TryGetProperty("Name", out var nameProp) ? nameProp.GetString() ?? "" : "",
+                Type = element.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null,
+                Description = element.TryGetProperty("Description", out var descProp) ? descProp.GetString() : null
+            };
+            if (element.TryGetProperty("Score", out var scoreProp) && scoreProp.ValueKind == JsonValueKind.Number)
+                candidate.Score = scoreProp.GetSingle();
+            result.Add(candidate);
+        }
+
+        return result;
+    }
+
+    private static string ExtractNameZh(JsonElement element)
+    {
+        if (element.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
+        {
+            if (name.TryGetProperty("zh", out var zh) && zh.ValueKind == JsonValueKind.String)
+                return zh.GetString() ?? "";
+            if (name.TryGetProperty("en", out var en) && en.ValueKind == JsonValueKind.String)
+                return en.GetString() ?? "";
+        }
+
+        return "";
     }
 
     private List<ToolDefinition> BuildTools(string gameId)
