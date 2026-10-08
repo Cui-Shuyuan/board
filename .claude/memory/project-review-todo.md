@@ -116,6 +116,23 @@ metadata:
   - Android JVM 回归：`QaEvidenceParsingTest` 4 条覆盖 partial Evidence、缺失/畸形 Evidence、tier2/tier3 提示；`QaRepositoryTest` 新增 1 条真实 HTTP 返回 partial Evidence 的集成测试。Android JVM 全量 89/89 通过。
   - 未执行：真实 LLM key 的动态回答、真实 Android 设备/界面验收。后端序列化由 xUnit 覆盖，客户端字段消费与降级由 JVM 覆盖；真机仍待后续端到端。
 
+
+## 2026-10-09 ontology 修改后的补充复现
+
+### [ ] REV-03a 修复同来源槽位与概念的索引键冲突
+
+- 实际复现：更新 ontology 后执行 tools/indexing/rebuild_index.py --all，前四款游戏通过；Civolution 提取 438 条 full 记录，写入后只有 431 个点，完整性校验失败；name 408/408。失败清理了本次临时集合，未切换 Civolution 旧索引。
+- 根因证据：同一 source=game 内，stage_partition 同时被提取为局部 slot 与全局 object；槽位元数据 name、material 各被误提取四次。点 ID 仅含 game/source/concept_id，以上记录互相覆盖。九款游戏中此次仅 Civolution 出现重复点键。
+- 修复范围：对齐 Python 与 C# 的槽位提取和身份规则，区分元数据与真实槽位，明确局部槽位的所属路径及与全局概念的寻址关系；同步索引版本/点 ID 契约与查询解析。不要仅放宽数量校验或机械保留最后条目来掩盖冲突。
+- 验收：用九款真实规则数据比较 CLI/API 提取项与键；元数据不入槽位索引，合法局部槽位可准确寻址，同名全局概念不被覆盖；两套索引点数校验通过并原子切换。补覆盖 Civolution 的回归。
+- 本轮保留：ontology 修改已通过规则校验（0 errors / 72 warnings）与后端 108/108；索引问题另行收口，不修改已交给其他模型维护的检索代码。
+
+### [ ] 修正本地 pre-commit 规则校验脚本路径
+
+- 本次提交实测：.git/hooks/pre-commit 仍调用已不存在的 scripts/validate_rules.py，打印 can't open file 后继续提交，因此其“校验完成”不代表真正跑过校验。
+- 修改：本地 hook 调用 tools/content/validate_rules.py，并检查安装/同步 hook 的入口，避免后续恢复旧路径；是否阻止提交仍遵循既有工作约定。
+- 验收：实际触发 hook 时可看到当前校验器的执行结果。本轮已独立运行现行校验器，0 errors / 72 warnings。
+
 ## 执行与收口
 
 - 建议顺序：REV-01 → REV-02 → REV-03 → REV-04 → REV-05 → REV-06 → REV-07 → REV-08。REV-01 完成后再开放多游戏资源。
