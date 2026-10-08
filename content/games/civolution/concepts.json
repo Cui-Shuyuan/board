@@ -2524,8 +2524,8 @@
               "en": "lower-right area of the progress board"
             },
             "description": {
-              "zh": "收入芯片展示区，上限为玩家人数 + 2",
-              "en": "income chip display area, capacity = player count + 2"
+              "zh": "收入芯片展示区，上限 3 个",
+              "en": "income chip display area, capacity 3"
             }
           }
         },
