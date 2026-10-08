@@ -85,11 +85,13 @@ metadata:
 - 实施记录（2026-10-08）：`QaSession` 增加 holder 分配的 generation；`QaSessionHolder` 的 `appendMessage` 必须携带 generation，active session 变化后旧回调直接拒绝；切换游戏与 clear 后旧 generation 全部失效。QaPanel 为每次发送保留 session generation、active chat Job 和 stale 检查，新建会话/关闭面板/切换游戏时取消 Job 并断开 `QaRepository` 阻塞连接；旧 reply/error 不写当前消息、不改输入、不启动 TTS。QaVoiceController 为 ASR/TTS 增加 generation、Job 跟踪与引擎级 `cancelActiveRequests()`：新会话/新 PTT 会取消旧录音、ASR、TTS 并断开 HTTP 连接，迟到的转写/合成结果被忽略，临时 wav 与回答音频在会话结束/关闭时清理；MainActivity 在 close/return/switch 路径同步断开 chat 连接。
 - 验收记录（2026-10-08）：新增 `QaSessionHolderTest` 4 条（同游戏上下文更新保持 generation、新会话清空并换代、stale append 拒绝、切换游戏失效旧 owner），`QaVoiceControllerTest` 新增 4 条（新会话丢弃迟到 ASR 并删 wav、新 PTT 丢弃前一录音 ASR、PTT 取消迟到自动 TTS、启动新会话删除缓存回答音频），`QaRepositoryTest` 1 条（cancelActiveRequests 断开阻塞 chat 请求并抛 cancellation）。Android JVM `:app:testDebugUnitTest` 共 84 tests，0 failures / 0 errors。未执行真机端到端；JVM 覆盖的是状态机与连接取消，未覆盖 MediaPlayer/AudioRecord 驱动行为。
 
-### [ ] REV-07 规则缓存并发与版本一致性（代码显示风险，需补并发复现）
+### [x] REV-07 规则缓存并发与版本一致性（代码显示风险，需补并发复现）
 
 - 证据：GameRulesService 为 singleton，名称/流程/类型等派生缓存使用普通 Dictionary，读取、写入与 Clear 缺少共同同步；热更新可交错重建。RulesDocumentStore 将被替换文档加入 retired，直到服务 Dispose 才释放。
 - 修改：按规则版本构建不可变快照并原子切换；一次请求绑定一个版本，名称、流程、事实使用同一快照；通过明确所有权/引用生命周期释放旧文档。仅换成 ConcurrentDictionary 不足以保证整次请求一致性。
 - 验收：多请求与连续热更新交错，无并发异常或混合版本；新增/删除文件和缓存命中路径能刷新；长期更新后旧快照内存可回收。
+- 实施记录（2026-10-08）：新增 `RulesGameSnapshot`（按游戏深拷贝本体/游戏 concepts/instances/flow，带内容哈希 Version）与 `RulesSnapshotScope`（AsyncLocal 请求作用域）。`RulesContentStore.GetSnapshot(game)` 在 store 锁内探测文件增删改、按 Revision 缓存并对旧快照自然换出；快照一旦被请求捕获，整条调用链（包含 `RulesSearchService` 的 Task.Run 子任务）读取同一版本。名称/精确名/流程/Plan 类型/计分表缓存均改为“快照内一次性构建”，普通 Dictionary 路径只保留给直接构造协作类的旧单测。`RulesDocumentStore` 每次实际加载/替换/删除推进 Revision；retired 原始 JsonDocument 改为有界队列（最多 16 个），读取增加短暂重试；快照使用独立 `JsonDocument`，不再依赖 retired 生命周期。`ChatOrchestratorService` 在整轮 Chat 进入 `BeginRequestScope`，同一轮内多个 execute_plan/注解也不会跨版本。
+- 验收记录（2026-10-08）：新增 `Rev07RulesSnapshotTests` 4 条：200 次热更新后 retired 文档数有界；真实文件新增/删除 game concepts 后快照刷新；4 个并发请求与 500 次内存热更新交错无异常、无单请求混合版本；缓存命中后一次内存更新即重建派生缓存。修复前临时复现已观察到 retired count 200、`RulesFlowService` 并发 `IndexOutOfRangeException`/文件 `IOException` 与版本混用；修复后 `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` 101/101 通过。
 
 ### [ ] REV-08 逐查询记录回答证据（设计改进）
 
