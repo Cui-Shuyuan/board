@@ -136,12 +136,16 @@ def load_asks(path: Path):
         asks = []
         for cue in spec.get("cues") or []:
             cid = cue.get("id")
-            for item in cue.get("qa") or []:
+            raw_qa = cue.get("qa")
+            if raw_qa is None:
+                continue
+            items = raw_qa if isinstance(raw_qa, list) else [raw_qa]
+            for item in items:
                 if isinstance(item, str) and item.strip():
-                    asks.append({"cue": cid, "q": item})
+                    asks.append({"cue": cid, "q": item.strip()})
                 elif isinstance(item, dict) and str(item.get("q") or "").strip():
-                    ask = {"cue": cid, "q": str(item["q"])}
-                    if item.get("expect"):
+                    ask = {"cue": cid, "q": str(item["q"]).strip()}
+                    if item.get("expect") is not None:
                         ask["expect"] = str(item["expect"])
                     asks.append(ask)
         return {"source": str(path), "asks": asks}

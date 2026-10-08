@@ -70,6 +70,234 @@ def normalize_manifest_paths(manifest: dict) -> dict:
     return manifest
 
 
+# ── QA source loading and change detection ─────────────────────────────────
+# Presentation-only event ops do not require board-state QA.  Anything else
+# (including future primitive ops) is treated as stateful, so this gate fails
+# closed rather than silently skipping an unknown operation.
+_QA_PRESENTATION_EVENT_OPS = frozenset({
+    "camera", "wait", "label", "point", "shape", "fade", "scale",
+    "highlight", "overlay_show", "overlay_hide", "magnifier", "show", "hide",
+})
+
+
+def _canonical_json(value) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True,
+                      separators=(",", ":"), default=str)
+
+
+def event_changes_board_state(event: dict) -> bool:
+    """Return True when an event can change board state (QA-relevant)."""
+    op = str((event or {}).get("op") or "")
+    return op not in _QA_PRESENTATION_EVENT_OPS
+
+
+def qa_change_signature(cue: dict) -> dict:
+    """Extract the cue parts whose change requires a QA question refresh."""
+    cue = cue or {}
+    script = cue.get("script") if isinstance(cue.get("script"), dict) else {}
+    events = cue.get("events") if isinstance(cue.get("events"), list) else []
+    return {
+        "entry": cue.get("entry"),
+        "parent": cue.get("parent"),
+        "tree": cue.get("tree"),
+        "transition": cue.get("transition", "continue"),
+        "negative": cue.get("negative"),
+        "demo": cue.get("demo"),
+        "script_enter": script.get("enter"),
+        "script_exit": script.get("exit"),
+        "state_events": [
+            event for event in events
+            if isinstance(event, dict) and event_changes_board_state(event)
+        ],
+    }
+
+
+def cue_has_qa_relevant_change(before: dict | None, after: dict | None) -> bool:
+    """Canonical comparison of one cue against its baseline version."""
+    if before is None or after is None:
+        return True
+    return _canonical_json(qa_change_signature(before)) != _canonical_json(qa_change_signature(after))
+
+
+def load_baseline_track_doc(game: str, track: str) -> dict | None:
+    """Read the committed baseline anim JSON from HEAD (not mtime/whole-file diff)."""
+    rel = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(ROOT), "show", f"HEAD:{rel}"],
+            capture_output=True, text=True, check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    try:
+        doc = json.loads(proc.stdout)
+    except json.JSONDecodeError:
+        return None
+    return doc if isinstance(doc, dict) else None
+
+
+def _qa_effective_track_doc(doc: dict) -> dict:
+    """Resolve inheritance for QA selection, falling back to the raw document."""
+    try:
+        resolved = schema.resolve_track(doc)
+    except Exception:  # noqa: BLE001 - QA selection should not crash on malformed drafts
+        return doc
+    if isinstance(resolved, dict) and isinstance(resolved.get("cues"), list):
+        return resolved
+    return doc
+
+
+def select_qa_changed_ids(track_doc: dict, baseline_doc: dict | None,
+                          tts_changed_ids: list[str] | None = None) -> list[str]:
+    """Select cue IDs that require QA for the incremental `--validate-qa` gate.
+
+    Text/narration changes are passed in through ``tts_changed_ids`` (they are
+    already detected by the TTS/LRC comparison).  This function adds any cue
+    whose contract / inheritance / state-changing events changed vs HEAD.
+    """
+    track_doc = _qa_effective_track_doc(track_doc or {})
+    if isinstance(baseline_doc, dict):
+        baseline_doc = _qa_effective_track_doc(baseline_doc)
+
+    current_by: dict[str, dict] = {}
+    ordered: list[str] = []
+    for cue in (track_doc or {}).get("cues") or []:
+        if not isinstance(cue, dict):
+            continue
+        cid = cue.get("id")
+        if cid and cid not in current_by:
+            current_by[cid] = cue
+            ordered.append(cid)
+
+    changed = {cid for cid in (tts_changed_ids or []) if cid in current_by}
+    if not isinstance(baseline_doc, dict):
+        changed.update(ordered)
+        return ordered[:]
+
+    baseline_by: dict[str, dict] = {}
+    for cue in baseline_doc.get("cues") or []:
+        if isinstance(cue, dict) and cue.get("id"):
+            baseline_by[cue["id"]] = cue
+
+    for cid in ordered:
+        old = baseline_by.get(cid)
+        if old is None or cue_has_qa_relevant_change(old, current_by[cid]):
+            changed.add(cid)
+    return [cid for cid in ordered if cid in changed]
+
+
+def _normalise_qa_question(item, cue_id: str, original_cue: str, source: str) -> dict:
+    if isinstance(item, str):
+        question = item.strip()
+        expect = None
+    elif isinstance(item, dict):
+        question = str(item.get("q") or "").strip()
+        expect = item.get("expect")
+        if expect is not None:
+            expect = str(expect)
+    else:
+        return {}
+    if not question:
+        return {}
+    return {
+        "cue": cue_id,
+        "q": question,
+        "expect": expect,
+        "source": source,
+        "original_cue": original_cue,
+    }
+
+
+def cue_qa_asks(track_doc: dict, source_label: str) -> list[dict]:
+    """Extract hand-written QA embedded in each cue's ``qa`` field."""
+    asks: list[dict] = []
+    for cue in (track_doc or {}).get("cues") or []:
+        if not isinstance(cue, dict) or not cue.get("id"):
+            continue
+        cid = cue["id"]
+        raw = cue.get("qa")
+        if raw is None:
+            continue
+        items = raw if isinstance(raw, list) else [raw]
+        for index, item in enumerate(items):
+            ask = _normalise_qa_question(
+                item, cue_id=cid, original_cue=cid,
+                source=f"{source_label}#{cid}.qa[{index}]",
+            )
+            if ask:
+                asks.append(ask)
+    return asks
+
+
+def external_qa_asks(spec: dict, source_label: str) -> list[dict]:
+    """Extract hand-written QA from the legacy ``_qa/questions.json`` file."""
+    asks: list[dict] = []
+    raw_items = spec.get("asks") if isinstance(spec, dict) else None
+    if not isinstance(raw_items, list):
+        return asks
+    for index, item in enumerate(raw_items):
+        if not isinstance(item, dict):
+            continue
+        original_cue = str(item.get("cue") or "").strip()
+        main_cue = original_cue.split("#", 1)[0]
+        ask = _normalise_qa_question(
+            item, cue_id=main_cue, original_cue=original_cue,
+            source=f"{source_label}#asks[{index}]",
+        )
+        if ask:
+            asks.append(ask)
+    return asks
+
+
+def merge_qa_asks(*groups: list[dict]) -> list[dict]:
+    """Merge asks from all sources, de-duplicating by (main cue, question)."""
+    merged: dict[tuple[str, str], dict] = {}
+    for group in groups:
+        for ask in group:
+            key = (ask.get("cue", ""), ask.get("q", ""))
+            existing = merged.get(key)
+            if existing is None:
+                item = dict(ask)
+                item["sources"] = [ask.get("source", "")]
+                item["original_cues"] = [ask.get("original_cue", "")]
+                merged[key] = item
+                continue
+            source = ask.get("source", "")
+            original_cue = ask.get("original_cue", "")
+            if source and source not in existing.setdefault("sources", []):
+                existing["sources"].append(source)
+            if original_cue and original_cue not in existing.setdefault("original_cues", []):
+                existing["original_cues"].append(original_cue)
+            # Preserve a hand-written expected verdict even when the duplicate
+            # from another source omitted it.
+            if not existing.get("expect") and ask.get("expect"):
+                existing["expect"] = ask["expect"]
+    return list(merged.values())
+
+
+def _qa_source_label(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def invalid_external_qa_cues(spec: dict, valid_cue_ids: set[str]) -> list[str]:
+    """Return external cue references that do not exist in the current track."""
+    invalid: list[str] = []
+    raw_items = spec.get("asks") if isinstance(spec, dict) else None
+    if not isinstance(raw_items, list):
+        return invalid
+    for index, item in enumerate(raw_items):
+        if not isinstance(item, dict):
+            continue
+        original = str(item.get("cue") or "").strip()
+        main = original.split("#", 1)[0]
+        if not main or main not in valid_cue_ids:
+            invalid.append(original or f"<asks[{index}] missing cue>")
+    return invalid
+
+
 def manifest_audio_ok(manifest_cue: dict, root: Path | None = None) -> bool:
     """Return True when a manifest cue's audio file exists after path normalization."""
     if not isinstance(manifest_cue, dict):
@@ -240,35 +468,79 @@ def update_lrc_refs(lrc_path: Path, script: dict):
     lrc_utils.update_lrc_refs(lrc_path, script)
 
 
-def run_qa_gate(game: str, track: str, ids: list[str] | None = None) -> int:
+def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
+                  track_doc: dict | None = None) -> int:
     """Ask BoardAI the handwritten QA questions before compiling.
 
-    ids=None -> all questions; ids=[...] -> only questions belonging to those
-    cue ids (including action.cards.market.001.1#1 style suffixes).
+    Questions are merged from two hand-written sources:
+      1. each cue's ``qa`` field in ``{track}.anim.json``;
+      2. the legacy ``_qa/questions.json`` file.
+    ``ids=None`` -> all merged questions; ``ids=[...]`` -> only questions for
+    those main cue IDs.  A selected cue without any merged question is an error
+    (fail closed), and stale external cue references always fail.
     """
     import os
     import tempfile
+
+    if track_doc is None:
+        anim_path = ROOT / "content" / "games" / game / "tutorial" / "anim" / "v2" / f"{track}.anim.json"
+        try:
+            track_doc = load_json(anim_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"[qa] cannot read track for cue validation: {anim_path}: {exc}", file=sys.stderr)
+            return 2
+
+    valid_cue_ids = {
+        cue.get("id") for cue in (track_doc or {}).get("cues") or []
+        if isinstance(cue, dict) and cue.get("id")
+    }
     qa_path = qa_questions_path(game)
-    if not qa_path.exists():
-        print(f"[qa] missing questions file: {qa_path}", file=sys.stderr)
-        return 2
-    spec = load_json(qa_path)
-    asks = spec.get("asks") or []
-    if ids is not None:
-        wanted = set(ids)
-        selected = [a for a in asks if (a.get("cue", "").split("#", 1)[0] in wanted)]
+    external_asks: list[dict] = []
+    if qa_path.exists():
+        try:
+            spec = load_json(qa_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"[qa] cannot read questions file: {qa_path}: {exc}", file=sys.stderr)
+            return 2
+        invalid = invalid_external_qa_cues(spec, valid_cue_ids)
+        if invalid:
+            unique = ", ".join(sorted(set(invalid)))
+            print(f"[qa] stale external cue id(s) in {_qa_source_label(qa_path)}: {unique}",
+                  file=sys.stderr)
+            return 1
+        external_asks = external_qa_asks(spec, _qa_source_label(qa_path))
     else:
-        selected = asks
+        print(f"[qa] external questions not found; using cue qa fields only: "
+              f"{_qa_source_label(qa_path)}", file=sys.stderr)
+
+    anim_label = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
+    merged = merge_qa_asks(cue_qa_asks(track_doc, anim_label), external_asks)
+
+    if ids is None:
+        selected = merged
+    else:
+        wanted = set(ids)
+        selected = [ask for ask in merged if ask.get("cue") in wanted]
+        available = {ask.get("cue") for ask in merged}
+        missing = [cid for cid in ids if cid not in available]
+        if missing:
+            print(f"[qa] missing required QA for cue(s): {', '.join(missing)} "
+                  f"(hand-written sources: cue.qa + {_qa_source_label(qa_path)})",
+                  file=sys.stderr)
+            return 1
+
     if not selected:
         print("[qa] no matching questions; skip")
         return 0
+
     tmp = Path(tempfile.mkstemp(prefix="compile_qa_", suffix=".json")[1])
     try:
-        tmp.write_text(json.dumps({"note": "compile gate", "asks": selected}, ensure_ascii=False, indent=2),
-                       encoding="utf-8")
+        tmp.write_text(json.dumps({"note": "compile gate", "asks": selected},
+                                  ensure_ascii=False, indent=2), encoding="utf-8")
         cmd = ["--game", game, "--track", track,
                "--in", str(tmp), "--jobs", "4", "--tag", "compile_validation", "--strict"]
-        print(f"[qa] validating {len(selected)} question(s) via BoardAI ...")
+        cue_ids = sorted({ask.get("cue", "?") for ask in selected})
+        print(f"[qa] validating {len(selected)} question(s) via BoardAI for {len(cue_ids)} cue(s) ...")
         had_api = os.environ.get("BOARDAI_API")
         os.environ.setdefault("BOARDAI_API", "http://localhost:5000/api/chat")
         try:
@@ -282,7 +554,6 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None) -> int:
         return 0
     finally:
         tmp.unlink(missing_ok=True)
-
 
 def games_with_track(track: str) -> list[str]:
     """Return games that have the complete source/generated set for a track."""
@@ -342,6 +613,7 @@ def main() -> int:
         return 2
 
     script = load_json(script_path)
+    anim_doc = load_json(anim_path)
     manifest = normalize_manifest_paths(load_json(manifest_path))
     tts_text = read_current_tts_text(tts_lrc_path)
     manifest_by = {c["id"]: c for c in manifest.get("cues") or []}
@@ -362,15 +634,25 @@ def main() -> int:
         elif (m.get("refs") or []) != refs:
             refs_changed.append(cid)
 
-    if not args.dry_run:
-        qa_ids = None if args.validate_qa_all else ([c["id"] for c in changed] if args.validate_qa else [])
-        if qa_ids is None or qa_ids:
-            if qa_ids == []:
-                pass
-            else:
-                rc = run_qa_gate(args.game, args.track, qa_ids)
-                if rc != 0:
-                    return rc
+    if not args.dry_run and (args.validate_qa or args.validate_qa_all):
+        if args.validate_qa_all:
+            qa_ids = None
+            print("[qa] loading all merged hand-written questions (cue.qa + external)")
+        else:
+            baseline_doc = load_baseline_track_doc(args.game, args.track)
+            if baseline_doc is None:
+                cue_count = len(anim_doc.get("cues") or [])
+                print(f"[qa] no committed baseline for {args.game}/{args.track}; "
+                      f"treating all {cue_count} cue(s) as changed", file=sys.stderr)
+            qa_ids = select_qa_changed_ids(
+                anim_doc, baseline_doc, [c["id"] for c in changed])
+            preview = ", ".join(qa_ids[:10])
+            if len(qa_ids) > 10:
+                preview += f", ... (+{len(qa_ids) - 10})"
+            print(f"[qa] selected {len(qa_ids)} changed cue(s) for QA: {preview or '(none)'}")
+        rc = run_qa_gate(args.game, args.track, qa_ids, track_doc=anim_doc)
+        if rc != 0:
+            return rc
 
     manifest, removed = prune_removed(game_dir, args.track, script, manifest, args.dry_run)
     if changed:

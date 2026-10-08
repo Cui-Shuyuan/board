@@ -719,7 +719,7 @@ def main():
         for level, loc, msg in errors:
             print(f"[{level}] {loc}\n    {msg}")
         print(f"\n共 {len(errors)} 个错误, {len(warns)} 个警告")
-        return 0
+        return 1 if errors else 0
     for level, loc, msg in v.issues:
         print(f"[{level}] {loc}\n    {msg}")
     print(f"\n共 {len(errors)} 个错误, {len(warns)} 个警告")
