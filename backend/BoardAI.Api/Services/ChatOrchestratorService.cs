@@ -15,6 +15,8 @@ public class ChatOrchestratorService
     private readonly string _systemPromptTemplate;
     private readonly ILogger<ChatOrchestratorService> _logger;
     private readonly int _maxToolRounds;
+    private readonly int _maxToolCallsPerRound;
+    private readonly int _maxTotalToolCalls;
     private readonly TimeSpan _maxRequestTimeout;
     private readonly int _maxRepeatedFailures;
     private readonly int _maxConversationMessages;
@@ -45,6 +47,8 @@ public class ChatOrchestratorService
         var llmOptions = options.Value;
         _systemPromptTemplate = llmOptions.SystemPrompt;
         _maxToolRounds = Math.Max(1, llmOptions.MaxToolRounds);
+        _maxToolCallsPerRound = Math.Max(1, llmOptions.MaxToolCallsPerRound);
+        _maxTotalToolCalls = Math.Max(1, llmOptions.MaxTotalToolCalls);
         _maxRequestTimeout = TimeSpan.FromSeconds(Math.Max(1, llmOptions.MaxRequestSeconds));
         _maxRepeatedFailures = Math.Max(1, llmOptions.MaxRepeatedFailures);
         _maxConversationMessages = Math.Max(2, llmOptions.MaxConversationMessages);
@@ -102,6 +106,7 @@ public class ChatOrchestratorService
             var consecutiveToolFailures = 0;
             var repeatedCallCount = 0;
             var repeatedFailureCount = 0;
+            var totalToolCallsExecuted = 0;
             string? lastToolCallSignature = null;
             string? lastFailureSignature = null;
 
@@ -141,6 +146,20 @@ public class ChatOrchestratorService
 
                 for (var toolIndex = 0; toolIndex < assistantMessage.ToolCalls.Count; toolIndex++)
                 {
+                    if (toolIndex >= _maxToolCallsPerRound)
+                    {
+                        stopReason = "max_tool_calls_per_round";
+                        AppendSkippedToolResults(messages, assistantMessage.ToolCalls, toolIndex, stopReason);
+                        break;
+                    }
+
+                    if (totalToolCallsExecuted >= _maxTotalToolCalls)
+                    {
+                        stopReason = "max_total_tool_calls";
+                        AppendSkippedToolResults(messages, assistantMessage.ToolCalls, toolIndex, stopReason);
+                        break;
+                    }
+
                     effectiveToken.ThrowIfCancellationRequested();
 
                     var toolCall = assistantMessage.ToolCalls[toolIndex];
@@ -157,6 +176,7 @@ public class ChatOrchestratorService
                     }
 
                     var result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
+                    totalToolCallsExecuted++;
                     effectiveToken.ThrowIfCancellationRequested();
 
                     _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}",
@@ -203,8 +223,8 @@ public class ChatOrchestratorService
                 if (stopReason != null)
                 {
                     _logger.LogInformation(
-                        "[Chat] Game {GameId}, tool loop stopped: reason={Reason}, rounds={Rounds}, elapsed={Elapsed:F0}ms, consecutiveFailures={ConsecutiveFailures}, repeatedCalls={RepeatedCalls}, repeatedFailures={RepeatedFailures}",
-                        gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds,
+                        "[Chat] Game {GameId}, tool loop stopped: reason={Reason}, rounds={Rounds}, elapsed={Elapsed:F0}ms, totalToolCalls={TotalToolCalls}, consecutiveFailures={ConsecutiveFailures}, repeatedCalls={RepeatedCalls}, repeatedFailures={RepeatedFailures}",
+                        gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds, totalToolCallsExecuted,
                         consecutiveToolFailures, repeatedCallCount, repeatedFailureCount);
                     break;
                 }
@@ -215,14 +235,21 @@ public class ChatOrchestratorService
 
             return await RequestFinalAnswerAsync(gameId, messages, evidence, stopReason, roundsExecuted, sw, effectiveToken);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            sw.Stop();
+            _logger.LogInformation(
+                "[Chat] Game {GameId}, canceled by client: rounds={Rounds}, elapsed={Elapsed:F0}ms",
+                gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds);
+            throw;
+        }
         catch (OperationCanceledException) when (effectiveToken.IsCancellationRequested)
         {
             sw.Stop();
-            var cancellationReason = cancellationToken.IsCancellationRequested ? "client_cancelled" : "request_timeout";
             _logger.LogInformation(
-                "[Chat] Game {GameId}, canceled: reason={Reason}, rounds={Rounds}, elapsed={Elapsed:F0}ms",
-                gameId, cancellationReason, roundsExecuted, sw.Elapsed.TotalMilliseconds);
-            throw;
+                "[Chat] Game {GameId}, request timeout: rounds={Rounds}, elapsed={Elapsed:F0}ms",
+                gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds);
+            return BuildIncompleteReply("request_timeout", evidence);
         }
         finally
         {
@@ -348,7 +375,10 @@ public class ChatOrchestratorService
     {
         var reasonText = stopReason switch
         {
+            "request_timeout" => "已达到本次问答的时间上限",
             "max_tool_rounds" => "已达到本次查询的工具调用轮数上限",
+            "max_tool_calls_per_round" => "单轮工具调用数量过多",
+            "max_total_tool_calls" => "本次查询的工具调用总数过多",
             "consecutive_tool_failures" => "工具连续返回错误",
             "repeated_tool_call" => "工具调用重复",
             "repeated_failure_signature" => "工具连续以相同方式失败",

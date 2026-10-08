@@ -16,6 +16,12 @@ public class LLMOptions
     /// <summary>单次 /api/chat 请求内，最多允许的带工具 LLM 轮数；达到后只允许一次无工具总结。</summary>
     public int MaxToolRounds { get; set; } = 6;
 
+    /// <summary>单轮 LLM 响应中最多执行的 tool call 数量；超出部分跳过并进入无工具总结。</summary>
+    public int MaxToolCallsPerRound { get; set; } = 4;
+
+    /// <summary>单次 /api/chat 请求内最多执行的 tool call 总数；达到后跳过剩余调用并进入无工具总结。</summary>
+    public int MaxTotalToolCalls { get; set; } = 12;
+
     /// <summary>单次 /api/chat 请求的总预算（秒）；到点后取消所有进行中的 LLM/tool 调用。</summary>
     public int MaxRequestSeconds { get; set; } = 60;
 

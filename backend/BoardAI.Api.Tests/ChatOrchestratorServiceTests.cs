@@ -69,6 +69,78 @@ public sealed class ChatOrchestratorServiceTests
     }
 
     [Fact]
+    public async Task ProcessAsync_WhenSingleRoundExceedsToolCallLimit_OnlyExecutesLimitAndSummarizes()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        List<ChatMessage>? summaryMessages = null;
+        var llm = new FakeLLMService(call =>
+        {
+            if (call.HasTools)
+            {
+                return Task.FromResult(MultiToolCallResponse(
+                    call.Index,
+                    DistinctPlanArguments(1),
+                    DistinctPlanArguments(2),
+                    DistinctPlanArguments(3),
+                    DistinctPlanArguments(4),
+                    DistinctPlanArguments(5)));
+            }
+
+            summaryMessages = call.Messages;
+            return Task.FromResult(FinalResponse("FINAL"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(
+            maxToolRounds: 3,
+            maxToolCallsPerRound: 2,
+            maxTotalToolCalls: 10));
+
+        var reply = await sut.ProcessAsync("testgame", History());
+
+        Assert.Equal("FINAL", reply);
+        Assert.Equal(1, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+        Assert.NotNull(summaryMessages);
+        var toolMessages = summaryMessages!.Where(message => message.Role == "tool").ToList();
+        Assert.Equal(5, toolMessages.Count);
+        Assert.Equal(2, toolMessages.Count(message => !message.Content!.Contains("未执行")));
+        Assert.Equal(3, toolMessages.Count(message => message.Content!.Contains("未执行")));
+    }
+
+    [Fact]
+    public async Task ProcessAsync_WhenTotalToolCallsExceedLimit_StopsAndSummarizes()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        List<ChatMessage>? summaryMessages = null;
+        var llm = new FakeLLMService(call =>
+        {
+            if (call.HasTools)
+            {
+                return Task.FromResult(ToolCallResponse(DistinctPlanArguments(call.Index), call.Index));
+            }
+
+            summaryMessages = call.Messages;
+            return Task.FromResult(FinalResponse("FINAL"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(
+            maxToolRounds: 6,
+            maxToolCallsPerRound: 4,
+            maxTotalToolCalls: 2));
+
+        var reply = await sut.ProcessAsync("testgame", History());
+
+        Assert.Equal("FINAL", reply);
+        Assert.Equal(3, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+        Assert.NotNull(summaryMessages);
+        var toolMessages = summaryMessages!.Where(message => message.Role == "tool").ToList();
+        Assert.Equal(3, toolMessages.Count);
+        Assert.Equal(2, toolMessages.Count(message => !message.Content!.Contains("未执行")));
+        Assert.Equal(1, toolMessages.Count(message => message.Content!.Contains("未执行")));
+    }
+
+    [Fact]
     public async Task ProcessAsync_WhenRequestIsCancelled_StopsWithoutFurtherRequestsOrSummary()
     {
         using var fixture = new RulesFixture();
@@ -95,7 +167,7 @@ public sealed class ChatOrchestratorServiceTests
     }
 
     [Fact]
-    public async Task ProcessAsync_WhenTotalBudgetExpires_CancelsActiveLlmRequest()
+    public async Task ProcessAsync_WhenTotalBudgetExpires_ReturnsIncompleteReplyInsteadOfThrowing()
     {
         using var fixture = new RulesFixture();
         using var rules = fixture.CreateService();
@@ -112,10 +184,10 @@ public sealed class ChatOrchestratorServiceTests
         var processTask = sut.ProcessAsync("testgame", History());
         await firstCallStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => processTask.WaitAsync(TimeSpan.FromSeconds(5)));
+        var reply = await processTask.WaitAsync(TimeSpan.FromSeconds(5));
         sw.Stop();
 
+        Assert.Contains("时间上限", reply);
         Assert.True(sw.Elapsed < TimeSpan.FromSeconds(4), $"elapsed={sw.Elapsed}");
         Assert.Equal(1, llm.ToolCallCount);
         Assert.Equal(0, llm.SummaryCount);
@@ -192,12 +264,16 @@ public sealed class ChatOrchestratorServiceTests
     private static LLMOptions CreateOptions(
         int maxToolRounds = 3,
         int maxRequestSeconds = 10,
-        int maxRepeatedFailures = 3)
+        int maxRepeatedFailures = 3,
+        int maxToolCallsPerRound = 4,
+        int maxTotalToolCalls = 12)
         => new()
         {
             MaxToolRounds = maxToolRounds,
             MaxRequestSeconds = maxRequestSeconds,
             MaxRepeatedFailures = maxRepeatedFailures,
+            MaxToolCallsPerRound = maxToolCallsPerRound,
+            MaxTotalToolCalls = maxTotalToolCalls,
             MaxConversationMessages = 24
         };
 
@@ -226,6 +302,32 @@ public sealed class ChatOrchestratorServiceTests
                                 }
                             }
                         }
+                    }
+                }
+            }
+        };
+
+    private static LLMChatResponse MultiToolCallResponse(int index, params string[] arguments)
+        => new()
+        {
+            Choices = new List<LLMChoice>
+            {
+                new()
+                {
+                    Message = new ChatMessage
+                    {
+                        Role = "assistant",
+                        ToolCalls = arguments
+                            .Select((argument, offset) => new ToolCall
+                            {
+                                Id = $"call_{index}_{offset}",
+                                Function = new FunctionCall
+                                {
+                                    Name = "execute_plan",
+                                    Arguments = argument
+                                }
+                            })
+                            .ToList()
                     }
                 }
             }
