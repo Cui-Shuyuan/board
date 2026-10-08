@@ -64,7 +64,7 @@ L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 - `RulesDocumentStore`：按文件 `Length + LastWriteTimeUtc` 自动失效；文档变化时回调清派生缓存。
 - `RulesConceptCatalog`：概念类型、列表、概念详情、action conditions；局部槽位支持 `<owner>.<slot_id>` 路径解析。
 - `RulesNameIndexService`：id → 中文名映射与精确名称/别名查找，按 game 缓存。
-- `RulesSearchService`：关键词/向量混合检索、查询切分、名称短路；按稳定身份路径去重，局部槽位可被精确寻回。
+- `RulesSearchService`：关键词/向量混合检索、整句主导排序、查询切分；按稳定身份路径去重，局部槽位可被精确寻回。
 - `RulesIndexService`：从概念目录、实例、顶层引用、flow 提取索引条目并触发向量索引重建；显式槽位 `id/name/material` 按元数据处理，局部槽位身份为 `<owner>.<slot_id>`。
 - `RulesFlowService`：flow 节点 id → 祖先链、同级顺序、位置、最近 loop，按 game 缓存。
 - `RulesReferenceService`：概念引用注解、一层 related 扩展、Plan ok 结果的引用扩展。
@@ -125,10 +125,11 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 - 索引内容：ontology 概念、游戏 concepts、flow 递归节点、合法局部槽位；显式槽位元数据（id/name/material）不生成索引键。
 - 身份路径：全局概念 = `concept_id`；局部槽位 = `<owner_concept_path>.<slot_id>`。Point ID、版本行和 payload 均使用该路径，同名全局概念/局部槽位不会静默覆盖。
 - 重建：`tools/indexing/rebuild_index.py`，先构建临时 collection 并精确校验 count，再原子切换 alias；Python CLI 与 C# API 的版本 hash 已对九款真实规则数据回归对齐。
-- 搜索路由：向量优先 + 关键词降级。
-- 短查询（≤2 字）走名称索引，长查询/整句走完整索引。
+- 搜索排序：整句向量 + 整句关键词 + 0.02 × 子查询平均分；同一身份路径/查询/通道取最大值，整句关键词必须全部分词在同一概念中匹配。PhraseScore / SubqueryBoost / TermScores 记录来源，混合分不是概率。
+- 向量子查询路由：≤2 字走名称索引，其余走全文；explain 同时查全文与名称，名称补漏封顶 0.55 并保留 NameMatchScore，弱全文重复不能阻挡名称补漏。identify 外观描述走全文候选，不因 question 命中通用名而提前确认；精确 ID 可直达。
+- execute-plan 最多保留 15 个候选；boundary 可查询对象、本体、局部槽位等实体。自动语义确认要求整句 vector≥0.72、keyword≥0.30、总分≥0.80、领先第二名≥0.10；名称补漏不能自动确认。
 - namespace：`ontology::concept_id` 限定本体概念；局部槽位在无歧义时也可用 `owner.slot` 路径精确解析，避免与同名全局概念混用。
-- 检索回归门禁：`tools/qa/retrieval_gold.jsonl` + `tools/indexing/eval_retrieval.py`。
+- 检索回归：`tools/qa/retrieval_gold.jsonl`（85 条）+ `tools/qa/retrieval_regressions.jsonl`（7 条）+ `tools/indexing/eval_retrieval.py`；实测见 `docs/reviews/retrieval-ranking-2026-10-09.md`。
 
 ## 5. 交互模型
 

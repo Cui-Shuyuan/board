@@ -65,7 +65,7 @@ hook 会调用当前入口 `tools/content/validate_rules.py --errors-only`，不
 D:\dotnet\dotnet.exe test D:\workspace\board\backend\BoardAI.Api.Tests\BoardAI.Api.Tests.csproj --nologo
 ```
 
-当前为 121/121 全绿。测试项目：`backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj`。
+当前为 133/133 全绿（2026-10-09 检索排序修改）。测试项目：`backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj`。
 
 Python animation/索引纯提取回归：
 
@@ -93,12 +93,14 @@ python tools/indexing/rebuild_index.py --game splendor
 
 ```bash
 python tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_gold.jsonl --api http://localhost:5000
+python tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_regressions.jsonl --api http://localhost:5000
 ```
 
 - Gold set：`tools/qa/retrieval_gold.jsonl`，当前 85 条，覆盖 9 款游戏。
 - 直接调用 `POST /api/rules/games/{game}/execute-plan`，不经过 LLM 回答。
 - 指标：resolved_hit / resolved_wrong / candidate_top1 / candidate_top3 / unresolved / no_match。
-- 当前基线仍沿用最近记录：82/85 resolved_hit，wrong=0，no_match=0（待复核）。
+- 2026-10-09 实测：既有 85 条中 77 直接命中，8 条返回候选且预期目标均在前三（7 条第一），wrong=0、no_match=0；比旧版 82 直接命中更谨慎，目标未丢失。
+- 新增自然语言回归 7 条：全部候选前三命中、5 条第一，wrong=0、no_match=0。候选命中不等于答案准确率；同题 71 次聊天与 65 个查询排名对比见 `docs/reviews/retrieval-ranking-2026-10-09.md`。
 
 ## 5. 后端语音桥
 
