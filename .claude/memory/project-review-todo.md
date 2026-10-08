@@ -9,7 +9,7 @@ metadata:
 
 状态：REV-01～REV-08 已完成；本轮（2026-10-08）对 REV-07/REV-08 做了独立复核、真实磁盘并发补测与 Android 客户端证据消费补缺。来自本次代码与现行文档审查，区分已确认的逻辑缺陷、并发风险与设计改进；验收通过后再勾选。代码入口与行号以实施时的代码为准。
 
-本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并对 `origin/main` 执行 fast-forward push（已从 `f340373` 推进，包含此前 25 个本地提交、发布记录提交 `4798c82` 与本补记；最终远端 hash 以 `git ls-remote origin refs/heads/main` 为准）。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。2026-10-09 补充收口：REV-03a、pre-commit 路径、过期文档同步已完成；Python animation 165/165、.NET xUnit 121/121；Android JVM 本轮未改动。
+本轮收口（2026-10-09）：按用户确认发布 Splendor runtime `59989b16fd96479f`（133 files；release `content/releases/splendor/59989b16fd96479f/`；逐 path/size/sha256 校验通过；重复 builder 幂等复用；旧 release `1964d531eedcae5f` 保留），并对 `origin/main` 执行 fast-forward push（已从 `f340373` 推进，包含此前 25 个本地提交、发布记录提交 `4798c82` 与本补记；最终远端 hash 以 `git ls-remote origin refs/heads/main` 为准）。生成物仍不入 Git。**生产 API 主机仍需本机重建或部署该 release/manifest；在部署完成前设备/API 仍取旧版本 `1964d531eedcae5f`。** 本轮全量回归：Python animation 102/102、.NET xUnit 108/108、Android JVM 89/89。2026-10-09 补充收口：REV-03a、pre-commit 路径、过期文档同步已完成；Python animation 165/165、.NET xUnit 121/121；九款 Qdrant 索引已实际重建并原子切换 alias；Android JVM 本轮未改动。
 
 ## 审查基线与范围
 
@@ -135,7 +135,7 @@ metadata:
   - 九款真实规则数据：Python CLI 与 C# API 的 `IndexContract` 版本 hash 逐游戏一致（agricola/ark-nova/brass-birmingham/castles-of-burgundy/civolution/puerto-rico/seasons/splendor/wingspan）；Civolution 修复后 434 条 full / 412 条 name，身份路径 434/434 唯一；旧问题为 438 条记录仅 431 个点。
   - `civolution` 显式 `settlement_slot_*` 4 个槽位正确入库，`id/name/material` 无虚假槽位；全局 `stage_partition` 与局部槽位路径均保留。
   - `python3 -m unittest discover -s animation -p 'test_*.py'`：165/165 通过；`dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo`：121/121 通过；`validate_rules.py --errors-only`：0 errors / 72 warnings。
-  - 未执行：本机未启动 Qdrant，因此没有实际写入九款 collection/切换 alias；原子切换路径仍由既有 REV-03 的 API/CLI 测试与失败保留逻辑覆盖，真实环境需在有 Qdrant 的机器上跑一次 `rebuild_index.py --all`。
+  - 实际 Qdrant 验收（2026-10-09）：本机 Qdrant 1.18.3 启动后逐游戏执行 `QDRANT_URL=http://localhost:6333 python tools/indexing/rebuild_index.py --game <game>`；九款 aliases 全部指向本次新版本 collection，count 为 agricola 233/232、ark-nova 261/260、brass-birmingham 224/223、castles-of-burgundy 228/227、civolution 434/412、puerto-rico 216/215、seasons 123/122、splendor 156/151、wingspan 149/148。Civolution 从修复前 438 条记录只有 431 个点变为 434/434 唯一身份；九款 `board_{game}__active[_name]` 均与 Python/C# 对齐的版本 hash 一致。
 
 ### [x] 修正本地 pre-commit 规则校验脚本路径
 
