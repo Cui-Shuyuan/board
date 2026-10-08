@@ -12,16 +12,16 @@ namespace BoardAI.Api.Tests;
 public sealed class IndexRealContentContractTests
 {
     [Theory]
-    [InlineData("agricola", "3796433e0d63a235")]
-    [InlineData("ark-nova", "a25f3dc1e20c5590")]
-    [InlineData("brass-birmingham", "6aec6eaf6ac0cbaa")]
-    [InlineData("castles-of-burgundy", "f763f42b734c7a26")]
-    [InlineData("civolution", "75a5bd36f360c382")]
-    [InlineData("puerto-rico", "21f842ace2b37e6b")]
-    [InlineData("seasons", "2df6ff09b492b711")]
-    [InlineData("splendor", "03283886a77eb0de")]
-    [InlineData("wingspan", "527374f5bc466f7d")]
-    public void RealContent_IndexItemsMatchPythonContractVersion(string game, string expectedVersion)
+    [InlineData("agricola", "3796433e0d63a235", "afe4750e060fcfe6")]
+    [InlineData("ark-nova", "a25f3dc1e20c5590", "820b551f2d5d3e1e")]
+    [InlineData("brass-birmingham", "6aec6eaf6ac0cbaa", "0d9fd99dc1957c9b")]
+    [InlineData("castles-of-burgundy", "f763f42b734c7a26", "2418bbebe1b6861e")]
+    [InlineData("civolution", "9c19ea7abb301bd2", "2fbdea8f273e564e")]
+    [InlineData("puerto-rico", "21f842ace2b37e6b", "298d9d581d0d2707")]
+    [InlineData("seasons", "2df6ff09b492b711", "db7f8f4940210e71")]
+    [InlineData("splendor", "03283886a77eb0de", "d8c4ecd72294b017")]
+    [InlineData("wingspan", "527374f5bc466f7d", "73bb9a7f44921237")]
+    public void RealContent_IndexItemsMatchPythonContractVersion(string game, string expectedVersion, string expectedClsVersion)
     {
         using var content = new RulesContentStore(BoardPaths.GetBasePath());
         var service = new RulesIndexService(new RulesConceptCatalog(content), content, null);
@@ -31,5 +31,7 @@ public sealed class IndexRealContentContractTests
             game, "bge-base-zh-v1.5-fp32", 768, items);
 
         Assert.Equal(expectedVersion, actual);
+        Assert.Equal(expectedClsVersion, IndexContract.ComputeIndexVersion(
+            game, "bge-base-zh-v1.5-fp32/cls-v1", 768, items));
     }
 }

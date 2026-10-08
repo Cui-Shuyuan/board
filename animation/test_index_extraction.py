@@ -116,11 +116,18 @@ class IndexExtractionContractTests(unittest.TestCase):
             "ark-nova": "a25f3dc1e20c5590",
             "brass-birmingham": "6aec6eaf6ac0cbaa",
             "castles-of-burgundy": "f763f42b734c7a26",
-            "civolution": "75a5bd36f360c382",
+            "civolution": "9c19ea7abb301bd2",
             "puerto-rico": "21f842ace2b37e6b",
             "seasons": "2df6ff09b492b711",
             "splendor": "03283886a77eb0de",
             "wingspan": "527374f5bc466f7d",
+        }
+        cls_expected = {
+            "agricola": "afe4750e060fcfe6", "ark-nova": "820b551f2d5d3e1e",
+            "brass-birmingham": "0d9fd99dc1957c9b", "castles-of-burgundy": "2418bbebe1b6861e",
+            "civolution": "2fbdea8f273e564e", "puerto-rico": "298d9d581d0d2707",
+            "seasons": "db7f8f4940210e71", "splendor": "d8c4ecd72294b017",
+            "wingspan": "73bb9a7f44921237",
         }
         for game, version in expected.items():
             with self.subTest(game=game):
@@ -128,6 +135,12 @@ class IndexExtractionContractTests(unittest.TestCase):
                 for item in items:
                     item["name_text"] = (item.get("name_zh") or item.get("name_en") or "").strip()
                 self.assertEqual(version, ri.compute_index_version(game, items))
+                previous_pooling = ri.POOLING
+                try:
+                    ri.POOLING = "cls"
+                    self.assertEqual(cls_expected[game], ri.compute_index_version(game, items))
+                finally:
+                    ri.POOLING = previous_pooling
 
     def test_civolution_slot_extraction_does_not_collapse_local_slot_with_global_object(self):
         items = _extract_game("civolution")

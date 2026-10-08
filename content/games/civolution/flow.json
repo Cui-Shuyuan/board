@@ -2762,8 +2762,8 @@
       },
       "specifies": "<ontology::upgrade>",
       "description": {
-        "zh": "对 1 个未达最高等级的<upgradable_module>执行 1 次<ontology::upgrade>（<ontology::state_change>：level 属性提升 1 级）。物理后果：L1→L2 <module>的<ontology::tile>翻面，L2→L3 <module>的<ontology::tile>放回<ontology::game_box>、<console>上 L3 效果激活。",
-        "en": "Perform 1 <ontology::upgrade> on a main module not at max level (<ontology::state_change>: level attribute increases by 1). Physical consequences: L1→L2 flips the module tile; L2→L3 returns the tile to the <ontology::game_box> and activates the console L3 effect."
+        "zh": "对 1 个未达最高等级的<upgradable_module>执行 1 次<ontology::upgrade>（<ontology::state_change>：level 属性提升 1 级）。物理后果：L1→L2 <module>的<ontology::tile>翻面，L2→L3 <module>的<ontology::tile>放回<ontology::game_box>、露出<console>上的 L3 效果。若升级的是本回合已激活、且仍在执行其行动的模组，本次行动不能改用新等级；要到自己的下一回合才能使用它的新等级。",
+        "en": "Perform 1 <ontology::upgrade> on a main module not at max level (<ontology::state_change>: level attribute increases by 1). Physical consequences: L1→L2 flips the module tile; L2→L3 returns the tile to the <ontology::game_box> and reveals the console L3 effect. If this is the module activated this turn and you are still performing its actions, you cannot use its new level until your next turn; do not switch levels during the current action."
       },
       "options": [
         {
@@ -2802,8 +2802,8 @@
             "en": "Upgrade L2 to L3"
           },
           "description": {
-            "zh": "<module> level 属性从 2 变为 3。物理后果：将<module>的<ontology::tile>放回 <ontology::game_box>，<console>的<module_area>底部的 L3 effect 激活。",
-            "en": "Module level attribute changes from 2 to 3. Physical consequence: return the module tile to <ontology::game_box>; the L3 effect printed at the console module slot becomes active."
+            "zh": "<module> level 属性从 2 变为 3。物理后果：将<module>的<ontology::tile>放回 <ontology::game_box>，露出<console>的<module_area>底部的 L3 effect。若这是本回合正在执行行动的模组，新等级要到自己的下一回合才能使用。",
+            "en": "Module level attribute changes from 2 to 3. Physical consequence: return the module tile to <ontology::game_box> and reveal the L3 effect printed at the console module slot. If this module's actions are still being performed this turn, its new level cannot be used until your next turn."
           },
           "<ontology::state_change>": {
             "subject": "this.target 选中的模组",
@@ -4771,8 +4771,8 @@
       },
       "specifies": "<ontology::action>",
       "description": {
-        "zh": "选择 1 个自己的模组（<upgradable_module> 或 <feature_module>），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），执行其当前等级的效果。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<ontology::pipeline> 的 pay_cost 步骤）。",
-        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module): pay the module's declared cost (exactly 2 <activation_die>s of matching values), then execute its current-level effect. <planning_marker> / <focus_marker> substitutions apply during payment (see each marker's <ontology::substitution>; effective point: the pay_cost step of <ontology::pipeline>)."
+        "zh": "选择 1 个自己的模组（<upgradable_module> 或 <feature_module>），支付该模组声明的费用（恰好 2 个对应点数的<activation_die>），按开始执行时的等级结算效果。若执行过程中升级了这个模组，不能在本次行动中改用新等级；要到自己的下一回合才能使用它的新等级。<planning_marker> 与 <focus_marker> 的替代在支付环节生效（见各自定义的 <ontology::substitution>，生效点：<ontology::pipeline> 的 pay_cost 步骤）。",
+        "en": "Choose 1 of your modules (<upgradable_module> main module or <feature_module> feature module): pay the module's declared cost (exactly 2 <activation_die>s of matching values), then resolve its effect at the level at which execution began. If you upgrade this module while performing its actions, do not switch to the new level during this action; its new level cannot be used until your next turn. <planning_marker> / <focus_marker> substitutions apply during payment (see each marker's <ontology::substitution>; effective point: the pay_cost step of <ontology::pipeline>)."
       },
       "target": "1 个自己的模组（<upgradable_module> 或 <feature_module>）",
       "<ontology::content>": {
