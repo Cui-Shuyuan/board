@@ -11,204 +11,14 @@
   },
   "time_anchors": [
     {
-      "id": "bg.intro.001.1.start",
-      "cue": "bg.intro.001.1",
+      "id": "bg.intro.001.start",
+      "cue": "bg.intro.001",
       "edge": "cue_start"
     },
     {
-      "id": "bg.intro.001.1.end",
-      "cue": "bg.intro.001.1",
+      "id": "bg.intro.001.end",
+      "cue": "bg.intro.001",
       "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.001.1.b1.start",
-      "cue": "bg.intro.001.1",
-      "beat": "bg.intro.001.1.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.001.1.b1.end",
-      "cue": "bg.intro.001.1",
-      "beat": "bg.intro.001.1.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.001.2.start",
-      "cue": "bg.intro.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.001.2.end",
-      "cue": "bg.intro.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.001.2.b1.start",
-      "cue": "bg.intro.001.2",
-      "beat": "bg.intro.001.2.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.001.2.b1.end",
-      "cue": "bg.intro.001.2",
-      "beat": "bg.intro.001.2.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.001.2.b2.start",
-      "cue": "bg.intro.001.2",
-      "beat": "bg.intro.001.2.b2",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.001.2.b2.end",
-      "cue": "bg.intro.001.2",
-      "beat": "bg.intro.001.2.b2",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.002.1.start",
-      "cue": "bg.intro.002.1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.002.1.end",
-      "cue": "bg.intro.002.1",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.002.1.b1.start",
-      "cue": "bg.intro.002.1",
-      "beat": "bg.intro.002.1.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.002.1.b1.end",
-      "cue": "bg.intro.002.1",
-      "beat": "bg.intro.002.1.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.002.2.start",
-      "cue": "bg.intro.002.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.002.2.end",
-      "cue": "bg.intro.002.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.002.2.b1.start",
-      "cue": "bg.intro.002.2",
-      "beat": "bg.intro.002.2.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.002.2.b1.end",
-      "cue": "bg.intro.002.2",
-      "beat": "bg.intro.002.2.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.002.3.start",
-      "cue": "bg.intro.002.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.002.3.end",
-      "cue": "bg.intro.002.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.002.3.b1.start",
-      "cue": "bg.intro.002.3",
-      "beat": "bg.intro.002.3.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.002.3.b1.end",
-      "cue": "bg.intro.002.3",
-      "beat": "bg.intro.002.3.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.003.1.start",
-      "cue": "bg.intro.003.1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.003.1.end",
-      "cue": "bg.intro.003.1",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.003.1.b1.start",
-      "cue": "bg.intro.003.1",
-      "beat": "bg.intro.003.1.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.003.1.b1.end",
-      "cue": "bg.intro.003.1",
-      "beat": "bg.intro.003.1.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.003.2.start",
-      "cue": "bg.intro.003.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.003.2.end",
-      "cue": "bg.intro.003.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.003.2.b1.start",
-      "cue": "bg.intro.003.2",
-      "beat": "bg.intro.003.2.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.003.2.b1.end",
-      "cue": "bg.intro.003.2",
-      "beat": "bg.intro.003.2.b1",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.003.2.b2.start",
-      "cue": "bg.intro.003.2",
-      "beat": "bg.intro.003.2.b2",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.003.2.b2.end",
-      "cue": "bg.intro.003.2",
-      "beat": "bg.intro.003.2.b2",
-      "edge": "end"
-    },
-    {
-      "id": "bg.intro.003.3.start",
-      "cue": "bg.intro.003.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "bg.intro.003.3.end",
-      "cue": "bg.intro.003.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "bg.intro.003.3.b1.start",
-      "cue": "bg.intro.003.3",
-      "beat": "bg.intro.003.3.b1",
-      "edge": "start"
-    },
-    {
-      "id": "bg.intro.003.3.b1.end",
-      "cue": "bg.intro.003.3",
-      "beat": "bg.intro.003.3.b1",
-      "edge": "end"
     },
     {
       "id": "setup.cards.001.1.start",
@@ -2191,19 +2001,15 @@
   ],
   "cues": [
     {
-      "id": "bg.intro.001.1",
+      "id": "bg.intro.001",
       "parent": null,
+      "entry": "initial",
       "tree": "main",
       "transition": "world_cut",
-      "timing": [
-        {
-          "key": "显示盒面",
-          "text": "0.0（口播 0.00-4.25）"
-        }
-      ],
+      "qa_exempt": true,
       "script": {
-        "story": "介绍《璀璨宝石》：适合 2～4 人游玩。",
-        "note": "用整桌镜头显示游戏盒封面，作为背景介绍的固定画面。此时桌面逻辑区域为空，游戏组件在后续设置环节建立。",
+        "story": "介绍《璀璨宝石》：支持二到四人的丝绸之路主题贸易游戏。",
+        "note": "用整桌镜头显示游戏盒封面。此时桌面逻辑区域为空，游戏组件在后续设置环节建立。",
         "enter": {
           "picture": "media/box.png",
           "zones": {}
@@ -2219,187 +2025,19 @@
           "dur": 0.0,
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
-          "anchor": "bg.intro.001.1.start"
+          "anchor": "bg.intro.001.start"
         },
         {
           "op": "show",
           "dur": 0.0,
           "picture": "media/box.png",
-          "anchor": "bg.intro.001.1.start"
+          "anchor": "bg.intro.001.start"
         }
-      ],
-      "entry": "initial"
-    },
-    {
-      "id": "bg.intro.001.2",
-      "parent": "bg.intro.001.1",
-      "timing": [
-        {
-          "key": "盒面",
-          "text": "0.00（本条画面 = 2024 新版盒面）"
-        }
-      ],
-      "script": {
-        "story": "2015 年出版，2024 年再版；我手里的这一版是 2024 年的新版",
-        "note": "保持游戏盒封面，配合口播介绍出版与再版信息。画面不新增组件。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.001.2.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.001.2.b1.start",
-          "offset": 0.115
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "bg.intro.002.1",
-      "parent": "bg.intro.001.2",
-      "script": {
-        "story": "老版主题：玩家扮演文艺复兴时期的富商，收购宝石矿",
-        "note": "保持游戏盒封面，旧版的文艺复兴主题由口播说明。画面不另建矿场或人物场景。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.002.1.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.002.1.b1.start",
-          "offset": 0.105
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "bg.intro.002.2",
-      "parent": "bg.intro.002.1",
-      "script": {
-        "story": "老版主题：开采宝石、雇佣工匠加工成饰品，最后在城市中售卖",
-        "note": "保持游戏盒封面，配合口播说明旧版主题中的开采、加工与售卖。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.002.2.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.002.2.b1.start",
-          "offset": 0.105
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "bg.intro.002.3",
-      "parent": "bg.intro.002.2",
-      "script": {
-        "story": "老版主题：获得声望的同时收获贵族的青睐",
-        "note": "保持游戏盒封面，配合口播说明声望与贵族的主题背景。贵族实体在设置环节介绍。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.002.3.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.002.3.b1.start",
-          "offset": 0.105
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "bg.intro.003.1",
-      "parent": "bg.intro.002.3",
-      "script": {
-        "story": "新版主题：由文艺复兴改为丝绸之路",
-        "note": "保持游戏盒封面，由口播说明新版改用丝绸之路主题。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.003.1.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.003.1.b1.start",
-          "offset": 0.105
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "bg.intro.003.2",
-      "parent": "bg.intro.003.1",
-      "script": {
-        "story": "新版主题：扮演丝路商人，买卖宝石",
-        "note": "保持游戏盒封面，由口播说明丝路商人的身份与宝石交易背景。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.003.2.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.003.2.b1.start",
-          "offset": 0.115
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "bg.intro.003.3",
-      "parent": "bg.intro.003.2",
-      "script": {
-        "story": "新版主题：结识各地贵族，建立自己的贸易帝国",
-        "note": "保持游戏盒封面，完成新版主题介绍，为组件设置环节过渡。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "dur": 0.0,
-          "picture": "media/box.png",
-          "anchor": "bg.intro.003.3.start"
-        },
-        {
-          "op": "wait",
-          "dur": 0.0,
-          "anchor": "bg.intro.003.3.b1.start",
-          "offset": 0.115
-        }
-      ],
-      "tree": "main"
+      ]
     },
     {
       "id": "setup.cards.001.1",
-      "parent": "bg.intro.003.3",
+      "parent": "bg.intro.001",
       "tree": "main",
       "transition": "overlay",
       "timing": [

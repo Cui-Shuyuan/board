@@ -6,7 +6,7 @@
   "version": "0.1.0",
   "cues": [
     {
-      "id": "bg.intro.001.1",
+      "id": "bg.intro.001",
       "group": "1 背景介绍",
       "group_path": [
         "1 背景介绍"
@@ -17,135 +17,12 @@
       "pause_after": 0.0,
       "beats": [
         {
-          "id": "bg.intro.001.1.b1",
-          "text": "《璀璨宝石》是一款支持2到4名玩家的游戏。"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.001.2",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.001.2.b1",
-          "text": "这款游戏于2015年出版，2024年再版。"
+          "id": "bg.intro.001.b1",
+          "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。"
         },
         {
-          "id": "bg.intro.001.2.b2",
-          "text": "我手里的这一版是2024年的新版。"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.002.1",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.002.1.b1",
-          "text": "在老版璀璨宝石中，玩家将扮演文艺复兴时期的一名富商，利用手中的资源收购宝石矿、"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.002.2",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.002.2.b1",
-          "text": "开采宝石、雇佣宝石工匠将宝石加工成饰品，最后在城市中售卖，"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.002.3",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.002.3.b1",
-          "text": "获得声望的同时收获贵族的青睐。"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.003.1",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.003.1.b1",
-          "text": "而在新版璀璨宝石中，游戏主题由文艺复兴改为了丝绸之路，"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.003.2",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.003.2.b1",
-          "text": "宝石加工的过程也改为了游历丝绸之路的过程。"
-        },
-        {
-          "id": "bg.intro.003.2.b2",
-          "text": "玩家将扮演一位丝路商人，买卖宝石、"
-        }
-      ]
-    },
-    {
-      "id": "bg.intro.003.3",
-      "group": "1 背景介绍",
-      "group_path": [
-        "1 背景介绍"
-      ],
-      "refs": [
-        "rulebook:background"
-      ],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "bg.intro.003.3.b1",
-          "text": "收获财富的同时结识各地的贵族，最终建立起属于自己的贸易帝国。"
+          "id": "bg.intro.001.b2",
+          "text": "玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。"
         }
       ]
     },

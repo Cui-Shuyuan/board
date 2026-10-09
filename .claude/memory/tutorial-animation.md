@@ -12,7 +12,7 @@ metadata:
 讲规动画是离线编译的静态数字资产，播放端只做确定性播放，不实时调用 LLM。口播稿是主，动画是次；TTS 冻结后，音频时长是动画硬边界。
 
 现状：
-- 试点为《璀璨宝石》full 版，当前 83 cue（cue id 已语义化；旧文档的数字编号只作历史对照），388 个 time anchors。
+- 试点为《璀璨宝石》full 版，当前 76 cue（cue id 已语义化；旧文档的数字编号只作历史对照），354 个 time anchors。
 - full TTS、runtime、compiled、Unity 播放器、编译/校验/采样对账链路已跑通。
 - `time_anchors` 已迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。
 - QA 与 cue 同置流程已落地：问题优先/可写在 `full.anim.json` 的 `qa` 字段，历史问题继续放 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取 cue 内问题，`compile_tutorial.py --validate-qa` / `--validate-qa-all` 当前从 `_qa/questions.json` 提供机器侧门禁。
@@ -76,7 +76,7 @@ metadata:
 ## 时间锚点 `time_anchors`
 
 - 轨道顶层声明时间坐标；事件写 `anchor`，必要时加 `offset`；编译产物仍写数值 `at`。
-- 当前 full 轨道 388 个锚点，覆盖 cue 和 beat 的 start/end。
+- 当前 full 轨道 354 个锚点，覆盖 cue 和 beat 的 start/end。
 - 锚点命名：`<cue_id>.start`、`<cue_id>.end`、`<beat_id>.start`、`<beat_id>.end`。
 - 解析来源：`script.{track}.json` 的 beats + `{track}.runtime.json` 的 TTS 字级 timing。
 - 迁移与提交状态：`38971d4` 已把 `time_anchors` 全量迁移并 commit；`full.runtime.json` / `full.compiled.json` 输出数值 `at`，源数据保留 anchor。
@@ -223,12 +223,12 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 
 ## 当前遗留
 
-- **下一步（最高优先）：Splendor full 重新过动画。** 发展卡扫描件/真卡模板已补齐，`check_card_identity_v2.py` 569 个中间状态 0 error；现在需要从头到尾重新看一遍 83 cue，重点看 `action.cards.*` / `action.nobles.*` / `action.reserve.*` 等市场与发展区 cue 的真卡画面、`setup.gems.005.1` 的宝石数量复位、终局示例的双发展区与贵族表现，以及旧审查记录中的观感问题。
+- **下一步（最高优先）：Splendor full 重新过动画。** 发展卡扫描件/真卡模板已补齐，`check_card_identity_v2.py` 562 个中间状态 0 error；现在需要从头到尾重新看一遍 76 cue，重点看 `action.cards.*` / `action.nobles.*` / `action.reserve.*` 等市场与发展区 cue 的真卡画面、`setup.gems.005.1` 的宝石数量复位、终局示例的双发展区与贵族表现，以及旧审查记录中的观感问题。
 - TTS 增量尚未真实跑过一次（改一条 cue 文本，验证只生成该 cue 的 mp3/subtitle，其他 cue 不动）。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 尚未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。
 - Quick 版尚未开始；正式视觉验收未闭环。
-- 以下为 2026-09-23 旧审查记录，待 83 cue 重审时重新确认；当前 `check_anim_v2.py` 已是 83 cues / 0 warnings，旧记录的 2 条 stage 布局重叠 warning 不再出现：
+- 以下为 2026-09-23 旧审查记录，待 76 cue 重审时重新确认；当前 `check_anim_v2.py` 已是 76 cues / 0 warnings，旧记录的 2 条 stage 布局重叠 warning 不再出现：
   - 第二批取景待手写：买牌进发展区、发展区+贵族结算、拿三色宝石、市场一格。
   - `action.nobles.forced.001.1` 仍有“贵族特写 → 整桌 → 又回贵族特写”的跳切。
   - 两处原语缺口：错误示范的撤销/临时状态层；4 人局例子只有 A/B 玩家区。
