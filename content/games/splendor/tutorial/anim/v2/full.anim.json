@@ -2933,61 +2933,6 @@
             "space": "screen",
             "id": "gem_sample_onyx"
           }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.8,
-          "grow": 1.1,
-          "anchor": "setup.gems.001.1.b3.start",
-          "offset": 0.325,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_diamond"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.8,
-          "grow": 1.1,
-          "anchor": "setup.gems.001.1.b3.start",
-          "offset": 0.325,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_sapphire"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.8,
-          "grow": 1.1,
-          "anchor": "setup.gems.001.1.b3.start",
-          "offset": 0.325,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_ruby"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.8,
-          "grow": 1.1,
-          "anchor": "setup.gems.001.1.b3.start",
-          "offset": 0.325,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_emerald"
-          }
-        },
-        {
-          "op": "highlight",
-          "dur": 0.8,
-          "grow": 1.1,
-          "anchor": "setup.gems.001.1.b3.start",
-          "offset": 0.325,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_onyx"
-          }
         }
       ]
     },
