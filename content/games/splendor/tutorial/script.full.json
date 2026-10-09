@@ -42,10 +42,6 @@
         {
           "id": "setup.cards.001.1.b1",
           "text": "这是发展卡牌，共90张。"
-        },
-        {
-          "id": "setup.cards.001.1.b2",
-          "text": "根据背面可以将所有发展卡牌分为三类，"
         }
       ]
     },
@@ -64,26 +60,19 @@
       "beats": [
         {
           "id": "setup.cards.001.2.b1",
-          "text": "分别是40张绿色的一级发展卡牌、"
-        }
-      ]
-    },
-    {
-      "id": "setup.cards.001.3",
-      "group": "2.1 发展卡牌",
-      "group_path": [
-        "2 设置",
-        "2.1 发展卡牌"
-      ],
-      "refs": [
-        "<development_card>",
-        "rulebook:setup"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+          "text": "根据背面可以将所有发展卡牌分为三类，"
+        },
         {
-          "id": "setup.cards.001.3.b1",
-          "text": "30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌。"
+          "id": "setup.cards.001.2.b2",
+          "text": "分别是40张绿色的一级发展卡牌、"
+        },
+        {
+          "id": "setup.cards.001.2.b3",
+          "text": "30张黄色的二级发展卡牌，"
+        },
+        {
+          "id": "setup.cards.001.2.b4",
+          "text": "和20张蓝色的三级发展卡牌。"
         }
       ]
     },

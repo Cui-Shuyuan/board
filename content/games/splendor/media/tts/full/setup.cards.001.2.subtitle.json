@@ -1,91 +1,349 @@
 [
   {
     "phonemes": [],
-    "text": "分别是40张绿色的一级发展卡牌、\n",
+    "text": "根据背面可以将所有发展卡牌分为三类，",
     "words": [
       {
-        "confidence": 0.825216,
-        "endTime": 0.475,
-        "startTime": 0.325,
-        "word": "分"
+        "confidence": 0.97441053,
+        "endTime": 0.415,
+        "startTime": 0.275,
+        "word": "根"
       },
       {
-        "confidence": 0.9467485,
-        "endTime": 0.625,
-        "startTime": 0.475,
-        "word": "别"
+        "confidence": 0.9604573,
+        "endTime": 0.565,
+        "startTime": 0.415,
+        "word": "据"
       },
       {
-        "confidence": 0.84302044,
-        "endTime": 0.915,
-        "startTime": 0.625,
-        "word": "是"
+        "confidence": 0.98141575,
+        "endTime": 0.765,
+        "startTime": 0.565,
+        "word": "背"
       },
       {
-        "confidence": 0.14569351,
-        "endTime": 1.275,
+        "confidence": 0.9713273,
+        "endTime": 0.995,
+        "startTime": 0.765,
+        "word": "面"
+      },
+      {
+        "confidence": 0.7785556,
+        "endTime": 1.125,
+        "startTime": 0.995,
+        "word": "可"
+      },
+      {
+        "confidence": 0.7046526,
+        "endTime": 1.245,
+        "startTime": 1.125,
+        "word": "以"
+      },
+      {
+        "confidence": 0.93243116,
+        "endTime": 1.465,
         "startTime": 1.245,
-        "word": "40"
+        "word": "将"
       },
       {
-        "confidence": 0.8520392,
-        "endTime": 1.525,
-        "startTime": 1.275,
-        "word": "张"
+        "confidence": 0.9599186,
+        "endTime": 1.655,
+        "startTime": 1.465,
+        "word": "所"
       },
       {
-        "confidence": 0.918692,
-        "endTime": 1.675,
-        "startTime": 1.525,
-        "word": "绿"
+        "confidence": 0.8775045,
+        "endTime": 1.765,
+        "startTime": 1.655,
+        "word": "有"
       },
       {
-        "confidence": 0.97344816,
-        "endTime": 1.905,
-        "startTime": 1.675,
-        "word": "色"
-      },
-      {
-        "confidence": 0.93485504,
-        "endTime": 2.155,
-        "startTime": 1.905,
-        "word": "的"
-      },
-      {
-        "confidence": 0.8827407,
-        "endTime": 2.285,
-        "startTime": 2.155,
-        "word": "一"
-      },
-      {
-        "confidence": 0.88226545,
-        "endTime": 2.475,
-        "startTime": 2.285,
-        "word": "级"
-      },
-      {
-        "confidence": 0.9633791,
-        "endTime": 2.635,
-        "startTime": 2.475,
+        "confidence": 0.98746455,
+        "endTime": 1.965,
+        "startTime": 1.765,
         "word": "发"
       },
       {
-        "confidence": 0.8774161,
-        "endTime": 2.755,
-        "startTime": 2.635,
+        "confidence": 0.8877968,
+        "endTime": 2.095,
+        "startTime": 1.965,
         "word": "展"
       },
       {
-        "confidence": 0.88968086,
-        "endTime": 2.955,
-        "startTime": 2.755,
+        "confidence": 0.96066046,
+        "endTime": 2.305,
+        "startTime": 2.095,
         "word": "卡"
       },
       {
-        "confidence": 0.19489293,
-        "endTime": 2.985,
-        "startTime": 2.955,
+        "confidence": 0.94780487,
+        "endTime": 2.585,
+        "startTime": 2.305,
+        "word": "牌"
+      },
+      {
+        "confidence": 0.89072883,
+        "endTime": 2.735,
+        "startTime": 2.585,
+        "word": "分"
+      },
+      {
+        "confidence": 0.97921234,
+        "endTime": 2.865,
+        "startTime": 2.735,
+        "word": "为"
+      },
+      {
+        "confidence": 0.9274404,
+        "endTime": 3.095,
+        "startTime": 2.865,
+        "word": "三"
+      },
+      {
+        "confidence": 0.9236979,
+        "endTime": 3.295,
+        "startTime": 3.095,
+        "word": "类，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "分别是40张绿色的一级发展卡牌、",
+    "words": [
+      {
+        "confidence": 0.6606036,
+        "endTime": 3.8050418,
+        "startTime": 3.7300417,
+        "word": "分"
+      },
+      {
+        "confidence": 0.917261,
+        "endTime": 3.9650416,
+        "startTime": 3.8050418,
+        "word": "别"
+      },
+      {
+        "confidence": 0.81355834,
+        "endTime": 4.265042,
+        "startTime": 3.9650416,
+        "word": "是"
+      },
+      {
+        "confidence": 0.14098148,
+        "endTime": 4.6050415,
+        "startTime": 4.575042,
+        "word": "40"
+      },
+      {
+        "confidence": 0.84343755,
+        "endTime": 4.915042,
+        "startTime": 4.6050415,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9168133,
+        "endTime": 5.0650415,
+        "startTime": 4.915042,
+        "word": "绿"
+      },
+      {
+        "confidence": 0.97814715,
+        "endTime": 5.3150415,
+        "startTime": 5.0650415,
+        "word": "色"
+      },
+      {
+        "confidence": 0.9140576,
+        "endTime": 5.555042,
+        "startTime": 5.3150415,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8586777,
+        "endTime": 5.685042,
+        "startTime": 5.555042,
+        "word": "一"
+      },
+      {
+        "confidence": 0.7921744,
+        "endTime": 5.8850417,
+        "startTime": 5.685042,
+        "word": "级"
+      },
+      {
+        "confidence": 0.96419525,
+        "endTime": 6.045042,
+        "startTime": 5.8850417,
+        "word": "发"
+      },
+      {
+        "confidence": 0.8678036,
+        "endTime": 6.165042,
+        "startTime": 6.045042,
+        "word": "展"
+      },
+      {
+        "confidence": 0.9127741,
+        "endTime": 6.3650417,
+        "startTime": 6.165042,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.13392192,
+        "endTime": 6.6450415,
+        "startTime": 6.6150417,
         "word": "牌、"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "30张黄色的二级发展卡牌，",
+    "words": [
+      {
+        "confidence": 0.1884529,
+        "endTime": 7.2650833,
+        "startTime": 7.235083,
+        "word": "30"
+      },
+      {
+        "confidence": 0.92013866,
+        "endTime": 7.485083,
+        "startTime": 7.2650833,
+        "word": "张"
+      },
+      {
+        "confidence": 0.9497081,
+        "endTime": 7.7450833,
+        "startTime": 7.485083,
+        "word": "黄"
+      },
+      {
+        "confidence": 0.95822674,
+        "endTime": 7.9950833,
+        "startTime": 7.7450833,
+        "word": "色"
+      },
+      {
+        "confidence": 0.8289576,
+        "endTime": 8.185083,
+        "startTime": 7.9950833,
+        "word": "的"
+      },
+      {
+        "confidence": 0.94367105,
+        "endTime": 8.385083,
+        "startTime": 8.185083,
+        "word": "二"
+      },
+      {
+        "confidence": 0.91662747,
+        "endTime": 8.585083,
+        "startTime": 8.385083,
+        "word": "级"
+      },
+      {
+        "confidence": 0.9675637,
+        "endTime": 8.735084,
+        "startTime": 8.585083,
+        "word": "发"
+      },
+      {
+        "confidence": 0.8661801,
+        "endTime": 8.845083,
+        "startTime": 8.735084,
+        "word": "展"
+      },
+      {
+        "confidence": 0.94143605,
+        "endTime": 9.035084,
+        "startTime": 8.845083,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.9654858,
+        "endTime": 9.375083,
+        "startTime": 9.035084,
+        "word": "牌，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "和20张蓝色的三级发展卡牌。",
+    "words": [
+      {
+        "confidence": 0.86704147,
+        "endTime": 9.845125,
+        "startTime": 9.590125,
+        "word": "和"
+      },
+      {
+        "confidence": 0.4591022,
+        "endTime": 9.885125,
+        "startTime": 9.845125,
+        "word": "20"
+      },
+      {
+        "confidence": 0.16609605,
+        "endTime": 9.945125,
+        "startTime": 9.885125,
+        "word": "张"
+      },
+      {
+        "confidence": 0.17672355,
+        "endTime": 10.005125,
+        "startTime": 9.945125,
+        "word": "蓝"
+      },
+      {
+        "confidence": 0.3227704,
+        "endTime": 10.105125,
+        "startTime": 10.005125,
+        "word": "色"
+      },
+      {
+        "confidence": 0.20700273,
+        "endTime": 10.165125,
+        "startTime": 10.105125,
+        "word": "的"
+      },
+      {
+        "confidence": 0.45600808,
+        "endTime": 10.315125,
+        "startTime": 10.215125,
+        "word": "三"
+      },
+      {
+        "confidence": 0.15046959,
+        "endTime": 10.375125,
+        "startTime": 10.315125,
+        "word": "级"
+      },
+      {
+        "confidence": 0.17606726,
+        "endTime": 11.225125,
+        "startTime": 11.165125,
+        "word": "发"
+      },
+      {
+        "confidence": 0.24769986,
+        "endTime": 11.305125,
+        "startTime": 11.225125,
+        "word": "展"
+      },
+      {
+        "confidence": 0.51498,
+        "endTime": 11.465125,
+        "startTime": 11.305125,
+        "word": "卡"
+      },
+      {
+        "confidence": 0.33764187,
+        "endTime": 11.665125,
+        "startTime": 11.595125,
+        "word": "牌。"
       }
     ]
   }

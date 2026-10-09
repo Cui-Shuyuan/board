@@ -462,9 +462,9 @@
         "2 设置",
         "2.1 发展卡牌"
       ],
-      "text": "这是发展卡牌，共90张。根据背面可以将所有发展卡牌分为三类，",
+      "text": "这是发展卡牌，共90张。",
       "audio": "media/tts/full/setup.cards.001.1.mp3",
-      "duration": 6.288,
+      "duration": 2.664,
       "start": 15.55,
       "refs": [
         "<development_card>",
@@ -472,172 +472,63 @@
       ],
       "subtitles": [
         {
-          "t": 0.305,
-          "end": 2.505,
+          "t": 0.285,
+          "end": 2.295,
           "text": "这是发展卡牌，共90张。",
           "words": [
             {
               "word": "这",
-              "start": 0.305,
-              "end": 0.415,
-              "confidence": 0.973
+              "start": 0.285,
+              "end": 0.395,
+              "confidence": 0.9671
             },
             {
               "word": "是",
-              "start": 0.415,
-              "end": 0.535,
-              "confidence": 0.9728
+              "start": 0.395,
+              "end": 0.525,
+              "confidence": 0.9587
             },
             {
               "word": "发",
-              "start": 0.535,
-              "end": 0.705,
-              "confidence": 0.9797
+              "start": 0.525,
+              "end": 0.695,
+              "confidence": 0.9859
             },
             {
               "word": "展",
-              "start": 0.705,
-              "end": 0.845,
-              "confidence": 0.7571
+              "start": 0.695,
+              "end": 0.835,
+              "confidence": 0.8025
             },
             {
               "word": "卡",
-              "start": 0.845,
-              "end": 1.035,
-              "confidence": 0.847
+              "start": 0.835,
+              "end": 1.025,
+              "confidence": 0.8955
             },
             {
               "word": "牌，",
-              "start": 1.035,
-              "end": 1.425,
-              "confidence": 0.9287
+              "start": 1.025,
+              "end": 1.395,
+              "confidence": 0.9191
             },
             {
               "word": "共",
-              "start": 1.645,
-              "end": 1.865,
-              "confidence": 0.927
+              "start": 1.525,
+              "end": 1.695,
+              "confidence": 0.9128
             },
             {
               "word": "90",
-              "start": 1.865,
-              "end": 1.895,
-              "confidence": 0.173
+              "start": 1.695,
+              "end": 1.725,
+              "confidence": 0.1586
             },
             {
               "word": "张。",
-              "start": 2.305,
-              "end": 2.505,
-              "confidence": 0.75
-            }
-          ]
-        },
-        {
-          "t": 3.12,
-          "end": 5.975,
-          "text": "根据背面可以将所有发展卡牌分为三类，\n",
-          "words": [
-            {
-              "word": "根",
-              "start": 3.12,
-              "end": 3.195,
-              "confidence": 0.4516
-            },
-            {
-              "word": "据",
-              "start": 3.195,
-              "end": 3.305,
-              "confidence": 0.8402
-            },
-            {
-              "word": "背",
-              "start": 3.305,
-              "end": 3.495,
-              "confidence": 0.9815
-            },
-            {
-              "word": "面",
-              "start": 3.495,
-              "end": 3.725,
-              "confidence": 0.9693
-            },
-            {
-              "word": "可",
-              "start": 3.725,
-              "end": 3.875,
-              "confidence": 0.8216
-            },
-            {
-              "word": "以",
-              "start": 3.875,
-              "end": 3.995,
-              "confidence": 0.7403
-            },
-            {
-              "word": "将",
-              "start": 3.995,
-              "end": 4.195,
-              "confidence": 0.9404
-            },
-            {
-              "word": "所",
-              "start": 4.195,
-              "end": 4.425,
-              "confidence": 0.9724
-            },
-            {
-              "word": "有",
-              "start": 4.425,
-              "end": 4.525,
-              "confidence": 0.9419
-            },
-            {
-              "word": "发",
-              "start": 4.525,
-              "end": 4.695,
-              "confidence": 0.9706
-            },
-            {
-              "word": "展",
-              "start": 4.695,
-              "end": 4.835,
-              "confidence": 0.8255
-            },
-            {
-              "word": "卡",
-              "start": 4.835,
-              "end": 5.035,
-              "confidence": 0.9463
-            },
-            {
-              "word": "牌",
-              "start": 5.035,
-              "end": 5.305,
-              "confidence": 0.9436
-            },
-            {
-              "word": "分",
-              "start": 5.305,
-              "end": 5.465,
-              "confidence": 0.8883
-            },
-            {
-              "word": "为",
-              "start": 5.465,
-              "end": 5.605,
-              "confidence": 0.9599
-            },
-            {
-              "word": "三",
-              "start": 5.605,
-              "end": 5.835,
-              "confidence": 0.9233
-            },
-            {
-              "word": "类，",
-              "start": 5.835,
-              "end": 5.975,
-              "confidence": 0.9509
+              "start": 2.105,
+              "end": 2.295,
+              "confidence": 0.8556
             }
           ]
         }
@@ -651,267 +542,364 @@
         "2 设置",
         "2.1 发展卡牌"
       ],
-      "text": "分别是40张绿色的一级发展卡牌、",
+      "text": "根据背面可以将所有发展卡牌分为三类，分别是40张绿色的一级发展卡牌、30张黄色的二级发展卡牌，和20张蓝色的三级发展卡牌。",
       "audio": "media/tts/full/setup.cards.001.2.mp3",
-      "duration": 3.624,
-      "start": 21.84,
+      "duration": 12.672,
+      "start": 18.22,
       "refs": [
         "<development_card>",
         "rulebook:setup"
       ],
       "subtitles": [
         {
-          "t": 0.325,
-          "end": 2.985,
-          "text": "分别是40张绿色的一级发展卡牌、\n",
+          "t": 0.275,
+          "end": 3.295,
+          "text": "根据背面可以将所有发展卡牌分为三类，",
           "words": [
             {
-              "word": "分",
-              "start": 0.325,
-              "end": 0.475,
-              "confidence": 0.8252
+              "word": "根",
+              "start": 0.275,
+              "end": 0.415,
+              "confidence": 0.9744
             },
             {
-              "word": "别",
-              "start": 0.475,
-              "end": 0.625,
-              "confidence": 0.9467
+              "word": "据",
+              "start": 0.415,
+              "end": 0.565,
+              "confidence": 0.9605
             },
             {
-              "word": "是",
-              "start": 0.625,
-              "end": 0.915,
-              "confidence": 0.843
+              "word": "背",
+              "start": 0.565,
+              "end": 0.765,
+              "confidence": 0.9814
             },
             {
-              "word": "40",
+              "word": "面",
+              "start": 0.765,
+              "end": 0.995,
+              "confidence": 0.9713
+            },
+            {
+              "word": "可",
+              "start": 0.995,
+              "end": 1.125,
+              "confidence": 0.7786
+            },
+            {
+              "word": "以",
+              "start": 1.125,
+              "end": 1.245,
+              "confidence": 0.7047
+            },
+            {
+              "word": "将",
               "start": 1.245,
-              "end": 1.275,
-              "confidence": 0.1457
+              "end": 1.465,
+              "confidence": 0.9324
             },
             {
-              "word": "张",
-              "start": 1.275,
-              "end": 1.525,
-              "confidence": 0.852
+              "word": "所",
+              "start": 1.465,
+              "end": 1.655,
+              "confidence": 0.9599
             },
             {
-              "word": "绿",
-              "start": 1.525,
-              "end": 1.675,
-              "confidence": 0.9187
-            },
-            {
-              "word": "色",
-              "start": 1.675,
-              "end": 1.905,
-              "confidence": 0.9734
-            },
-            {
-              "word": "的",
-              "start": 1.905,
-              "end": 2.155,
-              "confidence": 0.9349
-            },
-            {
-              "word": "一",
-              "start": 2.155,
-              "end": 2.285,
-              "confidence": 0.8827
-            },
-            {
-              "word": "级",
-              "start": 2.285,
-              "end": 2.475,
-              "confidence": 0.8823
+              "word": "有",
+              "start": 1.655,
+              "end": 1.765,
+              "confidence": 0.8775
             },
             {
               "word": "发",
-              "start": 2.475,
-              "end": 2.635,
-              "confidence": 0.9634
+              "start": 1.765,
+              "end": 1.965,
+              "confidence": 0.9875
             },
             {
               "word": "展",
-              "start": 2.635,
-              "end": 2.755,
-              "confidence": 0.8774
+              "start": 1.965,
+              "end": 2.095,
+              "confidence": 0.8878
             },
             {
               "word": "卡",
-              "start": 2.755,
-              "end": 2.955,
-              "confidence": 0.8897
-            },
-            {
-              "word": "牌、",
-              "start": 2.955,
-              "end": 2.985,
-              "confidence": 0.1949
-            }
-          ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "setup.cards.001.3",
-      "group": "2.1 发展卡牌",
-      "group_path": [
-        "2 设置",
-        "2.1 发展卡牌"
-      ],
-      "text": "30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌。",
-      "audio": "media/tts/full/setup.cards.001.3.mp3",
-      "duration": 5.88,
-      "start": 25.46,
-      "refs": [
-        "<development_card>",
-        "rulebook:setup"
-      ],
-      "subtitles": [
-        {
-          "t": 0.0,
-          "end": 5.535,
-          "text": "30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌。",
-          "words": [
-            {
-              "word": "30",
-              "start": 0.0,
-              "end": 0.045,
-              "confidence": 0.5007
-            },
-            {
-              "word": "张",
-              "start": 0.725,
-              "end": 0.905,
-              "confidence": 0.886
-            },
-            {
-              "word": "黄",
-              "start": 0.905,
-              "end": 1.155,
-              "confidence": 0.9335
-            },
-            {
-              "word": "色",
-              "start": 1.155,
-              "end": 1.425,
-              "confidence": 0.9813
-            },
-            {
-              "word": "的",
-              "start": 1.425,
-              "end": 1.625,
-              "confidence": 0.9732
-            },
-            {
-              "word": "二",
-              "start": 1.665,
-              "end": 1.825,
-              "confidence": 0.9776
-            },
-            {
-              "word": "级",
-              "start": 1.825,
-              "end": 2.025,
-              "confidence": 0.9346
-            },
-            {
-              "word": "发",
-              "start": 2.025,
-              "end": 2.185,
-              "confidence": 0.9737
-            },
-            {
-              "word": "展",
-              "start": 2.185,
-              "end": 2.315,
-              "confidence": 0.8968
-            },
-            {
-              "word": "卡",
-              "start": 2.315,
-              "end": 2.515,
-              "confidence": 0.9562
+              "start": 2.095,
+              "end": 2.305,
+              "confidence": 0.9607
             },
             {
               "word": "牌",
-              "start": 2.515,
-              "end": 2.855,
-              "confidence": 0.9439
+              "start": 2.305,
+              "end": 2.585,
+              "confidence": 0.9478
             },
             {
-              "word": "和",
-              "start": 2.885,
-              "end": 3.155,
-              "confidence": 0.9017
+              "word": "分",
+              "start": 2.585,
+              "end": 2.735,
+              "confidence": 0.8907
             },
             {
-              "word": "20",
-              "start": 3.435,
-              "end": 3.465,
-              "confidence": 0.1491
-            },
-            {
-              "word": "张",
-              "start": 3.465,
-              "end": 3.705,
-              "confidence": 0.9153
-            },
-            {
-              "word": "蓝",
-              "start": 3.705,
-              "end": 3.895,
-              "confidence": 0.8741
-            },
-            {
-              "word": "色",
-              "start": 3.895,
-              "end": 4.175,
-              "confidence": 0.9743
-            },
-            {
-              "word": "的",
-              "start": 4.175,
-              "end": 4.365,
-              "confidence": 0.9456
+              "word": "为",
+              "start": 2.735,
+              "end": 2.865,
+              "confidence": 0.9792
             },
             {
               "word": "三",
-              "start": 4.365,
+              "start": 2.865,
+              "end": 3.095,
+              "confidence": 0.9274
+            },
+            {
+              "word": "类，",
+              "start": 3.095,
+              "end": 3.295,
+              "confidence": 0.9237
+            }
+          ]
+        },
+        {
+          "t": 3.73,
+          "end": 6.645,
+          "text": "分别是40张绿色的一级发展卡牌、",
+          "words": [
+            {
+              "word": "分",
+              "start": 3.73,
+              "end": 3.805,
+              "confidence": 0.6606
+            },
+            {
+              "word": "别",
+              "start": 3.805,
+              "end": 3.965,
+              "confidence": 0.9173
+            },
+            {
+              "word": "是",
+              "start": 3.965,
+              "end": 4.265,
+              "confidence": 0.8136
+            },
+            {
+              "word": "40",
+              "start": 4.575,
               "end": 4.605,
-              "confidence": 0.9441
+              "confidence": 0.141
+            },
+            {
+              "word": "张",
+              "start": 4.605,
+              "end": 4.915,
+              "confidence": 0.8434
+            },
+            {
+              "word": "绿",
+              "start": 4.915,
+              "end": 5.065,
+              "confidence": 0.9168
+            },
+            {
+              "word": "色",
+              "start": 5.065,
+              "end": 5.315,
+              "confidence": 0.9781
+            },
+            {
+              "word": "的",
+              "start": 5.315,
+              "end": 5.555,
+              "confidence": 0.9141
+            },
+            {
+              "word": "一",
+              "start": 5.555,
+              "end": 5.685,
+              "confidence": 0.8587
             },
             {
               "word": "级",
-              "start": 4.605,
-              "end": 4.805,
-              "confidence": 0.9118
+              "start": 5.685,
+              "end": 5.885,
+              "confidence": 0.7922
             },
             {
               "word": "发",
-              "start": 4.805,
-              "end": 4.955,
-              "confidence": 0.9614
+              "start": 5.885,
+              "end": 6.045,
+              "confidence": 0.9642
             },
             {
               "word": "展",
-              "start": 4.955,
-              "end": 5.075,
-              "confidence": 0.8992
+              "start": 6.045,
+              "end": 6.165,
+              "confidence": 0.8678
             },
             {
               "word": "卡",
-              "start": 5.075,
-              "end": 5.265,
-              "confidence": 0.9398
+              "start": 6.165,
+              "end": 6.365,
+              "confidence": 0.9128
+            },
+            {
+              "word": "牌、",
+              "start": 6.615,
+              "end": 6.645,
+              "confidence": 0.1339
+            }
+          ]
+        },
+        {
+          "t": 7.235,
+          "end": 9.375,
+          "text": "30张黄色的二级发展卡牌，",
+          "words": [
+            {
+              "word": "30",
+              "start": 7.235,
+              "end": 7.265,
+              "confidence": 0.1885
+            },
+            {
+              "word": "张",
+              "start": 7.265,
+              "end": 7.485,
+              "confidence": 0.9201
+            },
+            {
+              "word": "黄",
+              "start": 7.485,
+              "end": 7.745,
+              "confidence": 0.9497
+            },
+            {
+              "word": "色",
+              "start": 7.745,
+              "end": 7.995,
+              "confidence": 0.9582
+            },
+            {
+              "word": "的",
+              "start": 7.995,
+              "end": 8.185,
+              "confidence": 0.829
+            },
+            {
+              "word": "二",
+              "start": 8.185,
+              "end": 8.385,
+              "confidence": 0.9437
+            },
+            {
+              "word": "级",
+              "start": 8.385,
+              "end": 8.585,
+              "confidence": 0.9166
+            },
+            {
+              "word": "发",
+              "start": 8.585,
+              "end": 8.735,
+              "confidence": 0.9676
+            },
+            {
+              "word": "展",
+              "start": 8.735,
+              "end": 8.845,
+              "confidence": 0.8662
+            },
+            {
+              "word": "卡",
+              "start": 8.845,
+              "end": 9.035,
+              "confidence": 0.9414
+            },
+            {
+              "word": "牌，",
+              "start": 9.035,
+              "end": 9.375,
+              "confidence": 0.9655
+            }
+          ]
+        },
+        {
+          "t": 9.59,
+          "end": 11.665,
+          "text": "和20张蓝色的三级发展卡牌。",
+          "words": [
+            {
+              "word": "和",
+              "start": 9.59,
+              "end": 9.845,
+              "confidence": 0.867
+            },
+            {
+              "word": "20",
+              "start": 9.845,
+              "end": 9.885,
+              "confidence": 0.4591
+            },
+            {
+              "word": "张",
+              "start": 9.885,
+              "end": 9.945,
+              "confidence": 0.1661
+            },
+            {
+              "word": "蓝",
+              "start": 9.945,
+              "end": 10.005,
+              "confidence": 0.1767
+            },
+            {
+              "word": "色",
+              "start": 10.005,
+              "end": 10.105,
+              "confidence": 0.3228
+            },
+            {
+              "word": "的",
+              "start": 10.105,
+              "end": 10.165,
+              "confidence": 0.207
+            },
+            {
+              "word": "三",
+              "start": 10.215,
+              "end": 10.315,
+              "confidence": 0.456
+            },
+            {
+              "word": "级",
+              "start": 10.315,
+              "end": 10.375,
+              "confidence": 0.1505
+            },
+            {
+              "word": "发",
+              "start": 11.165,
+              "end": 11.225,
+              "confidence": 0.1761
+            },
+            {
+              "word": "展",
+              "start": 11.225,
+              "end": 11.305,
+              "confidence": 0.2477
+            },
+            {
+              "word": "卡",
+              "start": 11.305,
+              "end": 11.465,
+              "confidence": 0.515
             },
             {
               "word": "牌。",
-              "start": 5.265,
-              "end": 5.535,
-              "confidence": 0.9502
+              "start": 11.595,
+              "end": 11.665,
+              "confidence": 0.3376
             }
           ]
         }
@@ -928,7 +916,7 @@
       "text": "将这三类牌分别洗混后按顺序摆成一列。从每摞牌上方分别翻开四张牌，在一侧摆成一行。",
       "audio": "media/tts/full/setup.cards.002.1.mp3",
       "duration": 8.448,
-      "start": 31.34,
+      "start": 30.89,
       "refs": [
         "flow:prepare_level_1_deck",
         "flow:prepare_level_2_deck",
@@ -1190,7 +1178,7 @@
       "text": "最终组成一个3乘4的发展卡牌供应堆。",
       "audio": "media/tts/full/setup.cards.002.2.mp3",
       "duration": 3.864,
-      "start": 39.79,
+      "start": 39.34,
       "refs": [
         "flow:prepare_level_1_deck",
         "flow:prepare_level_2_deck",
@@ -1325,7 +1313,7 @@
       "text": "这些是标记，后续称之为宝石。",
       "audio": "media/tts/full/setup.gems.001.1.mp3",
       "duration": 3.24,
-      "start": 43.66,
+      "start": 43.2,
       "refs": [
         "<gem>",
         "rulebook:setup"
@@ -1423,7 +1411,7 @@
       "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。",
       "audio": "media/tts/full/setup.gems.001.2.mp3",
       "duration": 7.224,
-      "start": 46.9,
+      "start": 46.44,
       "refs": [
         "<gem>",
         "rulebook:setup"
@@ -1599,7 +1587,7 @@
       "text": "后续我们就直接以颜色称呼它们了。",
       "audio": "media/tts/full/setup.gems.001.3.mp3",
       "duration": 3.072,
-      "start": 54.12,
+      "start": 53.66,
       "refs": [
         "<gem>",
         "rulebook:setup"
@@ -1715,7 +1703,7 @@
       "text": "这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石。",
       "audio": "media/tts/full/setup.gems.002.mp3",
       "duration": 6.024,
-      "start": 57.19,
+      "start": 56.74,
       "refs": [
         "<gold>",
         "rulebook:setup"
@@ -1910,7 +1898,7 @@
       "text": "我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚。",
       "audio": "media/tts/full/setup.gems.003.1.mp3",
       "duration": 7.056,
-      "start": 63.22,
+      "start": 62.76,
       "refs": [
         "flow:distribute_gems"
       ],
@@ -2134,7 +2122,7 @@
       "text": "3人游戏时，拿取5枚。",
       "audio": "media/tts/full/setup.gems.003.2.mp3",
       "duration": 2.832,
-      "start": 70.27,
+      "start": 69.82,
       "refs": [
         "flow:distribute_gems"
       ],
@@ -2213,7 +2201,7 @@
       "text": "4人游戏时则使用全部的7枚宝石。",
       "audio": "media/tts/full/setup.gems.004.mp3",
       "duration": 3.864,
-      "start": 73.1,
+      "start": 72.65,
       "refs": [
         "flow:distribute_gems"
       ],
@@ -2328,7 +2316,7 @@
       "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。",
       "audio": "media/tts/full/setup.gems.005.1.mp3",
       "duration": 5.856,
-      "start": 76.97,
+      "start": 76.51,
       "refs": [
         "<gem_supply>",
         "<gold_supply>",
@@ -2530,7 +2518,7 @@
       "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。其余的宝石放回盒子。",
       "audio": "media/tts/full/setup.gems.005.2.mp3",
       "duration": 6.816,
-      "start": 82.82,
+      "start": 82.37,
       "refs": [
         "<gem_supply>",
         "<gold_supply>",
@@ -2733,7 +2721,7 @@
       "text": "这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块，",
       "audio": "media/tts/full/setup.nobles.001.1.mp3",
       "duration": 5.64,
-      "start": 89.64,
+      "start": 89.18,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -2916,7 +2904,7 @@
       "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。",
       "audio": "media/tts/full/setup.nobles.001.2.mp3",
       "duration": 5.064,
-      "start": 95.28,
+      "start": 94.82,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3081,7 +3069,7 @@
       "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。",
       "audio": "media/tts/full/setup.nobles.002.mp3",
       "duration": 7.056,
-      "start": 100.34,
+      "start": 99.89,
       "refs": [
         "flow:deal_nobles"
       ],
@@ -3311,7 +3299,7 @@
       "text": "现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家，",
       "audio": "media/tts/full/setup.starting_player.001.1.mp3",
       "duration": 6.048,
-      "start": 107.4,
+      "start": 106.94,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3513,7 +3501,7 @@
       "text": "也可以使用所有人都认可的方式决定谁是起始玩家。",
       "audio": "media/tts/full/setup.starting_player.001.2.mp3",
       "duration": 4.44,
-      "start": 113.45,
+      "start": 112.99,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3672,7 +3660,7 @@
       "text": "这是起始玩家标记。",
       "audio": "media/tts/full/setup.starting_player.001.3.mp3",
       "duration": 2.04,
-      "start": 117.89,
+      "start": 117.43,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3747,7 +3735,7 @@
       "text": "起始玩家获得这枚标记。",
       "audio": "media/tts/full/setup.starting_player.001.4.mp3",
       "duration": 2.664,
-      "start": 119.93,
+      "start": 119.47,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3834,7 +3822,7 @@
       "text": "至此，整个设置环节就大功告成了。接下来可以正式开始游戏了。",
       "audio": "media/tts/full/setup.end.001.1.mp3",
       "duration": 5.64,
-      "start": 122.59,
+      "start": 122.14,
       "refs": [
         "rulebook:setup",
         "flow:main_gameplay"
@@ -4022,7 +4010,7 @@
       "text": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。",
       "audio": "media/tts/full/action.turn.001.mp3",
       "duration": 8.232,
-      "start": 128.23,
+      "start": 127.78,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -4265,7 +4253,7 @@
       "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行：",
       "audio": "media/tts/full/action.turn.002.mp3",
       "duration": 5.472,
-      "start": 136.46,
+      "start": 136.01,
       "refs": [
         "flow:action_phase"
       ],
@@ -4446,7 +4434,7 @@
       "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。",
       "audio": "media/tts/full/action.take.different.001.mp3",
       "duration": 5.28,
-      "start": 141.94,
+      "start": 141.48,
       "refs": [
         "<take_gems_different>",
         "flow:player_action_turn"
@@ -4610,7 +4598,7 @@
       "text": "当某种宝石在供应堆中的数量大于等于4时，也可以改为拿取这种宝石两枚。",
       "audio": "media/tts/full/action.take.same.001.mp3",
       "duration": 7.056,
-      "start": 147.22,
+      "start": 146.76,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -4835,7 +4823,7 @@
       "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，否则就不能这样拿取。",
       "audio": "media/tts/full/action.take.same.002.mp3",
       "duration": 7.08,
-      "start": 154.27,
+      "start": 153.82,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5060,7 +5048,7 @@
       "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。",
       "audio": "media/tts/full/action.take.draw_rule.001.1.mp3",
       "duration": 6.84,
-      "start": 161.35,
+      "start": 160.9,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -5285,7 +5273,7 @@
       "text": "当供应堆宝石不足时，尽可能拿取宝石。",
       "audio": "media/tts/full/action.take.draw_rule.001.2.mp3",
       "duration": 3.864,
-      "start": 168.19,
+      "start": 167.74,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -5407,7 +5395,7 @@
       "text": "玩家持有的宝石和黄金总数上限为10个。任何时候当持有数量超过上限时，",
       "audio": "media/tts/full/action.take.limit.001.1.mp3",
       "duration": 6.84,
-      "start": 172.06,
+      "start": 171.6,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -5627,7 +5615,7 @@
       "text": "必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。",
       "audio": "media/tts/full/action.take.limit.001.2.mp3",
       "duration": 6.048,
-      "start": 178.9,
+      "start": 178.44,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -5835,7 +5823,7 @@
       "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，",
       "audio": "media/tts/full/action.take.public.001.1.mp3",
       "duration": 6.264,
-      "start": 184.94,
+      "start": 184.49,
       "refs": [
         "<player_holding>"
       ],
@@ -6034,7 +6022,7 @@
       "text": "所有人都能清楚看到的地方。",
       "audio": "media/tts/full/action.take.public.001.2.mp3",
       "duration": 2.856,
-      "start": 191.21,
+      "start": 190.75,
       "refs": [
         "<player_holding>"
       ],
@@ -6132,7 +6120,7 @@
       "text": "我们介绍一下发展卡牌。",
       "audio": "media/tts/full/action.cards.intro.001.mp3",
       "duration": 2.256,
-      "start": 194.06,
+      "start": 193.61,
       "refs": [
         "<development_card>"
       ],
@@ -6218,7 +6206,7 @@
       "text": "左下角是这张牌的价格。要想购买这张牌，",
       "audio": "media/tts/full/action.cards.cost.001.1.mp3",
       "duration": 3.84,
-      "start": 196.32,
+      "start": 195.86,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -6355,7 +6343,7 @@
       "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。",
       "audio": "media/tts/full/action.cards.cost.001.2.mp3",
       "duration": 10.488,
-      "start": 200.16,
+      "start": 199.7,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -6684,7 +6672,7 @@
       "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，",
       "audio": "media/tts/full/action.cards.market.001.1.mp3",
       "duration": 15.096,
-      "start": 210.65,
+      "start": 210.19,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -7158,7 +7146,7 @@
       "text": "除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。",
       "audio": "media/tts/full/action.cards.market.001.2.mp3",
       "duration": 8.256,
-      "start": 225.74,
+      "start": 225.29,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -7396,7 +7384,7 @@
       "text": "左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值。",
       "audio": "media/tts/full/action.cards.prestige.001.1.mp3",
       "duration": 6.648,
-      "start": 234.0,
+      "start": 233.54,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -7610,7 +7598,7 @@
       "text": "不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值。",
       "audio": "media/tts/full/action.cards.prestige.001.2.mp3",
       "duration": 6.264,
-      "start": 240.65,
+      "start": 240.19,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -7812,7 +7800,7 @@
       "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。",
       "audio": "media/tts/full/action.cards.discount.001.mp3",
       "duration": 7.464,
-      "start": 246.91,
+      "start": 246.46,
       "refs": [
         "<discount>"
       ],
@@ -8061,7 +8049,7 @@
       "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。",
       "audio": "media/tts/full/action.cards.discount.002.1.mp3",
       "duration": 11.472,
-      "start": 254.38,
+      "start": 253.92,
       "refs": [
         "<discount>"
       ],
@@ -8438,7 +8426,7 @@
       "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。",
       "audio": "media/tts/full/action.cards.discount.003.1.mp3",
       "duration": 7.872,
-      "start": 265.85,
+      "start": 265.39,
       "refs": [
         "<discount>"
       ],
@@ -8699,7 +8687,7 @@
       "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。",
       "audio": "media/tts/full/action.cards.discount.003.2.mp3",
       "duration": 8.304,
-      "start": 273.72,
+      "start": 273.26,
       "refs": [
         "<discount>"
       ],
@@ -8966,7 +8954,7 @@
       "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。",
       "audio": "media/tts/full/action.cards.public.001.1.mp3",
       "duration": 12.864,
-      "start": 282.02,
+      "start": 281.57,
       "refs": [
         "<development_area>"
       ],
@@ -9354,7 +9342,7 @@
       "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
       "audio": "media/tts/full/action.cards.limit.001.1.mp3",
       "duration": 8.856,
-      "start": 294.89,
+      "start": 294.43,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -9640,7 +9628,7 @@
       "text": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。",
       "audio": "media/tts/full/action.nobles.intro.001.mp3",
       "duration": 10.464,
-      "start": 303.74,
+      "start": 303.29,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -9988,7 +9976,7 @@
       "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。",
       "audio": "media/tts/full/action.nobles.trigger.001.1.mp3",
       "duration": 12.024,
-      "start": 314.21,
+      "start": 313.75,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -10383,7 +10371,7 @@
       "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。",
       "audio": "media/tts/full/action.nobles.forced.001.1.mp3",
       "duration": 11.088,
-      "start": 326.23,
+      "start": 325.78,
       "refs": [
         "<attract_noble>"
       ],
@@ -10747,7 +10735,7 @@
       "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。",
       "audio": "media/tts/full/action.nobles.source.001.mp3",
       "duration": 8.76,
-      "start": 337.32,
+      "start": 336.86,
       "refs": [
         "<noble_market>",
         "<attract_noble>"
@@ -10918,7 +10906,7 @@
       "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.choice.001.1.mp3",
       "duration": 8.832,
-      "start": 346.08,
+      "start": 345.62,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11217,7 +11205,7 @@
       "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.repeat.001.1.mp3",
       "duration": 11.664,
-      "start": 354.91,
+      "start": 354.46,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -11625,7 +11613,7 @@
       "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。",
       "audio": "media/tts/full/action.nobles.repeat.001.3.mp3",
       "duration": 6.672,
-      "start": 366.58,
+      "start": 366.12,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -11845,7 +11833,7 @@
       "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，",
       "audio": "media/tts/full/action.cards.summary.001.1.mp3",
       "duration": 5.064,
-      "start": 373.25,
+      "start": 372.79,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12006,7 +11994,7 @@
       "text": "已购买的发展卡牌会为玩家带来声望值和折扣。",
       "audio": "media/tts/full/action.cards.summary.001.2.mp3",
       "duration": 4.44,
-      "start": 378.31,
+      "start": 377.86,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12155,7 +12143,7 @@
       "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
       "audio": "media/tts/full/action.cards.summary.001.3.mp3",
       "duration": 6.432,
-      "start": 382.75,
+      "start": 382.3,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12376,7 +12364,7 @@
       "text": "除购买外，玩家也可以不支付费用，把一张发展卡牌从供应堆拿走，正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。",
       "audio": "media/tts/full/action.reserve.intro.001.1.mp3",
       "duration": 11.088,
-      "start": 389.18,
+      "start": 388.73,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -12718,7 +12706,7 @@
       "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。",
       "audio": "media/tts/full/action.reserve.gold.001.mp3",
       "duration": 6.84,
-      "start": 400.27,
+      "start": 399.82,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -12949,7 +12937,7 @@
       "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。",
       "audio": "media/tts/full/action.reserve.deck.001.mp3",
       "duration": 7.656,
-      "start": 407.11,
+      "start": 406.66,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -13206,7 +13194,7 @@
       "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
       "audio": "media/tts/full/action.reserve.notes_intro.001.mp3",
       "duration": 8.856,
-      "start": 414.77,
+      "start": 414.31,
       "refs": [
         "<reserve_development_card>",
         "<player_holding>",
@@ -13482,7 +13470,7 @@
       "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.2.mp3",
       "duration": 5.472,
-      "start": 423.62,
+      "start": 423.17,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -13665,7 +13653,7 @@
       "text": "每位玩家最多同时保留3张发展卡牌；已经保留3张时，就不能再保留，必须选择其他行动。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.1.mp3",
       "duration": 8.04,
-      "start": 429.1,
+      "start": 428.64,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -13920,7 +13908,7 @@
       "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。",
       "audio": "media/tts/full/action.reserve.private.001.1.mp3",
       "duration": 11.28,
-      "start": 437.14,
+      "start": 436.68,
       "refs": [
         "<hand>"
       ],
@@ -14289,7 +14277,7 @@
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
       "audio": "media/tts/full/action.reserve.private.002.mp3",
       "duration": 6.456,
-      "start": 448.42,
+      "start": 447.96,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -14489,7 +14477,7 @@
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
       "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
       "duration": 7.08,
-      "start": 454.87,
+      "start": 454.42,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -14709,7 +14697,7 @@
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
       "duration": 18.672,
-      "start": 461.95,
+      "start": 461.5,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -15322,7 +15310,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 480.62,
+      "start": 480.17,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -15555,7 +15543,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 9.456,
-      "start": 487.85,
+      "start": 487.39,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -15848,7 +15836,7 @@
       "text": "就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 3.456,
-      "start": 497.3,
+      "start": 496.85,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -15964,7 +15952,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 500.76,
+      "start": 500.3,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -16121,7 +16109,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 10.296,
-      "start": 505.99,
+      "start": 505.54,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -16448,7 +16436,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 16.488,
-      "start": 516.29,
+      "start": 515.83,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -16973,7 +16961,7 @@
       "text": "第一种情况：声望值最高的玩家获得胜利。比如玩家A有17分，玩家B有14分，A获胜。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 9.024,
-      "start": 532.78,
+      "start": 532.32,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -17209,7 +17197,7 @@
       "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。",
       "audio": "media/tts/full/endgame.winner.002.mp3",
       "duration": 12.648,
-      "start": 541.8,
+      "start": 541.34,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -17566,7 +17554,7 @@
       "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。现在两人都是17分、10张牌，共享胜利。",
       "audio": "media/tts/full/endgame.winner.003.mp3",
       "duration": 11.088,
-      "start": 554.45,
+      "start": 553.99,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

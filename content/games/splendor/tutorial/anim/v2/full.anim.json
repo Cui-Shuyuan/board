@@ -43,18 +43,6 @@
       "edge": "end"
     },
     {
-      "id": "setup.cards.001.1.b2.start",
-      "cue": "setup.cards.001.1",
-      "beat": "setup.cards.001.1.b2",
-      "edge": "start"
-    },
-    {
-      "id": "setup.cards.001.1.b2.end",
-      "cue": "setup.cards.001.1",
-      "beat": "setup.cards.001.1.b2",
-      "edge": "end"
-    },
-    {
       "id": "setup.cards.001.2.start",
       "cue": "setup.cards.001.2",
       "edge": "cue_start"
@@ -77,25 +65,39 @@
       "edge": "end"
     },
     {
-      "id": "setup.cards.001.3.start",
-      "cue": "setup.cards.001.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.cards.001.3.end",
-      "cue": "setup.cards.001.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.cards.001.3.b1.start",
-      "cue": "setup.cards.001.3",
-      "beat": "setup.cards.001.3.b1",
+      "id": "setup.cards.001.2.b2.start",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b2",
       "edge": "start"
     },
     {
-      "id": "setup.cards.001.3.b1.end",
-      "cue": "setup.cards.001.3",
-      "beat": "setup.cards.001.3.b1",
+      "id": "setup.cards.001.2.b2.end",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.001.2.b3.start",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b3",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.001.2.b3.end",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b3",
+      "edge": "end"
+    },
+    {
+      "id": "setup.cards.001.2.b4.start",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b4",
+      "edge": "start"
+    },
+    {
+      "id": "setup.cards.001.2.b4.end",
+      "cue": "setup.cards.001.2",
+      "beat": "setup.cards.001.2.b4",
       "edge": "end"
     },
     {
@@ -2112,7 +2114,15 @@
         },
         {
           "key": "高亮绿色(一级)",
-          "text": "0.33-2.98 分别是40张绿色的一级发展卡牌"
+          "text": "0.33-2.98 40张绿色的一级发展卡牌"
+        },
+        {
+          "key": "高亮黄色(二级)",
+          "text": "0.00-2.98 30张黄色的二级发展卡牌"
+        },
+        {
+          "key": "高亮蓝色(三级)",
+          "text": "2.90-5.54 20张蓝色的三级发展卡牌"
         }
       ],
       "script": {
@@ -2203,116 +2213,17 @@
         },
         {
           "op": "highlight",
-          "dur": 1.1,
-          "grow": 1.16,
-          "anchor": "setup.cards.001.2.b1.start",
-          "offset": 0.275,
+          "dur": 1.2,
+          "anchor": "setup.cards.001.2.b2.start",
           "target": {
             "space": "screen",
             "id": "card_intro_back_1"
-          }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "setup.cards.001.3",
-      "parent": "setup.cards.001.2",
-      "timing": [
-        {
-          "key": "高亮黄色(二级)",
-          "text": "0.00-2.98 30张黄色的二级发展卡牌"
-        },
-        {
-          "key": "高亮蓝色(三级)",
-          "text": "2.90-5.54 20张蓝色的三级发展卡牌"
-        }
-      ],
-      "script": {
-        "story": "30张黄色的二级发展卡牌和20张蓝色的三级发展卡牌",
-        "note": "保持三张卡背的位置，分别高亮中间的二级与右侧的三级卡背，对应口播的类别与数量。",
-        "enter": {
-          "zones": {}
-        },
-        "exit": {
-          "zones": {}
-        }
-      },
-      "events": [
-        {
-          "op": "show",
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 1,
-            "h": 1
-          },
-          "background": "#1E2126",
-          "layer": 0,
-          "dur": 0.0,
-          "anchor": "setup.cards.001.3.start",
-          "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.17,
-            "y": 0.14,
-            "w": 0.18,
-            "h": 0.68
-          },
-          "dur": 0.0,
-          "anchor": "setup.cards.001.3.start",
-          "image": "media/card/一级发展卡_背面_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "card_intro_back_1"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.41,
-            "y": 0.14,
-            "w": 0.18,
-            "h": 0.68
-          },
-          "dur": 0.0,
-          "anchor": "setup.cards.001.3.start",
-          "image": "media/card/二级发展卡_背面_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "card_intro_back_2"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.65,
-            "y": 0.14,
-            "w": 0.18,
-            "h": 0.68
-          },
-          "dur": 0.0,
-          "anchor": "setup.cards.001.3.start",
-          "image": "media/card/三级发展卡_背面_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "card_intro_back_3"
           }
         },
         {
           "op": "highlight",
-          "dur": 1.3,
-          "grow": 1.16,
-          "anchor": "setup.cards.001.3.b1.start",
-          "offset": 0.1,
+          "dur": 1.2,
+          "anchor": "setup.cards.001.2.b3.start",
           "target": {
             "space": "screen",
             "id": "card_intro_back_2"
@@ -2320,10 +2231,8 @@
         },
         {
           "op": "highlight",
-          "dur": 1.3,
-          "grow": 1.16,
-          "anchor": "setup.cards.001.3.b1.end",
-          "offset": -2.635,
+          "dur": 1.2,
+          "anchor": "setup.cards.001.2.b4.start",
           "target": {
             "space": "screen",
             "id": "card_intro_back_3"
@@ -2334,7 +2243,7 @@
     },
     {
       "id": "setup.cards.002.1",
-      "parent": "setup.cards.001.3",
+      "parent": "setup.cards.001.2",
       "tree": "main",
       "transition": "overlay",
       "timing": [
