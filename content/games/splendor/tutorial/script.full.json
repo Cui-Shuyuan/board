@@ -103,31 +103,9 @@
         {
           "id": "setup.cards.002.1.b2",
           "text": "从每摞牌上方分别翻开四张牌，在一侧摆成一行。"
-        }
-      ]
-    },
-    {
-      "id": "setup.cards.002.2",
-      "group": "2.1 发展卡牌",
-      "group_path": [
-        "2 设置",
-        "2.1 发展卡牌"
-      ],
-      "refs": [
-        "flow:prepare_level_1_deck",
-        "flow:prepare_level_2_deck",
-        "flow:prepare_level_3_deck",
-        "flow:shuffle_level_1_deck",
-        "flow:shuffle_level_2_deck",
-        "flow:shuffle_level_3_deck",
-        "flow:deal_card_market_level_1",
-        "flow:deal_card_market_level_2",
-        "flow:deal_card_market_level_3"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.cards.002.2.b1",
+          "id": "setup.cards.002.1.b3",
           "text": "最终组成一个3乘4的发展卡牌供应堆。"
         }
       ]

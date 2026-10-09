@@ -135,25 +135,15 @@
       "edge": "end"
     },
     {
-      "id": "setup.cards.002.2.start",
-      "cue": "setup.cards.002.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.cards.002.2.end",
-      "cue": "setup.cards.002.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.cards.002.2.b1.start",
-      "cue": "setup.cards.002.2",
-      "beat": "setup.cards.002.2.b1",
+      "id": "setup.cards.002.1.b3.start",
+      "cue": "setup.cards.002.1",
+      "beat": "setup.cards.002.1.b3",
       "edge": "start"
     },
     {
-      "id": "setup.cards.002.2.b1.end",
-      "cue": "setup.cards.002.2",
-      "beat": "setup.cards.002.2.b1",
+      "id": "setup.cards.002.1.b3.end",
+      "cue": "setup.cards.002.1",
+      "beat": "setup.cards.002.1.b3",
       "edge": "end"
     },
     {
@@ -2254,11 +2244,15 @@
         {
           "key": "发牌（12 张，每张 0.39s）",
           "text": "3.60-8.45 从每摞牌上方分别翻开四张牌，在一侧摆成一行"
+        },
+        {
+          "key": "确认 3×4 供应堆",
+          "text": "8.45-11.00 最终组成一个3乘4的发展卡牌供应堆"
         }
       ],
       "script": {
-        "story": "将这三类牌分别洗混后按顺序摆成一列；从每摞牌上方分别翻开四张牌，在一侧摆成一行",
-        "note": "切回牌堆与市场视图，分别建立 40、30、20 张的三级牌堆并演示洗混，再从每堆顶翻出四张，形成三行市场。各堆预置五张真实模板：四张用于发牌，一张留作补位；其余空白模板只承担堆叠展示，不应作为后续购买对象。发牌后牌堆分别剩 36、26、16 张。",
+        "story": "将这三类牌分别洗混后按顺序摆成一列；从每摞牌上方分别翻开四张牌，在一侧摆成一行；最终组成一个3乘4的发展卡牌供应堆。",
+        "note": "切回牌堆与市场视图，分别建立 40、30、20 张的三级牌堆并演示洗混，再从每堆顶翻出四张，形成三行市场；最后确认市场为 3×4 的供应堆结构。各堆预置五张真实模板：四张用于发牌，一张留作补位；其余空白模板只承担堆叠展示，不应作为后续购买对象。发牌后牌堆分别剩 36、26、16 张。",
         "enter": {
           "picture": null,
           "zones": {
@@ -2765,62 +2759,8 @@
       ]
     },
     {
-      "id": "setup.cards.002.2",
-      "parent": "setup.cards.002.1",
-      "timing": [
-        {
-          "key": "不动作",
-          "text": "整条只把镜头放在整桌，让 12 张牌安静待着"
-        }
-      ],
-      "script": {
-        "story": "最终组成一个 3 乘 4 的发展卡牌供应堆",
-        "note": "保持已经摆好的三行、每行四张的卡牌市场，供观众确认 3×4 的结构。本条只有等待事件。",
-        "enter": {
-          "zones": {
-            "deck_level_1": {
-              "count": 36
-            },
-            "deck_level_2": {
-              "count": 26
-            },
-            "deck_level_3": {
-              "count": 16
-            },
-            "card_market": {
-              "count": 12
-            }
-          }
-        },
-        "exit": {
-          "zones": {
-            "deck_level_1": {
-              "count": 36
-            },
-            "deck_level_2": {
-              "count": 26
-            },
-            "deck_level_3": {
-              "count": 16
-            },
-            "card_market": {
-              "count": 12
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "wait",
-          "dur": 3.4,
-          "anchor": "setup.cards.002.2.start"
-        }
-      ],
-      "tree": "main"
-    },
-    {
       "id": "setup.gems.001.1",
-      "parent": "setup.cards.002.2",
+      "parent": "setup.cards.002.1",
       "tree": "main",
       "transition": "overlay",
       "timing": [
@@ -3533,7 +3473,7 @@
     {
       "id": "setup.gems.003.1",
       "parent": "setup.gems.002",
-      "entry": "setup.cards.002.2",
+      "entry": "setup.cards.002.1",
       "tree": "main",
       "transition": "world_cut",
       "timing": [
