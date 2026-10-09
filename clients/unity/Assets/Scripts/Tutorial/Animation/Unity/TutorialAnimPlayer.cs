@@ -167,6 +167,11 @@ namespace BoardGameTutorial.Animation
             }
 
             bool active = mask != null;
+            bool wasActive = fullScreenMaskActive;
+            // Update the flag before RebuildZoneDebug(); otherwise the
+            // active -> inactive transition clears the zone layer and never
+            // repopulates it until the next cue.
+            fullScreenMaskActive = active;
             if (active)
             {
                 var bg = Color.black;
@@ -179,14 +184,13 @@ namespace BoardGameTutorial.Animation
                 if (animRoot != null) animRoot.SetActive(false);
                 if (zoneDebug != null) zoneDebug.gameObject.SetActive(false);
             }
-            else if (fullScreenMaskActive)
+            else if (wasActive)
             {
                 if (animRoot != null) animRoot.SetActive(true);
                 if (zoneDebug != null) zoneDebug.gameObject.SetActive(true);
                 cameraDirector.SetBackground(stageRuntime.Stage != null ? stageRuntime.Stage.background : null);
                 RebuildZoneDebug();
             }
-            fullScreenMaskActive = active;
         }
 
         public void Complete() => Seek(TotalDuration);
