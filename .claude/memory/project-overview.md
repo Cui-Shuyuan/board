@@ -61,7 +61,7 @@ metadata:
 2. **Rule DSL**：已完成 Splendor 首版，后续游戏沿用。
 3. **Runtime / 意图接口**：已完成；单工具 `execute_plan` + 三层回答 + 向量检索。后端 `GameRulesService` 已完成服务化拆分，121 条 xUnit 全绿；全文/name 索引与 Python CLI 共用身份路径和版本契约，九款真实规则数据回归对齐。
 4. **扩游戏与元信息**：进行中；已有 9 款游戏规则数据。catalog 与 manifest v1 仅 Splendor 落地：`content/catalog/splendor.json` 已入 Git，`content/manifests/splendor.json` 为生成物。Android 首页读取 `/api/catalog/games`，内容更新走 manifest。
-5. **Tutorial Tree / 讲规动画**：当前重点之一；Splendor full 72 cue（cue id 已语义化）已跑通，终局与真卡身份收口，time_anchors 与 QA 同置已落地；quick 未做，正式视觉验收待定。
+5. **Tutorial Tree / 讲规动画**：当前重点之一；Splendor full 69 cue（cue id 已语义化）已跑通，终局与真卡身份收口，time_anchors 与 QA 同置已落地；quick 未做，正式视觉验收待定。
 6. **Controller / 语音问答**：已有首版能力；后端有一句话 ASR + TTS、Android PTT、回答音频自动播放/重播/继续播放。继续播放会先停回答音频，再按进入问答时记录的 cueId + 位置精确恢复；端到端真机验收仍待复测。
 7. **UI / 客户端**：已有首版客户端；UaaL 原生壳、Compose 控制、首页、资源管理、问答面板已落地。店内平板规模验收仍未完成。
 
