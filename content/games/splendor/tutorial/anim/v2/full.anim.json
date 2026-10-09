@@ -169,47 +169,27 @@
       "edge": "end"
     },
     {
-      "id": "setup.gems.001.2.start",
-      "cue": "setup.gems.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.gems.001.2.end",
-      "cue": "setup.gems.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.gems.001.2.b1.start",
-      "cue": "setup.gems.001.2",
-      "beat": "setup.gems.001.2.b1",
+      "id": "setup.gems.001.1.b2.start",
+      "cue": "setup.gems.001.1",
+      "beat": "setup.gems.001.1.b2",
       "edge": "start"
     },
     {
-      "id": "setup.gems.001.2.b1.end",
-      "cue": "setup.gems.001.2",
-      "beat": "setup.gems.001.2.b1",
+      "id": "setup.gems.001.1.b2.end",
+      "cue": "setup.gems.001.1",
+      "beat": "setup.gems.001.1.b2",
       "edge": "end"
     },
     {
-      "id": "setup.gems.001.3.start",
-      "cue": "setup.gems.001.3",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.gems.001.3.end",
-      "cue": "setup.gems.001.3",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.gems.001.3.b1.start",
-      "cue": "setup.gems.001.3",
-      "beat": "setup.gems.001.3.b1",
+      "id": "setup.gems.001.1.b3.start",
+      "cue": "setup.gems.001.1",
+      "beat": "setup.gems.001.1.b3",
       "edge": "start"
     },
     {
-      "id": "setup.gems.001.3.b1.end",
-      "cue": "setup.gems.001.3",
-      "beat": "setup.gems.001.3.b1",
+      "id": "setup.gems.001.1.b3.end",
+      "cue": "setup.gems.001.1",
+      "beat": "setup.gems.001.1.b3",
       "edge": "end"
     },
     {
@@ -2765,13 +2745,21 @@
       "transition": "overlay",
       "timing": [
         {
-          "key": "5 枚样本出现在展示位",
-          "text": "0.35 起（瞬时，各错开 0.12s；口播 0.30-2.83）"
+          "key": "5 枚样本出现",
+          "text": "0.35 起（瞬时；口播约 0.30-2.8）"
+        },
+        {
+          "key": "五种颜色依次高亮",
+          "text": "钻石、蓝宝石、红宝石、翡翠、缟玛瑙"
+        },
+        {
+          "key": "五枚一起高亮",
+          "text": "收束颜色称呼；后续直接用颜色称呼"
         }
       ],
       "script": {
-        "story": "这些是标记，后续称之为宝石",
-        "note": "在深色屏幕背景上同时展示五种宝石样本。样本属于 screen，用于介绍外观，不计入供应堆或持有区的实物数量。",
+        "story": "这些是标记，后续称之为宝石；宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙；后续直接以颜色称呼它们。",
+        "note": "在深色屏幕背景上同时展示五种宝石样本，随口播依次高亮名称与颜色；最后五个样本一起高亮，说明后续直接用颜色称呼。样本属于 screen，用于介绍外观，不计入供应堆或持有区的实物数量。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -2890,146 +2878,12 @@
             "space": "screen",
             "id": "gem_sample_onyx"
           }
-        }
-      ]
-    },
-    {
-      "id": "setup.gems.001.2",
-      "parent": "setup.gems.001.1",
-      "timing": [
-        {
-          "key": "白宝石高亮",
-          "text": "2.85"
-        },
-        {
-          "key": "蓝宝石高亮",
-          "text": "3.62"
-        },
-        {
-          "key": "红宝石高亮",
-          "text": "4.51"
-        },
-        {
-          "key": "绿宝石高亮",
-          "text": "5.46"
-        },
-        {
-          "key": "黑宝石高亮",
-          "text": "6.39"
-        }
-      ],
-      "script": {
-        "story": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙",
-        "note": "五个样本从左到右依次为白、蓝、红、绿、黑；随口播逐个高亮，帮助观众把名称与颜色对应起来。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 1,
-            "h": 1
-          },
-          "background": "#1E2126",
-          "layer": 0,
-          "dur": 0.0,
-          "anchor": "setup.gems.001.2.start",
-          "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.15,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.2.start",
-          "image": "media/card/白宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_diamond"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.29,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.2.start",
-          "image": "media/card/蓝宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_sapphire"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.43,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.2.start",
-          "image": "media/card/红宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_ruby"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.57,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.2.start",
-          "image": "media/card/绿宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_emerald"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.71,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.2.start",
-          "image": "media/card/黑宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_onyx"
-          }
         },
         {
           "op": "highlight",
           "dur": 0.5,
           "grow": 1.18,
-          "anchor": "setup.gems.001.2.b1.start",
+          "anchor": "setup.gems.001.1.b2.start",
           "offset": 2.575,
           "target": {
             "space": "screen",
@@ -3040,7 +2894,7 @@
           "op": "highlight",
           "dur": 0.5,
           "grow": 1.18,
-          "anchor": "setup.gems.001.2.b1.start",
+          "anchor": "setup.gems.001.1.b2.start",
           "offset": 3.345,
           "target": {
             "space": "screen",
@@ -3051,7 +2905,7 @@
           "op": "highlight",
           "dur": 0.5,
           "grow": 1.18,
-          "anchor": "setup.gems.001.2.b1.end",
+          "anchor": "setup.gems.001.1.b2.end",
           "offset": -2.495,
           "target": {
             "space": "screen",
@@ -3062,7 +2916,7 @@
           "op": "highlight",
           "dur": 0.5,
           "grow": 1.18,
-          "anchor": "setup.gems.001.2.b1.end",
+          "anchor": "setup.gems.001.1.b2.end",
           "offset": -1.545,
           "target": {
             "space": "screen",
@@ -3073,137 +2927,18 @@
           "op": "highlight",
           "dur": 0.5,
           "grow": 1.18,
-          "anchor": "setup.gems.001.2.b1.end",
+          "anchor": "setup.gems.001.1.b2.end",
           "offset": -0.615,
           "target": {
             "space": "screen",
             "id": "gem_sample_onyx"
           }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "setup.gems.001.3",
-      "parent": "setup.gems.001.2",
-      "timing": [
-        {
-          "key": "五堆一起呼吸一次",
-          "text": "0.60-1.60（口播 0.28-2.71）"
-        }
-      ],
-      "script": {
-        "story": "后续我们就直接以颜色称呼它们了",
-        "note": "五个宝石样本一起高亮，收束名称介绍，说明后续直接用颜色称呼。保持样本位置与桌面状态。"
-      },
-      "events": [
-        {
-          "op": "show",
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 1,
-            "h": 1
-          },
-          "background": "#1E2126",
-          "layer": 0,
-          "dur": 0.0,
-          "anchor": "setup.gems.001.3.start",
-          "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.15,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.3.start",
-          "image": "media/card/白宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_diamond"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.29,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.3.start",
-          "image": "media/card/蓝宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_sapphire"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.43,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.3.start",
-          "image": "media/card/红宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_ruby"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.57,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.3.start",
-          "image": "media/card/绿宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_emerald"
-          }
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.71,
-            "y": 0.29,
-            "w": 0.11,
-            "h": 0.2
-          },
-          "dur": 0.0,
-          "anchor": "setup.gems.001.3.start",
-          "image": "media/card/黑宝石_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "gem_sample_onyx"
-          }
         },
         {
           "op": "highlight",
           "dur": 0.8,
           "grow": 1.1,
-          "anchor": "setup.gems.001.3.b1.start",
+          "anchor": "setup.gems.001.1.b3.start",
           "offset": 0.325,
           "target": {
             "space": "screen",
@@ -3214,7 +2949,7 @@
           "op": "highlight",
           "dur": 0.8,
           "grow": 1.1,
-          "anchor": "setup.gems.001.3.b1.start",
+          "anchor": "setup.gems.001.1.b3.start",
           "offset": 0.325,
           "target": {
             "space": "screen",
@@ -3225,7 +2960,7 @@
           "op": "highlight",
           "dur": 0.8,
           "grow": 1.1,
-          "anchor": "setup.gems.001.3.b1.start",
+          "anchor": "setup.gems.001.1.b3.start",
           "offset": 0.325,
           "target": {
             "space": "screen",
@@ -3236,7 +2971,7 @@
           "op": "highlight",
           "dur": 0.8,
           "grow": 1.1,
-          "anchor": "setup.gems.001.3.b1.start",
+          "anchor": "setup.gems.001.1.b3.start",
           "offset": 0.325,
           "target": {
             "space": "screen",
@@ -3247,19 +2982,18 @@
           "op": "highlight",
           "dur": 0.8,
           "grow": 1.1,
-          "anchor": "setup.gems.001.3.b1.start",
+          "anchor": "setup.gems.001.1.b3.start",
           "offset": 0.325,
           "target": {
             "space": "screen",
             "id": "gem_sample_onyx"
           }
         }
-      ],
-      "tree": "main"
+      ]
     },
     {
       "id": "setup.gems.002",
-      "parent": "setup.gems.001.3",
+      "parent": "setup.gems.001.1",
       "timing": [
         {
           "key": "黄金样本出现",

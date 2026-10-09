@@ -126,43 +126,13 @@
         {
           "id": "setup.gems.001.1.b1",
           "text": "这些是标记，后续称之为宝石。"
-        }
-      ]
-    },
-    {
-      "id": "setup.gems.001.2",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "refs": [
-        "<gem>",
-        "rulebook:setup"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.gems.001.2.b1",
+          "id": "setup.gems.001.1.b2",
           "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。"
-        }
-      ]
-    },
-    {
-      "id": "setup.gems.001.3",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "refs": [
-        "<gem>",
-        "rulebook:setup"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.gems.001.3.b1",
+          "id": "setup.gems.001.1.b3",
           "text": "后续我们就直接以颜色称呼它们了。"
         }
       ]

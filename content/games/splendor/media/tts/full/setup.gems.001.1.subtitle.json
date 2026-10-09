@@ -4,76 +4,328 @@
     "text": "这些是标记，后续称之为宝石。",
     "words": [
       {
-        "confidence": 0.975243,
+        "confidence": 0.9817697,
         "endTime": 0.445,
-        "startTime": 0.305,
+        "startTime": 0.285,
         "word": "这"
       },
       {
-        "confidence": 0.98048174,
-        "endTime": 0.585,
+        "confidence": 0.9902592,
+        "endTime": 0.595,
         "startTime": 0.445,
         "word": "些"
       },
       {
-        "confidence": 0.9111937,
-        "endTime": 0.715,
-        "startTime": 0.585,
+        "confidence": 0.9285452,
+        "endTime": 0.735,
+        "startTime": 0.595,
         "word": "是"
       },
       {
-        "confidence": 0.9663702,
-        "endTime": 0.945,
-        "startTime": 0.715,
+        "confidence": 0.9575197,
+        "endTime": 0.975,
+        "startTime": 0.735,
         "word": "标"
       },
       {
-        "confidence": 0.8659386,
-        "endTime": 1.235,
-        "startTime": 0.945,
+        "confidence": 0.837676,
+        "endTime": 1.285,
+        "startTime": 0.975,
         "word": "记，"
       },
       {
-        "confidence": 0.8852527,
-        "endTime": 1.545,
-        "startTime": 1.415,
+        "confidence": 0.94482493,
+        "endTime": 1.705,
+        "startTime": 1.525,
         "word": "后"
       },
       {
-        "confidence": 0.8650986,
-        "endTime": 1.785,
-        "startTime": 1.545,
+        "confidence": 0.90799046,
+        "endTime": 1.915,
+        "startTime": 1.705,
         "word": "续"
       },
       {
-        "confidence": 0.76380795,
-        "endTime": 1.985,
-        "startTime": 1.785,
+        "confidence": 0.7408313,
+        "endTime": 2.115,
+        "startTime": 1.915,
         "word": "称"
       },
       {
-        "confidence": 0.8413825,
-        "endTime": 2.115,
-        "startTime": 1.985,
+        "confidence": 0.8726649,
+        "endTime": 2.275,
+        "startTime": 2.115,
         "word": "之"
       },
       {
-        "confidence": 0.90888983,
-        "endTime": 2.265,
-        "startTime": 2.115,
+        "confidence": 0.8948075,
+        "endTime": 2.495,
+        "startTime": 2.275,
         "word": "为"
       },
       {
-        "confidence": 0.9519103,
-        "endTime": 2.455,
-        "startTime": 2.265,
+        "confidence": 0.92811984,
+        "endTime": 2.745,
+        "startTime": 2.495,
         "word": "宝"
       },
       {
-        "confidence": 0.9514726,
-        "endTime": 2.835,
-        "startTime": 2.455,
+        "confidence": 0.9543909,
+        "endTime": 3.135,
+        "startTime": 2.745,
         "word": "石。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。",
+    "words": [
+      {
+        "confidence": 0.8689966,
+        "endTime": 3.8550417,
+        "startTime": 3.7400417,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.90963084,
+        "endTime": 4.1350417,
+        "startTime": 3.8550417,
+        "word": "石"
+      },
+      {
+        "confidence": 0.97708595,
+        "endTime": 4.3150415,
+        "startTime": 4.1350417,
+        "word": "分"
+      },
+      {
+        "confidence": 0.8894669,
+        "endTime": 4.455042,
+        "startTime": 4.3150415,
+        "word": "为"
+      },
+      {
+        "confidence": 0.1808676,
+        "endTime": 4.4850416,
+        "startTime": 4.455042,
+        "word": "5"
+      },
+      {
+        "confidence": 0.8886907,
+        "endTime": 4.7750416,
+        "startTime": 4.625042,
+        "word": "种"
+      },
+      {
+        "confidence": 0.9501185,
+        "endTime": 4.9450417,
+        "startTime": 4.7750416,
+        "word": "颜"
+      },
+      {
+        "confidence": 0.9849749,
+        "endTime": 5.225042,
+        "startTime": 4.9450417,
+        "word": "色，"
+      },
+      {
+        "confidence": 0.8919299,
+        "endTime": 5.665042,
+        "startTime": 5.495042,
+        "word": "分"
+      },
+      {
+        "confidence": 0.95094043,
+        "endTime": 5.835042,
+        "startTime": 5.665042,
+        "word": "别"
+      },
+      {
+        "confidence": 0.8137668,
+        "endTime": 6.165042,
+        "startTime": 5.835042,
+        "word": "是"
+      },
+      {
+        "confidence": 0.7383332,
+        "endTime": 6.4250417,
+        "startTime": 6.165042,
+        "word": "钻"
+      },
+      {
+        "confidence": 0.11109366,
+        "endTime": 6.455042,
+        "startTime": 6.4250417,
+        "word": "石、"
+      },
+      {
+        "confidence": 0.8413897,
+        "endTime": 7.1350417,
+        "startTime": 6.9850416,
+        "word": "蓝"
+      },
+      {
+        "confidence": 0.9135918,
+        "endTime": 7.3450418,
+        "startTime": 7.1350417,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.11802251,
+        "endTime": 7.375042,
+        "startTime": 7.3450418,
+        "word": "石、"
+      },
+      {
+        "confidence": 0.9524114,
+        "endTime": 8.1050415,
+        "startTime": 7.8650417,
+        "word": "红"
+      },
+      {
+        "confidence": 0.8876019,
+        "endTime": 8.285042,
+        "startTime": 8.1050415,
+        "word": "宝"
+      },
+      {
+        "confidence": 0.12495991,
+        "endTime": 8.315042,
+        "startTime": 8.285042,
+        "word": "石、"
+      },
+      {
+        "confidence": 0.89906645,
+        "endTime": 9.065042,
+        "startTime": 8.815042,
+        "word": "翡"
+      },
+      {
+        "confidence": 0.8859669,
+        "endTime": 9.395042,
+        "startTime": 9.065042,
+        "word": "翠"
+      },
+      {
+        "confidence": 0.85688514,
+        "endTime": 9.585041,
+        "startTime": 9.425041,
+        "word": "和"
+      },
+      {
+        "confidence": 0.8798666,
+        "endTime": 9.765041,
+        "startTime": 9.585041,
+        "word": "缟"
+      },
+      {
+        "confidence": 0.73537666,
+        "endTime": 9.925041,
+        "startTime": 9.765041,
+        "word": "玛"
+      },
+      {
+        "confidence": 0.90018755,
+        "endTime": 10.175041,
+        "startTime": 9.925041,
+        "word": "瑙。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "后续我们就直接以颜色称呼它们了。",
+    "words": [
+      {
+        "confidence": 0.9547409,
+        "endTime": 10.705084,
+        "startTime": 10.580084,
+        "word": "后"
+      },
+      {
+        "confidence": 0.81874645,
+        "endTime": 10.915084,
+        "startTime": 10.705084,
+        "word": "续"
+      },
+      {
+        "confidence": 0.95273525,
+        "endTime": 11.045084,
+        "startTime": 10.915084,
+        "word": "我"
+      },
+      {
+        "confidence": 0.9687024,
+        "endTime": 11.155084,
+        "startTime": 11.045084,
+        "word": "们"
+      },
+      {
+        "confidence": 0.9607322,
+        "endTime": 11.305084,
+        "startTime": 11.155084,
+        "word": "就"
+      },
+      {
+        "confidence": 0.96752924,
+        "endTime": 11.455084,
+        "startTime": 11.305084,
+        "word": "直"
+      },
+      {
+        "confidence": 0.9442675,
+        "endTime": 11.625084,
+        "startTime": 11.455084,
+        "word": "接"
+      },
+      {
+        "confidence": 0.7283572,
+        "endTime": 11.795084,
+        "startTime": 11.625084,
+        "word": "以"
+      },
+      {
+        "confidence": 0.8994783,
+        "endTime": 11.975084,
+        "startTime": 11.795084,
+        "word": "颜"
+      },
+      {
+        "confidence": 0.96207416,
+        "endTime": 12.155084,
+        "startTime": 11.975084,
+        "word": "色"
+      },
+      {
+        "confidence": 0.13975692,
+        "endTime": 12.215084,
+        "startTime": 12.155084,
+        "word": "称"
+      },
+      {
+        "confidence": 0.1122034,
+        "endTime": 12.275084,
+        "startTime": 12.215084,
+        "word": "呼"
+      },
+      {
+        "confidence": 0.12679146,
+        "endTime": 12.335084,
+        "startTime": 12.275084,
+        "word": "它"
+      },
+      {
+        "confidence": 0.09327053,
+        "endTime": 12.395084,
+        "startTime": 12.335084,
+        "word": "们"
+      },
+      {
+        "confidence": 0.18690829,
+        "endTime": 12.455084,
+        "startTime": 12.395084,
+        "word": "了。"
       }
     ]
   }
