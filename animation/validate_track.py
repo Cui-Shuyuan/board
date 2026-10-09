@@ -538,6 +538,9 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         demo_flag = c.get("demo")
         if demo_flag is not None and not isinstance(demo_flag, bool):
             rep.error(f"{where}: demo must be boolean")
+        qa_exempt_flag = c.get("qa_exempt")
+        if qa_exempt_flag is not None and not isinstance(qa_exempt_flag, bool):
+            rep.error(f"{where}: qa_exempt must be boolean")
         trans = c.get("transition")
         if trans not in TRANSITIONS:
             rep.error(f"{where}: transition must be one of {sorted(TRANSITIONS)}, got {trans!r}")

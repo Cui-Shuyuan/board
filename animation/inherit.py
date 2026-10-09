@@ -202,6 +202,9 @@ def resolve_track(doc: dict) -> dict:
             eff["qa"] = _deep_copy(raw.get("qa"))
         if raw.get("entry") is not None:
             eff["entry"] = _deep_copy(raw.get("entry"))
+        if raw.get("qa_exempt") is not None:
+            # Explicit per-cue opt-out; never inherited from a parent/demo cue.
+            eff["qa_exempt"] = bool(raw.get("qa_exempt"))
         if "demo" in raw:
             eff["demo"] = bool(raw.get("demo"))
         elif base and inherit:

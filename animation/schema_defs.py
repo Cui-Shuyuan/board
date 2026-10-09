@@ -76,4 +76,4 @@ def _has_selector(ev: dict) -> bool:
 
 
 
-_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "qa", "events", "stage", "demo"}
+_LOCAL_CUE_KEYS = {"id", "parent", "entry", "negative", "qa", "qa_exempt", "events", "stage", "demo"}

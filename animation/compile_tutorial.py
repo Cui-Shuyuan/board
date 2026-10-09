@@ -103,6 +103,7 @@ def qa_change_signature(cue: dict) -> dict:
         "transition": cue.get("transition", "continue"),
         "negative": cue.get("negative"),
         "demo": cue.get("demo"),
+        "qa_exempt": cue.get("qa_exempt"),
         "script_enter": script.get("enter"),
         "script_exit": script.get("exit"),
         "state_events": [
@@ -477,7 +478,8 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
       2. the legacy ``_qa/questions.json`` file.
     ``ids=None`` -> all merged questions; ``ids=[...]`` -> only questions for
     those main cue IDs.  A selected cue without any merged question is an error
-    (fail closed), and stale external cue references always fail.
+    (fail closed), unless the cue explicitly declares ``qa_exempt: true``;
+    stale external cue references always fail.
     """
     import os
     import tempfile
@@ -490,9 +492,14 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
             print(f"[qa] cannot read track for cue validation: {anim_path}: {exc}", file=sys.stderr)
             return 2
 
+    qa_doc = _qa_effective_track_doc(track_doc or {})
     valid_cue_ids = {
-        cue.get("id") for cue in (track_doc or {}).get("cues") or []
+        cue.get("id") for cue in (qa_doc or {}).get("cues") or []
         if isinstance(cue, dict) and cue.get("id")
+    }
+    exempt_ids = {
+        str(cue.get("id")) for cue in (qa_doc or {}).get("cues") or []
+        if isinstance(cue, dict) and cue.get("id") and cue.get("qa_exempt") is True
     }
     qa_path = qa_questions_path(game)
     external_asks: list[dict] = []
@@ -514,7 +521,7 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
               f"{_qa_source_label(qa_path)}", file=sys.stderr)
 
     anim_label = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
-    merged = merge_qa_asks(cue_qa_asks(track_doc, anim_label), external_asks)
+    merged = merge_qa_asks(cue_qa_asks(qa_doc, anim_label), external_asks)
 
     if ids is None:
         selected = merged
@@ -522,12 +529,18 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
         wanted = set(ids)
         selected = [ask for ask in merged if ask.get("cue") in wanted]
         available = {ask.get("cue") for ask in merged}
-        missing = [cid for cid in ids if cid not in available]
+        missing = [cid for cid in ids
+                   if cid not in available and str(cid) not in exempt_ids]
         if missing:
             print(f"[qa] missing required QA for cue(s): {', '.join(missing)} "
                   f"(hand-written sources: cue.qa + {_qa_source_label(qa_path)})",
                   file=sys.stderr)
             return 1
+        exempt_without_question = [cid for cid in ids
+                                   if str(cid) in exempt_ids and cid not in available]
+        if exempt_without_question:
+            print(f"[qa] qa_exempt=true, no handwritten question required: "
+                  f"{', '.join(exempt_without_question)}")
 
     if not selected:
         print("[qa] no matching questions; skip")

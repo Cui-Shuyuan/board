@@ -132,6 +132,7 @@ metadata:
    - 回答必须是「允许/合法」；不是就停下改脚本或改数据；
    - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题；
    - **cue 改一次，qa 必须跟着改一次**。只改 events/state 不改问题 = 未完成，不允许提交。
+   - 纯介绍/纯展示、不涉及规则断言的 cue 可显式写 `qa_exempt: true`，门禁只跳过该 cue 的“必须提供手写问题”要求；默认 false，且不会继承给后续 cue。只有确认它不承担规则校验职责时才使用。
 3. 改动画树/契约/events：`full.anim.json`。
 4. 编译与检查（可用 `--validate-qa` / `--validate-qa-all` 做机器侧补充）。
 5. Unity 采样对账。
@@ -145,6 +146,7 @@ metadata:
 
 - 每改一个真的改状态的 cue，都由 AI/人手写问题；问题无法自动生成，因为要先判断这条 cue 到底在做什么、哪些前提必须带。
 - **qa 与 cue 同步更新是硬约束。** 旧问题问新动作会直接失去校验意义；只要 event/state/contract 变了，就必须重新审视并改写问题。
+- 例外：纯介绍/纯展示片段可显式声明 `qa_exempt: true`，门禁跳过其必需问题校验；该标记是 cue 局部字段，不会自动继承。
 - 问法遵守一 cue 一事、只带最小必要状态、不用教程自造词；规则自动发生的事就说成自动。
 - 问题可/优先作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；`animation/qa_anim_ask.py` 可从 `full.anim.json` 自动提取、发送、留档 `ask_log_<tag>.md/.jsonl`。历史问题仍在 `_qa/questions.json`，`compile_tutorial.py --validate-qa` 当前从该文件选中受影响 cue 做门禁，`--validate-qa-all` 跑全部手写 QA。
 

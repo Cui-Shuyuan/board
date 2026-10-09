@@ -187,6 +187,43 @@ class QaGateTests(unittest.TestCase):
         self.assertNotEqual(0, rc)
         api.assert_not_called()
 
+    def test_qa_exempt_true_cue_without_question_skips_gate(self):
+        doc = {"cues": [{
+            "id": "intro.1", "parent": "initial", "tree": "main",
+            "qa_exempt": True, "events": [],
+        }]}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with mock.patch.object(ct, "ROOT", root), \
+                    mock.patch.object(ct.qa_anim_ask, "main") as api:
+                rc = ct.run_qa_gate("fake", "full", ["intro.1"], track_doc=doc)
+        self.assertEqual(0, rc)
+        api.assert_not_called()
+
+    def test_qa_exempt_false_still_requires_question(self):
+        doc = {"cues": [{
+            "id": "intro.1", "parent": "initial", "tree": "main",
+            "qa_exempt": False, "events": [],
+        }]}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with mock.patch.object(ct, "ROOT", root), \
+                    mock.patch.object(ct.qa_anim_ask, "main") as api:
+                rc = ct.run_qa_gate("fake", "full", ["intro.1"], track_doc=doc)
+        self.assertNotEqual(0, rc)
+        api.assert_not_called()
+
+    def test_qa_exempt_is_local_and_not_inherited(self):
+        doc = {"cues": [
+            {"id": "intro.1", "parent": "initial", "tree": "main",
+             "qa_exempt": True, "events": []},
+            {"id": "next.1", "parent": "intro.1", "tree": "main", "events": []},
+        ]}
+        resolved = ct.schema.resolve_track(doc)
+        by_id = {cue["id"]: cue for cue in resolved["cues"]}
+        self.assertTrue(by_id["intro.1"].get("qa_exempt"))
+        self.assertIsNone(by_id["next.1"].get("qa_exempt"))
+
     def test_stale_external_cue_fails_without_api(self):
         doc = {"cues": [{"id": "cue.1", "parent": "initial", "events": []}]}
         with tempfile.TemporaryDirectory() as tmp:
