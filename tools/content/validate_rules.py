@@ -39,6 +39,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 ONTOLOGY_DIR = ROOT / "content" / "ontology"
 GAMES_DIR = ROOT / "content" / "games"
+ONTOLOGY_SOURCE = "content/ontology/concepts.json"
+ONTOLOGY_SCOPE = "ontology"
+
+
+def source_scope(source: str) -> str:
+    """定义所属作用域: ontology 或某个游戏目录下的 concepts/instances 共享同一作用域。"""
+    if source == ONTOLOGY_SOURCE or source.startswith("content/ontology/"):
+        return ONTOLOGY_SCOPE
+    prefix = "content/games/"
+    if source.startswith(prefix):
+        game = source[len(prefix):].split("/", 1)[0]
+        return f"game:{game}"
+    return source
 
 # ── 引用正则: <xxx> / <xxx.yyy> / <ontology::xxx> / <ontology::xxx.YYY> / <a>.<b>.<c> ──
 REF_RE = re.compile(r"<([A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)?(?:\.[A-Za-z0-9_]+)*)>")
@@ -80,11 +93,13 @@ class Validator:
         self.placeholder_refs = {"concept", "field", "subfield", "event_id", "zone_id",
                                  "part_id", "slot_id", "null", "a", "b", "x", "y"}
         self.enum_ids: set[str] = set()  # 枚举值 (如 upright/lying/face_up, <枚举值> 引用不报悬空)
-        # W04/E11 继承链分析: 概念 id → 字段集 / 父概念引用 (setdefault 防 game 层重名覆盖)
-        self.concept_fields: dict[str, set[str]] = {}
-        self.concept_parent: dict[str, str] = {}
-        self.definition_ids: set[str] = set()  # 概念定义型节点 (W05 孤立检查范围)
-        self.referenced: set[str] = set()      # 被引用过的概念 (W05)
+        # W04/E11 继承链分析: (scope, concept id) → 字段集 / 父节点
+        # 必须按 source 隔离，否则不同游戏里的同名 id 会互相覆盖父链。
+        self.concept_fields: dict[tuple[str, str], set[str]] = {}
+        self.concept_parent: dict[tuple[str, str], tuple[str, str] | None] = {}
+        self._raw_parent_ref: dict[tuple[str, str], str] = {}
+        self.definition_nodes: set[tuple[str, str]] = set()  # 概念定义型节点 (W05)
+        self.referenced: set[str] = set()                   # 被引用过的概念 id (W05)
         self.this_params: dict[str, set[str]] = {}  # source → this.xxx 模板参数引用 (E12 按文件判定)
         self.field_appearances: dict[str, set[str]] = {}  # 字段名 → 声明它的概念集合 (专属参数判定)
         self.game_defs: dict[str, set[str]] = {}  # 游戏名 → 该游戏定义的全部 id (E15 namespace 判定)
@@ -205,6 +220,8 @@ class Validator:
 
     # ── 阶段一: 全量收集定义 (不检查, 保证顺序无关) ──────
     def collect_ids(self, data: object, source: str, is_ontology: bool):
+        scope = source_scope(source)
+
         def walk(obj, path, depth):
             if isinstance(obj, dict):
                 if in_constraints(path):
@@ -268,12 +285,13 @@ class Validator:
                     if is_ontology or "concepts.json" in source:
                         for f in top:
                             self.field_appearances.setdefault(f, set()).add(oid)
-                    self.concept_fields.setdefault(oid, top)
+                    node_key = (scope, oid)
+                    self.concept_fields.setdefault(node_key, top)
                     for rel in ("extends", "specifies", "instance_of"):
                         pv = obj.get(rel)
                         if isinstance(pv, str) and pv.startswith("<"):
-                            self.concept_parent.setdefault(
-                                oid, pv.strip("<>").split("::")[-1].split(".")[0])
+                            self._raw_parent_ref.setdefault(node_key, pv)
+                            break
                     # W05 定义型节点: ontology 全部 + 游戏顶层概念 (depth==2, 排除流程/enum/_skip)
                     #   concepts/instances 组数组元素 (objects[i] 等) + flow triggers 组元素
                     is_top_concept = (
@@ -284,7 +302,7 @@ class Validator:
                     )
                     if (is_top_concept and oid != "_skip" and ".enum[" not in path
                             and ".parts[" not in path):
-                        self.definition_ids.add(oid)
+                        self.definition_nodes.add((scope, oid))
                     # parts 条目: value dict 的 id 是实例引用 (如 {"<ontology::effect>": {"id": "activity_01"}})
                     if ".parts[" in path and isinstance(oid, str):
                         self.referenced.add(oid)
@@ -532,12 +550,45 @@ class Validator:
 
         walk(data, "$")
 
-    def parent_chain(self, oid: str) -> list[str]:
+    def _resolve_inheritance(self):
+        """把所有作用域限定的父引用解析为 (scope, id) 节点键。
+
+        解析规则：
+        1. `<ontology::foo>` → ontology 节点。
+        2. 未带 namespace 的 `<foo>` → 同文件本地概念优先，再回退 ontology。
+        3. 找不到时保留一个同样带 source 的占位键，便于错误定位；不抛异常。
+        """
+        present = set(self.concept_fields)
+        for node_key, ref in self._raw_parent_ref.items():
+            scope, _ = node_key
+            raw = ref.strip("<>")
+            explicit_ns = "::" in raw
+            if explicit_ns:
+                ns, target = raw.split("::", 1)
+                target = target.split(".")[0]
+                if ns == "ontology":
+                    self.concept_parent[node_key] = (ONTOLOGY_SCOPE, target)
+                    continue
+            else:
+                target = raw.split(".")[0]
+
+            local_key = (scope, target)
+            ont_key = (ONTOLOGY_SCOPE, target)
+            if local_key in present:
+                self.concept_parent[node_key] = local_key
+            elif ont_key in present:
+                self.concept_parent[node_key] = ont_key
+            else:
+                # 保持旧诊断行为：指向一个可能不存在的 scope 限定键。
+                self.concept_parent[node_key] = (scope if not explicit_ns else "", target)
+
+    def parent_chain(self, source: str, oid: str) -> list[str]:
         """沿 extends/specifies/instance_of 链收集全部祖先 id（防环）。"""
         chain, seen = [], set()
-        cur = self.concept_parent.get(oid)
+        cur = self.concept_parent.get((source, oid))
         while cur and cur not in seen:
-            chain.append(cur)
+            _, parent_id = cur
+            chain.append(parent_id)
             seen.add(cur)
             cur = self.concept_parent.get(cur)
         return chain
@@ -550,15 +601,15 @@ class Validator:
 
     # ── constraints 顶层字段校验 (ontology 概念, 含继承链) ─
     def check_constraints(self, data: list[dict], text: str):
-        def all_fields(cid: str, memo: dict) -> set[str]:
+        def all_fields(node_key: tuple[str, str], memo: dict) -> set[str]:
             """本概念 + extends/specifies 链上所有祖先的顶层字段"""
-            if cid in memo:
-                return memo[cid]
-            fields = set(self.concept_fields.get(cid, set()))
-            parent = self.concept_parent.get(cid)
+            if node_key in memo:
+                return memo[node_key]
+            fields = set(self.concept_fields.get(node_key, set()))
+            parent = self.concept_parent.get(node_key)
             if parent:
                 fields |= all_fields(parent, memo)
-            memo[cid] = fields
+            memo[node_key] = fields
             return fields
 
         memo: dict = {}
@@ -570,7 +621,7 @@ class Validator:
                 for item in c.get("constraints", {}).get(slot, []):
                     fid = self.constraint_fid(item)
                     if (isinstance(fid, str) and not fid.startswith("<")
-                            and fid not in all_fields(cid, memo)):
+                            and fid not in all_fields((ONTOLOGY_SCOPE, cid), memo)):
                         self.warn(f"ontology › {cid} › constraints.{slot}",
                                   f"W04 字段 {fid} 既不在本概念也不在任何父概念顶层声明")
 
@@ -579,23 +630,24 @@ class Validator:
     #      实现节点覆盖其下所有后代链 (继承语义)
     # ── W05: 孤立概念 (有定义无引用, 非触发型) ────────────
     def check_e11_w05(self, ontology_concepts: list[dict]):
-        def subtree_closed(cid: str, field: str) -> bool:
+        def subtree_closed(node_key: tuple[str, str], field: str) -> bool:
             """该节点子树是否闭合: 自身实现 field 或某后代实现"""
-            if field in self.concept_fields.get(cid, set()):
+            if field in self.concept_fields.get(node_key, set()):
                 return True
             return any(subtree_closed(c, field)
-                       for c, p in self.concept_parent.items() if p == cid)
+                       for c, p in self.concept_parent.items() if p == node_key)
 
-        def uncovered_chains(parent: str, field: str) -> list[str]:
+        def uncovered_chains(parent_key: tuple[str, str], field: str) -> list[tuple[str, str]]:
             """返回完全未闭合的直接子链 (子节点自身未实现且其子树也无实现)"""
             return [c for c, p in self.concept_parent.items()
-                    if p == parent and not subtree_closed(c, field)]
+                    if p == parent_key and not subtree_closed(c, field)]
 
         for c in ontology_concepts:
             cid = c.get("id")
             if not cid:
                 continue
-            if not any(p == cid for p in self.concept_parent.values()):
+            parent_key = (ONTOLOGY_SCOPE, cid)
+            if not any(p == parent_key for p in self.concept_parent.values()):
                 continue  # 无子类不适用
             for item in c.get("constraints", {}).get("required", []):
                 fid = self.constraint_fid(item)
@@ -604,23 +656,24 @@ class Validator:
                 key = self.norm_field(fid)
                 if key in ("id", "<field_id>"):
                     continue  # id 隐式拥有; <field_id> 是 Object 的占位符
-                bad = uncovered_chains(cid, key)
+                bad = uncovered_chains(parent_key, key)
                 if bad:
+                    bad_ids = sorted({nid for _, nid in bad})
                     self.err(f"ontology › {cid} › constraints.required",
-                             f"E11 字段 {fid} 的继承链未闭合: {', '.join(bad)} (这些链上无节点实现该字段)")
+                             f"E11 字段 {fid} 的继承链未闭合: {', '.join(bad_ids)} (这些链上无节点实现该字段)")
 
         # W05: 触发型 = 沿父链可达 trigger (action/effect/activation 等由点燃机制引用)
-        def is_trigger_type(cid: str) -> bool:
-            cur, seen = cid, set()
+        def is_trigger_type(node_key: tuple[str, str]) -> bool:
+            cur, seen = node_key, set()
             while cur and cur not in seen:
-                if cur == "trigger":
+                if cur[1] == "trigger":
                     return True
                 seen.add(cur)
                 cur = self.concept_parent.get(cur)
             return False
 
-        for cid in sorted(self.definition_ids):
-            if cid in self.referenced or is_trigger_type(cid):
+        for source, cid in sorted(self.definition_nodes):
+            if cid in self.referenced or is_trigger_type((source, cid)):
                 continue
             self.warn("", f"W05 孤立概念 <{cid}> — 有定义但无任何引用")
 
@@ -658,6 +711,9 @@ class Validator:
                 continue
             self.collect_ids(data, src, is_onto)
 
+        # 所有文件收集完后，再解析 source 限定的继承关系。
+        self._resolve_inheritance()
+
         # 阶段二: 逐文件检查
         for p, src, is_onto in targets:
             self.check_file(p, src, is_onto)
@@ -676,7 +732,7 @@ class Validator:
         for (src, oid), (has_data, has_key) in sorted(self.appearance_nodes.items()):
             if not src.startswith("content/games/"):
                 continue  # ontology 自身概念的 appearance 声明策略由本体设计决定
-            chain = self.parent_chain(oid)
+            chain = self.parent_chain(source_scope(src), oid)
             physical = any(a in self.physical_bases for a in chain) or oid in self.physical_bases
             if has_data and not physical:
                 self.err(src, f"E16 抽象概念 <{oid}> 不应填 appearance 数据 — 其继承链 {chain} 不经过物理基类 {sorted(self.physical_bases)}")

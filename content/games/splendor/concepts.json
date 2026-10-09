@@ -608,7 +608,7 @@
     },
     {
       "id": "prestige_point",
-      "specifies": "<ontology::resource>",
+      "specifies": "<ontology::score>",
       "name": {
         "zh": "声望点数",
         "en": "Prestige Point"
@@ -684,7 +684,8 @@
           "zh": "<gold>的外观。poker-chip 风格圆形厚片，中央印有一枚黄金图案，边缘一圈为金色。与五种<gem>同尺寸但颜色明显不同。",
           "en": "Visual description of <gold>. Poker-chip style round thick disc, with a gold symbol printed in the center and a golden ring around the edge. Same size as the five <gem>s but distinctly different in color."
         }
-      }
+      },
+      "limited_supply": true
     }
   ],
   "actions": [
