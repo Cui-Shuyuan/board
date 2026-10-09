@@ -235,7 +235,7 @@
       "beats": [
         {
           "id": "setup.nobles.001.1.b1",
-          "text": "这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块，"
+          "text": "这些是贵族板块。"
         }
       ]
     },
@@ -255,7 +255,7 @@
       "beats": [
         {
           "id": "setup.nobles.001.2.b1",
-          "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
+          "text": "从所有的贵族板块中随机抽出玩家数量+1块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
         }
       ]
     },
@@ -298,25 +298,9 @@
         {
           "id": "setup.starting_player.001.1.b2",
           "text": "规则书中规定最年轻的玩家作为起始玩家，"
-        }
-      ]
-    },
-    {
-      "id": "setup.starting_player.001.2",
-      "group": "2.4 起始玩家",
-      "group_path": [
-        "2 设置",
-        "2.4 起始玩家"
-      ],
-      "refs": [
-        "flow:choose_starting_player",
-        "flow:give_starting_player_marker",
-        "<starting_player_marker>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.starting_player.001.2.b1",
+          "id": "setup.starting_player.001.1.b3",
           "text": "也可以使用所有人都认可的方式决定谁是起始玩家。"
         }
       ]
@@ -338,25 +322,9 @@
         {
           "id": "setup.starting_player.001.3.b1",
           "text": "这是起始玩家标记。"
-        }
-      ]
-    },
-    {
-      "id": "setup.starting_player.001.4",
-      "group": "2.4 起始玩家",
-      "group_path": [
-        "2 设置",
-        "2.4 起始玩家"
-      ],
-      "refs": [
-        "flow:choose_starting_player",
-        "flow:give_starting_player_marker",
-        "<starting_player_marker>"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.starting_player.001.4.b1",
+          "id": "setup.starting_player.001.3.b2",
           "text": "起始玩家获得这枚标记。"
         }
       ]

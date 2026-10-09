@@ -4,51 +4,117 @@
     "text": "这是起始玩家标记。",
     "words": [
       {
-        "confidence": 0.9808757,
-        "endTime": 0.415,
-        "startTime": 0.275,
+        "confidence": 0.95637935,
+        "endTime": 0.425,
+        "startTime": 0.285,
         "word": "这"
       },
       {
-        "confidence": 0.97104603,
-        "endTime": 0.575,
-        "startTime": 0.415,
+        "confidence": 0.9743852,
+        "endTime": 0.585,
+        "startTime": 0.425,
         "word": "是"
       },
       {
-        "confidence": 0.7838549,
-        "endTime": 0.765,
-        "startTime": 0.575,
+        "confidence": 0.77543926,
+        "endTime": 0.935,
+        "startTime": 0.585,
         "word": "起"
       },
       {
-        "confidence": 0.77429605,
-        "endTime": 0.925,
-        "startTime": 0.765,
+        "confidence": 0.8377767,
+        "endTime": 1.135,
+        "startTime": 0.935,
         "word": "始"
       },
       {
-        "confidence": 0.9247678,
-        "endTime": 1.055,
-        "startTime": 0.925,
+        "confidence": 0.9765077,
+        "endTime": 1.295,
+        "startTime": 1.135,
         "word": "玩"
       },
       {
-        "confidence": 0.9550503,
-        "endTime": 1.235,
-        "startTime": 1.055,
+        "confidence": 0.95844924,
+        "endTime": 1.495,
+        "startTime": 1.295,
         "word": "家"
       },
       {
-        "confidence": 0.9622688,
-        "endTime": 1.425,
-        "startTime": 1.235,
+        "confidence": 0.9523965,
+        "endTime": 1.705,
+        "startTime": 1.495,
         "word": "标"
       },
       {
-        "confidence": 0.89869756,
-        "endTime": 1.695,
-        "startTime": 1.425,
+        "confidence": 0.9096384,
+        "endTime": 1.995,
+        "startTime": 1.705,
+        "word": "记。"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "起始玩家获得这枚标记。",
+    "words": [
+      {
+        "confidence": 0.58905655,
+        "endTime": 2.5850418,
+        "startTime": 2.5100417,
+        "word": "起"
+      },
+      {
+        "confidence": 0.7299416,
+        "endTime": 2.7150416,
+        "startTime": 2.5850418,
+        "word": "始"
+      },
+      {
+        "confidence": 0.9655422,
+        "endTime": 2.8650417,
+        "startTime": 2.7150416,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.8918819,
+        "endTime": 3.1450417,
+        "startTime": 2.8650417,
+        "word": "家"
+      },
+      {
+        "confidence": 0.8151063,
+        "endTime": 3.3850417,
+        "startTime": 3.1450417,
+        "word": "获"
+      },
+      {
+        "confidence": 0.93650746,
+        "endTime": 3.5350418,
+        "startTime": 3.3850417,
+        "word": "得"
+      },
+      {
+        "confidence": 0.9516734,
+        "endTime": 3.6750417,
+        "startTime": 3.5350418,
+        "word": "这"
+      },
+      {
+        "confidence": 0.9545202,
+        "endTime": 3.8050418,
+        "startTime": 3.6750417,
+        "word": "枚"
+      },
+      {
+        "confidence": 0.98043287,
+        "endTime": 4.0050416,
+        "startTime": 3.8050418,
+        "word": "标"
+      },
+      {
+        "confidence": 0.88134223,
+        "endTime": 4.285042,
+        "startTime": 4.0050416,
         "word": "记。"
       }
     ]

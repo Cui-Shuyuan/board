@@ -431,25 +431,15 @@
       "edge": "end"
     },
     {
-      "id": "setup.starting_player.001.2.start",
-      "cue": "setup.starting_player.001.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.starting_player.001.2.end",
-      "cue": "setup.starting_player.001.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.starting_player.001.2.b1.start",
-      "cue": "setup.starting_player.001.2",
-      "beat": "setup.starting_player.001.2.b1",
+      "id": "setup.starting_player.001.1.b3.start",
+      "cue": "setup.starting_player.001.1",
+      "beat": "setup.starting_player.001.1.b3",
       "edge": "start"
     },
     {
-      "id": "setup.starting_player.001.2.b1.end",
-      "cue": "setup.starting_player.001.2",
-      "beat": "setup.starting_player.001.2.b1",
+      "id": "setup.starting_player.001.1.b3.end",
+      "cue": "setup.starting_player.001.1",
+      "beat": "setup.starting_player.001.1.b3",
       "edge": "end"
     },
     {
@@ -475,25 +465,15 @@
       "edge": "end"
     },
     {
-      "id": "setup.starting_player.001.4.start",
-      "cue": "setup.starting_player.001.4",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.starting_player.001.4.end",
-      "cue": "setup.starting_player.001.4",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.starting_player.001.4.b1.start",
-      "cue": "setup.starting_player.001.4",
-      "beat": "setup.starting_player.001.4.b1",
+      "id": "setup.starting_player.001.3.b2.start",
+      "cue": "setup.starting_player.001.3",
+      "beat": "setup.starting_player.001.3.b2",
       "edge": "start"
     },
     {
-      "id": "setup.starting_player.001.4.b1.end",
-      "cue": "setup.starting_player.001.4",
-      "beat": "setup.starting_player.001.4.b1",
+      "id": "setup.starting_player.001.3.b2.end",
+      "cue": "setup.starting_player.001.3",
+      "beat": "setup.starting_player.001.3.b2",
       "edge": "end"
     },
     {
@@ -3551,121 +3531,21 @@
     },
     {
       "id": "setup.nobles.001.1",
+      "qa_exempt": true,
       "parent": "setup.gems.005.2",
       "tree": "main",
       "transition": "overlay",
       "timing": [
         {
-          "key": "三块贵族板块在 mask 上出现",
-          "text": "0.00（与 cue 同帧）"
-        },
-        {
-          "key": "保持 mask + 三块贵族到口播结束",
-          "text": "整条 cue"
+          "key": "展示三块贵族样例",
+          "text": "屏幕展示；不建立贵族供应堆"
         }
       ],
       "script": {
-        "story": "这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块",
-        "note": "建立 noble_1、noble_4、noble_5 三块真实贵族，并用屏幕展示图并排介绍它们。三块对应两人局的玩家数加一；展示图与真实 noble_market 分开，不重复计数。",
-        "enter": {
-          "picture": null,
-          "zones": {
-            "noble_market": {
-              "items": [
-                {
-                  "template": "noble_1",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_4",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_5",
-                  "palette": "noble",
-                  "count": 1
-                }
-              ]
-            }
-          }
-        },
-        "exit": {
-          "picture": null,
-          "zones": {
-            "noble_market": {
-              "items": [
-                {
-                  "template": "noble_1",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_4",
-                  "palette": "noble",
-                  "count": 1
-                },
-                {
-                  "template": "noble_5",
-                  "palette": "noble",
-                  "count": 1
-                }
-              ]
-            }
-          }
-        }
+        "story": "这些是贵族板块",
+        "note": "用深色屏幕背景并排展示三块贵族板块样例，让观众先识别外观。真实贵族供应堆、抽取和摆放动作放在下一 cue 的桌面实拍中处理。"
       },
       "events": [
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_nobles",
-          "realizes": "<ontology::timing>",
-          "anchor": "setup.nobles.001.1.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "setup.nobles.001.1.start",
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_1",
-            "palette": "noble",
-            "concept": "noble"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "setup.nobles.001.1.start",
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_4",
-            "palette": "noble",
-            "concept": "noble"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "anchor": "setup.nobles.001.1.start",
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_5",
-            "palette": "noble",
-            "concept": "noble"
-          }
-        },
         {
           "op": "show",
           "rect": {
@@ -3741,20 +3621,90 @@
       "parent": "setup.nobles.001.1",
       "timing": [
         {
-          "key": "3 块贵族依次落位",
-          "text": "1.05-2.25（台词「放(1.07)置(1.26)」）"
-        },
-        {
-          "key": "逐块高亮",
-          "text": "2.05 / 2.40 / 2.75"
+          "key": "实拍桌面贵族区",
+          "text": "镜头shot_nobles；三块贵族落位为供应堆"
         }
       ],
       "script": {
-        "story": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子",
-        "note": "保持三块贵族的介绍画面，说明正面朝上摆放与剩余板块的处理。真实贵族已经在 noble_market，本条不重新抽取或建立组件。"
+        "story": "从所有的贵族板块中随机抽出玩家数量+1块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子",
+        "note": "切到桌面贵族区实拍，镜头对准桌面的一部分：建立本局选出的三块贵族并正面朝上放置为贵族供应堆；其余贵族板块放回盒子。",
+        "exit": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble_1",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_4",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_5",
+                  "palette": "noble",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
       },
       "tree": "main",
-      "events": []
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_nobles",
+          "realizes": "<ontology::timing>",
+          "anchor": "setup.nobles.001.2.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "setup.nobles.001.2.start",
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "setup.nobles.001.2.start",
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "anchor": "setup.nobles.001.2.start",
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          }
+        }
+      ]
     },
     {
       "id": "setup.nobles.002",
@@ -3847,11 +3797,15 @@
         {
           "key": "镜头切到全景",
           "text": "0.00"
+        },
+        {
+          "key": "补充起始玩家决定方式",
+          "text": "保持全景，继续口播"
         }
       ],
       "script": {
-        "story": "现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家",
-        "note": "用全桌镜头展示已完成的组件设置，配合口播说明决定起始玩家的方法。此时尚未在桌面建立起始玩家标记。"
+        "story": "现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家",
+        "note": "用全桌镜头展示已完成的组件设置，说明两种决定起始玩家的方式：规则书默认最年轻的玩家，也可以由所有玩家共同认可。本条不建立起始玩家标记。"
       },
       "events": [
         {
@@ -3862,27 +3816,12 @@
           "anchor": "setup.starting_player.001.1.start"
         }
       ],
-      "tree": "main"
-    },
-    {
-      "id": "setup.starting_player.001.2",
-      "parent": "setup.starting_player.001.1",
-      "timing": [
-        {
-          "key": "镜头保持全景（继承 cue26）",
-          "text": "0.00"
-        }
-      ],
-      "script": {
-        "story": "也可以使用所有人都认可的方式决定谁是起始玩家",
-        "note": "保持全桌画面，补充可以由玩家共同认可的方式决定起始玩家。本条没有新事件。"
-      },
       "tree": "main",
-      "events": []
+      "qa_exempt": true
     },
     {
       "id": "setup.starting_player.001.3",
-      "parent": "setup.starting_player.001.2",
+      "parent": "setup.starting_player.001.1",
       "tree": "main",
       "transition": "overlay",
       "timing": [
@@ -3891,22 +3830,22 @@
           "text": "0.00"
         },
         {
-          "key": "标记出现",
-          "text": "0.80"
+          "key": "展示并高亮标记样本",
+          "text": "保持屏幕展示"
         },
         {
-          "key": "点亮标记",
-          "text": "1.40"
+          "key": "切回全景，标记进入玩家区",
+          "text": "第二句口播起"
         }
       ],
       "script": {
-        "story": "这是起始玩家标记",
-        "note": "用深色屏幕背景展示并高亮起始玩家标记样本。样本属于 screen，真实标记在下一条放入桌面。",
+        "story": "这是起始玩家标记。起始玩家获得这枚标记。",
+        "note": "先用深色屏幕背景展示并高亮起始玩家标记样本；真实起始玩家标记在 cue 起点预先建立于 player_marker（被全屏 mask 遮住），第二句切回全桌时显示并高亮，完成标记归属说明。",
         "enter": {
           "picture": null,
           "zones": {
             "player_marker": {
-              "count": 0
+              "count": 1
             }
           }
         },
@@ -3914,7 +3853,7 @@
           "picture": null,
           "zones": {
             "player_marker": {
-              "count": 0
+              "count": 1
             }
           }
         }
@@ -3971,56 +3910,37 @@
             "space": "screen",
             "id": "marker_intro"
           }
-        }
-      ]
-    },
-    {
-      "id": "setup.starting_player.001.4",
-      "parent": "setup.starting_player.001.3",
-      "tree": "main",
-      "timing": [
-        {
-          "key": "镜头切到全景",
-          "text": "0.00"
         },
         {
-          "key": "标记进入玩家区",
-          "text": "0.80"
-        }
-      ],
-      "script": {
-        "story": "起始玩家获得这枚标记",
-        "note": "切回全桌，在 player_marker 建立真实起始玩家标记并高亮，完成标记归属的说明。",
-        "enter": {
-          "picture": null,
-          "zones": {
-            "player_marker": {
-              "count": 1
-            }
+          "op": "hide",
+          "dur": 0.0,
+          "anchor": "setup.starting_player.001.3.b2.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
           }
         },
-        "exit": {
-          "picture": null,
-          "zones": {
-            "player_marker": {
-              "count": 1
-            }
+        {
+          "op": "hide",
+          "dur": 0.0,
+          "anchor": "setup.starting_player.001.3.b2.start",
+          "target": {
+            "space": "screen",
+            "id": "marker_intro"
           }
-        }
-      },
-      "events": [
+        },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_all_zones_static",
           "realizes": "<ontology::timing>",
-          "anchor": "setup.starting_player.001.4.start"
+          "anchor": "setup.starting_player.001.3.b2.start"
         },
         {
           "op": "create",
           "dur": 0.0,
           "count": 1,
-          "anchor": "setup.starting_player.001.4.start",
+          "anchor": "setup.starting_player.001.3.start",
           "offset": 0.0,
           "target": {
             "space": "entity",
@@ -4035,7 +3955,7 @@
           "dur": 0.5,
           "peak_alpha": 0.65,
           "grow": 1.0,
-          "anchor": "setup.starting_player.001.4.start",
+          "anchor": "setup.starting_player.001.3.b2.start",
           "offset": 0.45,
           "target": {
             "space": "entity",
@@ -4049,7 +3969,7 @@
     },
     {
       "id": "setup.end.001.1",
-      "parent": "setup.starting_player.001.4",
+      "parent": "setup.starting_player.001.3",
       "timing": [
         {
           "key": "两 cue 合并，全景不切镜头",
@@ -4062,7 +3982,8 @@
       },
       "events": [],
       "tree": "main",
-      "demo": false
+      "demo": false,
+      "qa_exempt": true
     },
     {
       "id": "action.turn.001",

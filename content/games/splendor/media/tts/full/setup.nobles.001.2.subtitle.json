@@ -1,144 +1,264 @@
 [
   {
     "phonemes": [],
-    "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。",
+    "text": "从所有的贵族板块中随机抽出玩家数量+1块，",
     "words": [
       {
-        "confidence": 0.7706019,
-        "endTime": 0.455,
-        "startTime": 0.285,
-        "word": "正"
+        "confidence": 0.9432554,
+        "endTime": 0.525,
+        "startTime": 0.315,
+        "word": "从"
       },
       {
-        "confidence": 0.95522434,
-        "endTime": 0.645,
-        "startTime": 0.455,
-        "word": "面"
+        "confidence": 0.8853652,
+        "endTime": 0.765,
+        "startTime": 0.525,
+        "word": "所"
       },
       {
-        "confidence": 0.874567,
-        "endTime": 0.845,
-        "startTime": 0.645,
-        "word": "朝"
+        "confidence": 0.94889826,
+        "endTime": 0.875,
+        "startTime": 0.765,
+        "word": "有"
       },
       {
-        "confidence": 0.96869445,
-        "endTime": 1.075,
-        "startTime": 0.845,
-        "word": "上"
-      },
-      {
-        "confidence": 0.978291,
-        "endTime": 1.265,
-        "startTime": 1.075,
-        "word": "放"
-      },
-      {
-        "confidence": 0.9459381,
-        "endTime": 1.405,
-        "startTime": 1.265,
-        "word": "置"
-      },
-      {
-        "confidence": 0.953529,
-        "endTime": 1.525,
-        "startTime": 1.405,
-        "word": "在"
-      },
-      {
-        "confidence": 0.80724686,
-        "endTime": 1.655,
-        "startTime": 1.525,
-        "word": "一"
-      },
-      {
-        "confidence": 0.913758,
-        "endTime": 1.975,
-        "startTime": 1.655,
-        "word": "旁"
-      },
-      {
-        "confidence": 0.915405,
-        "endTime": 2.165,
-        "startTime": 1.975,
-        "word": "成"
-      },
-      {
-        "confidence": 0.9273698,
-        "endTime": 2.285,
-        "startTime": 2.165,
-        "word": "为"
-      },
-      {
-        "confidence": 0.97539246,
-        "endTime": 2.475,
-        "startTime": 2.285,
-        "word": "贵"
-      },
-      {
-        "confidence": 0.9449839,
-        "endTime": 2.625,
-        "startTime": 2.475,
-        "word": "族"
-      },
-      {
-        "confidence": 0.8746932,
-        "endTime": 2.795,
-        "startTime": 2.625,
-        "word": "供"
-      },
-      {
-        "confidence": 0.86194116,
-        "endTime": 2.925,
-        "startTime": 2.795,
-        "word": "应"
-      },
-      {
-        "confidence": 0.87810796,
-        "endTime": 3.175,
-        "startTime": 2.925,
-        "word": "堆，"
-      },
-      {
-        "confidence": 0.8713582,
-        "endTime": 3.745,
-        "startTime": 3.535,
-        "word": "其"
-      },
-      {
-        "confidence": 0.8932166,
-        "endTime": 3.915,
-        "startTime": 3.745,
-        "word": "余"
-      },
-      {
-        "confidence": 0.83606666,
-        "endTime": 4.115,
-        "startTime": 3.915,
+        "confidence": 0.9451272,
+        "endTime": 0.975,
+        "startTime": 0.875,
         "word": "的"
       },
       {
-        "confidence": 0.9327184,
-        "endTime": 4.265,
-        "startTime": 4.115,
+        "confidence": 0.95912343,
+        "endTime": 1.125,
+        "startTime": 0.975,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.89242697,
+        "endTime": 1.235,
+        "startTime": 1.125,
+        "word": "族"
+      },
+      {
+        "confidence": 0.9072512,
+        "endTime": 1.405,
+        "startTime": 1.235,
+        "word": "板"
+      },
+      {
+        "confidence": 0.971597,
+        "endTime": 1.585,
+        "startTime": 1.405,
+        "word": "块"
+      },
+      {
+        "confidence": 0.9409398,
+        "endTime": 1.805,
+        "startTime": 1.585,
+        "word": "中"
+      },
+      {
+        "confidence": 0.9101077,
+        "endTime": 2.005,
+        "startTime": 1.805,
+        "word": "随"
+      },
+      {
+        "confidence": 0.9515787,
+        "endTime": 2.145,
+        "startTime": 2.005,
+        "word": "机"
+      },
+      {
+        "confidence": 0.96045804,
+        "endTime": 2.325,
+        "startTime": 2.145,
+        "word": "抽"
+      },
+      {
+        "confidence": 0.9548134,
+        "endTime": 2.485,
+        "startTime": 2.325,
+        "word": "出"
+      },
+      {
+        "confidence": 0.97442836,
+        "endTime": 2.625,
+        "startTime": 2.485,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.9840614,
+        "endTime": 2.765,
+        "startTime": 2.625,
+        "word": "家"
+      },
+      {
+        "confidence": 0.9413605,
+        "endTime": 2.965,
+        "startTime": 2.765,
+        "word": "数"
+      },
+      {
+        "confidence": 0.93956804,
+        "endTime": 3.105,
+        "startTime": 2.965,
+        "word": "量"
+      },
+      {
+        "confidence": 0.1450547,
+        "endTime": 3.135,
+        "startTime": 3.105,
+        "word": "+1"
+      },
+      {
+        "confidence": 0.89402896,
+        "endTime": 3.655,
+        "startTime": 3.435,
+        "word": "块，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。",
+    "words": [
+      {
+        "confidence": 0.79870987,
+        "endTime": 4.225042,
+        "startTime": 4.0900416,
+        "word": "正"
+      },
+      {
+        "confidence": 0.92574346,
+        "endTime": 4.3750415,
+        "startTime": 4.225042,
+        "word": "面"
+      },
+      {
+        "confidence": 0.88909626,
+        "endTime": 4.5450416,
+        "startTime": 4.3750415,
+        "word": "朝"
+      },
+      {
+        "confidence": 0.9729301,
+        "endTime": 4.785042,
+        "startTime": 4.5450416,
+        "word": "上"
+      },
+      {
+        "confidence": 0.9728671,
+        "endTime": 4.9650416,
+        "startTime": 4.785042,
         "word": "放"
       },
       {
-        "confidence": 0.9785731,
-        "endTime": 4.395,
-        "startTime": 4.265,
+        "confidence": 0.93453413,
+        "endTime": 5.1050415,
+        "startTime": 4.9650416,
+        "word": "置"
+      },
+      {
+        "confidence": 0.9527717,
+        "endTime": 5.2350416,
+        "startTime": 5.1050415,
+        "word": "在"
+      },
+      {
+        "confidence": 0.79609245,
+        "endTime": 5.325042,
+        "startTime": 5.2350416,
+        "word": "一"
+      },
+      {
+        "confidence": 0.9170128,
+        "endTime": 5.6350417,
+        "startTime": 5.325042,
+        "word": "旁"
+      },
+      {
+        "confidence": 0.90491164,
+        "endTime": 5.825042,
+        "startTime": 5.6350417,
+        "word": "成"
+      },
+      {
+        "confidence": 0.93418294,
+        "endTime": 6.0050416,
+        "startTime": 5.825042,
+        "word": "为"
+      },
+      {
+        "confidence": 0.9627345,
+        "endTime": 6.2250414,
+        "startTime": 6.0050416,
+        "word": "贵"
+      },
+      {
+        "confidence": 0.9578445,
+        "endTime": 6.375042,
+        "startTime": 6.2250414,
+        "word": "族"
+      },
+      {
+        "confidence": 0.8932611,
+        "endTime": 6.5450416,
+        "startTime": 6.375042,
+        "word": "供"
+      },
+      {
+        "confidence": 0.8422568,
+        "endTime": 6.6750417,
+        "startTime": 6.5450416,
+        "word": "应"
+      },
+      {
+        "confidence": 0.9002814,
+        "endTime": 6.9250417,
+        "startTime": 6.6750417,
+        "word": "堆，"
+      },
+      {
+        "confidence": 0.85559773,
+        "endTime": 7.5050416,
+        "startTime": 7.2950416,
+        "word": "其"
+      },
+      {
+        "confidence": 0.83351046,
+        "endTime": 7.6450415,
+        "startTime": 7.5050416,
+        "word": "余"
+      },
+      {
+        "confidence": 0.78719586,
+        "endTime": 7.8150415,
+        "startTime": 7.6450415,
+        "word": "的"
+      },
+      {
+        "confidence": 0.8492883,
+        "endTime": 7.9250417,
+        "startTime": 7.8150415,
+        "word": "放"
+      },
+      {
+        "confidence": 0.25201857,
+        "endTime": 7.9850416,
+        "startTime": 7.9250417,
         "word": "回"
       },
       {
-        "confidence": 0.97509766,
-        "endTime": 4.625,
-        "startTime": 4.395,
+        "confidence": 0.25637403,
+        "endTime": 8.045042,
+        "startTime": 7.9850416,
         "word": "盒"
       },
       {
-        "confidence": 0.8209906,
-        "endTime": 4.775,
-        "startTime": 4.625,
+        "confidence": 0.18593471,
+        "endTime": 8.1050415,
+        "startTime": 8.045042,
         "word": "子。"
       }
     ]

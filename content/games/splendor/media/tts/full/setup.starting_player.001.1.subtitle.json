@@ -4,178 +4,316 @@
     "text": "现在需要决定起始玩家。",
     "words": [
       {
-        "confidence": 0.978202,
-        "endTime": 0.485,
-        "startTime": 0.275,
+        "confidence": 0.9848058,
+        "endTime": 0.515,
+        "startTime": 0.285,
         "word": "现"
       },
       {
-        "confidence": 0.9859727,
-        "endTime": 0.655,
-        "startTime": 0.485,
+        "confidence": 0.97599846,
+        "endTime": 0.725,
+        "startTime": 0.515,
         "word": "在"
       },
       {
-        "confidence": 0.76099634,
-        "endTime": 0.785,
-        "startTime": 0.655,
+        "confidence": 0.88545644,
+        "endTime": 0.865,
+        "startTime": 0.725,
         "word": "需"
       },
       {
-        "confidence": 0.8046268,
-        "endTime": 0.905,
-        "startTime": 0.785,
+        "confidence": 0.8606021,
+        "endTime": 1.015,
+        "startTime": 0.865,
         "word": "要"
       },
       {
-        "confidence": 0.9258716,
-        "endTime": 1.085,
-        "startTime": 0.905,
+        "confidence": 0.9046509,
+        "endTime": 1.185,
+        "startTime": 1.015,
         "word": "决"
       },
       {
-        "confidence": 0.97828484,
-        "endTime": 1.315,
-        "startTime": 1.085,
+        "confidence": 0.9782379,
+        "endTime": 1.405,
+        "startTime": 1.185,
         "word": "定"
       },
       {
-        "confidence": 0.7864674,
-        "endTime": 1.505,
-        "startTime": 1.315,
+        "confidence": 0.7986804,
+        "endTime": 1.605,
+        "startTime": 1.405,
         "word": "起"
       },
       {
-        "confidence": 0.67144364,
-        "endTime": 1.655,
-        "startTime": 1.505,
+        "confidence": 0.72526366,
+        "endTime": 1.765,
+        "startTime": 1.605,
         "word": "始"
       },
       {
-        "confidence": 0.9416654,
-        "endTime": 1.815,
-        "startTime": 1.655,
+        "confidence": 0.9483398,
+        "endTime": 1.925,
+        "startTime": 1.765,
         "word": "玩"
       },
       {
-        "confidence": 0.9510287,
-        "endTime": 2.095,
-        "startTime": 1.815,
+        "confidence": 0.9570249,
+        "endTime": 2.275,
+        "startTime": 1.925,
         "word": "家。"
       }
     ]
   },
   {
     "phonemes": [],
-    "text": "规则书中规定最年轻的玩家作为起始玩家，\n",
+    "text": "规则书中规定最年轻的玩家作为起始玩家，",
     "words": [
       {
-        "confidence": 0.48142937,
-        "endTime": 2.6950417,
-        "startTime": 2.6200416,
+        "confidence": 0.4202355,
+        "endTime": 2.7650418,
+        "startTime": 2.6900418,
         "word": "规"
       },
       {
-        "confidence": 0.8467874,
-        "endTime": 2.8250415,
-        "startTime": 2.6950417,
+        "confidence": 0.63120866,
+        "endTime": 2.8750417,
+        "startTime": 2.7650418,
         "word": "则"
       },
       {
-        "confidence": 0.83661586,
-        "endTime": 2.9950416,
-        "startTime": 2.8250415,
+        "confidence": 0.8444012,
+        "endTime": 3.0350418,
+        "startTime": 2.8750417,
         "word": "书"
       },
       {
-        "confidence": 0.92979294,
-        "endTime": 3.2050416,
-        "startTime": 2.9950416,
+        "confidence": 0.9659862,
+        "endTime": 3.2150416,
+        "startTime": 3.0350418,
         "word": "中"
       },
       {
-        "confidence": 0.9591664,
+        "confidence": 0.9706078,
         "endTime": 3.3850417,
-        "startTime": 3.2050416,
+        "startTime": 3.2150416,
         "word": "规"
       },
       {
-        "confidence": 0.922995,
-        "endTime": 3.6250415,
+        "confidence": 0.8739125,
+        "endTime": 3.6450417,
         "startTime": 3.3850417,
         "word": "定"
       },
       {
-        "confidence": 0.9272528,
-        "endTime": 3.8550415,
-        "startTime": 3.6250415,
+        "confidence": 0.94803655,
+        "endTime": 3.8650417,
+        "startTime": 3.6450417,
         "word": "最"
       },
       {
-        "confidence": 0.92027515,
-        "endTime": 4.0250416,
-        "startTime": 3.8550415,
+        "confidence": 0.93404937,
+        "endTime": 4.035042,
+        "startTime": 3.8650417,
         "word": "年"
       },
       {
-        "confidence": 0.96707344,
-        "endTime": 4.2350416,
-        "startTime": 4.0250416,
+        "confidence": 0.9565721,
+        "endTime": 4.245042,
+        "startTime": 4.035042,
         "word": "轻"
       },
       {
-        "confidence": 0.8390548,
-        "endTime": 4.3150415,
-        "startTime": 4.2350416,
+        "confidence": 0.80880046,
+        "endTime": 4.325042,
+        "startTime": 4.245042,
         "word": "的"
       },
       {
-        "confidence": 0.9465581,
-        "endTime": 4.4850416,
-        "startTime": 4.3150415,
+        "confidence": 0.92467827,
+        "endTime": 4.505042,
+        "startTime": 4.325042,
         "word": "玩"
       },
       {
-        "confidence": 0.90434587,
-        "endTime": 4.7550416,
-        "startTime": 4.4850416,
+        "confidence": 0.87488264,
+        "endTime": 4.765042,
+        "startTime": 4.505042,
         "word": "家"
       },
       {
-        "confidence": 0.9310975,
-        "endTime": 4.9350414,
-        "startTime": 4.7550416,
+        "confidence": 0.9456082,
+        "endTime": 4.9450417,
+        "startTime": 4.765042,
         "word": "作"
       },
       {
-        "confidence": 0.97949153,
-        "endTime": 5.0850415,
-        "startTime": 4.9350414,
+        "confidence": 0.9775363,
+        "endTime": 5.0250416,
+        "startTime": 4.9450417,
         "word": "为"
       },
       {
-        "confidence": 0.7999292,
-        "endTime": 5.285042,
-        "startTime": 5.0850415,
+        "confidence": 0.8167179,
+        "endTime": 5.225042,
+        "startTime": 5.0250416,
         "word": "起"
       },
       {
-        "confidence": 0.68493235,
-        "endTime": 5.4250417,
-        "startTime": 5.285042,
+        "confidence": 0.72060394,
+        "endTime": 5.3650417,
+        "startTime": 5.225042,
         "word": "始"
       },
       {
-        "confidence": 0.9494443,
-        "endTime": 5.5550413,
-        "startTime": 5.4250417,
+        "confidence": 0.9251343,
+        "endTime": 5.505042,
+        "startTime": 5.3650417,
         "word": "玩"
       },
       {
-        "confidence": 0.94821143,
-        "endTime": 5.8050413,
-        "startTime": 5.5550413,
+        "confidence": 0.9702833,
+        "endTime": 5.785042,
+        "startTime": 5.505042,
         "word": "家，"
+      }
+    ]
+  },
+  {
+    "phonemes": [],
+    "text": "也可以使用所有人都认可的方式决定谁是起始玩家。",
+    "words": [
+      {
+        "confidence": 0.9329279,
+        "endTime": 6.235083,
+        "startTime": 6.135083,
+        "word": "也"
+      },
+      {
+        "confidence": 0.7308799,
+        "endTime": 6.375083,
+        "startTime": 6.235083,
+        "word": "可"
+      },
+      {
+        "confidence": 0.6650352,
+        "endTime": 6.465083,
+        "startTime": 6.375083,
+        "word": "以"
+      },
+      {
+        "confidence": 0.95614564,
+        "endTime": 6.6450834,
+        "startTime": 6.465083,
+        "word": "使"
+      },
+      {
+        "confidence": 0.98392355,
+        "endTime": 6.8250833,
+        "startTime": 6.6450834,
+        "word": "用"
+      },
+      {
+        "confidence": 0.9419602,
+        "endTime": 7.045083,
+        "startTime": 6.8250833,
+        "word": "所"
+      },
+      {
+        "confidence": 0.94725317,
+        "endTime": 7.1450834,
+        "startTime": 7.045083,
+        "word": "有"
+      },
+      {
+        "confidence": 0.9572607,
+        "endTime": 7.295083,
+        "startTime": 7.1450834,
+        "word": "人"
+      },
+      {
+        "confidence": 0.9459812,
+        "endTime": 7.425083,
+        "startTime": 7.295083,
+        "word": "都"
+      },
+      {
+        "confidence": 0.92741686,
+        "endTime": 7.585083,
+        "startTime": 7.425083,
+        "word": "认"
+      },
+      {
+        "confidence": 0.90449506,
+        "endTime": 7.715083,
+        "startTime": 7.585083,
+        "word": "可"
+      },
+      {
+        "confidence": 0.919523,
+        "endTime": 7.815083,
+        "startTime": 7.715083,
+        "word": "的"
+      },
+      {
+        "confidence": 0.98712707,
+        "endTime": 7.9750834,
+        "startTime": 7.815083,
+        "word": "方"
+      },
+      {
+        "confidence": 0.9389066,
+        "endTime": 8.285084,
+        "startTime": 7.9750834,
+        "word": "式"
+      },
+      {
+        "confidence": 0.92738974,
+        "endTime": 8.465083,
+        "startTime": 8.285084,
+        "word": "决"
+      },
+      {
+        "confidence": 0.9813578,
+        "endTime": 8.635083,
+        "startTime": 8.465083,
+        "word": "定"
+      },
+      {
+        "confidence": 0.9450517,
+        "endTime": 8.845083,
+        "startTime": 8.635083,
+        "word": "谁"
+      },
+      {
+        "confidence": 0.91222626,
+        "endTime": 9.005083,
+        "startTime": 8.845083,
+        "word": "是"
+      },
+      {
+        "confidence": 0.84273237,
+        "endTime": 9.165083,
+        "startTime": 9.005083,
+        "word": "起"
+      },
+      {
+        "confidence": 0.66314375,
+        "endTime": 9.295083,
+        "startTime": 9.165083,
+        "word": "始"
+      },
+      {
+        "confidence": 0.9430679,
+        "endTime": 9.435083,
+        "startTime": 9.295083,
+        "word": "玩"
+      },
+      {
+        "confidence": 0.8663705,
+        "endTime": 9.665083,
+        "startTime": 9.435083,
+        "word": "家。"
       }
     ]
   }
