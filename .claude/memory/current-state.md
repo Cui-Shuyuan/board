@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-09 · 基线见 git log · CLS 检索/事实核查/证据恢复：后端 xUnit 161/161、Python animation 165/165、检索实验 5/5；Android JVM 91/91 · Splendor runtime 已发布 `969ac55c10c68c54`（126 files），本地 API 已切换，Redmi K30 Pro 测试机已更新 active
+> 最后更新：2026-10-09 · 基线见 git log · CLS 检索/事实核查/证据恢复：后端 xUnit 161/161、Python animation 165/165、检索实验 5/5；Android JVM 91/91 · Splendor runtime 已发布 `ea780de750b5c9e5`（125 files），本地 API 已切换，Redmi K30 Pro 测试机已更新 active
 
 # 当前状态（2026-10-09）
 
@@ -20,7 +20,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - 动画对象原语统一为 `target` 接口（`entity` / `screen`）；新增 edge flip（axis/direction/destination）、`draw` 默认 duration、`set_order`、magnifier world-view pinning 等能力。
 - 本轮改动前工作区已无已跟踪文件改动；仅剩未跟踪的 `archive/tools/`。此前 5 个 Unity 编辑器回写的 Settings/ProjectSettings 文件已由 `627401d` 提交。pre-commit 已改为调用 `tools/content/validate_rules.py --errors-only`，并提供 `tools/ops/install_git_hooks.sh` 作为本地 hook 安装/同步入口，不再引用已删除的 `scripts/validate_rules.py`。
 - Android 代码已到 `95487f3`（每次 seek 独立重置快进 flash 计时）；APK 产出路径为 `clients/android/app/build/outputs/apk/debug/app-debug.apk`。内容版本以本地生成的 `content/manifests/splendor.json` 为准，状态文档不再记某个设备上的旧版本号。
-- `full` 轨道当前 76 cue / 354 个 `time_anchors`，源数据保留 `anchor`，`full.compiled.json` 输出数值 `at`。
+- `full` 轨道当前 75 cue / 354 个 `time_anchors`，源数据保留 `anchor`，`full.compiled.json` 输出数值 `at`。
 - 2026-09-23 记录的动画待收口项已由后续提交收口（time_anchors 见 `38971d4`）；`.claude/archive/memory/2026-09-23/` 只用于追溯历史，不作为现状依据。
 
 ## 当前已具备的能力
@@ -39,11 +39,11 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - **Android 客户端**：已有 Unity as a Library（UaaL）原生 Android 壳、Kotlin + Jetpack Compose 控制层、首页游戏目录/搜索/历史/资源管理、manifest → 本地内容仓库 → 增量下载/断点续传 v1、教程播放器 Compose 控制层与 Unity 状态回传、问答面板、按住说话 PTT、ASR、回答 TTS、自动播放/重播/继续播放。QA 会话已按 generation 隔离新旧 chat/ASR/TTS 结果，并在新会话/新 PTT/关闭时取消阻塞 HTTP 连接与清理音频。已有 12 个 Android JVM 测试文件（ContentStatus、ContentStoreCleanup、ContentUpdater、HomeContentCoordinator、PlayerSessionController、PlayerTimelineBar、UnityLoadQueue、QaVoiceController、QaPanelMode、QaSessionHolder、QaRepository、QaEvidenceParsing），本轮 89/89 通过；`QaRepository` 已解析可选 `Evidence`，`QaPanel` 对 partial/unresolved 记录日志并在回答气泡下显示“本次回答未覆盖”提示，Evidence 缺失/畸形仍保持 reply-only 兼容。真机结论只保留已有记录部分，完整范围待复测。
 - **语音链路**：后端运行时走 Python 短进程桥 `tools/voice/asr_once.py` / `tools/voice/tts_once.py`，对外接口 `POST /api/asr/once`、`POST /api/tts`；默认 TTS provider 是 `standard`（豆包标准语音合成小模型 v1），`--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 可切回旧 2.0；standard 路径没有字级 subtitle，旧 seed2 路径有；已存在 Splendor full 音频 manifest 来源为 seed2（`zh_female_vv_uranus_bigtts` / `seed-tts-2.0`）。Android 不直接接触火山凭证，密钥只在仓库根 `.env`（git-ignored）。
 - **Catalog / Manifest**：`content/catalog/splendor.json` 已入 Git，并显式声明 `rules_ready=true` / `tutorial_ready=true` / `tutorial_tracks=["full"]`；`content/manifests/splendor.json` 与 `content/releases/splendor/{version}/` 为生成物、不入 Git，当前只有 Splendor 一套。manifest builder 已改为 runtime-only 白名单（runtime/compiled + 实际引用媒体；排除 QA/文档/脚本/pyc/lrc/动画源），version 只由 package 内 `path + sha256` 决定；显式 file-reference key 的非媒体路径会校验并实际打包（如 `subtitle_file: "*.subtitle.json"`），缺失/越界/排除路径 fail closed；发布使用 `{version}.tmp` + 逐文件校验 + 原子 rename，versioned URL 只从 release 读取，缺文件 404，不回退到 mutable source。catalog 能力字段已贯通后端与 Android：省略 `rules_ready` 时按 `content/games/{id}/concepts.json` 实际内容推导，显式声明优先；规则-only 游戏显示“仅规则问答”并直接进入问答，不显示教程下载/播放入口。生产 API 主机必须本机 build manifest/release 或单独部署这两个 git-ignored 目录。2026-10-09 已按用户确认发布：`build_content_manifest("splendor")` 为 version=59989b16fd96479f / 133 files，发布命令为 `python3 tools/content/build_content_manifest.py --game splendor`，已生成 `content/releases/splendor/59989b16fd96479f/`（133 files；逐 path/size/sha256 校验通过；重复 builder 幂等复用同 version）；旧 release `1964d531eedcae5f` 保留。该版本差异来自 `6b64fd4` 对 `full.anim.json` / `full.compiled.json` 的 story/note 说明整理。**该新 release 目前只在本地/当前工作区主机，尚未部署到生产 API 主机；设备/API 仍会拿到旧版本 1964d531eedcae5f。** manifest/release 生成物仍不入 Git。
-- **Splendor runtime 发布/测试机（2026-10-09 后续）**：intro 合并后 `build_content_manifest.py --game splendor` 发布 `version=969ac55c10c68c54 / 126 files`；本地 API `/api/content/games/splendor/manifest` 与 catalog 均已返回该版本。Redmi K30 Pro 测试机通过 `adb reverse tcp:5000 tcp:5000` 从本地 API 下载更新，`board-content/active.json` 与本地缓存的 `content_version` 均已切到 `969ac55c10c68c54`。
-- **Intro 合并与 QA 显式豁免（2026-10-09）**：`bg.intro.001.1` ～ `bg.intro.003.3` 8 条合并为 `bg.intro.001`，只保留游戏盒展示；该 cue 显式写 `qa_exempt: true`，不再要求手写规则 QA。TTS 沿用 seed2 音色重新生成，旧 8 条音频/字幕已 prune；当前 full 为 76 cue / 354 anchors / 562 card-identity states，`check_anim_v2`、`validate_anim_rules_v2`、`audit_anim_v2`、`check_card_identity_v2` 全绿。
-- **动画 full**：Splendor full 76 cue（cue id 已语义化），当前 354 个 `time_anchors`，已全量迁移并 commit（`38971d4`）；早期样卡/桌面可见性问题已按 tree/stage 机制修正（`7ad18e5`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
+- **Splendor runtime 发布/测试机（2026-10-09 后续）**：发展卡 intro 拆分后再次执行 `build_content_manifest.py --game splendor`，发布 `version=ea780de750b5c9e5 / 125 files`；本地 API manifest/catalog 与该 release 文件校验通过。Redmi K30 Pro 通过 `adb reverse tcp:5000 tcp:5000` 从本地 API 完成更新，`board-content/active.json` 与本地缓存的 `content_version` 均已切到 `ea780de750b5c9e5`。
+- **Intro / 发展卡 intro 拆分与 QA 显式豁免（2026-10-09）**：`bg.intro.001.1` ～ `bg.intro.003.3` 8 条合并为 `bg.intro.001` 并显式写 `qa_exempt: true`；`setup.cards.001.1` 只保留“这是发展卡牌，共90张”；原 `.001.2/.001.3` 合并为新 `setup.cards.001.2`，从“根据背面……”开始直接切换三张牌背并依次高亮一、二、三级。当前 full 为 75 cue / 354 anchors / 561 card-identity states，`check_anim_v2`、`validate_anim_rules_v2`、`audit_anim_v2`、`check_card_identity_v2` 全绿。
+- **动画 full**：Splendor full 75 cue（cue id 已语义化），当前 354 个 `time_anchors`，已全量迁移并 commit（`38971d4`）；早期样卡/桌面可见性问题已按 tree/stage 机制修正（`7ad18e5`）；源数据保留 anchor，compiled 输出数值 `at`。口播 QA 问题可/优先与 cue 同置（`full.anim.json` 的 `qa` 字段），历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取并自动发送，`compile_tutorial.py --validate-qa` 当前从 `_qa/questions.json` 选受影响 cue 做门禁、`--validate-qa-all` 跑全集。full TTS/runtime/compiled/Unity 链可运行。
 - **动画工具链 P3 收口（2026-10-09）**：`tools/ops/check_unity_scripts.py` 已适配 WSL + Windows `dotnet.exe`：临时工程放到仓库 `.tmp/` 的 drvfs 路径并复制 `--dir` 源码，失败时保留可定位的 `CS*` 诊断和 raw output；当前稳定编译 34 个 C# 文件。新增 checker/geometry/orchestration 单测后 Python animation 160/160 通过；两个一次性迁移脚本归档到 `animation/archive/`，不再出现在动画顶层入口。
-- **发展卡身份保真（方案 B）**：Splendor 28 个独立 face-up 发展卡卡位各有一张真卡模板/扫描件；`content/games/splendor/card_registry.json` 是真卡身份表，`check_card_identity_v2.py` 检查任一 state 内不出现两张同一真卡（当前 562 个中间状态 0 error）。Android 真机此前已验证旧版 83 cue 内容可下载并正常播放；合并后的 76 cue 包尚未做真机验收。
+- **发展卡身份保真（方案 B）**：Splendor 28 个独立 face-up 发展卡卡位各有一张真卡模板/扫描件；`content/games/splendor/card_registry.json` 是真卡身份表，`check_card_identity_v2.py` 检查任一 state 内不出现两张同一真卡（当前 561 个中间状态 0 error）。Android 真机此前已验证旧版 83 cue 内容可下载并正常播放；合并后的 75 cue 包尚未做真机验收。
 
 ## 当前优先待办
 
@@ -51,15 +51,15 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 
 1. **Splendor full 重新过动画（真卡身份阻塞已解除，下一步逐 cue 重审）**
    - 4 张补扫真卡（红 34 / 红 87 / 黑 1 / 黑 71）已完成去白边、登记 registry/facts、补进 table stage，并把 `action.nobles.source.001` 的 B 区替换为专属真卡。
-   - 当前检查结果：`check_card_identity_v2.py` 562 个中间状态 0 error；`validate_anim_rules_v2.py` 76 cues / 0 warnings；`check_anim_v2.py` 76 cues / 0 warnings；`audit_anim_v2.py` 53 cues / 0 error / 0 warning。
-   - 需要从头到尾重新过一遍 Splendor full 76 cue：真实播放/真机观看，逐段确认画面、卡面、镜头、字幕和口播仍然一致。
+   - 当前检查结果：`check_card_identity_v2.py` 561 个中间状态 0 error；`validate_anim_rules_v2.py` 75 cues / 0 warnings；`check_anim_v2.py` 75 cues / 0 warnings；`audit_anim_v2.py` 53 cues / 0 error / 0 warning。
+   - 需要从头到尾重新过一遍 Splendor full 75 cue：真实播放/真机观看，逐段确认画面、卡面、镜头、字幕和口播仍然一致。
    - 重点：`action.cards.*` / `action.nobles.*` / `action.reserve.*` / `action.purchase_reserved.001` 的市场与玩家发展区卡面是否都是对应真卡、无重复；贵族放大镜 demo（`action.nobles.choice.001.1`、`action.nobles.repeat.001.1`）；`setup.gems.003.2` / `setup.gems.004` 演示后 `setup.gems.005.1` 的宝石数量复位；`endgame.example.001.1` 的终局说明是否同时展示 A/B 双方发展区与贵族。
    - 产出逐 cue 问题清单；能当场改的改，需要用户裁决的记录待办。
 2. **其余游戏目录与能力声明**：能力字段与 Android rules-only 路径已就绪；后续补 catalog 时必须逐游戏显式声明 `rules_ready` / `tutorial_ready` / `tutorial_tracks`，补 manifest 不等于教程可播放。目前仅 Splendor 有 runtime，实际条目仍待补。完整第二款游戏的交付优先级见 project-review-todo。
 3. **Android 真机端到端验收**：验证 PTT → ASR → 提问 → 回答 TTS → 回到动画/继续播放的完整链路，以及打断后回跳重播。
 4. **动画收尾**：真实跑一次 TTS 增量；把 `cue_graph_v2.py` 接入 `compile_tutorial.py` 总控；建立编辑前后 compiled 自动回归断言；推进 Quick 版。
    - manifest 路径归一化已实现；2026-10-08 当前 Windows 工作区 dry-run 为 0 changed / 0 removed / 0 ref-only，不再列为未修复 bug。
-5. **动画检查现状**：`check_anim_v2.py` 76 cues / 0 warnings，`validate_anim_rules_v2.py` 76 cues / 0 warnings，`audit_anim_v2.py` 53 cues / 0 error / 0 warning；此前 2 条 stage 重叠 warning 已不再报出。
+5. **动画检查现状**：`check_anim_v2.py` 75 cues / 0 warnings，`validate_anim_rules_v2.py` 75 cues / 0 warnings，`audit_anim_v2.py` 53 cues / 0 error / 0 warning；此前 2 条 stage 重叠 warning 已不再报出。
 6. **Flow Guide**：动画收口后开始，先做 Civolution 顶层 8 阶段循环 + 终局计分助手。
 
 ## Splendor 真卡补扫（2026-10-07 已完成）
@@ -68,7 +68,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` god class �
 - 白边处理沿用 `tools/media/matte_pipeline.py --class card`（2mm 圆角 + 2px 收边）；4 张输出 748x1045 RGBA，`matte_eval` 4/4 PASS。
 - `card_registry.json` / `card_facts.json` 已补 4 条身份；`splendor.table.stage.json` 已补 4 个模板。
 - `action.nobles.source.001` 的 B 区替换：diamond_17 保留；diamond_55→diamond_22、diamond_81→diamond_80、ruby_38→ruby_34、ruby_70→ruby_69、ruby_88→ruby_87、onyx_908→onyx_1、onyx_45→onyx_909、onyx_74→onyx_71；A 从市场买走的仍是 diamond_81。
-- 验证：`check_card_identity_v2` 562 states 0 error；`validate_anim_rules_v2` 76 cues / 0 warnings、`check_anim_v2` 76 cues / 0 warnings、`audit_anim_v2` 53 cues / 0 error / 0 warning；真机更新当次内容后 `action.nobles.source.001` 正常播放，设备侧文件哈希与本地一致。
+- 验证：`check_card_identity_v2` 561 states 0 error；`validate_anim_rules_v2` 75 cues / 0 warnings、`check_anim_v2` 75 cues / 0 warnings、`audit_anim_v2` 53 cues / 0 error / 0 warning；真机更新当次内容后 `action.nobles.source.001` 正常播放，设备侧文件哈希与本地一致。
 
 ## 已知未做 / 未闭环
 
