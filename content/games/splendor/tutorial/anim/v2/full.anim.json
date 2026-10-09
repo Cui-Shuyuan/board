@@ -261,69 +261,39 @@
       "edge": "end"
     },
     {
-      "id": "setup.gems.003.2.start",
-      "cue": "setup.gems.003.2",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.gems.003.2.end",
-      "cue": "setup.gems.003.2",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.gems.003.2.b1.start",
-      "cue": "setup.gems.003.2",
-      "beat": "setup.gems.003.2.b1",
+      "id": "setup.gems.003.1.b3.start",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b3",
       "edge": "start"
     },
     {
-      "id": "setup.gems.003.2.b1.end",
-      "cue": "setup.gems.003.2",
-      "beat": "setup.gems.003.2.b1",
+      "id": "setup.gems.003.1.b3.end",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b3",
       "edge": "end"
     },
     {
-      "id": "setup.gems.004.start",
-      "cue": "setup.gems.004",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.gems.004.end",
-      "cue": "setup.gems.004",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.gems.004.b1.start",
-      "cue": "setup.gems.004",
-      "beat": "setup.gems.004.b1",
+      "id": "setup.gems.003.1.b4.start",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b4",
       "edge": "start"
     },
     {
-      "id": "setup.gems.004.b1.end",
-      "cue": "setup.gems.004",
-      "beat": "setup.gems.004.b1",
+      "id": "setup.gems.003.1.b4.end",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b4",
       "edge": "end"
     },
     {
-      "id": "setup.gems.005.1.start",
-      "cue": "setup.gems.005.1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "setup.gems.005.1.end",
-      "cue": "setup.gems.005.1",
-      "edge": "cue_end"
-    },
-    {
-      "id": "setup.gems.005.1.b1.start",
-      "cue": "setup.gems.005.1",
-      "beat": "setup.gems.005.1.b1",
+      "id": "setup.gems.003.1.b5.start",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b5",
       "edge": "start"
     },
     {
-      "id": "setup.gems.005.1.b1.end",
-      "cue": "setup.gems.005.1",
-      "beat": "setup.gems.005.1.b1",
+      "id": "setup.gems.003.1.b5.end",
+      "cue": "setup.gems.003.1",
+      "beat": "setup.gems.003.1.b5",
       "edge": "end"
     },
     {
@@ -3157,21 +3127,25 @@
       "transition": "world_cut",
       "timing": [
         {
-          "key": "销毁样本 + 镜头切回",
-          "text": "0.00（与切镜头同帧）"
+          "key": "根据人数取对应数量",
+          "text": "2 人局每种 4 枚"
         },
         {
-          "key": "五色同时补齐到 4 枚",
-          "text": "4.20（一次到位）"
+          "key": "3 人局",
+          "text": "每种 5 枚"
         },
         {
-          "key": "五堆呼吸",
-          "text": "5.70"
+          "key": "4 人局",
+          "text": "每种 7 枚"
+        },
+        {
+          "key": "恢复 2 人局供应堆",
+          "text": "收起多出的 3 枚，成为可拿取的宝石供应堆"
         }
       ],
       "script": {
-        "story": "根据玩家人数拿取对应数量的宝石；2人游戏时，每种宝石拿取4枚",
-        "note": "回到宝石供应区，在桌面五种颜色的供应堆中各建立四枚宝石，作为两人局的设置。卡牌市场延续已经完成的设置。",
+        "story": "根据玩家人数拿取对应数量的宝石；2人取4枚，3人取5枚，4人使用全部7枚；最后将对应数量的宝石放在方便拿取的地方，成为宝石供应堆。",
+        "note": "在主桌上依次演示 2 人局每种 4 枚、3 人局每种 5 枚、4 人局每种 7 枚；最后收起多出的 3 枚，恢复为后续教程使用的 2 人局用量，并把供应堆布置完成。",
         "enter": {
           "picture": null,
           "zones": {
@@ -3315,469 +3289,207 @@
             "template": "gem",
             "palette": "gem_onyx"
           }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 5,
+          "anchor": "setup.gems.003.1.b3.start",
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 5,
+          "anchor": "setup.gems.003.1.b3.start",
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 5,
+          "anchor": "setup.gems.003.1.b3.start",
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 5,
+          "anchor": "setup.gems.003.1.b3.start",
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 5,
+          "anchor": "setup.gems.003.1.b3.start",
+          "offset": 0.105,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "setup.gems.003.1.b4.start",
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "setup.gems.003.1.b4.start",
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "setup.gems.003.1.b4.start",
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "setup.gems.003.1.b4.start",
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "setup.gems.003.1.b4.start",
+          "offset": 0.095,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 3,
+          "from_back": true,
+          "anchor": "setup.gems.003.1.b5.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond"
+          }
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 3,
+          "from_back": true,
+          "anchor": "setup.gems.003.1.b5.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire"
+          }
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 3,
+          "from_back": true,
+          "anchor": "setup.gems.003.1.b5.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby"
+          }
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 3,
+          "from_back": true,
+          "anchor": "setup.gems.003.1.b5.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald"
+          }
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 3,
+          "from_back": true,
+          "anchor": "setup.gems.003.1.b5.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx"
+          }
         }
       ]
     },
     {
-      "id": "setup.gems.003.2",
-      "parent": "setup.gems.003.1",
-      "demo": true,
-      "timing": [
-        {
-          "key": "五色同时补齐到 5 枚",
-          "text": "0.55（一次到位）"
-        },
-        {
-          "key": "五堆一起呼吸（强调 5）",
-          "text": "1.60-2.20"
-        }
-      ],
-      "script": {
-        "story": "3人游戏时，拿取5枚",
-        "note": "在同一张主桌上把每色供应堆增加到五枚，演示三人局的用量。玩家人数只由口播说明；后续 setup.gems.005.1 会恢复两人局用量。",
-        "exit": {
-          "zones": {
-            "gem_supply_diamond": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 5
-                }
-              ]
-            },
-            "gem_supply_sapphire": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 5
-                }
-              ]
-            },
-            "gem_supply_ruby": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 5
-                }
-              ]
-            },
-            "gem_supply_emerald": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 5
-                }
-              ]
-            },
-            "gem_supply_onyx": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_onyx",
-                  "count": 5
-                }
-              ]
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "anchor": "setup.gems.003.2.b1.start",
-          "offset": 0.105,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "setup.gems.004",
-      "parent": "setup.gems.003.2",
-      "timing": [
-        {
-          "key": "五色同时补齐到 7 枚",
-          "text": "0.60（一次到位）"
-        },
-        {
-          "key": "五堆一起呼吸（强调 7）",
-          "text": "2.00-2.70"
-        }
-      ],
-      "script": {
-        "story": "4人游戏时则使用全部的7枚宝石",
-        "note": "继续在主桌上把每色供应堆增加到七枚，演示四人局使用全部宝石。后续 setup.gems.005.1 会收起每色多出的三枚。",
-        "exit": {
-          "zones": {
-            "gem_supply_diamond": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 7
-                }
-              ]
-            },
-            "gem_supply_sapphire": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 7
-                }
-              ]
-            },
-            "gem_supply_ruby": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 7
-                }
-              ]
-            },
-            "gem_supply_emerald": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 7
-                }
-              ]
-            },
-            "gem_supply_onyx": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_onyx",
-                  "count": 7
-                }
-              ]
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          }
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "anchor": "setup.gems.004.b1.start",
-          "offset": 0.095,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          }
-        }
-      ],
-      "tree": "main"
-    },
-    {
-      "id": "setup.gems.005.1",
-      "parent": "setup.gems.004",
-      "timing": [
-        {
-          "key": "五堆一起呼吸（「成为宝石供应堆」）",
-          "text": "1.20-2.40（口播 0.28-5.55）"
-        }
-      ],
-      "script": {
-        "story": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆",
-        "note": "收起每色多出的三枚宝石，使供应堆从七枚恢复到四枚，结束三人、四人局的数量演示。后续教程以两人局用量继续。",
-        "enter": {
-          "zones": {
-            "gem_supply_diamond": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_sapphire": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_ruby": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_emerald": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_onyx": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_onyx",
-                  "count": 4
-                }
-              ]
-            },
-            "gold_supply": {
-              "count": 0
-            }
-          }
-        },
-        "exit": {
-          "zones": {
-            "gem_supply_diamond": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_diamond",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_sapphire": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_sapphire",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_ruby": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_ruby",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_emerald": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_emerald",
-                  "count": 4
-                }
-              ]
-            },
-            "gem_supply_onyx": {
-              "items": [
-                {
-                  "template": "gem",
-                  "palette": "gem_onyx",
-                  "count": 4
-                }
-              ]
-            },
-            "gold_supply": {
-              "count": 0
-            }
-          }
-        }
-      },
-      "events": [
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "anchor": "setup.gems.005.1.start",
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          }
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "anchor": "setup.gems.005.1.start",
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          }
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "anchor": "setup.gems.005.1.start",
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          }
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "anchor": "setup.gems.005.1.start",
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          }
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "anchor": "setup.gems.005.1.start",
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          }
-        }
-      ],
-      "tree": "main"
-    },
-    {
       "id": "setup.gems.005.2",
-      "parent": "setup.gems.005.1",
+      "parent": "setup.gems.003.1",
       "timing": [
         {
           "key": "黄金 5 枚出现",

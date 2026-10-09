@@ -1831,613 +1831,556 @@
         "2 设置",
         "2.2 宝石与黄金"
       ],
-      "text": "我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚。",
+      "text": "我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚。3人游戏时，拿取5枚。4人游戏时则使用全部的7枚宝石。将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。",
       "audio": "media/tts/full/setup.gems.003.1.mp3",
-      "duration": 7.056,
+      "duration": 18.696,
       "start": 63.02,
       "refs": [
         "flow:distribute_gems"
       ],
       "subtitles": [
         {
-          "t": 0.295,
+          "t": 0.275,
           "end": 3.555,
           "text": "我们需要根据玩家人数拿取对应数量的宝石。",
           "words": [
             {
               "word": "我",
-              "start": 0.295,
-              "end": 0.395,
-              "confidence": 0.9545
+              "start": 0.275,
+              "end": 0.365,
+              "confidence": 0.9721
             },
             {
               "word": "们",
-              "start": 0.395,
-              "end": 0.485,
-              "confidence": 0.9841
+              "start": 0.365,
+              "end": 0.465,
+              "confidence": 0.9788
             },
             {
               "word": "需",
-              "start": 0.485,
-              "end": 0.645,
-              "confidence": 0.9601
+              "start": 0.465,
+              "end": 0.595,
+              "confidence": 0.9684
             },
             {
               "word": "要",
-              "start": 0.645,
-              "end": 0.775,
-              "confidence": 0.9375
+              "start": 0.595,
+              "end": 0.735,
+              "confidence": 0.9391
             },
             {
               "word": "根",
-              "start": 0.775,
-              "end": 0.925,
-              "confidence": 0.9577
+              "start": 0.735,
+              "end": 0.895,
+              "confidence": 0.9792
             },
             {
               "word": "据",
-              "start": 0.925,
-              "end": 1.115,
-              "confidence": 0.9667
+              "start": 0.895,
+              "end": 1.095,
+              "confidence": 0.9722
             },
             {
               "word": "玩",
-              "start": 1.115,
-              "end": 1.255,
-              "confidence": 0.9718
+              "start": 1.095,
+              "end": 1.245,
+              "confidence": 0.9712
             },
             {
               "word": "家",
-              "start": 1.255,
-              "end": 1.455,
-              "confidence": 0.9587
+              "start": 1.245,
+              "end": 1.435,
+              "confidence": 0.9157
             },
             {
               "word": "人",
-              "start": 1.455,
-              "end": 1.605,
-              "confidence": 0.929
+              "start": 1.435,
+              "end": 1.595,
+              "confidence": 0.9644
             },
             {
               "word": "数",
-              "start": 1.605,
-              "end": 1.915,
-              "confidence": 0.9465
+              "start": 1.595,
+              "end": 1.875,
+              "confidence": 0.9467
             },
             {
               "word": "拿",
-              "start": 1.915,
-              "end": 2.095,
-              "confidence": 0.9257
+              "start": 1.875,
+              "end": 2.075,
+              "confidence": 0.9302
             },
             {
               "word": "取",
-              "start": 2.095,
-              "end": 2.305,
-              "confidence": 0.9259
+              "start": 2.075,
+              "end": 2.315,
+              "confidence": 0.9262
             },
             {
               "word": "对",
-              "start": 2.305,
-              "end": 2.445,
-              "confidence": 0.9161
+              "start": 2.315,
+              "end": 2.485,
+              "confidence": 0.9365
             },
             {
               "word": "应",
-              "start": 2.445,
-              "end": 2.595,
-              "confidence": 0.9229
+              "start": 2.485,
+              "end": 2.615,
+              "confidence": 0.9524
             },
             {
               "word": "数",
-              "start": 2.595,
+              "start": 2.615,
               "end": 2.795,
-              "confidence": 0.8758
+              "confidence": 0.8287
             },
             {
               "word": "量",
               "start": 2.795,
               "end": 2.935,
-              "confidence": 0.9808
+              "confidence": 0.9831
             },
             {
               "word": "的",
               "start": 2.935,
-              "end": 3.025,
-              "confidence": 0.9829
+              "end": 3.035,
+              "confidence": 0.9531
             },
             {
               "word": "宝",
-              "start": 3.025,
-              "end": 3.185,
-              "confidence": 0.9389
+              "start": 3.035,
+              "end": 3.215,
+              "confidence": 0.9508
             },
             {
               "word": "石。",
-              "start": 3.185,
+              "start": 3.215,
               "end": 3.555,
-              "confidence": 0.9533
+              "confidence": 0.9588
             }
           ]
         },
         {
-          "t": 4.145,
-          "end": 6.695,
+          "t": 4.125,
+          "end": 6.745,
           "text": "2人游戏时，每种宝石拿取4枚。",
           "words": [
             {
               "word": "2",
-              "start": 4.145,
-              "end": 4.175,
-              "confidence": 0.2591
+              "start": 4.125,
+              "end": 4.155,
+              "confidence": 0.1878
             },
             {
               "word": "人",
-              "start": 4.175,
-              "end": 4.355,
-              "confidence": 0.8775
+              "start": 4.155,
+              "end": 4.335,
+              "confidence": 0.8577
             },
             {
               "word": "游",
-              "start": 4.355,
-              "end": 4.455,
-              "confidence": 0.6112
+              "start": 4.335,
+              "end": 4.435,
+              "confidence": 0.5326
             },
             {
               "word": "戏",
-              "start": 4.455,
-              "end": 4.655,
-              "confidence": 0.9727
+              "start": 4.435,
+              "end": 4.635,
+              "confidence": 0.9667
             },
             {
               "word": "时，",
-              "start": 4.655,
-              "end": 5.045,
-              "confidence": 0.9653
+              "start": 4.635,
+              "end": 4.985,
+              "confidence": 0.9649
             },
             {
               "word": "每",
-              "start": 5.155,
-              "end": 5.315,
-              "confidence": 0.9298
+              "start": 5.135,
+              "end": 5.305,
+              "confidence": 0.9191
             },
             {
               "word": "种",
-              "start": 5.315,
-              "end": 5.465,
-              "confidence": 0.8535
+              "start": 5.305,
+              "end": 5.445,
+              "confidence": 0.8594
             },
             {
               "word": "宝",
-              "start": 5.465,
-              "end": 5.665,
-              "confidence": 0.9555
+              "start": 5.445,
+              "end": 5.645,
+              "confidence": 0.9548
             },
             {
               "word": "石",
-              "start": 5.665,
-              "end": 5.895,
-              "confidence": 0.9217
+              "start": 5.645,
+              "end": 5.905,
+              "confidence": 0.9441
             },
             {
               "word": "拿",
-              "start": 5.895,
-              "end": 6.065,
-              "confidence": 0.9302
+              "start": 5.905,
+              "end": 6.085,
+              "confidence": 0.9576
             },
             {
               "word": "取",
-              "start": 6.065,
-              "end": 6.225,
-              "confidence": 0.8596
+              "start": 6.085,
+              "end": 6.255,
+              "confidence": 0.8558
             },
             {
               "word": "4",
-              "start": 6.405,
-              "end": 6.435,
-              "confidence": 0.1929
+              "start": 6.455,
+              "end": 6.485,
+              "confidence": 0.2134
             },
             {
               "word": "枚。",
-              "start": 6.435,
-              "end": 6.695,
-              "confidence": 0.8555
+              "start": 6.485,
+              "end": 6.745,
+              "confidence": 0.837
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "setup.gems.003.2",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "text": "3人游戏时，拿取5枚。",
-      "audio": "media/tts/full/setup.gems.003.2.mp3",
-      "duration": 2.832,
-      "start": 70.08,
-      "refs": [
-        "flow:distribute_gems"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.445,
-          "end": 2.495,
+          "t": 7.255,
+          "end": 9.075,
           "text": "3人游戏时，拿取5枚。",
           "words": [
             {
               "word": "3",
-              "start": 0.445,
-              "end": 0.475,
-              "confidence": 0.2568
+              "start": 7.255,
+              "end": 7.285,
+              "confidence": 0.2347
             },
             {
               "word": "人",
-              "start": 0.475,
-              "end": 0.665,
-              "confidence": 0.7126
+              "start": 7.285,
+              "end": 7.455,
+              "confidence": 0.7622
             },
             {
               "word": "游",
-              "start": 0.665,
-              "end": 0.775,
-              "confidence": 0.7037
+              "start": 7.455,
+              "end": 7.555,
+              "confidence": 0.8112
             },
             {
               "word": "戏",
-              "start": 0.775,
-              "end": 0.995,
-              "confidence": 0.9718
+              "start": 7.555,
+              "end": 7.735,
+              "confidence": 0.9565
             },
             {
               "word": "时，",
-              "start": 0.995,
-              "end": 1.405,
-              "confidence": 0.9718
+              "start": 7.735,
+              "end": 8.095,
+              "confidence": 0.9688
             },
             {
               "word": "拿",
-              "start": 1.555,
-              "end": 1.775,
-              "confidence": 0.9445
+              "start": 8.205,
+              "end": 8.395,
+              "confidence": 0.9484
             },
             {
               "word": "取",
-              "start": 1.775,
-              "end": 2.125,
-              "confidence": 0.6345
+              "start": 8.395,
+              "end": 8.605,
+              "confidence": 0.8198
             },
             {
               "word": "5",
-              "start": 2.125,
-              "end": 2.155,
-              "confidence": 0.1678
+              "start": 8.775,
+              "end": 8.805,
+              "confidence": 0.1976
             },
             {
               "word": "枚。",
-              "start": 2.155,
-              "end": 2.495,
-              "confidence": 0.8359
+              "start": 8.805,
+              "end": 9.075,
+              "confidence": 0.9147
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "setup.gems.004",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "text": "4人游戏时则使用全部的7枚宝石。",
-      "audio": "media/tts/full/setup.gems.004.mp3",
-      "duration": 3.864,
-      "start": 72.91,
-      "refs": [
-        "flow:distribute_gems"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.505,
-          "end": 3.415,
+          "t": 9.605,
+          "end": 12.225,
           "text": "4人游戏时则使用全部的7枚宝石。",
           "words": [
             {
               "word": "4",
-              "start": 0.505,
-              "end": 0.535,
-              "confidence": 0.2243
+              "start": 9.605,
+              "end": 9.635,
+              "confidence": 0.1826
             },
             {
               "word": "人",
-              "start": 0.535,
-              "end": 0.715,
-              "confidence": 0.7916
+              "start": 9.635,
+              "end": 9.795,
+              "confidence": 0.7857
             },
             {
               "word": "游",
-              "start": 0.715,
-              "end": 0.845,
-              "confidence": 0.6823
+              "start": 9.795,
+              "end": 9.885,
+              "confidence": 0.7813
             },
             {
               "word": "戏",
-              "start": 0.845,
-              "end": 1.065,
-              "confidence": 0.9534
+              "start": 9.885,
+              "end": 10.075,
+              "confidence": 0.9668
             },
             {
               "word": "时",
-              "start": 1.065,
-              "end": 1.395,
-              "confidence": 0.9114
+              "start": 10.075,
+              "end": 10.395,
+              "confidence": 0.9196
             },
             {
               "word": "则",
-              "start": 1.395,
-              "end": 1.565,
-              "confidence": 0.9225
+              "start": 10.395,
+              "end": 10.575,
+              "confidence": 0.9595
             },
             {
               "word": "使",
-              "start": 1.565,
-              "end": 1.745,
-              "confidence": 0.8708
+              "start": 10.575,
+              "end": 10.735,
+              "confidence": 0.8743
             },
             {
               "word": "用",
-              "start": 1.745,
-              "end": 1.935,
-              "confidence": 0.9914
+              "start": 10.735,
+              "end": 10.915,
+              "confidence": 0.9782
             },
             {
               "word": "全",
-              "start": 1.935,
-              "end": 2.165,
-              "confidence": 0.8666
+              "start": 10.915,
+              "end": 11.135,
+              "confidence": 0.8522
             },
             {
               "word": "部",
-              "start": 2.165,
-              "end": 2.395,
-              "confidence": 0.9744
+              "start": 11.135,
+              "end": 11.385,
+              "confidence": 0.9748
             },
             {
               "word": "的",
-              "start": 2.395,
-              "end": 2.515,
-              "confidence": 0.8687
+              "start": 11.385,
+              "end": 11.525,
+              "confidence": 0.8914
             },
             {
               "word": "7",
-              "start": 2.735,
-              "end": 2.765,
-              "confidence": 0.2303
+              "start": 11.745,
+              "end": 11.775,
+              "confidence": 0.2213
             },
             {
               "word": "枚",
-              "start": 2.765,
-              "end": 2.905,
-              "confidence": 0.8456
+              "start": 11.775,
+              "end": 11.915,
+              "confidence": 0.8064
             },
             {
               "word": "宝",
-              "start": 2.905,
-              "end": 3.075,
-              "confidence": 0.9365
+              "start": 11.915,
+              "end": 12.095,
+              "confidence": 0.9313
             },
             {
               "word": "石。",
-              "start": 3.075,
-              "end": 3.415,
-              "confidence": 0.9608
+              "start": 12.095,
+              "end": 12.225,
+              "confidence": 0.929
             }
           ]
-        }
-      ],
-      "animation": null
-    },
-    {
-      "id": "setup.gems.005.1",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。",
-      "audio": "media/tts/full/setup.gems.005.1.mp3",
-      "duration": 5.856,
-      "start": 76.78,
-      "refs": [
-        "<gem_supply>",
-        "<gold_supply>",
-        "flow:distribute_gems",
-        "flow:distribute_gold"
-      ],
-      "subtitles": [
+        },
         {
-          "t": 0.275,
-          "end": 5.555,
+          "t": 12.835,
+          "end": 18.305,
           "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。",
           "words": [
             {
               "word": "将",
-              "start": 0.275,
-              "end": 0.515,
-              "confidence": 0.9093
+              "start": 12.835,
+              "end": 13.125,
+              "confidence": 0.9101
             },
             {
               "word": "对",
-              "start": 0.515,
-              "end": 0.675,
-              "confidence": 0.9515
+              "start": 13.125,
+              "end": 13.275,
+              "confidence": 0.9409
             },
             {
               "word": "应",
-              "start": 0.675,
-              "end": 0.795,
-              "confidence": 0.9452
+              "start": 13.275,
+              "end": 13.415,
+              "confidence": 0.8804
             },
             {
               "word": "数",
-              "start": 0.795,
-              "end": 0.985,
-              "confidence": 0.7154
+              "start": 13.415,
+              "end": 13.595,
+              "confidence": 0.724
             },
             {
               "word": "量",
-              "start": 0.985,
-              "end": 1.125,
-              "confidence": 0.9539
+              "start": 13.595,
+              "end": 13.745,
+              "confidence": 0.9811
             },
             {
               "word": "的",
-              "start": 1.125,
-              "end": 1.235,
-              "confidence": 0.9588
+              "start": 13.745,
+              "end": 13.845,
+              "confidence": 0.9697
             },
             {
               "word": "宝",
-              "start": 1.235,
-              "end": 1.415,
-              "confidence": 0.949
+              "start": 13.845,
+              "end": 14.025,
+              "confidence": 0.9676
             },
             {
               "word": "石",
-              "start": 1.415,
-              "end": 1.695,
-              "confidence": 0.9421
+              "start": 14.025,
+              "end": 14.305,
+              "confidence": 0.9225
             },
             {
               "word": "放",
-              "start": 1.695,
-              "end": 1.905,
-              "confidence": 0.9791
+              "start": 14.305,
+              "end": 14.495,
+              "confidence": 0.9828
             },
             {
               "word": "在",
-              "start": 1.905,
-              "end": 2.075,
-              "confidence": 0.9419
+              "start": 14.495,
+              "end": 14.715,
+              "confidence": 0.944
             },
             {
               "word": "所",
-              "start": 2.075,
-              "end": 2.295,
-              "confidence": 0.9687
+              "start": 14.715,
+              "end": 14.915,
+              "confidence": 0.952
             },
             {
               "word": "有",
-              "start": 2.295,
-              "end": 2.415,
-              "confidence": 0.9097
+              "start": 14.915,
+              "end": 15.025,
+              "confidence": 0.9013
             },
             {
               "word": "玩",
-              "start": 2.415,
-              "end": 2.565,
-              "confidence": 0.8763
+              "start": 15.025,
+              "end": 15.185,
+              "confidence": 0.8663
             },
             {
               "word": "家",
-              "start": 2.565,
-              "end": 2.785,
-              "confidence": 0.9694
+              "start": 15.185,
+              "end": 15.425,
+              "confidence": 0.9627
             },
             {
               "word": "都",
-              "start": 2.785,
-              "end": 2.895,
-              "confidence": 0.9326
+              "start": 15.425,
+              "end": 15.565,
+              "confidence": 0.9578
             },
             {
               "word": "方",
-              "start": 2.895,
-              "end": 3.055,
-              "confidence": 0.9738
+              "start": 15.565,
+              "end": 15.745,
+              "confidence": 0.9759
             },
             {
               "word": "便",
-              "start": 3.055,
-              "end": 3.225,
-              "confidence": 0.9549
+              "start": 15.745,
+              "end": 15.905,
+              "confidence": 0.9742
             },
             {
               "word": "拿",
-              "start": 3.225,
-              "end": 3.395,
-              "confidence": 0.9487
+              "start": 15.905,
+              "end": 16.085,
+              "confidence": 0.9736
             },
             {
               "word": "取",
-              "start": 3.395,
-              "end": 3.555,
-              "confidence": 0.8279
+              "start": 16.085,
+              "end": 16.245,
+              "confidence": 0.9141
             },
             {
               "word": "的",
-              "start": 3.555,
-              "end": 3.675,
-              "confidence": 0.9295
+              "start": 16.245,
+              "end": 16.355,
+              "confidence": 0.9383
             },
             {
               "word": "地",
-              "start": 3.675,
-              "end": 3.835,
-              "confidence": 0.9773
+              "start": 16.355,
+              "end": 16.515,
+              "confidence": 0.9753
             },
             {
               "word": "方，",
-              "start": 3.835,
-              "end": 4.065,
-              "confidence": 0.9668
+              "start": 16.515,
+              "end": 16.755,
+              "confidence": 0.9842
             },
             {
               "word": "成",
-              "start": 4.315,
-              "end": 4.485,
-              "confidence": 0.8984
+              "start": 17.035,
+              "end": 17.205,
+              "confidence": 0.9475
             },
             {
               "word": "为",
-              "start": 4.485,
-              "end": 4.665,
-              "confidence": 0.9345
+              "start": 17.205,
+              "end": 17.385,
+              "confidence": 0.9249
             },
             {
               "word": "宝",
-              "start": 4.665,
-              "end": 4.845,
-              "confidence": 0.9444
+              "start": 17.385,
+              "end": 17.585,
+              "confidence": 0.9268
             },
             {
               "word": "石",
-              "start": 4.845,
-              "end": 5.045,
-              "confidence": 0.9593
+              "start": 17.585,
+              "end": 17.795,
+              "confidence": 0.9547
             },
             {
               "word": "供",
-              "start": 5.045,
-              "end": 5.215,
-              "confidence": 0.9479
+              "start": 17.795,
+              "end": 17.965,
+              "confidence": 0.9478
             },
             {
               "word": "应",
-              "start": 5.215,
-              "end": 5.355,
-              "confidence": 0.8949
+              "start": 17.965,
+              "end": 18.115,
+              "confidence": 0.8968
             },
             {
               "word": "堆。",
-              "start": 5.355,
-              "end": 5.555,
-              "confidence": 0.8378
+              "start": 18.115,
+              "end": 18.305,
+              "confidence": 0.8663
             }
           ]
         }
@@ -2454,7 +2397,7 @@
       "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。其余的宝石放回盒子。",
       "audio": "media/tts/full/setup.gems.005.2.mp3",
       "duration": 6.816,
-      "start": 82.63,
+      "start": 81.72,
       "refs": [
         "<gem_supply>",
         "<gold_supply>",
@@ -2657,7 +2600,7 @@
       "text": "这些是贵族板块，从所有的贵族板块中随机抽出玩家数量+1块，",
       "audio": "media/tts/full/setup.nobles.001.1.mp3",
       "duration": 5.64,
-      "start": 89.45,
+      "start": 88.54,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -2840,7 +2783,7 @@
       "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。",
       "audio": "media/tts/full/setup.nobles.001.2.mp3",
       "duration": 5.064,
-      "start": 95.09,
+      "start": 94.18,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3005,7 +2948,7 @@
       "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。",
       "audio": "media/tts/full/setup.nobles.002.mp3",
       "duration": 7.056,
-      "start": 100.15,
+      "start": 99.24,
       "refs": [
         "flow:deal_nobles"
       ],
@@ -3235,7 +3178,7 @@
       "text": "现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家，",
       "audio": "media/tts/full/setup.starting_player.001.1.mp3",
       "duration": 6.048,
-      "start": 107.21,
+      "start": 106.3,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3437,7 +3380,7 @@
       "text": "也可以使用所有人都认可的方式决定谁是起始玩家。",
       "audio": "media/tts/full/setup.starting_player.001.2.mp3",
       "duration": 4.44,
-      "start": 113.26,
+      "start": 112.34,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3596,7 +3539,7 @@
       "text": "这是起始玩家标记。",
       "audio": "media/tts/full/setup.starting_player.001.3.mp3",
       "duration": 2.04,
-      "start": 117.7,
+      "start": 116.78,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3671,7 +3614,7 @@
       "text": "起始玩家获得这枚标记。",
       "audio": "media/tts/full/setup.starting_player.001.4.mp3",
       "duration": 2.664,
-      "start": 119.74,
+      "start": 118.82,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -3758,7 +3701,7 @@
       "text": "至此，整个设置环节就大功告成了。接下来可以正式开始游戏了。",
       "audio": "media/tts/full/setup.end.001.1.mp3",
       "duration": 5.64,
-      "start": 122.4,
+      "start": 121.49,
       "refs": [
         "rulebook:setup",
         "flow:main_gameplay"
@@ -3946,7 +3889,7 @@
       "text": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。",
       "audio": "media/tts/full/action.turn.001.mp3",
       "duration": 8.232,
-      "start": 128.04,
+      "start": 127.13,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -4189,7 +4132,7 @@
       "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行：",
       "audio": "media/tts/full/action.turn.002.mp3",
       "duration": 5.472,
-      "start": 136.27,
+      "start": 135.36,
       "refs": [
         "flow:action_phase"
       ],
@@ -4370,7 +4313,7 @@
       "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。",
       "audio": "media/tts/full/action.take.different.001.mp3",
       "duration": 5.28,
-      "start": 141.74,
+      "start": 140.83,
       "refs": [
         "<take_gems_different>",
         "flow:player_action_turn"
@@ -4534,7 +4477,7 @@
       "text": "当某种宝石在供应堆中的数量大于等于4时，也可以改为拿取这种宝石两枚。",
       "audio": "media/tts/full/action.take.same.001.mp3",
       "duration": 7.056,
-      "start": 147.02,
+      "start": 146.11,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -4759,7 +4702,7 @@
       "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，否则就不能这样拿取。",
       "audio": "media/tts/full/action.take.same.002.mp3",
       "duration": 7.08,
-      "start": 154.08,
+      "start": 153.17,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -4984,7 +4927,7 @@
       "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。",
       "audio": "media/tts/full/action.take.draw_rule.001.1.mp3",
       "duration": 6.84,
-      "start": 161.16,
+      "start": 160.25,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -5209,7 +5152,7 @@
       "text": "当供应堆宝石不足时，尽可能拿取宝石。",
       "audio": "media/tts/full/action.take.draw_rule.001.2.mp3",
       "duration": 3.864,
-      "start": 168.0,
+      "start": 167.09,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -5331,7 +5274,7 @@
       "text": "玩家持有的宝石和黄金总数上限为10个。任何时候当持有数量超过上限时，",
       "audio": "media/tts/full/action.take.limit.001.1.mp3",
       "duration": 6.84,
-      "start": 171.86,
+      "start": 170.95,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -5551,7 +5494,7 @@
       "text": "必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。",
       "audio": "media/tts/full/action.take.limit.001.2.mp3",
       "duration": 6.048,
-      "start": 178.7,
+      "start": 177.79,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -5759,7 +5702,7 @@
       "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，",
       "audio": "media/tts/full/action.take.public.001.1.mp3",
       "duration": 6.264,
-      "start": 184.75,
+      "start": 183.84,
       "refs": [
         "<player_holding>"
       ],
@@ -5958,7 +5901,7 @@
       "text": "所有人都能清楚看到的地方。",
       "audio": "media/tts/full/action.take.public.001.2.mp3",
       "duration": 2.856,
-      "start": 191.02,
+      "start": 190.1,
       "refs": [
         "<player_holding>"
       ],
@@ -6056,7 +5999,7 @@
       "text": "我们介绍一下发展卡牌。",
       "audio": "media/tts/full/action.cards.intro.001.mp3",
       "duration": 2.256,
-      "start": 193.87,
+      "start": 192.96,
       "refs": [
         "<development_card>"
       ],
@@ -6142,7 +6085,7 @@
       "text": "左下角是这张牌的价格。要想购买这张牌，",
       "audio": "media/tts/full/action.cards.cost.001.1.mp3",
       "duration": 3.84,
-      "start": 196.13,
+      "start": 195.22,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -6279,7 +6222,7 @@
       "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。",
       "audio": "media/tts/full/action.cards.cost.001.2.mp3",
       "duration": 10.488,
-      "start": 199.97,
+      "start": 199.06,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -6608,7 +6551,7 @@
       "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，",
       "audio": "media/tts/full/action.cards.market.001.1.mp3",
       "duration": 15.096,
-      "start": 210.46,
+      "start": 209.54,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -7082,7 +7025,7 @@
       "text": "除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。",
       "audio": "media/tts/full/action.cards.market.001.2.mp3",
       "duration": 8.256,
-      "start": 225.55,
+      "start": 224.64,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -7320,7 +7263,7 @@
       "text": "左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值。",
       "audio": "media/tts/full/action.cards.prestige.001.1.mp3",
       "duration": 6.648,
-      "start": 233.81,
+      "start": 232.9,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -7534,7 +7477,7 @@
       "text": "不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值。",
       "audio": "media/tts/full/action.cards.prestige.001.2.mp3",
       "duration": 6.264,
-      "start": 240.46,
+      "start": 239.54,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -7736,7 +7679,7 @@
       "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。",
       "audio": "media/tts/full/action.cards.discount.001.mp3",
       "duration": 7.464,
-      "start": 246.72,
+      "start": 245.81,
       "refs": [
         "<discount>"
       ],
@@ -7985,7 +7928,7 @@
       "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。",
       "audio": "media/tts/full/action.cards.discount.002.1.mp3",
       "duration": 11.472,
-      "start": 254.18,
+      "start": 253.27,
       "refs": [
         "<discount>"
       ],
@@ -8362,7 +8305,7 @@
       "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。",
       "audio": "media/tts/full/action.cards.discount.003.1.mp3",
       "duration": 7.872,
-      "start": 265.66,
+      "start": 264.74,
       "refs": [
         "<discount>"
       ],
@@ -8623,7 +8566,7 @@
       "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。",
       "audio": "media/tts/full/action.cards.discount.003.2.mp3",
       "duration": 8.304,
-      "start": 273.53,
+      "start": 272.62,
       "refs": [
         "<discount>"
       ],
@@ -8890,7 +8833,7 @@
       "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。",
       "audio": "media/tts/full/action.cards.public.001.1.mp3",
       "duration": 12.864,
-      "start": 281.83,
+      "start": 280.92,
       "refs": [
         "<development_area>"
       ],
@@ -9278,7 +9221,7 @@
       "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
       "audio": "media/tts/full/action.cards.limit.001.1.mp3",
       "duration": 8.856,
-      "start": 294.7,
+      "start": 293.78,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -9564,7 +9507,7 @@
       "text": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。",
       "audio": "media/tts/full/action.nobles.intro.001.mp3",
       "duration": 10.464,
-      "start": 303.55,
+      "start": 302.64,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -9912,7 +9855,7 @@
       "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。",
       "audio": "media/tts/full/action.nobles.trigger.001.1.mp3",
       "duration": 12.024,
-      "start": 314.02,
+      "start": 313.1,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -10307,7 +10250,7 @@
       "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。",
       "audio": "media/tts/full/action.nobles.forced.001.1.mp3",
       "duration": 11.088,
-      "start": 326.04,
+      "start": 325.13,
       "refs": [
         "<attract_noble>"
       ],
@@ -10671,7 +10614,7 @@
       "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。",
       "audio": "media/tts/full/action.nobles.source.001.mp3",
       "duration": 8.76,
-      "start": 337.13,
+      "start": 336.22,
       "refs": [
         "<noble_market>",
         "<attract_noble>"
@@ -10842,7 +10785,7 @@
       "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.choice.001.1.mp3",
       "duration": 8.832,
-      "start": 345.89,
+      "start": 344.98,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11141,7 +11084,7 @@
       "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。",
       "audio": "media/tts/full/action.nobles.repeat.001.1.mp3",
       "duration": 11.664,
-      "start": 354.72,
+      "start": 353.81,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -11549,7 +11492,7 @@
       "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。",
       "audio": "media/tts/full/action.nobles.repeat.001.3.mp3",
       "duration": 6.672,
-      "start": 366.38,
+      "start": 365.47,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -11769,7 +11712,7 @@
       "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，",
       "audio": "media/tts/full/action.cards.summary.001.1.mp3",
       "duration": 5.064,
-      "start": 373.06,
+      "start": 372.14,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -11930,7 +11873,7 @@
       "text": "已购买的发展卡牌会为玩家带来声望值和折扣。",
       "audio": "media/tts/full/action.cards.summary.001.2.mp3",
       "duration": 4.44,
-      "start": 378.12,
+      "start": 377.21,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12079,7 +12022,7 @@
       "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
       "audio": "media/tts/full/action.cards.summary.001.3.mp3",
       "duration": 6.432,
-      "start": 382.56,
+      "start": 381.65,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12300,7 +12243,7 @@
       "text": "除购买外，玩家也可以不支付费用，把一张发展卡牌从供应堆拿走，正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。",
       "audio": "media/tts/full/action.reserve.intro.001.1.mp3",
       "duration": 11.088,
-      "start": 388.99,
+      "start": 388.08,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -12642,7 +12585,7 @@
       "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。",
       "audio": "media/tts/full/action.reserve.gold.001.mp3",
       "duration": 6.84,
-      "start": 400.08,
+      "start": 399.17,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -12873,7 +12816,7 @@
       "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。",
       "audio": "media/tts/full/action.reserve.deck.001.mp3",
       "duration": 7.656,
-      "start": 406.92,
+      "start": 406.01,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -13130,7 +13073,7 @@
       "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
       "audio": "media/tts/full/action.reserve.notes_intro.001.mp3",
       "duration": 8.856,
-      "start": 414.58,
+      "start": 413.66,
       "refs": [
         "<reserve_development_card>",
         "<player_holding>",
@@ -13406,7 +13349,7 @@
       "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。",
       "audio": "media/tts/full/action.reserve.limit_gold.001.2.mp3",
       "duration": 5.472,
-      "start": 423.43,
+      "start": 422.52,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -13589,7 +13532,7 @@
       "text": "每位玩家最多同时保留3张发展卡牌；已经保留3张时，就不能再保留，必须选择其他行动。",
       "audio": "media/tts/full/action.reserve.limit_hand.001.1.mp3",
       "duration": 8.04,
-      "start": 428.9,
+      "start": 427.99,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -13844,7 +13787,7 @@
       "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。",
       "audio": "media/tts/full/action.reserve.private.001.1.mp3",
       "duration": 11.28,
-      "start": 436.94,
+      "start": 436.03,
       "refs": [
         "<hand>"
       ],
@@ -14213,7 +14156,7 @@
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
       "audio": "media/tts/full/action.reserve.private.002.mp3",
       "duration": 6.456,
-      "start": 448.22,
+      "start": 447.31,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -14413,7 +14356,7 @@
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
       "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
       "duration": 7.08,
-      "start": 454.68,
+      "start": 453.77,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -14633,7 +14576,7 @@
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
       "audio": "media/tts/full/action.purchase_reserved.001.mp3",
       "duration": 18.672,
-      "start": 461.76,
+      "start": 460.85,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -15246,7 +15189,7 @@
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
       "audio": "media/tts/full/action.summary.001.mp3",
       "duration": 7.224,
-      "start": 480.43,
+      "start": 479.52,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -15479,7 +15422,7 @@
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。",
       "audio": "media/tts/full/action.summary.002.1.mp3",
       "duration": 9.456,
-      "start": 487.66,
+      "start": 486.74,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -15772,7 +15715,7 @@
       "text": "就这样一直循环，直到整局游戏结束。",
       "audio": "media/tts/full/action.summary.002.2.mp3",
       "duration": 3.456,
-      "start": 497.11,
+      "start": 496.2,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -15888,7 +15831,7 @@
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
       "audio": "media/tts/full/endgame.trigger.001.mp3",
       "duration": 5.232,
-      "start": 500.57,
+      "start": 499.66,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -16045,7 +15988,7 @@
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
       "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
       "duration": 10.296,
-      "start": 505.8,
+      "start": 504.89,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -16372,7 +16315,7 @@
       "text": "以4人局为例：如果起始玩家的声望值达到15，剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
       "audio": "media/tts/full/endgame.example.001.1.mp3",
       "duration": 16.488,
-      "start": 516.1,
+      "start": 515.18,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -16897,7 +16840,7 @@
       "text": "第一种情况：声望值最高的玩家获得胜利。比如玩家A有17分，玩家B有14分，A获胜。",
       "audio": "media/tts/full/endgame.winner.001.mp3",
       "duration": 9.024,
-      "start": 532.58,
+      "start": 531.67,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -17133,7 +17076,7 @@
       "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。",
       "audio": "media/tts/full/endgame.winner.002.mp3",
       "duration": 12.648,
-      "start": 541.61,
+      "start": 540.7,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -17490,7 +17433,7 @@
       "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。现在两人都是17分、10张牌，共享胜利。",
       "audio": "media/tts/full/endgame.winner.003.mp3",
       "duration": 11.088,
-      "start": 554.26,
+      "start": 553.34,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

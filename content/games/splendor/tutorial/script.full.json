@@ -179,62 +179,17 @@
         {
           "id": "setup.gems.003.1.b2",
           "text": "2人游戏时，每种宝石拿取4枚。"
-        }
-      ]
-    },
-    {
-      "id": "setup.gems.003.2",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "refs": [
-        "flow:distribute_gems"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.gems.003.2.b1",
+          "id": "setup.gems.003.1.b3",
           "text": "3人游戏时，拿取5枚。"
-        }
-      ]
-    },
-    {
-      "id": "setup.gems.004",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "refs": [
-        "flow:distribute_gems"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.gems.004.b1",
+          "id": "setup.gems.003.1.b4",
           "text": "4人游戏时则使用全部的7枚宝石。"
-        }
-      ]
-    },
-    {
-      "id": "setup.gems.005.1",
-      "group": "2.2 宝石与黄金",
-      "group_path": [
-        "2 设置",
-        "2.2 宝石与黄金"
-      ],
-      "refs": [
-        "<gem_supply>",
-        "<gold_supply>",
-        "flow:distribute_gems",
-        "flow:distribute_gold"
-      ],
-      "pause_after": 0.0,
-      "beats": [
+        },
         {
-          "id": "setup.gems.005.1.b1",
+          "id": "setup.gems.003.1.b5",
           "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。"
         }
       ]
