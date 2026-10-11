@@ -39,6 +39,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "animation"))
 import anim_schema_v2 as schema  # noqa: E402
 import compiled_state as logical_state  # noqa: E402
+import section_source  # noqa: E402
 
 CHECK_ORDER = {"boundary": 0, "demo": 1, "conservation": 2, "refill": 3, "pointer": 4}
 AUDIT_PROFILE_REL = Path("tutorial") / "animation" / "audit-profile.json"
@@ -945,12 +946,15 @@ def _discover_audit_games() -> list[str]:
 
 
 def _discover_audit_tracks(game: str) -> list[str]:
+    tracks = list(section_source.discover_tracks(game))
     v2 = ROOT / "content" / "games" / game / "tutorial" / "anim" / "v2"
-    return sorted(
-        path.name[: -len(".anim.json")]
-        for path in v2.glob("*.anim.json")
-        if not path.name.startswith("_")
-    )
+    for path in sorted(v2.glob("*.anim.json")):
+        if path.name.startswith("_"):
+            continue
+        name = path.name[: -len(".anim.json")]
+        if name not in tracks:
+            tracks.append(name)
+    return sorted(tracks)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -986,8 +990,10 @@ def main(argv: list[str] | None = None) -> int:
     source_path = base / f"{args.track}.anim.json"
     compiled_path = base / f"{args.track}.compiled.json"
     try:
-        track_doc = load_json(source_path)
-    except (OSError, json.JSONDecodeError) as exc:
+        track_doc, _, _, _, _ = section_source.load_track_docs(
+            args.game, args.track, allow_legacy=True, warn=True
+        )
+    except (OSError, json.JSONDecodeError, ValueError, FileNotFoundError) as exc:
         print(f"ERR  source input: {source_path}: {exc}", file=sys.stderr)
         return 2
     try:

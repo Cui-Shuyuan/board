@@ -29,6 +29,8 @@ if (sys.stdout.encoding or "").lower() not in ("utf-8", "utf8"):
 
 ROOT = Path(__file__).resolve().parent.parent
 GAMES_ROOT = ROOT / "content" / "games"
+sys.path.insert(0, str(ROOT / "animation"))
+import section_source  # noqa: E402
 
 
 def _game_from_path(path: Path) -> str | None:
@@ -52,7 +54,59 @@ def _games_with_qa() -> list[str]:
             games.add(path.relative_to(GAMES_ROOT).parts[0])
         except (OSError, ValueError, IndexError):
             continue
+    for path in GAMES_ROOT.glob("*/tutorial/tracks/*.track.json"):
+        try:
+            games.add(path.relative_to(GAMES_ROOT).parts[0])
+        except (OSError, ValueError, IndexError):
+            continue
     return sorted(games)
+
+
+def load_section_asks(game: str, track: str):
+    """Merge cue.qa and sections/*/qa.json into the ask format used by this tool."""
+    try:
+        src = section_source.load_track_source(game, track)
+    except Exception as exc:  # noqa: BLE001
+        raise FileNotFoundError(f"no section source for {game}/{track}: {exc}")
+    asks: list[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for cue in src.anim_doc.get("cues") or []:
+        cid = cue.get("id")
+        if not cid:
+            continue
+        raw = cue.get("qa")
+        items = raw if isinstance(raw, list) else ([raw] if raw is not None else [])
+        for item in items:
+            if isinstance(item, str) and item.strip():
+                item = {"q": item.strip()}
+            if not isinstance(item, dict) or not str(item.get("q") or "").strip():
+                continue
+            key = (cid, str(item["q"]).strip())
+            if key in seen:
+                continue
+            seen.add(key)
+            asks.append({
+                "cue": cid,
+                "q": str(item["q"]).strip(),
+                **({"expect": str(item["expect"])} if item.get("expect") is not None else {}),
+                "source": f"cue:{cid}.qa",
+            })
+    for item in src.qa_asks:
+        cid = item.get("cue")
+        q = str(item.get("q") or "").strip()
+        if not cid or not q:
+            continue
+        key = (str(cid), q)
+        if key in seen:
+            continue
+        seen.add(key)
+        asks.append({
+            "cue": str(cid),
+            "q": q,
+            **({"expect": str(item["expect"])} if item.get("expect") is not None else {}),
+            "source": item.get("source") or "section qa.json",
+        })
+    return {"source": str(src.descriptor_path), "asks": asks}
 
 
 def resolve_game(game_arg: str | None, input_path: Path | None) -> str:
@@ -187,12 +241,21 @@ def main(argv: list[str] | None = None) -> int:
 
     input_arg = Path(a.inp) if a.inp else None
     game = resolve_game(a.game, input_arg)
-    inp = qa_input_for(game, a.track, a.inp)
-    try:
-        spec = load_asks(inp)
-    except FileNotFoundError:
-        print(f"[qa] missing questions file: {inp}", file=sys.stderr)
-        return 2
+    use_section_source = not a.inp and section_source.has_section_source(game, a.track)
+    if use_section_source:
+        inp = section_source.track_descriptor_path(game, a.track)
+        try:
+            spec = load_section_asks(game, a.track)
+        except FileNotFoundError as exc:
+            print(f"[qa] {exc}", file=sys.stderr)
+            return 2
+    else:
+        inp = qa_input_for(game, a.track, a.inp)
+        try:
+            spec = load_asks(inp)
+        except FileNotFoundError:
+            print(f"[qa] missing questions file: {inp}", file=sys.stderr)
+            return 2
     items = spec["asks"]
     only = [x.strip() for x in a.only.split(",") if x.strip()]
     if only:

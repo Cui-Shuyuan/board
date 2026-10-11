@@ -433,6 +433,17 @@ async def synthesize_text(
     return float(duration)
 
 
+def _cue_id_to_slug(cue_id: str) -> str:
+    try:
+        from section_source import cue_id_to_slug
+    except ImportError:  # pragma: no cover - direct module execution
+        import sys as _sys
+        from pathlib import Path as _Path
+        _sys.path.insert(0, str(_Path(__file__).resolve().parent))
+        from section_source import cue_id_to_slug
+    return cue_id_to_slug(cue_id)
+
+
 def _get_arg(args: Any, name: str, default: Any = None) -> Any:
     return getattr(args, name, default)
 
@@ -450,8 +461,9 @@ async def synthesize_all(cues: list[dict[str, Any]], args: argparse.Namespace) -
 
     results: list[dict[str, Any]] = []
     for cue in cues:
-        audio_path = out_dir / f"{cue['id']}.{encoding}"
-        subtitle_path = out_dir / f"{cue['id']}.subtitle.json"
+        stem = _cue_id_to_slug(cue["id"])
+        audio_path = out_dir / f"{stem}.{encoding}"
+        subtitle_path = out_dir / f"{stem}.subtitle.json"
 
         if audio_path.exists() and not _get_arg(args, "force", False) and not _get_arg(args, "overwrite", False):
             duration = _audio_duration(audio_path, encoding, sample_rate)

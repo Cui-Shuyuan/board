@@ -23,6 +23,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "animation"))
 import anim_schema_v2 as schema  # noqa: E402
+import section_source  # noqa: E402
 
 
 def load(path):
@@ -166,22 +167,28 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERR  ledger: {exc}", file=sys.stderr)
         return 2
 
-    base = ROOT / "content" / "games" / game / "tutorial" / "anim" / "v2"
     try:
-        track = schema.resolve_track(load(base / f"{a.track}.anim.json"))
-        compiled = load(base / f"{a.track}.compiled.json")
-    except (OSError, json.JSONDecodeError) as exc:
-        print(f"ERR  input: {base / (a.track + '.anim.json')}: {exc}", file=sys.stderr)
+        anim_doc, _, source_root, _, _ = section_source.load_track_docs(
+            game, a.track, allow_legacy=True, warn=True
+        )
+        track = schema.resolve_track(anim_doc)
+        compiled = load(section_source.compiled_path(game, a.track))
+    except (OSError, json.JSONDecodeError, ValueError, FileNotFoundError) as exc:
+        print(f"ERR  input: {game}/{a.track}: {exc}", file=sys.stderr)
         return 2
 
+    legacy_base = ROOT / "content" / "games" / game / "tutorial" / "anim" / "v2"
+    stage_roots = [source_root, legacy_base] if source_root else [legacy_base]
     stages = {}
     default_stage = None
     for t in track.get("trees") or []:
-        p = base / (t["stage"] if t["stage"].endswith(".json") else t["stage"] + ".json")
-        if p.exists():
-            stages[t["id"]] = load(p)
-            if t["id"] == track.get("default_tree") or default_stage is None:
-                default_stage = load(p)
+        try:
+            p = section_source.resolve_stage_path(t["stage"], *stage_roots)
+        except FileNotFoundError:
+            continue
+        stages[t["id"]] = load(p)
+        if t["id"] == track.get("default_tree") or default_stage is None:
+            default_stage = load(p)
     try:
         facts = load(ROOT / "content" / "games" / game / "card_facts.json")
     except FileNotFoundError:

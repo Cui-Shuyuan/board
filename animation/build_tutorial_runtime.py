@@ -29,6 +29,10 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 from validate_timed_script import parse_file  # noqa: E402
+try:
+    import section_source  # noqa: E402
+except Exception:  # pragma: no cover - runtime builder keeps working without it
+    section_source = None
 
 
 def build_group_paths(groups: list[str]) -> dict[str, list[str]]:
@@ -130,6 +134,23 @@ def build_runtime(game: str, track: str, force: bool = False) -> Path:
     manifest_by_id = {cue["id"]: cue for cue in manifest["cues"]}
     group_paths = build_group_paths(doc["groups"])
 
+    section_meta: list[dict[str, Any]] = []
+    source_cue_by_id: dict[str, dict[str, Any]] = {}
+    if section_source is not None and section_source.has_section_source(game, track):
+        try:
+            track_source = section_source.load_track_source(game, track)
+            section_meta = [
+                {k: v for k, v in sec.meta.items() if k not in ("cue_ids",)}
+                | {"order": sec.order, "cue_ids": [sec.local_to_qid[x] for x in sec.local_anim_ids]}
+                for sec in track_source.sections
+            ]
+            source_cue_by_id = {
+                c["id"]: c for c in track_source.script_doc.get("cues") or []
+                if isinstance(c, dict) and c.get("id")
+            }
+        except Exception as exc:  # noqa: BLE001 - runtime is derived; keep going
+            print(f"[runtime] section metadata unavailable: {exc}", file=sys.stderr)
+
     cues: list[dict[str, Any]] = []
     seen: set[str] = set()
     for cue in doc["cues"]:
@@ -155,7 +176,7 @@ def build_runtime(game: str, track: str, force: bool = False) -> Path:
             duration,
         )
 
-        cues.append({
+        runtime_cue: dict[str, Any] = {
             "id": cue_id,
             "group": cue["group"],
             "group_path": group_paths.get(cue["group"] or "", []),
@@ -166,7 +187,15 @@ def build_runtime(game: str, track: str, force: bool = False) -> Path:
             "refs": cue["refs"],
             "subtitles": subtitles,
             "animation": None,
-        })
+        }
+        src_cue = source_cue_by_id.get(cue_id)
+        if src_cue:
+            for key in ("section", "local_id", "section_index", "local_index", "cue_index"):
+                if src_cue.get(key) is not None:
+                    runtime_cue[key] = src_cue[key]
+            if src_cue.get("group_path") and not runtime_cue["group_path"]:
+                runtime_cue["group_path"] = list(src_cue["group_path"])
+        cues.append(runtime_cue)
 
     runtime = {
         "schema_version": 1,
@@ -177,6 +206,7 @@ def build_runtime(game: str, track: str, force: bool = False) -> Path:
         "format": manifest.get("format", "mp3"),
         "sample_rate": manifest.get("sample_rate", 24000),
         "generator": "animation/build_tutorial_runtime.py",
+        "sections": section_meta,
         "cues": cues,
     }
 

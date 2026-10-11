@@ -37,6 +37,7 @@ sys.path.insert(0, str(ROOT / "animation"))
 import anim_schema_v2 as schema  # noqa: E402
 import compile_animation_v2 as animation_compiler  # noqa: E402
 import lrc as lrc_utils  # noqa: E402
+import section_source  # noqa: E402
 import qa_anim_ask  # noqa: E402
 import validate_anim_rules_v2 as rule_ledger  # noqa: E402
 from build_tutorial_runtime import build_runtime  # noqa: E402
@@ -343,8 +344,12 @@ def write_tts_lrc(game_dir: Path, track: str, script: dict, manifest: dict) -> P
 
 
 def tts_asset_rel(game: str, track: str, cue_id: str, ext: str) -> str:
-    """Repository-relative manifest path for one generated TTS asset."""
-    return f"content/games/{game}/media/tts/{track}/{cue_id}{ext}"
+    """Repository-relative manifest path for one generated TTS asset.
+
+    Cue ids are qualified (``section/local``) in JSON, but generated files use
+    the stable slug (``section__local``).
+    """
+    return f"content/games/{game}/media/tts/{track}/{section_source.cue_id_to_slug(cue_id)}{ext}"
 
 
 def qa_questions_path(game: str) -> Path:
@@ -428,8 +433,9 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
     by_id = {c["id"]: c for c in manifest.get("cues") or []}
     for dm in delta_manifest.get("cues") or []:
         cid = dm["id"]
+        stem = section_source.cue_id_to_slug(cid)
         for ext in (".mp3", ".subtitle.json"):
-            src = media / f"{cid}{ext}"
+            src = media / f"{stem}{ext}"
             if src.exists():
                 shutil.copy2(src, full_media / src.name)
         by_id[cid] = {
@@ -457,8 +463,9 @@ def prune_removed(game_dir: Path, track: str, script: dict, manifest: dict, dry_
     else:
         full_media = game_dir / "media" / "tts" / track
         for cid in removed:
+            stem = section_source.cue_id_to_slug(cid)
             for ext in (".mp3", ".subtitle.json"):
-                p = full_media / f"{cid}{ext}"
+                p = full_media / f"{stem}{ext}"
                 if p.exists():
                     p.unlink()
         manifest["cues"] = [c for c in manifest.get("cues") or [] if c["id"] in keep]
@@ -502,27 +509,36 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
         str(cue.get("id")) for cue in (qa_doc or {}).get("cues") or []
         if isinstance(cue, dict) and cue.get("id") and cue.get("qa_exempt") is True
     }
-    qa_path = qa_questions_path(game)
     external_asks: list[dict] = []
-    if qa_path.exists():
+    if section_source.has_section_source(game, track):
         try:
-            spec = load_json(qa_path)
-        except (OSError, json.JSONDecodeError) as exc:
-            print(f"[qa] cannot read questions file: {qa_path}: {exc}", file=sys.stderr)
+            section_spec = qa_anim_ask.load_section_asks(game, track)
+        except FileNotFoundError as exc:
+            print(f"[qa] cannot load section QA: {exc}", file=sys.stderr)
             return 2
-        invalid = invalid_external_qa_cues(spec, valid_cue_ids)
-        if invalid:
-            unique = ", ".join(sorted(set(invalid)))
-            print(f"[qa] stale external cue id(s) in {_qa_source_label(qa_path)}: {unique}",
-                  file=sys.stderr)
-            return 1
-        external_asks = external_qa_asks(spec, _qa_source_label(qa_path))
+        merged = list(section_spec.get("asks") or [])
+        anim_label = f"content/games/{game}/tutorial/tracks/{track}.track.json"
     else:
-        print(f"[qa] external questions not found; using cue qa fields only: "
-              f"{_qa_source_label(qa_path)}", file=sys.stderr)
+        qa_path = qa_questions_path(game)
+        if qa_path.exists():
+            try:
+                spec = load_json(qa_path)
+            except (OSError, json.JSONDecodeError) as exc:
+                print(f"[qa] cannot read questions file: {qa_path}: {exc}", file=sys.stderr)
+                return 2
+            invalid = invalid_external_qa_cues(spec, valid_cue_ids)
+            if invalid:
+                unique = ", ".join(sorted(set(invalid)))
+                print(f"[qa] stale external cue id(s) in {_qa_source_label(qa_path)}: {unique}",
+                      file=sys.stderr)
+                return 1
+            external_asks = external_qa_asks(spec, _qa_source_label(qa_path))
+        else:
+            print(f"[qa] external questions not found; using cue qa fields only: "
+                  f"{_qa_source_label(qa_path)}", file=sys.stderr)
 
-    anim_label = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
-    merged = merge_qa_asks(cue_qa_asks(qa_doc, anim_label), external_asks)
+        anim_label = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
+        merged = merge_qa_asks(cue_qa_asks(qa_doc, anim_label), external_asks)
 
     if ids is None:
         selected = merged
@@ -533,8 +549,10 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
         missing = [cid for cid in ids
                    if cid not in available and str(cid) not in exempt_ids]
         if missing:
+            source_hint = anim_label if section_source.has_section_source(game, track) else (
+                _qa_source_label(qa_questions_path(game)))
             print(f"[qa] missing required QA for cue(s): {', '.join(missing)} "
-                  f"(hand-written sources: cue.qa + {_qa_source_label(qa_path)})",
+                  f"(hand-written sources: cue.qa + {source_hint})",
                   file=sys.stderr)
             return 1
         exempt_without_question = [cid for cid in ids
@@ -572,17 +590,21 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
         tmp.unlink(missing_ok=True)
 
 def games_with_track(track: str) -> list[str]:
-    """Return games that have the complete source/generated set for a track."""
+    """Return games that have a complete authored track source for ``track``."""
     games = ROOT / "content" / "games"
     found = []
     for game_dir in sorted(games.iterdir() if games.exists() else []):
         if not game_dir.is_dir():
             continue
+        game = game_dir.name
+        if section_source.has_section_source(game, track):
+            found.append(game)
+            continue
         has_script = (game_dir / "tutorial" / f"script.{track}.json").exists()
         has_anim = (game_dir / "tutorial" / "anim" / "v2" / f"{track}.anim.json").exists()
         has_manifest = (game_dir / "media" / "tts" / track / "tts_manifest.json").exists()
         if has_script and has_anim and has_manifest:
-            found.append(game_dir.name)
+            found.append(game)
     return sorted(found)
 
 
@@ -619,24 +641,24 @@ def main() -> int:
         return 2
 
     try:
-        from section_source import assemble_track
-        assemble_track(args.game, args.track)
+        anim_doc, script, source_root, source_hash, source_is_section = section_source.load_track_docs(
+            args.game, args.track, allow_legacy=True, warn=True
+        )
     except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
-        print(f"assemble failed for {args.game}/{args.track}: {exc}", file=sys.stderr)
+        print(f"source load failed for {args.game}/{args.track}: {exc}", file=sys.stderr)
+        return 2
+    if not script.get("cues"):
+        print(f"missing narration script for {args.game}/{args.track}", file=sys.stderr)
         return 2
 
     game_dir = ROOT / "content" / "games" / args.game
     tutorial = game_dir / "tutorial"
-    script_path = tutorial / f"script.{args.track}.json"
-    anim_path = tutorial / "anim" / "v2" / f"{args.track}.anim.json"
     manifest_path = game_dir / "media" / "tts" / args.track / "tts_manifest.json"
     tts_lrc_path = tutorial / f"{args.track}.tts.lrc"
-    if not script_path.exists() or not anim_path.exists() or not manifest_path.exists():
-        print(f"missing source: {script_path} / {anim_path} / {manifest_path}", file=sys.stderr)
+    if not manifest_path.exists():
+        print(f"missing TTS manifest: {manifest_path}", file=sys.stderr)
         return 2
 
-    script = load_json(script_path)
-    anim_doc = load_json(anim_path)
     manifest = normalize_manifest_paths(load_json(manifest_path))
     tts_text = read_current_tts_text(tts_lrc_path)
     manifest_by = {c["id"]: c for c in manifest.get("cues") or []}

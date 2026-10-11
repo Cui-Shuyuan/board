@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'animation'))
 import anim_schema_v2 as schema  # noqa: E402
+import section_source  # noqa: E402
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 
@@ -95,19 +96,34 @@ def main():
     ap.add_argument('--source')
     ap.add_argument('--sample')
     a=ap.parse_args()
-    src=Path(a.source) if a.source else ROOT/'content'/'games'/a.game/'tutorial'/'anim'/'v2'/f'{a.track}.anim.json'
-    smp=Path(a.sample) if a.sample else src.with_name(f'{a.track}.v2sample.json')
-    if not src.exists() or not smp.exists():
-        print(f'missing source or sample: {src} / {smp}',file=sys.stderr); return 2
-    track=schema.resolve_track(load(src)); sdoc=load(smp)
-    compiled_path=src.with_name(src.name.replace('.anim.json','.compiled.json'))
+    if a.source:
+        src=Path(a.source)
+        if not src.exists():
+            print(f'missing source: {src}',file=sys.stderr); return 2
+        anim_doc=load(src)
+        compiled_path=src.with_name(src.name.replace('.anim.json','.compiled.json'))
+        src_name=src.name
+    else:
+        try:
+            anim_doc, _, _, _, _ = section_source.load_track_docs(
+                a.game, a.track, allow_legacy=True, warn=True
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f'missing source for {a.game}/{a.track}: {exc}',file=sys.stderr); return 2
+        compiled_path=section_source.compiled_path(a.game, a.track)
+        src_name=f'{a.track}.anim.json'
+    sample_root=ROOT/'content'/'games'/a.game/'tutorial'/'anim'/'v2'
+    smp=Path(a.sample) if a.sample else sample_root/f'{a.track}.v2sample.json'
+    if not smp.exists():
+        print(f'missing sample: {smp}',file=sys.stderr); return 2
+    track=schema.resolve_track(anim_doc); sdoc=load(smp)
     compiled=load(compiled_path) if compiled_path.exists() else {'cues':[]}
     sample={c['cue']:c for c in sdoc.get('cues') or []}
     errors=reconcile_sample(track, compiled, sdoc)
     for e in errors: print('ERR  '+e)
     if errors:
-        print(f'FAIL {src.name}: {len(errors)} sample mismatches',file=sys.stderr); return 1
-    print(f'OK   {src.name}: {len(sample)} sampled cues match exit contracts')
+        print(f'FAIL {src_name}: {len(errors)} sample mismatches',file=sys.stderr); return 1
+    print(f'OK   {src_name}: {len(sample)} sampled cues match exit contracts')
     return 0
 
 if __name__=='__main__':

@@ -155,6 +155,17 @@ def provider_subtitle_mode(provider: str) -> str:
     return "seed2-v3-events" if provider == PROVIDER_SEED2 else "unavailable-standard-v1"
 
 
+def cue_id_to_slug(cue_id: str) -> str:
+    try:
+        from section_source import cue_id_to_slug as _slug
+    except ImportError:  # direct script in unusual cwd
+        import sys as _sys
+        from pathlib import Path as _Path
+        _sys.path.insert(0, str(_Path(__file__).resolve().parent))
+        from section_source import cue_id_to_slug as _slug
+    return _slug(cue_id)
+
+
 def normalize_cue_refs(refs: list[str]) -> str:
     return "".join(f"[ref:{ref}]" for ref in refs)
 
@@ -317,8 +328,9 @@ async def _synthesize_all_seed2(cues: list[dict[str, Any]], args: argparse.Names
         await wait_for_event(websocket, MsgType.FullServerResponse, EventType.ConnectionStarted)
 
         for cue in cues:
-            audio_path = out_dir / f"{cue['id']}.{args.format}"
-            subtitle_path = out_dir / f"{cue['id']}.subtitle.json"
+            stem = cue_id_to_slug(cue["id"])
+            audio_path = out_dir / f"{stem}.{args.format}"
+            subtitle_path = out_dir / f"{stem}.subtitle.json"
 
             if audio_path.exists() and not args.overwrite and not args.force:
                 duration = audio_duration(audio_path, args.format, args.sample_rate)
@@ -466,7 +478,7 @@ async def synthesize_once(
 
 
 def prune_stale(out_dir: Path, cues: list[dict[str, Any]], audio_format: str) -> None:
-    expected = {cue["id"] for cue in cues}
+    expected = {cue_id_to_slug(cue["id"]) for cue in cues}
     removed = 0
     for path in out_dir.iterdir():
         if not path.is_file():

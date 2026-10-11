@@ -733,10 +733,26 @@ class EventContext:
 # ── compiler ────────────────────────────────────────────────────────────────
 
 class Compiler:
-    def __init__(self, track_path: Path):
-        self.track_path = track_path
-        self.track_dir = track_path.parent
-        self.doc = schema.resolve_track(json.loads(track_path.read_text(encoding="utf-8")))
+    def __init__(self, track_path: Path, doc: dict | None = None, *,
+                 source_root: Path | None = None, source_hash: str | None = None):
+        self.track_path = Path(track_path)
+        if source_root is not None:
+            self.track_dir = Path(source_root)
+        else:
+            self.track_dir = self.track_path.parent
+        raw_doc = copy.deepcopy(doc) if doc is not None else json.loads(
+            self.track_path.read_text(encoding="utf-8")
+        )
+        self.doc = schema.resolve_track(raw_doc)
+        if source_hash is not None:
+            self.source_hash = str(source_hash)
+        else:
+            try:
+                self.source_hash = hashlib.sha256(self.track_path.read_bytes()).hexdigest()
+            except OSError:
+                self.source_hash = hashlib.sha256(
+                    json.dumps(raw_doc, ensure_ascii=False, sort_keys=True).encode("utf-8")
+                ).hexdigest()
         self.annotation_style = self.doc.get("annotation_style")
         if not isinstance(self.annotation_style, dict):
             self.annotation_style = {}
@@ -1231,14 +1247,20 @@ class Compiler:
                 "clips": result.pop("clips"),
                 "pointer_resolution": result.pop("pointer_resolution"),
             }
+            for key in ("section", "local_id", "section_index", "local_index", "cue_index"):
+                if cue.get(key) is not None:
+                    ordered[key] = copy.deepcopy(cue.get(key))
             cues_out.append(ordered)
 
-        src_bytes = self.track_path.read_bytes()
         return {
             "schema": schema.COMPILED_TRACK_SCHEMA,
-            "source_sha256": hashlib.sha256(src_bytes).hexdigest(),
+            "source_sha256": self.source_hash,
+            "source_kind": "section-first" if (self.doc.get("sections") or any(
+                c.get("local_id") for c in cues_out
+            )) else "monolithic",
             "game": self.doc.get("game"),
             "track": self.doc.get("track"),
+            "sections": copy.deepcopy(self.doc.get("sections") or []),
             "trees": list(self.trees.values()),
             "stages": list(self.compiled_stages.values()),
             "zone_bindings": self.zone_bindings,
@@ -2919,20 +2941,49 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--stdout", action="store_true")
     a = ap.parse_args(argv)
 
-    if not a.source:
-        try:
-            from section_source import assemble_track
-            assemble_track(a.game, a.track)
-        except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
-            print(f"assemble failed for {a.game}/{a.track}: {exc}", file=sys.stderr)
-            return 2
+    from section_source import (  # noqa: PLC0415 - CLI import keeps module import cheap
+        build_anim_path,
+        compiled_path,
+        has_section_source,
+        load_track_docs,
+    )
 
-    src = source_path(a.game, a.track, a.source)
-    if not src.exists():
-        print(f"source not found: {src}", file=sys.stderr)
-        return 2
+    source_hash: str | None = None
+    source_root: Path | None = None
+    build_source: Path | None = None
+    section_source_obj = None
+    if a.source:
+        src = Path(a.source)
+        if not src.is_file():
+            print(f"source not found: {src}", file=sys.stderr)
+            return 2
+        doc = None
+        out = output_path(src)
+        source_root = src.parent
+    elif has_section_source(a.game, a.track):
+        from section_source import load_track_source  # noqa: PLC0415
+        try:
+            section_source_obj = load_track_source(a.game, a.track)
+        except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
+            print(f"section source failed for {a.game}/{a.track}: {exc}", file=sys.stderr)
+            return 2
+        doc = section_source_obj.anim_doc
+        out = compiled_path(a.game, a.track)
+        source_root = section_source_obj.tutorial
+        source_hash = section_source_obj.source_hash
+        build_source = build_anim_path(a.game, a.track)
+        src = build_source
+    else:
+        try:
+            doc, _, source_root, source_hash, _ = load_track_docs(a.game, a.track, allow_legacy=True, warn=True)
+        except Exception as exc:  # noqa: BLE001
+            print(f"source not found for {a.game}/{a.track}: {exc}", file=sys.stderr)
+            return 2
+        out = output_path(legacy_source_dummy := source_path(a.game, a.track))
+        src = legacy_source_dummy
+
     try:
-        c = Compiler(src)
+        c = Compiler(src, doc=doc, source_root=source_root, source_hash=source_hash)
         compiled = c.compile()
     except Exception as e:
         print(f"COMPILE FAIL {src}: {e}", file=sys.stderr)
@@ -2942,7 +2993,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"WARN {src}: {warning}", file=sys.stderr)
 
     text = json_canonical(compiled)
-    out = output_path(src)
     if a.stdout:
         print(text, end="")
         return 0
@@ -2956,7 +3006,11 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"OK   {out} is up to date")
         return 0
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text, encoding="utf-8")
+    if section_source_obj is not None:
+        anim_path, script_path = section_source_obj.write_build()
+        print(f"[build] {anim_path} / {script_path}")
     print(f"OK   {src} -> {out} ({len(compiled['cues'])} cues, {len(compiled['stages'])} stages)")
     return 0
 

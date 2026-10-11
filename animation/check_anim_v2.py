@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "animation"))
 import anim_schema_v2 as schema  # noqa: E402
 import anim_geometry_v2 as geom  # noqa: E402
+import section_source  # noqa: E402
 from compiled_state import apply_state_ops  # noqa: E402
 
 
@@ -338,18 +339,38 @@ def main() -> int:
     ap.add_argument("--track", default="_schema_example")
     ap.add_argument("--source")
     a = ap.parse_args()
-    src = Path(a.source) if a.source else ROOT / "content" / "games" / a.game / "tutorial" / "anim" / "v2" / f"{a.track}.anim.json"
-    out = src.with_name(src.name.replace(".anim.json", ".compiled.json"))
-    if not src.exists() or not out.exists():
-        print(f"missing {src} or {out}", file=sys.stderr)
+    if a.source:
+        src = Path(a.source)
+        if not src.exists():
+            print(f"missing {src}", file=sys.stderr)
+            return 2
+        track = schema.resolve_track(load(src))
+        out = src.with_name(src.name.replace(".anim.json", ".compiled.json"))
+    else:
+        try:
+            anim_doc, _, source_root, _, _ = section_source.load_track_docs(
+                a.game, a.track, allow_legacy=True, warn=True
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f"missing source for {a.game}/{a.track}: {exc}", file=sys.stderr)
+            return 2
+        src = Path(a.source) if a.source else (
+            section_source.legacy_anim_path(a.game, a.track)
+            if not section_source.has_section_source(a.game, a.track)
+            else section_source.build_anim_path(a.game, a.track)
+        )
+        track = schema.resolve_track(anim_doc)
+        out = section_source.compiled_path(a.game, a.track)
+    if not out.exists():
+        print(f"missing compiled {out}", file=sys.stderr)
         return 2
 
-    track = schema.resolve_track(load(src))
     compiled = load(out)
     schema_rep = schema.validate_track(track)
     errors = []
     warnings = list(schema_rep.warnings)
-    check_stage_layouts(warnings, track, compiled, src)
+    stage_check_path = src if a.source else (section_source.build_anim_path(a.game, a.track) if section_source.has_section_source(a.game, a.track) else src)
+    check_stage_layouts(warnings, track, compiled, stage_check_path)
     for e in schema_rep.errors:
         errors.append("schema: " + e)
 
