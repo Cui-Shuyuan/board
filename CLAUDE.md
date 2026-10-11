@@ -31,8 +31,8 @@
 - `backend/BoardAI.Api/` — .NET 9 Runtime 服务
 - `clients/android/` — UaaL 原生 Android 壳 + Compose 控制层
 - `clients/unity/` — Unity 6 客户端 / Unity as a Library 导出侧
-- `content/games/splendor/tutorial/anim/v2/full.anim.json` — 当前动画源
-- `content/games/splendor/tutorial/anim/v2/full.compiled.json` — Unity 实际读取的编译产物
+- `content/games/splendor/tutorial/tracks/full.track.json` + `sections/` + `shared/` — 当前动画源真值（section-first）
+- `content/games/splendor/tutorial/anim/v2/{full,quick}.compiled.json` — Unity 实际读取的编译产物
 - `.claude/archive/` — 历史日志、旧版长文档、聊天记录，默认不读
 
 ## 工作约定

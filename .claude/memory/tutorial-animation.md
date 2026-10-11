@@ -1,6 +1,6 @@
 ---
 name: tutorial-animation
-description: 讲规动画 v3 当前模型、文件结构、生产流程与状态（2026-10-07）
+description: 讲规动画 v3 当前模型、section-first 文件结构、生产流程与状态（2026-10-12）
 metadata:
   type: project
 ---
@@ -12,11 +12,11 @@ metadata:
 讲规动画是离线编译的静态数字资产，播放端只做确定性播放，不实时调用 LLM。口播稿是主，动画是次；TTS 冻结后，音频时长是动画硬边界。
 
 现状：
-- 试点为《璀璨宝石》full 版，当前 69 cue（cue id 已语义化；旧文档的数字编号只作历史对照），342 个 time anchors。
+- 试点为《璀璨宝石》：full 67 cue / 338 anchors，quick 19 cue / 76 anchors；两轨均已迁移为 section-first 源并以 qualified cue id 编译通过。
 - full TTS、runtime、compiled、Unity 播放器、编译/校验/采样对账链路已跑通。
-- `time_anchors` 已迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。
-- QA 与 cue 同置流程已落地：问题优先/可写在 `full.anim.json` 的 `qa` 字段，历史问题继续放 `_qa/questions.json`；`qa_anim_ask.py` 可直接提取 cue 内问题，`compile_tutorial.py --validate-qa` / `--validate-qa-all` 当前从 `_qa/questions.json` 提供机器侧门禁。
-- quick 版尚未开始；正式视觉验收被用户主动跳过，仍未闭环。
+- `time_anchors` 已迁移并 commit（`38971d4`）；section 源保留 anchor，compiled 输出数值 `at`。
+- QA 与 section/cue 同置流程已落地：问题可写在该 cue 的 `qa` 字段，历史外置问题迁到 `sections/<section_id>/qa.json`；`qa_anim_ask.py` 可直接合并提取，`compile_tutorial.py --validate-qa` / `--validate-qa-all` 使用 section-aware QA。
+- quick 版已完成 section-first 迁移、编译和静态检查；正式视觉验收仍未闭环。
 - **2026-10-01：展示树收成 main + screen mask。** full 当前只有 `main` 一棵 tree；
   发展卡/宝石/购买样卡等非实体展示改为屏幕空间 `show/hide` 对象，
   贵族和起始玩家标记保留真实组件，在 main 树用近景 shot 介绍。
@@ -24,6 +24,24 @@ metadata:
   `target`，由 `{"space":"entity"|"screen", ...}` 选择接收者；
   编译器把接口展开成 flat 字段，Unity 运行时用 `IAnimVisualObject`
   同时处理实体和屏幕对象。屏幕对象也支持 highlight/point/fade/scale。
+
+## Section-first 源模型（2026-10-12 重构后）
+
+动画作者层以 section 为单位，track 只负责有序引用 section：
+
+- 源真值：`content/games/splendor/tutorial/`
+  - `shared/stage/`：跨 section 共享舞台、zone、模板、机位；
+  - `shared/{track}.base.anim.json`：track 公共元信息；
+  - `sections/<section_id>/section.json`：主题元信息与 section 默认 `entry`；
+  - `sections/<section_id>/{track}.anim.json`：该 section 的 cue/events/camera/anchors；
+  - `sections/<section_id>/{track}.script.json`：该 section 的口播；
+  - `sections/<section_id>/qa.json`：该 section 的手写 QA（可空）；
+  - `tracks/<track>.track.json`：section 顺序与 track 元信息。
+- `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，也不是源真值。
+- cue 在 section 文件里写 local id；解析后统一变为 qualified id：`<section_id>/<local_id>`。跨 section 引用必须写 qualified id。
+- `entry: "section:<id>"` 回到该 section 起点；section 第一条 cue 无显式 entry/parent 时继承 section.entry；section 内后续 cue 默认继承前一条；显式 entry/parent 优先。
+- 音频、runtime、QA、compiled 中持久化的 cue id 一律使用 qualified id；带 `/` 的文件名使用稳定 slug（`section__cue`）。
+- full/quick 文本与动作差异较大时拆成独立 section，不强行共用。
 
 ## 技术选型
 
@@ -76,7 +94,7 @@ metadata:
 ## 时间锚点 `time_anchors`
 
 - 轨道顶层声明时间坐标；事件写 `anchor`，必要时加 `offset`；编译产物仍写数值 `at`。
-- 当前 full 轨道 342 个锚点，覆盖 cue 和 beat 的 start/end。
+- 当前 full 轨道 338 个锚点、quick 轨道 76 个锚点，覆盖 cue 和 beat 的 start/end。
 - 锚点命名：`<cue_id>.start`、`<cue_id>.end`、`<beat_id>.start`、`<beat_id>.end`。
 - 解析来源：`script.{track}.json` 的 beats + `{track}.runtime.json` 的 TTS 字级 timing。
 - 迁移与提交状态：`38971d4` 已把 `time_anchors` 全量迁移并 commit；`full.runtime.json` / `full.compiled.json` 输出数值 `at`，源数据保留 anchor。
@@ -101,12 +119,15 @@ metadata:
 
 ### 源数据
 
-- `content/games/splendor/tutorial/script.full.json`：口播文本、分组、refs。
-- `content/games/splendor/card_registry.json`：发展卡真卡身份表；一张真卡一个 stage 模板，禁止再用 `market_card_{lv}_{bonus}` 代表多张。
-- `content/games/splendor/tutorial/anim/v2/full.anim.json`：动画事件、camera、parent/entry、tree、契约、可选的 `qa` 字段。
-- `content/games/splendor/tutorial/anim/v2/_stage/*.stage.json`：各树舞台、zone、模板、命名机位。
+- `content/games/splendor/tutorial/tracks/{full,quick}.track.json`：track section 顺序与元信息。
+- `content/games/splendor/tutorial/sections/<section_id>/section.json`：section 元信息、默认 entry、tree。
+- `content/games/splendor/tutorial/sections/<section_id>/{track}.anim.json`：动画事件、camera、parent/entry、tree、契约、可选的 `qa` 字段。
+- `content/games/splendor/tutorial/sections/<section_id>/{track}.script.json`：口播文本、分组与 refs。
+- `content/games/splendor/tutorial/sections/<section_id>/qa.json`：section 外置手写合法性问句（可空）。
+- `content/games/splendor/tutorial/shared/{track}.base.anim.json`：track 公共 schema / worlds / trees。
+- `content/games/splendor/tutorial/shared/stage/*.stage.json`：跨 section 舞台、zone、模板、命名机位。
+- `content/games/splendor/card_registry.json`：发展卡真卡身份表；一张真卡一个 stage 模板。
 - `content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`：LLM 写作规范。
-- `content/games/splendor/tutorial/anim/_qa/questions.json`：历史手写合法性问句。
 - `content/games/splendor/tutorial/anim/_qa/ask_log_*`：问答留档。
 
 ### 编译/运行产物
@@ -125,15 +146,15 @@ metadata:
 
 ### 标准顺序
 
-1. 改文字脚本：`script.full.json`。
+1. 改文字脚本：`sections/<section_id>/full.script.json`。
 2. **手写这一 cue 的合法性问答，问运行中的 Board API**：
-   - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），优先手写进该 cue 的 `qa` 字段；历史遗留问题继续保留在 `_qa/questions.json`；
-   - 用 `python3 animation/qa_anim_ask.py --in content/games/splendor/tutorial/anim/v2/full.anim.json --only <cue>` 自动发送并留档；
+   - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），优先手写进该 cue 的 `qa` 字段；外置历史问题放 `sections/<section_id>/qa.json`；
+   - 用 `python3 animation/qa_anim_ask.py --game splendor --track full --only <qualified_cue>` 自动发送并留档；
    - 回答必须是「允许/合法」；不是就停下改脚本或改数据；
    - **问题必须由 AI/人根据改动点手写**，不能靠脚本生成器/模板批量造问题；
    - **cue 改一次，qa 必须跟着改一次**。只改 events/state 不改问题 = 未完成，不允许提交。
    - 纯介绍/纯展示、不涉及规则断言的 cue 可显式写 `qa_exempt: true`，门禁只跳过该 cue 的“必须提供手写问题”要求；默认 false，且不会继承给后续 cue。只有确认它不承担规则校验职责时才使用。
-3. 改动画树/契约/events：`full.anim.json`。
+3. 改动画树/契约/events：`sections/<section_id>/full.anim.json` 与 `shared/stage/`。
 4. 编译与检查（可用 `--validate-qa` / `--validate-qa-all` 做机器侧补充）。
 5. Unity 采样对账。
 6. 截图做视觉验收。
@@ -148,7 +169,7 @@ metadata:
 - **qa 与 cue 同步更新是硬约束。** 旧问题问新动作会直接失去校验意义；只要 event/state/contract 变了，就必须重新审视并改写问题。
 - 例外：纯介绍/纯展示片段可显式声明 `qa_exempt: true`，门禁跳过其必需问题校验；该标记是 cue 局部字段，不会自动继承。
 - 问法遵守一 cue 一事、只带最小必要状态、不用教程自造词；规则自动发生的事就说成自动。
-- 问题可/优先作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；`animation/qa_anim_ask.py` 可从 `full.anim.json` 自动提取、发送、留档 `ask_log_<tag>.md/.jsonl`。历史问题仍在 `_qa/questions.json`，`compile_tutorial.py --validate-qa` 当前从该文件选中受影响 cue 做门禁，`--validate-qa-all` 跑全部手写 QA。
+- 问题可/优先作为 cue 数据的一部分写在该 cue 的 `qa` 字段里；外置问题放对应 section 的 `qa.json`。`animation/qa_anim_ask.py` 会合并二者并留档 `ask_log_<tag>.md/.jsonl`。`compile_tutorial.py --validate-qa` / `--validate-qa-all` 使用合并后的 section-aware QA。
 
 ### 总控命令
 
@@ -166,7 +187,7 @@ python3 animation/compile_tutorial.py --game splendor --track full --validate-qa
 ### 检查命令
 
 ```bash
-python3 animation/anim_schema_v2.py content/games/splendor/tutorial/anim/v2/full.anim.json
+python3 animation/section_source.py --game splendor --track full --check
 python3 animation/compile_animation_v2.py --game splendor --track full
 python3 animation/compile_animation_v2.py --game splendor --track full --check
 python3 animation/check_anim_v2.py --game splendor --track full
@@ -214,7 +235,7 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 ## 工作方式（不要走回头路）
 
 - 动画脚本是**手写的静态资产**，story / note / tree / 契约 / events / camera 全由人或 LLM 写入源 JSON；程序只做体检、过账、编译、对账、取景链检查。
-- **动画问题归因脚本。** 画面里出现的任何视觉元素都必须能追溯到源 JSON 里的显式事件/原语；改动画默认只改 `full.anim.json` / stage 等源数据后重编译 `full.compiled.json`，不要为单条 cue 在 Unity C# 里加特判。C# 只负责解释通用原语；如果确认是通用原语实现缺口/缺陷，作为基础设施问题单独修，再回到脚本层完成动画修改。
+- **动画问题归因脚本。** 画面里出现的任何视觉元素都必须能追溯到源 JSON 里的显式事件/原语；改动画默认只改 `sections/<id>/{track}.anim.json` / `shared/stage/` 等源数据后重编译 compiled，不要为单条 cue 在 Unity C# 里加特判。C# 只负责解释通用原语；如果确认是通用原语实现缺口/缺陷，作为基础设施问题单独修，再回到脚本层完成动画修改。
 - 合法性问句手写：一 cue 一事、只带最小状态；不要使用机器拼接的问句。
 - `camera` 写“要入镜的 zone”（逗号分隔）；`camera_fill` 是这些 zone 占画面中央的比例，默认 0.8，特写 0.6–0.72；镜头继承状态来源 cue 的 `camera_out`，没有可用来源时用当前 resolved stage 的默认机位。
 - 用户验收节奏：AI 写 → 用户看 → AI 改 → 改完即成为固定资产，只用于确定性播放。
@@ -223,12 +244,12 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 
 ## 当前遗留
 
-- **下一步（最高优先）：Splendor full 重新过动画。** 发展卡扫描件/真卡模板已补齐，`check_card_identity_v2.py` 555 个中间状态 0 error；现在需要从头到尾重新看一遍 69 cue，重点看 `action.cards.*` / `action.nobles.*` / `action.reserve.*` 等市场与发展区 cue 的真卡画面、`setup.gems.005.1` 的宝石数量复位、终局示例的双发展区与贵族表现，以及旧审查记录中的观感问题。
+- **下一步（最高优先）：Splendor full 重新过动画。** 发展卡扫描件/真卡模板已补齐，`check_card_identity_v2.py` 553 个中间状态 0 error；现在需要从头到尾重新看一遍 67 cue，重点看 `action.cards.*` / `action.nobles.*` / `action.reserve.*` 等市场与发展区 cue 的真卡画面、`setup.gems.005.1` 的宝石数量复位、终局示例的双发展区与贵族表现，以及旧审查记录中的观感问题。
 - TTS 增量尚未真实跑过一次（改一条 cue 文本，验证只生成该 cue 的 mp3/subtitle，其他 cue 不动）。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 尚未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。
-- Quick 版尚未开始；正式视觉验收未闭环。
-- 以下为 2026-09-23 旧审查记录，待 69 cue 重审时重新确认；当前 `check_anim_v2.py` 已是 69 cues / 0 warnings，旧记录的 2 条 stage 布局重叠 warning 不再出现：
+- Quick 版 section-first 源已完成；正式视觉验收未闭环。
+- 以下为 2026-09-23 旧审查记录，待 67 cue 重审时重新确认；当前 `check_anim_v2.py` 已是 67 cues / 0 warnings，旧记录的 2 条 stage 布局重叠 warning 不再出现：
   - 第二批取景待手写：买牌进发展区、发展区+贵族结算、拿三色宝石、市场一格。
   - `action.nobles.forced.001.1` 仍有“贵族特写 → 整桌 → 又回贵族特写”的跳切。
   - 两处原语缺口：错误示范的撤销/临时状态层；4 人局例子只有 A/B 玩家区。

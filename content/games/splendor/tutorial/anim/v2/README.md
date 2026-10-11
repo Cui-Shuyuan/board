@@ -145,7 +145,7 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 - 删除/合并时把 children 重接到新的 state owner。
 
 它**不替写** story/note、TTS 音频和 runtime；这些属于单独的口播层。结构改完后仍需按
-`script.full.json → TTS → runtime → full.anim.json → compiled` 的链路补齐对应资产。
+`sections/<id>/full.script.json → TTS → runtime → sections/<id>/full.anim.json → compiled` 的链路补齐对应资产。
 
 ## 素材路径约定
 
@@ -176,10 +176,11 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 
 ## 总控编译入口
 
-源数据只改两处：
+源数据只改 section-first 目录：
 
-- `content/games/splendor/tutorial/script.full.json`：口播文本/refs
-- `content/games/splendor/tutorial/anim/v2/full.anim.json`：动画事件/camera/parent/entry
+- `content/games/splendor/tutorial/tracks/full.track.json`：section 顺序
+- `content/games/splendor/tutorial/sections/<id>/full.script.json`：口播文本/refs
+- `content/games/splendor/tutorial/sections/<id>/full.anim.json`：动画事件/camera/parent/entry
 
 看效果前跑一次：
 
@@ -207,7 +208,7 @@ python3 animation/compile_tutorial.py --game splendor --track full --dry-run
 ## 命令
 
 ```bash
-python3 animation/anim_schema_v2.py content/games/splendor/tutorial/anim/v2/full.anim.json
+python3 animation/section_source.py --game splendor --track full --check
 python3 animation/compile_animation_v2.py --game splendor --track full
 python3 animation/compile_animation_v2.py --game splendor --track full --check
 python3 animation/check_anim_v2.py --game splendor --track full

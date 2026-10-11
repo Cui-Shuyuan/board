@@ -25,7 +25,7 @@
 - 当前规则数据：`content/ontology/`、`content/games/`
 - 当前游戏目录：`content/catalog/`
 - 当前内容 manifest：`content/manifests/`（生成物，不入 Git）
-- 当前动画数据：`content/games/splendor/tutorial/anim/v2/`
+- 当前动画源：`content/games/splendor/tutorial/{tracks,sections,shared}/`；compiled/runtime 在 `tutorial/anim/v2/` 与 `tutorial/*.runtime.json`
 - 当前检索基准：`tools/qa/retrieval_gold.jsonl`、`retrieval_regressions.jsonl`、`retrieval_questions.jsonl`；回答事实要求见 `rule_fact_regressions.jsonl`
 - 语音桥：`tools/voice/README.md`、`docs/ops/start-services.md`
 - 遇到文档与代码/数据冲突，以代码和 JSON 数据为准，并顺手更新本目录。

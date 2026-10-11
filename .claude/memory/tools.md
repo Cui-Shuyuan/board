@@ -181,18 +181,19 @@ python3 animation/compile_tutorial.py --game splendor --track full --validate-qa
 python3 animation/compile_tutorial.py --game splendor --track full --validate-qa-all
 ```
 
-`compile_tutorial.py` 负责增量 TTS / manifest / tts.lrc / runtime / compiled。`--validate-qa` 当前从 `_qa/questions.json` 选出受影响 cue 的手写问题做门禁，`--validate-qa-all` 跑全部手写 QA；`qa_anim_ask.py` 另可直接提取 cue 的 `qa` 字段。
+`compile_tutorial.py` 负责增量 TTS / manifest / tts.lrc / runtime / compiled；源真值是 `tracks/` + `sections/`。`--validate-qa` 选出受影响 qualified cue 的手写问题做门禁，`--validate-qa-all` 跑全部手写 QA；问题来自 cue 的 `qa` 字段与 `sections/<id>/qa.json`。
 
 ### 编译与检查
 
 ```bash
-python3 animation/anim_schema_v2.py content/games/splendor/tutorial/anim/v2/full.anim.json
+python3 animation/section_source.py --game splendor --track full --check
 python3 animation/compile_animation_v2.py --game splendor --track full
 python3 animation/compile_animation_v2.py --game splendor --track full --check
 python3 animation/check_anim_v2.py --game splendor --track full
 python3 animation/validate_anim_rules_v2.py --game splendor --track full
 python3 animation/audit_anim_v2.py --game splendor --track full
 python3 animation/check_card_identity_v2.py --game splendor --track full
+python3 animation/check_anim_v2_sample.py --game splendor --track full
 python3 -m unittest animation/test_audit_anim_v2.py
 python3 tools/ops/check_unity_scripts.py
 ```
@@ -201,7 +202,7 @@ python3 tools/ops/check_unity_scripts.py
 
 ### 时间锚点
 
-`time_anchors` 已迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。一次性迁移/重生成：
+`time_anchors` 已迁移并 commit（`38971d4`）；section 源保留 anchor，compiled 输出数值 `at`。一次性迁移/重生成：
 
 ```bash
 python3 animation/archive/migrate_time_anchors_v2.py  # 历史一次性脚本，不再需要运行
@@ -230,7 +231,7 @@ python3 animation/cue_graph_v2.py --help
 
 - `animation/tts_doubao.py`：provider-aware 豆包 TTS。默认 `standard`（标准语音合成小模型 v1）；`--provider seed2` 或 `DOUBAO_TTS_PROVIDER=seed2` 切回旧语音合成 2.0。
 - `standard` 输出 MP3，但当前实现没有字级 subtitle / 词级时间戳；`seed2` 路径有 subtitle 事件。
-- `content/games/splendor/media/tts/full/tts_manifest.json` 当前记录的 `voice=zh_female_vv_uranus_bigtts`、`resource_id=seed-tts-2.0`，也就是说这份已有 full 资产来自 seed2 路径；新生成的默认路径将是 standard。
+- `content/games/splendor/media/tts/full/tts_manifest.json` 记录 `voice=zh_female_vv_uranus_bigtts`、`resource_id=seed-tts-2.0`；文件名使用 qualified id 的 slug（`section__local.mp3/.subtitle.json`），manifest 内仍保存 qualified id。新生成的默认路径将是 standard。
 - `tools/voice/tts_once.py`：命令行/后端桥用的单次合成入口。
 - `animation/requirements-tts.txt`：TTS 依赖。
 - `animation/validate_timed_script.py`：LRC-like 口播脚本校验/解析。
