@@ -151,8 +151,9 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 
 素材统一放在一个公共池里，不按 section/cue 分目录，也不在文件名里拼
 `section__cue`：所有卡牌、宝石、盒子、TTS 音频和字幕都保留自己的原名，
-由引用它的 cue 显式指名。生成的 TTS 放 `media/tts/{track}/`，cue 的
-`tts_asset` 字段就是该音频的原始文件基名。
+由 section 统一生成。一个 section 一段连续 TTS，放 `media/tts/{track}/`；
+`section.json` 的 `tts_asset` 就是该音频的原始文件基名，section 内多条 cue
+共享同一 `audio`，通过 `audio_start` 在音频内切换画面。
 
 - stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`
   （裁到实物、alpha 成品、可选 mm 统一尺寸）。运行时按字面路径加载，
@@ -195,8 +196,8 @@ python3 animation/compile_tutorial.py --game splendor --track full
 
 它会：
 
-1. 对照当前 `full.tts.lrc` 文本，只找出真正变了的 cue；
-2. 只为这些 cue 做增量 TTS（生成 mp3 + subtitle）；
+1. 对照当前 `full.tts.lrc` 文本，只找出真正变了的 section；
+2. 只为这些 section 做连续增量 TTS（生成 mp3 + subtitle）；
 3. 更新 `tts_manifest.json` / `full.tts.lrc`；
 4. 重建 `full.runtime.json`；
 5. 编译 `full.compiled.json`；

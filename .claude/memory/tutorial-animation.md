@@ -182,7 +182,7 @@ python3 animation/compile_tutorial.py --game splendor --track full --validate-qa
 python3 animation/compile_tutorial.py --game splendor --track full --validate-qa-all
 ```
 
-`compile_tutorial.py` 负责：对照文本只挑变化 cue → 增量 TTS → 更新 manifest/tts.lrc → 重建 runtime → 编译 compiled。
+`compile_tutorial.py` 负责：对照 section 文本挑变化 → 每个变化 section 做一次连续 TTS → 更新 manifest/tts.lrc → 重建 runtime（cue 共享 section 音频）→ 编译 compiled。
 
 ### 检查命令
 
@@ -245,7 +245,7 @@ python3 animation/check_anim_v2_sample.py --game splendor --track full
 ## 当前遗留
 
 - **下一步（最高优先）：Splendor full 重新过动画。** 发展卡扫描件/真卡模板已补齐，`check_card_identity_v2.py` 553 个中间状态 0 error；现在需要从头到尾重新看一遍 67 cue，重点看 `action.cards.*` / `action.nobles.*` / `action.reserve.*` 等市场与发展区 cue 的真卡画面、`setup.gems.005.1` 的宝石数量复位、终局示例的双发展区与贵族表现，以及旧审查记录中的观感问题。
-- TTS 增量尚未真实跑过一次（改一条 cue 文本，验证只生成该 cue 的 mp3/subtitle，其他 cue 不动）。
+- TTS 已迁移为 section 级连续音频；后续可验证只改一个 section 文本时，只重生成该 section 的 mp3/subtitle。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 尚未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。
 - Quick 版 section-first 源已完成；正式视觉验收未闭环。

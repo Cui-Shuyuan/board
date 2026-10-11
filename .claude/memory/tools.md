@@ -181,7 +181,7 @@ python3 animation/compile_tutorial.py --game splendor --track full --validate-qa
 python3 animation/compile_tutorial.py --game splendor --track full --validate-qa-all
 ```
 
-`compile_tutorial.py` 负责增量 TTS / manifest / tts.lrc / runtime / compiled；源真值是 `tracks/` + `sections/`。`--validate-qa` 选出受影响 qualified cue 的手写问题做门禁，`--validate-qa-all` 跑全部手写 QA；问题来自 cue 的 `qa` 字段与 `sections/<id>/qa.json`。
+`compile_tutorial.py` 负责按 section 的连续 TTS / manifest / tts.lrc / runtime / compiled；源真值是 `tracks/` + `sections/`。`--validate-qa` 选出受影响 qualified cue 的手写问题做门禁，`--validate-qa-all` 跑全部手写 QA；问题来自 cue 的 `qa` 字段与 `sections/<id>/qa.json`。
 
 ### 编译与检查
 
@@ -236,7 +236,7 @@ python3 animation/cue_graph_v2.py --help
 - `animation/requirements-tts.txt`：TTS 依赖。
 - `animation/validate_timed_script.py`：LRC-like 口播脚本校验/解析。
 - `animation/split_lrc_long_cues.py`：过长 cue 拆分。
-- `animation/build_tutorial_runtime.py`：编译运行时 cue 数据。
+- `animation/build_tutorial_runtime.py`：编译运行时 cue 数据；section 模式由 `build_section_runtime.py` 把一段 section 音频展开成多条共享 `audio` + `audio_start` 的 cue。
 - `animation/tutorial_script_tool.py`：分层编辑源 split/merge/set-pause。
 - `animation/rebuild_tutorial.py`：source → LRC → TTS → runtime 一条命令。
 
