@@ -29,7 +29,7 @@ namespace BoardGameTutorial
                 && doc.sections != null
                 && doc.sections.Count > 0;
             if (!hasSection)
-                return $"section -/-  cue {currentIndex + 1}/{doc.cues.Count}";
+                return "section -/-  cue -/-";
 
             int sectionIndex = Mathf.Clamp(cue.section_index, 0, doc.sections.Count - 1);
             var section = doc.sections[sectionIndex];
@@ -43,7 +43,7 @@ namespace BoardGameTutorial
             }
             if (localIndex < 0 || localIndex >= sectionCueCount) localIndex = 0;
 
-            return $"section {sectionIndex + 1}/{doc.sections.Count}  cue {localIndex + 1}/{sectionCueCount}  (全局 {currentIndex + 1}/{doc.cues.Count})";
+            return $"section {sectionIndex + 1}/{doc.sections.Count}  cue {localIndex + 1}/{sectionCueCount}";
         }
 
         private int SectionCueCount(int sectionIndex, string sectionId)
