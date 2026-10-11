@@ -29,6 +29,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -122,19 +123,72 @@ def cue_has_qa_relevant_change(before: dict | None, after: dict | None) -> bool:
     return _canonical_json(qa_change_signature(before)) != _canonical_json(qa_change_signature(after))
 
 
-def load_baseline_track_doc(game: str, track: str) -> dict | None:
-    """Read the committed baseline anim JSON from HEAD (not mtime/whole-file diff)."""
-    rel = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
+def _git_show_bytes(rel: str) -> bytes | None:
     try:
         proc = subprocess.run(
             ["git", "-C", str(ROOT), "show", f"HEAD:{rel}"],
-            capture_output=True, text=True, check=True,
+            capture_output=True, check=True,
         )
     except (OSError, subprocess.CalledProcessError):
         return None
+    return proc.stdout
+
+
+def _load_section_baseline_from_head(game: str, track: str) -> dict | None:
+    """Resolve the section source as committed at HEAD, without touching the worktree."""
+    tutorial_rel = f"content/games/{game}/tutorial"
+    descriptor_rel = f"{tutorial_rel}/tracks/{track}.track.json"
     try:
-        doc = json.loads(proc.stdout)
-    except json.JSONDecodeError:
+        listed = subprocess.run(
+            ["git", "-C", str(ROOT), "ls-tree", "-r", "--name-only", "-z", "HEAD", "--", tutorial_rel],
+            capture_output=True, check=True,
+        ).stdout.decode("utf-8").split("\0")
+    except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
+        return None
+    files = [rel for rel in listed if rel]
+    if descriptor_rel not in files:
+        return None
+    with tempfile.TemporaryDirectory(prefix="boardai_section_baseline_") as tmp:
+        root = Path(tmp)
+        for rel in files:
+            base = rel[len(tutorial_rel) + 1:] if rel.startswith(tutorial_rel + "/") else rel
+            keep = (
+                base == f"tracks/{track}.track.json"
+                or base.startswith("shared/")
+                or base.startswith("sections/")
+            )
+            if not keep:
+                continue
+            data = _git_show_bytes(rel)
+            if data is None:
+                return None
+            target = root / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+        saved_root = section_source.ROOT
+        try:
+            section_source.ROOT = root  # type: ignore[attr-defined]
+            source = section_source.load_track_source(game, track)
+        except Exception:  # noqa: BLE001 - malformed historical snapshot means no QA baseline
+            return None
+        finally:
+            section_source.ROOT = saved_root  # type: ignore[attr-defined]
+        return source.anim_doc
+
+
+def load_baseline_track_doc(game: str, track: str) -> dict | None:
+    """Read the committed baseline animation doc from HEAD (not mtime/whole-file diff)."""
+    if section_source.has_section_source(game, track):
+        section_baseline = _load_section_baseline_from_head(game, track)
+        if section_baseline is not None:
+            return section_baseline
+    rel = f"content/games/{game}/tutorial/anim/v2/{track}.anim.json"
+    raw = _git_show_bytes(rel)
+    if raw is None:
+        return None
+    try:
+        doc = json.loads(raw)
+    except (json.JSONDecodeError, UnicodeDecodeError):
         return None
     return doc if isinstance(doc, dict) else None
 

@@ -19,9 +19,14 @@ while [ $# -gt 0 ]; do
 done
 if [ -z "$CUES" ]; then
   CUES=$(python3 -c "
-import json
-p='$ROOT/content/games/$GAME/tutorial/anim/v2/$TRACK.anim.json'
-d=json.load(open(p))
+import json, sys
+sys.path.insert(0, '$ROOT/animation')
+import section_source
+if section_source.has_section_source('$GAME', '$TRACK'):
+    d = section_source.load_track_source('$GAME', '$TRACK').anim_doc
+else:
+    p = '$ROOT/content/games/$GAME/tutorial/anim/v2/$TRACK.anim.json'
+    d = json.load(open(p))
 print(','.join(c['id'] for c in d['cues']))")
 fi
 WIN_COMPILED="D:\\workspace\\board\\content\\games\\$GAME\\tutorial\\anim\\v2\\$TRACK.compiled.json"
