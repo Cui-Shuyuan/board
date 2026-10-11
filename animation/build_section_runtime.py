@@ -222,6 +222,21 @@ def build_section_runtime(game: str, track: str, *, force: bool = False,
                     "text": text,
                     "words": _pseudo_words(text, cue_duration),
                 }]
+            else:
+                # A cue's subtitle must stay for at least the whole cue audio
+                # span.  TTS word timing often ends before trailing silence;
+                # without this the line disappears while the section audio is
+                # still playing and the next cue has not started yet.
+                subtitles[0]["t"] = 0.0
+                last = max(subtitles, key=lambda sub: float(sub.get("end", 0.0) or 0.0))
+                last["end"] = max(float(last.get("end", 0.0) or 0.0), round(cue_duration, 3))
+                for sub in subtitles:
+                    sub["t"] = max(0.0, float(sub.get("t", 0.0) or 0.0))
+                    sub["end"] = min(
+                        round(cue_duration, 3),
+                        max(float(sub.get("end", 0.0) or 0.0), float(sub.get("t", 0.0) or 0.0)),
+                    )
+                last["end"] = round(cue_duration, 3)
             group = source_cue.get("group") or sec.meta.get("title") or sec.id
             group_path = source_cue.get("group_path") or sec.meta.get("group_path") or [group]
             cues_out.append({

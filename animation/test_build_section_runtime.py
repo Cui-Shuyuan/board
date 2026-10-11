@@ -151,6 +151,8 @@ class SectionRuntimePipelineTests(unittest.TestCase):
             self.assertAlmostEqual(first["audio_start"], 0.0, places=3)
             self.assertGreater(second["audio_start"], first["audio_start"])
             self.assertAlmostEqual(second["subtitles"][0]["t"], 0.0, places=3)
+            self.assertAlmostEqual(first["subtitles"][-1]["end"], first["duration"], places=3)
+            self.assertAlmostEqual(second["subtitles"][-1]["end"], second["duration"], places=3)
             self.assertEqual(first["text"], "第一句")
             self.assertEqual(second["text"], "第二句")
 
