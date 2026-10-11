@@ -339,6 +339,7 @@ def main() -> int:
     ap.add_argument("--track", default="_schema_example")
     ap.add_argument("--source")
     a = ap.parse_args()
+    stage_root: Path | None = None
     if a.source:
         src = Path(a.source)
         if not src.exists():
@@ -354,13 +355,14 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             print(f"missing source for {a.game}/{a.track}: {exc}", file=sys.stderr)
             return 2
-        src = Path(a.source) if a.source else (
+        src = (
             section_source.legacy_anim_path(a.game, a.track)
             if not section_source.has_section_source(a.game, a.track)
             else section_source.build_anim_path(a.game, a.track)
         )
         track = schema.resolve_track(anim_doc)
         out = section_source.compiled_path(a.game, a.track)
+        stage_root = Path(source_root) if source_root else None
     if not out.exists():
         print(f"missing compiled {out}", file=sys.stderr)
         return 2
@@ -369,7 +371,12 @@ def main() -> int:
     schema_rep = schema.validate_track(track)
     errors = []
     warnings = list(schema_rep.warnings)
-    stage_check_path = src if a.source else (section_source.build_anim_path(a.game, a.track) if section_source.has_section_source(a.game, a.track) else src)
+    # Stage references are resolved relative to the authored tutorial root;
+    # never make the ignored build/ directory a prerequisite for checking.
+    stage_check_path = (
+        (stage_root / f"__{a.track}.source.anim.json")
+        if stage_root is not None else src
+    )
     check_stage_layouts(warnings, track, compiled, stage_check_path)
     for e in schema_rep.errors:
         errors.append("schema: " + e)
