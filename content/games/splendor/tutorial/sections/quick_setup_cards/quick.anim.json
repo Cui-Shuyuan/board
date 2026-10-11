@@ -5,13 +5,13 @@
   "section": "quick_setup_cards",
   "cues": [
     {
-      "id": "001",
+      "id": "001.1",
       "parent": "quick_intro/001",
       "tree": "main",
       "transition": "overlay",
       "script": {
-        "story": "发展卡共90张，按背面分成三级：一级、二级、三级；每级洗混后翻开四张，摆成三行，组成市场。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "story": "发展卡共90张，按背面分成三级：一级、二级、三级。",
+        "note": "只展示卡牌：先放正面，再并排展示三级卡背并依次高亮；全部走 screen 对象，不切桌面视角。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -37,14 +37,14 @@
             "space": "screen",
             "id": "scene_backdrop"
           },
-          "anchor": "quick_setup_cards/001.start"
+          "anchor": "quick_setup_cards/001.1.start"
         },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
-          "anchor": "quick_setup_cards/001.start"
+          "anchor": "quick_setup_cards/001.1.start"
         },
         {
           "op": "show",
@@ -61,44 +61,12 @@
             "space": "screen",
             "id": "card_intro_face"
           },
-          "anchor": "quick_setup_cards/001.start"
-        },
-        {
-          "op": "wait",
-          "dur": 10.032,
-          "anchor": "quick_setup_cards/001.start"
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 1,
-            "h": 1
-          },
-          "background": "#1E2126",
-          "layer": 0,
-          "dur": 0.0,
-          "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
-          },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 0.663
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 0.663
+          "anchor": "quick_setup_cards/001.1.start"
         },
         {
           "op": "hide",
           "dur": 0.0,
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 1.5,
+          "anchor": "quick_setup_cards/001.1.b2.start",
           "target": {
             "space": "screen",
             "id": "card_intro_face"
@@ -119,8 +87,8 @@
             "space": "screen",
             "id": "card_intro_back_1"
           },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 1.5
+          "anchor": "quick_setup_cards/001.1.b2.start",
+          "offset": 1.94
         },
         {
           "op": "show",
@@ -137,8 +105,8 @@
             "space": "screen",
             "id": "card_intro_back_2"
           },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 1.5
+          "anchor": "quick_setup_cards/001.1.b2.start",
+          "offset": 2.74
         },
         {
           "op": "show",
@@ -155,8 +123,8 @@
             "space": "screen",
             "id": "card_intro_back_3"
           },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 1.5
+          "anchor": "quick_setup_cards/001.1.b2.start",
+          "offset": 3.4
         },
         {
           "op": "highlight",
@@ -165,8 +133,8 @@
             "space": "screen",
             "id": "card_intro_back_1"
           },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 3.28
+          "anchor": "quick_setup_cards/001.1.b2.start",
+          "offset": 1.94
         },
         {
           "op": "highlight",
@@ -175,8 +143,8 @@
             "space": "screen",
             "id": "card_intro_back_2"
           },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 3.99
+          "anchor": "quick_setup_cards/001.1.b2.start",
+          "offset": 2.74
         },
         {
           "op": "highlight",
@@ -185,14 +153,33 @@
             "space": "screen",
             "id": "card_intro_back_3"
           },
-          "anchor": "quick_setup_cards/001.b1.start",
-          "offset": 4.62
+          "anchor": "quick_setup_cards/001.1.b2.start",
+          "offset": 3.4
+        }
+      ]
+    },
+    {
+      "id": "001.2",
+      "parent": "001.1",
+      "tree": "main",
+      "transition": "overlay",
+      "script": {
+        "story": "每级洗混后，翻开四张，摆成三行，组成市场。",
+        "note": "从 screen 卡牌展示切回桌面镜头；建立三级牌堆、洗混，再逐行翻开四张组成 3×4 市场。",
+        "enter": {
+          "picture": null,
+          "zones": {}
         },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
         {
           "op": "hide",
           "dur": 0.0,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.8,
+          "anchor": "quick_setup_cards/001.2.start",
           "target": {
             "space": "screen",
             "id": "scene_backdrop"
@@ -201,8 +188,7 @@
         {
           "op": "hide",
           "dur": 0.0,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.8,
+          "anchor": "quick_setup_cards/001.2.start",
           "target": {
             "space": "screen",
             "id": "card_intro_back_1"
@@ -211,8 +197,7 @@
         {
           "op": "hide",
           "dur": 0.0,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.8,
+          "anchor": "quick_setup_cards/001.2.start",
           "target": {
             "space": "screen",
             "id": "card_intro_back_2"
@@ -221,8 +206,7 @@
         {
           "op": "hide",
           "dur": 0.0,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.8,
+          "anchor": "quick_setup_cards/001.2.start",
           "target": {
             "space": "screen",
             "id": "card_intro_back_3"
@@ -233,8 +217,7 @@
           "dur": 0.0,
           "shot": "shot_decks_market",
           "realizes": "<ontology::timing>",
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.945
+          "anchor": "quick_setup_cards/001.2.start"
         },
         {
           "op": "stack",
@@ -247,8 +230,7 @@
             "space": "entity",
             "zone": "deck_level_1"
           },
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.927
+          "anchor": "quick_setup_cards/001.2.start"
         },
         {
           "op": "stack",
@@ -261,8 +243,7 @@
             "space": "entity",
             "zone": "deck_level_2"
           },
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.926
+          "anchor": "quick_setup_cards/001.2.start"
         },
         {
           "op": "stack",
@@ -275,8 +256,7 @@
             "space": "entity",
             "zone": "deck_level_3"
           },
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.925
+          "anchor": "quick_setup_cards/001.2.start"
         },
         {
           "op": "shuffle",
@@ -285,8 +265,7 @@
             "space": "entity",
             "zone": "deck_level_1"
           },
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.755
+          "anchor": "quick_setup_cards/001.2.b1.start"
         },
         {
           "op": "shuffle",
@@ -295,8 +274,7 @@
             "space": "entity",
             "zone": "deck_level_2"
           },
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.755
+          "anchor": "quick_setup_cards/001.2.b1.start"
         },
         {
           "op": "shuffle",
@@ -305,8 +283,7 @@
             "space": "entity",
             "zone": "deck_level_3"
           },
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -3.755
+          "anchor": "quick_setup_cards/001.2.b1.start"
         },
         {
           "op": "draw",
@@ -329,8 +306,7 @@
             "zone": "card_market"
           },
           "order": 0,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.955
+          "anchor": "quick_setup_cards/001.2.b2.start"
         },
         {
           "op": "draw",
@@ -353,8 +329,7 @@
             "zone": "card_market"
           },
           "order": 1,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.955
+          "anchor": "quick_setup_cards/001.2.b2.start"
         },
         {
           "op": "draw",
@@ -377,8 +352,7 @@
             "zone": "card_market"
           },
           "order": 2,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.955
+          "anchor": "quick_setup_cards/001.2.b2.start"
         },
         {
           "op": "draw",
@@ -401,8 +375,7 @@
             "zone": "card_market"
           },
           "order": 3,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.955
+          "anchor": "quick_setup_cards/001.2.b2.start"
         },
         {
           "op": "draw",
@@ -425,8 +398,7 @@
             "zone": "card_market"
           },
           "order": 4,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.205
+          "anchor": "quick_setup_cards/001.2.b3.start"
         },
         {
           "op": "draw",
@@ -449,8 +421,7 @@
             "zone": "card_market"
           },
           "order": 5,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.205
+          "anchor": "quick_setup_cards/001.2.b3.start"
         },
         {
           "op": "draw",
@@ -473,8 +444,7 @@
             "zone": "card_market"
           },
           "order": 6,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.205
+          "anchor": "quick_setup_cards/001.2.b3.start"
         },
         {
           "op": "draw",
@@ -497,8 +467,7 @@
             "zone": "card_market"
           },
           "order": 7,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -2.205
+          "anchor": "quick_setup_cards/001.2.b3.start"
         },
         {
           "op": "draw",
@@ -521,8 +490,7 @@
             "zone": "card_market"
           },
           "order": 8,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -1.455
+          "anchor": "quick_setup_cards/001.2.b4.start"
         },
         {
           "op": "draw",
@@ -545,8 +513,7 @@
             "zone": "card_market"
           },
           "order": 9,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -1.455
+          "anchor": "quick_setup_cards/001.2.b4.start"
         },
         {
           "op": "draw",
@@ -569,8 +536,7 @@
             "zone": "card_market"
           },
           "order": 10,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -1.455
+          "anchor": "quick_setup_cards/001.2.b4.start"
         },
         {
           "op": "draw",
@@ -593,33 +559,102 @@
             "zone": "card_market"
           },
           "order": 11,
-          "anchor": "quick_setup_cards/001.b1.end",
-          "offset": -1.455
+          "anchor": "quick_setup_cards/001.2.b4.start"
         }
       ]
     }
   ],
   "time_anchors": [
     {
-      "id": "quick_setup_cards/001.start",
-      "cue": "001",
+      "id": "quick_setup_cards/001.1.start",
+      "cue": "001.1",
       "edge": "cue_start"
     },
     {
-      "id": "quick_setup_cards/001.end",
-      "cue": "001",
+      "id": "quick_setup_cards/001.1.end",
+      "cue": "001.1",
       "edge": "cue_end"
     },
     {
-      "id": "quick_setup_cards/001.b1.start",
-      "cue": "001",
-      "beat": "quick_setup_cards/001.b1",
+      "id": "quick_setup_cards/001.1.b1.start",
+      "cue": "001.1",
+      "beat": "quick_setup_cards/001.1.b1",
       "edge": "start"
     },
     {
-      "id": "quick_setup_cards/001.b1.end",
-      "cue": "001",
-      "beat": "quick_setup_cards/001.b1",
+      "id": "quick_setup_cards/001.1.b1.end",
+      "cue": "001.1",
+      "beat": "quick_setup_cards/001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_cards/001.1.b2.start",
+      "cue": "001.1",
+      "beat": "quick_setup_cards/001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_cards/001.1.b2.end",
+      "cue": "001.1",
+      "beat": "quick_setup_cards/001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_cards/001.2.start",
+      "cue": "001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_setup_cards/001.2.end",
+      "cue": "001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b1.start",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b1.end",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b2.start",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b2.end",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b2",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b3.start",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b3",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b3.end",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b3",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b4.start",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b4",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_cards/001.2.b4.end",
+      "cue": "001.2",
+      "beat": "quick_setup_cards/001.2.b4",
       "edge": "end"
     }
   ]

@@ -31,7 +31,8 @@
       "tree": "main",
       "entry": "quick_intro/001",
       "cue_ids": [
-        "quick_setup_cards/001"
+        "quick_setup_cards/001.1",
+        "quick_setup_cards/001.2"
       ]
     },
     {
@@ -42,7 +43,7 @@
       ],
       "order": 2,
       "tree": "main",
-      "entry": "quick_setup_cards/001",
+      "entry": "quick_setup_cards/001.2",
       "cue_ids": [
         "quick_setup_gems/002"
       ]
@@ -465,254 +466,274 @@
       "cue_index": 0
     },
     {
-      "id": "quick_setup_cards/001",
+      "id": "quick_setup_cards/001.1",
       "group": "2 设置",
       "group_path": [
         "2 设置"
       ],
-      "text": "发展卡共90张，按背面分成三级：一级、二级、三级；每级洗混后翻开四张，摆成三行，组成市场。",
-      "audio": "media/tts/quick/setup.quick.001.mp3",
-      "duration": 10.032,
+      "text": "发展卡共90张，按背面分成三级：一级、二级、三级。",
+      "audio": "media/tts/quick/setup.quick.001.1.mp3",
+      "duration": 6.432,
       "start": 10.3,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.285,
-          "end": 5.535,
-          "text": "发展卡共90张，按背面分成三级：一级、二级、三级；",
+          "t": 0.305,
+          "end": 5.955,
+          "text": "发展卡共90张，按背面分成三级：一级、二级、三级。",
           "words": [
             {
               "word": "发",
-              "start": 0.285,
-              "end": 0.425,
-              "confidence": 0.8943
+              "start": 0.305,
+              "end": 0.515,
+              "confidence": 0.9095
             },
             {
               "word": "展",
-              "start": 0.425,
-              "end": 0.535,
-              "confidence": 0.8203
+              "start": 0.515,
+              "end": 0.755,
+              "confidence": 0.7132
             },
             {
               "word": "卡",
-              "start": 0.535,
-              "end": 0.735,
-              "confidence": 0.8935
+              "start": 0.755,
+              "end": 0.985,
+              "confidence": 0.8447
             },
             {
               "word": "共",
-              "start": 0.735,
-              "end": 0.895,
-              "confidence": 0.8233
+              "start": 0.985,
+              "end": 1.185,
+              "confidence": 0.8252
             },
             {
               "word": "90",
-              "start": 0.895,
-              "end": 0.925,
-              "confidence": 0.1218
+              "start": 1.185,
+              "end": 1.215,
+              "confidence": 0.1255
             },
             {
               "word": "张，",
-              "start": 1.245,
-              "end": 1.485,
-              "confidence": 0.9046
+              "start": 1.605,
+              "end": 1.875,
+              "confidence": 0.8742
             },
             {
               "word": "按",
-              "start": 1.795,
-              "end": 1.925,
-              "confidence": 0.7231
+              "start": 2.235,
+              "end": 2.335,
+              "confidence": 0.7616
             },
             {
               "word": "背",
-              "start": 1.925,
-              "end": 2.165,
-              "confidence": 0.9216
+              "start": 2.335,
+              "end": 2.595,
+              "confidence": 0.9173
             },
             {
               "word": "面",
-              "start": 2.165,
-              "end": 2.355,
-              "confidence": 0.9648
+              "start": 2.595,
+              "end": 2.845,
+              "confidence": 0.9017
             },
             {
               "word": "分",
-              "start": 2.355,
-              "end": 2.505,
-              "confidence": 0.913
+              "start": 2.845,
+              "end": 3.035,
+              "confidence": 0.9097
             },
             {
               "word": "成",
-              "start": 2.505,
-              "end": 2.665,
-              "confidence": 0.9733
+              "start": 3.035,
+              "end": 3.205,
+              "confidence": 0.9749
             },
             {
               "word": "三",
-              "start": 2.665,
-              "end": 2.855,
-              "confidence": 0.8356
+              "start": 3.205,
+              "end": 3.395,
+              "confidence": 0.8946
             },
             {
               "word": "级：",
-              "start": 3.145,
-              "end": 3.175,
-              "confidence": 0.1442
+              "start": 3.395,
+              "end": 3.425,
+              "confidence": 0.1694
             },
             {
               "word": "一",
-              "start": 3.565,
-              "end": 3.735,
-              "confidence": 0.8844
+              "start": 4.175,
+              "end": 4.345,
+              "confidence": 0.9099
             },
             {
               "word": "级、",
-              "start": 4.085,
-              "end": 4.115,
-              "confidence": 0.2133
+              "start": 4.945,
+              "end": 4.975,
+              "confidence": 0.2536
             },
             {
               "word": "二",
-              "start": 4.275,
-              "end": 4.455,
-              "confidence": 0.9395
+              "start": 4.975,
+              "end": 5.115,
+              "confidence": 0.8673
             },
             {
               "word": "级、",
-              "start": 4.455,
-              "end": 4.485,
-              "confidence": 0.1728
+              "start": 5.115,
+              "end": 5.145,
+              "confidence": 0.2101
             },
             {
               "word": "三",
-              "start": 4.905,
-              "end": 5.185,
-              "confidence": 0.9535
+              "start": 5.635,
+              "end": 5.895,
+              "confidence": 0.9483
             },
             {
-              "word": "级；",
-              "start": 5.185,
-              "end": 5.535,
-              "confidence": 0.9016
-            }
-          ]
-        },
-        {
-          "t": 5.915,
-          "end": 9.405,
-          "text": "每级洗混后翻开四张，摆成三行，组成市场。",
-          "words": [
-            {
-              "word": "每",
-              "start": 5.915,
-              "end": 6.095,
-              "confidence": 0.9491
-            },
-            {
-              "word": "级",
-              "start": 6.095,
-              "end": 6.315,
-              "confidence": 0.9016
-            },
-            {
-              "word": "洗",
-              "start": 6.315,
-              "end": 6.555,
-              "confidence": 0.9154
-            },
-            {
-              "word": "混",
-              "start": 6.555,
-              "end": 6.735,
-              "confidence": 0.5848
-            },
-            {
-              "word": "后",
-              "start": 6.735,
-              "end": 7.005,
-              "confidence": 0.9259
-            },
-            {
-              "word": "翻",
-              "start": 7.005,
-              "end": 7.175,
-              "confidence": 0.8706
-            },
-            {
-              "word": "开",
-              "start": 7.175,
-              "end": 7.365,
-              "confidence": 0.9858
-            },
-            {
-              "word": "四",
-              "start": 7.365,
-              "end": 7.555,
-              "confidence": 0.8643
-            },
-            {
-              "word": "张，",
-              "start": 7.555,
-              "end": 7.855,
-              "confidence": 0.9751
-            },
-            {
-              "word": "摆",
-              "start": 8.035,
-              "end": 8.195,
-              "confidence": 0.9673
-            },
-            {
-              "word": "成",
-              "start": 8.195,
-              "end": 8.365,
-              "confidence": 0.9707
-            },
-            {
-              "word": "三",
-              "start": 8.365,
-              "end": 8.585,
-              "confidence": 0.7707
-            },
-            {
-              "word": "行，",
-              "start": 8.585,
-              "end": 8.895,
-              "confidence": 0.8711
-            },
-            {
-              "word": "组",
-              "start": 9.065,
-              "end": 9.225,
-              "confidence": 0.9474
-            },
-            {
-              "word": "成",
-              "start": 9.225,
-              "end": 9.285,
-              "confidence": 0.1836
-            },
-            {
-              "word": "市",
-              "start": 9.285,
-              "end": 9.345,
-              "confidence": 0.1738
-            },
-            {
-              "word": "场。",
-              "start": 9.345,
-              "end": 9.405,
-              "confidence": 0.2821
+              "word": "级。",
+              "start": 5.895,
+              "end": 5.955,
+              "confidence": 0.4801
             }
           ]
         }
       ],
       "animation": null,
       "section": "quick_setup_cards",
-      "local_id": "001",
+      "local_id": "001.1",
       "section_index": 1,
       "local_index": 0,
       "cue_index": 1
+    },
+    {
+      "id": "quick_setup_cards/001.2",
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "text": "每级洗混后，翻开四张，摆成三行，组成市场。",
+      "audio": "media/tts/quick/setup.quick.001.2.mp3",
+      "duration": 5.064,
+      "start": 16.73,
+      "refs": [],
+      "subtitles": [
+        {
+          "t": 0.285,
+          "end": 4.705,
+          "text": "每级洗混后，翻开四张，摆成三行，组成市场。",
+          "words": [
+            {
+              "word": "每",
+              "start": 0.285,
+              "end": 0.485,
+              "confidence": 0.9133
+            },
+            {
+              "word": "级",
+              "start": 0.485,
+              "end": 0.655,
+              "confidence": 0.8631
+            },
+            {
+              "word": "洗",
+              "start": 0.655,
+              "end": 0.835,
+              "confidence": 0.7676
+            },
+            {
+              "word": "混",
+              "start": 0.835,
+              "end": 1.015,
+              "confidence": 0.7608
+            },
+            {
+              "word": "后，",
+              "start": 1.015,
+              "end": 1.425,
+              "confidence": 0.8829
+            },
+            {
+              "word": "翻",
+              "start": 1.525,
+              "end": 1.715,
+              "confidence": 0.8404
+            },
+            {
+              "word": "开",
+              "start": 1.715,
+              "end": 1.915,
+              "confidence": 0.977
+            },
+            {
+              "word": "四",
+              "start": 1.915,
+              "end": 2.135,
+              "confidence": 0.8477
+            },
+            {
+              "word": "张，",
+              "start": 2.135,
+              "end": 2.455,
+              "confidence": 0.9601
+            },
+            {
+              "word": "摆",
+              "start": 2.805,
+              "end": 2.965,
+              "confidence": 0.9393
+            },
+            {
+              "word": "成",
+              "start": 2.965,
+              "end": 3.175,
+              "confidence": 0.9521
+            },
+            {
+              "word": "三",
+              "start": 3.175,
+              "end": 3.415,
+              "confidence": 0.8524
+            },
+            {
+              "word": "行，",
+              "start": 3.415,
+              "end": 3.765,
+              "confidence": 0.8909
+            },
+            {
+              "word": "组",
+              "start": 3.925,
+              "end": 4.105,
+              "confidence": 0.9603
+            },
+            {
+              "word": "成",
+              "start": 4.105,
+              "end": 4.275,
+              "confidence": 0.9801
+            },
+            {
+              "word": "市",
+              "start": 4.275,
+              "end": 4.475,
+              "confidence": 0.9543
+            },
+            {
+              "word": "场。",
+              "start": 4.475,
+              "end": 4.705,
+              "confidence": 0.9647
+            }
+          ]
+        }
+      ],
+      "animation": null,
+      "section": "quick_setup_cards",
+      "local_id": "001.2",
+      "section_index": 1,
+      "local_index": 1,
+      "cue_index": 2
     },
     {
       "id": "quick_setup_gems/002",
@@ -723,7 +744,7 @@
       "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；黄金的数量和人数无关，放置五枚。",
       "audio": "media/tts/quick/setup.quick.002.mp3",
       "duration": 10.032,
-      "start": 20.33,
+      "start": 21.79,
       "refs": [],
       "subtitles": [
         {
@@ -980,7 +1001,7 @@
       "local_id": "002",
       "section_index": 2,
       "local_index": 0,
-      "cue_index": 2
+      "cue_index": 3
     },
     {
       "id": "quick_setup_players/003",
@@ -991,7 +1012,7 @@
       "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；再选出一位起始玩家，并拿取起始玩家标记。",
       "audio": "media/tts/quick/setup.quick.003.mp3",
       "duration": 8.688,
-      "start": 30.36,
+      "start": 31.82,
       "refs": [],
       "subtitles": [
         {
@@ -1248,7 +1269,7 @@
       "local_id": "003",
       "section_index": 3,
       "local_index": 0,
-      "cue_index": 3
+      "cue_index": 4
     },
     {
       "id": "quick_turn/001",
@@ -1259,7 +1280,7 @@
       "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。",
       "audio": "media/tts/quick/quick.turn.001.mp3",
       "duration": 5.472,
-      "start": 39.05,
+      "start": 40.51,
       "refs": [],
       "subtitles": [
         {
@@ -1413,7 +1434,7 @@
       "local_id": "001",
       "section_index": 4,
       "local_index": 0,
-      "cue_index": 4
+      "cue_index": 5
     },
     {
       "id": "quick_turn/002",
@@ -1424,7 +1445,7 @@
       "text": "自己的回合，需要从三种行动中选一种：拿宝石、买发展卡、保留发展卡；执行后轮到下一位玩家。",
       "audio": "media/tts/quick/quick.turn.002.mp3",
       "duration": 10.032,
-      "start": 44.52,
+      "start": 45.98,
       "refs": [],
       "subtitles": [
         {
@@ -1682,7 +1703,7 @@
       "local_id": "002",
       "section_index": 4,
       "local_index": 1,
-      "cue_index": 5
+      "cue_index": 6
     },
     {
       "id": "quick_take_gems/different.001",
@@ -1694,7 +1715,7 @@
       "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。",
       "audio": "media/tts/quick/quick.take.different.001.mp3",
       "duration": 4.824,
-      "start": 54.55,
+      "start": 56.02,
       "refs": [],
       "subtitles": [
         {
@@ -1830,7 +1851,7 @@
       "local_id": "different.001",
       "section_index": 5,
       "local_index": 0,
-      "cue_index": 6
+      "cue_index": 7
     },
     {
       "id": "quick_take_gems/same.001",
@@ -1842,7 +1863,7 @@
       "text": "二是拿两枚相同颜色的宝石。",
       "audio": "media/tts/quick/quick.take.same.001.mp3",
       "duration": 3.24,
-      "start": 59.38,
+      "start": 60.84,
       "refs": [],
       "subtitles": [
         {
@@ -1930,7 +1951,7 @@
       "local_id": "same.001",
       "section_index": 5,
       "local_index": 1,
-      "cue_index": 7
+      "cue_index": 8
     },
     {
       "id": "quick_take_gems/002",
@@ -1942,7 +1963,7 @@
       "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。",
       "audio": "media/tts/quick/quick.take.002.mp3",
       "duration": 7.08,
-      "start": 62.62,
+      "start": 64.08,
       "refs": [],
       "subtitles": [
         {
@@ -2151,7 +2172,7 @@
       "local_id": "002",
       "section_index": 5,
       "local_index": 2,
-      "cue_index": 8
+      "cue_index": 9
     },
     {
       "id": "quick_take_gems/003",
@@ -2163,7 +2184,7 @@
       "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
       "audio": "media/tts/quick/quick.take.003.mp3",
       "duration": 9.648,
-      "start": 69.7,
+      "start": 71.16,
       "refs": [],
       "subtitles": [
         {
@@ -2450,7 +2471,7 @@
       "local_id": "003",
       "section_index": 5,
       "local_index": 3,
-      "cue_index": 9
+      "cue_index": 10
     },
     {
       "id": "quick_gold/001",
@@ -2462,7 +2483,7 @@
       "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。",
       "audio": "media/tts/quick/quick.gold.001.mp3",
       "duration": 7.656,
-      "start": 79.34,
+      "start": 80.81,
       "refs": [],
       "subtitles": [
         {
@@ -2689,7 +2710,7 @@
       "local_id": "001",
       "section_index": 6,
       "local_index": 0,
-      "cue_index": 10
+      "cue_index": 11
     },
     {
       "id": "quick_cards/001",
@@ -2701,7 +2722,7 @@
       "text": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
       "audio": "media/tts/quick/quick.cards.001.mp3",
       "duration": 9.264,
-      "start": 87.0,
+      "start": 88.46,
       "refs": [],
       "subtitles": [
         {
@@ -2922,7 +2943,7 @@
       "local_id": "001",
       "section_index": 7,
       "local_index": 0,
-      "cue_index": 11
+      "cue_index": 12
     },
     {
       "id": "quick_cards/002",
@@ -2934,7 +2955,7 @@
       "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；市场空出的位置，要从对应等级牌堆补一张。每回合最多买一张，但整局购买数量不限。",
       "audio": "media/tts/quick/quick.cards.002.mp3",
       "duration": 13.056,
-      "start": 96.26,
+      "start": 97.73,
       "refs": [],
       "subtitles": [
         {
@@ -3312,7 +3333,7 @@
       "local_id": "002",
       "section_index": 7,
       "local_index": 1,
-      "cue_index": 12
+      "cue_index": 13
     },
     {
       "id": "quick_cards/003",
@@ -3324,7 +3345,7 @@
       "text": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。",
       "audio": "media/tts/quick/quick.cards.003.mp3",
       "duration": 8.832,
-      "start": 109.32,
+      "start": 110.78,
       "refs": [],
       "subtitles": [
         {
@@ -3575,7 +3596,7 @@
       "local_id": "003",
       "section_index": 7,
       "local_index": 2,
-      "cue_index": 13
+      "cue_index": 14
     },
     {
       "id": "quick_reserve/001",
@@ -3587,7 +3608,7 @@
       "text": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。",
       "audio": "media/tts/quick/quick.reserve.001.mp3",
       "duration": 9.24,
-      "start": 118.15,
+      "start": 119.62,
       "refs": [],
       "subtitles": [
         {
@@ -3851,7 +3872,7 @@
       "local_id": "001",
       "section_index": 8,
       "local_index": 0,
-      "cue_index": 14
+      "cue_index": 15
     },
     {
       "id": "quick_reserve/002",
@@ -3863,7 +3884,7 @@
       "text": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。",
       "audio": "media/tts/quick/quick.reserve.002.mp3",
       "duration": 8.856,
-      "start": 127.39,
+      "start": 128.86,
       "refs": [],
       "subtitles": [
         {
@@ -4133,7 +4154,7 @@
       "local_id": "002",
       "section_index": 8,
       "local_index": 1,
-      "cue_index": 15
+      "cue_index": 16
     },
     {
       "id": "quick_reserve/003",
@@ -4145,7 +4166,7 @@
       "text": "保留的牌，之后可以在自己回合花钱买下。",
       "audio": "media/tts/quick/quick.reserve.003.mp3",
       "duration": 4.032,
-      "start": 136.25,
+      "start": 137.71,
       "refs": [],
       "subtitles": [
         {
@@ -4263,7 +4284,7 @@
       "local_id": "003",
       "section_index": 8,
       "local_index": 2,
-      "cue_index": 16
+      "cue_index": 17
     },
     {
       "id": "quick_nobles/001",
@@ -4275,7 +4296,7 @@
       "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，就拿取这位贵族；同时满足多位时，选一位拿取。",
       "audio": "media/tts/quick/quick.nobles.001.mp3",
       "duration": 10.872,
-      "start": 140.28,
+      "start": 141.74,
       "refs": [],
       "subtitles": [
         {
@@ -4606,7 +4627,7 @@
       "local_id": "001",
       "section_index": 9,
       "local_index": 0,
-      "cue_index": 17
+      "cue_index": 18
     },
     {
       "id": "quick_end/001",
@@ -4617,7 +4638,7 @@
       "text": "当有人获得十五分，游戏进入最后一轮；确保所有玩家回合数相同后，游戏结束；分多者获胜。",
       "audio": "media/tts/quick/quick.end.001.mp3",
       "duration": 8.256,
-      "start": 151.15,
+      "start": 152.62,
       "refs": [],
       "subtitles": [
         {
@@ -4869,7 +4890,7 @@
       "local_id": "001",
       "section_index": 10,
       "local_index": 0,
-      "cue_index": 18
+      "cue_index": 19
     }
   ]
 }

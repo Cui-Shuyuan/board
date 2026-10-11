@@ -5,8 +5,8 @@
   "section": "quick_setup_cards",
   "cues": [
     {
-      "id": "001",
-      "tts_asset": "setup.quick.001",
+      "id": "001.1",
+      "tts_asset": "setup.quick.001.1",
       "group": "2 设置",
       "group_path": [
         "2 设置"
@@ -15,8 +15,40 @@
       "pause_after": 0.0,
       "beats": [
         {
-          "id": "quick_setup_cards/001.b1",
-          "text": "发展卡共90张，按背面分成三级：一级、二级、三级；每级洗混后翻开四张，摆成三行，组成市场。"
+          "id": "quick_setup_cards/001.1.b1",
+          "text": "发展卡共90张，"
+        },
+        {
+          "id": "quick_setup_cards/001.1.b2",
+          "text": "按背面分成三级：一级、二级、三级。"
+        }
+      ]
+    },
+    {
+      "id": "001.2",
+      "tts_asset": "setup.quick.001.2",
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_setup_cards/001.2.b1",
+          "text": "每级洗混后，"
+        },
+        {
+          "id": "quick_setup_cards/001.2.b2",
+          "text": "翻开四张，"
+        },
+        {
+          "id": "quick_setup_cards/001.2.b3",
+          "text": "摆成三行，"
+        },
+        {
+          "id": "quick_setup_cards/001.2.b4",
+          "text": "组成市场。"
         }
       ]
     }
