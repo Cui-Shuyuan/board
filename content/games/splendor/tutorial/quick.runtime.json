@@ -7,15 +7,173 @@
   "format": "mp3",
   "sample_rate": 24000,
   "generator": "animation/build_tutorial_runtime.py",
+  "sections": [
+    {
+      "id": "quick_intro",
+      "title": "开始",
+      "group_path": [
+        "1 开始"
+      ],
+      "order": 0,
+      "tree": "main",
+      "entry": "initial",
+      "cue_ids": [
+        "quick_intro/001"
+      ]
+    },
+    {
+      "id": "quick_setup_cards",
+      "title": "设置：发展卡",
+      "group_path": [
+        "2 设置"
+      ],
+      "order": 1,
+      "tree": "main",
+      "entry": "quick_intro/001",
+      "cue_ids": [
+        "quick_setup_cards/001"
+      ]
+    },
+    {
+      "id": "quick_setup_gems",
+      "title": "设置：宝石",
+      "group_path": [
+        "2 设置"
+      ],
+      "order": 2,
+      "tree": "main",
+      "entry": "quick_setup_cards/001",
+      "cue_ids": [
+        "quick_setup_gems/002"
+      ]
+    },
+    {
+      "id": "quick_setup_players",
+      "title": "设置：贵族与起始玩家",
+      "group_path": [
+        "2 设置"
+      ],
+      "order": 3,
+      "tree": "main",
+      "entry": "quick_setup_gems/002",
+      "cue_ids": [
+        "quick_setup_players/003"
+      ]
+    },
+    {
+      "id": "quick_turn",
+      "title": "回合",
+      "group_path": [
+        "3 回合与行动"
+      ],
+      "order": 4,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_turn/001",
+        "quick_turn/002"
+      ]
+    },
+    {
+      "id": "quick_take_gems",
+      "title": "拿宝石",
+      "group_path": [
+        "3 回合与行动",
+        "3.1 拿宝石"
+      ],
+      "order": 5,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_take_gems/different.001",
+        "quick_take_gems/same.001",
+        "quick_take_gems/002",
+        "quick_take_gems/003"
+      ]
+    },
+    {
+      "id": "quick_gold",
+      "title": "黄金",
+      "group_path": [
+        "3 回合与行动",
+        "3.1 拿宝石"
+      ],
+      "order": 6,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_gold/001"
+      ]
+    },
+    {
+      "id": "quick_cards",
+      "title": "购买发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.2 购买发展卡"
+      ],
+      "order": 7,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_cards/001",
+        "quick_cards/002",
+        "quick_cards/003"
+      ]
+    },
+    {
+      "id": "quick_reserve",
+      "title": "保留发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.3 保留发展卡"
+      ],
+      "order": 8,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_reserve/001",
+        "quick_reserve/002",
+        "quick_reserve/003"
+      ]
+    },
+    {
+      "id": "quick_nobles",
+      "title": "贵族",
+      "group_path": [
+        "3 回合与行动",
+        "3.4 贵族"
+      ],
+      "order": 9,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_nobles/001"
+      ]
+    },
+    {
+      "id": "quick_end",
+      "title": "游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "order": 10,
+      "tree": "main",
+      "entry": "quick_setup_players/003",
+      "cue_ids": [
+        "quick_end/001"
+      ]
+    }
+  ],
   "cues": [
     {
-      "id": "quick.intro.001",
+      "id": "quick_intro/001",
       "group": "1 开始",
       "group_path": [
         "1 开始"
       ],
       "text": "璀璨宝石的目标，是成为最负盛名的商人。所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。",
-      "audio": "media/tts/quick/quick.intro.001.mp3",
+      "audio": "media/tts/quick/quick_intro__001.mp3",
       "duration": 10.296,
       "start": 0.0,
       "refs": [],
@@ -299,16 +457,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_intro",
+      "local_id": "001",
+      "section_index": 0,
+      "local_index": 0,
+      "cue_index": 0
     },
     {
-      "id": "setup.quick.001",
+      "id": "quick_setup_cards/001",
       "group": "2 设置",
       "group_path": [
         "2 设置"
       ],
       "text": "发展卡共90张，按背面分成三级：一级、二级、三级；每级洗混后翻开四张，摆成三行，组成市场。",
-      "audio": "media/tts/quick/setup.quick.001.mp3",
+      "audio": "media/tts/quick/quick_setup_cards__001.mp3",
       "duration": 10.032,
       "start": 10.3,
       "refs": [],
@@ -544,16 +707,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_setup_cards",
+      "local_id": "001",
+      "section_index": 1,
+      "local_index": 0,
+      "cue_index": 1
     },
     {
-      "id": "setup.quick.002",
+      "id": "quick_setup_gems/002",
       "group": "2 设置",
       "group_path": [
         "2 设置"
       ],
       "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；黄金的数量和人数无关，放置五枚。",
-      "audio": "media/tts/quick/setup.quick.002.mp3",
+      "audio": "media/tts/quick/quick_setup_gems__002.mp3",
       "duration": 10.032,
       "start": 20.33,
       "refs": [],
@@ -807,16 +975,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_setup_gems",
+      "local_id": "002",
+      "section_index": 2,
+      "local_index": 0,
+      "cue_index": 2
     },
     {
-      "id": "setup.quick.003",
+      "id": "quick_setup_players/003",
       "group": "2 设置",
       "group_path": [
         "2 设置"
       ],
       "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；再选出一位起始玩家，并拿取起始玩家标记。",
-      "audio": "media/tts/quick/setup.quick.003.mp3",
+      "audio": "media/tts/quick/quick_setup_players__003.mp3",
       "duration": 8.688,
       "start": 30.36,
       "refs": [],
@@ -1070,16 +1243,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_setup_players",
+      "local_id": "003",
+      "section_index": 3,
+      "local_index": 0,
+      "cue_index": 3
     },
     {
-      "id": "quick.turn.001",
+      "id": "quick_turn/001",
       "group": "3 回合与行动",
       "group_path": [
         "3 回合与行动"
       ],
       "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。",
-      "audio": "media/tts/quick/quick.turn.001.mp3",
+      "audio": "media/tts/quick/quick_turn__001.mp3",
       "duration": 5.472,
       "start": 39.05,
       "refs": [],
@@ -1230,16 +1408,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_turn",
+      "local_id": "001",
+      "section_index": 4,
+      "local_index": 0,
+      "cue_index": 4
     },
     {
-      "id": "quick.turn.002",
+      "id": "quick_turn/002",
       "group": "3 回合与行动",
       "group_path": [
         "3 回合与行动"
       ],
       "text": "自己的回合，需要从三种行动中选一种：拿宝石、买发展卡、保留发展卡；执行后轮到下一位玩家。",
-      "audio": "media/tts/quick/quick.turn.002.mp3",
+      "audio": "media/tts/quick/quick_turn__002.mp3",
       "duration": 10.032,
       "start": 44.52,
       "refs": [],
@@ -1494,17 +1677,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_turn",
+      "local_id": "002",
+      "section_index": 4,
+      "local_index": 1,
+      "cue_index": 5
     },
     {
-      "id": "quick.take.different.001",
+      "id": "quick_take_gems/different.001",
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
         "3.1 拿宝石"
       ],
       "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。",
-      "audio": "media/tts/quick/quick.take.different.001.mp3",
+      "audio": "media/tts/quick/quick_take_gems__different.001.mp3",
       "duration": 4.824,
       "start": 54.55,
       "refs": [],
@@ -1637,17 +1825,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_take_gems",
+      "local_id": "different.001",
+      "section_index": 5,
+      "local_index": 0,
+      "cue_index": 6
     },
     {
-      "id": "quick.take.same.001",
+      "id": "quick_take_gems/same.001",
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
         "3.1 拿宝石"
       ],
       "text": "二是拿两枚相同颜色的宝石。",
-      "audio": "media/tts/quick/quick.take.same.001.mp3",
+      "audio": "media/tts/quick/quick_take_gems__same.001.mp3",
       "duration": 3.24,
       "start": 59.38,
       "refs": [],
@@ -1732,17 +1925,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_take_gems",
+      "local_id": "same.001",
+      "section_index": 5,
+      "local_index": 1,
+      "cue_index": 7
     },
     {
-      "id": "quick.take.002",
+      "id": "quick_take_gems/002",
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
         "3.1 拿宝石"
       ],
       "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。",
-      "audio": "media/tts/quick/quick.take.002.mp3",
+      "audio": "media/tts/quick/quick_take_gems__002.mp3",
       "duration": 7.08,
       "start": 62.62,
       "refs": [],
@@ -1948,17 +2146,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_take_gems",
+      "local_id": "002",
+      "section_index": 5,
+      "local_index": 2,
+      "cue_index": 8
     },
     {
-      "id": "quick.take.003",
+      "id": "quick_take_gems/003",
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
         "3.1 拿宝石"
       ],
       "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
-      "audio": "media/tts/quick/quick.take.003.mp3",
+      "audio": "media/tts/quick/quick_take_gems__003.mp3",
       "duration": 9.648,
       "start": 69.7,
       "refs": [],
@@ -2242,17 +2445,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_take_gems",
+      "local_id": "003",
+      "section_index": 5,
+      "local_index": 3,
+      "cue_index": 9
     },
     {
-      "id": "quick.gold.001",
+      "id": "quick_gold/001",
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
         "3.1 拿宝石"
       ],
       "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。",
-      "audio": "media/tts/quick/quick.gold.001.mp3",
+      "audio": "media/tts/quick/quick_gold__001.mp3",
       "duration": 7.656,
       "start": 79.34,
       "refs": [],
@@ -2476,17 +2684,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_gold",
+      "local_id": "001",
+      "section_index": 6,
+      "local_index": 0,
+      "cue_index": 10
     },
     {
-      "id": "quick.cards.001",
+      "id": "quick_cards/001",
       "group": "3.2 购买发展卡",
       "group_path": [
         "3 回合与行动",
         "3.2 购买发展卡"
       ],
       "text": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
-      "audio": "media/tts/quick/quick.cards.001.mp3",
+      "audio": "media/tts/quick/quick_cards__001.mp3",
       "duration": 9.264,
       "start": 87.0,
       "refs": [],
@@ -2704,17 +2917,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_cards",
+      "local_id": "001",
+      "section_index": 7,
+      "local_index": 0,
+      "cue_index": 11
     },
     {
-      "id": "quick.cards.002",
+      "id": "quick_cards/002",
       "group": "3.2 购买发展卡",
       "group_path": [
         "3 回合与行动",
         "3.2 购买发展卡"
       ],
       "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；市场空出的位置，要从对应等级牌堆补一张。每回合最多买一张，但整局购买数量不限。",
-      "audio": "media/tts/quick/quick.cards.002.mp3",
+      "audio": "media/tts/quick/quick_cards__002.mp3",
       "duration": 13.056,
       "start": 96.26,
       "refs": [],
@@ -3089,17 +3307,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_cards",
+      "local_id": "002",
+      "section_index": 7,
+      "local_index": 1,
+      "cue_index": 12
     },
     {
-      "id": "quick.cards.003",
+      "id": "quick_cards/003",
       "group": "3.2 购买发展卡",
       "group_path": [
         "3 回合与行动",
         "3.2 购买发展卡"
       ],
       "text": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。",
-      "audio": "media/tts/quick/quick.cards.003.mp3",
+      "audio": "media/tts/quick/quick_cards__003.mp3",
       "duration": 8.832,
       "start": 109.32,
       "refs": [],
@@ -3347,17 +3570,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_cards",
+      "local_id": "003",
+      "section_index": 7,
+      "local_index": 2,
+      "cue_index": 13
     },
     {
-      "id": "quick.reserve.001",
+      "id": "quick_reserve/001",
       "group": "3.3 保留发展卡",
       "group_path": [
         "3 回合与行动",
         "3.3 保留发展卡"
       ],
       "text": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。",
-      "audio": "media/tts/quick/quick.reserve.001.mp3",
+      "audio": "media/tts/quick/quick_reserve__001.mp3",
       "duration": 9.24,
       "start": 118.15,
       "refs": [],
@@ -3618,17 +3846,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_reserve",
+      "local_id": "001",
+      "section_index": 8,
+      "local_index": 0,
+      "cue_index": 14
     },
     {
-      "id": "quick.reserve.002",
+      "id": "quick_reserve/002",
       "group": "3.3 保留发展卡",
       "group_path": [
         "3 回合与行动",
         "3.3 保留发展卡"
       ],
       "text": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。",
-      "audio": "media/tts/quick/quick.reserve.002.mp3",
+      "audio": "media/tts/quick/quick_reserve__002.mp3",
       "duration": 8.856,
       "start": 127.39,
       "refs": [],
@@ -3895,17 +4128,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_reserve",
+      "local_id": "002",
+      "section_index": 8,
+      "local_index": 1,
+      "cue_index": 15
     },
     {
-      "id": "quick.reserve.003",
+      "id": "quick_reserve/003",
       "group": "3.3 保留发展卡",
       "group_path": [
         "3 回合与行动",
         "3.3 保留发展卡"
       ],
       "text": "保留的牌，之后可以在自己回合花钱买下。",
-      "audio": "media/tts/quick/quick.reserve.003.mp3",
+      "audio": "media/tts/quick/quick_reserve__003.mp3",
       "duration": 4.032,
       "start": 136.25,
       "refs": [],
@@ -4020,17 +4258,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_reserve",
+      "local_id": "003",
+      "section_index": 8,
+      "local_index": 2,
+      "cue_index": 16
     },
     {
-      "id": "quick.nobles.001",
+      "id": "quick_nobles/001",
       "group": "3.4 贵族",
       "group_path": [
         "3 回合与行动",
         "3.4 贵族"
       ],
       "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，就拿取这位贵族；同时满足多位时，选一位拿取。",
-      "audio": "media/tts/quick/quick.nobles.001.mp3",
+      "audio": "media/tts/quick/quick_nobles__001.mp3",
       "duration": 10.872,
       "start": 140.28,
       "refs": [],
@@ -4358,16 +4601,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_nobles",
+      "local_id": "001",
+      "section_index": 9,
+      "local_index": 0,
+      "cue_index": 17
     },
     {
-      "id": "quick.end.001",
+      "id": "quick_end/001",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "当有人获得十五分，游戏进入最后一轮；确保所有玩家回合数相同后，游戏结束；分多者获胜。",
-      "audio": "media/tts/quick/quick.end.001.mp3",
+      "audio": "media/tts/quick/quick_end__001.mp3",
       "duration": 8.256,
       "start": 151.15,
       "refs": [],
@@ -4616,7 +4864,12 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "quick_end",
+      "local_id": "001",
+      "section_index": 10,
+      "local_index": 0,
+      "cue_index": 18
     }
   ]
 }

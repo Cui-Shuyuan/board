@@ -135,7 +135,7 @@ class CompileTutorialDryRunTests(unittest.TestCase):
             manifest_path = game_dir / "media" / "tts" / "full" / "tts_manifest.json"
             before = manifest_path.read_text(encoding="utf-8")
             out = io.StringIO()
-            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct, "read_current_tts_text", return_value={"cue.1": "hello"}),                  mock.patch.object(ct, "manifest_audio_ok", return_value=True),                  mock.patch.object(sys, "argv", [
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct.section_source, "ROOT", root),                  mock.patch.object(ct, "read_current_tts_text", return_value={"cue.1": "hello"}),                  mock.patch.object(ct, "manifest_audio_ok", return_value=True),                  mock.patch.object(sys, "argv", [
                      "compile_tutorial.py", "--game", "fake", "--track", "full", "--dry-run"
                  ]),                  contextlib.redirect_stdout(out):
                 rc = ct.main()
@@ -148,7 +148,7 @@ class CompileTutorialDryRunTests(unittest.TestCase):
             root = Path(tmp)
             self._write_fixture(root, script_text="new text")
             out = io.StringIO()
-            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct, "read_current_tts_text", return_value={"cue.1": "old text"}),                  mock.patch.object(ct, "manifest_audio_ok", return_value=True),                  mock.patch.object(ct, "run_tts_delta") as run_tts,                  mock.patch.object(sys, "argv", [
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct.section_source, "ROOT", root),                  mock.patch.object(ct, "read_current_tts_text", return_value={"cue.1": "old text"}),                  mock.patch.object(ct, "manifest_audio_ok", return_value=True),                  mock.patch.object(ct, "run_tts_delta") as run_tts,                  mock.patch.object(sys, "argv", [
                      "compile_tutorial.py", "--game", "fake", "--track", "full", "--dry-run"
                  ]),                  contextlib.redirect_stdout(out):
                 run_tts.side_effect = lambda game_dir, game, track, script, manifest, changed, tts_python, dry_run: manifest
@@ -162,7 +162,7 @@ class CompileTutorialDryRunTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             err = io.StringIO()
-            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(sys, "argv", [
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct.section_source, "ROOT", root),                  mock.patch.object(sys, "argv", [
                      "compile_tutorial.py", "--game", "fake", "--track", "full", "--dry-run"
                  ]),                  contextlib.redirect_stderr(err):
                 rc = ct.main()

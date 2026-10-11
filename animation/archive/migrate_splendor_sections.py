@@ -84,6 +84,15 @@ def full_target(cid: str) -> tuple[str, str]:
         return "nobles", "summary." + cid[len("action.cards.summary."):]
     if cid.startswith("action.cards."):
         return "cards", cid[len("action.cards."):]
+    # setup_players groups three legacy prefixes; keep a semantic local
+    # prefix so local ids stay unique inside the shared track section.
+    for prefix, section, local_prefix in [
+        ("setup.nobles.", "setup_players", "nobles."),
+        ("setup.starting_player.", "setup_players", "starting."),
+        ("setup.end.", "setup_players", "end."),
+    ]:
+        if cid.startswith(prefix):
+            return section, local_prefix + cid[len(prefix):]
     for prefix, section in FULL_RULES:
         if cid.startswith(prefix):
             local = cid[len(prefix):]
@@ -364,8 +373,9 @@ def migrate_manifest(track: str, target_fn, *, delete_old: bool) -> None:
         if cue.get("file"):
             cue["file"] = f"content/games/{GAME}/media/tts/{track}/{stem}{ext}"
         if cue.get("subtitle_file"):
-            sub_ext = Path(cue["subtitle_file"]).suffix or ".subtitle.json"
-            cue["subtitle_file"] = f"content/games/{GAME}/media/tts/{track}/{stem}{sub_ext}"
+            # Original subtitle files use the two-part ``.subtitle.json``
+            # extension; a plain ``Path(...).suffix`` would lose it.
+            cue["subtitle_file"] = f"content/games/{GAME}/media/tts/{track}/{stem}.subtitle.json"
     write(manifest_path, manifest)
     if delete_old:
         for old_id, qid, stem in changed:

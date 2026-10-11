@@ -2,6 +2,9 @@
   "id": "turn",
   "title": "回合与行动",
   "group_path": [
-    "3 回合与行动"
-  ]
+    "3 行动"
+  ],
+  "order": 4,
+  "tree": "main",
+  "entry": "setup_players/end.001.1"
 }

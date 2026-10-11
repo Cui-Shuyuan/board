@@ -298,12 +298,15 @@ def resolve_start_index(
     cues: list[dict],
     from_cue: str | None,
     start_after_cue_prefix: str = "setup.",
+    start_after_section_prefixes: Iterable[str] = (),
 ) -> int:
     """Return the first compiled cue to audit.
 
     Without ``--from-cue`` the audit starts after the last cue whose id matches
-    the game's configured setup prefix.  With ``--from-cue`` that cue becomes
-    the first checkpoint.
+    the game's configured setup prefix.  Section-first tracks additionally use
+    ``start_after_section_prefixes`` (e.g. ``setup_`` / ``quick_setup_``), since
+    qualified cue ids begin with their section id rather than ``setup.``.
+    With ``--from-cue`` that cue becomes the first checkpoint.
     """
     if from_cue:
         for idx, cue in enumerate(cues):
@@ -311,9 +314,14 @@ def resolve_start_index(
                 return idx
         raise ValueError(f"from-cue not found: {from_cue}")
 
+    prefixes = [str(p) for p in (start_after_section_prefixes or []) if p]
     last_setup = -1
     for idx, cue in enumerate(cues):
-        if str(cue.get("id") or "").startswith(start_after_cue_prefix):
+        cid = str(cue.get("id") or "")
+        section = str(cue.get("section") or "")
+        if cid.startswith(start_after_cue_prefix) or any(
+            section.startswith(prefix) for prefix in prefixes
+        ):
             last_setup = idx
     return last_setup + 1
 
@@ -832,7 +840,10 @@ def audit_documents(
     if not cues:
         raise ValueError("compiled track has no cues")
     start_after = str(profile.get("start_after_cue_prefix") or "setup.")
-    start_index = resolve_start_index(cues, from_cue, start_after)
+    start_section_prefixes = profile.get("start_after_section_prefixes") or []
+    start_index = resolve_start_index(
+        cues, from_cue, start_after, start_section_prefixes
+    )
     if start_index >= len(cues):
         raise ValueError("no cue to audit after setup")
 

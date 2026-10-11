@@ -1,0 +1,134 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "quick",
+  "section": "quick_turn",
+  "cues": [
+    {
+      "id": "001",
+      "parent": "quick_setup_players/003",
+      "tree": "main",
+      "script": {
+        "story": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "anchor": "quick_turn/001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "从起始玩家开始，按顺时针顺序轮流行动",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          },
+          "anchor": "quick_turn/001.start"
+        },
+        {
+          "op": "wait",
+          "dur": 5.472,
+          "anchor": "quick_turn/001.start"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "parent": "001",
+      "tree": "main",
+      "script": {
+        "story": "自己的回合，需要从三种行动中选一种：拿宝石、买发展卡、保留发展卡；执行后轮到下一位玩家。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "anchor": "quick_turn/002.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "拿宝石\n购买1张发展卡\n保留1张发展卡",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          },
+          "anchor": "quick_turn/002.start"
+        },
+        {
+          "op": "wait",
+          "dur": 10.032,
+          "anchor": "quick_turn/002.start"
+        }
+      ]
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "quick_turn/001.start",
+      "cue": "001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_turn/001.end",
+      "cue": "001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_turn/001.b1.start",
+      "cue": "001",
+      "beat": "quick_turn/001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_turn/001.b1.end",
+      "cue": "001",
+      "beat": "quick_turn/001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_turn/002.start",
+      "cue": "002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_turn/002.end",
+      "cue": "002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_turn/002.b1.start",
+      "cue": "002",
+      "beat": "quick_turn/002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_turn/002.b1.end",
+      "cue": "002",
+      "beat": "quick_turn/002.b1",
+      "edge": "end"
+    }
+  ]
+}

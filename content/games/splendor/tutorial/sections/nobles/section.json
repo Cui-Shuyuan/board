@@ -1,9 +1,12 @@
 {
   "id": "nobles",
-  "title": "贵族",
+  "title": "贵族结算与购买总结",
   "group_path": [
-    "3 回合与行动",
-    "3.4 贵族"
+    "3 行动",
+    "3.2 发展卡牌与贵族",
+    "3.2.2 贵族结算"
   ],
-  "entry": "setup.quick.003"
+  "order": 7,
+  "tree": "main",
+  "entry": "cards/discount.001"
 }

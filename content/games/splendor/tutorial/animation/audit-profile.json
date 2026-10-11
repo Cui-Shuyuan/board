@@ -104,5 +104,9 @@
       "2": "二",
       "3": "三"
     }
-  }
+  },
+  "start_after_section_prefixes": [
+    "setup",
+    "quick_setup"
+  ]
 }

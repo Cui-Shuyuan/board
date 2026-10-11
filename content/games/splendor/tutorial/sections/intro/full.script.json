@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "intro",
+  "cues": [
+    {
+      "id": "001",
+      "group": "1 背景介绍",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "refs": [
+        "rulebook:background"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "intro/001.b1",
+          "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。"
+        },
+        {
+          "id": "intro/001.b2",
+          "text": "玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。"
+        }
+      ]
+    }
+  ]
+}

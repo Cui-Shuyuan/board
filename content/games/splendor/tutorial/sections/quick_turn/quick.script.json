@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "quick",
+  "section": "quick_turn",
+  "cues": [
+    {
+      "id": "001",
+      "group": "3 回合与行动",
+      "group_path": [
+        "3 回合与行动"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_turn/001.b1",
+          "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "group": "3 回合与行动",
+      "group_path": [
+        "3 回合与行动"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_turn/002.b1",
+          "text": "自己的回合，需要从三种行动中选一种：拿宝石、买发展卡、保留发展卡；执行后轮到下一位玩家。"
+        }
+      ]
+    }
+  ]
+}

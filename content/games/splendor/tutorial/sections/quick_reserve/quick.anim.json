@@ -1,0 +1,301 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "quick",
+  "section": "quick_reserve",
+  "cues": [
+    {
+      "id": "001",
+      "parent": "quick_setup_players/003",
+      "entry": "quick_setup_players/003",
+      "tree": "main",
+      "script": {
+        "story": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_reserve/001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "quick_reserve/001.start"
+        },
+        {
+          "op": "wait",
+          "dur": 9.24,
+          "anchor": "quick_reserve/001.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.417,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 9
+          },
+          "anchor": "quick_reserve/001.b1.start",
+          "offset": 2.549
+        },
+        {
+          "op": "take",
+          "dur": 0.5,
+          "quantity": 1,
+          "to": "face_down",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          },
+          "anchor": "quick_reserve/001.b1.start",
+          "offset": 4.132
+        },
+        {
+          "op": "draw",
+          "dur": 0.5,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 9,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          },
+          "anchor": "quick_reserve/001.b1.end",
+          "offset": -3.823
+        },
+        {
+          "op": "take",
+          "dur": 0.5,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick_reserve/001.b1.end",
+          "offset": -0.836
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "parent": "001",
+      "entry": "001",
+      "tree": "main",
+      "script": {
+        "story": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_reserved",
+          "anchor": "quick_reserve/002.start"
+        },
+        {
+          "op": "wait",
+          "dur": 8.856,
+          "anchor": "quick_reserve/002.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "最多保留3张；不提供折扣和声望，也不能给其他玩家看",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "quick_reserve/002.b1.start",
+          "offset": -0.024
+        },
+        {
+          "op": "highlight",
+          "dur": 0.468,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "order": 0
+          },
+          "anchor": "quick_reserve/002.b1.start",
+          "offset": 0.63
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "parent": "001",
+      "entry": "001",
+      "tree": "main",
+      "script": {
+        "story": "保留的牌，之后可以在自己回合花钱买下。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_reserved",
+          "anchor": "quick_reserve/003.start"
+        },
+        {
+          "op": "wait",
+          "dur": 4.032,
+          "anchor": "quick_reserve/003.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "保留的牌，之后可以在自己回合花钱买下",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "quick_reserve/003.b1.start",
+          "offset": -0.002
+        },
+        {
+          "op": "highlight",
+          "dur": 0.455,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "order": 0
+          },
+          "anchor": "quick_reserve/003.b1.start",
+          "offset": 0.635
+        }
+      ]
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "quick_reserve/001.start",
+      "cue": "001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_reserve/001.end",
+      "cue": "001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_reserve/001.b1.start",
+      "cue": "001",
+      "beat": "quick_reserve/001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_reserve/001.b1.end",
+      "cue": "001",
+      "beat": "quick_reserve/001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_reserve/002.start",
+      "cue": "002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_reserve/002.end",
+      "cue": "002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_reserve/002.b1.start",
+      "cue": "002",
+      "beat": "quick_reserve/002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_reserve/002.b1.end",
+      "cue": "002",
+      "beat": "quick_reserve/002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_reserve/003.start",
+      "cue": "003",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_reserve/003.end",
+      "cue": "003",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_reserve/003.b1.start",
+      "cue": "003",
+      "beat": "quick_reserve/003.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_reserve/003.b1.end",
+      "cue": "003",
+      "beat": "quick_reserve/003.b1",
+      "edge": "end"
+    }
+  ]
+}

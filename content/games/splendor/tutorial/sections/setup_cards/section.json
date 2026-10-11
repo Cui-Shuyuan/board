@@ -2,6 +2,10 @@
   "id": "setup_cards",
   "title": "设置：发展卡",
   "group_path": [
-    "2 设置"
-  ]
+    "2 设置",
+    "2.1 发展卡牌"
+  ],
+  "order": 1,
+  "tree": "main",
+  "entry": "intro/001"
 }

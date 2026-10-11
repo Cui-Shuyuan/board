@@ -105,3 +105,5 @@ clients/unity/.utmp/
 # 跟踪它会**每次采样都把工作区弄脏**，于是 sync_workspaces 的下一次同步会被自己的产物挡住。
 content/games/*/tutorial/anim/*.exitstate.json
 content/games/*/tutorial/anim/v2/*.v2sample.json
+# section-first 装配中间产物：可由 sections/ + tracks/ 随时重建，不是源真值。
+content/games/*/tutorial/build/

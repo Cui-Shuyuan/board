@@ -1,0 +1,28 @@
+{
+  "schema": "tutorial-anim/v2",
+  "kind": "animation_track",
+  "game": "splendor",
+  "track": "full",
+  "default_tree": "main",
+  "annotation_style": {
+    "color": "#FF2020",
+    "stroke": 11,
+    "gap": 65
+  },
+  "worlds": [
+    {
+      "id": "real",
+      "why": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。"
+    }
+  ],
+  "trees": [
+    {
+      "id": "main",
+      "world": "real",
+      "stage": "shared/stage/splendor.table.stage.json",
+      "purpose": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。",
+      "initial": "空桌；真实组件从 setup.gems.003.1 起按规则 create。根画面在 setup.cards.001.1 已关掉盒面，之后保持无整幅图。",
+      "extent_note": "当前为真实牌桌完整 extent；多棵树全部落地后再按主树实际内容收紧。"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "turn",
+  "cues": [
+    {
+      "id": "001",
+      "parent": "setup_players/end.001.1",
+      "timing": [
+        {
+          "key": "镜头整桌",
+          "text": "0.00"
+        },
+        {
+          "key": "点起始玩家标记",
+          "text": "1.00"
+        }
+      ],
+      "script": {
+        "story": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动",
+        "note": "高亮桌面上的起始玩家标记，作为讲解行动顺序的视觉参照。顺时针轮流行动由口播说明，不实际模拟玩家轮转。"
+      },
+      "events": [
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "turn/001.b1.start",
+          "offset": 0.715,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker"
+          }
+        }
+      ],
+      "tree": "main"
+    },
+    {
+      "id": "002",
+      "parent": "001",
+      "timing": [
+        {
+          "key": "镜头整桌",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "玩家在自己回合内可以从如下几种行动中选择其中一种进行",
+        "note": "保持桌面画面，用口播引出每回合选择一种行动。本条没有新事件，后续各行动示例从此状态分支。"
+      },
+      "events": [],
+      "tree": "main"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "turn/001.start",
+      "cue": "001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "turn/001.end",
+      "cue": "001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "turn/001.b1.start",
+      "cue": "001",
+      "beat": "turn/001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "turn/001.b1.end",
+      "cue": "001",
+      "beat": "turn/001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "turn/002.start",
+      "cue": "002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "turn/002.end",
+      "cue": "002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "turn/002.b1.start",
+      "cue": "002",
+      "beat": "turn/002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "turn/002.b1.end",
+      "cue": "002",
+      "beat": "turn/002.b1",
+      "edge": "end"
+    }
+  ]
+}

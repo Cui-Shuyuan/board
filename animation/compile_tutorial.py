@@ -645,7 +645,7 @@ def main() -> int:
             args.game, args.track, allow_legacy=True, warn=True
         )
     except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
-        print(f"source load failed for {args.game}/{args.track}: {exc}", file=sys.stderr)
+        print(f"missing source for {args.game}/{args.track}: {exc}", file=sys.stderr)
         return 2
     if not script.get("cues"):
         print(f"missing narration script for {args.game}/{args.track}", file=sys.stderr)

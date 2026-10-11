@@ -6,21 +6,23 @@
   "version": "0.1.0",
   "base_anim": "../shared/quick.base.anim.json",
   "sections": [
-    "intro",
-    "setup_cards",
-    "setup_gems",
-    "setup_players",
-    "turn",
-    "take_gems",
-    "gold",
-    "cards",
-    "reserve",
-    "nobles",
-    "end"
+    "quick_intro",
+    "quick_setup_cards",
+    "quick_setup_gems",
+    "quick_setup_players",
+    "quick_turn",
+    "quick_take_gems",
+    "quick_gold",
+    "quick_cards",
+    "quick_reserve",
+    "quick_nobles",
+    "quick_end"
   ],
   "script_meta": {
     "schema_version": 1,
     "title": "璀璨宝石 Quick 口播稿",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "game_id": "splendor",
+    "track": "quick"
   }
 }

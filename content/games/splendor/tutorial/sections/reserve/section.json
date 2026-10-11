@@ -2,8 +2,10 @@
   "id": "reserve",
   "title": "保留发展卡",
   "group_path": [
-    "3 回合与行动",
-    "3.3 保留发展卡"
+    "3 行动",
+    "3.3 保留一张发展卡牌"
   ],
-  "entry": "setup.quick.003"
+  "order": 8,
+  "tree": "main",
+  "entry": "turn/002"
 }

@@ -1,0 +1,214 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "quick",
+  "section": "quick_setup_players",
+  "cues": [
+    {
+      "id": "003",
+      "parent": "quick_setup_gems/002",
+      "tree": "main",
+      "script": {
+        "story": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；再选出一位起始玩家，并拿取起始玩家标记。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_nobles",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_setup_players/003.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "quick_setup_players/003.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "quick_setup_players/003.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "quick_setup_players/003.start"
+        },
+        {
+          "op": "wait",
+          "dur": 8.688,
+          "anchor": "quick_setup_players/003.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_marker",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -2.5
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "dur": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -2.5
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.38,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.529
+          },
+          "dur": 0.0,
+          "image": "media/marker/起始玩家标记_clean_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "marker_intro"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -2.5
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker",
+            "template": "starting_marker",
+            "palette": "",
+            "concept": "starting_player_marker"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -2.5
+        },
+        {
+          "op": "highlight",
+          "dur": 0.321,
+          "grow": 1.08,
+          "target": {
+            "space": "screen",
+            "id": "marker_intro"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -1.986
+        },
+        {
+          "op": "hide",
+          "dur": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -0.887
+        },
+        {
+          "op": "hide",
+          "dur": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "marker_intro"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -0.887
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_all_zones_static",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -0.887
+        },
+        {
+          "op": "highlight",
+          "dur": 0.321,
+          "peak_alpha": 0.65,
+          "grow": 1.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_marker"
+          },
+          "anchor": "quick_setup_players/003.b1.end",
+          "offset": -0.598
+        }
+      ]
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "quick_setup_players/003.start",
+      "cue": "003",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_setup_players/003.end",
+      "cue": "003",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_setup_players/003.b1.start",
+      "cue": "003",
+      "beat": "quick_setup_players/003.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_players/003.b1.end",
+      "cue": "003",
+      "beat": "quick_setup_players/003.b1",
+      "edge": "end"
+    }
+  ]
+}

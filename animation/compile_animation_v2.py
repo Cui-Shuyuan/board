@@ -734,7 +734,8 @@ class EventContext:
 
 class Compiler:
     def __init__(self, track_path: Path, doc: dict | None = None, *,
-                 source_root: Path | None = None, source_hash: str | None = None):
+                 source_root: Path | None = None, source_hash: str | None = None,
+                 script_doc: dict | None = None):
         self.track_path = Path(track_path)
         if source_root is not None:
             self.track_dir = Path(source_root)
@@ -744,6 +745,7 @@ class Compiler:
             self.track_path.read_text(encoding="utf-8")
         )
         self.doc = schema.resolve_track(raw_doc)
+        self._source_script_doc = copy.deepcopy(script_doc) if script_doc is not None else None
         if source_hash is not None:
             self.source_hash = str(source_hash)
         else:
@@ -790,12 +792,15 @@ class Compiler:
         track = norm(self.doc.get("track"))
         script_path = ROOT / "content" / "games" / game / "tutorial" / f"script.{track}.json"
         runtime_path = ROOT / "content" / "games" / game / "tutorial" / f"{track}.runtime.json"
-        if not script_path.exists():
-            raise FileNotFoundError(f"time_anchors: missing narration script {script_path}")
         if not runtime_path.exists():
             raise FileNotFoundError(f"time_anchors: missing runtime timing {runtime_path}")
 
-        script_doc = json.loads(script_path.read_text(encoding="utf-8"))
+        if self._source_script_doc is not None:
+            script_doc = self._source_script_doc
+        else:
+            if not script_path.exists():
+                raise FileNotFoundError(f"time_anchors: missing narration script {script_path}")
+            script_doc = json.loads(script_path.read_text(encoding="utf-8"))
         runtime_doc = json.loads(runtime_path.read_text(encoding="utf-8"))
         self.beat_times = self._build_beat_times(script_doc, runtime_doc)
         runtime_cues = {c.get("id"): c for c in (runtime_doc.get("cues") or []) if c.get("id")}
@@ -2951,6 +2956,7 @@ def main(argv: list[str] | None = None) -> int:
     source_hash: str | None = None
     source_root: Path | None = None
     build_source: Path | None = None
+    script_doc: dict | None = None
     section_source_obj = None
     if a.source:
         src = Path(a.source)
@@ -2968,6 +2974,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"section source failed for {a.game}/{a.track}: {exc}", file=sys.stderr)
             return 2
         doc = section_source_obj.anim_doc
+        script_doc = section_source_obj.script_doc
         out = compiled_path(a.game, a.track)
         source_root = section_source_obj.tutorial
         source_hash = section_source_obj.source_hash
@@ -2983,7 +2990,8 @@ def main(argv: list[str] | None = None) -> int:
         src = legacy_source_dummy
 
     try:
-        c = Compiler(src, doc=doc, source_root=source_root, source_hash=source_hash)
+        c = Compiler(src, doc=doc, source_root=source_root,
+                     source_hash=source_hash, script_doc=script_doc)
         compiled = c.compile()
     except Exception as e:
         print(f"COMPILE FAIL {src}: {e}", file=sys.stderr)

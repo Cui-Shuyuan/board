@@ -2,6 +2,10 @@
   "id": "setup_gems",
   "title": "设置：宝石与黄金",
   "group_path": [
-    "2 设置"
-  ]
+    "2 设置",
+    "2.2 宝石与黄金"
+  ],
+  "order": 2,
+  "tree": "main",
+  "entry": "setup_cards/002.1"
 }

@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "purchase_reserved",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。我要买一张我保留着的一级红发展卡 card_l1_ruby_37：它的价格是蓝2颗 + 绿1颗；我发展区有一张绿色一级牌，提供绿折扣1，所以绿色费用被抵掉，还差蓝2颗；我手上没有蓝宝石，但有2颗黄金，用2颗黄金当作蓝宝石支付。这笔购买合法吗？只回答「允许」或「不允许」，再说明该付什么。",
+      "cue": "001"
+    }
+  ]
+}

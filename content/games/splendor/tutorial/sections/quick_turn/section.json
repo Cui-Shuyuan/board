@@ -1,0 +1,10 @@
+{
+  "id": "quick_turn",
+  "title": "回合",
+  "group_path": [
+    "3 回合与行动"
+  ],
+  "order": 4,
+  "tree": "main",
+  "entry": "quick_setup_players/003"
+}

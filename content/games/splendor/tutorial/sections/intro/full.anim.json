@@ -1,0 +1,54 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "intro",
+  "cues": [
+    {
+      "id": "001",
+      "entry": "initial",
+      "tree": "main",
+      "transition": "world_cut",
+      "qa_exempt": true,
+      "script": {
+        "story": "介绍《璀璨宝石》：支持二到四人的丝绸之路主题贸易游戏。",
+        "note": "用整桌镜头显示游戏盒封面。此时桌面逻辑区域为空，游戏组件在后续设置环节建立。",
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "intro/001.start"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "picture": "media/box.png",
+          "anchor": "intro/001.start"
+        }
+      ]
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "intro/001.start",
+      "cue": "001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "intro/001.end",
+      "cue": "001",
+      "edge": "cue_end"
+    }
+  ]
+}

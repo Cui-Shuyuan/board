@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "quick",
+  "section": "quick_reserve",
+  "cues": [
+    {
+      "id": "001",
+      "group": "3.3 保留发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.3 保留发展卡"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_reserve/001.b1",
+          "text": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "group": "3.3 保留发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.3 保留发展卡"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_reserve/002.b1",
+          "text": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。"
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "group": "3.3 保留发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.3 保留发展卡"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_reserve/003.b1",
+          "text": "保留的牌，之后可以在自己回合花钱买下。"
+        }
+      ]
+    }
+  ]
+}

@@ -7,15 +7,239 @@
   "format": "mp3",
   "sample_rate": 24000,
   "generator": "animation/build_tutorial_runtime.py",
+  "sections": [
+    {
+      "id": "intro",
+      "title": "开始",
+      "group_path": [
+        "1 背景介绍"
+      ],
+      "order": 0,
+      "tree": "main",
+      "entry": "initial",
+      "cue_ids": [
+        "intro/001"
+      ]
+    },
+    {
+      "id": "setup_cards",
+      "title": "设置：发展卡",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "order": 1,
+      "tree": "main",
+      "entry": "intro/001",
+      "cue_ids": [
+        "setup_cards/001.1",
+        "setup_cards/001.2",
+        "setup_cards/002.1"
+      ]
+    },
+    {
+      "id": "setup_gems",
+      "title": "设置：宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "order": 2,
+      "tree": "main",
+      "entry": "setup_cards/002.1",
+      "cue_ids": [
+        "setup_gems/001.1",
+        "setup_gems/002",
+        "setup_gems/003.1",
+        "setup_gems/005.2"
+      ]
+    },
+    {
+      "id": "setup_players",
+      "title": "设置：贵族与起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "order": 3,
+      "tree": "main",
+      "entry": "setup_gems/005.2",
+      "cue_ids": [
+        "setup_players/nobles.001.1",
+        "setup_players/nobles.001.2",
+        "setup_players/nobles.002",
+        "setup_players/starting.001.1",
+        "setup_players/starting.001.3",
+        "setup_players/end.001.1"
+      ]
+    },
+    {
+      "id": "turn",
+      "title": "回合与行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "order": 4,
+      "tree": "main",
+      "entry": "setup_players/end.001.1",
+      "cue_ids": [
+        "turn/001",
+        "turn/002"
+      ]
+    },
+    {
+      "id": "take_gems",
+      "title": "拿宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "order": 5,
+      "tree": "main",
+      "entry": "turn/002",
+      "cue_ids": [
+        "take_gems/different.001",
+        "take_gems/same.001",
+        "take_gems/same.002",
+        "take_gems/draw_rule.001.1",
+        "take_gems/draw_rule.001.2",
+        "take_gems/limit.001.1",
+        "take_gems/limit.001.2",
+        "take_gems/public.001.1",
+        "take_gems/public.001.2"
+      ]
+    },
+    {
+      "id": "cards",
+      "title": "购买与认识发展卡",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "order": 6,
+      "tree": "main",
+      "entry": "take_gems/public.001.2",
+      "cue_ids": [
+        "cards/intro.001",
+        "cards/cost.001.1",
+        "cards/cost.001.2",
+        "cards/market.001.1",
+        "cards/market.001.2",
+        "cards/prestige.001.1",
+        "cards/prestige.001.2",
+        "cards/discount.001",
+        "cards/discount.002.1",
+        "cards/discount.003.1",
+        "cards/discount.003.2",
+        "cards/public.001.1",
+        "cards/limit.001.1"
+      ]
+    },
+    {
+      "id": "nobles",
+      "title": "贵族结算与购买总结",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "order": 7,
+      "tree": "main",
+      "entry": "cards/discount.001",
+      "cue_ids": [
+        "nobles/intro.001",
+        "nobles/trigger.001.1",
+        "nobles/forced.001.1",
+        "nobles/source.001",
+        "nobles/choice.001.1",
+        "nobles/repeat.001.1",
+        "nobles/repeat.001.3",
+        "nobles/summary.001.1",
+        "nobles/summary.001.2",
+        "nobles/summary.001.3"
+      ]
+    },
+    {
+      "id": "reserve",
+      "title": "保留发展卡",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "order": 8,
+      "tree": "main",
+      "entry": "turn/002",
+      "cue_ids": [
+        "reserve/intro.001.1",
+        "reserve/gold.001",
+        "reserve/deck.001",
+        "reserve/notes_intro.001",
+        "reserve/limit_gold.001.2",
+        "reserve/limit_hand.001.1",
+        "reserve/private.001.1",
+        "reserve/private.002",
+        "reserve/not_purchase.001"
+      ]
+    },
+    {
+      "id": "purchase_reserved",
+      "title": "购买保留的发展卡",
+      "group_path": [
+        "3 行动",
+        "3.4 购买保留的发展卡牌"
+      ],
+      "order": 9,
+      "tree": "main",
+      "entry": "reserve/not_purchase.001",
+      "cue_ids": [
+        "purchase_reserved/001"
+      ]
+    },
+    {
+      "id": "summary",
+      "title": "回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "order": 10,
+      "tree": "main",
+      "entry": "purchase_reserved/001",
+      "cue_ids": [
+        "summary/001",
+        "summary/002.1",
+        "summary/002.2"
+      ]
+    },
+    {
+      "id": "end",
+      "title": "游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "order": 11,
+      "tree": "main",
+      "entry": "nobles/summary.001.3",
+      "cue_ids": [
+        "end/trigger.001",
+        "end/final_rounds.001.1",
+        "end/example.001.1",
+        "end/winner.001",
+        "end/winner.002",
+        "end/winner.003"
+      ]
+    }
+  ],
   "cues": [
     {
-      "id": "bg.intro.001",
+      "id": "intro/001",
       "group": "1 背景介绍",
       "group_path": [
         "1 背景介绍"
       ],
       "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。",
-      "audio": "media/tts/full/bg.intro.001.mp3",
+      "audio": "media/tts/full/intro__001.mp3",
       "duration": 15.552,
       "start": 0.0,
       "refs": [
@@ -453,17 +677,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "intro",
+      "local_id": "001",
+      "section_index": 0,
+      "local_index": 0,
+      "cue_index": 0
     },
     {
-      "id": "setup.cards.001.1",
+      "id": "setup_cards/001.1",
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
         "2.1 发展卡牌"
       ],
       "text": "这是发展卡牌，共90张。",
-      "audio": "media/tts/full/setup.cards.001.1.mp3",
+      "audio": "media/tts/full/setup_cards__001.1.mp3",
       "duration": 2.664,
       "start": 15.55,
       "refs": [
@@ -533,17 +762,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_cards",
+      "local_id": "001.1",
+      "section_index": 1,
+      "local_index": 0,
+      "cue_index": 1
     },
     {
-      "id": "setup.cards.001.2",
+      "id": "setup_cards/001.2",
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
         "2.1 发展卡牌"
       ],
       "text": "根据背面可以将所有发展卡牌分为三类，分别是40张绿色的一级发展卡牌、30张黄色的二级发展卡牌，和20张蓝色的三级发展卡牌。",
-      "audio": "media/tts/full/setup.cards.001.2.mp3",
+      "audio": "media/tts/full/setup_cards__001.2.mp3",
       "duration": 12.672,
       "start": 18.22,
       "refs": [
@@ -904,17 +1138,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_cards",
+      "local_id": "001.2",
+      "section_index": 1,
+      "local_index": 1,
+      "cue_index": 2
     },
     {
-      "id": "setup.cards.002.1",
+      "id": "setup_cards/002.1",
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
         "2.1 发展卡牌"
       ],
       "text": "将这三类牌分别洗混后按顺序摆成一列。从每摞牌上方分别翻开四张牌，在一侧摆成一行。最终组成一个3乘4的发展卡牌供应堆。",
-      "audio": "media/tts/full/setup.cards.002.1.mp3",
+      "audio": "media/tts/full/setup_cards__002.1.mp3",
       "duration": 12.84,
       "start": 30.89,
       "refs": [
@@ -1275,17 +1514,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_cards",
+      "local_id": "002.1",
+      "section_index": 1,
+      "local_index": 2,
+      "cue_index": 3
     },
     {
-      "id": "setup.gems.001.1",
+      "id": "setup_gems/001.1",
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
         "2.2 宝石与黄金"
       ],
       "text": "这些是标记，后续称之为宝石。宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。后续我们就直接以颜色称呼它们了。",
-      "audio": "media/tts/full/setup.gems.001.1.mp3",
+      "audio": "media/tts/full/setup_gems__001.1.mp3",
       "duration": 13.272,
       "start": 43.73,
       "refs": [
@@ -1627,17 +1871,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_gems",
+      "local_id": "001.1",
+      "section_index": 2,
+      "local_index": 0,
+      "cue_index": 4
     },
     {
-      "id": "setup.gems.002",
+      "id": "setup_gems/002",
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
         "2.2 宝石与黄金"
       ],
       "text": "这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石。",
-      "audio": "media/tts/full/setup.gems.002.mp3",
+      "audio": "media/tts/full/setup_gems__002.mp3",
       "duration": 6.024,
       "start": 57.0,
       "refs": [
@@ -1822,17 +2071,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_gems",
+      "local_id": "002",
+      "section_index": 2,
+      "local_index": 1,
+      "cue_index": 5
     },
     {
-      "id": "setup.gems.003.1",
+      "id": "setup_gems/003.1",
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
         "2.2 宝石与黄金"
       ],
       "text": "我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚。3人游戏时，拿取5枚。4人游戏时则使用全部的7枚宝石。将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。",
-      "audio": "media/tts/full/setup.gems.003.1.mp3",
+      "audio": "media/tts/full/setup_gems__003.1.mp3",
       "duration": 18.696,
       "start": 63.02,
       "refs": [
@@ -2385,17 +2639,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_gems",
+      "local_id": "003.1",
+      "section_index": 2,
+      "local_index": 2,
+      "cue_index": 6
     },
     {
-      "id": "setup.gems.005.2",
+      "id": "setup_gems/005.2",
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
         "2.2 宝石与黄金"
       ],
       "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。其余的宝石放回盒子。",
-      "audio": "media/tts/full/setup.gems.005.2.mp3",
+      "audio": "media/tts/full/setup_gems__005.2.mp3",
       "duration": 6.816,
       "start": 81.72,
       "refs": [
@@ -2588,17 +2847,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_gems",
+      "local_id": "005.2",
+      "section_index": 2,
+      "local_index": 3,
+      "cue_index": 7
     },
     {
-      "id": "setup.nobles.001.1",
+      "id": "setup_players/nobles.001.1",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
         "2.3 贵族板块"
       ],
       "text": "这些是贵族板块。",
-      "audio": "media/tts/full/setup.nobles.001.1.mp3",
+      "audio": "media/tts/full/setup_players__nobles.001.1.mp3",
       "duration": 1.872,
       "start": 88.54,
       "refs": [
@@ -2657,17 +2921,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_players",
+      "local_id": "nobles.001.1",
+      "section_index": 3,
+      "local_index": 0,
+      "cue_index": 8
     },
     {
-      "id": "setup.nobles.001.2",
+      "id": "setup_players/nobles.001.2",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
         "2.3 贵族板块"
       ],
       "text": "从所有的贵族板块中随机抽出玩家数量+1块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。",
-      "audio": "media/tts/full/setup.nobles.001.2.mp3",
+      "audio": "media/tts/full/setup_players__nobles.001.2.mp3",
       "duration": 8.856,
       "start": 90.41,
       "refs": [
@@ -2943,17 +3212,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_players",
+      "local_id": "nobles.001.2",
+      "section_index": 3,
+      "local_index": 1,
+      "cue_index": 9
     },
     {
-      "id": "setup.nobles.002",
+      "id": "setup_players/nobles.002",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
         "2.3 贵族板块"
       ],
       "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。",
-      "audio": "media/tts/full/setup.nobles.002.mp3",
+      "audio": "media/tts/full/setup_players__nobles.002.mp3",
       "duration": 7.056,
       "start": 99.26,
       "refs": [
@@ -3173,17 +3447,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_players",
+      "local_id": "nobles.002",
+      "section_index": 3,
+      "local_index": 2,
+      "cue_index": 10
     },
     {
-      "id": "setup.starting_player.001.1",
+      "id": "setup_players/starting.001.1",
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
         "2.4 起始玩家"
       ],
       "text": "现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家。",
-      "audio": "media/tts/full/setup.starting_player.001.1.mp3",
+      "audio": "media/tts/full/setup_players__starting.001.1.mp3",
       "duration": 10.056,
       "start": 106.32,
       "refs": [
@@ -3514,17 +3793,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_players",
+      "local_id": "starting.001.1",
+      "section_index": 3,
+      "local_index": 3,
+      "cue_index": 11
     },
     {
-      "id": "setup.starting_player.001.3",
+      "id": "setup_players/starting.001.3",
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
         "2.4 起始玩家"
       ],
       "text": "这是起始玩家标记。起始玩家获得这枚标记。",
-      "audio": "media/tts/full/setup.starting_player.001.3.mp3",
+      "audio": "media/tts/full/setup_players__starting.001.3.mp3",
       "duration": 4.656,
       "start": 116.38,
       "refs": [
@@ -3656,17 +3940,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_players",
+      "local_id": "starting.001.3",
+      "section_index": 3,
+      "local_index": 4,
+      "cue_index": 12
     },
     {
-      "id": "setup.end.001.1",
+      "id": "setup_players/end.001.1",
       "group": "2.5 设置完成",
       "group_path": [
         "2 设置",
         "2.5 设置完成"
       ],
       "text": "至此，整个设置环节就大功告成了。接下来可以正式开始游戏了。",
-      "audio": "media/tts/full/setup.end.001.1.mp3",
+      "audio": "media/tts/full/setup_players__end.001.1.mp3",
       "duration": 5.64,
       "start": 121.03,
       "refs": [
@@ -3845,16 +4134,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "setup_players",
+      "local_id": "end.001.1",
+      "section_index": 3,
+      "local_index": 5,
+      "cue_index": 13
     },
     {
-      "id": "action.turn.001",
+      "id": "turn/001",
       "group": "3 行动",
       "group_path": [
         "3 行动"
       ],
       "text": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。",
-      "audio": "media/tts/full/action.turn.001.mp3",
+      "audio": "media/tts/full/turn__001.mp3",
       "duration": 8.232,
       "start": 126.67,
       "refs": [
@@ -4088,16 +4382,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "turn",
+      "local_id": "001",
+      "section_index": 4,
+      "local_index": 0,
+      "cue_index": 14
     },
     {
-      "id": "action.turn.002",
+      "id": "turn/002",
       "group": "3 行动",
       "group_path": [
         "3 行动"
       ],
       "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行：",
-      "audio": "media/tts/full/action.turn.002.mp3",
+      "audio": "media/tts/full/turn__002.mp3",
       "duration": 5.472,
       "start": 134.9,
       "refs": [
@@ -4268,17 +4567,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "turn",
+      "local_id": "002",
+      "section_index": 4,
+      "local_index": 1,
+      "cue_index": 15
     },
     {
-      "id": "action.take.different.001",
+      "id": "take_gems/different.001",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。",
-      "audio": "media/tts/full/action.take.different.001.mp3",
+      "audio": "media/tts/full/take_gems__different.001.mp3",
       "duration": 5.28,
       "start": 140.38,
       "refs": [
@@ -4432,17 +4736,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "different.001",
+      "section_index": 5,
+      "local_index": 0,
+      "cue_index": 16
     },
     {
-      "id": "action.take.same.001",
+      "id": "take_gems/same.001",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "当某种宝石在供应堆中的数量大于等于4时，也可以改为拿取这种宝石两枚。",
-      "audio": "media/tts/full/action.take.same.001.mp3",
+      "audio": "media/tts/full/take_gems__same.001.mp3",
       "duration": 7.056,
       "start": 145.66,
       "refs": [
@@ -4657,17 +4966,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "same.001",
+      "section_index": 5,
+      "local_index": 1,
+      "cue_index": 17
     },
     {
-      "id": "action.take.same.002",
+      "id": "take_gems/same.002",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，否则就不能这样拿取。",
-      "audio": "media/tts/full/action.take.same.002.mp3",
+      "audio": "media/tts/full/take_gems__same.002.mp3",
       "duration": 7.08,
       "start": 152.71,
       "refs": [
@@ -4882,17 +5196,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "same.002",
+      "section_index": 5,
+      "local_index": 2,
+      "cue_index": 18
     },
     {
-      "id": "action.take.draw_rule.001.1",
+      "id": "take_gems/draw_rule.001.1",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。",
-      "audio": "media/tts/full/action.take.draw_rule.001.1.mp3",
+      "audio": "media/tts/full/take_gems__draw_rule.001.1.mp3",
       "duration": 6.84,
       "start": 159.79,
       "refs": [
@@ -5107,17 +5426,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "draw_rule.001.1",
+      "section_index": 5,
+      "local_index": 3,
+      "cue_index": 19
     },
     {
-      "id": "action.take.draw_rule.001.2",
+      "id": "take_gems/draw_rule.001.2",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "当供应堆宝石不足时，尽可能拿取宝石。",
-      "audio": "media/tts/full/action.take.draw_rule.001.2.mp3",
+      "audio": "media/tts/full/take_gems__draw_rule.001.2.mp3",
       "duration": 3.864,
       "start": 166.63,
       "refs": [
@@ -5229,17 +5553,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "draw_rule.001.2",
+      "section_index": 5,
+      "local_index": 4,
+      "cue_index": 20
     },
     {
-      "id": "action.take.limit.001.1",
+      "id": "take_gems/limit.001.1",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "玩家持有的宝石和黄金总数上限为10个。任何时候当持有数量超过上限时，",
-      "audio": "media/tts/full/action.take.limit.001.1.mp3",
+      "audio": "media/tts/full/take_gems__limit.001.1.mp3",
       "duration": 6.84,
       "start": 170.5,
       "refs": [
@@ -5449,17 +5778,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "limit.001.1",
+      "section_index": 5,
+      "local_index": 5,
+      "cue_index": 21
     },
     {
-      "id": "action.take.limit.001.2",
+      "id": "take_gems/limit.001.2",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。",
-      "audio": "media/tts/full/action.take.limit.001.2.mp3",
+      "audio": "media/tts/full/take_gems__limit.001.2.mp3",
       "duration": 6.048,
       "start": 177.34,
       "refs": [
@@ -5657,17 +5991,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "limit.001.2",
+      "section_index": 5,
+      "local_index": 6,
+      "cue_index": 22
     },
     {
-      "id": "action.take.public.001.1",
+      "id": "take_gems/public.001.1",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，",
-      "audio": "media/tts/full/action.take.public.001.1.mp3",
+      "audio": "media/tts/full/take_gems__public.001.1.mp3",
       "duration": 6.264,
       "start": 183.38,
       "refs": [
@@ -5856,17 +6195,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "public.001.1",
+      "section_index": 5,
+      "local_index": 7,
+      "cue_index": 23
     },
     {
-      "id": "action.take.public.001.2",
+      "id": "take_gems/public.001.2",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "所有人都能清楚看到的地方。",
-      "audio": "media/tts/full/action.take.public.001.2.mp3",
+      "audio": "media/tts/full/take_gems__public.001.2.mp3",
       "duration": 2.856,
       "start": 189.65,
       "refs": [
@@ -5953,10 +6297,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "take_gems",
+      "local_id": "public.001.2",
+      "section_index": 5,
+      "local_index": 8,
+      "cue_index": 24
     },
     {
-      "id": "action.cards.intro.001",
+      "id": "cards/intro.001",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -5964,7 +6313,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "我们介绍一下发展卡牌。",
-      "audio": "media/tts/full/action.cards.intro.001.mp3",
+      "audio": "media/tts/full/cards__intro.001.mp3",
       "duration": 2.256,
       "start": 192.5,
       "refs": [
@@ -6039,10 +6388,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "intro.001",
+      "section_index": 6,
+      "local_index": 0,
+      "cue_index": 25
     },
     {
-      "id": "action.cards.cost.001.1",
+      "id": "cards/cost.001.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -6050,7 +6404,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "左下角是这张牌的价格。要想购买这张牌，",
-      "audio": "media/tts/full/action.cards.cost.001.1.mp3",
+      "audio": "media/tts/full/cards__cost.001.1.mp3",
       "duration": 3.84,
       "start": 194.76,
       "refs": [
@@ -6176,10 +6530,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "cost.001.1",
+      "section_index": 6,
+      "local_index": 1,
+      "cue_index": 26
     },
     {
-      "id": "action.cards.cost.001.2",
+      "id": "cards/cost.001.2",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -6187,7 +6546,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。",
-      "audio": "media/tts/full/action.cards.cost.001.2.mp3",
+      "audio": "media/tts/full/cards__cost.001.2.mp3",
       "duration": 10.488,
       "start": 198.6,
       "refs": [
@@ -6505,10 +6864,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "cost.001.2",
+      "section_index": 6,
+      "local_index": 2,
+      "cue_index": 27
     },
     {
-      "id": "action.cards.market.001.1",
+      "id": "cards/market.001.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -6516,7 +6880,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，",
-      "audio": "media/tts/full/action.cards.market.001.1.mp3",
+      "audio": "media/tts/full/cards__market.001.1.mp3",
       "duration": 15.096,
       "start": 209.09,
       "refs": [
@@ -6979,10 +7343,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "market.001.1",
+      "section_index": 6,
+      "local_index": 3,
+      "cue_index": 28
     },
     {
-      "id": "action.cards.market.001.2",
+      "id": "cards/market.001.2",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -6990,7 +7359,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。",
-      "audio": "media/tts/full/action.cards.market.001.2.mp3",
+      "audio": "media/tts/full/cards__market.001.2.mp3",
       "duration": 8.256,
       "start": 224.18,
       "refs": [
@@ -7217,10 +7586,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "market.001.2",
+      "section_index": 6,
+      "local_index": 4,
+      "cue_index": 29
     },
     {
-      "id": "action.cards.prestige.001.1",
+      "id": "cards/prestige.001.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7228,7 +7602,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值。",
-      "audio": "media/tts/full/action.cards.prestige.001.1.mp3",
+      "audio": "media/tts/full/cards__prestige.001.1.mp3",
       "duration": 6.648,
       "start": 232.44,
       "refs": [
@@ -7431,10 +7805,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "prestige.001.1",
+      "section_index": 6,
+      "local_index": 5,
+      "cue_index": 30
     },
     {
-      "id": "action.cards.prestige.001.2",
+      "id": "cards/prestige.001.2",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7442,7 +7821,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值。",
-      "audio": "media/tts/full/action.cards.prestige.001.2.mp3",
+      "audio": "media/tts/full/cards__prestige.001.2.mp3",
       "duration": 6.264,
       "start": 239.09,
       "refs": [
@@ -7633,10 +8012,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "prestige.001.2",
+      "section_index": 6,
+      "local_index": 6,
+      "cue_index": 31
     },
     {
-      "id": "action.cards.discount.001",
+      "id": "cards/discount.001",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7644,7 +8028,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。",
-      "audio": "media/tts/full/action.cards.discount.001.mp3",
+      "audio": "media/tts/full/cards__discount.001.mp3",
       "duration": 7.464,
       "start": 245.35,
       "refs": [
@@ -7882,10 +8266,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "discount.001",
+      "section_index": 6,
+      "local_index": 7,
+      "cue_index": 32
     },
     {
-      "id": "action.cards.discount.002.1",
+      "id": "cards/discount.002.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7893,7 +8282,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。",
-      "audio": "media/tts/full/action.cards.discount.002.1.mp3",
+      "audio": "media/tts/full/cards__discount.002.1.mp3",
       "duration": 11.472,
       "start": 252.82,
       "refs": [
@@ -8259,10 +8648,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "discount.002.1",
+      "section_index": 6,
+      "local_index": 8,
+      "cue_index": 33
     },
     {
-      "id": "action.cards.discount.003.1",
+      "id": "cards/discount.003.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8270,7 +8664,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。",
-      "audio": "media/tts/full/action.cards.discount.003.1.mp3",
+      "audio": "media/tts/full/cards__discount.003.1.mp3",
       "duration": 7.872,
       "start": 264.29,
       "refs": [
@@ -8520,10 +8914,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "discount.003.1",
+      "section_index": 6,
+      "local_index": 9,
+      "cue_index": 34
     },
     {
-      "id": "action.cards.discount.003.2",
+      "id": "cards/discount.003.2",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8531,7 +8930,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。",
-      "audio": "media/tts/full/action.cards.discount.003.2.mp3",
+      "audio": "media/tts/full/cards__discount.003.2.mp3",
       "duration": 8.304,
       "start": 272.16,
       "refs": [
@@ -8787,10 +9186,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "discount.003.2",
+      "section_index": 6,
+      "local_index": 10,
+      "cue_index": 35
     },
     {
-      "id": "action.cards.public.001.1",
+      "id": "cards/public.001.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8798,7 +9202,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。",
-      "audio": "media/tts/full/action.cards.public.001.1.mp3",
+      "audio": "media/tts/full/cards__public.001.1.mp3",
       "duration": 12.864,
       "start": 280.46,
       "refs": [
@@ -9175,10 +9579,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "public.001.1",
+      "section_index": 6,
+      "local_index": 11,
+      "cue_index": 36
     },
     {
-      "id": "action.cards.limit.001.1",
+      "id": "cards/limit.001.1",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -9186,7 +9595,7 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
-      "audio": "media/tts/full/action.cards.limit.001.1.mp3",
+      "audio": "media/tts/full/cards__limit.001.1.mp3",
       "duration": 8.856,
       "start": 293.33,
       "refs": [
@@ -9461,10 +9870,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "cards",
+      "local_id": "limit.001.1",
+      "section_index": 6,
+      "local_index": 12,
+      "cue_index": 37
     },
     {
-      "id": "action.nobles.intro.001",
+      "id": "nobles/intro.001",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -9472,7 +9886,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。",
-      "audio": "media/tts/full/action.nobles.intro.001.mp3",
+      "audio": "media/tts/full/nobles__intro.001.mp3",
       "duration": 10.464,
       "start": 302.18,
       "refs": [
@@ -9809,10 +10223,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "intro.001",
+      "section_index": 7,
+      "local_index": 0,
+      "cue_index": 38
     },
     {
-      "id": "action.nobles.trigger.001.1",
+      "id": "nobles/trigger.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -9820,7 +10239,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。",
-      "audio": "media/tts/full/action.nobles.trigger.001.1.mp3",
+      "audio": "media/tts/full/nobles__trigger.001.1.mp3",
       "duration": 12.024,
       "start": 312.65,
       "refs": [
@@ -10204,10 +10623,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "trigger.001.1",
+      "section_index": 7,
+      "local_index": 1,
+      "cue_index": 39
     },
     {
-      "id": "action.nobles.forced.001.1",
+      "id": "nobles/forced.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -10215,7 +10639,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。",
-      "audio": "media/tts/full/action.nobles.forced.001.1.mp3",
+      "audio": "media/tts/full/nobles__forced.001.1.mp3",
       "duration": 11.088,
       "start": 324.67,
       "refs": [
@@ -10568,10 +10992,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "forced.001.1",
+      "section_index": 7,
+      "local_index": 2,
+      "cue_index": 40
     },
     {
-      "id": "action.nobles.source.001",
+      "id": "nobles/source.001",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -10579,7 +11008,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。",
-      "audio": "media/tts/full/action.nobles.source.001.mp3",
+      "audio": "media/tts/full/nobles__source.001.mp3",
       "duration": 8.76,
       "start": 335.76,
       "refs": [
@@ -10739,10 +11168,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "source.001",
+      "section_index": 7,
+      "local_index": 3,
+      "cue_index": 41
     },
     {
-      "id": "action.nobles.choice.001.1",
+      "id": "nobles/choice.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -10750,7 +11184,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。",
-      "audio": "media/tts/full/action.nobles.choice.001.1.mp3",
+      "audio": "media/tts/full/nobles__choice.001.1.mp3",
       "duration": 8.832,
       "start": 344.52,
       "refs": [
@@ -11038,10 +11472,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "choice.001.1",
+      "section_index": 7,
+      "local_index": 4,
+      "cue_index": 42
     },
     {
-      "id": "action.nobles.repeat.001.1",
+      "id": "nobles/repeat.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11049,7 +11488,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。",
-      "audio": "media/tts/full/action.nobles.repeat.001.1.mp3",
+      "audio": "media/tts/full/nobles__repeat.001.1.mp3",
       "duration": 11.664,
       "start": 353.35,
       "refs": [
@@ -11446,10 +11885,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "repeat.001.1",
+      "section_index": 7,
+      "local_index": 5,
+      "cue_index": 43
     },
     {
-      "id": "action.nobles.repeat.001.3",
+      "id": "nobles/repeat.001.3",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11457,7 +11901,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。",
-      "audio": "media/tts/full/action.nobles.repeat.001.3.mp3",
+      "audio": "media/tts/full/nobles__repeat.001.3.mp3",
       "duration": 6.672,
       "start": 365.02,
       "refs": [
@@ -11666,10 +12110,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "repeat.001.3",
+      "section_index": 7,
+      "local_index": 6,
+      "cue_index": 44
     },
     {
-      "id": "action.cards.summary.001.1",
+      "id": "nobles/summary.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11677,7 +12126,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，",
-      "audio": "media/tts/full/action.cards.summary.001.1.mp3",
+      "audio": "media/tts/full/nobles__summary.001.1.mp3",
       "duration": 5.064,
       "start": 371.69,
       "refs": [
@@ -11827,10 +12276,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "summary.001.1",
+      "section_index": 7,
+      "local_index": 7,
+      "cue_index": 45
     },
     {
-      "id": "action.cards.summary.001.2",
+      "id": "nobles/summary.001.2",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11838,7 +12292,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "已购买的发展卡牌会为玩家带来声望值和折扣。",
-      "audio": "media/tts/full/action.cards.summary.001.2.mp3",
+      "audio": "media/tts/full/nobles__summary.001.2.mp3",
       "duration": 4.44,
       "start": 376.75,
       "refs": [
@@ -11976,10 +12430,15 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "summary.001.2",
+      "section_index": 7,
+      "local_index": 8,
+      "cue_index": 46
     },
     {
-      "id": "action.cards.summary.001.3",
+      "id": "nobles/summary.001.3",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11987,7 +12446,7 @@
         "3.2.2 贵族结算"
       ],
       "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
-      "audio": "media/tts/full/action.cards.summary.001.3.mp3",
+      "audio": "media/tts/full/nobles__summary.001.3.mp3",
       "duration": 6.432,
       "start": 381.19,
       "refs": [
@@ -12198,17 +12657,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "nobles",
+      "local_id": "summary.001.3",
+      "section_index": 7,
+      "local_index": 9,
+      "cue_index": 47
     },
     {
-      "id": "action.reserve.intro.001.1",
+      "id": "reserve/intro.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "除购买外，玩家也可以不支付费用，把一张发展卡牌从供应堆拿走，正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。",
-      "audio": "media/tts/full/action.reserve.intro.001.1.mp3",
+      "audio": "media/tts/full/reserve__intro.001.1.mp3",
       "duration": 11.088,
       "start": 387.62,
       "refs": [
@@ -12540,17 +13004,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "intro.001.1",
+      "section_index": 8,
+      "local_index": 0,
+      "cue_index": 48
     },
     {
-      "id": "action.reserve.gold.001",
+      "id": "reserve/gold.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。",
-      "audio": "media/tts/full/action.reserve.gold.001.mp3",
+      "audio": "media/tts/full/reserve__gold.001.mp3",
       "duration": 6.84,
       "start": 398.71,
       "refs": [
@@ -12771,17 +13240,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "gold.001",
+      "section_index": 8,
+      "local_index": 1,
+      "cue_index": 49
     },
     {
-      "id": "action.reserve.deck.001",
+      "id": "reserve/deck.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。",
-      "audio": "media/tts/full/action.reserve.deck.001.mp3",
+      "audio": "media/tts/full/reserve__deck.001.mp3",
       "duration": 7.656,
       "start": 405.55,
       "refs": [
@@ -13028,17 +13502,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "deck.001",
+      "section_index": 8,
+      "local_index": 2,
+      "cue_index": 50
     },
     {
-      "id": "action.reserve.notes_intro.001",
+      "id": "reserve/notes_intro.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。",
-      "audio": "media/tts/full/action.reserve.notes_intro.001.mp3",
+      "audio": "media/tts/full/reserve__notes_intro.001.mp3",
       "duration": 8.856,
       "start": 413.21,
       "refs": [
@@ -13304,17 +13783,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "notes_intro.001",
+      "section_index": 8,
+      "local_index": 3,
+      "cue_index": 51
     },
     {
-      "id": "action.reserve.limit_gold.001.2",
+      "id": "reserve/limit_gold.001.2",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。",
-      "audio": "media/tts/full/action.reserve.limit_gold.001.2.mp3",
+      "audio": "media/tts/full/reserve__limit_gold.001.2.mp3",
       "duration": 5.472,
       "start": 422.06,
       "refs": [
@@ -13487,17 +13971,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "limit_gold.001.2",
+      "section_index": 8,
+      "local_index": 4,
+      "cue_index": 52
     },
     {
-      "id": "action.reserve.limit_hand.001.1",
+      "id": "reserve/limit_hand.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "每位玩家最多同时保留3张发展卡牌；已经保留3张时，就不能再保留，必须选择其他行动。",
-      "audio": "media/tts/full/action.reserve.limit_hand.001.1.mp3",
+      "audio": "media/tts/full/reserve__limit_hand.001.1.mp3",
       "duration": 8.04,
       "start": 427.54,
       "refs": [
@@ -13742,17 +14231,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "limit_hand.001.1",
+      "section_index": 8,
+      "local_index": 5,
+      "cue_index": 53
     },
     {
-      "id": "action.reserve.private.001.1",
+      "id": "reserve/private.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。",
-      "audio": "media/tts/full/action.reserve.private.001.1.mp3",
+      "audio": "media/tts/full/reserve__private.001.1.mp3",
       "duration": 11.28,
       "start": 435.58,
       "refs": [
@@ -14111,17 +14605,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "private.001.1",
+      "section_index": 8,
+      "local_index": 6,
+      "cue_index": 54
     },
     {
-      "id": "action.reserve.private.002",
+      "id": "reserve/private.002",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。",
-      "audio": "media/tts/full/action.reserve.private.002.mp3",
+      "audio": "media/tts/full/reserve__private.002.mp3",
       "duration": 6.456,
       "start": 446.86,
       "refs": [
@@ -14311,17 +14810,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "private.002",
+      "section_index": 8,
+      "local_index": 7,
+      "cue_index": 55
     },
     {
-      "id": "action.reserve.not_purchase.001",
+      "id": "reserve/not_purchase.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
-      "audio": "media/tts/full/action.reserve.not_purchase.001.mp3",
+      "audio": "media/tts/full/reserve__not_purchase.001.mp3",
       "duration": 7.08,
       "start": 453.31,
       "refs": [
@@ -14531,17 +15035,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "reserve",
+      "local_id": "not_purchase.001",
+      "section_index": 8,
+      "local_index": 8,
+      "cue_index": 56
     },
     {
-      "id": "action.purchase_reserved.001",
+      "id": "purchase_reserved/001",
       "group": "3.4 购买保留的发展卡牌",
       "group_path": [
         "3 行动",
         "3.4 购买保留的发展卡牌"
       ],
       "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
-      "audio": "media/tts/full/action.purchase_reserved.001.mp3",
+      "audio": "media/tts/full/purchase_reserved__001.mp3",
       "duration": 18.672,
       "start": 460.39,
       "refs": [
@@ -15144,17 +15653,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "purchase_reserved",
+      "local_id": "001",
+      "section_index": 9,
+      "local_index": 0,
+      "cue_index": 57
     },
     {
-      "id": "action.summary.001",
+      "id": "summary/001",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
         "3.5 回合结束与循环"
       ],
       "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。",
-      "audio": "media/tts/full/action.summary.001.mp3",
+      "audio": "media/tts/full/summary__001.mp3",
       "duration": 7.224,
       "start": 479.06,
       "refs": [
@@ -15377,17 +15891,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "summary",
+      "local_id": "001",
+      "section_index": 10,
+      "local_index": 0,
+      "cue_index": 58
     },
     {
-      "id": "action.summary.002.1",
+      "id": "summary/002.1",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
         "3.5 回合结束与循环"
       ],
       "text": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。",
-      "audio": "media/tts/full/action.summary.002.1.mp3",
+      "audio": "media/tts/full/summary__002.1.mp3",
       "duration": 9.456,
       "start": 486.29,
       "refs": [
@@ -15670,17 +16189,22 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "summary",
+      "local_id": "002.1",
+      "section_index": 10,
+      "local_index": 1,
+      "cue_index": 59
     },
     {
-      "id": "action.summary.002.2",
+      "id": "summary/002.2",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
         "3.5 回合结束与循环"
       ],
       "text": "就这样一直循环，直到整局游戏结束。",
-      "audio": "media/tts/full/action.summary.002.2.mp3",
+      "audio": "media/tts/full/summary__002.2.mp3",
       "duration": 3.456,
       "start": 495.74,
       "refs": [
@@ -15787,16 +16311,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "summary",
+      "local_id": "002.2",
+      "section_index": 10,
+      "local_index": 2,
+      "cue_index": 60
     },
     {
-      "id": "endgame.trigger.001",
+      "id": "end/trigger.001",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。",
-      "audio": "media/tts/full/endgame.trigger.001.mp3",
+      "audio": "media/tts/full/end__trigger.001.mp3",
       "duration": 5.232,
       "start": 499.2,
       "refs": [
@@ -15944,16 +16473,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "end",
+      "local_id": "trigger.001",
+      "section_index": 11,
+      "local_index": 0,
+      "cue_index": 61
     },
     {
-      "id": "endgame.final_rounds.001.1",
+      "id": "end/final_rounds.001.1",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。",
-      "audio": "media/tts/full/endgame.final_rounds.001.1.mp3",
+      "audio": "media/tts/full/end__final_rounds.001.1.mp3",
       "duration": 10.296,
       "start": 504.43,
       "refs": [
@@ -16271,16 +16805,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "end",
+      "local_id": "final_rounds.001.1",
+      "section_index": 11,
+      "local_index": 1,
+      "cue_index": 62
     },
     {
-      "id": "endgame.example.001.1",
+      "id": "end/example.001.1",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "以4人局为例：如果起始玩家的声望值达到15，剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。",
-      "audio": "media/tts/full/endgame.example.001.1.mp3",
+      "audio": "media/tts/full/end__example.001.1.mp3",
       "duration": 16.488,
       "start": 514.73,
       "refs": [
@@ -16796,16 +17335,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "end",
+      "local_id": "example.001.1",
+      "section_index": 11,
+      "local_index": 2,
+      "cue_index": 63
     },
     {
-      "id": "endgame.winner.001",
+      "id": "end/winner.001",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "第一种情况：声望值最高的玩家获得胜利。比如玩家A有17分，玩家B有14分，A获胜。",
-      "audio": "media/tts/full/endgame.winner.001.mp3",
+      "audio": "media/tts/full/end__winner.001.mp3",
       "duration": 9.024,
       "start": 531.22,
       "refs": [
@@ -17032,16 +17576,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "end",
+      "local_id": "winner.001",
+      "section_index": 11,
+      "local_index": 3,
+      "cue_index": 64
     },
     {
-      "id": "endgame.winner.002",
+      "id": "end/winner.002",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。",
-      "audio": "media/tts/full/endgame.winner.002.mp3",
+      "audio": "media/tts/full/end__winner.002.mp3",
       "duration": 12.648,
       "start": 540.24,
       "refs": [
@@ -17389,16 +17938,21 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "end",
+      "local_id": "winner.002",
+      "section_index": 11,
+      "local_index": 4,
+      "cue_index": 65
     },
     {
-      "id": "endgame.winner.003",
+      "id": "end/winner.003",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。现在两人都是17分、10张牌，共享胜利。",
-      "audio": "media/tts/full/endgame.winner.003.mp3",
+      "audio": "media/tts/full/end__winner.003.mp3",
       "duration": 11.088,
       "start": 552.89,
       "refs": [
@@ -17704,7 +18258,12 @@
           ]
         }
       ],
-      "animation": null
+      "animation": null,
+      "section": "end",
+      "local_id": "winner.003",
+      "section_index": 11,
+      "local_index": 5,
+      "cue_index": 66
     }
   ]
 }

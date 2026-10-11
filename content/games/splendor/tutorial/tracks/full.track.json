@@ -1,0 +1,29 @@
+{
+  "schema": "tutorial-track/v1",
+  "game": "splendor",
+  "track": "full",
+  "title": "璀璨宝石 full 口播稿",
+  "version": "0.1.0",
+  "base_anim": "../shared/full.base.anim.json",
+  "sections": [
+    "intro",
+    "setup_cards",
+    "setup_gems",
+    "setup_players",
+    "turn",
+    "take_gems",
+    "cards",
+    "nobles",
+    "reserve",
+    "purchase_reserved",
+    "summary",
+    "end"
+  ],
+  "script_meta": {
+    "schema_version": 1,
+    "game_id": "splendor",
+    "track": "full",
+    "title": "璀璨宝石 full 口播稿",
+    "version": "0.1.0"
+  }
+}

@@ -1,0 +1,4175 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "nobles",
+  "cues": [
+    {
+      "id": "intro.001",
+      "parent": "cards/limit.001.1",
+      "tree": "main",
+      "transition": "overlay",
+      "timing": [
+        {
+          "key": "左 mask 贵族 / 右 4红+3黑（另有 1 张早前购入的白牌）",
+          "text": "整条 cue"
+        }
+      ],
+      "script": {
+        "story": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。",
+        "note": "从 action.cards.discount.001 分支，静默准备玩家 A 一白、四红、三黑的发展卡与后续补位牌。镜头展示发展区，屏幕放大 noble_1，分别圈出三点声望与四黑、四红条件。此时尚未满足该贵族条件。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 28
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 3
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 28
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 3
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 8,
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_33",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_35",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_37",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_905",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_906",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_907",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_down",
+          "anchor": "nobles/intro.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_908",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_development_side",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/intro.001.start"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "nobles/intro.001.start",
+          "rect": {
+            "x": 0.03,
+            "y": 0.18,
+            "w": 0.28,
+            "h": 0.498
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "nobles/intro.001.start",
+          "rect": {
+            "x": 0.03,
+            "y": 0.18,
+            "w": 0.28,
+            "h": 0.498
+          },
+          "image": "media/card/贵族_0001_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "noble_prestige",
+          "anchor": "nobles/intro.001.b1.start",
+          "offset": 2.235,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "condition_2",
+          "dur": 0.0,
+          "anchor": "nobles/intro.001.b1.start",
+          "offset": 4.755,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.9,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/intro.001.b1.start",
+          "offset": 8.44,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        }
+      ],
+      "entry": "cards/discount.001",
+      "qa": [
+        "璀璨宝石。贵族板块左上角是它的声望值，下方是结识条件；条件看的是玩家已购买的发展卡牌的种类和数量。这样理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ]
+    },
+    {
+      "id": "trigger.001.1",
+      "parent": "intro.001",
+      "timing": [
+        {
+          "key": "mask 贵族常驻 / 镜头对准桌面",
+          "text": "整条 cue"
+        },
+        {
+          "key": "玩家A购买一级黑卡",
+          "text": "第二句"
+        },
+        {
+          "key": "贵族进入玩家A贵族区",
+          "text": "第三句"
+        }
+      ],
+      "script": {
+        "story": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。",
+        "note": "购买市场 slot 2 的 card_l1_onyx_3，支付两蓝、一白并补位，玩家 A 的黑色发展卡从三张变四张，满足 noble_1 的四黑、四红条件。随后把 noble_1 从市场移到玩家 A 贵族区并高亮。静默补回的一白、一蓝用于后续示例准备，不是贵族奖励。",
+        "exit": {
+          "zones": {
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_3",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "deck_level_1": {
+              "count": 27
+            },
+            "card_market": {
+              "count": 12
+            },
+            "noble_market": {
+              "count": 2
+            },
+            "player_nobles": {
+              "count": 1
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            }
+          }
+        },
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 28
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_nobles": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "setup": true,
+          "anchor": "nobles/trigger.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/trigger.001.1.start"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "nobles/trigger.001.1.start",
+          "rect": {
+            "x": 0.03,
+            "y": 0.18,
+            "w": 0.28,
+            "h": 0.498
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "nobles/trigger.001.1.start",
+          "rect": {
+            "x": 0.03,
+            "y": 0.18,
+            "w": 0.28,
+            "h": 0.498
+          },
+          "image": "media/card/贵族_0001_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_explain"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/trigger.001.1.b2.start",
+          "offset": 0.2,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 2,
+          "anchor": "nobles/trigger.001.1.b2.start",
+          "offset": 0.35,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "nobles/trigger.001.1.b2.start",
+          "offset": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "nobles/trigger.001.1.b2.start",
+          "offset": 0.9,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/trigger.001.1.b2.start",
+          "offset": 2.15,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "setup": true,
+          "anchor": "nobles/trigger.001.1.b2.end",
+          "offset": -0.15,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "setup": true,
+          "anchor": "nobles/trigger.001.1.b2.end",
+          "offset": -0.1,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "nobles/trigger.001.1.b2.start",
+          "offset": 1.9,
+          "order": 2,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_908",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "nobles/trigger.001.1.b3.start",
+          "offset": 0.5,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/trigger.001.1.b3.end",
+          "offset": -0.5,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
+        }
+      ],
+      "tree": "main",
+      "transition": "continue",
+      "qa": [
+        "璀璨宝石。玩家A发展区原有 1 白、4 红、3 黑，三块贵族条件都未满足；他这一回合用 2 蓝 + 1 白买进一张一级黑卡（4 红提供红折扣、1 白提供白折扣），买后变成 1 白、4 红、4 黑，恰好满足 4黑4红贵族，于是在回合结束时获得该贵族。这个结算是否合法？只回答「合法」或「有问题」，再给一句话理由。"
+      ]
+    },
+    {
+      "id": "forced.001.1",
+      "parent": "intro.001",
+      "timing": [
+        {
+          "key": "同一张牌照买 / 但不拿贵族",
+          "text": "整条 cue"
+        },
+        {
+          "key": "“并且这个行动是…” → 贵族区出禁止标记和说明",
+          "text": "第二句开头"
+        }
+      ],
+      "script": {
+        "story": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。",
+        "note": "从 action.nobles.intro.001 单独演示错误情况：照常付款、买入黑卡并补位，满足 noble_1 条件后却不拿贵族。在玩家 A 空贵族槽显示禁止标记与说明文字。后续 action.nobles.source.001 的 parent 指回正确拿取分支，不沿用本条错误结果。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 28
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_nobles": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 27
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_3",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "nobles/forced.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/forced.001.1.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 3.8,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 2,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 4.05,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 4.35,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 4.6,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 5.85,
+          "target": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 6.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 6.1,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "nobles/forced.001.1.b1.start",
+          "offset": 5.55,
+          "order": 2,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_908",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 0.0,
+          "forbid": "forbid",
+          "overlay": "noble_forbid_a",
+          "anchor": "nobles/forced.001.1.b2.start",
+          "offset": 0.0
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "满足贵族条件就必须立即拿取，不能跳过。",
+          "overlay": "noble_forbid_a",
+          "annotation_space": "world",
+          "nudge": {
+            "x": 0.18,
+            "y": -0.1
+          },
+          "anchor": "nobles/forced.001.1.b2.start",
+          "offset": 0.0
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        {
+          "q": "两人局。玩家A买进发展卡后已经满足4黑4红贵族条件，但他没有拿取该贵族，贵族区仍为空，贵族_0001留在供应堆。这个状态是否合法？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "有问题"
+        }
+      ]
+    },
+    {
+      "id": "source.001",
+      "parent": "trigger.001.1",
+      "timing": [
+        {
+          "key": "B合法持有贵族 / A买1张白牌满足条件 / A搬B的贵族 / 禁止标记",
+          "text": "整条 cue（节奏放慢）"
+        }
+      ],
+      "script": {
+        "story": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取",
+        "note": "从正确拿取贵族的分支继续，静默准备玩家 B 已拥有 noble_5、玩家 A 再买一张白卡后满足其条件的前提。演示把 noble_5 从玩家 B 贵族区移给玩家 A，并显示禁止标记，强调条件满足也不能拿走别人已结识的贵族。后续 choice 示例通过 entry 回到正确分支。",
+        "enter": {
+          "zones": {
+            "deck_level_1": {
+              "count": 27
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "card_market": {
+              "count": 12
+            },
+            "noble_market": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 1
+            },
+            "player_b_nobles": {
+              "count": 1
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_3",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_b_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_17",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_diamond_80",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_34",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l2_ruby_69",
+                  "palette": "card_level_2",
+                  "concept": "development_card_level_2",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_ruby_87",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_1",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l2_onyx_909",
+                  "palette": "card_level_2",
+                  "concept": "development_card_level_2",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_onyx_71",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 2,
+                  "face": "down"
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "count": 2
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "deck_level_1": {
+              "count": 27
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "card_market": {
+              "count": 12
+            },
+            "noble_market": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 2
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_3",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_diamond_81",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_b_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_17",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_diamond_80",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_34",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l2_ruby_69",
+                  "palette": "card_level_2",
+                  "concept": "development_card_level_2",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_ruby_87",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_1",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l2_onyx_909",
+                  "palette": "card_level_2",
+                  "concept": "development_card_level_2",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l3_onyx_71",
+                  "palette": "card_level_3",
+                  "concept": "development_card_level_3",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "setup": true,
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_nobles"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_ruby_34",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_ruby_69",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_ruby_87",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_onyx_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_onyx_909",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_onyx_71",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "nobles/source.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/source.001.start"
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "nobles/source.001.start",
+          "offset": 2.5,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "nobles/source.001.start",
+          "offset": 2.8,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 1.0,
+          "quantity": 1,
+          "anchor": "nobles/source.001.start",
+          "offset": 3.1,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l3_diamond_81",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.8,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 9,
+          "anchor": "nobles/source.001.start",
+          "offset": 4.5,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "template": "card_l3_sapphire_78",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 1.4,
+          "quantity": 1,
+          "anchor": "nobles/source.001.start",
+          "offset": 5.8,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_nobles",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "forbid",
+          "anchor": "nobles/source.001.start",
+          "offset": 7.4,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles",
+            "order": 1
+          }
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        {
+          "q": "两人局。玩家A打出一张发展牌：发展区从2白4红4黑买成3白4红4黑，满足了玩家B面前那枚3黑3红3白贵族；贵族在B的贵族区，A把它从B那里拿到自己面前。A的做法合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "有问题"
+        }
+      ]
+    },
+    {
+      "id": "choice.001.1",
+      "parent": "source.001",
+      "timing": [],
+      "script": {
+        "story": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件",
+        "note": "从 action.nobles.trigger.001.1 分支，静默把可选贵族设为 noble_1、noble_2，并把玩家 A 折扣设为四白、四红、三黑。支付一白买入 card_l1_onyx_45 并补位后，玩家 A 同时满足两位贵族条件；用贵族区放大视图显示选择，只拿 noble_1。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 27
+            },
+            "noble_market": {
+              "count": 2
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "noble_market": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 1
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_diamond_18",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_20",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_22",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_diamond_24",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<diamond>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_33",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_35",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_37",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_ruby_40",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<ruby>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_905",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_906",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l1_onyx_907",
+                  "palette": "card_level_1",
+                  "concept": "development_card_level_1",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                },
+                {
+                  "template": "card_l2_onyx_45",
+                  "palette": "card_level_2",
+                  "concept": "development_card_level_2",
+                  "count": 1,
+                  "face": "up",
+                  "parts": [
+                    {
+                      "key": "bonus",
+                      "value": "<onyx>"
+                    }
+                  ]
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 7,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "offstage"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "offstage"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "offstage"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "offstage",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "noble_market"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_2",
+            "palette": "noble",
+            "concept": "noble"
+          }
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "offstage"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_down",
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "template": "card_l2_onyx_909",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/choice.001.1.start"
+        },
+        {
+          "op": "magnifier",
+          "id": "magnifier_nobles",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          },
+          "rect": {
+            "x": 0.29,
+            "y": 0.3,
+            "w": 0.2,
+            "h": 0.35
+          },
+          "zoom": 1.15,
+          "padding": 0.1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.0,
+          "shape": "box",
+          "mask": "full"
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 0.8,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 1.0,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 1.3,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l2_onyx_45",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.8,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 5,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 2.4,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "template": "card_l2_onyx_909",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 1.6,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 3.3,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 1.0,
+          "quantity": 1,
+          "anchor": "nobles/choice.001.1.start",
+          "offset": 7.2,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A发展区为4白4红3黑，桌上两块贵族条件是4黑4红和4白4黑；A用1枚白宝石买下一张二级黑卡后变成4白4红4黑，同时满足两块贵族并拿走其中一块。这个结算是否合法？只回答「合法」或「有问题」，再给一句话理由。"
+      ],
+      "entry": "trigger.001.1"
+    },
+    {
+      "id": "repeat.001.1",
+      "parent": "choice.001.1",
+      "timing": [
+        {
+          "key": "镜头给玩家面前",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "当他的下一个回合结束时，不管这回合他做了什么行动",
+        "note": "承接已拿 noble_1 的结果，玩家 A 下一回合拿白、蓝、红各一枚，随后拿取仍满足条件的 noble_2。贵族区放大视图保持固定取景中心，避免拿走第一块后画面漂移。此例用拿宝石说明后续回合的贵族结算。",
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "noble_market": {
+              "count": 0
+            },
+            "player_nobles": {
+              "count": 2
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/repeat.001.1.start"
+        },
+        {
+          "op": "magnifier",
+          "id": "magnifier_nobles",
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          },
+          "rect": {
+            "x": 0.29,
+            "y": 0.3,
+            "w": 0.2,
+            "h": 0.35
+          },
+          "zoom": 1.15,
+          "padding": 0.1,
+          "view_center_x": -1.57,
+          "view_center_z": 2.55,
+          "view_ortho_size": 0.633424,
+          "anchor": "nobles/repeat.001.1.start",
+          "offset": 0.0,
+          "shape": "box",
+          "mask": "full"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.35,
+          "grow": 1.2,
+          "anchor": "nobles/repeat.001.1.b1.start",
+          "offset": 0.005,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.35,
+          "grow": 1.2,
+          "anchor": "nobles/repeat.001.1.b1.start",
+          "offset": 0.255,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.35,
+          "grow": 1.2,
+          "anchor": "nobles/repeat.001.1.b1.start",
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.5,
+          "quantity": 1,
+          "stagger": 0.25,
+          "anchor": "nobles/repeat.001.1.b1.end",
+          "offset": -1.635,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 1.6,
+          "peak_alpha": 0.65,
+          "anchor": "nobles/repeat.001.1.b2.start",
+          "offset": 1.8,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "nobles/repeat.001.1.b2.start",
+          "offset": 5.7,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_2",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          }
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A已有1块贵族，发展区为4白4红4黑；贵族供应堆只剩1块（4白+4黑）且条件满足。到下一个回合结束时，A必须再拿取这最后1块。这个结算是否合法？只回答「合法」或「有问题」，再给一句话理由。"
+      ]
+    },
+    {
+      "id": "repeat.001.3",
+      "parent": "repeat.001.1",
+      "timing": [
+        {
+          "key": "镜头回整桌",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止",
+        "note": "镜头回到全桌，展示玩家 A 已有两块贵族、贵族市场为空的结果。用口播说明持续检查直至没有符合条件的贵族；本条不再拿取。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/repeat.001.3.start"
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "两人局。玩家A已有2块贵族（4黑4红、4白4黑）；他在自己的回合结束时，贵族供应堆里已经没有任何条件被满足的无主贵族，所以这次不再获得贵族。这个结算是否合法？只回答「合法」或「有问题」，再给一句话理由。"
+      ]
+    },
+    {
+      "id": "summary.001.1",
+      "parent": "repeat.001.3",
+      "timing": [],
+      "script": {
+        "story": "我们做个总结：玩家可以花费费用购买一张发展卡牌",
+        "note": "保持当前桌面，用口播回顾支付费用购买发展卡。本条没有新事件，不执行另一笔购买。"
+      },
+      "events": [],
+      "tree": "main"
+    },
+    {
+      "id": "summary.001.2",
+      "parent": "summary.001.1",
+      "timing": [],
+      "script": {
+        "story": "已购买的发展卡牌会为玩家带来声望值和折扣",
+        "note": "镜头看玩家 A 发展区，展示已购买的十二张发展卡，配合口播总结声望与折扣。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_development",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/summary.001.2.start"
+        }
+      ],
+      "tree": "main"
+    },
+    {
+      "id": "summary.001.3",
+      "parent": "summary.001.2",
+      "timing": [],
+      "script": {
+        "story": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值",
+        "note": "镜头回到全桌，展示十二张发展卡与两块已结识的贵族。该终态也是 endgame.trigger.001 的显式入口。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "nobles/summary.001.3.start"
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。玩家已购买发展卡左上角的声望，和已经获得的贵族板块左上角的声望，都会累计成玩家的总分。这样理解合法吗？只回答「合法」或「有问题」，再给一句话理由。"
+      ]
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "nobles/intro.001.start",
+      "cue": "intro.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/intro.001.end",
+      "cue": "intro.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/intro.001.b1.start",
+      "cue": "intro.001",
+      "beat": "nobles/intro.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/intro.001.b1.end",
+      "cue": "intro.001",
+      "beat": "nobles/intro.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/trigger.001.1.start",
+      "cue": "trigger.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/trigger.001.1.end",
+      "cue": "trigger.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/trigger.001.1.b1.start",
+      "cue": "trigger.001.1",
+      "beat": "nobles/trigger.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/trigger.001.1.b1.end",
+      "cue": "trigger.001.1",
+      "beat": "nobles/trigger.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/trigger.001.1.b2.start",
+      "cue": "trigger.001.1",
+      "beat": "nobles/trigger.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/trigger.001.1.b2.end",
+      "cue": "trigger.001.1",
+      "beat": "nobles/trigger.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/trigger.001.1.b3.start",
+      "cue": "trigger.001.1",
+      "beat": "nobles/trigger.001.1.b3",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/trigger.001.1.b3.end",
+      "cue": "trigger.001.1",
+      "beat": "nobles/trigger.001.1.b3",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/forced.001.1.start",
+      "cue": "forced.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/forced.001.1.end",
+      "cue": "forced.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/forced.001.1.b1.start",
+      "cue": "forced.001.1",
+      "beat": "nobles/forced.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/forced.001.1.b1.end",
+      "cue": "forced.001.1",
+      "beat": "nobles/forced.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/forced.001.1.b2.start",
+      "cue": "forced.001.1",
+      "beat": "nobles/forced.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/forced.001.1.b2.end",
+      "cue": "forced.001.1",
+      "beat": "nobles/forced.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/source.001.start",
+      "cue": "source.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/source.001.end",
+      "cue": "source.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/source.001.b1.start",
+      "cue": "source.001",
+      "beat": "nobles/source.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/source.001.b1.end",
+      "cue": "source.001",
+      "beat": "nobles/source.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/choice.001.1.start",
+      "cue": "choice.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/choice.001.1.end",
+      "cue": "choice.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/choice.001.1.b1.start",
+      "cue": "choice.001.1",
+      "beat": "nobles/choice.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/choice.001.1.b1.end",
+      "cue": "choice.001.1",
+      "beat": "nobles/choice.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/choice.001.1.b2.start",
+      "cue": "choice.001.1",
+      "beat": "nobles/choice.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/choice.001.1.b2.end",
+      "cue": "choice.001.1",
+      "beat": "nobles/choice.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/repeat.001.1.start",
+      "cue": "repeat.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/repeat.001.1.end",
+      "cue": "repeat.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/repeat.001.1.b1.start",
+      "cue": "repeat.001.1",
+      "beat": "nobles/repeat.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/repeat.001.1.b1.end",
+      "cue": "repeat.001.1",
+      "beat": "nobles/repeat.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/repeat.001.1.b2.start",
+      "cue": "repeat.001.1",
+      "beat": "nobles/repeat.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/repeat.001.1.b2.end",
+      "cue": "repeat.001.1",
+      "beat": "nobles/repeat.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/repeat.001.3.start",
+      "cue": "repeat.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/repeat.001.3.end",
+      "cue": "repeat.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/repeat.001.3.b1.start",
+      "cue": "repeat.001.3",
+      "beat": "nobles/repeat.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/repeat.001.3.b1.end",
+      "cue": "repeat.001.3",
+      "beat": "nobles/repeat.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/summary.001.1.start",
+      "cue": "summary.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/summary.001.1.end",
+      "cue": "summary.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/summary.001.1.b1.start",
+      "cue": "summary.001.1",
+      "beat": "nobles/summary.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/summary.001.1.b1.end",
+      "cue": "summary.001.1",
+      "beat": "nobles/summary.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/summary.001.2.start",
+      "cue": "summary.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/summary.001.2.end",
+      "cue": "summary.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/summary.001.2.b1.start",
+      "cue": "summary.001.2",
+      "beat": "nobles/summary.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/summary.001.2.b1.end",
+      "cue": "summary.001.2",
+      "beat": "nobles/summary.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/summary.001.3.start",
+      "cue": "summary.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/summary.001.3.end",
+      "cue": "summary.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/summary.001.3.b1.start",
+      "cue": "summary.001.3",
+      "beat": "nobles/summary.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/summary.001.3.b1.end",
+      "cue": "summary.001.3",
+      "beat": "nobles/summary.001.3.b1",
+      "edge": "end"
+    }
+  ]
+}

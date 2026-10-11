@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "nobles",
+  "cues": [
+    {
+      "id": "intro.001",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/intro.001.b1",
+          "text": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。"
+        }
+      ]
+    },
+    {
+      "id": "trigger.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/trigger.001.1.b1",
+          "text": "当玩家结束自己的回合后，"
+        },
+        {
+          "id": "nobles/trigger.001.1.b2",
+          "text": "如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，"
+        },
+        {
+          "id": "nobles/trigger.001.1.b3",
+          "text": "他必须立即拿取这张贵族板块，并立刻获得其声望值。"
+        }
+      ]
+    },
+    {
+      "id": "forced.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/forced.001.1.b1",
+          "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。"
+        },
+        {
+          "id": "nobles/forced.001.1.b2",
+          "text": "并且这个行动是强制性的，玩家不可以选择跳过。"
+        }
+      ]
+    },
+    {
+      "id": "source.001",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble_market>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/source.001.b1",
+          "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。"
+        }
+      ]
+    },
+    {
+      "id": "choice.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/choice.001.1.b1",
+          "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，"
+        },
+        {
+          "id": "nobles/choice.001.1.b2",
+          "text": "他必须从这些贵族板块中挑选一个拿取。"
+        }
+      ]
+    },
+    {
+      "id": "repeat.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/repeat.001.1.b1",
+          "text": "当他的下一个回合结束时，不管这回合他做了什么行动，"
+        },
+        {
+          "id": "nobles/repeat.001.1.b2",
+          "text": "只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
+        }
+      ]
+    },
+    {
+      "id": "repeat.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/repeat.001.3.b1",
+          "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。"
+        }
+      ]
+    },
+    {
+      "id": "summary.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/summary.001.1.b1",
+          "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，"
+        }
+      ]
+    },
+    {
+      "id": "summary.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/summary.001.2.b1",
+          "text": "已购买的发展卡牌会为玩家带来声望值和折扣。"
+        }
+      ]
+    },
+    {
+      "id": "summary.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/summary.001.3.b1",
+          "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。"
+        }
+      ]
+    }
+  ]
+}
