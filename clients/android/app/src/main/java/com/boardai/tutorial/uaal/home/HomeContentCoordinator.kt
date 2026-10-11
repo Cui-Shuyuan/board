@@ -40,7 +40,8 @@ class HomeContentCoordinator(
     private val selectedGameIdProvider: () -> String? = { null },
     private val onSelectedGameUnavailable: () -> Unit = {},
     private val onBeforeDownload: () -> Unit = {},
-    private val onPlaybackErrorCleared: () -> Unit = {}
+    private val onPlaybackErrorCleared: () -> Unit = {},
+    private val onEnterGameWithTrack: ((GameCatalogEntry, String) -> Unit)? = null
 ) {
     private val _state = MutableStateFlow(HomeContentState())
     val state: StateFlow<HomeContentState> = _state.asStateFlow()
@@ -159,7 +160,7 @@ class HomeContentCoordinator(
             }
             is ContentStatus.InstalledOffline,
             is ContentStatus.InstalledCurrent -> {
-                onEnterGame(game)
+                requestEnterGame(game)
             }
             else -> {
                 updateState { it.copy(gamePrompt = GamePromptState(game, status)) }
@@ -177,13 +178,63 @@ class HomeContentCoordinator(
             GamePromptAction.CONTINUE_DOWNLOAD,
             GamePromptAction.UPDATE,
             GamePromptAction.CONTINUE_UPDATE -> startDownload(prompt.game)
-            GamePromptAction.USE_CURRENT -> onEnterGame(prompt.game)
+            GamePromptAction.USE_CURRENT -> requestEnterGame(prompt.game)
             GamePromptAction.CANCEL -> Unit
         }
     }
 
     fun dismissPrompt() {
         updateState { it.copy(gamePrompt = null) }
+    }
+
+    fun dismissTrackPicker() {
+        updateState { it.copy(trackPicker = null) }
+    }
+
+    fun selectTrack(trackId: String) {
+        val picker = _state.value.trackPicker ?: return
+        val track = trackId.trim()
+        if (track.isBlank()) return
+        updateState { it.copy(trackPicker = null) }
+        val withTrack = onEnterGameWithTrack
+        if (withTrack != null) {
+            withTrack(picker.game, track)
+        } else {
+            onEnterGame(picker.game)
+        }
+    }
+
+    private fun requestEnterGame(game: GameCatalogEntry) {
+        val tracks = game.tutorialTracks
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .ifEmpty {
+                listOf(game.tutorialTrack.trim()).filter { it.isNotBlank() }
+            }
+
+        if (tracks.size > 1) {
+            updateState {
+                it.copy(
+                    gamePrompt = null,
+                    trackPicker = TrackPickerState(game, tracks)
+                )
+            }
+            return
+        }
+
+        val track = tracks.firstOrNull().orEmpty()
+        updateState {
+            it.copy(
+                gamePrompt = null,
+                trackPicker = null
+            )
+        }
+        val withTrack = onEnterGameWithTrack
+        if (withTrack != null && track.isNotBlank()) {
+            withTrack(game, track)
+        } else {
+            onEnterGame(game)
+        }
     }
 
     fun openResourceManager() {

@@ -6,6 +6,11 @@ import com.boardai.tutorial.uaal.content.DownloadOverlayState
 import com.boardai.tutorial.uaal.content.GamePromptState
 import com.boardai.tutorial.uaal.history.RecentGame
 
+data class TrackPickerState(
+    val game: GameCatalogEntry,
+    val tracks: List<String>
+)
+
 /**
  * UI-facing home/catalog/download state owned by [HomeContentCoordinator].
  *
@@ -19,6 +24,7 @@ data class HomeContentState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val gamePrompt: GamePromptState? = null,
+    val trackPicker: TrackPickerState? = null,
     val activeDownload: DownloadOverlayState? = null,
     val resourceManagerOpen: Boolean = false,
     val resourceChecking: Boolean = false,

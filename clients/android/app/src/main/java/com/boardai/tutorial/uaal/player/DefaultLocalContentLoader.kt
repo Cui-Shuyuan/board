@@ -8,18 +8,23 @@ import java.io.File
 class DefaultLocalContentLoader(
     private val contentStore: ContentStore
 ) : LocalContentLoader {
-    override fun load(game: GameCatalogEntry): LoadedLocalContent? {
-        if (!game.tutorialReady || game.tutorialTrack.isBlank()) return null
+    override fun load(game: GameCatalogEntry): LoadedLocalContent? =
+        load(game, game.tutorialTrack)
+
+    override fun load(game: GameCatalogEntry, trackId: String): LoadedLocalContent? {
+        val track = trackId.trim().ifBlank { game.tutorialTrack.trim() }
+        if (!game.tutorialReady || track.isBlank()) return null
 
         val active = contentStore.readActiveValid(game.id) ?: return null
         val gameRoot = contentStore.gameRoot(active.version, game.id)
         if (!gameRoot.isDirectory) return null
 
-        val timeline = loadTimeline(gameRoot, game.tutorialTrack) ?: return null
+        val timeline = loadTimeline(gameRoot, track) ?: return null
         return LoadedLocalContent(
             version = active.version,
             versionRoot = contentStore.versionRoot(active.version, game.id),
-            timeline = timeline
+            timeline = timeline,
+            track = track
         )
     }
 

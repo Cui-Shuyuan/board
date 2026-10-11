@@ -1,0 +1,571 @@
+{
+  "cues": [
+    {
+      "id": "quick.take.different.001",
+      "section": "take_gems",
+      "tree": "main",
+      "script": {
+        "story": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。",
+        "note": "Quick section 第一条：拿三枚不同色。",
+        "enter": {},
+        "exit": {}
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "ensure",
+          "dur": 0.0,
+          "count": 4,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "template": "gem",
+            "palette": "gem_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "ensure",
+          "dur": 0.0,
+          "count": 4,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "template": "gem",
+            "palette": "gem_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "ensure",
+          "dur": 0.0,
+          "count": 4,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "template": "gem",
+            "palette": "gem_ruby",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "ensure",
+          "dur": 0.0,
+          "count": 4,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "template": "gem",
+            "palette": "gem_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "ensure",
+          "dur": 0.0,
+          "count": 4,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "template": "gem",
+            "palette": "gem_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "ensure",
+          "dur": 0.0,
+          "count": 5,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "template": "gem",
+            "palette": "gem_gold",
+            "concept": "gold"
+          },
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "wait",
+          "dur": 4.824,
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "wait",
+          "dur": 4.824,
+          "anchor": "quick.take.different.001.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.32,
+          "grow": 1.2,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          },
+          "anchor": "quick.take.different.001.b1.start",
+          "offset": -0.011
+        },
+        {
+          "op": "highlight",
+          "dur": 0.32,
+          "grow": 1.2,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          },
+          "anchor": "quick.take.different.001.b1.start",
+          "offset": 0.217
+        },
+        {
+          "op": "highlight",
+          "dur": 0.32,
+          "grow": 1.2,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          },
+          "anchor": "quick.take.different.001.b1.start",
+          "offset": 0.446
+        },
+        {
+          "op": "take",
+          "dur": 0.457,
+          "quantity": 1,
+          "stagger": 0.25,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.different.001.b1.end",
+          "offset": -1.374
+        },
+        {
+          "op": "highlight",
+          "dur": 0.457,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.different.001.b1.end",
+          "offset": -0.689
+        }
+      ]
+    },
+    {
+      "id": "quick.take.same.001",
+      "section": "take_gems",
+      "entry": "section:take_gems",
+      "tree": "main",
+      "script": {
+        "story": "二是拿两枚相同颜色的宝石。",
+        "note": "Quick section 第二条：回到本 section 起点，拿两枚同色。",
+        "enter": {},
+        "exit": {}
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "anchor": "quick.take.same.001.start",
+          "text": "或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick.take.same.001.start"
+        },
+        {
+          "op": "wait",
+          "dur": 3.24,
+          "anchor": "quick.take.same.001.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.229,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          },
+          "anchor": "quick.take.same.001.b1.start",
+          "offset": -0.069
+        },
+        {
+          "op": "take",
+          "dur": 0.276,
+          "quantity": 2,
+          "stagger": 0.25,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.same.001.b1.start",
+          "offset": 1.032
+        },
+        {
+          "op": "highlight",
+          "dur": 0.229,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.same.001.b1.end",
+          "offset": -0.897
+        }
+      ]
+    },
+    {
+      "id": "quick.take.002",
+      "parent": "setup.quick.003",
+      "entry": "setup.quick.003",
+      "tree": "main",
+      "script": {
+        "story": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.002.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick.take.002.start"
+        },
+        {
+          "op": "wait",
+          "dur": 7.08,
+          "anchor": "quick.take.002.start"
+        }
+      ],
+      "section": "take_gems"
+    },
+    {
+      "id": "quick.take.003",
+      "parent": "setup.quick.003",
+      "entry": "setup.quick.003",
+      "tree": "main",
+      "script": {
+        "story": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.003.start"
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.003.start"
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.003.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick.take.003.start"
+        },
+        {
+          "op": "wait",
+          "dur": 9.648,
+          "anchor": "quick.take.003.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "现在是这位玩家的回合，他选择拿取3枚不同宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          },
+          "anchor": "quick.take.003.b1.start",
+          "offset": 1.814
+        },
+        {
+          "op": "take",
+          "dur": 0.847,
+          "quantity": 1,
+          "over_limit_demo": true,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick.take.003.b1.end",
+          "offset": -3.053
+        }
+      ],
+      "section": "take_gems"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "quick.take.002.start",
+      "cue": "quick.take.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick.take.002.end",
+      "cue": "quick.take.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick.take.002.b1.start",
+      "cue": "quick.take.002",
+      "beat": "quick.take.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick.take.002.b1.end",
+      "cue": "quick.take.002",
+      "beat": "quick.take.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick.take.003.start",
+      "cue": "quick.take.003",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick.take.003.end",
+      "cue": "quick.take.003",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick.take.003.b1.start",
+      "cue": "quick.take.003",
+      "beat": "quick.take.003.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick.take.003.b1.end",
+      "cue": "quick.take.003",
+      "beat": "quick.take.003.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick.take.different.001.start",
+      "cue": "quick.take.different.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick.take.different.001.end",
+      "cue": "quick.take.different.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick.take.different.001.b1.start",
+      "cue": "quick.take.different.001",
+      "beat": "quick.take.different.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick.take.different.001.b1.end",
+      "cue": "quick.take.different.001",
+      "beat": "quick.take.different.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick.take.same.001.start",
+      "cue": "quick.take.same.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick.take.same.001.end",
+      "cue": "quick.take.same.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick.take.same.001.b1.start",
+      "cue": "quick.take.same.001",
+      "beat": "quick.take.same.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick.take.same.001.b1.end",
+      "cue": "quick.take.same.001",
+      "beat": "quick.take.same.001.b1",
+      "edge": "end"
+    }
+  ]
+}

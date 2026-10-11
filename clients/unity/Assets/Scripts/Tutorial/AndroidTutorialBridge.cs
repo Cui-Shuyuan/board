@@ -305,20 +305,28 @@ namespace BoardGameTutorial
                 return;
             }
 
+            int trackSeparator = payload.IndexOf('|', separator + 1);
             string gameId = payload.Substring(0, separator).Trim();
-            string versionRoot = payload.Substring(separator + 1).Trim();
+            string versionRoot = (trackSeparator < 0
+                ? payload.Substring(separator + 1)
+                : payload.Substring(separator + 1, trackSeparator - separator - 1)).Trim();
+            string track = trackSeparator < 0
+                ? "full"
+                : payload.Substring(trackSeparator + 1).Trim();
             if (gameId.Length == 0 || versionRoot.Length == 0)
             {
                 Debug.LogWarning("[AndroidTutorialBridge] LoadGameWithRoot missing game/root: " + payload);
                 return;
             }
+            if (track.Length == 0) track = "full";
 
             player.gameId = gameId;
             player.tutorialRoot = versionRoot;
+            player.track = track;
             player.ReloadGame();
             Debug.Log(
                 "[AndroidTutorialBridge] LoadGameWithRoot(game=" + gameId +
-                ", root=" + versionRoot + ") forwarded.");
+                ", root=" + versionRoot + ", track=" + track + ") forwarded.");
             PostStatus();
         }
 

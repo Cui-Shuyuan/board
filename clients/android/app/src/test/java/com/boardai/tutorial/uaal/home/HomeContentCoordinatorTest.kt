@@ -80,6 +80,35 @@ class HomeContentCoordinatorTest {
     }
 
     @Test
+    fun onGameClickMultiTrackShowsPickerAndSelectedTrackEnters() {
+        val game = game(
+            id = "multi",
+            contentVersion = "v1",
+            tutorialTrack = "quick",
+            tutorialTracks = listOf("quick", "full")
+        )
+        val store = FakeHomeContentStore(
+            active = active(game.id, "v1")
+        )
+        val entered = mutableListOf<Pair<GameCatalogEntry, String>>()
+        val coordinator = coordinator(
+            contentStore = store,
+            onEnterGameWithTrack = { selectedGame, track -> entered += selectedGame to track }
+        )
+
+        coordinator.onGameClick(game)
+
+        assertNotNull(coordinator.state.value.trackPicker)
+        assertEquals(listOf("quick", "full"), coordinator.state.value.trackPicker?.tracks)
+        assertTrue(entered.isEmpty())
+
+        coordinator.selectTrack("quick")
+
+        assertEquals(listOf(game to "quick"), entered)
+        assertNull(coordinator.state.value.trackPicker)
+    }
+
+    @Test
     fun onGameClickRulesOnlyOpensQaAndNeverOffersTutorialDownloadOrPlayback() {
         val rulesOnly = game(
             id = "rules-only",
@@ -405,6 +434,7 @@ class HomeContentCoordinatorTest {
         history: HomeHistorySource = FakeHomeHistorySource(),
         scheduler: HomeContentScheduler = DirectHomeContentScheduler(),
         onEnterGame: (GameCatalogEntry) -> Unit = {},
+        onEnterGameWithTrack: ((GameCatalogEntry, String) -> Unit)? = null,
         onToast: (String) -> Unit = {},
         onOpenRulesQa: (GameCatalogEntry) -> Unit = {},
         selectedGameIdProvider: () -> String? = { null },
@@ -417,6 +447,7 @@ class HomeContentCoordinatorTest {
             historyRepository = history,
             scheduler = scheduler,
             onEnterGame = onEnterGame,
+            onEnterGameWithTrack = onEnterGameWithTrack,
             onToast = onToast,
             onOpenRulesQa = onOpenRulesQa,
             log = { _, _ -> },
@@ -429,7 +460,8 @@ class HomeContentCoordinatorTest {
         contentVersion: String? = "v1",
         tutorialReady: Boolean = true,
         rulesReady: Boolean = true,
-        tutorialTrack: String = "full"
+        tutorialTrack: String = "full",
+        tutorialTracks: List<String>? = null
     ): GameCatalogEntry =
         GameCatalogEntry(
             id = id,
@@ -444,7 +476,7 @@ class HomeContentCoordinatorTest {
             contentVersion = contentVersion,
             rulesReady = rulesReady,
             tutorialReady = tutorialReady,
-            tutorialTracks = if (tutorialReady && tutorialTrack.isNotBlank()) {
+            tutorialTracks = tutorialTracks ?: if (tutorialReady && tutorialTrack.isNotBlank()) {
                 listOf(tutorialTrack)
             } else {
                 emptyList()

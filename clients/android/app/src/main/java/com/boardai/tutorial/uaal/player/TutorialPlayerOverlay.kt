@@ -60,6 +60,7 @@ fun TutorialPlayerOverlay(
     timeline: TutorialTimeline?,
     game: GameCatalogEntry?,
     activeVersion: String?,
+    activeTrack: String? = null,
     qaOpen: Boolean,
     debugOverlayEnabled: Boolean,
     onToggleDebugOverlay: () -> Unit,
@@ -265,7 +266,10 @@ fun TutorialPlayerOverlay(
                 PlayerTopBar(
                     chapterPathText = if (display.unityReady) chapterPathTextWithGame else null,
                     onBack = onBack,
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    trackLabel = activeTrack
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let { tutorialTrackInfo(it).title }
                 )
 
                 PlayerTransportBar(

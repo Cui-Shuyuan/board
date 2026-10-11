@@ -2919,6 +2919,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--stdout", action="store_true")
     a = ap.parse_args(argv)
 
+    if not a.source:
+        try:
+            from section_source import assemble_track
+            assemble_track(a.game, a.track)
+        except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
+            print(f"assemble failed for {a.game}/{a.track}: {exc}", file=sys.stderr)
+            return 2
+
     src = source_path(a.game, a.track, a.source)
     if not src.exists():
         print(f"source not found: {src}", file=sys.stderr)

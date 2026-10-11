@@ -1,0 +1,71 @@
+{
+  "cues": [
+    {
+      "id": "quick.end.001",
+      "parent": "setup.quick.003",
+      "entry": "setup.quick.003",
+      "tree": "main",
+      "script": {
+        "story": "当有人获得十五分，游戏进入最后一轮；确保所有玩家回合数相同后，游戏结束；分多者获胜。",
+        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "anchor": "quick.end.001.start"
+        },
+        {
+          "op": "wait",
+          "dur": 8.256,
+          "anchor": "quick.end.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "达到15分触发最后一轮\n所有玩家回合数相同时\n游戏结束，分多者获胜",
+          "target": {
+            "space": "screen",
+            "id": "hint_endgame"
+          },
+          "anchor": "quick.end.001.b1.start",
+          "offset": 0.089
+        }
+      ],
+      "section": "end"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "quick.end.001.start",
+      "cue": "quick.end.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick.end.001.end",
+      "cue": "quick.end.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick.end.001.b1.start",
+      "cue": "quick.end.001",
+      "beat": "quick.end.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick.end.001.b1.end",
+      "cue": "quick.end.001",
+      "beat": "quick.end.001.b1",
+      "edge": "end"
+    }
+  ]
+}

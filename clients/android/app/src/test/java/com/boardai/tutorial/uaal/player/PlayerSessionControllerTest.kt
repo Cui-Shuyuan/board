@@ -47,6 +47,19 @@ class PlayerSessionControllerTest {
     }
 
     @Test
+    fun enterGameUsesSelectedTrackAndExposesItInState() {
+        val loaded = loadedContent()
+        val controller = controller(loader = FakeLocalContentLoader(loaded))
+        val game = game("tracked")
+
+        controller.enterGame(game, "quick")
+        controller.onUnityReady()
+
+        assertEquals("quick", controller.state.value.activeTrack)
+        assertEquals(game.id, controller.state.value.selectedGame?.id)
+    }
+
+    @Test
     fun enterGameFailureSetsPlaybackErrorRefreshesHomeAndDoesNotLoadUnity() {
         val commands = mutableListOf<Pair<String, String>>()
         val preparing = mutableListOf<String?>()

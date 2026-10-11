@@ -36,6 +36,7 @@ import com.boardai.tutorial.uaal.home.AndroidHomeContentScheduler
 import com.boardai.tutorial.uaal.home.HomeContentCoordinator
 import com.boardai.tutorial.uaal.home.HomeScreen
 import com.boardai.tutorial.uaal.home.ResourceManagerOverlay
+import com.boardai.tutorial.uaal.home.TrackPickerDialog
 import com.boardai.tutorial.uaal.player.DefaultLocalContentLoader
 import com.boardai.tutorial.uaal.player.PlayerSessionController
 import com.boardai.tutorial.uaal.player.TutorialPlayerOverlay
@@ -101,6 +102,11 @@ class MainActivity : UnityPlayerGameActivity() {
                 homeContent.closeResourceManager()
                 clearQaState()
                 playerSession.enterGame(game)
+            },
+            onEnterGameWithTrack = { game, track ->
+                homeContent.closeResourceManager()
+                clearQaState()
+                playerSession.enterGame(game, track)
             },
             onToast = { message -> showToast(message) },
             onOpenRulesQa = { game ->
@@ -227,6 +233,10 @@ class MainActivity : UnityPlayerGameActivity() {
                 closeQa()
                 true
             }
+            homeState.trackPicker != null -> {
+                homeContent.dismissTrackPicker()
+                true
+            }
             homeState.gamePrompt != null -> {
                 homeContent.dismissPrompt()
                 true
@@ -348,6 +358,7 @@ class MainActivity : UnityPlayerGameActivity() {
                                 timeline = timeline,
                                 game = selected,
                                 activeVersion = playerState.activeVersion,
+                                activeTrack = playerState.activeTrack,
                                 qaOpen = qaOpen.value,
                                 debugOverlayEnabled = debugOverlayEnabled.value,
                                 onToggleDebugOverlay = { toggleDebugOverlay() },
@@ -424,6 +435,14 @@ class MainActivity : UnityPlayerGameActivity() {
                                 onPause = { homeContent.pauseDownloadAndReturnHome() },
                                 onRetry = { homeContent.startDownload(downloadState.game) },
                                 onReturnHome = { homeContent.dismissDownloadError() }
+                            )
+                        }
+
+                        homeState.trackPicker?.let { pickerState ->
+                            TrackPickerDialog(
+                                state = pickerState,
+                                onSelect = { trackId -> homeContent.selectTrack(trackId) },
+                                onDismiss = { homeContent.dismissTrackPicker() }
                             )
                         }
 

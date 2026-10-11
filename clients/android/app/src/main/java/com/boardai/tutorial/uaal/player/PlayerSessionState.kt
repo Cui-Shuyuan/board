@@ -10,6 +10,7 @@ data class PlayerSessionState(
     val selectedGame: GameCatalogEntry? = null,
     val playerActive: Boolean = false,
     val timeline: TutorialTimeline? = null,
+    val activeTrack: String? = null,
     val activeVersion: String? = null,
     val playbackError: String? = null
 )

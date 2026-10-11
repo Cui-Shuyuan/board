@@ -99,6 +99,7 @@ def qa_change_signature(cue: dict) -> dict:
     return {
         "entry": cue.get("entry"),
         "parent": cue.get("parent"),
+        "section": cue.get("section"),
         "tree": cue.get("tree"),
         "transition": cue.get("transition", "continue"),
         "negative": cue.get("negative"),
@@ -615,6 +616,13 @@ def main() -> int:
         args.game = resolve_game(args.game, args.track)
     except SystemExit as exc:
         print(str(exc), file=sys.stderr)
+        return 2
+
+    try:
+        from section_source import assemble_track
+        assemble_track(args.game, args.track)
+    except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
+        print(f"assemble failed for {args.game}/{args.track}: {exc}", file=sys.stderr)
         return 2
 
     game_dir = ROOT / "content" / "games" / args.game

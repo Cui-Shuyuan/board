@@ -83,6 +83,17 @@ def resolve_track(doc: dict) -> dict:
         if isinstance(t, dict) and t.get("id")
     }
 
+    sections_by_id = {
+        str(sec.get("id")): sec
+        for sec in (doc.get("sections") or [])
+        if isinstance(sec, dict) and sec.get("id")
+    }
+    first_cue_by_section = {}
+    for c in raw_cues:
+        if not isinstance(c, dict) or not c.get("id") or not c.get("section"):
+            continue
+        first_cue_by_section.setdefault(str(c["section"]), str(c["id"]))
+
     resolved = {}
     visiting = set()
 
@@ -92,6 +103,29 @@ def resolve_track(doc: dict) -> dict:
             return None
         prev = raw_cues[idx - 1]
         return prev.get("id") if isinstance(prev, dict) else None
+
+    def _effective_entry(raw):
+        """Resolve section-aware entry declarations to a concrete cue id.
+
+        ``entry: "section:<id>"`` resets to that section's entry state.  The
+        first cue of a section with no explicit entry/parent also inherits the
+        section entry.  Explicit entry/parent always wins.
+        """
+        section_id = raw.get("section")
+        raw_entry = raw.get("entry")
+        if isinstance(raw_entry, str) and raw_entry.startswith("section:"):
+            ref = raw_entry.split(":", 1)[1].strip() or str(section_id or "")
+            sec = sections_by_id.get(ref)
+            if sec is not None and sec.get("entry") is not None:
+                return str(sec.get("entry"))
+            return raw_entry
+        if raw_entry is None and raw.get("parent") is None and section_id:
+            sec = sections_by_id.get(str(section_id))
+            if sec is not None and sec.get("entry") is not None:
+                first_id = first_cue_by_section.get(str(section_id))
+                if first_id == str(raw.get("id")):
+                    return str(sec.get("entry"))
+        return raw_entry
 
     def resolve_one(cid):
         if cid in resolved:
@@ -104,6 +138,11 @@ def resolve_track(doc: dict) -> dict:
         visiting.add(cid)
         parent_id = raw.get("parent")
         base = resolve_one(parent_id) if parent_id in by_id else {}
+        effective_entry = _effective_entry(raw)
+        state_raw = raw
+        if effective_entry is not None:
+            state_raw = dict(raw)
+            state_raw["entry"] = effective_entry
 
         transition = raw.get("transition", "continue")
         # tree resolution: explicit -> parent -> previous cue -> default
@@ -122,7 +161,7 @@ def resolve_track(doc: dict) -> dict:
         # to no source here, matching the old resolve_track behavior; strict
         # compilation still rejects them.
         source = resolve_effective_state_source(
-            raw,
+            state_raw,
             by_id=by_id,
             prev_id=_prev_raw_id(cid),
         )
@@ -200,8 +239,10 @@ def resolve_track(doc: dict) -> dict:
             eff["negative"] = bool(raw.get("negative"))
         if raw.get("qa") is not None:
             eff["qa"] = _deep_copy(raw.get("qa"))
-        if raw.get("entry") is not None:
-            eff["entry"] = _deep_copy(raw.get("entry"))
+        if effective_entry is not None:
+            eff["entry"] = _deep_copy(effective_entry)
+        if raw.get("section") is not None:
+            eff["section"] = _deep_copy(raw.get("section"))
         if raw.get("qa_exempt") is not None:
             # Explicit per-cue opt-out; never inherited from a parent/demo cue.
             eff["qa_exempt"] = bool(raw.get("qa_exempt"))

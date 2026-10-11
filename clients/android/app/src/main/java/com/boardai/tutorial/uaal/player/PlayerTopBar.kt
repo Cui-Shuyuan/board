@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.sp
 internal fun PlayerTopBar(
     chapterPathText: String?,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trackLabel: String? = null
 ) {
     Row(
         modifier = modifier
@@ -65,6 +66,20 @@ internal fun PlayerTopBar(
                     .clip(RoundedCornerShape(4.dp))
                     .background(Color.Black.copy(alpha = 0.22f))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
+            )
+        }
+        if (!trackLabel.isNullOrBlank()) {
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = trackLabel,
+                color = Color(0xFFCCE3FF),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color(0xFF234A72).copy(alpha = 0.82f))
+                    .padding(horizontal = 7.dp, vertical = 3.dp)
             )
         }
     }

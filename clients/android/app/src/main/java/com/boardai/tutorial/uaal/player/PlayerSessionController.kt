@@ -35,7 +35,11 @@ class PlayerSessionController(
     @Volatile
     private var generation = 0
 
-    fun enterGame(game: GameCatalogEntry) {
+    fun enterGame(game: GameCatalogEntry, trackId: String? = null) {
+        val selectedTrack = trackId
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
+            ?: game.tutorialTrack.trim()
         cancelPendingEnter()
         localLoadInProgress = true
         onSetPreparingGame(game.id)
@@ -43,7 +47,7 @@ class PlayerSessionController(
 
         val enteredGeneration = generation
         runIoTask {
-            val loaded = localContentLoader.load(game)
+            val loaded = localContentLoader.load(game, selectedTrack)
             postToMain {
                 if (enteredGeneration != generation) return@postToMain
                 localLoadInProgress = false
@@ -55,16 +59,18 @@ class PlayerSessionController(
                     return@postToMain
                 }
 
+                val resolvedTrack = loaded.track.ifBlank { selectedTrack }
                 _state.value = PlayerSessionState(
                     selectedGame = game,
                     playerActive = true,
                     timeline = loaded.timeline,
+                    activeTrack = resolvedTrack.takeIf { it.isNotBlank() },
                     activeVersion = loaded.version,
                     playbackError = null
                 )
                 onRecordPlay(game.id)
                 onSetPreparingGame(null)
-                loadQueue.queueLoad(game.id, loaded.versionRoot.absolutePath)
+                loadQueue.queueLoad(game.id, loaded.versionRoot.absolutePath, resolvedTrack)
             }
         }
     }

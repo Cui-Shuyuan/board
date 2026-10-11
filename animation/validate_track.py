@@ -505,6 +505,36 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
             if not t.get(k):
                 rep.warn(f"{where}.{k} is empty; write it in the text script")
 
+    sections = doc.get("sections")
+    section_ids: set[str] = set()
+    section_entries: list[tuple[str, str]] = []
+    if sections is not None:
+        if not isinstance(sections, list):
+            rep.error("sections: list required when present")
+            sections = []
+        else:
+            for i, sec in enumerate(sections):
+                where = f"sections[{i}]"
+                if not isinstance(sec, dict):
+                    rep.error(f"{where}: must be an object")
+                    continue
+                sid = sec.get("id")
+                if not sid or not isinstance(sid, str):
+                    rep.error(f"{where}.id required")
+                    continue
+                if sid in section_ids:
+                    rep.error(f"{where}.id duplicated: {sid}")
+                section_ids.add(sid)
+                for key in ("title", "group_path"):
+                    if key in sec and sec.get(key) is not None and not isinstance(sec.get(key), (str, list)):
+                        rep.error(f"{where}.{key} must be string/list when present")
+                entry = sec.get("entry")
+                if entry is not None:
+                    if not isinstance(entry, str) or not entry.strip():
+                        rep.error(f"{where}.entry must be a non-empty string")
+                    else:
+                        section_entries.append((where, entry.strip()))
+
     cues = doc.get("cues")
     if not isinstance(cues, list):
         rep.error("cues: list required")
@@ -517,6 +547,31 @@ def validate_track(doc: dict, report: Report | None = None) -> Report:
         c["id"]: c for c in cues
         if isinstance(c, dict) and c.get("id")
     }
+
+    # Validate section references after cue ids are known.
+    for i, cue in enumerate(cues):
+        if not isinstance(cue, dict):
+            continue
+        cid = cue.get("id") or f"cues[{i}]"
+        section = cue.get("section")
+        if section is not None and str(section) not in section_ids:
+            rep.error(f"{cid}.section references unknown section {section!r}")
+        entry = cue.get("entry")
+        if isinstance(entry, str) and entry.startswith("section:"):
+            ref = entry.split(":", 1)[1].strip()
+            if not ref:
+                rep.error(f"{cid}.entry section reference needs a section id")
+            elif ref not in section_ids:
+                rep.error(f"{cid}.entry references unknown section {ref!r}")
+
+    for where, entry in section_entries:
+        if entry == "initial":
+            continue
+        if entry.startswith("section:"):
+            rep.error(f"{where}.entry must point to a cue or initial, not another section")
+            continue
+        if entry not in cue_ids:
+            rep.error(f"{where}.entry references unknown cue {entry!r}")
 
     prev = None
     for i, c in enumerate(cues):
