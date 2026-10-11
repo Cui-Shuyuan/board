@@ -6,6 +6,7 @@
   "cues": [
     {
       "id": "001",
+      "tts_asset": "action.summary.001",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
@@ -27,6 +28,7 @@
     },
     {
       "id": "002.1",
+      "tts_asset": "action.summary.002.1",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
@@ -47,6 +49,7 @@
     },
     {
       "id": "002.2",
+      "tts_asset": "action.summary.002.2",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",

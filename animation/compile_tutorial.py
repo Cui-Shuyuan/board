@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 """Incremental top-level compiler for a tutorial track.
 
-Source:
-    content/games/{game}/tutorial/script.{track}.json      narration cues
-    content/games/{game}/tutorial/anim/v2/{track}.anim.json animation graph/events
+Source (section-first):
+    content/games/{game}/tutorial/tracks/{track}.track.json    ordered sections
+    content/games/{game}/tutorial/sections/<id>/{track}.script.json  narration cues
+    content/games/{game}/tutorial/sections/<id>/{track}.anim.json    animation graph/events
+
+Generated TTS asset names come from each cue's explicit ``tts_asset``; files
+live together under ``media/tts/{track}/`` and keep that original name.
 
 Generated:
     media/tts/{track}/*.mp3 + *.subtitle.json
@@ -397,13 +401,34 @@ def write_tts_lrc(game_dir: Path, track: str, script: dict, manifest: dict) -> P
     return lrc_utils.write_manifest_tts_lrc(game_dir, track, script, manifest)
 
 
-def tts_asset_rel(game: str, track: str, cue_id: str, ext: str) -> str:
+TTS_ASSET_KEY = "tts_asset"
+
+
+def cue_tts_asset(cue: dict, cue_id: str | None = None) -> str:
+    """Return the explicit TTS asset base name for one cue.
+
+    Assets are stored together under ``media/tts/{track}/`` and keep their
+    authored/original names; a cue references the asset by name instead of the
+    build deriving a section/cue-specific file name.  Legacy fixtures without
+    an explicit reference fall back to the old stable slug.
+    """
+    raw = (cue or {}).get(TTS_ASSET_KEY)
+    name = str(raw).strip() if raw is not None else ""
+    if name:
+        if name in {".", ".."} or "/" in name or "\\" in name or "\x00" in name:
+            raise SystemExit(f"invalid {TTS_ASSET_KEY} {raw!r}: use a plain file base name")
+        return name
+    cid = str(cue_id or (cue or {}).get("id") or "").strip()
+    return section_source.cue_id_to_slug(cid)
+
+
+def tts_asset_rel(game: str, track: str, asset_name: str, ext: str) -> str:
     """Repository-relative manifest path for one generated TTS asset.
 
-    Cue ids are qualified (``section/local``) in JSON, but generated files use
-    the stable slug (``section__local``).
+    ``asset_name`` is the cue's explicit ``tts_asset`` (original asset name),
+    not a cue-id-derived slug.
     """
-    return f"content/games/{game}/media/tts/{track}/{section_source.cue_id_to_slug(cue_id)}{ext}"
+    return f"content/games/{game}/media/tts/{track}/{asset_name}{ext}"
 
 
 def qa_questions_path(game: str) -> Path:
@@ -448,6 +473,7 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
     delta_dir.mkdir(parents=True, exist_ok=True)
     lrc = delta_dir / "delta.lrc"
     media = delta_dir / "media"
+    assets = {c["id"]: cue_tts_asset(c, c.get("id")) for c in changed}
     write_delta_lrc(lrc, changed, {c["id"]: c.get("refs") or [] for c in script.get("cues") or []}, game, track)
     provider = _current_tts_provider()
     manifest_provider = (manifest.get("provider") or "").strip().lower()
@@ -475,6 +501,18 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
     # different interpreter/venv that owns the provider SDK and credentials.
     print("[tts] " + " ".join(cmd))
     subprocess.run(cmd, cwd=ROOT, check=True)
+    # tts_doubao writes one file per cue id.  The cue owns the asset name, so
+    # move the temp output to its original asset name before copying it to the
+    # shared TTS folder.  No re-encoding happens here.
+    for cid, asset in assets.items():
+        temp_stem = section_source.cue_id_to_slug(cid)
+        if temp_stem == asset:
+            continue
+        for ext in (".mp3", ".subtitle.json", ".wav"):
+            src = media / f"{temp_stem}{ext}"
+            dst = media / f"{asset}{ext}"
+            if src.exists():
+                src.replace(dst)
     delta_manifest = load_json(media / "tts_manifest.json")
 
     # Propagate provider-level metadata so future incremental runs keep the
@@ -487,18 +525,19 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
     by_id = {c["id"]: c for c in manifest.get("cues") or []}
     for dm in delta_manifest.get("cues") or []:
         cid = dm["id"]
-        stem = section_source.cue_id_to_slug(cid)
+        asset = assets.get(cid) or section_source.cue_id_to_slug(cid)
         for ext in (".mp3", ".subtitle.json"):
-            src = media / f"{stem}{ext}"
+            src = media / f"{asset}{ext}"
             if src.exists():
                 shutil.copy2(src, full_media / src.name)
         by_id[cid] = {
             "id": cid,
+            "asset": asset,
             "group": dm.get("group", ""),
             "start": 0.0,
             "duration": round(float(dm.get("duration", 0.0) or 0.0), 3),
-            "file": tts_asset_rel(game, track, cid, ".mp3"),
-            "subtitle_file": tts_asset_rel(game, track, cid, ".subtitle.json"),
+            "file": tts_asset_rel(game, track, asset, ".mp3"),
+            "subtitle_file": tts_asset_rel(game, track, asset, ".subtitle.json"),
             "refs": dm.get("refs") or [],
         }
     manifest["cues"] = [by_id[c["id"]] for c in script.get("cues") or [] if c["id"] in by_id]
@@ -516,10 +555,13 @@ def prune_removed(game_dir: Path, track: str, script: dict, manifest: dict, dry_
         print(f"[dry-run] TTS would prune: {', '.join(removed)}")
     else:
         full_media = game_dir / "media" / "tts" / track
+        manifest_by_id = {c["id"]: c for c in manifest.get("cues") or [] if isinstance(c, dict) and c.get("id")}
         for cid in removed:
-            stem = section_source.cue_id_to_slug(cid)
-            for ext in (".mp3", ".subtitle.json"):
-                p = full_media / f"{stem}{ext}"
+            m = manifest_by_id.get(cid) or {}
+            asset = m.get("asset") or section_source.cue_id_to_slug(cid)
+            for key, ext in (("file", ".mp3"), ("subtitle_file", ".subtitle.json")):
+                rel = normalize_manifest_path(m.get(key) or "")
+                p = (ROOT / rel) if rel else (full_media / f"{asset}{ext}")
                 if p.exists():
                     p.unlink()
         manifest["cues"] = [c for c in manifest.get("cues") or [] if c["id"] in keep]
@@ -725,10 +767,13 @@ def main() -> int:
             continue
         text = cue_text(cue)
         refs = cue.get("refs") or []
+        asset = cue_tts_asset(cue, cid)
         old_text = tts_text.get(cid)
         m = manifest_by.get(cid)
         audio_ok = manifest_audio_ok(m)
-        if args.force_full_tts or old_text is None or old_text != text or not audio_ok:
+        asset_changed = bool(m and m.get("asset") and m.get("asset") != asset)
+        if (args.force_full_tts or old_text is None or old_text != text
+                or not audio_ok or asset_changed):
             changed.append(cue)
         elif (m.get("refs") or []) != refs:
             refs_changed.append(cid)
@@ -774,6 +819,10 @@ def main() -> int:
     # Source-of-truth is script order; align manifest with it.
     manifest["cues"] = [m for m in manifest.get("cues") or [] if m["id"] in script_by]
     manifest["cues"].sort(key=lambda m: [c["id"] for c in script["cues"]].index(m["id"]))
+    for m in manifest["cues"]:
+        cue = script_by.get(m["id"])
+        if cue is not None:
+            m["asset"] = cue_tts_asset(cue, m["id"])
     if changed or removed:
         recompute_starts(manifest)
     save_json(manifest_path, manifest)

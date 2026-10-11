@@ -58,7 +58,7 @@ class SectionSourceTests(unittest.TestCase):
         write(sections / "a" / "full.script.json", {
             "section": "a",
             "cues": [{
-                "id": "c1", "group": "1 A",
+                "id": "c1", "tts_asset": "intro.old", "group": "1 A",
                 "beats": [{"id": "c1.b1", "text": "hello"}],
             }],
         })
@@ -106,6 +106,7 @@ class SectionSourceTests(unittest.TestCase):
             self.assertEqual(src.anim_doc["cues"][0]["local_id"], "c1")
             self.assertEqual(src.anim_doc["cues"][1]["section"], "b")
             self.assertEqual(src.anim_doc["cues"][2]["local_index"], 1)
+            self.assertEqual(src.script_doc["cues"][0]["tts_asset"], "intro.old")
             self.assertEqual(src.qa_asks[0]["cue"], "b/d1")
 
     def test_section_ref_resolves_to_section_start(self):

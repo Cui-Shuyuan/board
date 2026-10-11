@@ -149,6 +149,11 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 
 ## 素材路径约定
 
+素材统一放在一个公共池里，不按 section/cue 分目录，也不在文件名里拼
+`section__cue`：所有卡牌、宝石、盒子、TTS 音频和字幕都保留自己的原名，
+由引用它的 cue 显式指名。生成的 TTS 放 `media/tts/{track}/`，cue 的
+`tts_asset` 字段就是该音频的原始文件基名。
+
 - stage 模板的 `face_image` / `back_image` 必须直接写**处理过的** `_cutout.png`
   （裁到实物、alpha 成品、可选 mm 统一尺寸）。运行时按字面路径加载，
   不做“优先找 `_cutout.png`”的隐式回退。

@@ -6,6 +6,7 @@
   "cues": [
     {
       "id": "nobles.001.1",
+      "tts_asset": "setup.nobles.001.1",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -26,6 +27,7 @@
     },
     {
       "id": "nobles.001.2",
+      "tts_asset": "setup.nobles.001.2",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -46,6 +48,7 @@
     },
     {
       "id": "nobles.002",
+      "tts_asset": "setup.nobles.002",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -64,6 +67,7 @@
     },
     {
       "id": "starting.001.1",
+      "tts_asset": "setup.starting_player.001.1",
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
@@ -92,6 +96,7 @@
     },
     {
       "id": "starting.001.3",
+      "tts_asset": "setup.starting_player.001.3",
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
@@ -116,6 +121,7 @@
     },
     {
       "id": "end.001.1",
+      "tts_asset": "setup.end.001.1",
       "group": "2.5 设置完成",
       "group_path": [
         "2 设置",

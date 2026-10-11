@@ -87,6 +87,70 @@ class CompileTutorialPathTests(unittest.TestCase):
         rel = ct.tts_asset_rel("fake-game", "quick", "cue.1", ".mp3")
         self.assertEqual("content/games/fake-game/media/tts/quick/cue.1.mp3", rel)
 
+    def test_cue_tts_asset_prefers_explicit_original_name(self):
+        self.assertEqual(
+            ct.cue_tts_asset({"id": "intro/001", "tts_asset": "bg.intro.001"}),
+            "bg.intro.001",
+        )
+        self.assertEqual(
+            ct.cue_tts_asset({"id": "intro/001"}),
+            "intro__001",
+        )
+        with self.assertRaises(SystemExit):
+            ct.cue_tts_asset({"id": "intro/001", "tts_asset": "../escape"})
+
+    def test_run_tts_delta_restores_cue_asset_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            game_dir = root / "content" / "games" / "fake"
+            media = game_dir / "media" / "tts" / "full"
+            media.mkdir(parents=True)
+            script = {
+                "cues": [{
+                    "id": "intro/001",
+                    "tts_asset": "bg.intro.001",
+                    "refs": [],
+                    "beats": [{"text": "hello"}],
+                }]
+            }
+            manifest = {
+                "cues": [{
+                    "id": "intro/001",
+                    "asset": "bg.intro.001",
+                    "file": "content/games/fake/media/tts/full/bg.intro.001.mp3",
+                    "subtitle_file": "content/games/fake/media/tts/full/bg.intro.001.subtitle.json",
+                    "duration": 1.0,
+                    "refs": [],
+                }]
+            }
+
+            def fake_run(cmd, cwd=None, check=None):
+                out_dir = Path(cmd[cmd.index("--out-dir") + 1])
+                out_dir.mkdir(parents=True, exist_ok=True)
+                slug = ct.section_source.cue_id_to_slug("intro/001")
+                (out_dir / f"{slug}.mp3").write_bytes(b"audio")
+                (out_dir / f"{slug}.subtitle.json").write_text("[]", encoding="utf-8")
+                (out_dir / "tts_manifest.json").write_text(
+                    json.dumps({"cues": [{
+                        "id": "intro/001", "duration": 1.0,
+                        "group": "1", "refs": [],
+                    }]}),
+                    encoding="utf-8",
+                )
+
+            with mock.patch.object(ct, "ROOT", root),                  mock.patch.object(ct.subprocess, "run", side_effect=fake_run):
+                updated = ct.run_tts_delta(
+                    game_dir, "fake", "full", script, manifest,
+                    script["cues"], sys.executable, False,
+                )
+            cue = updated["cues"][0]
+            self.assertEqual(cue["asset"], "bg.intro.001")
+            self.assertTrue(cue["file"].endswith("/bg.intro.001.mp3"))
+            self.assertTrue(cue["subtitle_file"].endswith("/bg.intro.001.subtitle.json"))
+            self.assertTrue((media / "bg.intro.001.mp3").exists())
+            self.assertTrue((media / "bg.intro.001.subtitle.json").exists())
+            self.assertFalse((media / "intro__001.mp3").exists())
+
     def test_qa_questions_path_uses_game(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

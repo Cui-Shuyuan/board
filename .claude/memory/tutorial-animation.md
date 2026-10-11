@@ -40,7 +40,7 @@ metadata:
 - `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，也不是源真值。
 - cue 在 section 文件里写 local id；解析后统一变为 qualified id：`<section_id>/<local_id>`。跨 section 引用必须写 qualified id。
 - `entry: "section:<id>"` 回到该 section 起点；section 第一条 cue 无显式 entry/parent 时继承 section.entry；section 内后续 cue 默认继承前一条；显式 entry/parent 优先。
-- 音频、runtime、QA、compiled 中持久化的 cue id 一律使用 qualified id；带 `/` 的文件名使用稳定 slug（`section__cue`）。
+- 音频、runtime、QA、compiled 中持久化的 cue id 一律使用 qualified id；素材不按 section/cue 分目录：统一放 `media/` 池，TTS 放 `media/tts/<track>/`，文件名使用 cue 的 `tts_asset`（素材原名），cue 显式引用。
 - full/quick 文本与动作差异较大时拆成独立 section，不强行共用。
 
 ## 技术选型
@@ -122,7 +122,7 @@ metadata:
 - `content/games/splendor/tutorial/tracks/{full,quick}.track.json`：track section 顺序与元信息。
 - `content/games/splendor/tutorial/sections/<section_id>/section.json`：section 元信息、默认 entry、tree。
 - `content/games/splendor/tutorial/sections/<section_id>/{track}.anim.json`：动画事件、camera、parent/entry、tree、契约、可选的 `qa` 字段。
-- `content/games/splendor/tutorial/sections/<section_id>/{track}.script.json`：口播文本、分组与 refs。
+- `content/games/splendor/tutorial/sections/<section_id>/{track}.script.json`：口播文本、分组、refs，以及该 cue 的 `tts_asset` 素材原名引用。
 - `content/games/splendor/tutorial/sections/<section_id>/qa.json`：section 外置手写合法性问句（可空）。
 - `content/games/splendor/tutorial/shared/{track}.base.anim.json`：track 公共 schema / worlds / trees。
 - `content/games/splendor/tutorial/shared/stage/*.stage.json`：跨 section 舞台、zone、模板、命名机位。

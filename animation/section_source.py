@@ -17,6 +17,11 @@ its *local* id.  Loading a track produces a resolved in-memory document whose
 cue ids are qualified as ``<section_id>/<local_id>``.  Compilers and checkers
 consume that resolved document directly; ``build/*.json`` is a derived,
 non-authoritative dump for debugging only.
+
+Assets are intentionally not section/cue scoped: authored media lives in one
+shared game media pool, generated TTS lives in ``media/tts/{track}/``, and each
+cue references the assets it uses.  TTS cues use an explicit ``tts_asset``
+field naming the original audio file base name.
 """
 from __future__ import annotations
 
