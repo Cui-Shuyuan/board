@@ -19,13 +19,29 @@ namespace BoardGameTutorial
         public string format;
         public int sample_rate;
         public string generator;
+        public List<TutorialSection> sections;
         public List<TutorialCue> cues;
+    }
+
+    [Serializable]
+    public class TutorialSection
+    {
+        public string id;
+        public string title;
+        public int order;
+        public List<string> group_path;
+        public List<string> cue_ids;
     }
 
     [Serializable]
     public class TutorialCue
     {
         public string id;
+        public string local_id;
+        public string section;
+        public int section_index;
+        public int local_index;
+        public int cue_index;
         public string group;
         public List<string> group_path;
         public string text;

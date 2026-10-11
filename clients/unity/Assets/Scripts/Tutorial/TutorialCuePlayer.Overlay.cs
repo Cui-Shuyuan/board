@@ -18,6 +18,51 @@ namespace BoardGameTutorial
 {
     public partial class TutorialCuePlayer : MonoBehaviour
     {
+        private string CurrentProgressLabel()
+        {
+            if (doc == null || doc.cues == null || doc.cues.Count == 0)
+                return "section -/-  cue -/-";
+
+            var cue = CurrentCue;
+            bool hasSection = cue != null
+                && !string.IsNullOrEmpty(cue.section)
+                && doc.sections != null
+                && doc.sections.Count > 0;
+            if (!hasSection)
+                return $"section -/-  cue {currentIndex + 1}/{doc.cues.Count}";
+
+            int sectionIndex = Mathf.Clamp(cue.section_index, 0, doc.sections.Count - 1);
+            var section = doc.sections[sectionIndex];
+            int sectionCueCount = SectionCueCount(sectionIndex, cue.section);
+
+            int localIndex = cue.local_index;
+            if (section?.cue_ids != null)
+            {
+                int found = section.cue_ids.IndexOf(cue.id);
+                if (found >= 0) localIndex = found;
+            }
+            if (localIndex < 0 || localIndex >= sectionCueCount) localIndex = 0;
+
+            return $"section {sectionIndex + 1}/{doc.sections.Count}  cue {localIndex + 1}/{sectionCueCount}  (全局 {currentIndex + 1}/{doc.cues.Count})";
+        }
+
+        private int SectionCueCount(int sectionIndex, string sectionId)
+        {
+            if (doc?.sections != null && sectionIndex >= 0 && sectionIndex < doc.sections.Count)
+            {
+                var cues = doc.sections[sectionIndex]?.cue_ids;
+                if (cues != null && cues.Count > 0) return cues.Count;
+            }
+
+            int count = 0;
+            if (doc?.cues != null)
+            {
+                foreach (var cue in doc.cues)
+                    if (cue != null && cue.section == sectionId) count++;
+            }
+            return Mathf.Max(1, count);
+        }
+
         private void OnGUI()
         {
             if (doc == null) return;
@@ -50,7 +95,7 @@ namespace BoardGameTutorial
             }
 
             GUI.Box(new Rect(10, 10, Screen.width - 20, 202), doc.title ?? "Tutorial");
-            GUI.Label(new Rect(24, 28, Screen.width - 48, 24), $"cue {currentIndex + 1}/{doc.cues.Count}  {CurrentCueId}", debugStyle);
+            GUI.Label(new Rect(24, 28, Screen.width - 48, 24), $"{CurrentProgressLabel()}  {CurrentCueId}", debugStyle);
             GUI.Label(new Rect(24, 52, Screen.width - 48, 24), CurrentCueGroupPath, debugStyle);
             GUI.Label(new Rect(24, 78, Screen.width - 48, 56), CurrentCueText, debugStyle);
 
