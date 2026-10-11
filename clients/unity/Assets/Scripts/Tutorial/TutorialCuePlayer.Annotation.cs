@@ -187,6 +187,11 @@ namespace BoardGameTutorial
         {
             if (string.IsNullOrEmpty(text) || maxCharsPerLine <= 0) return text;
 
+            // Explicit manual line breaks take precedence.  The GUI style
+            // still has wordWrap enabled as a width safety net.
+            if (text.IndexOf('\n') >= 0)
+                return text.Replace("\r\n", "\n").Replace("\r", "\n");
+
             var sb = new System.Text.StringBuilder(text.Length + text.Length / maxCharsPerLine + 1);
             int lineChars = 0;
             for (int i = 0; i < text.Length; i++)

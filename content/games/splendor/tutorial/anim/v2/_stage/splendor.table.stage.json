@@ -3168,6 +3168,39 @@
       "note": "统一文字说明槽位（label）：约屏高 4.6% 的大字号、白字 + 深色描边、无背景黑框；运行时按每行最多 15 个字自动换行，槽位高度保留两行大字余量。屏幕左上角行动提示。overlay 只做屏幕锚点，不参与游戏 zone / 全景 / 重叠检查。"
     },
     {
+      "id": "hint_action_second",
+      "space": "screen",
+      "rect": {
+        "x": 0.035,
+        "y": 0.025,
+        "w": 0.62,
+        "h": 0.085
+      },
+      "note": "统一文字说明槽位（label）：屏幕左上角第 2 个行动提示。overlay 只做屏幕锚点，不参与游戏 zone / 全景 / 重叠检查。"
+    },
+    {
+      "id": "hint_action_third",
+      "space": "screen",
+      "rect": {
+        "x": 0.035,
+        "y": 0.025,
+        "w": 0.62,
+        "h": 0.085
+      },
+      "note": "统一文字说明槽位（label）：屏幕左上角第 3 个行动提示。overlay 只做屏幕锚点，不参与游戏 zone / 全景 / 重叠检查。"
+    },
+    {
+      "id": "hint_action_summary",
+      "space": "screen",
+      "rect": {
+        "x": 0.035,
+        "y": 0.035,
+        "w": 0.62,
+        "h": 0.24
+      },
+      "note": "统一文字说明槽位（label）：屏幕左上角行动总结提示，容纳 4 行短文字。overlay 只做屏幕锚点，不参与游戏 zone / 全景 / 重叠检查。"
+    },
+    {
       "id": "hint_limit",
       "space": "screen",
       "rect": {

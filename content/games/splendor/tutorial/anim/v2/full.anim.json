@@ -4119,7 +4119,7 @@
         {
           "op": "label",
           "dur": 0.0,
-          "text": "第一个行动：拿取3枚不同颜色的宝石",
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
           "anchor": "action.take.different.001.start",
           "target": {
             "space": "screen",
@@ -5622,6 +5622,16 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.cards.intro.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "anchor": "action.cards.intro.001.start",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          }
         },
         {
           "op": "show",
@@ -11583,6 +11593,16 @@
           "anchor": "action.reserve.intro.001.1.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "anchor": "action.reserve.intro.001.1.start",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          }
+        },
+        {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
@@ -13575,6 +13595,16 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "action.summary.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "本回合可选择以下行动之一：\n第1个行动：拿取宝石\n第2个行动：购买1张发展卡牌\n第3个行动：保留1张发展卡牌",
+          "anchor": "action.summary.001.start",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          }
         }
       ],
       "tree": "main"
