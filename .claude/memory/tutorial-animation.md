@@ -12,7 +12,7 @@ metadata:
 讲规动画是离线编译的静态数字资产，播放端只做确定性播放，不实时调用 LLM。口播稿是主，动画是次；TTS 冻结后，音频时长是动画硬边界。
 
 现状：
-- 试点为《璀璨宝石》：full 67 cue / 338 anchors，quick 20 cue / 88 anchors；两轨均已迁移为 section-first 源并以 qualified cue id 编译通过。
+- 试点为《璀璨宝石》：full 67 cue / 338 anchors，quick 20 cue / 88 anchors；两轨均已迁移为 section-first 源与 section 级连续 TTS。
 - full TTS、runtime、compiled、Unity 播放器、编译/校验/采样对账链路已跑通。
 - `time_anchors` 已迁移并 commit（`38971d4`）；section 源保留 anchor，compiled 输出数值 `at`。
 - QA 与 section/cue 同置流程已落地：问题可写在该 cue 的 `qa` 字段，历史外置问题迁到 `sections/<section_id>/qa.json`；`qa_anim_ask.py` 可直接合并提取，`compile_tutorial.py --validate-qa` / `--validate-qa-all` 使用 section-aware QA。
@@ -40,7 +40,7 @@ metadata:
 - `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，也不是源真值。
 - cue 在 section 文件里写 local id；解析后统一变为 qualified id：`<section_id>/<local_id>`。跨 section 引用必须写 qualified id。
 - `entry: "section:<id>"` 回到该 section 起点；section 第一条 cue 无显式 entry/parent 时继承 section.entry；section 内后续 cue 默认继承前一条；显式 entry/parent 优先。
-- 音频、runtime、QA、compiled 中持久化的 cue id 一律使用 qualified id；素材不按 section/cue 分目录：统一放 `media/` 池，TTS 放 `media/tts/<track>/`，文件名使用 cue 的 `tts_asset`（素材原名），cue 显式引用。
+- TTS 单位是 section：一个 section 一段连续音频，section 内多条 cue 共享同一 `audio` 文件并按 `audio_start` 切换画面；素材统一放 `media/` 池，TTS 文件名用 `section.json` 的 `tts_asset`。
 - full/quick 文本与动作差异较大时拆成独立 section，不强行共用。
 
 ## 技术选型
@@ -122,7 +122,7 @@ metadata:
 - `content/games/splendor/tutorial/tracks/{full,quick}.track.json`：track section 顺序与元信息。
 - `content/games/splendor/tutorial/sections/<section_id>/section.json`：section 元信息、默认 entry、tree。
 - `content/games/splendor/tutorial/sections/<section_id>/{track}.anim.json`：动画事件、camera、parent/entry、tree、契约、可选的 `qa` 字段。
-- `content/games/splendor/tutorial/sections/<section_id>/{track}.script.json`：口播文本、分组、refs，以及该 cue 的 `tts_asset` 素材原名引用。
+- `content/games/splendor/tutorial/sections/<section_id>/{track}.script.json`：口播文本、分组与 refs；TTS 素材名在 `section.json` 的 `tts_asset`。
 - `content/games/splendor/tutorial/sections/<section_id>/qa.json`：section 外置手写合法性问句（可空）。
 - `content/games/splendor/tutorial/shared/{track}.base.anim.json`：track 公共 schema / worlds / trees。
 - `content/games/splendor/tutorial/shared/stage/*.stage.json`：跨 section 舞台、zone、模板、命名机位。
@@ -146,7 +146,7 @@ metadata:
 
 ### 标准顺序
 
-1. 改文字脚本：`sections/<section_id>/full.script.json`。
+1. 改文字脚本：`sections/<section_id>/full.script.json`；TTS 按 section 拼接生成，不从 cue 边界切开。
 2. **手写这一 cue 的合法性问答，问运行中的 Board API**：
    - 问题只带这一个 cue 的最小事实（状态前提 + 动作 + 结果），优先手写进该 cue 的 `qa` 字段；外置历史问题放 `sections/<section_id>/qa.json`；
    - 用 `python3 animation/qa_anim_ask.py --game splendor --track full --only <qualified_cue>` 自动发送并留档；

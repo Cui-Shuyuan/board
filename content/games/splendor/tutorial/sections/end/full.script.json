@@ -6,7 +6,6 @@
   "cues": [
     {
       "id": "trigger.001",
-      "tts_asset": "endgame.trigger.001",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -25,7 +24,6 @@
     },
     {
       "id": "final_rounds.001.1",
-      "tts_asset": "endgame.final_rounds.001.1",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -45,7 +43,6 @@
     },
     {
       "id": "example.001.1",
-      "tts_asset": "endgame.example.001.1",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -63,7 +60,6 @@
     },
     {
       "id": "winner.001",
-      "tts_asset": "endgame.winner.001",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -82,7 +78,6 @@
     },
     {
       "id": "winner.002",
-      "tts_asset": "endgame.winner.002",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -101,7 +96,6 @@
     },
     {
       "id": "winner.003",
-      "tts_asset": "endgame.winner.003",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"

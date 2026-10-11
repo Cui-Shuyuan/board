@@ -473,7 +473,11 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
     delta_dir.mkdir(parents=True, exist_ok=True)
     lrc = delta_dir / "delta.lrc"
     media = delta_dir / "media"
-    assets = {c["id"]: cue_tts_asset(c, c.get("id")) for c in changed}
+    by_change = {c["id"]: c for c in changed}
+    assets = {
+        c["id"]: str(c.get("asset") or cue_tts_asset(c, c.get("id"))).strip()
+        for c in changed
+    }
     write_delta_lrc(lrc, changed, {c["id"]: c.get("refs") or [] for c in script.get("cues") or []}, game, track)
     provider = _current_tts_provider()
     manifest_provider = (manifest.get("provider") or "").strip().lower()
@@ -533,7 +537,10 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
         by_id[cid] = {
             "id": cid,
             "asset": asset,
+            "text": dm.get("text") or cue_text(by_change.get(cid, {})),
             "group": dm.get("group", ""),
+            "group_path": dm.get("group_path") or [],
+            "cue_ids": dm.get("cue_ids") or by_change.get(cid, {}).get("cue_ids") or [],
             "start": 0.0,
             "duration": round(float(dm.get("duration", 0.0) or 0.0), 3),
             "file": tts_asset_rel(game, track, asset, ".mp3"),
@@ -685,6 +692,155 @@ def run_qa_gate(game: str, track: str, ids: list[str] | None = None,
     finally:
         tmp.unlink(missing_ok=True)
 
+def _valid_tts_asset_name(name: str) -> str:
+    value = str(name or "").strip()
+    if not value or value in {".", ".."} or "/" in value or "\\" in value or "\x00" in value:
+        raise SystemExit(f"invalid section tts_asset {name!r}: use a plain file base name")
+    return value
+
+
+def build_section_tts_entries(track_source) -> list[dict]:
+    """One TTS entry per authored section; cue texts are concatenated for prosody."""
+    cues_by_section: dict[str, list[dict]] = {}
+    for cue in track_source.script_doc.get("cues") or []:
+        if not isinstance(cue, dict) or not cue.get("id"):
+            continue
+        cues_by_section.setdefault(str(cue.get("section") or ""), []).append(cue)
+
+    entries: list[dict] = []
+    for sec in track_source.sections:
+        cues = cues_by_section.get(sec.id) or []
+        if not cues:
+            raise SystemExit(f"section {sec.id!r} has no script cues")
+        text = "".join(cue_text(c) for c in cues)
+        if not text.strip():
+            raise SystemExit(f"section {sec.id!r} has empty TTS text")
+        asset = _valid_tts_asset_name(sec.meta.get("tts_asset") or sec.id)
+        refs: list[str] = []
+        for c in cues:
+            for ref in c.get("refs") or []:
+                if ref not in refs:
+                    refs.append(ref)
+        first = cues[0]
+        group = first.get("group") or sec.meta.get("title") or sec.id
+        group_path = first.get("group_path") or sec.meta.get("group_path") or [group]
+        entries.append({
+            "id": sec.id,
+            "asset": asset,
+            "text": text,
+            "group": group,
+            "group_path": list(group_path),
+            "refs": refs,
+            "pause_after": 0.0,
+            "cue_ids": [str(c["id"]) for c in cues],
+            "beats": [{"id": f"{sec.id}.tts", "text": text}],
+        })
+    return entries
+
+
+def _main_section_mode(args, track_source, *, script: dict, source_root: Path | None = None) -> int:
+    """Section-level TTS pipeline: one continuous audio passage per section."""
+    game_dir = ROOT / "content" / "games" / args.game
+    tutorial = game_dir / "tutorial"
+    manifest_path = game_dir / "media" / "tts" / args.track / "tts_manifest.json"
+    tts_lrc_path = tutorial / f"{args.track}.tts.lrc"
+    if not manifest_path.exists():
+        print(f"missing TTS manifest: {manifest_path}", file=sys.stderr)
+        return 2
+
+    entries = build_section_tts_entries(track_source)
+    pseudo_script = {
+        "title": track_source.script_doc.get("title") or f"{args.game} {args.track}",
+        "game_id": args.game,
+        "track": args.track,
+        "version": track_source.script_doc.get("version"),
+        "cues": entries,
+    }
+    manifest = normalize_manifest_paths(load_json(manifest_path))
+    tts_text = read_current_tts_text(tts_lrc_path)
+    manifest_by = {c["id"]: c for c in manifest.get("cues") or [] if isinstance(c, dict) and c.get("id")}
+
+    changed: list[dict] = []
+    refs_changed: list[str] = []
+    for entry in entries:
+        cid = entry["id"]
+        m = manifest_by.get(cid)
+        old_text = tts_text.get(cid)
+        if (args.force_full_tts or old_text is None or old_text != entry["text"]
+                or not manifest_audio_ok(m)):
+            changed.append(entry)
+        elif (m.get("refs") or []) != entry["refs"]:
+            refs_changed.append(cid)
+
+    if not args.dry_run and (args.validate_qa or args.validate_qa_all):
+        if args.validate_qa_all:
+            qa_ids = None
+        else:
+            baseline_doc = load_baseline_track_doc(args.game, args.track)
+            qa_ids = select_qa_changed_ids(
+                track_source.anim_doc,
+                baseline_doc,
+                [cid for entry in changed for cid in entry["cue_ids"]],
+            )
+        rc = run_qa_gate(args.game, args.track, qa_ids, track_doc=track_source.anim_doc)
+        if rc != 0:
+            return rc
+
+    manifest, removed = prune_removed(game_dir, args.track, {"cues": entries}, manifest, args.dry_run)
+    if args.dry_run:
+        print(
+            f"[dry-run] changed text sections: {len(changed)}, removed: {len(removed)}, "
+            f"ref-only: {len(refs_changed)}"
+        )
+        return 0
+
+    if changed:
+        if args.skip_tts:
+            print(
+                f"[tts] {len(changed)} section(s) need regeneration, but --skip-tts is set",
+                file=sys.stderr,
+            )
+            return 1
+        manifest = run_tts_delta(
+            game_dir, args.game, args.track, pseudo_script, manifest, changed,
+            args.tts_python, args.dry_run,
+        )
+
+    # Normalize manifest to the current section list while keeping TTS timing.
+    by_id = {c["id"]: c for c in manifest.get("cues") or [] if isinstance(c, dict) and c.get("id")}
+    ordered: list[dict] = []
+    for entry in entries:
+        m = by_id.get(entry["id"])
+        if m is None:
+            # Complete sections can be present without being regenerated above;
+            # if a manifest is missing one, fail instead of silently dropping it.
+            print(f"missing TTS manifest section: {entry['id']}", file=sys.stderr)
+            return 2
+        for key in ("asset", "text", "group", "group_path", "refs", "cue_ids"):
+            m[key] = entry[key]
+        ordered.append(m)
+    manifest["units"] = "section"
+    manifest["cues"] = ordered
+    recompute_starts(manifest)
+    save_json(manifest_path, manifest)
+
+    rebuild_lrc(script, tutorial / f"{args.track}.lrc")
+    write_tts_lrc(game_dir, args.track, pseudo_script, manifest)
+    build_runtime(args.game, args.track, force=True)
+
+    rc = animation_compiler.main(["--game", args.game, "--track", args.track])
+    if rc != 0:
+        return rc
+    rc = rule_ledger.main(["--game", args.game, "--track", args.track])
+    if rc != 0:
+        return rc
+    print(
+        f"OK   compiled {args.game}/{args.track}: section-tts_regenerated={len(changed)} "
+        f"removed={len(removed)}"
+    )
+    return 0
+
+
 def games_with_track(track: str) -> list[str]:
     """Return games that have a complete authored track source for ``track``."""
     games = ROOT / "content" / "games"
@@ -736,16 +892,30 @@ def main() -> int:
         print(str(exc), file=sys.stderr)
         return 2
 
+    track_source = None
     try:
-        anim_doc, script, source_root, source_hash, source_is_section = section_source.load_track_docs(
-            args.game, args.track, allow_legacy=True, warn=True
-        )
+        if section_source.has_section_source(args.game, args.track):
+            track_source = section_source.load_track_source(args.game, args.track)
+            anim_doc = track_source.anim_doc
+            script = track_source.script_doc
+            source_is_section = True
+            source_root = track_source.tutorial
+            source_hash = track_source.source_hash
+        else:
+            anim_doc, script, source_root, source_hash, source_is_section = section_source.load_track_docs(
+                args.game, args.track, allow_legacy=True, warn=True
+            )
     except Exception as exc:  # noqa: BLE001 - CLI should surface source errors
         print(f"missing source for {args.game}/{args.track}: {exc}", file=sys.stderr)
         return 2
     if not script.get("cues"):
         print(f"missing narration script for {args.game}/{args.track}", file=sys.stderr)
         return 2
+    if track_source is not None and any(
+        isinstance(sec.meta, dict) and sec.meta.get("tts_asset")
+        for sec in track_source.sections
+    ):
+        return _main_section_mode(args, track_source, script=script, source_root=source_root)
 
     game_dir = ROOT / "content" / "games" / args.game
     tutorial = game_dir / "tutorial"

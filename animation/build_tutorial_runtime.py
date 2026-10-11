@@ -120,10 +120,18 @@ def build_runtime(game: str, track: str, force: bool = False) -> Path:
     manifest_path = game_dir / "media" / "tts" / track / "tts_manifest.json"
     output_path = game_dir / "tutorial" / f"{track}.runtime.json"
 
-    if not lrc_path.exists():
-        raise SystemExit(f"missing lrc: {lrc_path}")
     if not manifest_path.exists():
         raise SystemExit(f"missing manifest: {manifest_path}")
+    try:
+        _manifest_early = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"invalid manifest: {manifest_path}: {exc}")
+    if _manifest_early.get("units") == "section":
+        from build_section_runtime import build_section_runtime
+        return build_section_runtime(game, track, force=force, manifest=_manifest_early)
+
+    if not lrc_path.exists():
+        raise SystemExit(f"missing lrc: {lrc_path}")
 
     doc = parse_file(lrc_path)
     errors = [issue for issue in doc["issues"] if issue["level"] == "error"]

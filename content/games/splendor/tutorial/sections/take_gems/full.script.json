@@ -6,7 +6,6 @@
   "cues": [
     {
       "id": "different.001",
-      "tts_asset": "action.take.different.001",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -26,7 +25,6 @@
     },
     {
       "id": "same.001",
-      "tts_asset": "action.take.same.001",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -46,7 +44,6 @@
     },
     {
       "id": "same.002",
-      "tts_asset": "action.take.same.002",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -66,7 +63,6 @@
     },
     {
       "id": "draw_rule.001.1",
-      "tts_asset": "action.take.draw_rule.001.1",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -86,7 +82,6 @@
     },
     {
       "id": "draw_rule.001.2",
-      "tts_asset": "action.take.draw_rule.001.2",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -106,7 +101,6 @@
     },
     {
       "id": "limit.001.1",
-      "tts_asset": "action.take.limit.001.1",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -131,7 +125,6 @@
     },
     {
       "id": "limit.001.2",
-      "tts_asset": "action.take.limit.001.2",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -152,7 +145,6 @@
     },
     {
       "id": "public.001.1",
-      "tts_asset": "action.take.public.001.1",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -171,7 +163,6 @@
     },
     {
       "id": "public.001.2",
-      "tts_asset": "action.take.public.001.2",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",

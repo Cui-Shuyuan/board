@@ -62,6 +62,12 @@ namespace BoardGameTutorial
             float localTime,
             bool startPaused)
         {
+            if (IsSectionAudioCue(index))
+            {
+                yield return PlaySectionCueRoutine(index, Mathf.Max(0f, localTime), startPaused);
+                yield break;
+            }
+
             if (audioSource.isPlaying) audioSource.Stop();
             audioSource.clip = null;
             currentIndex = index;
@@ -244,9 +250,8 @@ namespace BoardGameTutorial
         {
             if (audioSource == null || audioSource.clip == null) return;
 
-            float duration = audioSource.clip.length;
-            if (duration <= 0f && CurrentCue != null) duration = CurrentCue.duration;
-            float target = audioSource.time + seconds;
+            float duration = Duration;
+            float target = Position + seconds;
 
             if (target < 0f)
             {
@@ -291,9 +296,20 @@ namespace BoardGameTutorial
         private void SeekToCurrentTime(float time)
         {
             if (audioSource == null || audioSource.clip == null) return;
-            float duration = Mathf.Max(0f, audioSource.clip.length);
-            float clamped = ClampCueLocalTime(time, duration);
-            audioSource.time = clamped;
+            float cueDuration = CurrentCue != null
+                ? Mathf.Max(0.001f, CurrentCue.duration)
+                : Mathf.Max(0f, audioSource.clip.length);
+            float clamped = Mathf.Clamp(time, 0f, Mathf.Max(0f, cueDuration - 0.02f));
+            if (CurrentCue != null && CurrentCue.section_audio)
+            {
+                float sectionTime = CurrentCue.audio_start + clamped;
+                audioSource.time = Mathf.Clamp(
+                    sectionTime, 0f, Mathf.Max(0f, audioSource.clip.length - 0.02f));
+            }
+            else
+            {
+                audioSource.time = clamped;
+            }
             if (v2AnimPlayer != null) v2AnimPlayer.Seek(clamped);
             UpdateSubtitle();
         }
@@ -354,7 +370,7 @@ namespace BoardGameTutorial
 
             if (v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
             {
-                float t = audioSource != null && audioSource.clip != null ? audioSource.time : fallbackClock;
+                float t = audioSource != null && audioSource.clip != null ? Position : fallbackClock;
                 if (!isPaused && (audioSource == null || audioSource.clip == null))
                     fallbackClock += Time.deltaTime;
                 v2AnimPlayer.Seek(t);
@@ -423,7 +439,7 @@ namespace BoardGameTutorial
             currentSubtitle = "";
             var cue = CurrentCue;
             if (cue == null || audioSource == null || cue.subtitles == null) return;
-            float time = audioSource.time;
+            float time = cue.section_audio ? Position : audioSource.time;
             foreach (var subtitle in cue.subtitles)
                 if (time >= subtitle.t && time <= subtitle.end) { currentSubtitle = subtitle.text; return; }
         }

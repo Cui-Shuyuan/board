@@ -31,6 +31,10 @@ namespace BoardGameTutorial
         public int order;
         public List<string> group_path;
         public List<string> cue_ids;
+        public string asset;
+        public string audio;
+        public float start;
+        public float duration;
     }
 
     [Serializable]
@@ -51,6 +55,8 @@ namespace BoardGameTutorial
         public List<string> refs;
         public List<TutorialCueSubtitle> subtitles;
         public string animation;
+        public float audio_start;
+        public bool section_audio;
 
         /// <summary>
         /// 本条 cue 的**入口状态**来自哪条 cue 的终态。

@@ -6,7 +6,6 @@
   "cues": [
     {
       "id": "intro.001.1",
-      "tts_asset": "action.reserve.intro.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -28,7 +27,6 @@
     },
     {
       "id": "gold.001",
-      "tts_asset": "action.reserve.gold.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -48,7 +46,6 @@
     },
     {
       "id": "deck.001",
-      "tts_asset": "action.reserve.deck.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -70,7 +67,6 @@
     },
     {
       "id": "notes_intro.001",
-      "tts_asset": "action.reserve.notes_intro.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -93,7 +89,6 @@
     },
     {
       "id": "limit_gold.001.2",
-      "tts_asset": "action.reserve.limit_gold.001.2",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -114,7 +109,6 @@
     },
     {
       "id": "limit_hand.001.1",
-      "tts_asset": "action.reserve.limit_hand.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -135,7 +129,6 @@
     },
     {
       "id": "private.001.1",
-      "tts_asset": "action.reserve.private.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -155,7 +148,6 @@
     },
     {
       "id": "private.002",
-      "tts_asset": "action.reserve.private.002",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -175,7 +167,6 @@
     },
     {
       "id": "not_purchase.001",
-      "tts_asset": "action.reserve.not_purchase.001",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",

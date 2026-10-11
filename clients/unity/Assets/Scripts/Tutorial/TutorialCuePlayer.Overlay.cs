@@ -99,7 +99,7 @@ namespace BoardGameTutorial
             GUI.Label(new Rect(24, 52, Screen.width - 48, 24), CurrentCueGroupPath, debugStyle);
             GUI.Label(new Rect(24, 78, Screen.width - 48, 56), CurrentCueText, debugStyle);
 
-            float t = (audioSource != null && audioSource.clip != null) ? audioSource.time : 0f;
+            float t = (audioSource != null && audioSource.clip != null) ? Position : 0f;
             string animInfo = v2AnimPlayer != null && v2AnimPlayer.IsLoaded
                 ? $"anim: ON  {v2AnimPlayer.CueId}  t={t:0.00}s  动画总长 {v2AnimPlayer.TotalDuration:0.00}s"
                 : $"anim: none  (t={t:0.00}s)";

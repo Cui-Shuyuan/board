@@ -6,7 +6,6 @@
   "cues": [
     {
       "id": "intro.001",
-      "tts_asset": "action.nobles.intro.001",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -27,7 +26,6 @@
     },
     {
       "id": "trigger.001.1",
-      "tts_asset": "action.nobles.trigger.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -56,7 +54,6 @@
     },
     {
       "id": "forced.001.1",
-      "tts_asset": "action.nobles.forced.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -80,7 +77,6 @@
     },
     {
       "id": "source.001",
-      "tts_asset": "action.nobles.source.001",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -101,7 +97,6 @@
     },
     {
       "id": "choice.001.1",
-      "tts_asset": "action.nobles.choice.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -126,7 +121,6 @@
     },
     {
       "id": "repeat.001.1",
-      "tts_asset": "action.nobles.repeat.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -151,7 +145,6 @@
     },
     {
       "id": "repeat.001.3",
-      "tts_asset": "action.nobles.repeat.001.3",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -172,7 +165,6 @@
     },
     {
       "id": "summary.001.1",
-      "tts_asset": "action.cards.summary.001.1",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -195,7 +187,6 @@
     },
     {
       "id": "summary.001.2",
-      "tts_asset": "action.cards.summary.001.2",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -218,7 +209,6 @@
     },
     {
       "id": "summary.001.3",
-      "tts_asset": "action.cards.summary.001.3",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",

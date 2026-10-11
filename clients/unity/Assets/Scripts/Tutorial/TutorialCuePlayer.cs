@@ -138,8 +138,28 @@ namespace BoardGameTutorial
         public int CurrentCueIndex => currentIndex;
         public int TotalCueCount => doc != null && doc.cues != null ? doc.cues.Count : 0;
         public float Volume => audioSource != null ? audioSource.volume : 1f;
-        public float Position => audioSource != null && audioSource.clip != null ? audioSource.time : 0f;
-        public float Duration => audioSource != null && audioSource.clip != null ? audioSource.clip.length : 0f;
+
+        public float Position
+        {
+            get
+            {
+                if (audioSource == null || audioSource.clip == null) return 0f;
+                var cue = CurrentCue;
+                if (cue != null && cue.section_audio)
+                    return Mathf.Clamp(audioSource.time - cue.audio_start, 0f, Mathf.Max(0f, cue.duration));
+                return audioSource.time;
+            }
+        }
+
+        public float Duration
+        {
+            get
+            {
+                var cue = CurrentCue;
+                if (cue != null && cue.section_audio) return Mathf.Max(0f, cue.duration);
+                return audioSource != null && audioSource.clip != null ? audioSource.clip.length : 0f;
+            }
+        }
         public bool UnityTouchControlsEnabled
         {
             get
@@ -238,6 +258,12 @@ namespace BoardGameTutorial
                 audioSource.clip = null;
                 audioSource.time = 0f;
             }
+            if (sectionAudioClip != null)
+            {
+                UnityEngine.Object.Destroy(sectionAudioClip);
+                sectionAudioClip = null;
+            }
+            sectionAudioPath = "";
             if (v2AnimPlayer != null)
             {
                 v2AnimPlayer.ClearScene();
