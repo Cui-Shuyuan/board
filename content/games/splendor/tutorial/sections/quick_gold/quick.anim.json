@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "黄金替代演示：静默给玩家 A 3 枚黑宝石和 1 枚黄金，先让观众看到持有区；口播到“买卡时”再浮出示意卡（card_l1_emerald_32，价格 4 黑），框出价格并用 1 枚黄金替代 1 枚黑宝石；归还 3 黑 + 1 黄金后把真卡拿入发展区，并从一级牌堆补一张真卡回市场。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -23,9 +23,48 @@
       },
       "events": [
         {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 3,
+          "anchor": "quick_gold/001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "quick_gold/001.start",
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
+          "realizes": "<ontology::timing>",
           "anchor": "quick_gold/001.start"
         },
         {
@@ -42,7 +81,8 @@
             "space": "screen",
             "id": "scene_backdrop"
           },
-          "anchor": "quick_gold/001.start"
+          "anchor": "quick_gold/001.b1.start",
+          "offset": 1.9
         },
         {
           "op": "show",
@@ -58,7 +98,8 @@
             "space": "screen",
             "id": "purchase_card"
           },
-          "anchor": "quick_gold/001.start"
+          "anchor": "quick_gold/001.b1.start",
+          "offset": 1.9
         },
         {
           "op": "wait",
@@ -75,18 +116,108 @@
             "id": "purchase_card"
           },
           "anchor": "quick_gold/001.b1.start",
-          "offset": 0.075
+          "offset": 2.55
         },
         {
           "op": "label",
           "dur": 0.0,
-          "text": "黄金可以代替任意一种颜色\n但不能直接拿取",
+          "text": "这里用1枚黄金代替了1枚黑宝石",
           "target": {
             "space": "screen",
             "id": "hint_gold_substitute"
           },
           "anchor": "quick_gold/001.b1.start",
-          "offset": 0.265
+          "offset": 3.35
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 3,
+          "stagger": 0.12,
+          "anchor": "quick_gold/001.b1.start",
+          "offset": 3.6,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "quick_gold/001.b1.start",
+          "offset": 3.9,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.7,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "quick_gold/001.b1.start",
+          "offset": 4.3,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_emerald_32",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 0,
+          "anchor": "quick_gold/001.b1.start",
+          "offset": 5.1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
         },
         {
           "op": "highlight",
@@ -97,7 +228,7 @@
             "zone": "gold_supply"
           },
           "anchor": "quick_gold/001.b1.start",
-          "offset": 1.215
+          "offset": 5.45
         },
         {
           "op": "hide",
@@ -118,6 +249,12 @@
           },
           "anchor": "quick_gold/001.end",
           "offset": -0.38
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A手上已有3枚黑宝石和1枚黄金。玩家A购买市场里一张标价4枚黑宝石的一级绿卡，支付3枚黑宝石和1枚黄金。这笔购买合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
         }
       ]
     }
