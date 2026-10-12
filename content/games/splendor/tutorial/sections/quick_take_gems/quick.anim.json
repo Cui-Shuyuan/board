@@ -400,14 +400,13 @@
         {
           "op": "label",
           "dur": 1.35,
-          "text": "宝石数量：11/10",
+          "text": "宝石数量：<color=#FF2020>11</color>/10",
           "target": {
             "space": "screen",
             "id": "hint_limit"
           },
           "anchor": "quick_take_gems/003.start",
-          "offset": 2.55,
-          "label_color": "#FF2020"
+          "offset": 2.55
         },
         {
           "op": "pay",

@@ -209,6 +209,18 @@ namespace BoardGameTutorial
                     lineChars = 0;
                     continue;
                 }
+                if (ch == '<')
+                {
+                    // Rich-text tags are markup, not visible characters; keep
+                    // them intact and do not let them consume the line budget.
+                    int close = text.IndexOf('>', i + 1);
+                    if (close > i)
+                    {
+                        sb.Append(text, i, close - i + 1);
+                        i = close;
+                        continue;
+                    }
+                }
                 if (lineChars >= maxCharsPerLine)
                 {
                     sb.Append('\n');
@@ -235,6 +247,7 @@ namespace BoardGameTutorial
             {
                 alignment = TextAnchor.MiddleLeft,
                 wordWrap = true,
+                richText = true,
                 fontSize = fontSize,
                 normal = { textColor = Color.white }
             };

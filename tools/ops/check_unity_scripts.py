@@ -534,6 +534,7 @@ namespace UnityEngine
         public GUIStyle(GUIStyle other) { }
         public int fontSize;
         public bool wordWrap;
+        public bool richText;
         public TextAnchor alignment;
         public GUIStyleState normal = new GUIStyleState();
         public RectOffset margin = new RectOffset();
