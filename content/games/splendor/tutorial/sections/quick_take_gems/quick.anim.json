@@ -24,7 +24,7 @@
         {
           "op": "label",
           "dur": 0.0,
-          "text": "第1个行动：拿取3枚不同颜色的宝石 + 2枚相同颜色的宝石",
+          "text": "第1个行动：拿取3枚不同颜色的宝石 或 2枚相同颜色的宝石",
           "target": {
             "space": "screen",
             "id": "hint_action_first"
@@ -230,7 +230,7 @@
           "op": "label",
           "dur": 0.0,
           "anchor": "quick_take_gems/same.001.start",
-          "text": "第1个行动：拿取3枚不同颜色的宝石 + 2枚相同颜色的宝石",
+          "text": "第1个行动：拿取3枚不同颜色的宝石 或 2枚相同颜色的宝石",
           "target": {
             "space": "screen",
             "id": "hint_action_first"
