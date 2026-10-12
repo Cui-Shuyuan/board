@@ -282,6 +282,7 @@ overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里
 ```
 
 不要按 cue 单独调字号或加框；如果文字太长，优先缩短文案或调整槽位宽高。
+屏幕 `label` 可用可选 `"label_color": "#FF2020"` 单独指定该条文字颜色；未写时保持默认白色正文 + 深色描边。
 Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 ### 2.3 放大镜：放大桌面上的一部分实体

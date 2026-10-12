@@ -236,7 +236,7 @@
       "tree": "main",
       "script": {
         "story": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "反例：绿宝石供应堆只剩 3 枚，玩家仍拿取 2 枚；先静默把 1 枚绿宝石分到玩家 B 持有区以保持总数，再执行非法拿取并在落点显示禁止标记。本条为 negative，后续不沿用错误结果。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -251,7 +251,42 @@
           "op": "take",
           "dur": 0.0,
           "setup": true,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_holding"
+          },
+          "anchor": "quick_take_gems/002.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_take_gems/002.start"
+        },
+        {
+          "op": "wait",
+          "dur": 7.08,
+          "anchor": "quick_take_gems/002.start"
+        },
+        {
+          "op": "take",
+          "dur": 0.6,
           "quantity": 2,
+          "stagger": 0.25,
+          "forbid": true,
           "target": {
             "space": "entity",
             "zone": "gem_supply_emerald",
@@ -267,19 +302,15 @@
             "space": "entity",
             "zone": "player_holding"
           },
-          "anchor": "quick_take_gems/002.start"
-        },
+          "anchor": "quick_take_gems/002.b1.start",
+          "offset": 4.815
+        }
+      ],
+      "negative": true,
+      "qa": [
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_gem_flow",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_take_gems/002.start"
-        },
-        {
-          "op": "wait",
-          "dur": 7.08,
-          "anchor": "quick_take_gems/002.start"
+          "q": "璀璨宝石，两人局。绿宝石供应堆里只剩3枚。玩家A一次从绿宝石供应堆拿走2枚。这样拿合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+          "expect": "不允许"
         }
       ]
     },
@@ -290,7 +321,7 @@
       "tree": "main",
       "script": {
         "story": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "用紧凑数量文字演示持有上限：起始 8/10，拿 3 枚不同颜色后显示 11/10（红色），立刻归还 1 枚到供应堆后显示 10/10。静默前提把 4 色各 2 枚放入玩家 A 持有区，保持每色总数守恒。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -311,53 +342,10 @@
             "zones": [
               "gem_supply_diamond",
               "gem_supply_sapphire",
-              "gem_supply_ruby"
+              "gem_supply_ruby",
+              "gem_supply_emerald"
             ],
             "concept": "gem"
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
-          },
-          "anchor": "quick_take_gems/003.start"
-        },
-        {
-          "op": "take",
-          "dur": 0.0,
-          "setup": true,
-          "quantity": 2,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<emerald>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
-          },
-          "anchor": "quick_take_gems/003.start"
-        },
-        {
-          "op": "take",
-          "dur": 0.0,
-          "setup": true,
-          "quantity": 1,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<onyx>"
-              }
-            ]
           },
           "destination": {
             "space": "entity",
@@ -379,19 +367,19 @@
         },
         {
           "op": "label",
-          "dur": 0.0,
-          "text": "现在是这位玩家的回合，他选择拿取3枚不同宝石",
+          "dur": 2.45,
+          "text": "宝石数量：8/10",
           "target": {
             "space": "screen",
             "id": "hint_limit"
           },
-          "anchor": "quick_take_gems/003.b1.start",
-          "offset": 1.814
+          "anchor": "quick_take_gems/003.start"
         },
         {
           "op": "take",
-          "dur": 0.847,
+          "dur": 0.4,
           "quantity": 1,
+          "stagger": 0.15,
           "over_limit_demo": true,
           "target": {
             "space": "entity",
@@ -406,8 +394,59 @@
             "space": "entity",
             "zone": "player_holding"
           },
-          "anchor": "quick_take_gems/003.b1.end",
-          "offset": -3.053
+          "anchor": "quick_take_gems/003.start",
+          "offset": 1.75
+        },
+        {
+          "op": "label",
+          "dur": 1.35,
+          "text": "宝石数量：11/10",
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          },
+          "anchor": "quick_take_gems/003.start",
+          "offset": 2.55,
+          "label_color": "#FF2020"
+        },
+        {
+          "op": "pay",
+          "dur": 0.45,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          },
+          "anchor": "quick_take_gems/003.start",
+          "offset": 3.5
+        },
+        {
+          "op": "label",
+          "dur": 5.5,
+          "text": "宝石数量：10/10",
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          },
+          "anchor": "quick_take_gems/003.start",
+          "offset": 3.95
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A手上已有8枚宝石。玩家A一次拿了3枚不同颜色的宝石，手上变成11枚；随后立刻归还1枚到供应堆，手上剩10枚。这个结算合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
         }
       ]
     }

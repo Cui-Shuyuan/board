@@ -2482,6 +2482,7 @@ class Compiler:
         forbid_at = ctx.forbid_at
         overlay_id = norm(ev.get("overlay"))
         ann_space = annotation_space_of(ev)
+        label_color = norm(ev.get("label_color"))
         overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
                     if isinstance(o, dict) and o.get("id")}
         if ann_space == "world" and not overlay_id:
@@ -2509,6 +2510,8 @@ class Compiler:
             c.update(event_annotation_fields(
                 ev, stage, self.annotation_style,
                 template_id=selected[0].get("template")))
+            if label_color:
+                c["label_color"] = label_color
             clips.append(c)
         elif overlay_id:
             overlay = overlays.get(overlay_id)
@@ -2543,6 +2546,8 @@ class Compiler:
                 c.update(event_annotation_fields(
                     ev, stage, self.annotation_style,
                     template_id=overlay_templates.get(overlay_id) or norm(ev.get("template"))))
+            if label_color:
+                c["label_color"] = label_color
             clips.append(c)
         else:
             raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")

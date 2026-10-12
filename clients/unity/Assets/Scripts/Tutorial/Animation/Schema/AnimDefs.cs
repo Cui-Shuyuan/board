@@ -162,6 +162,7 @@ namespace BoardGameTutorial.Animation
         public float marker_radius;
         public string overlay;
         public string text;
+        public string label_color;
         public bool screen_space;
         public float label_x;
         public float label_y;

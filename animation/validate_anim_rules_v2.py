@@ -207,6 +207,7 @@ def main(argv: list[str] | None = None) -> int:
             "cue": c["id"],
             "tree": c.get("tree") or "main",
             "demo": bool(c.get("demo")),
+            "negative": bool(c.get("negative")),
             "events": [
                 x for x in (to_ledger_event(e) for e in (c.get("events") or [])) if x
             ],

@@ -172,11 +172,16 @@ namespace BoardGameTutorial
 
         private static Color ResolvedAnnotationColor(VisualAnnotationState annotation)
         {
+            return ResolvedAnnotationColor(annotation, AnnotationColor);
+        }
+
+        private static Color ResolvedAnnotationColor(VisualAnnotationState annotation, Color fallback)
+        {
             string hex = annotation != null ? annotation.ColorHex : null;
-            if (string.IsNullOrEmpty(hex)) return AnnotationColor;
+            if (string.IsNullOrEmpty(hex)) return fallback;
             Color parsed;
             if (ColorUtility.TryParseHtmlString(hex, out parsed)) return parsed;
-            return AnnotationColor;
+            return fallback;
         }
 
         private static readonly Color AnnotationColor = new Color(1f, 0.12f, 0.12f, 1f);
@@ -267,6 +272,9 @@ namespace BoardGameTutorial
             // 统一文字说明格式：深色描边 + 白色正文，不画背景框；
             // 先按每行最多 LabelMaxCharsPerLine 个字自动换行，再交给 GUI 排版。
             string wrappedText = WrapLabelText(annotation.Text, LabelMaxCharsPerLine);
+            Color color = ResolvedAnnotationColor(annotation, Color.white);
+            Color savedGuiColor = GUI.color;
+            GUI.color = color;
             float shadowScale = Mathf.Max(1f, overlayLabelStyle.fontSize / 34f);
             for (int i = 0; i < SubtitleOutlineOffsets.Length; i++)
             {
@@ -281,6 +289,7 @@ namespace BoardGameTutorial
                     labelShadowStyle);
             }
             GUI.Label(rect, wrappedText, overlayLabelStyle);
+            GUI.color = savedGuiColor;
         }
 
         private bool TryGetAnnotationScreenRect(FrameState frame, VisualAnnotationState annotation, out Rect rect)

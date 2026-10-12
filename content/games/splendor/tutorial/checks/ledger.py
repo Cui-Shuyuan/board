@@ -133,7 +133,7 @@ class _CueContext:
 
     __slots__ = (
         "cid", "tree", "world", "stage", "zones", "dev_zones", "st", "frozen",
-        "is_demo", "over_limit_demo", "paid", "bought", "reserved",
+        "is_demo", "negative", "over_limit_demo", "paid", "bought", "reserved",
         "gold_taken", "where", "ev",
     )
 
@@ -192,7 +192,8 @@ class Ledger:
                 cid=cid, tree=tree, world=world, stage=stage, zones=zones,
                 dev_zones=dev_zones, st=st,
                 frozen=self.frozen_by_tree.get(world),
-                is_demo=bool(cue.get("demo")), over_limit_demo=False,
+                is_demo=bool(cue.get("demo")), negative=bool(cue.get("negative")),
+                over_limit_demo=False,
                 paid=Counter(), bought=[], reserved=[], gold_taken=0,
                 where="", ev=None,
             )
@@ -294,6 +295,11 @@ class Ledger:
 
     def _check_take_shape(self, ctx):
         rep, stage, st, ev, where = self.rep, ctx.stage, ctx.st, ctx.ev, ctx.where
+        if ctx.negative:
+            # Negative cues are authored counterexamples: the whole point is a
+            # deliberately illegal action.  Keep existence/conservation checks,
+            # but do not reject the action shape that the cue is demonstrating.
+            return
         dest = resolve_zone_ref(stage, ev.get("destination"))
         # —— 取宝石这个**动作**的构成（引擎教的：只有"三色各一"或"同色两枚"两种）——
         srcs0 = [resolve_zone_ref(stage, x) for x in (ev.get("source") or [])]
