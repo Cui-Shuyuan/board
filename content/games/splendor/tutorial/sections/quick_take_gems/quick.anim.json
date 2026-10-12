@@ -150,39 +150,6 @@
           "anchor": "quick_take_gems/different.001.start"
         },
         {
-          "op": "highlight",
-          "dur": 0.32,
-          "grow": 1.2,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond"
-          },
-          "anchor": "quick_take_gems/different.001.b1.start",
-          "offset": -0.011
-        },
-        {
-          "op": "highlight",
-          "dur": 0.32,
-          "grow": 1.2,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire"
-          },
-          "anchor": "quick_take_gems/different.001.b1.start",
-          "offset": 0.217
-        },
-        {
-          "op": "highlight",
-          "dur": 0.32,
-          "grow": 1.2,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby"
-          },
-          "anchor": "quick_take_gems/different.001.b1.start",
-          "offset": 0.446
-        },
-        {
           "op": "take",
           "dur": 0.457,
           "quantity": 1,
@@ -201,17 +168,6 @@
           },
           "anchor": "quick_take_gems/different.001.b1.end",
           "offset": -1.374
-        },
-        {
-          "op": "highlight",
-          "dur": 0.457,
-          "peak_alpha": 0.65,
-          "target": {
-            "space": "entity",
-            "zone": "player_holding"
-          },
-          "anchor": "quick_take_gems/different.001.b1.end",
-          "offset": -0.689
         }
       ]
     },
@@ -249,17 +205,6 @@
           "anchor": "quick_take_gems/same.001.start"
         },
         {
-          "op": "highlight",
-          "dur": 0.229,
-          "peak_alpha": 0.65,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald"
-          },
-          "anchor": "quick_take_gems/same.001.b1.start",
-          "offset": -0.069
-        },
-        {
           "op": "take",
           "dur": 0.276,
           "quantity": 2,
@@ -281,17 +226,6 @@
           },
           "anchor": "quick_take_gems/same.001.b1.start",
           "offset": 1.032
-        },
-        {
-          "op": "highlight",
-          "dur": 0.229,
-          "peak_alpha": 0.65,
-          "target": {
-            "space": "entity",
-            "zone": "player_holding"
-          },
-          "anchor": "quick_take_gems/same.001.b1.end",
-          "offset": -0.897
         }
       ]
     },
