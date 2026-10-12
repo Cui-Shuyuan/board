@@ -67,6 +67,8 @@
       "start": 32.088,
       "duration": 9.072,
       "cue_ids": [
+        "quick_setup_players/001",
+        "quick_setup_players/002",
         "quick_setup_players/003"
       ]
     },
@@ -1035,9 +1037,9 @@
       "section_audio": true
     },
     {
-      "id": "quick_setup_players/003",
+      "id": "quick_setup_players/001",
       "section": "quick_setup_players",
-      "local_id": "003",
+      "local_id": "001",
       "section_index": 3,
       "local_index": 0,
       "cue_index": 4,
@@ -1045,16 +1047,16 @@
       "group_path": [
         "2 设置"
       ],
-      "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；再选出一位起始玩家，并拿取起始玩家标记。",
+      "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；",
       "audio": "media/tts/quick/quick.setup.players.mp3",
       "audio_start": 0.0,
-      "duration": 9.072,
+      "duration": 5.17,
       "start": 32.088,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.785,
+          "end": 5.17,
           "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；",
           "words": [
             {
@@ -1184,118 +1186,169 @@
               "confidence": 0.9712
             }
           ]
-        },
+        }
+      ],
+      "animation": null,
+      "section_audio": true
+    },
+    {
+      "id": "quick_setup_players/002",
+      "section": "quick_setup_players",
+      "local_id": "002",
+      "section_index": 3,
+      "local_index": 1,
+      "cue_index": 5,
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "text": "再选出一位起始玩家，",
+      "audio": "media/tts/quick/quick.setup.players.mp3",
+      "audio_start": 5.17,
+      "duration": 1.905,
+      "start": 37.258,
+      "refs": [],
+      "subtitles": [
         {
-          "t": 5.17,
-          "end": 9.072,
+          "t": 0.0,
+          "end": 1.905,
           "text": "再选出一位起始玩家，并拿取起始玩家标记。",
           "words": [
             {
               "word": "再",
-              "start": 5.17,
-              "end": 5.345,
+              "start": 0.0,
+              "end": 0.175,
               "confidence": 0.958
             },
             {
               "word": "选",
-              "start": 5.345,
-              "end": 5.545,
+              "start": 0.175,
+              "end": 0.375,
               "confidence": 0.9587
             },
             {
               "word": "出",
-              "start": 5.545,
-              "end": 5.715,
+              "start": 0.375,
+              "end": 0.545,
               "confidence": 0.9854
             },
             {
               "word": "一",
-              "start": 5.715,
-              "end": 5.855,
+              "start": 0.545,
+              "end": 0.685,
               "confidence": 0.8893
             },
             {
               "word": "位",
-              "start": 5.855,
-              "end": 6.055,
+              "start": 0.685,
+              "end": 0.885,
               "confidence": 0.9611
             },
             {
               "word": "起",
-              "start": 6.055,
-              "end": 6.265,
+              "start": 0.885,
+              "end": 1.095,
               "confidence": 0.7656
             },
             {
               "word": "始",
-              "start": 6.265,
-              "end": 6.405,
+              "start": 1.095,
+              "end": 1.235,
               "confidence": 0.6856
             },
             {
               "word": "玩",
-              "start": 6.405,
-              "end": 6.555,
+              "start": 1.235,
+              "end": 1.385,
               "confidence": 0.9562
             },
             {
               "word": "家，",
-              "start": 6.555,
-              "end": 6.835,
+              "start": 1.385,
+              "end": 1.665,
               "confidence": 0.9569
-            },
+            }
+          ]
+        }
+      ],
+      "animation": null,
+      "section_audio": true
+    },
+    {
+      "id": "quick_setup_players/003",
+      "section": "quick_setup_players",
+      "local_id": "003",
+      "section_index": 3,
+      "local_index": 2,
+      "cue_index": 6,
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "text": "并拿取起始玩家标记。",
+      "audio": "media/tts/quick/quick.setup.players.mp3",
+      "audio_start": 7.075,
+      "duration": 1.997,
+      "start": 39.163,
+      "refs": [],
+      "subtitles": [
+        {
+          "t": 0.0,
+          "end": 1.997,
+          "text": "再选出一位起始玩家，并拿取起始玩家标记。",
+          "words": [
             {
               "word": "并",
-              "start": 7.075,
-              "end": 7.235,
+              "start": 0.0,
+              "end": 0.16,
               "confidence": 0.9585
             },
             {
               "word": "拿",
-              "start": 7.235,
-              "end": 7.425,
+              "start": 0.16,
+              "end": 0.35,
               "confidence": 0.9573
             },
             {
               "word": "取",
-              "start": 7.425,
-              "end": 7.665,
+              "start": 0.35,
+              "end": 0.59,
               "confidence": 0.9328
             },
             {
               "word": "起",
-              "start": 7.665,
-              "end": 7.875,
+              "start": 0.59,
+              "end": 0.8,
               "confidence": 0.7762
             },
             {
               "word": "始",
-              "start": 7.875,
-              "end": 8.025,
+              "start": 0.8,
+              "end": 0.95,
               "confidence": 0.7107
             },
             {
               "word": "玩",
-              "start": 8.025,
-              "end": 8.155,
+              "start": 0.95,
+              "end": 1.08,
               "confidence": 0.9586
             },
             {
               "word": "家",
-              "start": 8.155,
-              "end": 8.325,
+              "start": 1.08,
+              "end": 1.25,
               "confidence": 0.9633
             },
             {
               "word": "标",
-              "start": 8.325,
-              "end": 8.505,
+              "start": 1.25,
+              "end": 1.43,
               "confidence": 0.9747
             },
             {
               "word": "记。",
-              "start": 8.505,
-              "end": 8.625,
+              "start": 1.43,
+              "end": 1.55,
               "confidence": 0.7939
             }
           ]
@@ -1310,7 +1363,7 @@
       "local_id": "001",
       "section_index": 4,
       "local_index": 0,
-      "cue_index": 5,
+      "cue_index": 7,
       "group": "3 回合与行动",
       "group_path": [
         "3 回合与行动"
@@ -1477,7 +1530,7 @@
       "local_id": "002",
       "section_index": 4,
       "local_index": 1,
-      "cue_index": 6,
+      "cue_index": 8,
       "group": "3 回合与行动",
       "group_path": [
         "3 回合与行动"
@@ -1748,7 +1801,7 @@
       "local_id": "different.001",
       "section_index": 5,
       "local_index": 0,
-      "cue_index": 7,
+      "cue_index": 9,
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
@@ -1898,7 +1951,7 @@
       "local_id": "same.001",
       "section_index": 5,
       "local_index": 1,
-      "cue_index": 8,
+      "cue_index": 10,
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
@@ -2000,7 +2053,7 @@
       "local_id": "002",
       "section_index": 5,
       "local_index": 2,
-      "cue_index": 9,
+      "cue_index": 11,
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
@@ -2223,7 +2276,7 @@
       "local_id": "003",
       "section_index": 5,
       "local_index": 3,
-      "cue_index": 10,
+      "cue_index": 12,
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
@@ -2524,7 +2577,7 @@
       "local_id": "001",
       "section_index": 6,
       "local_index": 0,
-      "cue_index": 11,
+      "cue_index": 13,
       "group": "3.1 拿宝石",
       "group_path": [
         "3 回合与行动",
@@ -2765,7 +2818,7 @@
       "local_id": "001",
       "section_index": 7,
       "local_index": 0,
-      "cue_index": 12,
+      "cue_index": 14,
       "group": "3.2 购买发展卡",
       "group_path": [
         "3 回合与行动",
@@ -3000,7 +3053,7 @@
       "local_id": "002",
       "section_index": 7,
       "local_index": 1,
-      "cue_index": 13,
+      "cue_index": 15,
       "group": "3.2 购买发展卡",
       "group_path": [
         "3 回合与行动",
@@ -3392,7 +3445,7 @@
       "local_id": "003",
       "section_index": 7,
       "local_index": 2,
-      "cue_index": 14,
+      "cue_index": 16,
       "group": "3.2 购买发展卡",
       "group_path": [
         "3 回合与行动",
@@ -3650,7 +3703,7 @@
       "local_id": "001",
       "section_index": 8,
       "local_index": 0,
-      "cue_index": 15,
+      "cue_index": 17,
       "group": "3.3 保留发展卡",
       "group_path": [
         "3 回合与行动",
@@ -3928,7 +3981,7 @@
       "local_id": "002",
       "section_index": 8,
       "local_index": 1,
-      "cue_index": 16,
+      "cue_index": 18,
       "group": "3.3 保留发展卡",
       "group_path": [
         "3 回合与行动",
@@ -4212,7 +4265,7 @@
       "local_id": "003",
       "section_index": 8,
       "local_index": 2,
-      "cue_index": 17,
+      "cue_index": 19,
       "group": "3.3 保留发展卡",
       "group_path": [
         "3 回合与行动",
@@ -4344,7 +4397,7 @@
       "local_id": "001",
       "section_index": 9,
       "local_index": 0,
-      "cue_index": 18,
+      "cue_index": 20,
       "group": "3.4 贵族",
       "group_path": [
         "3 回合与行动",
@@ -4689,7 +4742,7 @@
       "local_id": "001",
       "section_index": 10,
       "local_index": 0,
-      "cue_index": 19,
+      "cue_index": 21,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"

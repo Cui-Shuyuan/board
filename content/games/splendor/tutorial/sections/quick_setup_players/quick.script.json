@@ -5,6 +5,36 @@
   "section": "quick_setup_players",
   "cues": [
     {
+      "id": "001",
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_setup_players/001.b1",
+          "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_setup_players/002.b1",
+          "text": "再选出一位起始玩家，"
+        }
+      ]
+    },
+    {
       "id": "003",
       "group": "2 设置",
       "group_path": [
@@ -15,7 +45,7 @@
       "beats": [
         {
           "id": "quick_setup_players/003.b1",
-          "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；再选出一位起始玩家，并拿取起始玩家标记。"
+          "text": "并拿取起始玩家标记。"
         }
       ]
     }

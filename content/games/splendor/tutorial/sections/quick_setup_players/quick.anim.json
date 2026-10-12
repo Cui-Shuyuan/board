@@ -5,28 +5,21 @@
   "section": "quick_setup_players",
   "cues": [
     {
-      "id": "003",
+      "id": "001",
       "parent": "quick_setup_gems/002",
       "tree": "main",
       "script": {
-        "story": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；再选出一位起始玩家，并拿取起始玩家标记。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
-        "enter": {
-          "picture": null,
-          "zones": {}
-        },
-        "exit": {
-          "picture": null,
-          "zones": {}
-        }
+        "story": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；",
+        "note": "展示贵族供应堆：抽出玩家数+1块贵族，正面朝上放在一旁。",
+        "enter": {},
+        "exit": {}
       },
       "events": [
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_nobles",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_setup_players/003.start"
+          "anchor": "quick_setup_players/001.start"
         },
         {
           "op": "create",
@@ -40,7 +33,7 @@
             "palette": "noble",
             "concept": "noble"
           },
-          "anchor": "quick_setup_players/003.start"
+          "anchor": "quick_setup_players/001.start"
         },
         {
           "op": "create",
@@ -54,7 +47,7 @@
             "palette": "noble",
             "concept": "noble"
           },
-          "anchor": "quick_setup_players/003.start"
+          "anchor": "quick_setup_players/001.start"
         },
         {
           "op": "create",
@@ -68,20 +61,26 @@
             "palette": "noble",
             "concept": "noble"
           },
-          "anchor": "quick_setup_players/003.start"
-        },
-        {
-          "op": "wait",
-          "dur": 8.688,
-          "anchor": "quick_setup_players/003.start"
-        },
+          "anchor": "quick_setup_players/001.start"
+        }
+      ]
+    },
+    {
+      "id": "002",
+      "parent": "001",
+      "tree": "main",
+      "script": {
+        "story": "再选出一位起始玩家，",
+        "note": "切到起始玩家标记特写，并把它放到起始玩家面前。",
+        "enter": {},
+        "exit": {}
+      },
+      "events": [
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_marker",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -2.5
+          "anchor": "quick_setup_players/002.start"
         },
         {
           "op": "show",
@@ -98,8 +97,7 @@
             "space": "screen",
             "id": "scene_backdrop"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -2.5
+          "anchor": "quick_setup_players/002.start"
         },
         {
           "op": "show",
@@ -116,8 +114,7 @@
             "space": "screen",
             "id": "marker_intro"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -2.5
+          "anchor": "quick_setup_players/002.start"
         },
         {
           "op": "create",
@@ -130,8 +127,7 @@
             "palette": "",
             "concept": "starting_player_marker"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -2.5
+          "anchor": "quick_setup_players/002.start"
         },
         {
           "op": "highlight",
@@ -141,9 +137,21 @@
             "space": "screen",
             "id": "marker_intro"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -1.986
-        },
+          "anchor": "quick_setup_players/002.start"
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "parent": "002",
+      "tree": "main",
+      "script": {
+        "story": "并拿取起始玩家标记。",
+        "note": "切回桌面全景，确认贵族供应堆和起始玩家标记已经就位。",
+        "enter": {},
+        "exit": {}
+      },
+      "events": [
         {
           "op": "hide",
           "dur": 0.0,
@@ -151,8 +159,7 @@
             "space": "screen",
             "id": "scene_backdrop"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -0.887
+          "anchor": "quick_setup_players/003.start"
         },
         {
           "op": "hide",
@@ -161,16 +168,13 @@
             "space": "screen",
             "id": "marker_intro"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -0.887
+          "anchor": "quick_setup_players/003.start"
         },
         {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_all_zones_static",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -0.887
+          "anchor": "quick_setup_players/003.start"
         },
         {
           "op": "highlight",
@@ -181,13 +185,56 @@
             "space": "entity",
             "zone": "player_marker"
           },
-          "anchor": "quick_setup_players/003.b1.end",
-          "offset": -0.598
+          "anchor": "quick_setup_players/003.start"
         }
       ]
     }
   ],
   "time_anchors": [
+    {
+      "id": "quick_setup_players/001.start",
+      "cue": "001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_setup_players/001.end",
+      "cue": "001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_setup_players/001.b1.start",
+      "cue": "001",
+      "beat": "quick_setup_players/001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_players/001.b1.end",
+      "cue": "001",
+      "beat": "quick_setup_players/001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_players/002.start",
+      "cue": "002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_setup_players/002.end",
+      "cue": "002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_setup_players/002.b1.start",
+      "cue": "002",
+      "beat": "quick_setup_players/002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_players/002.b1.end",
+      "cue": "002",
+      "beat": "quick_setup_players/002.b1",
+      "edge": "end"
+    },
     {
       "id": "quick_setup_players/003.start",
       "cue": "003",
