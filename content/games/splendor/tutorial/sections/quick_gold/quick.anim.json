@@ -6,12 +6,12 @@
   "cues": [
     {
       "id": "001",
-      "parent": "quick_setup_players/003",
-      "entry": "quick_setup_players/003",
+      "parent": "quick_reserve/003",
+      "entry": "quick_reserve/003",
       "tree": "main",
       "script": {
         "story": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。",
-        "note": "黄金替代演示：静默给玩家 A 3 枚黑宝石和 1 枚黄金，先让观众看到持有区；口播到“买卡时”再浮出示意卡（card_l1_emerald_32，价格 4 黑），框出价格并用 1 枚黄金替代 1 枚黑宝石；归还 3 黑 + 1 黄金后把真卡拿入发展区，并从一级牌堆补一张真卡回市场。",
+        "note": "黄金替代演示：承接保留行动，玩家 A 已有保留牌和保留时取得的 1 枚黄金；静默补入 3 枚黑宝石，先让观众看到持有区；口播到“买卡时”再浮出示意卡（card_l1_emerald_32，价格 4 黑），框出价格并用 1 枚黄金替代 1 枚黑宝石；归还 3 黑 + 1 黄金后把真卡拿入发展区，并从一级牌堆补一张真卡回市场。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -38,22 +38,6 @@
                 "value": "<onyx>"
               }
             ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
-          }
-        },
-        {
-          "op": "take",
-          "dur": 0.0,
-          "setup": true,
-          "quantity": 1,
-          "anchor": "quick_gold/001.start",
-          "target": {
-            "space": "entity",
-            "zone": "gold_supply",
-            "concept": "gold"
           },
           "destination": {
             "space": "entity",
@@ -253,7 +237,7 @@
       ],
       "qa": [
         {
-          "q": "璀璨宝石，两人局。玩家A手上已有3枚黑宝石和1枚黄金。玩家A购买市场里一张标价4枚黑宝石的一级绿卡，支付3枚黑宝石和1枚黄金。这笔购买合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "q": "璀璨宝石，两人局。玩家A保留卡牌后持有1枚黄金，本次又持有3枚黑宝石。玩家A购买市场里一张标价4枚黑宝石的一级绿卡，支付3枚黑宝石和1枚黄金。这笔购买合法吗？只回答「合法」或「有问题」，再给一句话理由。",
           "expect": "合法"
         }
       ]
