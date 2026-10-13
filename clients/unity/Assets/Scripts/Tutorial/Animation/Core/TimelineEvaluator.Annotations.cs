@@ -64,14 +64,25 @@ namespace BoardGameTutorial.Animation
                 });
             }
 
+            // Labels follow the same "latest active clip wins" rule as
+            // point/shape annotations for a given target.  This lets a cue
+            // replace text on the same overlay without a blank frame between
+            // consecutive labels.
+            var labelPicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
             foreach (var clip in cue.clips)
             {
                 if (clip == null || clip.kind != "label") continue;
                 float start = clip.at + Math.Max(0f, clip.lead);
                 if (t + 1e-6f < start) continue;
                 if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
-                AddLabelAnnotation(clip, stage, frame, byId, activeOverlays);
+                string space = AnnotationSpace(clip);
+                string target = AnnotationTarget(clip, space);
+                string key = space + "|" + target;
+                if (!labelPicks.TryGetValue(key, out var existing) || start >= existing.Start)
+                    labelPicks[key] = new AnnotationPick { Clip = clip, Start = start };
             }
+            foreach (var pick in labelPicks.Values)
+                AddLabelAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
         }
 
         private static void AddAnnotation(CompiledClipDef clip, CompiledStageDef stage,
