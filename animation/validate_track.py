@@ -338,6 +338,8 @@ def _check_event(report: Report, where: str, ev: dict):
             mode = str(ev.get("label_mode") or "").strip().lower()
             if mode and mode not in ("add", "replace"):
                 report.error(f"{where}: label_mode must be 'add' or 'replace', got {ev.get('label_mode')!r}")
+            if "label_key" in ev and (not isinstance(ev.get("label_key"), str) or not ev.get("label_key").strip()):
+                report.error(f"{where}: label_key must be a non-empty string")
         elif op == "overlay_show":
             if not ev.get("overlay"):
                 report.error(f"{where}: overlay_show needs overlay")

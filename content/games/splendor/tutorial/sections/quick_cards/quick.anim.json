@@ -38,7 +38,8 @@
             "id": "hint_action_second"
           },
           "anchor": "quick_cards/001.start",
-          "label_mode": "replace"
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "show",
@@ -89,7 +90,8 @@
           },
           "anchor": "quick_cards/001.b1.start",
           "offset": 1.265,
-          "label_mode": "replace"
+          "label_mode": "replace",
+          "label_key": "action_hint"
         }
       ],
       "demo": true

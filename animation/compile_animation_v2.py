@@ -2484,6 +2484,7 @@ class Compiler:
         ann_space = annotation_space_of(ev)
         label_color = norm(ev.get("label_color"))
         label_mode = norm(ev.get("label_mode"))
+        label_key = norm(ev.get("label_key"))
         overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
                     if isinstance(o, dict) and o.get("id")}
         if ann_space == "world" and not overlay_id:
@@ -2515,6 +2516,8 @@ class Compiler:
                 c["label_color"] = label_color
             if label_mode:
                 c["label_mode"] = label_mode
+            if label_key:
+                c["label_key"] = label_key
             clips.append(c)
         elif overlay_id:
             overlay = overlays.get(overlay_id)
@@ -2553,6 +2556,8 @@ class Compiler:
                 c["label_color"] = label_color
             if label_mode:
                 c["label_mode"] = label_mode
+            if label_key:
+                c["label_key"] = label_key
             clips.append(c)
         else:
             raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")

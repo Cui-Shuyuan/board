@@ -80,7 +80,8 @@ namespace BoardGameTutorial.Animation
                 if (!IsReplaceLabel(clip)) continue;
                 string space = AnnotationSpace(clip);
                 string target = AnnotationTarget(clip, space);
-                string key = space + "|" + target;
+                string labelKey = clip != null ? (clip.label_key ?? "").Trim() : "";
+                string key = space + "|" + target + "|" + labelKey;
                 if (!replacePicks.TryGetValue(key, out var existing) || start >= existing.Start)
                     replacePicks[key] = new AnnotationPick { Clip = clip, Start = start };
             }

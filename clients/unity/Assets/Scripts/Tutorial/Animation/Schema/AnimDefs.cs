@@ -164,6 +164,7 @@ namespace BoardGameTutorial.Animation
         public string text;
         public string label_color;
         public string label_mode;
+        public string label_key;
         public bool screen_space;
         public float label_x;
         public float label_y;

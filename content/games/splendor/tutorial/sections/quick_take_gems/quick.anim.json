@@ -332,7 +332,7 @@
       "tree": "main",
       "script": {
         "story": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
-        "note": "用紧凑数量文字演示持有上限：起始 8/10，拿 3 枚不同颜色后显示 11/10（红色），立刻归还 1 枚到供应堆后显示 10/10。三段文字在 hint_limit 上用重叠时长切换，由运行时“同目标最新 label 生效”规则保证无缝替换，不出现短暂空白。静默前提把 4 色各 2 枚放入玩家 A 持有区，保持每色总数守恒。",
+        "note": "用紧凑数量文字演示持有上限：起始 8/10，拿 3 枚不同颜色后显示 11/10（红色），立刻归还 1 枚到供应堆后显示 10/10。三段文字共享 label_key=gem_count，并在 hint_limit 上用重叠时长切换，由运行时 replace 规则无缝替换，不出现短暂空白。静默前提把 4 色各 2 枚放入玩家 A 持有区，保持每色总数守恒。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -385,7 +385,8 @@
             "id": "hint_limit"
           },
           "anchor": "quick_take_gems/003.start",
-          "label_mode": "replace"
+          "label_mode": "replace",
+          "label_key": "gem_count"
         },
         {
           "op": "take",
@@ -419,7 +420,8 @@
           },
           "anchor": "quick_take_gems/003.start",
           "offset": 2.55,
-          "label_mode": "replace"
+          "label_mode": "replace",
+          "label_key": "gem_count"
         },
         {
           "op": "pay",
@@ -453,7 +455,8 @@
           },
           "anchor": "quick_take_gems/003.start",
           "offset": 3.95,
-          "label_mode": "replace"
+          "label_mode": "replace",
+          "label_key": "gem_count"
         }
       ],
       "qa": [
