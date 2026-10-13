@@ -5,12 +5,15 @@
 ## 文件
 
 - `entries.jsonl`：原始记录，append-only，一行一个 JSON。
-- `digest.md`：从 entries 中人工/新会话归纳出的稳定偏好；新会话先读这里，需要追溯细节再读 `entries.jsonl`。
 - 校验入口：
 
 ```bash
 python3 tools/ops/check_animation_change_log.py
 ```
+
+## 偏好归纳
+
+当前**不维护偏好归纳/摘要**。先积累原始 entries；等记录量足够后，再由新会话基于完整 entries 生成更准确的偏好归纳，避免早期样本太少导致过拟合。
 
 ## 记录时机
 
@@ -57,4 +60,3 @@ python3 tools/ops/check_animation_change_log.py
 - `actual` 才写实现细节和涉及文件。
 - 不要只写“已调整”；要保留可比较的前后差异。
 - 同一 cue 被多次调整时每次单独记一条，不合并历史。
-- `digest.md` 只保留稳定偏好，不复制所有流水账。

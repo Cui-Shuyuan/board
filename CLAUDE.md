@@ -49,4 +49,4 @@
 - 改 cue 的 script/events/state/contract 时，必须同步修改该 cue 的 `qa`。只改动画不改问题视为未完成，不允许提交；过期问题重复问等于没有校验。
 - 纯介绍/纯展示、不涉及规则断言的 cue 可显式写 `qa_exempt: true`，门禁跳过该 cue 的必需问题校验；默认 false，且不会继承给后续 cue。只有确认它不承担规则校验职责时才使用。
 - `offstage` / 可见性隐藏只用于引擎确实需要的隐藏，不得用来掩盖非法棋盘状态；隐藏后每色宝石、黄金、卡牌实物总数仍必须守恒。
-- 每次动画调整（game / section / cue / 修改前 / 期望 / 原因 / 实际 / commit）必须追加到 `docs/animation-change-log/entries.jsonl`；新会话处理动画前先读 `docs/animation-change-log/digest.md`，需要追溯细节再读 entries，并用 `python3 tools/ops/check_animation_change_log.py` 校验。
+- 每次动画调整（game / section / cue / 修改前 / 期望 / 原因 / 实际 / commit）必须追加到 `docs/animation-change-log/entries.jsonl`，并用 `python3 tools/ops/check_animation_change_log.py` 校验。偏好归纳先不做，等 entries 积累到一定量后再由新会话基于完整记录归纳。

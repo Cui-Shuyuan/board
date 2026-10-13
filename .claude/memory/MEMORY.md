@@ -2,7 +2,7 @@
 
 新会话按顺序读：
 
-> 动画任务补充入口：处理任何动画调整前，先读 `../../docs/animation-change-log/digest.md`；需要追溯具体调整时读 `../../docs/animation-change-log/entries.jsonl`。每次动画调整必须追加日志。
+> 动画任务补充入口：每次动画调整必须追加 `../../docs/animation-change-log/entries.jsonl`；偏好归纳暂不维护，等记录积累到一定量后再基于完整 entries 归纳。
 
 1. [current-state.md](current-state.md) — 截至 2026-10-09 的当前进度（HEAD 以 git log 为准）、工作区状态、待办与不做事项
 2. [project-overview.md](project-overview.md) — 项目定位、功能、阶段、技术选型
