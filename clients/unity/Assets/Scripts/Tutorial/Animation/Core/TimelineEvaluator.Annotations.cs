@@ -64,25 +64,33 @@ namespace BoardGameTutorial.Animation
                 });
             }
 
-            // Labels follow the same "latest active clip wins" rule as
-            // point/shape annotations for a given target.  This lets a cue
-            // replace text on the same overlay without a blank frame between
-            // consecutive labels.
-            var labelPicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
+            // Labels support two explicit behaviors:
+            //   label_mode=add      (default): all active labels draw (can stack);
+            //   label_mode=replace          : latest active label per target wins.
+            // Replace is what enables seamless text changes without a blank gap.
+            var activeLabels = new List<CompiledClipDef>();
+            var replacePicks = new Dictionary<string, AnnotationPick>(StringComparer.Ordinal);
             foreach (var clip in cue.clips)
             {
                 if (clip == null || clip.kind != "label") continue;
                 float start = clip.at + Math.Max(0f, clip.lead);
                 if (t + 1e-6f < start) continue;
                 if (clip.dur > 0f && t > start + clip.dur + 1e-6f) continue;
+                activeLabels.Add(clip);
+                if (!IsReplaceLabel(clip)) continue;
                 string space = AnnotationSpace(clip);
                 string target = AnnotationTarget(clip, space);
                 string key = space + "|" + target;
-                if (!labelPicks.TryGetValue(key, out var existing) || start >= existing.Start)
-                    labelPicks[key] = new AnnotationPick { Clip = clip, Start = start };
+                if (!replacePicks.TryGetValue(key, out var existing) || start >= existing.Start)
+                    replacePicks[key] = new AnnotationPick { Clip = clip, Start = start };
             }
-            foreach (var pick in labelPicks.Values)
-                AddLabelAnnotation(pick.Clip, stage, frame, byId, activeOverlays);
+            var chosenReplace = new HashSet<CompiledClipDef>();
+            foreach (var pick in replacePicks.Values) chosenReplace.Add(pick.Clip);
+            foreach (var clip in activeLabels)
+            {
+                if (IsReplaceLabel(clip) && !chosenReplace.Contains(clip)) continue;
+                AddLabelAnnotation(clip, stage, frame, byId, activeOverlays);
+            }
         }
 
         private static void AddAnnotation(CompiledClipDef clip, CompiledStageDef stage,
@@ -249,6 +257,12 @@ namespace BoardGameTutorial.Animation
             string kind = (clip.indicator ?? "").Trim().ToLowerInvariant();
             if (!string.IsNullOrEmpty(kind)) return kind;
             return clip.kind == "marker" ? "forbid" : "circle";
+        }
+
+        private static bool IsReplaceLabel(CompiledClipDef clip)
+        {
+            string mode = clip != null ? (clip.label_mode ?? "").Trim().ToLowerInvariant() : "";
+            return mode == "replace";
         }
 
         private static void ResolvePart(CompiledClipDef clip, out float u, out float v)

@@ -335,6 +335,9 @@ def _check_event(report: Report, where: str, ev: dict):
                     and not ev.get("zone")
                     and not _has_selector(ev)):
                 report.error(f"{where}: label needs an entity target or overlay id")
+            mode = str(ev.get("label_mode") or "").strip().lower()
+            if mode and mode not in ("add", "replace"):
+                report.error(f"{where}: label_mode must be 'add' or 'replace', got {ev.get('label_mode')!r}")
         elif op == "overlay_show":
             if not ev.get("overlay"):
                 report.error(f"{where}: overlay_show needs overlay")

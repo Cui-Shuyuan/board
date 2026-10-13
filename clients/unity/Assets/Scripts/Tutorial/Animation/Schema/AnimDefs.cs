@@ -163,6 +163,7 @@ namespace BoardGameTutorial.Animation
         public string overlay;
         public string text;
         public string label_color;
+        public string label_mode;
         public bool screen_space;
         public float label_x;
         public float label_y;

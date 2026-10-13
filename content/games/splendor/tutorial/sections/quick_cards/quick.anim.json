@@ -37,7 +37,8 @@
             "space": "screen",
             "id": "hint_action_second"
           },
-          "anchor": "quick_cards/001.start"
+          "anchor": "quick_cards/001.start",
+          "label_mode": "replace"
         },
         {
           "op": "show",
@@ -87,7 +88,8 @@
             "id": "hint_action_second"
           },
           "anchor": "quick_cards/001.b1.start",
-          "offset": 1.265
+          "offset": 1.265,
+          "label_mode": "replace"
         }
       ],
       "demo": true

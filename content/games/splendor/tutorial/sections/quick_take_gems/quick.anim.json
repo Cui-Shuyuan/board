@@ -384,7 +384,8 @@
             "space": "screen",
             "id": "hint_limit"
           },
-          "anchor": "quick_take_gems/003.start"
+          "anchor": "quick_take_gems/003.start",
+          "label_mode": "replace"
         },
         {
           "op": "take",
@@ -417,7 +418,8 @@
             "id": "hint_limit"
           },
           "anchor": "quick_take_gems/003.start",
-          "offset": 2.55
+          "offset": 2.55,
+          "label_mode": "replace"
         },
         {
           "op": "pay",
@@ -450,7 +452,8 @@
             "id": "hint_limit"
           },
           "anchor": "quick_take_gems/003.start",
-          "offset": 3.95
+          "offset": 3.95,
+          "label_mode": "replace"
         }
       ],
       "qa": [
