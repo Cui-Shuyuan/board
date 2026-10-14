@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
-        "note": "屏幕中央放大展示有分数的二级白卡（card_l2_diamond_55 的卡面：左上分数、左下价格、右上折扣）；三条 arrow 分别用 marker_key 独立共存，尖端指向对应位置，尾部写“分数/价格/折扣”。",
+        "note": "屏幕中央放大展示有分数的二级白卡；三条 arrow 用 marker_key 独立共存，尖端指向对应位置，尾部写说明。分数说明特别注明“为空代表没有分数”。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -91,7 +91,7 @@
           },
           "anchor": "quick_cards/001.b1.start",
           "offset": 0.3,
-          "text": "分数",
+          "text": "分数（为空代表没有分数）",
           "arrow_direction": "right",
           "size": 72,
           "gap": 18,
