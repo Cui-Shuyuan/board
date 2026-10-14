@@ -99,6 +99,8 @@ namespace UnityEngine
         public static float Distance(Vector3 a, Vector3 b) => 0f;
     }
 
+    public struct Matrix4x4 { }
+
     public struct Color
     {
         public float r, g, b, a;
@@ -539,6 +541,7 @@ namespace UnityEngine
         public GUIStyleState normal = new GUIStyleState();
         public RectOffset margin = new RectOffset();
         public RectOffset padding = new RectOffset();
+        public Vector2 CalcSize(GUIContent content) => default(Vector2);
     }
 
     public class GUIStyleState { public Color textColor; public Texture2D background; }
@@ -579,6 +582,7 @@ namespace UnityEngine
         public static GUISkin skin = new GUISkin();
         public static Color backgroundColor;
         public static Color color;
+        public static Matrix4x4 matrix;
         public static Color contentColor;
         public static void Label(Rect r, string text) { }
         public static void Label(Rect r, string text, GUIStyle style) { }
@@ -589,6 +593,11 @@ namespace UnityEngine
         public static void DrawTexture(Rect r, Texture tex, ScaleMode mode) { }
         public static void DrawTexture(Rect r, Texture tex, ScaleMode mode, bool alphaBlend) { }
         public static void DrawTexture(Rect r, Texture tex, ScaleMode mode, bool alphaBlend, float imageAspect, Color color, float borderWidth, float borderRadius) { }
+    }
+
+    public static class GUIUtility
+    {
+        public static void RotateAroundPivot(float angle, Vector2 pivot) { }
     }
 
     public class WaitForSeconds : YieldInstruction { public WaitForSeconds(float seconds) { } }

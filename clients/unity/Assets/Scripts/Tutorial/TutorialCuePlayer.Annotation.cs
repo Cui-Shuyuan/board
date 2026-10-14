@@ -76,11 +76,7 @@ namespace BoardGameTutorial
                 float strokeNorm = size > 0f ? strokePx / size : 0.075f;
                 if (worldArrow)
                 {
-                    const float tipU = 0.91f;
-                    float tipX = cx - ResolvedGapPx(annotation, partPx);
-                    DrawMarkerSprite(annotation.Kind,
-                        new Rect(tipX - size * tipU, cy - size * 0.5f, size, size),
-                        strokeNorm, color);
+                    DrawArrowMarker(annotation, cx, cy, size, strokeNorm, color, partPx);
                 }
                 else
                 {
@@ -125,12 +121,7 @@ namespace BoardGameTutorial
             float my = rect.y + rect.height * annotation.PartV + annotation.NudgeY * Screen.height;
             if (screenArrow)
             {
-                const float tipU = 0.91f;
-                float tipX = mx - ResolvedGapPx(annotation, screenPartPx);
-                DrawMarkerSprite(annotation.Kind,
-                    new Rect(tipX - screenMarkerSize * tipU, my - screenMarkerSize * 0.5f,
-                             screenMarkerSize, screenMarkerSize),
-                    screenStrokeNorm, color);
+                DrawArrowMarker(annotation, mx, my, screenMarkerSize, screenStrokeNorm, color, screenPartPx);
             }
             else
             {
@@ -139,6 +130,88 @@ namespace BoardGameTutorial
                              screenMarkerSize, screenMarkerSize),
                     screenStrokeNorm, color);
             }
+        }
+
+        private void DrawArrowMarker(VisualAnnotationState annotation, float ax, float ay,
+                                     float size, float strokeNorm, Color color, float partPx)
+        {
+            string dir = NormalizeArrowDirection(annotation != null ? annotation.ArrowDirection : null);
+            float dx = dir == "left" ? -1f : (dir == "right" ? 1f : 0f);
+            float dy = dir == "up" ? -1f : (dir == "down" ? 1f : 0f);
+            float gap = ResolvedGapPx(annotation, partPx);
+            Vector2 tip = new Vector2(ax - dx * gap, ay - dy * gap);
+
+            // The marker sprite is a right-pointing arrow.  Rotate it around
+            // the tip so the point still touches the target and the tail
+            // extends in the opposite direction.
+            const float tipU = 0.91f;
+            Rect rect = new Rect(tip.x - size * tipU, tip.y - size * 0.5f, size, size);
+            float angle = dir == "left" ? 180f : (dir == "up" ? -90f : (dir == "down" ? 90f : 0f));
+            Matrix4x4 oldMatrix = GUI.matrix;
+            if (Mathf.Abs(angle) > 0.01f) GUIUtility.RotateAroundPivot(angle, tip);
+            DrawMarkerSprite(annotation != null ? annotation.Kind : "arrow", rect, strokeNorm, color);
+            GUI.matrix = oldMatrix;
+
+            if (annotation != null && !string.IsNullOrEmpty(annotation.Text))
+                DrawArrowTailText(annotation.Text, tip, dir, size, gap);
+        }
+
+        private void DrawArrowTailText(string text, Vector2 tip, string dir, float arrowSize, float gap)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+            string wrapped = WrapLabelText(text, LabelMaxCharsPerLine);
+            var style = new GUIStyle(overlayLabelStyle);
+            var shadow = new GUIStyle(labelShadowStyle);
+            float pad = Mathf.Max(6f, 8f * UiScale());
+            float offset = arrowSize * 0.9f + gap + pad;
+            float dx = dir == "left" ? -1f : (dir == "right" ? 1f : 0f);
+            float dy = dir == "up" ? -1f : (dir == "down" ? 1f : 0f);
+            Vector2 tail = new Vector2(tip.x - dx * offset, tip.y - dy * offset);
+
+            float w = style.CalcSize(new GUIContent(wrapped)).x + 8f * UiScale();
+            float h = style.fontSize * 1.45f;
+            TextAnchor align;
+            Rect rect;
+            if (dir == "left")
+            {
+                align = TextAnchor.MiddleLeft;
+                rect = new Rect(tail.x, tail.y - h * 0.5f, w, h);
+            }
+            else if (dir == "up")
+            {
+                align = TextAnchor.UpperCenter;
+                rect = new Rect(tail.x - w * 0.5f, tail.y, w, h);
+            }
+            else if (dir == "down")
+            {
+                align = TextAnchor.LowerCenter;
+                rect = new Rect(tail.x - w * 0.5f, tail.y - h, w, h);
+            }
+            else
+            {
+                align = TextAnchor.MiddleRight;
+                rect = new Rect(tail.x - w, tail.y - h * 0.5f, w, h);
+            }
+            style.alignment = align;
+            shadow.alignment = align;
+
+            Color saved = GUI.color;
+            GUI.color = Color.white;
+            float shadowScale = Mathf.Max(1f, style.fontSize / 34f);
+            for (int i = 0; i < SubtitleOutlineOffsets.Length; i++)
+            {
+                Vector2 off = SubtitleOutlineOffsets[i];
+                GUI.Label(new Rect(rect.x + off.x * shadowScale, rect.y + off.y * shadowScale, rect.width, rect.height), wrapped, shadow);
+            }
+            GUI.Label(rect, wrapped, style);
+            GUI.color = saved;
+        }
+
+        private static string NormalizeArrowDirection(string value)
+        {
+            string dir = (value ?? "").Trim().ToLowerInvariant();
+            if (dir == "left" || dir == "up" || dir == "down") return dir;
+            return "right";
         }
 
         private static float UiScale()

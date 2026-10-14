@@ -2284,6 +2284,8 @@ class Compiler:
         affected_ids = ctx.affected_ids
         forbid_at = ctx.forbid_at
         ann_space = annotation_space_of(ev)
+        arrow_direction = norm(ev.get("arrow_direction"))
+        tail_text = str(ev.get("text") or "")
         kind = norm(ev.get("indicator")) if op == "point" else (
             norm(ev.get("shape")) or norm(ev.get("indicator")) or "circle")
         if op == "point" and not kind:
@@ -2302,6 +2304,10 @@ class Compiler:
             c.update(event_annotation_fields(
                 ev, stage, self.annotation_style,
                 template_id=overlay_templates.get(overlay_id) or norm(ev.get("template"))))
+            if tail_text:
+                c["text"] = tail_text
+            if arrow_direction:
+                c["arrow_direction"] = arrow_direction
             clips.append(c)
             pointer_resolution.append({
                 "event_index": event_index,
@@ -2340,6 +2346,10 @@ class Compiler:
                 c.update(event_annotation_fields(
                     ev, stage, self.annotation_style,
                     template_id=selected[0].get("template")))
+                if tail_text:
+                    c["text"] = tail_text
+                if arrow_direction:
+                    c["arrow_direction"] = arrow_direction
                 clips.append(c)
         ctx.manual_state_ops = manual_state_ops
         ctx.manual_state_item_ids = manual_state_item_ids

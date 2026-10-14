@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
-        "note": "屏幕中央放大展示一级红卡；三条箭头同时指向左上分数、左下价格、右上折扣，并用 hint_action_summary 文字明确三处含义。",
+        "note": "屏幕中央放大展示一级红卡；三条箭头同时指向左上分数、左下价格、右上折扣，箭头尾部直接用文字写明“分数/价格/折扣”。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -76,18 +76,6 @@
           "anchor": "quick_cards/001.start"
         },
         {
-          "op": "label",
-          "dur": 0.0,
-          "text": "左上：分数\n左下：价格\n右上：永久折扣",
-          "target": {
-            "space": "screen",
-            "id": "hint_action_summary"
-          },
-          "anchor": "quick_cards/001.start",
-          "label_mode": "replace",
-          "label_key": "card_legend"
-        },
-        {
           "op": "wait",
           "dur": 9.264,
           "anchor": "quick_cards/001.start"
@@ -102,7 +90,11 @@
             "id": "purchase_card"
           },
           "anchor": "quick_cards/001.b1.start",
-          "offset": 0.3
+          "offset": 0.3,
+          "text": "分数",
+          "arrow_direction": "right",
+          "size": 72,
+          "gap": 18
         },
         {
           "op": "point",
@@ -114,7 +106,11 @@
             "id": "purchase_card"
           },
           "anchor": "quick_cards/001.b1.start",
-          "offset": 0.3
+          "offset": 0.3,
+          "text": "价格",
+          "arrow_direction": "right",
+          "size": 72,
+          "gap": 18
         },
         {
           "op": "point",
@@ -126,7 +122,11 @@
             "id": "purchase_card"
           },
           "anchor": "quick_cards/001.b1.start",
-          "offset": 0.3
+          "offset": 0.3,
+          "text": "折扣",
+          "arrow_direction": "left",
+          "size": 72,
+          "gap": 18
         }
       ],
       "demo": true,

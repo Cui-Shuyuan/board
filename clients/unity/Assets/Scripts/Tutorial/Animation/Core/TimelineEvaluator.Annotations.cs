@@ -111,6 +111,8 @@ namespace BoardGameTutorial.Animation
                 {
                     Space = "world",
                     Kind = AnnotationKind(clip),
+                    Text = clip.text ?? "",
+                    ArrowDirection = clip.arrow_direction ?? "",
                     ItemId = clip.item_id,
                     Part = clip.part,
                     X = item.X + (u - 0.5f) * w,
@@ -140,6 +142,8 @@ namespace BoardGameTutorial.Animation
             {
                 Space = "screen",
                 Kind = AnnotationKind(clip),
+                Text = clip.text ?? "",
+                ArrowDirection = clip.arrow_direction ?? "",
                 OverlayId = id,
                 Part = clip.part,
                 PartU = u,

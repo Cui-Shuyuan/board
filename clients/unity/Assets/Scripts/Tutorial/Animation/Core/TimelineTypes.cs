@@ -71,7 +71,8 @@ namespace BoardGameTutorial.Animation
     {
         public string Space;      // world | screen
         public string Kind;       // arrow | circle | cross | forbid | box | label
-        public string Text;       // label only
+        public string Text;       // label text, or arrow tail text
+        public string ArrowDirection; // arrow only: right | left | up | down
         public string ItemId;     // world anchor (optional)
         public string OverlayId;  // screen anchor (optional)
         public string Part;
