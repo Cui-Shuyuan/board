@@ -169,7 +169,8 @@ namespace BoardGameTutorial
             Vector2 tail = new Vector2(tip.x - dx * offset, tip.y - dy * offset);
 
             float w = style.CalcSize(new GUIContent(wrapped)).x + 8f * UiScale();
-            float h = style.fontSize * 1.45f;
+            string[] lines = wrapped.Replace("\r\n", "\n").Replace("\r", "\n").Split('\n');
+            float h = style.fontSize * 1.45f * Math.Max(1, lines.Length);
             TextAnchor align;
             Rect rect;
             if (dir == "left")
