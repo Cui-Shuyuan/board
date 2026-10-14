@@ -40,7 +40,8 @@ namespace BoardGameTutorial.Animation
                 string space = AnnotationSpace(clip);
                 string target = AnnotationTarget(clip, space);
                 if (string.IsNullOrEmpty(target)) continue;
-                string key = space + "|" + target;
+                string markerKey = string.IsNullOrEmpty(clip.marker_key) ? "" : ("|" + clip.marker_key.Trim());
+                string key = space + "|" + target + markerKey;
                 if (!annotationPicks.TryGetValue(key, out var existing) || start >= existing.Start)
                     annotationPicks[key] = new AnnotationPick { Clip = clip, Start = start };
             }

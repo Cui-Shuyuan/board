@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
-        "note": "屏幕中央放大展示一级红卡；三条箭头同时指向左上分数、左下价格、右上折扣，箭头尾部直接用文字写明“分数/价格/折扣”。",
+        "note": "屏幕中央放大展示有分数的二级白卡（card_l2_diamond_55 的卡面：左上分数、左下价格、右上折扣）；三条 arrow 分别用 marker_key 独立共存，尖端指向对应位置，尾部写“分数/价格/折扣”。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -61,7 +61,7 @@
         {
           "op": "show",
           "dur": 0.0,
-          "image": "media/card/一级发展卡_红_cutout.png",
+          "image": "media/card/二级发展卡_白_cutout.png",
           "rect": {
             "x": 0.38,
             "y": 0.28,
@@ -94,13 +94,14 @@
           "text": "分数",
           "arrow_direction": "right",
           "size": 72,
-          "gap": 18
+          "gap": 18,
+          "marker_key": "score"
         },
         {
           "op": "point",
           "dur": 0.0,
           "indicator": "arrow",
-          "part": "cost_2",
+          "part": "cost_3",
           "target": {
             "space": "screen",
             "id": "purchase_card"
@@ -110,7 +111,8 @@
           "text": "价格",
           "arrow_direction": "right",
           "size": 72,
-          "gap": 18
+          "gap": 18,
+          "marker_key": "price"
         },
         {
           "op": "point",
@@ -126,7 +128,8 @@
           "text": "折扣",
           "arrow_direction": "left",
           "size": 72,
-          "gap": 18
+          "gap": 18,
+          "marker_key": "discount"
         }
       ],
       "demo": true,

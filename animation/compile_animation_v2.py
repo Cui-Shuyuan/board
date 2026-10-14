@@ -2285,6 +2285,7 @@ class Compiler:
         forbid_at = ctx.forbid_at
         ann_space = annotation_space_of(ev)
         arrow_direction = norm(ev.get("arrow_direction"))
+        marker_key = norm(ev.get("marker_key"))
         tail_text = str(ev.get("text") or "")
         kind = norm(ev.get("indicator")) if op == "point" else (
             norm(ev.get("shape")) or norm(ev.get("indicator")) or "circle")
@@ -2308,6 +2309,8 @@ class Compiler:
                 c["text"] = tail_text
             if arrow_direction:
                 c["arrow_direction"] = arrow_direction
+            if marker_key:
+                c["marker_key"] = marker_key
             clips.append(c)
             pointer_resolution.append({
                 "event_index": event_index,
@@ -2350,6 +2353,8 @@ class Compiler:
                     c["text"] = tail_text
                 if arrow_direction:
                     c["arrow_direction"] = arrow_direction
+                if marker_key:
+                    c["marker_key"] = marker_key
                 clips.append(c)
         ctx.manual_state_ops = manual_state_ops
         ctx.manual_state_item_ids = manual_state_item_ids

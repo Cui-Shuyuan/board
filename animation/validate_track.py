@@ -257,6 +257,8 @@ def _check_event(report: Report, where: str, ev: dict):
             direction = str(ev.get("arrow_direction") or "").strip().lower()
             if direction and direction not in ("right", "left", "up", "down"):
                 report.error(f"{where}: arrow_direction must be right/left/up/down, got {ev.get('arrow_direction')!r}")
+            if "marker_key" in ev and (not isinstance(ev.get("marker_key"), str) or not ev.get("marker_key").strip()):
+                report.error(f"{where}: marker_key must be a non-empty string")
             if op == "shape":
                 kind = ev.get("shape") or ev.get("indicator")
                 if kind not in SHAPE_KINDS:

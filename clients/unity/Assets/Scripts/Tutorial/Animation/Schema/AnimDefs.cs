@@ -163,6 +163,7 @@ namespace BoardGameTutorial.Animation
         public string overlay;
         public string text;
         public string arrow_direction;
+        public string marker_key;
         public string label_color;
         public string label_mode;
         public string label_key;
