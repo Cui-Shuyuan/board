@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "屏幕中央放大展示一级红卡；三条箭头同时指向左上分数、左下价格、右上折扣，并用 hint_action_summary 文字明确三处含义。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -43,14 +43,14 @@
         },
         {
           "op": "show",
+          "dur": 0.0,
+          "background": "#1E2126",
           "rect": {
             "x": 0,
             "y": 0,
             "w": 1,
             "h": 1
           },
-          "dur": 0.0,
-          "background": "#1E2126",
           "layer": 0,
           "target": {
             "space": "screen",
@@ -60,14 +60,14 @@
         },
         {
           "op": "show",
-          "rect": {
-            "x": 0.028,
-            "y": 0.1,
-            "w": 0.28,
-            "h": 0.64
-          },
           "dur": 0.0,
           "image": "media/card/一级发展卡_红_cutout.png",
+          "rect": {
+            "x": 0.38,
+            "y": 0.28,
+            "w": 0.24,
+            "h": 0.5
+          },
           "layer": 10,
           "target": {
             "space": "screen",
@@ -76,25 +76,61 @@
           "anchor": "quick_cards/001.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "左上：分数\n左下：价格\n右上：永久折扣",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          },
+          "anchor": "quick_cards/001.start",
+          "label_mode": "replace",
+          "label_key": "card_legend"
+        },
+        {
           "op": "wait",
           "dur": 9.264,
           "anchor": "quick_cards/001.start"
         },
         {
-          "op": "label",
+          "op": "point",
           "dur": 0.0,
-          "text": "左下：价格\n左上：分数\n右上：永久折扣",
+          "indicator": "arrow",
+          "part": "prestige",
           "target": {
             "space": "screen",
-            "id": "hint_action_second"
+            "id": "purchase_card"
           },
           "anchor": "quick_cards/001.b1.start",
-          "offset": 1.265,
-          "label_mode": "replace",
-          "label_key": "action_hint"
+          "offset": 0.3
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "cost_2",
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          },
+          "anchor": "quick_cards/001.b1.start",
+          "offset": 0.3
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "bonus",
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          },
+          "anchor": "quick_cards/001.b1.start",
+          "offset": 0.3
         }
       ],
-      "demo": true
+      "demo": true,
+      "qa_exempt": true
     },
     {
       "id": "002",
@@ -103,7 +139,7 @@
       "tree": "main",
       "script": {
         "story": "购买时支付价格，把卡放到自己面前并获得卡上的分数；市场空出的位置，要从对应等级牌堆补一张。每回合最多买一张，但整局购买数量不限。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "卡片留在屏幕左侧，右侧桌面保持可见。静默给玩家 A 准备购买一级白卡 card_l1_diamond_18 所需的 1黑/1蓝/2绿/1红，按价目支付后把真卡移入发展区，再从一级牌堆翻出 card_l1_onyx_3 补回市场空位。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -121,12 +157,34 @@
           "quantity": 1,
           "target": {
             "space": "entity",
-            "zone": "gem_supply_diamond",
+            "zone": "gem_supply_onyx",
             "concept": "gem",
             "parts": [
               {
                 "key": "color",
-                "value": "<diamond>"
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick_cards/002.start"
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
               }
             ]
           },
@@ -181,13 +239,87 @@
           "anchor": "quick_cards/002.start"
         },
         {
-          "op": "take",
+          "op": "camera",
           "dur": 0.0,
-          "setup": true,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_cards/002.start"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "image": "media/card/一级发展卡_白_cutout.png",
+          "rect": {
+            "x": 0.02,
+            "y": 0.1,
+            "w": 0.22,
+            "h": 0.56
+          },
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          },
+          "anchor": "quick_cards/002.start"
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_4",
+          "dur": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          },
+          "anchor": "quick_cards/002.start"
+        },
+        {
+          "op": "label",
+          "dur": 4.45,
+          "text": "价格：1黑 + 1蓝 + 2绿 + 1红",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 0.56,
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "wait",
+          "dur": 13.056,
+          "anchor": "quick_cards/002.start"
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
           "quantity": 1,
           "target": {
             "space": "entity",
-            "zone": "gem_supply_sapphire",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          },
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 0.8
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
             "concept": "gem",
             "parts": [
               {
@@ -198,153 +330,37 @@
           },
           "destination": {
             "space": "entity",
-            "zone": "player_holding"
-          },
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 1,
-            "h": 1
-          },
-          "dur": 0.0,
-          "background": "#1E2126",
-          "layer": 0,
-          "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
-          },
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.028,
-            "y": 0.1,
-            "w": 0.28,
-            "h": 0.64
-          },
-          "dur": 0.0,
-          "image": "media/card/一级发展卡_红_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          },
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "shape",
-          "shape": "box",
-          "part": "cost_2",
-          "dur": 0.0,
-          "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          },
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "take",
-          "dur": 0.0,
-          "quantity": 1,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<diamond>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
-          },
-          "setup": true,
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "take",
-          "dur": 0.0,
-          "quantity": 1,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "concept": "gem",
-            "parts": [
-              {
-                "key": "color",
-                "value": "<ruby>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "player_holding"
-          },
-          "setup": true,
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "wait",
-          "dur": 13.056,
-          "anchor": "quick_cards/002.start"
-        },
-        {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
-          "realizes": "<ontology::timing>",
-          "anchor": "quick_cards/002.b1.start",
-          "offset": 3.234
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.028,
-            "y": 0.1,
-            "w": 0.28,
-            "h": 0.64
-          },
-          "dur": 0.0,
-          "image": "media/card/一级发展卡_红_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "purchase_card"
+            "zone": "gem_supply_sapphire"
           },
           "anchor": "quick_cards/002.b1.start",
-          "offset": 3.234
-        },
-        {
-          "op": "shape",
-          "shape": "box",
-          "part": "cost_2",
-          "dur": 0.0,
-          "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          },
-          "anchor": "quick_cards/002.b1.start",
-          "offset": 3.234
+          "offset": 0.95
         },
         {
           "op": "pay",
-          "dur": 0.456,
+          "dur": 0.5,
           "quantity": 2,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          },
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 1.1
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
           "target": {
             "space": "entity",
             "zone": "player_holding",
@@ -360,13 +376,231 @@
             "space": "entity",
             "zone": "gem_supply_ruby"
           },
-          "anchor": "quick_cards/002.b1.end",
-          "offset": -5.546
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 1.25
+        },
+        {
+          "op": "take",
+          "dur": 1.0,
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ],
+            "template": "card_l1_diamond_18",
+            "palette": "card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          },
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 1.8
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "买走后，从对应等级牌堆补1张",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 4.99,
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 2,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ],
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          },
+          "anchor": "quick_cards/002.b1.start",
+          "offset": 5.8
+        }
+      ],
+      "demo": true,
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A手里有1枚黑宝石、1枚蓝宝石、2枚绿宝石、1枚红宝石，共5枚。市场里有一张一级白卡，价格是1黑+1蓝+2绿+1红。玩家A支付这5枚宝石买下它，并从一级牌堆补一张到市场空位。这个结算合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
+        }
+      ]
+    },
+    {
+      "id": "003",
+      "parent": "quick_cards/002",
+      "entry": "quick_cards/002",
+      "tree": "main",
+      "script": {
+        "story": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。",
+        "note": "承接 cue 2：玩家 A 已有一张白折扣一级卡 card_l1_diamond_18。屏幕右侧放大展示目标二级黑卡 card_l2_onyx_45（价格 5 白）；文字依次说明价格、已有白卡折扣、实际支付 4 白。随后支付 4 白、把真卡移入发展区，并从二级牌堆翻出 card_l2_diamond_55 补回市场空位。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 4,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "anchor": "quick_cards/003.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_cards/003.start"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "image": "media/card/二级发展卡_黑_cutout.png",
+          "rect": {
+            "x": 0.74,
+            "y": 0.18,
+            "w": 0.24,
+            "h": 0.56
+          },
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          },
+          "anchor": "quick_cards/003.start"
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_1",
+          "dur": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          },
+          "anchor": "quick_cards/003.start"
+        },
+        {
+          "op": "label",
+          "dur": 2.45,
+          "text": "目标：二级黑卡\n价格：5白",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          },
+          "anchor": "quick_cards/003.start",
+          "label_mode": "replace",
+          "label_key": "discount_hint"
+        },
+        {
+          "op": "wait",
+          "dur": 8.832,
+          "anchor": "quick_cards/003.start"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.6,
+          "peak_alpha": 0.65,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_18",
+            "palette": "card_level_1"
+          },
+          "anchor": "quick_cards/003.b1.start",
+          "offset": 1.33
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "bonus",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_18",
+            "palette": "card_level_1"
+          },
+          "anchor": "quick_cards/003.b1.start",
+          "offset": 1.4
+        },
+        {
+          "op": "label",
+          "dur": 1.55,
+          "text": "已有1张白卡 → 少付1白",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          },
+          "anchor": "quick_cards/003.b1.start",
+          "offset": 2.45,
+          "label_mode": "replace",
+          "label_key": "discount_hint"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "实际支付：4白",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          },
+          "anchor": "quick_cards/003.b1.start",
+          "offset": 3.95,
+          "label_mode": "replace",
+          "label_key": "discount_hint"
         },
         {
           "op": "pay",
-          "dur": 0.456,
-          "quantity": 2,
+          "dur": 0.6,
+          "quantity": 4,
           "target": {
             "space": "entity",
             "zone": "player_holding",
@@ -382,112 +616,81 @@
             "space": "entity",
             "zone": "gem_supply_diamond"
           },
-          "anchor": "quick_cards/002.b1.end",
-          "offset": -5.317
+          "anchor": "quick_cards/003.b1.start",
+          "offset": 3.95
         },
         {
           "op": "take",
-          "dur": 1.276,
+          "dur": 1.0,
           "quantity": 1,
+          "to": "face_up",
           "target": {
             "space": "entity",
             "zone": "card_market",
-            "template": "card_l1_ruby_38",
-            "palette": "card_level_1",
-            "concept": "development_card_level_1"
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ],
+            "template": "card_l2_onyx_45",
+            "palette": "card_level_2"
           },
           "destination": {
             "space": "entity",
             "zone": "player_development"
           },
-          "anchor": "quick_cards/002.b1.end",
-          "offset": -1.905
-        }
-      ],
-      "demo": true
-    },
-    {
-      "id": "003",
-      "parent": "quick_setup_players/003",
-      "entry": "quick_setup_players/003",
-      "tree": "main",
-      "script": {
-        "story": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
-        "enter": {
-          "picture": null,
-          "zones": {}
+          "anchor": "quick_cards/003.b1.start",
+          "offset": 5.8
         },
-        "exit": {
-          "picture": null,
-          "zones": {}
-        }
-      },
-      "events": [
         {
-          "op": "show",
-          "rect": {
-            "x": 0,
-            "y": 0,
-            "w": 1,
-            "h": 1
-          },
-          "dur": 0.0,
-          "background": "#1E2126",
-          "layer": 0,
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 5,
           "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ],
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2"
           },
-          "anchor": "quick_cards/003.start"
-        },
-        {
-          "op": "show",
-          "rect": {
-            "x": 0.38,
-            "y": 0.11,
-            "w": 0.24,
-            "h": 0.68
-          },
-          "dur": 0.0,
-          "image": "media/card/一级发展卡_白_17_cutout.png",
-          "layer": 10,
-          "target": {
-            "space": "screen",
-            "id": "sample_white"
-          },
-          "anchor": "quick_cards/003.start"
-        },
-        {
-          "op": "wait",
-          "dur": 8.832,
-          "anchor": "quick_cards/003.start"
-        },
-        {
-          "op": "point",
-          "dur": 0.0,
-          "indicator": "arrow",
-          "part": "bonus",
-          "target": {
-            "space": "screen",
-            "id": "sample_white"
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
           },
           "anchor": "quick_cards/003.b1.start",
-          "offset": 0.631
+          "offset": 6.8
         },
         {
           "op": "label",
           "dur": 0.0,
-          "text": "已购同色卡\n每张少付一颗对应宝石",
+          "text": "已购买：二级黑卡\n实付：4白",
           "target": {
             "space": "screen",
-            "id": "hint_action_second"
+            "id": "hint_action_summary"
           },
           "anchor": "quick_cards/003.b1.start",
-          "offset": 0.854
+          "offset": 6.6,
+          "label_mode": "replace",
+          "label_key": "discount_hint"
         }
       ],
-      "demo": true
+      "demo": true,
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A发展区已经有1张提供白宝石折扣的一级卡。市场里有一张二级黑卡，价格是5枚白宝石。玩家A支付4枚白宝石买下它（1枚白宝石由已有白卡折扣抵掉），再从二级牌堆补一张到市场空位。这个结算合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
+        }
+      ]
     }
   ],
   "time_anchors": [
