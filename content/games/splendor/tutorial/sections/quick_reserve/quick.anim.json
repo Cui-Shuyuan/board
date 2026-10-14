@@ -146,6 +146,18 @@
           "anchor": "quick_reserve/002.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "quick_reserve/002.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "wait",
           "dur": 8.856,
           "anchor": "quick_reserve/002.start"
@@ -156,7 +168,7 @@
           "text": "最多保留3张；不提供折扣和声望，也不能给其他玩家看",
           "target": {
             "space": "screen",
-            "id": "hint_action_third"
+            "id": "hint_limit"
           },
           "anchor": "quick_reserve/002.b1.start",
           "offset": -0.024
@@ -200,6 +212,18 @@
           "anchor": "quick_reserve/003.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "quick_reserve/003.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "wait",
           "dur": 4.032,
           "anchor": "quick_reserve/003.start"
@@ -210,7 +234,7 @@
           "text": "保留的牌，之后可以在自己回合花钱买下",
           "target": {
             "space": "screen",
-            "id": "hint_action_third"
+            "id": "hint_limit"
           },
           "anchor": "quick_reserve/003.b1.start",
           "offset": -0.002

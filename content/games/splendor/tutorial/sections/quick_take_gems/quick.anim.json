@@ -277,6 +277,18 @@
           "anchor": "quick_take_gems/002.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "quick_take_gems/002.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "wait",
           "dur": 6.955,
           "anchor": "quick_take_gems/002.start"
@@ -370,6 +382,18 @@
           "shot": "shot_gem_flow",
           "realizes": "<ontology::timing>",
           "anchor": "quick_take_gems/003.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "quick_take_gems/003.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "wait",

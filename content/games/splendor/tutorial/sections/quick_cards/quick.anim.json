@@ -279,6 +279,18 @@
         {
           "op": "label",
           "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "quick_cards/002.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
           "text": "价格：1黑+1蓝+2绿+1红\n买走后，从对应等级牌堆补1张",
           "target": {
             "space": "screen",
@@ -517,6 +529,18 @@
             "id": "purchase_card"
           },
           "anchor": "quick_cards/003.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "quick_cards/003.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "label",
