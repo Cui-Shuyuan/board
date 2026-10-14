@@ -142,7 +142,7 @@
       "tree": "main",
       "script": {
         "story": "购买时支付价格，把卡放到自己面前并获得卡上的分数；市场空出的位置，要从对应等级牌堆补一张。每回合最多买一张，但整局购买数量不限。",
-        "note": "卡片固定在屏幕左侧，并下移到顶部文字下方；价格提示压缩为单行，避免在较矮的 hint_action_second 中换行后第一行被顶出屏幕。",
+        "note": "卡片固定在屏幕左侧并下移；左上说明合并为一段两行文字，放在卡片右侧、靠近桌面的位置：价格一行、补牌一行，不再中途替换字幕。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -278,16 +278,17 @@
         },
         {
           "op": "label",
-          "dur": 4.45,
-          "text": "价格：1黑+1蓝+2绿+1红",
+          "dur": 0.0,
+          "text": "价格：1黑+1蓝+2绿+1红\n买走后，从对应等级牌堆补1张",
           "target": {
             "space": "screen",
-            "id": "hint_action_second"
+            "id": "hint_action_summary"
           },
           "anchor": "quick_cards/002.b1.start",
-          "offset": 0.56,
-          "label_mode": "replace",
-          "label_key": "action_hint"
+          "nudge": {
+            "x": 0.22,
+            "y": 0.12
+          }
         },
         {
           "op": "wait",
@@ -408,19 +409,6 @@
           "offset": 1.8
         },
         {
-          "op": "label",
-          "dur": 0.0,
-          "text": "买走后，从对应等级牌堆补1张",
-          "target": {
-            "space": "screen",
-            "id": "hint_action_second"
-          },
-          "anchor": "quick_cards/002.b1.start",
-          "offset": 4.99,
-          "label_mode": "replace",
-          "label_key": "action_hint"
-        },
-        {
           "op": "draw",
           "dur": 0.6,
           "quantity": 1,
@@ -462,7 +450,7 @@
       "tree": "main",
       "script": {
         "story": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。",
-        "note": "承接 cue 2，卡片固定在相同的屏幕左侧位置，保证视觉焦点一致。玩家 A 已有一张白折扣一级卡 card_l1_diamond_18；右侧桌面展示目标二级黑卡 card_l2_onyx_45（价格 5 白），文字依次说明价格、已有白卡折扣、实际支付 4 白。随后支付 4 白、把真卡移入发展区，并从二级牌堆翻出 card_l2_diamond_55 补回市场空位。",
+        "note": "承接 cue 2，卡片继续在相同左侧位置；左上说明合并为一段四行文字，放在卡片右侧、靠近桌面的位置，一次讲清目标、价格、折扣和实付，不再中途替换字幕。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -532,15 +520,17 @@
         },
         {
           "op": "label",
-          "dur": 2.45,
-          "text": "目标：二级黑卡\n价格：5白",
+          "dur": 0.0,
+          "text": "目标：二级黑卡\n价格：5白\n已有1张白卡 → 少付1白\n实际支付：4白",
           "target": {
             "space": "screen",
             "id": "hint_action_summary"
           },
-          "anchor": "quick_cards/003.start",
-          "label_mode": "replace",
-          "label_key": "discount_hint"
+          "anchor": "quick_cards/003.b1.start",
+          "nudge": {
+            "x": 0.22,
+            "y": 0.12
+          }
         },
         {
           "op": "wait",
@@ -573,32 +563,6 @@
           },
           "anchor": "quick_cards/003.b1.start",
           "offset": 1.4
-        },
-        {
-          "op": "label",
-          "dur": 1.55,
-          "text": "已有1张白卡 → 少付1白",
-          "target": {
-            "space": "screen",
-            "id": "hint_action_summary"
-          },
-          "anchor": "quick_cards/003.b1.start",
-          "offset": 2.45,
-          "label_mode": "replace",
-          "label_key": "discount_hint"
-        },
-        {
-          "op": "label",
-          "dur": 0.0,
-          "text": "实际支付：4白",
-          "target": {
-            "space": "screen",
-            "id": "hint_action_summary"
-          },
-          "anchor": "quick_cards/003.b1.start",
-          "offset": 3.95,
-          "label_mode": "replace",
-          "label_key": "discount_hint"
         },
         {
           "op": "pay",
@@ -672,19 +636,6 @@
           },
           "anchor": "quick_cards/003.b1.start",
           "offset": 6.8
-        },
-        {
-          "op": "label",
-          "dur": 0.0,
-          "text": "已购买：二级黑卡\n实付：4白",
-          "target": {
-            "space": "screen",
-            "id": "hint_action_summary"
-          },
-          "anchor": "quick_cards/003.b1.start",
-          "offset": 6.6,
-          "label_mode": "replace",
-          "label_key": "discount_hint"
         }
       ],
       "demo": true,
