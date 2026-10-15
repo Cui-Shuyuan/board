@@ -128,7 +128,7 @@
       "tree": "main",
       "script": {
         "story": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "用牌堆近景演示“从牌堆顶保留前不能看牌”：静默在一级牌堆顶准备一张 demo 卡 card_l1_diamond_17，把它翻到 deck_peek 正面落位后立即显示禁止标记；cue003 从 cue001 的入口重新开始，不沿用这张 demo 卡。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -140,9 +140,31 @@
       },
       "events": [
         {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_down",
+          "anchor": "quick_reserve/002.start",
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_reserved",
+          "shot": "shot_decks",
+          "realizes": "<ontology::timing>",
           "anchor": "quick_reserve/002.start"
         },
         {
@@ -163,29 +185,44 @@
           "anchor": "quick_reserve/002.start"
         },
         {
-          "op": "label",
-          "dur": 0.0,
-          "text": "最多保留3张；不提供折扣和声望，也不能给其他玩家看",
-          "target": {
-            "space": "screen",
-            "id": "hint_limit"
-          },
+          "op": "draw",
+          "to": "face_up",
+          "dur": 0.2,
           "anchor": "quick_reserve/002.b1.start",
-          "offset": -0.024
-        },
-        {
-          "op": "highlight",
-          "dur": 0.468,
-          "peak_alpha": 0.65,
+          "offset": 3.0,
           "target": {
             "space": "entity",
-            "zone": "player_reserved",
-            "order": 0
+            "zone": "deck_level_1"
           },
+          "destination": {
+            "space": "entity",
+            "zone": "deck_peek"
+          },
+          "axis": "long",
+          "direction": "ccw"
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "forbid",
           "anchor": "quick_reserve/002.b1.start",
-          "offset": 0.63
+          "offset": 3.25,
+          "target": {
+            "space": "entity",
+            "zone": "deck_peek",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
         }
-      ]
+      ],
+      "demo": true
     },
     {
       "id": "003",
