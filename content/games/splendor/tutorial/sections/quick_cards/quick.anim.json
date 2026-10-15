@@ -578,7 +578,7 @@
           "op": "point",
           "dur": 0.0,
           "indicator": "arrow",
-          "part": "bonus",
+          "part": "whole",
           "target": {
             "space": "entity",
             "zone": "player_development",
@@ -586,7 +586,11 @@
             "palette": "card_level_1"
           },
           "anchor": "quick_cards/003.b1.start",
-          "offset": 1.4
+          "offset": 1.4,
+          "text": "已购买白卡",
+          "arrow_direction": "right",
+          "size": 72,
+          "gap": 20
         },
         {
           "op": "pay",
