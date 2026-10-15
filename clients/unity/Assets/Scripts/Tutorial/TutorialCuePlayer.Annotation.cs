@@ -329,6 +329,33 @@ namespace BoardGameTutorial
             labelShadowStyle.normal.textColor = new Color(0f, 0f, 0f, 0.92f);
         }
 
+        private Rect FitLabelRect(Rect rect, string text)
+        {
+            if (string.IsNullOrEmpty(text)) return rect;
+            Vector2 measured = overlayLabelStyle.CalcSize(new GUIContent(text));
+            int lines = 1;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] == '\n') lines++;
+            }
+            float padX = 14f * UiScale();
+            float padY = 8f * UiScale();
+            float needW = measured.x + padX;
+            float needH = Mathf.Max(measured.y, overlayLabelStyle.fontSize * 1.45f * lines) + padY;
+            if (rect.width < needW) rect.width = needW;
+            if (rect.height < needH) rect.height = needH;
+
+            // Keep the auto-expanded box fully visible; prefer growing down/right
+            // from the authored anchor when the label would otherwise clip.
+            if (rect.x < 0f) rect.x = 0f;
+            if (rect.y < 0f) rect.y = 0f;
+            if (rect.x + rect.width > Screen.width)
+                rect.x = Mathf.Max(0f, Screen.width - rect.width);
+            if (rect.y + rect.height > Screen.height)
+                rect.y = Mathf.Max(0f, Screen.height - rect.height);
+            return rect;
+        }
+
         private void DrawLabelAnnotation(FrameState frame, VisualAnnotationState annotation, Camera cam)
         {
             if (annotation == null || string.IsNullOrEmpty(annotation.Text)) return;
@@ -359,6 +386,7 @@ namespace BoardGameTutorial
             // 统一文字说明格式：深色描边 + 白色正文，不画背景框；
             // 先按每行最多 LabelMaxCharsPerLine 个字自动换行，再交给 GUI 排版。
             string wrappedText = WrapLabelText(annotation.Text, LabelMaxCharsPerLine);
+            rect = FitLabelRect(rect, wrappedText);
             Color color = ResolvedAnnotationColor(annotation, Color.white);
             Color savedGuiColor = GUI.color;
             GUI.color = color;

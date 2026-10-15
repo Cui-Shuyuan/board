@@ -285,6 +285,7 @@ overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里
 屏幕 `label` 支持 Unity rich text 内联标签（如 `<color=#FF2020>11</color>`），也可用可选 `"label_color": "#FF2020"` 指定整条文字颜色；未写时保持默认白色正文 + 深色描边，富文本标签不占自动换行字数。
 `label` 还支持可选 `"label_mode": "add" | "replace"`：默认 `add`，同一槽位的多条 label 会各自出现；`replace` 表示同一目标上最新开始的 label 生效。需要无缝切换时写 `replace` 并让前后两条 label 的 `dur` 轻微重叠；需要停顿间隔时保持默认 `add` 并留空档。
 `replace` 可再写可选 `"label_key": "<logical-text-id>"`，指定它要替换哪一条逻辑文本；同一 overlay 上不同 `label_key` 可以独立替换、互不影响。不写时按整个目标替换。
+label 的文本框会按实际文本的行数和长度自动扩展，并保持在屏幕内；overlay 的 rect 主要决定锚点和排版起点，不应再写死过小的高度去裁切文字。
 Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
 ### 2.3 放大镜：放大桌面上的一部分实体
