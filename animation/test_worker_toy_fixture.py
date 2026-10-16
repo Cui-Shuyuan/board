@@ -16,6 +16,7 @@ ROOT = HERE.parent
 FIXTURE = HERE.parent / "tests/fixtures/worker_toy/tutorial"
 sys.path.insert(0, str(HERE))
 
+import check_materials  # noqa: E402
 import compile_animation_v2  # noqa: E402
 import section_source  # noqa: E402
 
@@ -83,26 +84,62 @@ class WorkerToyFixtureTests(unittest.TestCase):
         self.assertEqual(2, len(zone_items(dc, "resource_pool")))
         self.assertEqual(3, len(zone_items(cc, "resource_pool")))
 
+
+    def test_same_facts_different_timing_produces_same_semantic_state(self):
+        detailed = self._load("detailed")
+        same = self._load("same")
+        dc = self._compile(detailed)["cues"][0]
+        sc = self._compile(same)["cues"][0]
+
+        def semantic(cue):
+            return sorted(
+                (
+                    item["ZoneId"], item["TemplateId"], item["Palette"],
+                    item["Concept"], json.dumps(item.get("parts") or [], sort_keys=True),
+                    item["Order"], item["Face"],
+                )
+                for item in cue["end_state"]["components"]
+            )
+
+        self.assertEqual(semantic(dc), semantic(sc))
+        self.assertNotEqual(dc["duration"], sc["duration"])
+        self.assertNotEqual(dc["camera_ops"], sc["camera_ops"])
+        self.assertNotEqual(dc["camera_ops"][-1].get("shot"),
+                            sc["camera_ops"][-1].get("shot"))
+        # Different timing still respects causal source order.
+        self.assertEqual(
+            [x["id"] for x in detailed.anim_doc["cues"]],
+            [x["id"] for x in same.anim_doc["cues"]],
+        )
+
+
+    def test_material_gate_checks_fact_identity_and_timing_for_all_tracks(self):
+        for track in ("detailed", "compact", "same"):
+            code = compile_animation_v2.main(["--game", "worker_toy", "--track", track])
+            self.assertEqual(0, code)
+            code, errors = check_materials.check_track("worker_toy", track)
+            self.assertEqual(0, code, errors)
+
     def test_material_change_invalidates_both_tracks(self):
-        before = {t: self._load(t).source_hash for t in ("detailed", "compact")}
+        before = {t: self._load(t).source_hash for t in ("detailed", "compact", "same")}
         path = self.root / "content/games/worker_toy/tutorial/library/actions/worker_toy.action.gain_resource.action.json"
         doc = json.loads(path.read_text(encoding="utf-8"))
         doc["title"] = doc["title"] + "（变化）"
         path.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        after = {t: self._load(t).source_hash for t in ("detailed", "compact")}
+        after = {t: self._load(t).source_hash for t in ("detailed", "compact", "same")}
         self.assertNotEqual(before, after)
 
     def test_stage_change_invalidates_both_tracks(self):
-        before = {t: self._load(t).source_hash for t in ("detailed", "compact")}
+        before = {t: self._load(t).source_hash for t in ("detailed", "compact", "same")}
         path = self.root / "content/games/worker_toy/tutorial/shared/stage/worker_toy.stage.json"
         doc = json.loads(path.read_text(encoding="utf-8"))
         doc["shots"][0]["fill"] = 0.7
         path.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        after = {t: self._load(t).source_hash for t in ("detailed", "compact")}
+        after = {t: self._load(t).source_hash for t in ("detailed", "compact", "same")}
         self.assertNotEqual(before, after)
 
     def test_unrelated_unreferenced_material_does_not_affect_hash(self):
-        before = {t: self._load(t).source_hash for t in ("detailed", "compact")}
+        before = {t: self._load(t).source_hash for t in ("detailed", "compact", "same")}
         lib = self.root / "content/games/worker_toy/tutorial/library/actions"
         (lib / "worker_toy.action.unused.action.json").write_text(json.dumps({
             "schema": "tutorial-material/v1",
@@ -114,7 +151,7 @@ class WorkerToyFixtureTests(unittest.TestCase):
                 "target": {"space": "entity", "zone": "resource_pool", "template": "other"},
             }]}],
         }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        after = {t: self._load(t).source_hash for t in ("detailed", "compact")}
+        after = {t: self._load(t).source_hash for t in ("detailed", "compact", "same")}
         self.assertEqual(before, after)
 
 

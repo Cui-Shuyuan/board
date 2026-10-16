@@ -51,6 +51,15 @@ PRESENTATION_OPS = {
     "camera", "label", "magnifier", "overlay_show", "overlay_hide",
 }
 ALL_OPS = STATE_OPS | SEMANTIC_STATE_OPS | PRESENTATION_OPS
+STATE_EVENT_OPS = STATE_OPS | SEMANTIC_STATE_OPS
+# Explicit composition matrix at material dependency boundaries.
+# Examples may compose actions (and other examples), but not presentations; a
+# presentation is a cue-level visual companion, not a fact or state fragment.
+ALLOWED_CHILD_KINDS = {
+    "action": frozenset({"action"}),
+    "presentation": frozenset({"presentation"}),
+    "example": frozenset({"action", "example"}),
+}
 
 
 class MaterialError(ValueError):
@@ -142,6 +151,7 @@ class MaterialAsset:
     variants: list[dict] = field(default_factory=list)
     actions: list[dict] = field(default_factory=list)
     contract: dict = field(default_factory=dict)
+    timing: dict = field(default_factory=dict)
     rules: list[str] = field(default_factory=list)
     dependencies: set[str] = field(default_factory=set)
 
@@ -298,6 +308,27 @@ class MaterialLibrary:
                 raise MaterialError(f"{where}: contract must be an object")
             cls._validate_contract(contract, f"{where} contract")
             asset.contract = copy.deepcopy(contract)
+        timing = raw.get("timing")
+        if timing is not None:
+            if not isinstance(timing, dict):
+                raise MaterialError(f"{where}: timing must be an object")
+            allowed_timing = {"min_span", "min_event_duration", "conflict_check"}
+            unknown_timing = sorted(set(timing) - allowed_timing)
+            if unknown_timing:
+                raise MaterialError(
+                    f"{where}: unknown timing field(s): {', '.join(unknown_timing)}"
+                )
+            for field_name in ("min_span", "min_event_duration"):
+                if field_name in timing:
+                    try:
+                        value = float(timing[field_name])
+                    except (TypeError, ValueError):
+                        raise MaterialError(f"{where}: timing.{field_name} must be numeric")
+                    if value < 0:
+                        raise MaterialError(f"{where}: timing.{field_name} must be >= 0")
+            if "conflict_check" in timing and not isinstance(timing["conflict_check"], bool):
+                raise MaterialError(f"{where}: timing.conflict_check must be boolean")
+            asset.timing = copy.deepcopy(timing)
         rules = raw.get("rules") or []
         if not isinstance(rules, list) or not all(isinstance(x, str) for x in rules):
             raise MaterialError(f"{where}: rules must be a list of strings")
@@ -316,24 +347,35 @@ class MaterialLibrary:
         for action in asset.actions:
             asset.dependencies.add(str(action.get("ref") or ""))
 
-        if asset.kind == "action":
-            for step in asset.steps:
-                for ev in step.get("events") or []:
-                    op = ev.get("op")
-                    if op not in (STATE_OPS | SEMANTIC_STATE_OPS):
-                        raise MaterialError(
-                            f"{where}: action step {step.get('id')!r} has non-state op {op!r}; "
-                            f"move camera/annotation visuals to a presentation material"
-                        )
-        if asset.kind == "presentation":
-            for step in asset.steps:
-                for ev in step.get("events") or []:
-                    op = ev.get("op")
-                    if op not in PRESENTATION_OPS:
-                        raise MaterialError(
-                            f"{where}: presentation step {step.get('id')!r} has non-presentation "
-                            f"op {op!r}; use an action material for state changes"
-                        )
+        steps_for_kind = list(asset.steps)
+        for variant in asset.variants:
+            if isinstance(variant, dict):
+                vlabel = f"variant {variant.get('id')!r} "
+                for step in variant.get("steps") or []:
+                    steps_for_kind.append((vlabel, step))
+        for step in steps_for_kind:
+            if isinstance(step, tuple):
+                prefix, real_step = step
+            else:
+                prefix, real_step = "", step
+            for ev in real_step.get("events") or []:
+                op = ev.get("op")
+                if asset.kind == "action" and op not in STATE_EVENT_OPS:
+                    raise MaterialError(
+                        f"{where}: action {prefix}step {real_step.get('id')!r} has non-state op "
+                        f"{op!r}; move camera/annotation visuals to a presentation material"
+                    )
+                if asset.kind == "presentation" and op not in PRESENTATION_OPS:
+                    raise MaterialError(
+                        f"{where}: presentation {prefix}step {real_step.get('id')!r} has "
+                        f"non-presentation op {op!r}; use an action material for state changes"
+                    )
+                if asset.kind == "example" and op not in STATE_EVENT_OPS:
+                    raise MaterialError(
+                        f"{where}: example {prefix}step {real_step.get('id')!r} has non-state "
+                        f"op {op!r}; examples declare facts with state actions, while "
+                        f"presentation stays in the cue or a presentation material"
+                    )
 
     @classmethod
     def _parse_declarations(cls, raw: Any, where: str, label: str) -> dict[str, dict]:
@@ -491,6 +533,30 @@ class MaterialLibrary:
                     raise MaterialError(
                         f"{asset.path}: material dependency cycle: {asset.id} -> {asset.id}"
                     )
+        # Kind boundaries are enforced at dependency edges, recursively.  A
+        # presentation cannot smuggle a state action in through a nested use,
+        # and an action cannot smuggle visuals in the same way.
+        for asset in lib.assets.values():
+            allowed = ALLOWED_CHILD_KINDS[asset.kind]
+            steps = list(asset.steps)
+            for variant in asset.variants:
+                if isinstance(variant, dict):
+                    steps.extend(variant.get("steps") or [])
+            for step in steps:
+                sid = str(step.get("id") or "")
+                for use in (step.get("use", step.get("uses")) or []):
+                    if not isinstance(use, dict):
+                        continue
+                    ref = str(use.get("ref") or "").strip()
+                    dep = lib.assets.get(ref)
+                    if dep is None:
+                        continue
+                    if dep.kind not in allowed:
+                        raise MaterialError(
+                            f"{asset.path}: {asset.id} ({asset.kind}) step {sid!r} "
+                            f"references {dep.id} ({dep.kind}); allowed child kinds: "
+                            f"{sorted(allowed)}"
+                        )
         # Cycle detection over the static step-use graph.
         visiting: set[str] = set()
         done: set[str] = set()
@@ -543,8 +609,11 @@ class MaterialLibrary:
             local = _norm_local_id(cue, section_id, f"{where or section_id} cue[{i}]")
             local_by_cue[i] = local
             qid = f"{section_id}/{local}"
+            raw_entry = cue.get("entry")
+            explicit_entry = str(raw_entry).strip() if raw_entry is not None and str(raw_entry).strip() else None
             if cue.get("local_id") is not None:
                 del out["cues"][i]["local_id"]
+            used_namespaces: set[str] = set()
             # `example` / `examples` declarations are cue metadata checked here.
             declared_examples: list[dict] = []
             raw_example = cue.get("example")
@@ -572,6 +641,8 @@ class MaterialLibrary:
                     step=None, material=asset.id, kind=asset.kind, variant=variant,
                     mode=str(item.get("mode") or "continue"), path=asset.path,
                     where=f"{qid}.examples[{j}]",
+                    event_start=0, event_count=0, explicit_entry=explicit_entry,
+                    call_path=[asset.id],
                 ))
                 files.add(asset.path)
 
@@ -585,20 +656,29 @@ class MaterialLibrary:
             for use_index, use in enumerate(uses):
                 # Re-validate inline declarations (they may not have gone through parse).
                 self._validate_use_item(use, f"{qid}.use[{use_index}]")
-                expanded, usage, used_files = self._expand_use(
+                expanded, expanded_usages, used_files = self._expand_use(
                     use, qid=qid, section_id=section_id, track=track,
                     use_index=use_index, existing_anchors=existing_anchors,
                     generated_anchors=generated_anchors,
-                    cue=cue, where=f"{qid}.use[{use_index}]",
+                    cue=cue, used_namespaces=used_namespaces,
+                    explicit_entry=explicit_entry,
+                    where=f"{qid}.use[{use_index}]",
                 )
-                usages.append(usage)
                 files.update(used_files)
                 insert_at = int(use.get("insert_at", len(inline_events))) if isinstance(use, dict) else len(inline_events)
                 insert_at = max(0, min(insert_at, len(inline_events)))
-                insertions.setdefault(insert_at, []).extend(expanded)
+                insertions.setdefault(insert_at, []).append({
+                    "events": expanded,
+                    "usages": expanded_usages,
+                })
             merged_events: list[dict] = []
             for pos in range(len(inline_events) + 1):
-                merged_events.extend(insertions.get(pos, []))
+                for item in insertions.get(pos, []):
+                    base = len(merged_events)
+                    for usage in item["usages"]:
+                        usage.event_start += base
+                    merged_events.extend(item["events"])
+                    usages.extend(item["usages"])
                 if pos < len(inline_events):
                     merged_events.append(inline_events[pos])
             cue["events"] = merged_events
@@ -678,10 +758,45 @@ class MaterialLibrary:
             raise MaterialError(f"{where}: material {asset.id} has no variants")
         return text
 
+    @staticmethod
+    def _normalize_namespace(raw, fallback: str, where: str) -> str:
+        text = str(raw or "").strip()
+        if text:
+            text = SAFE_NAMESPACE_RE.sub("_", text).strip("_")
+            if not text:
+                raise MaterialError(f"{where}: namespace/alias normalizes to empty")
+            return text
+        return SAFE_NAMESPACE_RE.sub("_", fallback).strip("_") or "u"
+
+    @staticmethod
+    def _claim_namespace(namespace: str, used: set[str], where: str) -> None:
+        if namespace in used:
+            raise MaterialError(
+                f"{where}: namespace/alias {namespace!r} collides with another "
+                f"material call in the same cue"
+            )
+        used.add(namespace)
+
+    @staticmethod
+    def _all_steps(asset: "MaterialAsset") -> list[dict]:
+        steps = list(asset.steps)
+        for variant in asset.variants:
+            if isinstance(variant, dict):
+                steps.extend(variant.get("steps") or [])
+        return steps
+
+    @staticmethod
+    def _nested_segment(step: dict, use_index: int, raw_alias, where: str) -> str:
+        if raw_alias is not None and str(raw_alias).strip():
+            return str(raw_alias)
+        step_id = SAFE_NAMESPACE_RE.sub("_", str(step.get("id") or "step")).strip("_") or "step"
+        return f"s_{step_id}_u{use_index + 1}"
+
     def _expand_use(self, use: Any, *, qid: str, section_id: str, track: str,
                     use_index: int, existing_anchors: dict[str, dict],
                     generated_anchors: dict[str, dict], cue: dict,
-                    where: str) -> tuple[list[dict], "MaterialUsage", list[Path]]:
+                    used_namespaces: set[str], explicit_entry: str | None,
+                    where: str) -> tuple[list[dict], list["MaterialUsage"], list[Path]]:
         if isinstance(use, str):
             use = {"ref": use}
         if not isinstance(use, dict):
@@ -696,16 +811,15 @@ class MaterialLibrary:
         if asset.kind == "presentation" and use.get("variant") is not None:
             raise MaterialError(f"{where}: presentations do not declare variants")
 
-        namespace = str(use.get("namespace") or use.get("as") or f"u{use_index + 1}")
-        namespace = SAFE_NAMESPACE_RE.sub("_", namespace).strip("_") or f"u{use_index + 1}"
+        alias = use.get("namespace") if "namespace" in use else use.get("as")
+        namespace = self._normalize_namespace(alias, f"u{use_index + 1}", where)
+        self._claim_namespace(namespace, used_namespaces, where)
 
         scope = self._build_scope(asset, use.get("bind"), where)
-        # Resolve timing bindings through the current scope, then hand to events.
         timing = self._resolve_value(copy.deepcopy(use.get("timing") or {}), scope,
                                      f"{where}.timing")
         if not isinstance(timing, dict):
             raise MaterialError(f"{where}.timing must resolve to an object")
-
         mode = str(use.get("mode") or "continue").strip() or "continue"
         omit_raw = use.get("omit") or []
         omit = {str(x) for x in omit_raw}
@@ -719,20 +833,23 @@ class MaterialLibrary:
                 raise MaterialError(f"{where}: step {sid!r} is required and cannot be omitted")
 
         ctx = _ExpansionContext(
-            library=self, qid=qid, section_id=section_id, namespace=namespace,
-            timing=timing, existing_anchors=existing_anchors,
+            library=self, qid=qid, section_id=section_id, track=track,
+            namespace=namespace, timing=timing, existing_anchors=existing_anchors,
             generated_anchors=generated_anchors, omit=omit, where=where,
             files=set(), counters={}, depth=0, active=[],
+            used_namespaces=used_namespaces, explicit_entry=explicit_entry,
         )
+        ctx.call_path = [asset.id]
         variant_entry = self._variant_entry(asset, variant) if asset.kind == "example" else None
         expand_asset = asset
         if variant_entry is not None and "steps" in variant_entry:
             expand_asset = copy.copy(asset)
             expand_asset.steps = copy.deepcopy(variant_entry.get("steps") or [])
+        event_usages: list[MaterialUsage] = []
         if asset.kind == "example" and not expand_asset.steps:
             events: list[dict] = []
         else:
-            events = self._expand_asset(expand_asset, ctx, scope, [asset.id])
+            events, event_usages = self._expand_asset(expand_asset, ctx, scope, [asset.id])
         contract = None
         if asset.kind == "action" and asset.contract:
             contract = self._resolve_value(
@@ -744,12 +861,14 @@ class MaterialLibrary:
             mode=mode, path=asset.path, where=where,
             events=events, bindings=copy.deepcopy(use.get("bind") or {}),
             timing=copy.deepcopy(use.get("timing") or {}),
-            contract=contract,
+            contract=contract, event_start=0, event_count=len(events),
+            explicit_entry=explicit_entry,
+            call_path=[asset.id],
         )
-        return events, usage, sorted(ctx.files)
+        return events, [usage] + event_usages, sorted(ctx.files)
 
     def _expand_asset(self, asset: MaterialAsset, ctx: "_ExpansionContext",
-                      scope: dict, chain: list[str]) -> list[dict]:
+                      scope: dict, chain: list[str]) -> tuple[list[dict], list["MaterialUsage"]]:
         if asset.id in chain[:-1]:
             raise MaterialError(
                 f"{ctx.where}: material dependency cycle: " + " -> ".join(chain)
@@ -757,27 +876,35 @@ class MaterialLibrary:
         if len(chain) > 8:
             raise MaterialError(f"{ctx.where}: material expansion depth > 8 at {asset.id}")
         out: list[dict] = []
+        child_usages: list[MaterialUsage] = []
         ctx.files.add(asset.path)
         for step in asset.steps:
             sid = str(step.get("id"))
             if sid in ctx.omit:
                 continue
-            for j, use in enumerate(step.get("use", step.get("uses")) or []):
+            uses = step.get("use", step.get("uses")) or []
+            for j, use in enumerate(uses):
                 nested_where = f"{ctx.where} step {sid} use[{j}]"
-                nested, _, nested_files = self._expand_nested_use(
-                    use, asset=asset, parent_scope=scope, ctx=ctx,
+                nested, nested_usages, nested_files = self._expand_nested_use(
+                    use, asset=asset, step=step, use_index=j,
+                    parent_scope=scope, ctx=ctx,
                     where=nested_where, chain=chain,
                 )
+                base = len(out)
+                for nested_usage in nested_usages:
+                    nested_usage.event_start += base
                 out.extend(nested)
+                child_usages.extend(nested_usages)
                 ctx.files.update(nested_files)
             for j, ev in enumerate(step.get("events") or []):
                 where_ev = f"{ctx.where} step {sid} events[{j}]"
                 out.append(self._expand_event(asset, step, ev, scope, ctx, where_ev))
-        return out
+        return out, child_usages
 
-    def _expand_nested_use(self, use: Any, *, asset: MaterialAsset, parent_scope: dict,
+    def _expand_nested_use(self, use: Any, *, asset: MaterialAsset, step: dict,
+                           use_index: int, parent_scope: dict,
                            ctx: "_ExpansionContext", where: str,
-                           chain: list[str]) -> tuple[list[dict], "MaterialUsage", list[Path]]:
+                           chain: list[str]) -> tuple[list[dict], list["MaterialUsage"], list[Path]]:
         if isinstance(use, str):
             use = {"ref": use}
         if not isinstance(use, dict):
@@ -792,10 +919,13 @@ class MaterialLibrary:
                                      f"{where}.timing")
         if not isinstance(timing, dict):
             raise MaterialError(f"{where}.timing must resolve to an object")
-        # nested timing markers from parent scope are inherited by default
+        # Nested timing markers inherit the parent invocation unless overridden.
+        # The counter is intentionally scoped to the top-level call context so a
+        # caller can distribute a marker list across sibling nested calls.
         merged_timing = dict(ctx.timing)
         merged_timing.update(timing)
         previous_timing, previous_omit = ctx.timing, ctx.omit
+        previous_ns = ctx.namespace
         nested_omit = set(str(x) for x in use.get("omit") or [])
         valid_steps = {str(s.get("id")) for s in nested_asset.steps}
         if not nested_omit <= valid_steps:
@@ -803,22 +933,50 @@ class MaterialLibrary:
                 f"{where}: omit references unknown step(s): "
                 + ", ".join(sorted(nested_omit - valid_steps))
             )
-        for step in nested_asset.steps:
-            if str(step.get("id")) in nested_omit and str(step.get("status") or "required") != "optional":
-                raise MaterialError(f"{where}: step {step.get('id')!r} is required and cannot be omitted")
+        for step_decl in nested_asset.steps:
+            if (str(step_decl.get("id")) in nested_omit
+                    and str(step_decl.get("status") or "required") != "optional"):
+                raise MaterialError(
+                    f"{where}: step {step_decl.get('id')!r} is required and cannot be omitted"
+                )
+        alias = use.get("namespace") if "namespace" in use else use.get("as")
+        segment = self._nested_segment(step, use_index, alias, where)
+        child_namespace = f"{ctx.namespace}__{self._normalize_namespace(segment, '', where)}"
+        self._claim_namespace(child_namespace, ctx.used_namespaces, where)
         ctx.timing = merged_timing
         ctx.omit = nested_omit
+        ctx.namespace = child_namespace
+        previous_path = ctx.call_path
+        nested_call_path = list(ctx.call_path) + [
+            f"{asset.id}::{step.get('id')}[{use_index}]",
+            nested_asset.id,
+        ]
+        ctx.call_path = nested_call_path
         try:
-            events = self._expand_asset(nested_asset, ctx, scope, chain + [asset.id])
+            events, nested_usages = self._expand_asset(
+                nested_asset, ctx, scope, chain + [asset.id]
+            )
         finally:
             ctx.timing, ctx.omit = previous_timing, previous_omit
+            ctx.namespace = previous_ns
+            ctx.call_path = previous_path
+        contract = None
+        if nested_asset.kind == "action" and nested_asset.contract:
+            contract = self._resolve_value(
+                copy.deepcopy(nested_asset.contract), scope, f"{where}.contract"
+            )
         usage = MaterialUsage(
-            track="", section=ctx.section_id, cue=ctx.qid, use_index=-1,
-            step=None, material=nested_asset.id, kind=nested_asset.kind, variant=None,
+            track=ctx.track, section=ctx.section_id, cue=ctx.qid, use_index=-1,
+            step=str(step.get("id") or ""), material=nested_asset.id,
+            kind=nested_asset.kind, variant=None,
             mode=str(use.get("mode") or "continue"), path=nested_asset.path,
-            where=where, events=events,
+            where=where, events=events, bindings=copy.deepcopy(bind),
+            timing=copy.deepcopy(use.get("timing") or {}), contract=contract,
+            event_start=0, event_count=len(events),
+            explicit_entry=ctx.explicit_entry,
+            call_path=list(nested_call_path),
         )
-        return events, usage, [nested_asset.path]
+        return events, [usage] + nested_usages, [nested_asset.path]
 
     def _build_scope(self, asset: MaterialAsset, bind_raw: Any, where: str) -> dict:
         if bind_raw is None:
@@ -903,6 +1061,12 @@ class MaterialLibrary:
         if isinstance(value, str):
             if value.startswith("$") and value[1:] in scope:
                 return copy.deepcopy(scope[value[1:]])
+            full = PLACEHOLDER_RE.fullmatch(value)
+            if full:
+                name = full.group(1)
+                if name not in scope:
+                    raise MaterialError(f"{where}: unknown placeholder ${{{name}}}")
+                return copy.deepcopy(scope[name])
             def repl(match: re.Match) -> str:
                 name = match.group(1)
                 if name not in scope:
@@ -1012,12 +1176,18 @@ class MaterialUsage:
     bindings: dict = field(default_factory=dict)
     timing: dict = field(default_factory=dict)
     contract: dict | None = None
+    event_start: int = 0
+    event_count: int = 0
+    explicit_entry: str | None = None
+    call_path: list[str] = field(default_factory=list)
 
     def source_chain(self) -> str:
         pieces = [self.cue, f"use[{self.use_index}] {self.material}"]
         if self.variant:
             pieces.append(f"variant={self.variant}")
         pieces.append(f"mode={self.mode}")
+        if self.call_path:
+            pieces.append("path=" + " -> ".join(self.call_path))
         return " ".join(pieces)
 
     def to_dict(self) -> dict:
@@ -1033,17 +1203,23 @@ class MaterialUsage:
             "mode": self.mode,
             "where": self.where,
             "source": str(self.path),
+            "event_start": self.event_start,
+            "event_count": self.event_count,
+            "explicit_entry": self.explicit_entry,
+            "call_path": list(self.call_path),
         }
 
 
 class _ExpansionContext:
     def __init__(self, *, library: MaterialLibrary, qid: str, section_id: str,
-                 namespace: str, timing: dict, existing_anchors: dict,
+                 track: str, namespace: str, timing: dict, existing_anchors: dict,
                  generated_anchors: dict, omit: set[str], where: str,
-                 files: set[Path], counters: dict, depth: int, active: list[str]):
+                 files: set[Path], counters: dict, depth: int, active: list[str],
+                 used_namespaces: set[str], explicit_entry: str | None):
         self.library = library
         self.qid = qid
         self.section_id = section_id
+        self.track = track
         self.namespace = namespace
         self.timing = timing
         self.existing_anchors = existing_anchors
@@ -1054,6 +1230,9 @@ class _ExpansionContext:
         self.counters = counters
         self.depth = depth
         self.active = active
+        self.used_namespaces = used_namespaces
+        self.explicit_entry = explicit_entry
+        self.call_path: list[str] = []
         self._local_beat_verified: set[str] = set()
 
     def resolve_timing(self, marker: str) -> tuple[str | None, float | None, dict | None, str, float | None]:

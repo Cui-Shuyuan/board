@@ -368,6 +368,19 @@ def load_track_source(game: str, track: str, *, verbose: bool = False) -> TrackS
         if str(script.get("section") or sid) != sid:
             raise ValueError(f"{script_path}: section must be {sid!r}")
         _remember_cue_stages(anim)
+        needs_materials = any(
+            isinstance(cue, dict) and (
+                cue.get("use") is not None
+                or cue.get("example") is not None
+                or cue.get("examples") is not None
+            )
+            for cue in (anim.get("cues") or [])
+        )
+        if needs_materials and material_lib is None:
+            raise ValueError(
+                f"{anim_path}: cue references tutorial-material assets but "
+                f"tutorial/library/ is missing; cannot build an inline-only baseline"
+            )
         if material_lib is not None:
             anim, usages, material_files = material_lib.expand_section(
                 sid, track, anim, where=str(anim_path)

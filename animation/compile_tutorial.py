@@ -50,6 +50,36 @@ from tutorial_script_tool import rebuild_lrc  # noqa: E402
 from validate_timed_script import parse_file  # noqa: E402
 
 
+def _compile_track_with_material_gate(game: str, track: str) -> int:
+    """Compile one track and enforce the material state/time gate.
+
+    If the material gate fails, the previously published compiled file is
+    restored so a failed build cannot remain on disk as the latest output.
+    """
+    compiled_path = section_source.compiled_path(game, track)
+    previous = compiled_path.read_bytes() if compiled_path.is_file() else None
+    rc = animation_compiler.main(["--game", game, "--track", track])
+    if rc != 0:
+        return rc
+    try:
+        import check_materials  # noqa: PLC0415
+    except Exception as exc:  # noqa: BLE001 - gate must fail closed
+        print(f"[materials] checker import failed: {exc}", file=sys.stderr)
+        return 2
+    code, errors = check_materials.check_track(game, track)
+    if code:
+        for error in errors:
+            print(f"ERR  {error}", file=sys.stderr)
+        if previous is not None:
+            compiled_path.write_bytes(previous)
+            print("[materials] gate failed; previous compiled output restored", file=sys.stderr)
+        elif compiled_path.is_file():
+            compiled_path.unlink()
+            print("[materials] gate failed; no compiled output kept", file=sys.stderr)
+        return code
+    return 0
+
+
 def load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -97,7 +127,7 @@ def event_changes_board_state(event: dict) -> bool:
     return op not in _QA_PRESENTATION_EVENT_OPS
 
 
-def qa_change_signature(cue: dict) -> dict:
+def qa_change_signature(cue: dict, material_usage=None) -> dict:
     """Extract the cue parts whose change requires a QA question refresh."""
     cue = cue or {}
     script = cue.get("script") if isinstance(cue.get("script"), dict) else {}
@@ -117,14 +147,52 @@ def qa_change_signature(cue: dict) -> dict:
             event for event in events
             if isinstance(event, dict) and event_changes_board_state(event)
         ],
+        "material_usage": material_usage,
     }
 
 
-def cue_has_qa_relevant_change(before: dict | None, after: dict | None) -> bool:
+def cue_has_qa_relevant_change(before: dict | None, after: dict | None,
+                               before_material=None, after_material=None) -> bool:
     """Canonical comparison of one cue against its baseline version."""
     if before is None or after is None:
         return True
-    return _canonical_json(qa_change_signature(before)) != _canonical_json(qa_change_signature(after))
+    return _canonical_json(qa_change_signature(before, before_material)) != _canonical_json(
+        qa_change_signature(after, after_material)
+    )
+
+
+def _material_file_sha(path) -> str:
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    except OSError:
+        return ""
+
+
+def material_usage_signature_map(usages) -> dict:
+    """Per-cue signature of material refs, bindings, timing and contracts.
+
+    This catches shared-fact/contract changes even when expanded inline events
+    happen to look identical (for example, changing only a postcondition).
+    Event positions are intentionally excluded: reordering an insertion must
+    not dirty QA evidence by itself.
+    """
+    by_cue: dict[str, list[dict]] = {}
+    for usage in usages or []:
+        by_cue.setdefault(usage.cue, []).append({
+            "material": usage.material,
+            "kind": usage.kind,
+            "variant": usage.variant,
+            "mode": usage.mode,
+            "bindings": usage.bindings,
+            "timing": usage.timing,
+            "contract": usage.contract,
+            "call_path": usage.call_path,
+            "material_sha256": _material_file_sha(usage.path),
+        })
+    return {
+        cue: sorted(records, key=lambda r: _canonical_json(r))
+        for cue, records in by_cue.items()
+    }
 
 
 def _git_show_bytes(rel: str) -> bytes | None:
@@ -138,8 +206,8 @@ def _git_show_bytes(rel: str) -> bytes | None:
     return proc.stdout
 
 
-def _load_section_baseline_from_head(game: str, track: str) -> dict | None:
-    """Resolve the section source as committed at HEAD, without touching the worktree."""
+def _load_section_baseline_source_from_head(game: str, track: str):
+    """Return (HEAD TrackSource, material usage signature map) or (None, {})."""
     tutorial_rel = f"content/games/{game}/tutorial"
     descriptor_rel = f"{tutorial_rel}/tracks/{track}.track.json"
     try:
@@ -148,10 +216,10 @@ def _load_section_baseline_from_head(game: str, track: str) -> dict | None:
             capture_output=True, check=True,
         ).stdout.decode("utf-8").split("\0")
     except (OSError, subprocess.CalledProcessError, UnicodeDecodeError):
-        return None
+        return None, {}
     files = [rel for rel in listed if rel]
     if descriptor_rel not in files:
-        return None
+        return None, {}
     with tempfile.TemporaryDirectory(prefix="boardai_section_baseline_") as tmp:
         root = Path(tmp)
         for rel in files:
@@ -160,12 +228,13 @@ def _load_section_baseline_from_head(game: str, track: str) -> dict | None:
                 base == f"tracks/{track}.track.json"
                 or base.startswith("shared/")
                 or base.startswith("sections/")
+                or base.startswith("library/")
             )
             if not keep:
                 continue
             data = _git_show_bytes(rel)
             if data is None:
-                return None
+                return None, {}
             target = root / rel
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
@@ -174,10 +243,24 @@ def _load_section_baseline_from_head(game: str, track: str) -> dict | None:
             section_source.ROOT = root  # type: ignore[attr-defined]
             source = section_source.load_track_source(game, track)
         except Exception:  # noqa: BLE001 - malformed historical snapshot means no QA baseline
-            return None
+            return None, {}
         finally:
             section_source.ROOT = saved_root  # type: ignore[attr-defined]
-        return source.anim_doc
+        return source, material_usage_signature_map(source.material_usages)
+
+
+def _load_section_baseline_from_head(game: str, track: str) -> dict | None:
+    source, _ = _load_section_baseline_source_from_head(game, track)
+    return source.anim_doc if source is not None else None
+
+
+def load_baseline_qa_context(game: str, track: str) -> tuple[dict | None, dict]:
+    """Return (baseline animation doc, per-cue material usage signatures)."""
+    if section_source.has_section_source(game, track):
+        source, material_map = _load_section_baseline_source_from_head(game, track)
+        if source is not None:
+            return source.anim_doc, material_map
+    return load_baseline_track_doc(game, track), {}
 
 
 def load_baseline_track_doc(game: str, track: str) -> dict | None:
@@ -209,7 +292,9 @@ def _qa_effective_track_doc(doc: dict) -> dict:
 
 
 def select_qa_changed_ids(track_doc: dict, baseline_doc: dict | None,
-                          tts_changed_ids: list[str] | None = None) -> list[str]:
+                          tts_changed_ids: list[str] | None = None,
+                          current_material: dict | None = None,
+                          baseline_material: dict | None = None) -> list[str]:
     """Select cue IDs that require QA for the incremental `--validate-qa` gate.
 
     Text/narration changes are passed in through ``tts_changed_ids`` (they are
@@ -242,7 +327,12 @@ def select_qa_changed_ids(track_doc: dict, baseline_doc: dict | None,
 
     for cid in ordered:
         old = baseline_by.get(cid)
-        if old is None or cue_has_qa_relevant_change(old, current_by[cid]):
+        if old is None or cue_has_qa_relevant_change(
+            old,
+            current_by[cid],
+            (baseline_material or {}).get(cid),
+            (current_material or {}).get(cid),
+        ):
             changed.add(cid)
     return [cid for cid in ordered if cid in changed]
 
@@ -776,11 +866,15 @@ def _main_section_mode(args, track_source, *, script: dict, source_root: Path | 
         if args.validate_qa_all:
             qa_ids = None
         else:
-            baseline_doc = load_baseline_track_doc(args.game, args.track)
+            baseline_doc, baseline_material = load_baseline_qa_context(
+                args.game, args.track
+            )
             qa_ids = select_qa_changed_ids(
                 track_source.anim_doc,
                 baseline_doc,
                 [cid for entry in changed for cid in entry["cue_ids"]],
+                current_material=material_usage_signature_map(track_source.material_usages),
+                baseline_material=baseline_material,
             )
         rc = run_qa_gate(args.game, args.track, qa_ids, track_doc=track_source.anim_doc)
         if rc != 0:
@@ -828,7 +922,7 @@ def _main_section_mode(args, track_source, *, script: dict, source_root: Path | 
     write_tts_lrc(game_dir, args.track, pseudo_script, manifest)
     build_runtime(args.game, args.track, force=True)
 
-    rc = animation_compiler.main(["--game", args.game, "--track", args.track])
+    rc = _compile_track_with_material_gate(args.game, args.track)
     if rc != 0:
         return rc
     rc = rule_ledger.main(["--game", args.game, "--track", args.track])
@@ -953,13 +1047,20 @@ def main() -> int:
             qa_ids = None
             print("[qa] loading all merged hand-written questions (cue.qa + external)")
         else:
-            baseline_doc = load_baseline_track_doc(args.game, args.track)
+            baseline_doc, baseline_material = load_baseline_qa_context(
+                args.game, args.track
+            )
             if baseline_doc is None:
                 cue_count = len(anim_doc.get("cues") or [])
                 print(f"[qa] no committed baseline for {args.game}/{args.track}; "
                       f"treating all {cue_count} cue(s) as changed", file=sys.stderr)
             qa_ids = select_qa_changed_ids(
-                anim_doc, baseline_doc, [c["id"] for c in changed])
+                anim_doc, baseline_doc, [c["id"] for c in changed],
+                current_material=material_usage_signature_map(
+                    getattr(track_source, "material_usages", []) or []
+                ),
+                baseline_material=baseline_material,
+            )
             preview = ", ".join(qa_ids[:10])
             if len(qa_ids) > 10:
                 preview += f", ... (+{len(qa_ids) - 10})"
@@ -1008,7 +1109,7 @@ def main() -> int:
         build_runtime(args.game, args.track, force=True)
 
     # Animation compiler (cheap; always deterministic for the whole track).
-    rc = animation_compiler.main(["--game", args.game, "--track", args.track])
+    rc = _compile_track_with_material_gate(args.game, args.track)
     if rc != 0:
         return rc
 

@@ -735,7 +735,7 @@ class EventContext:
 class Compiler:
     def __init__(self, track_path: Path, doc: dict | None = None, *,
                  source_root: Path | None = None, source_hash: str | None = None,
-                 script_doc: dict | None = None):
+                 script_doc: dict | None = None, record_event_states: bool = False):
         self.track_path = Path(track_path)
         if source_root is not None:
             self.track_dir = Path(source_root)
@@ -773,6 +773,11 @@ class Compiler:
             if isinstance(c, dict) and c.get("id")
         }
         self.prev_cue = {}
+        self.record_event_states = bool(record_event_states)
+        # Optional in-memory instrumentation for checkers (never serialized):
+        # per-cue snapshot before each source event plus after every event.
+        self.event_state_timelines: dict[str, list[dict]] = {}
+        self.event_times: dict[str, list[float]] = {}
         ordered = [c for c in (self.doc.get("cues") or []) if isinstance(c, dict) and c.get("id")]
         for i in range(1, len(ordered)):
             self.prev_cue[str(ordered[i].get("id"))] = str(ordered[i - 1].get("id"))
@@ -1181,9 +1186,15 @@ class Compiler:
 
             state = StateModel(self.stack_zones, self.zone_order_policies).load_snapshot(entry_state)
             start = state.snapshot()
+            state_timeline = [] if self.record_event_states else None
+            event_times = [] if self.record_event_states else None
             clips, state_ops, camera_ops, first_state, pointer_resolution = self.compile_events(
-                cue, state, tree, 0, stage_id
+                cue, state, tree, 0, stage_id,
+                state_timeline=state_timeline, event_times=event_times,
             )
+            if self.record_event_states and cid is not None:
+                self.event_state_timelines[str(cid)] = state_timeline or []
+                self.event_times[str(cid)] = event_times or []
             if first_state is None:
                 first_state = start
             enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
@@ -1321,7 +1332,9 @@ class Compiler:
         return arr
 
     def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int,
-                       stage_id: str | None = None) -> tuple:
+                       stage_id: str | None = None, *,
+                       state_timeline: list | None = None,
+                       event_times: list | None = None) -> tuple:
         """Returns (clips, state_ops, camera_ops, first_state, pointer_resolution).
 
         * state_ops are concrete item-id puts/removes: the logical truth the
@@ -1375,6 +1388,9 @@ class Compiler:
             "wait": self._compile_wait,
         }
 
+        if state_timeline is not None:
+            state_timeline.append(state.snapshot())
+
         for event_index, ev in enumerate(cue.get("events") or []):
             op = ev.get("op")
             handler = handlers.get(op) if isinstance(op, str) else None
@@ -1398,8 +1414,16 @@ class Compiler:
             )
             handler(ctx)
             if ctx.skip:
+                if state_timeline is not None:
+                    state_timeline.append(state.snapshot())
+                if event_times is not None:
+                    event_times.append(ctx.at)
                 continue
             self._finalize_event(ctx)
+            if state_timeline is not None:
+                state_timeline.append(state.snapshot())
+            if event_times is not None:
+                event_times.append(ctx.at)
             first_state = ctx.first_state
 
         # Stable chronological order.  Python's sort is stable, so same-time

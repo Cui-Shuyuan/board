@@ -8,6 +8,15 @@
       "id": "round",
       "entry": "initial",
       "tree": "main",
+      "script": {
+        "story": "虚构工人夹具",
+        "enter": {
+          "zones": {}
+        },
+        "exit": {
+          "zones": {}
+        }
+      },
       "example": {
         "ref": "worker_toy.example.worker_round"
       },
@@ -46,16 +55,7 @@
           },
           "insert_at": 1
         }
-      ],
-      "script": {
-        "story": "虚构工人夹具",
-        "enter": {
-          "zones": {}
-        },
-        "exit": {
-          "zones": {}
-        }
-      }
+      ]
     }
   ]
 }

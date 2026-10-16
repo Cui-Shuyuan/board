@@ -210,6 +210,61 @@ class MaterialLibraryTests(unittest.TestCase):
             with self.assertRaisesRegex(ml.MaterialError, "no variant"):
                 lib.expand_section("sec", "tr", bad)
 
+
+    def test_nested_namespaces_are_path_scoped_and_collisions_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tut = self._tutorial(Path(tmp))
+            write(tut / "library/presentations/fake.inner.presentation.json", presentation_doc("fake.inner"))
+            write(tut / "library/presentations/fake.outer.presentation.json", {
+                "schema": "tutorial-material/v1", "id": "fake.outer",
+                "kind": "presentation", "game": "fake",
+                "steps": [
+                    {"id": "a", "use": [{"ref": "fake.inner"}]},
+                    {"id": "b", "use": [{"ref": "fake.inner"}]},
+                ],
+            })
+            write(tut / "library/presentations/fake.other_outer.presentation.json", {
+                "schema": "tutorial-material/v1", "id": "fake.other_outer",
+                "kind": "presentation", "game": "fake",
+                "steps": [{"id": "a", "use": [{"ref": "fake.inner"}]}],
+            })
+            lib = ml.load_materials("fake", tut)
+            anim = {"cues": [{
+                "id": "c1", "entry": "initial",
+                "use": [
+                    {"ref": "fake.outer", "timing": {"show": {"at": 0.1}}},
+                    {"ref": "fake.other_outer", "timing": {"show": {"at": 0.2}}},
+                ],
+            }]}
+            out, usages, _ = lib.expand_section("sec", "tr", anim)
+            ids = [e["target"]["id"] for e in out["cues"][0]["events"]]
+            self.assertEqual(3, len(ids))
+            self.assertEqual(3, len(set(ids)), ids)
+            nested = [u for u in usages if u.material == "fake.inner"]
+            self.assertEqual(3, len(nested))
+            self.assertEqual(3, len({tuple(u.call_path) for u in nested}))
+            # Explicit alias collision inside one parent is rejected.
+            write(tut / "library/presentations/fake.bad_outer.presentation.json", {
+                "schema": "tutorial-material/v1", "id": "fake.bad_outer",
+                "kind": "presentation", "game": "fake",
+                "steps": [
+                    {"id": "a", "use": [{"ref": "fake.inner", "as": "same"}]},
+                    {"id": "b", "use": [{"ref": "fake.inner", "as": "same"}]},
+                ],
+            })
+            lib2 = ml.load_materials("fake", tut)
+            bad = {"cues": [{"id": "c1", "entry": "initial",
+                             "use": [{"ref": "fake.bad_outer", "timing": {"show": {"at": 0.1}}}]}]}
+            with self.assertRaisesRegex(ml.MaterialError, "collides"):
+                lib2.expand_section("sec", "tr", bad)
+            # Two top-level explicit aliases that normalize to the same name collide too.
+            dup_root = {"cues": [{"id": "c1", "entry": "initial", "use": [
+                {"ref": "fake.inner", "as": "dup", "timing": {"show": {"at": 0.1}}},
+                {"ref": "fake.inner", "as": "dup", "timing": {"show": {"at": 0.2}}},
+            ]}]}
+            with self.assertRaisesRegex(ml.MaterialError, "collides"):
+                lib.expand_section("sec", "tr", dup_root)
+
     def test_contract_placeholders_are_resolved(self):
         with tempfile.TemporaryDirectory() as tmp:
             tut = self._tutorial(Path(tmp))
@@ -224,6 +279,37 @@ class MaterialLibraryTests(unittest.TestCase):
             self.assertEqual({"count": 2}, contract["postconditions"]["zones"]["board"])
             self.assertEqual("board", usages[0].bindings["zone"])
 
+
+
+    def test_nested_kind_constraints_are_recursive(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tut = self._tutorial(Path(tmp))
+            write(tut / "library/actions/fake.state.action.json", action_doc("fake.state"))
+            write(tut / "library/presentations/fake.visual.presentation.json",
+                  presentation_doc("fake.visual"))
+            # presentation -> action is rejected
+            badp = presentation_doc("fake.badp")
+            badp["steps"] = [{"id": "s", "use": [{"ref": "fake.state"}]}]
+            write(tut / "library/presentations/fake.badp.presentation.json", badp)
+            with self.assertRaisesRegex(ml.MaterialError, "cannot compose|references"):
+                ml.load_materials("fake", tut)
+            (tut / "library/presentations/fake.badp.presentation.json").unlink()
+            # action -> presentation is rejected
+            bada = action_doc("fake.bada")
+            bada["steps"] = [{"id": "s", "use": [{"ref": "fake.visual"}]}]
+            write(tut / "library/actions/fake.bada.action.json", bada)
+            with self.assertRaisesRegex(ml.MaterialError, "cannot compose|references"):
+                ml.load_materials("fake", tut)
+            (tut / "library/actions/fake.bada.action.json").unlink()
+            # example -> presentation is rejected
+            write(tut / "library/examples/fake.bade.example.json", {
+                "schema": "tutorial-material/v1", "id": "fake.bade",
+                "kind": "example", "game": "fake",
+                "steps": [{"id": "s", "use": [{"ref": "fake.visual"}]}],
+                "facts": {"zones": {}},
+            })
+            with self.assertRaisesRegex(ml.MaterialError, "cannot compose|references"):
+                ml.load_materials("fake", tut)
 
     def test_unknown_use_field_and_illegal_binding(self):
         with tempfile.TemporaryDirectory() as tmp:

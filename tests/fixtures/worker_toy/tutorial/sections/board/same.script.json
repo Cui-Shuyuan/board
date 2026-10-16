@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "game_id": "worker_toy",
+  "track": "same",
+  "section": "board",
+  "cues": [
+    {
+      "id": "round",
+      "group": "1 回合",
+      "group_path": [
+        "1 回合"
+      ],
+      "refs": [
+        "fixture:worker_round"
+      ],
+      "beats": [
+        {
+          "id": "board/round.b1",
+          "text": "放置工人"
+        },
+        {
+          "id": "board/round.b2",
+          "text": "获得资源"
+        }
+      ]
+    }
+  ]
+}

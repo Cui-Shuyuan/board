@@ -1,0 +1,21 @@
+{
+  "schema": "tutorial-anim/v2",
+  "kind": "animation_track",
+  "game": "worker_toy",
+  "track": "same",
+  "default_tree": "main",
+  "worlds": [
+    {
+      "id": "table",
+      "why": "虚构夹具牌桌"
+    }
+  ],
+  "trees": [
+    {
+      "id": "main",
+      "world": "table",
+      "stage": "shared/stage/worker_toy.stage.json",
+      "purpose": "工人与行动格"
+    }
+  ]
+}

@@ -112,6 +112,33 @@ class QaChangeDetectionTests(unittest.TestCase):
         self.assertEqual(["cue.1"], ct.select_qa_changed_ids(
             {"cues": [cue]}, {"cues": [cue]}, ["cue.1"]))
 
+
+    def test_material_usage_change_triggers_without_event_change(self):
+        cue = self._cue()
+        current = {"cue.1": [{"material": "g.a", "contract": {"postconditions": {}}, "material_sha256": "a"}]}
+        baseline = {"cue.1": [{"material": "g.a", "contract": {"postconditions": {}}, "material_sha256": "b"}]}
+        self.assertEqual(["cue.1"], ct.select_qa_changed_ids(
+            {"cues": [cue]}, {"cues": [cue]}, [],
+            current_material=current, baseline_material=baseline))
+        self.assertEqual([], ct.select_qa_changed_ids(
+            {"cues": [cue]}, {"cues": [cue]}, [],
+            current_material=current, baseline_material=current))
+
+    def test_material_signature_hashes_shared_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "m.action.json"
+            path.write_text("{}", encoding="utf-8")
+            usage = type("U", (), {
+                "cue": "cue.1", "material": "g.a", "kind": "action",
+                "variant": None, "mode": "continue", "bindings": {},
+                "timing": {}, "contract": None, "call_path": ["g.a"],
+                "path": path,
+            })()
+            first = ct.material_usage_signature_map([usage])
+            path.write_text('{"x":1}', encoding="utf-8")
+            second = ct.material_usage_signature_map([usage])
+            self.assertNotEqual(first, second)
+
     def test_missing_baseline_treats_all_cues_as_changed(self):
         doc = {"cues": [self._cue("cue.1"), self._cue("cue.2")]}
         self.assertEqual(
