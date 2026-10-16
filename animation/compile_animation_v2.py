@@ -778,6 +778,7 @@ class Compiler:
         # per-cue snapshot before each source event plus after every event.
         self.event_state_timelines: dict[str, list[dict]] = {}
         self.event_times: dict[str, list[float]] = {}
+        self.event_end_times: dict[str, list[float]] = {}
         ordered = [c for c in (self.doc.get("cues") or []) if isinstance(c, dict) and c.get("id")]
         for i in range(1, len(ordered)):
             self.prev_cue[str(ordered[i].get("id"))] = str(ordered[i - 1].get("id"))
@@ -1188,13 +1189,16 @@ class Compiler:
             start = state.snapshot()
             state_timeline = [] if self.record_event_states else None
             event_times = [] if self.record_event_states else None
+            event_ends = [] if self.record_event_states else None
             clips, state_ops, camera_ops, first_state, pointer_resolution = self.compile_events(
                 cue, state, tree, 0, stage_id,
                 state_timeline=state_timeline, event_times=event_times,
+                event_ends=event_ends,
             )
             if self.record_event_states and cid is not None:
                 self.event_state_timelines[str(cid)] = state_timeline or []
                 self.event_times[str(cid)] = event_times or []
+                self.event_end_times[str(cid)] = event_ends or []
             if first_state is None:
                 first_state = start
             enter_pic = ((cue.get("script") or {}).get("enter") or {}).get("picture")
@@ -1334,7 +1338,8 @@ class Compiler:
     def compile_events(self, cue: dict, state: StateModel, tree: dict, idx: int,
                        stage_id: str | None = None, *,
                        state_timeline: list | None = None,
-                       event_times: list | None = None) -> tuple:
+                       event_times: list | None = None,
+                       event_ends: list | None = None) -> tuple:
         """Returns (clips, state_ops, camera_ops, first_state, pointer_resolution).
 
         * state_ops are concrete item-id puts/removes: the logical truth the
@@ -1392,6 +1397,8 @@ class Compiler:
             state_timeline.append(state.snapshot())
 
         for event_index, ev in enumerate(cue.get("events") or []):
+            clip_start = len(clips)
+            state_op_start = len(state_ops)
             op = ev.get("op")
             handler = handlers.get(op) if isinstance(op, str) else None
             if handler is None:
@@ -1418,12 +1425,28 @@ class Compiler:
                     state_timeline.append(state.snapshot())
                 if event_times is not None:
                     event_times.append(ctx.at)
+                if event_ends is not None:
+                    event_ends.append(ctx.at)
                 continue
             self._finalize_event(ctx)
             if state_timeline is not None:
                 state_timeline.append(state.snapshot())
             if event_times is not None:
                 event_times.append(ctx.at)
+            if event_ends is not None:
+                visual_end = ctx.at
+                for clip in clips[clip_start:]:
+                    visual_end = max(
+                        visual_end,
+                        float(clip.get("at", 0.0) or 0.0)
+                        + max(0.0, float(clip.get("lead", 0.0) or 0.0))
+                        + max(0.0, float(clip.get("dur", 0.0) or 0.0)),
+                    )
+                state_end = ctx.at
+                for state_op in state_ops[state_op_start:]:
+                    state_end = max(state_end, float(state_op.get("at", 0.0) or 0.0))
+                declared_end = ctx.at + max(0.0, float(ctx.lead or 0.0)) + max(0.0, float(ctx.dur or 0.0))
+                event_ends.append(max(declared_end, visual_end, state_end))
             first_state = ctx.first_state
 
         # Stable chronological order.  Python's sort is stable, so same-time

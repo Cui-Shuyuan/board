@@ -296,14 +296,15 @@ def _state_signature(snapshot: dict) -> str:
 
 
 def _check_timing(usage: ml.MaterialUsage, asset: ml.MaterialAsset,
-                  times: list[float], cue_duration: float | None,
+                  start_times: list[float], end_times: list[float],
+                  cue_duration: float | None,
                   timeline_segment: list[dict] | None,
                   report: list[str]) -> int:
     events = usage.events or []
-    if len(times) != len(events):
+    if len(start_times) != len(events) or len(end_times) != len(events):
         report.append(
-            f"{usage.where}: timing source map mismatch ({len(times)} times for "
-            f"{len(events)} events)"
+            f"{usage.where}: timing source map mismatch "
+            f"({len(start_times)} starts / {len(end_times)} ends for {len(events)} events)"
         )
         return 0
     checks = 1
@@ -320,7 +321,7 @@ def _check_timing(usage: ml.MaterialUsage, asset: ml.MaterialAsset,
     ]
     last_state_time = None
     for i in state_indices:
-        t = float(times[i])
+        t = float(start_times[i])
         if t < -1e-9:
             report.append(f"{where}: event[{i}] resolves to negative time {t}")
         if last_state_time is not None and t + 1e-9 < last_state_time:
@@ -329,55 +330,51 @@ def _check_timing(usage: ml.MaterialUsage, asset: ml.MaterialAsset,
                 f"previous state event time {last_state_time}"
             )
         last_state_time = max(last_state_time, t) if last_state_time is not None else t
-    ends = []
-    for i, ev in enumerate(events):
-        try:
-            dur = float(ev.get("dur", 0.0) or 0.0)
-        except (TypeError, ValueError):
-            report.append(f"{where}: event[{i}] has non-numeric dur")
+
+    for i, (start, end) in enumerate(zip(start_times, end_times)):
+        if float(start) < -1e-9:
             continue
-        if dur < 0:
-            report.append(f"{where}: event[{i}] has negative duration {dur}")
-        ends.append(float(times[i]) + max(0.0, dur))
-    if ends:
-        start = min(float(times[i]) for i in range(len(times)))
-        end = max(ends)
-        span = end - start
-        checks += 1
-        min_span = asset.timing.get("min_span")
-        if min_span is not None and span + 1e-9 < float(min_span):
+        if float(end) + 1e-9 < float(start):
             report.append(
-                f"{where}: material span {span:.3f}s is below min_span {float(min_span):.3f}s"
+                f"{where}: event[{i}] effective end {end} is before its start {start}"
             )
-        min_event = asset.timing.get("min_event_duration")
-        if min_event is not None:
-            for i, ev in enumerate(events):
-                if ev.get("op") not in STATE_OPS:
-                    continue
-                dur = float(ev.get("dur", 0.0) or 0.0)
-                if 0.0 < dur + 1e-9 < float(min_event):
-                    report.append(
-                        f"{where}: event[{i}] duration {dur:.3f}s is below "
-                        f"min_event_duration {float(min_event):.3f}s"
-                    )
-        if cue_duration is not None and end > float(cue_duration) + 1e-6:
-            report.append(
-                f"{where}: material ends at {end:.3f}s, beyond cue duration "
-                f"{float(cue_duration):.3f}s"
-            )
+
+    start = min(float(t) for t in start_times)
+    end = max(float(t) for t in end_times)
+    span = end - start
+    checks += 1
+    min_span = asset.timing.get("min_span")
+    if min_span is not None and span + 1e-9 < float(min_span):
+        report.append(
+            f"{where}: material span {span:.3f}s is below min_span {float(min_span):.3f}s"
+        )
+    min_event = asset.timing.get("min_event_duration")
+    if min_event is not None:
+        for i in state_indices:
+            effective = float(end_times[i]) - float(start_times[i])
+            if effective + 1e-9 < float(min_event):
+                report.append(
+                    f"{where}: event[{i}] effective duration {effective:.3f}s is below "
+                    f"min_event_duration {float(min_event):.3f}s"
+                )
+    if cue_duration is not None and end > float(cue_duration) + 1e-6:
+        report.append(
+            f"{where}: material ends at {end:.3f}s, beyond cue duration "
+            f"{float(cue_duration):.3f}s"
+        )
+
     if asset.timing.get("conflict_check"):
         checks += 1
         for i in state_indices:
             for j in state_indices:
                 if j <= i:
                     continue
-                ei, ej = events[i], events[j]
-                dur_i = max(0.0, float(ei.get("dur", 0.0) or 0.0))
-                ti, tj = float(times[i]), float(times[j])
-                overlap = (ti + dur_i) > tj + 1e-9
+                si, ei = float(start_times[i]), float(end_times[i])
+                sj, ej = float(start_times[j]), float(end_times[j])
+                overlap = sj < ei - 1e-9 and si < ej - 1e-9
                 if not overlap:
                     continue
-                if _event_state_selector(ei) == _event_state_selector(ej):
+                if _event_state_selector(events[i]) == _event_state_selector(events[j]):
                     report.append(
                         f"{where}: conflicting state writes on the same selector in "
                         f"events[{i}] and events[{j}] overlap in time"
@@ -411,14 +408,6 @@ def _runtime_windows(game: str, track: str) -> dict[str, float]:
                     0.0, float(cue.get("duration", 0.0) or 0.0)
                 )
     return windows
-
-
-def _material_end_time(usage: ml.MaterialUsage, times: list[float]) -> float:
-    end = 0.0
-    for i, ev in enumerate(usage.events or []):
-        dur = float(ev.get("dur", 0.0) or 0.0)
-        end = max(end, float(times[i]) + max(0.0, dur))
-    return end
 
 
 def _canonical_without_source(doc: dict) -> str:
@@ -494,13 +483,14 @@ def check_track(game: str, track: str, *, quiet: bool = False,
             )
         timeline = compiler.event_state_timelines.get(usage.cue) or []
         times = compiler.event_times.get(usage.cue) or []
+        ends = compiler.event_end_times.get(usage.cue) or []
         entry = None
         exit = None
         where = f"{usage.cue} {usage.source_chain()}"
         if usage.event_count > 0:
             start = usage.event_start
             stop = start + usage.event_count
-            if start < 0 or stop >= len(timeline) or stop > len(times):
+            if start < 0 or stop >= len(timeline) or stop > len(times) or stop > len(ends):
                 report.append(
                     f"{usage.where}: event boundary [{start}, {stop}) is outside "
                     f"compiler timeline (len={len(timeline)})"
@@ -509,13 +499,13 @@ def check_track(game: str, track: str, *, quiet: bool = False,
             entry = timeline[start]
             exit = timeline[stop]
             checks += _check_timing(
-                usage, asset, times[start:stop],
+                usage, asset, times[start:stop], ends[start:stop],
                 float(comp.get("duration", 0.0) or 0.0),
                 timeline[start:stop + 1], report,
             )
             window = runtime_windows.get(usage.cue)
             if window is not None:
-                end = _material_end_time(usage, times[start:stop])
+                end = max(float(t) for t in ends[start:stop])
                 if end > window + 1e-6:
                     msg = (
                         f"{where}: material ends at {end:.3f}s, beyond audio "

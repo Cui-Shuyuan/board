@@ -736,8 +736,6 @@ class MaterialLibrary:
 
     def _select_variant(self, asset: MaterialAsset, use: dict, where: str) -> str | None:
         variant = use.get("variant")
-        if variant is None and use.get("mode") == "isolated":
-            variant = None
         if variant is not None:
             text = str(variant).strip()
         else:
@@ -757,6 +755,26 @@ class MaterialLibrary:
         elif text:
             raise MaterialError(f"{where}: material {asset.id} has no variants")
         return text
+
+    def _resolve_use_variant_steps(self, asset: MaterialAsset, use: dict,
+                                   where: str) -> tuple[str | None, list[dict]]:
+        """Resolve use.variant and the concrete step list for top/nested calls.
+
+        Nested calls must use the exact same default/missing/illegal variant
+        semantics as top-level calls.  Omit/status checks operate on the
+        selected variant steps, not on the base steps that are replaced.
+        """
+        variant = None
+        if asset.kind == "example":
+            variant = self._select_variant(asset, use, where)
+        elif use.get("variant") is not None:
+            raise MaterialError(f"{where}: only examples accept a variant")
+        selected_steps = asset.steps
+        if variant is not None:
+            entry = self._variant_entry(asset, variant)
+            if entry is not None and "steps" in entry:
+                selected_steps = entry.get("steps") or []
+        return variant, selected_steps
 
     @staticmethod
     def _normalize_namespace(raw, fallback: str, where: str) -> str:
@@ -803,13 +821,7 @@ class MaterialLibrary:
             raise MaterialError(f"{where}: use item must be a string or object")
         ref = str(use.get("ref") or "").strip()
         asset = self.resolve(ref, where=where)
-        variant = None
-        if asset.kind == "example":
-            variant = self._select_variant(asset, use, where)
-        elif use.get("variant") is not None:
-            raise MaterialError(f"{where}: only examples accept a variant")
-        if asset.kind == "presentation" and use.get("variant") is not None:
-            raise MaterialError(f"{where}: presentations do not declare variants")
+        variant, selected_steps = self._resolve_use_variant_steps(asset, use, where)
 
         alias = use.get("namespace") if "namespace" in use else use.get("as")
         namespace = self._normalize_namespace(alias, f"u{use_index + 1}", where)
@@ -823,11 +835,11 @@ class MaterialLibrary:
         mode = str(use.get("mode") or "continue").strip() or "continue"
         omit_raw = use.get("omit") or []
         omit = {str(x) for x in omit_raw}
-        valid_steps = {str(s.get("id")) for s in asset.steps}
+        valid_steps = {str(s.get("id")) for s in selected_steps}
         unknown_omit = sorted(omit - valid_steps)
         if unknown_omit:
             raise MaterialError(f"{where}: omit references unknown step(s): {', '.join(unknown_omit)}")
-        for step in asset.steps:
+        for step in selected_steps:
             sid = str(step.get("id"))
             if sid in omit and str(step.get("status") or "required") != "optional":
                 raise MaterialError(f"{where}: step {sid!r} is required and cannot be omitted")
@@ -840,11 +852,10 @@ class MaterialLibrary:
             used_namespaces=used_namespaces, explicit_entry=explicit_entry,
         )
         ctx.call_path = [asset.id]
-        variant_entry = self._variant_entry(asset, variant) if asset.kind == "example" else None
         expand_asset = asset
-        if variant_entry is not None and "steps" in variant_entry:
+        if selected_steps is not asset.steps:
             expand_asset = copy.copy(asset)
-            expand_asset.steps = copy.deepcopy(variant_entry.get("steps") or [])
+            expand_asset.steps = copy.deepcopy(selected_steps)
         event_usages: list[MaterialUsage] = []
         if asset.kind == "example" and not expand_asset.steps:
             events: list[dict] = []
@@ -911,6 +922,9 @@ class MaterialLibrary:
             raise MaterialError(f"{where}: nested use must be string or object")
         ref = str(self._resolve_value(use.get("ref"), parent_scope, f"{where}.ref") or "")
         nested_asset = self.resolve(ref, where=where)
+        nested_variant, selected_steps = self._resolve_use_variant_steps(
+            nested_asset, use, where
+        )
         bind = self._resolve_value(use.get("bind") or {}, parent_scope, f"{where}.bind")
         if not isinstance(bind, dict):
             raise MaterialError(f"{where}.bind must resolve to an object")
@@ -927,13 +941,13 @@ class MaterialLibrary:
         previous_timing, previous_omit = ctx.timing, ctx.omit
         previous_ns = ctx.namespace
         nested_omit = set(str(x) for x in use.get("omit") or [])
-        valid_steps = {str(s.get("id")) for s in nested_asset.steps}
+        valid_steps = {str(s.get("id")) for s in selected_steps}
         if not nested_omit <= valid_steps:
             raise MaterialError(
                 f"{where}: omit references unknown step(s): "
                 + ", ".join(sorted(nested_omit - valid_steps))
             )
-        for step_decl in nested_asset.steps:
+        for step_decl in selected_steps:
             if (str(step_decl.get("id")) in nested_omit
                     and str(step_decl.get("status") or "required") != "optional"):
                 raise MaterialError(
@@ -952,9 +966,13 @@ class MaterialLibrary:
             nested_asset.id,
         ]
         ctx.call_path = nested_call_path
+        expand_asset = nested_asset
+        if selected_steps is not nested_asset.steps:
+            expand_asset = copy.copy(nested_asset)
+            expand_asset.steps = copy.deepcopy(selected_steps)
         try:
             events, nested_usages = self._expand_asset(
-                nested_asset, ctx, scope, chain + [asset.id]
+                expand_asset, ctx, scope, chain + [asset.id]
             )
         finally:
             ctx.timing, ctx.omit = previous_timing, previous_omit
@@ -968,7 +986,7 @@ class MaterialLibrary:
         usage = MaterialUsage(
             track=ctx.track, section=ctx.section_id, cue=ctx.qid, use_index=-1,
             step=str(step.get("id") or ""), material=nested_asset.id,
-            kind=nested_asset.kind, variant=None,
+            kind=nested_asset.kind, variant=nested_variant,
             mode=str(use.get("mode") or "continue"), path=nested_asset.path,
             where=where, events=events, bindings=copy.deepcopy(bind),
             timing=copy.deepcopy(use.get("timing") or {}), contract=contract,

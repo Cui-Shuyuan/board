@@ -265,6 +265,97 @@ class MaterialLibraryTests(unittest.TestCase):
             with self.assertRaisesRegex(ml.MaterialError, "collides"):
                 lib.expand_section("sec", "tr", dup_root)
 
+
+    def test_nested_example_variant_matches_top_level_semantics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tut = self._tutorial(Path(tmp))
+            child = example_doc("fake.child")
+            child["steps"] = [{"id": "base", "events": [{
+                "op": "create", "count": 1, "anchor": "@e",
+                "target": {"space": "entity", "zone": "box", "template": "piece"}}]}]
+            child["variants"] = [{
+                "id": "two",
+                "steps": [
+                    {"id": "two", "events": [{
+                        "op": "create", "count": 2, "anchor": "@e",
+                        "target": {"space": "entity", "zone": "box", "template": "piece"}}]},
+                    {"id": "extra", "status": "optional", "events": [{
+                        "op": "create", "count": 1, "anchor": "@e",
+                        "target": {"space": "entity", "zone": "box", "template": "piece"}}]},
+                ],
+                "facts": {"zones": {"box": {"count": 2}}},
+            }]
+            child["facts"] = {"zones": {"box": {"count": 1}}}
+            write(tut / "library/examples/fake.child.example.json", child)
+            write(tut / "library/examples/fake.parent.example.json", {
+                "schema": "tutorial-material/v1", "id": "fake.parent",
+                "kind": "example", "game": "fake",
+                "steps": [{"id": "p", "use": [{"ref": "fake.child", "variant": "two"}]}],
+                "facts": {},
+            })
+            write(tut / "library/examples/fake.grand.example.json", {
+                "schema": "tutorial-material/v1", "id": "fake.grand",
+                "kind": "example", "game": "fake",
+                "steps": [{"id": "g", "use": [{"ref": "fake.parent"}]}],
+                "facts": {},
+            })
+            lib = ml.load_materials("fake", tut)
+            anim = {"cues": [{
+                "id": "c1", "entry": "initial",
+                "use": [
+                    {"ref": "fake.child", "variant": "two",
+                     "timing": {"e": {"at": 0.1}}},
+                    {"ref": "fake.parent", "timing": {"e": {"at": 0.2}}},
+                    {"ref": "fake.grand", "timing": {"e": {"at": 0.3}}},
+                ],
+            }]}
+            out, usages, _ = lib.expand_section("sec", "tr", anim)
+            counts = [e.get("count") for e in out["cues"][0]["events"]]
+            self.assertEqual([2, 1, 2, 1, 2, 1], counts)
+            variants = sorted((u.material, u.variant) for u in usages)
+            self.assertIn(("fake.child", "two"), variants)
+            self.assertEqual(3, sum(1 for m, v in variants if m == "fake.child" and v == "two"))
+            # Omit validation uses the selected variant steps, not base steps.
+            write(tut / "library/examples/fake.omit_parent.example.json", {
+                "schema": "tutorial-material/v1", "id": "fake.omit_parent",
+                "kind": "example", "game": "fake",
+                "steps": [{"id": "p", "use": [{
+                    "ref": "fake.child", "variant": "two", "omit": ["extra"]}]}],
+                "facts": {},
+            })
+            lib3 = ml.load_materials("fake", tut)
+            out3, _, _ = lib3.expand_section("sec", "tr", {"cues": [{
+                "id": "c1", "entry": "initial",
+                "use": [{"ref": "fake.omit_parent", "timing": {"e": {"at": 0.1}}}],
+            }]})
+            self.assertEqual(2, out3["cues"][0]["events"][0].get("count"))
+            write(tut / "library/examples/fake.bad_omit_parent.example.json", {
+                "schema": "tutorial-material/v1", "id": "fake.bad_omit_parent",
+                "kind": "example", "game": "fake",
+                "steps": [{"id": "p", "use": [{
+                    "ref": "fake.child", "variant": "two", "omit": ["base"]}]}],
+                "facts": {},
+            })
+            lib4 = ml.load_materials("fake", tut)
+            with self.assertRaisesRegex(ml.MaterialError, "unknown step"):
+                lib4.expand_section("sec", "tr", {"cues": [{
+                    "id": "c1", "entry": "initial",
+                    "use": [{"ref": "fake.bad_omit_parent", "timing": {"e": {"at": 0.1}}}],
+                }]})
+            # Illegal nested variant must fail with the nested call chain.
+            write(tut / "library/examples/fake.bad_parent.example.json", {
+                "schema": "tutorial-material/v1", "id": "fake.bad_parent",
+                "kind": "example", "game": "fake",
+                "steps": [{"id": "p", "use": [{"ref": "fake.child", "variant": "nope"}]}],
+                "facts": {},
+            })
+            lib2 = ml.load_materials("fake", tut)
+            with self.assertRaisesRegex(ml.MaterialError, "no variant"):
+                lib2.expand_section("sec", "tr", {"cues": [{
+                    "id": "c1", "entry": "initial",
+                    "use": [{"ref": "fake.bad_parent", "timing": {"e": {"at": 0.1}}}],
+                }]})
+
     def test_contract_placeholders_are_resolved(self):
         with tempfile.TemporaryDirectory() as tmp:
             tut = self._tutorial(Path(tmp))

@@ -203,6 +203,98 @@ class MaterialCheckerBoundaryTests(unittest.TestCase):
         self.assertTrue(any("stale/divergent" in e for e in errors), errors)
 
 
+
+    def test_omitted_draw_duration_is_seen_by_strict_audio_window(self):
+        actions = {
+            "case.create_one": action("case.create_one"),
+            "case.draw_omitted": action("case.draw_omitted", steps=[{
+                "id": "e",
+                "events": [{
+                    "op": "draw", "to": "face_up", "anchor": "@e",
+                    "target": {"space": "entity", "zone": "a", "template": "piece",
+                               "palette": "plain", "concept": "piece"},
+                    "destination": {"space": "entity", "zone": "b"},
+                }],
+            }]),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tut = self._fixture(root, actions, [
+                {"ref": "case.create_one", "timing": {"e": {"at": 0.0}}},
+                {"ref": "case.draw_omitted", "timing": {"e": {"at": 0.9}}},
+            ])
+            write(tut / "full.runtime.json", {"cues": [
+                {"id": "s/c1", "audio": "a.mp3", "audio_start": 0.0,
+                 "duration": 1.0},
+            ]})
+            game, track = "casegame", "full"
+            with mock.patch.object(section_source, "ROOT", root), \
+                    mock.patch.object(anim_compile, "ROOT", root):
+                self.assertEqual(0, anim_compile.main(["--game", game, "--track", track]))
+                code, errors = cm.check_track(game, track, strict_timing=False)
+                self.assertEqual(0, code, errors)
+                code, errors = cm.check_track(game, track, strict_timing=True)
+        self.assertEqual(1, code)
+        self.assertTrue(any("beyond audio window" in e and "1.500" in e for e in errors), errors)
+
+    def test_compiler_event_end_times_include_default_and_explicit_durations(self):
+        explicit_dur = 1.25
+        actions = {
+            "case.create_four": action("case.create_four", steps=[{
+                "id": "e", "events": [dict(create_event("a", count=4))],
+            }]),
+            "case.draw_omitted": action("case.draw_omitted", steps=[{
+                "id": "e",
+                "events": [{
+                    "op": "draw", "to": "face_up", "anchor": "@e",
+                    "target": {"space": "entity", "zone": "a", "template": "piece",
+                               "palette": "plain", "concept": "piece"},
+                    "destination": {"space": "entity", "zone": "b"},
+                }],
+            }]),
+            "case.draw_explicit": action("case.draw_explicit", steps=[{
+                "id": "e",
+                "events": [{
+                    "op": "draw", "to": "face_up", "anchor": "@e", "dur": explicit_dur,
+                    "target": {"space": "entity", "zone": "a", "template": "piece",
+                               "palette": "plain", "concept": "piece"},
+                    "destination": {"space": "entity", "zone": "b"},
+                }],
+            }]),
+            "case.flip_omitted": action("case.flip_omitted", steps=[{
+                "id": "e",
+                "events": [{
+                    "op": "flip", "to": "face_up", "anchor": "@e",
+                    "axis": "long", "direction": "ccw",
+                    "target": {"space": "entity", "zone": "a", "template": "piece",
+                               "palette": "plain", "concept": "piece"},
+                    "destination": {"space": "entity", "zone": "b"},
+                }],
+            }]),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._fixture(root, actions, [
+                {"ref": "case.create_four", "timing": {"e": {"at": 0.0}}},
+                {"ref": "case.draw_omitted", "timing": {"e": {"at": 0.2}}},
+                {"ref": "case.draw_explicit", "timing": {"e": {"at": 1.0}}},
+                {"ref": "case.flip_omitted", "timing": {"e": {"at": 2.5}}},
+            ])
+            with mock.patch.object(section_source, "ROOT", root), \
+                    mock.patch.object(anim_compile, "ROOT", root):
+                src = section_source.load_track_source("casegame", "full")
+                compiler = anim_compile.Compiler(
+                    root / "dummy.anim.json", doc=src.anim_doc,
+                    source_root=src.tutorial, source_hash=src.source_hash,
+                    script_doc=src.script_doc, record_event_states=True)
+                compiler.compile()
+        starts = compiler.event_times["s/c1"]
+        ends = compiler.event_end_times["s/c1"]
+        # events: create-four, draw (omitted), draw (explicit), flip (omitted)
+        self.assertAlmostEqual(0.6, ends[1] - starts[1], places=6)
+        self.assertAlmostEqual(explicit_dur, ends[2] - starts[2], places=6)
+        self.assertAlmostEqual(0.6, ends[3] - starts[3], places=6)
+
     def test_strict_timing_turns_audio_window_overrun_into_error(self):
         actions = {
             "case.long_create": action("case.long_create", steps=[{
@@ -435,7 +527,6 @@ class SelectorAndTimingUnitTests(unittest.TestCase):
             path=Path("x"), where="c1 use[0]",
             events=[dict(create_event("a", count=1), dur=1.0)],
         )
-        self.assertEqual(2.5, cm._material_end_time(usage, [1.5]))
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             rt = root / "content/games/casegame/tutorial/full.runtime.json"
@@ -461,13 +552,13 @@ class SelectorAndTimingUnitTests(unittest.TestCase):
                     self._snapshot([self._item("i1", "a"), self._item("i2", "a")])]
         usage.events = events
         report: list[str] = []
-        cm._check_timing(usage, SimpleNamespace(timing={}), [1.0, 0.5], None,
-                         timeline, report)
+        cm._check_timing(usage, SimpleNamespace(timing={}), [1.0, 0.5],
+                         [1.5, 1.2], None, timeline, report)
         self.assertTrue(any("causal order" in e for e in report), report)
 
         report = []
         cm._check_timing(usage, SimpleNamespace(timing={"min_span": 1.0}),
-                         [0.0, 0.2], None, timeline, report)
+                         [0.0, 0.2], [0.05, 0.3], None, timeline, report)
         self.assertTrue(any("min_span" in e for e in report), report)
 
         report = []
@@ -477,7 +568,7 @@ class SelectorAndTimingUnitTests(unittest.TestCase):
             path=Path("x"), where="c use[0]",
             events=[dict(create_event("a", count=1), dur=0.5)],
         )
-        cm._check_timing(one_event_usage, SimpleNamespace(timing={}), [0.0], 0.2,
+        cm._check_timing(one_event_usage, SimpleNamespace(timing={}), [0.0], [0.7], 0.2,
                          timeline[:2], report)
         self.assertTrue(any("beyond cue duration" in e for e in report), report)
 
@@ -490,7 +581,7 @@ class SelectorAndTimingUnitTests(unittest.TestCase):
         )
         report = []
         cm._check_timing(conflict_usage, SimpleNamespace(timing={"conflict_check": True}),
-                         [0.0, 0.2], None, timeline, report)
+                         [0.0, 0.2], [0.5, 0.7], None, timeline, report)
         self.assertTrue(any("conflicting state writes" in e for e in report), report)
 
 
