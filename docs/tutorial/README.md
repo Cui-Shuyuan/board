@@ -59,6 +59,7 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 
 - 新游戏作者指南与可复制模板：`docs/tutorial/animation-materials-authoring-guide.md`
 - 本次素材化重构报告：`docs/tutorial/animation-reuse-refactor-report.md`
+- 复核 R1–R6 修复报告：`docs/tutorial/animation-reuse-review-response-20261017.md`
 - 动画编写指南：`content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`
 - 数据模型细节：`content/games/splendor/tutorial/anim/v2/README.md`
 - 生产说明：`content/games/splendor/tutorial/anim/README.md`

@@ -8,7 +8,7 @@
 - Unity 播放器：`clients/unity/Assets/Scripts/Tutorial/`
 - 本目录只放跨游戏动画工具，不放 Unity 工程，也不放 per-game 动画数据。
 
-当前 Splendor：full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors。两轨引用同一批 `library/` 素材；迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。另有无 TTS 的非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性。
+当前 Splendor：full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors。两轨引用同一批 `library/` 素材；迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。`check_materials.py` 已接入 `compile_tutorial.py` 构建门禁，失败会恢复旧 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
 
 ## 原语与检查
 
@@ -23,6 +23,7 @@ python3 animation/material_cli.py validate --game splendor
 python3 animation/material_cli.py impact --game splendor --material splendor.action.seed_initial_market --check
 python3 animation/material_cli.py expand-cue --game splendor --track quick --cue quick_nobles/001 --anchors
 python3 animation/check_materials.py --game splendor --track quick
+python3 animation/check_materials.py --game splendor --strict-timing
 ```
 
 常用检查：

@@ -139,6 +139,9 @@ python3 animation/validate_anim_rules_v2.py --game <game> --track <track>
 python3 animation/audit_anim_v2.py --game <game> --track <track>
 python3 animation/check_card_identity_v2.py --game <game> --track <track>
 
+# 严格音频窗口：无 hold_after_audio 的超窗会失败；默认构建只 WARN
+python3 animation/check_materials.py --game <game> --strict-timing
+
 # 6. 看一个 cue 的展开结果和来源映射
 python3 animation/material_cli.py expand-cue --game <game> --track <track> --cue <qualified_cue> --anchors
 ```

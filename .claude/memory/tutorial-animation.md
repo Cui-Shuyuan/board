@@ -11,9 +11,10 @@ metadata:
 
 - 引入 `tutorial-material/v1` 素材库：`tutorial/library/{actions,examples,presentations}/`，由 `animation/material_library.py` 加载/校验/展开；cue 用 `use` + `example` 引用，不再在 full/quick 各存一份局面与动作。
 - `animation/material_cli.py` 提供 `validate` / `impact --check --rebuild` / `stale` / `expand-cue`；`animation/check_materials.py` 用 compiled state 校验 action 前后置与 example 事实。
-- Splendor 已抽 10 个 action、3 个 example、1 个 presentation，full 29 / quick 16 处引用；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致。
-- 非卡牌虚构夹具在 `tests/fixtures/worker_toy/`，同一 example 以 detailed/compact 两种编排、不同角色绑定和时间编译；对应测试 `animation/test_worker_toy_fixture.py`。
+- Splendor 已抽 10 个 action、3 个 example、1 个 presentation；含嵌套调用 full 31 / quick 20 处 usage。迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致。
+- 非卡牌虚构夹具在 `tests/fixtures/worker_toy/`：detailed/compact 验证参数化与不同编排，same 验证相同事实不同 timing 得到相同语义状态；对应测试 `animation/test_worker_toy_fixture.py`。
 - 修改共享素材：`python3 animation/material_cli.py impact --game splendor --material <id>`；纯动画素材变化不会触发 TTS 重合成。
+- R1–R6 复核修复见 `docs/tutorial/animation-reuse-review-response-20261017.md`：契约按调用边界检查、嵌套 usage/contract 保留、类别约束、namespace 隔离、QA HEAD 基线含 library、主构建门禁 `check_materials`。
 
 ## 定位与现状
 

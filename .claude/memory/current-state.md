@@ -15,7 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 最近进展
 
-- **素材化重构已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；Splendor 抽出 10 actions / 3 examples / 1 presentation，full 29、quick 16 处引用。迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 `tests/fixtures/worker_toy/` 走同一编译链。
+- **素材化重构与 R1–R6 复核修复已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；编译链按调用边界检查 action/example 契约、递归保留嵌套 usage、强制类别约束与 namespace 隔离、QA HEAD 基线包含 library。Splendor 抽出 10 actions / 3 examples / 1 presentation，full 31、quick 20 处 usage（含嵌套）；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 detailed/compact/same 走同一编译链。
 - **section-first 动画源已完成**：track 只排序 section，源真值为 `tutorial/{tracks,sections,shared}/`；旧单文件 `script.{track}.json` / `anim/v2/{track}.anim.json` / `anim/v2/_stage/` 已删除，`build/` 是忽略的装配中间产物。
 - cue id 统一为 qualified id `<section_id>/<local_id>`；section 内可写 local，跨 section 必须 qualified；`entry: "section:<id>"` 回到 section 起点。
 - TTS 按 section 生成一段连续音频，section 内多条 cue 共享 `audio` 并用 `audio_start` 切画面。
@@ -29,7 +29,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 - full：67 cue / 12 section / 338 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 53 cues / 0 errors；`check_card_identity_v2` 553 states / 0 error。
 - quick：24 cue / 11 section / 106 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 17 cues / 0 errors；`check_card_identity_v2` 333 states / 0 error。
 - `compile_animation_v2 --check` 对两轨均为 “up to date”；`section_source.py --check` 解析通过。
-- Python animation/索引回归 203/203；后端 xUnit 161/161；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
+- Python animation/索引回归 223/223；后端 xUnit 161/161；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
 - Android JVM 当前 12 个测试文件 / 93 个 `@Test` 全绿；真机端到端仍未验收。
 
 ## 当前已具备的能力

@@ -1,3 +1,5 @@
+> 后续复核发现并已修复 R1–R6；以 `docs/tutorial/animation-reuse-review-response-20261017.md` 为准。本报告保留首版迁移记录。
+
 # 动画素材复用重构报告（2026-10-17）
 
 任务书：`docs/tutorial/animation-reuse-refactor-prompt.md`。

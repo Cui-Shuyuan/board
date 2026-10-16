@@ -63,10 +63,9 @@ def _compile_track_with_material_gate(game: str, track: str) -> int:
         return rc
     try:
         import check_materials  # noqa: PLC0415
+        code, errors = check_materials.check_track(game, track)
     except Exception as exc:  # noqa: BLE001 - gate must fail closed
-        print(f"[materials] checker import failed: {exc}", file=sys.stderr)
-        return 2
-    code, errors = check_materials.check_track(game, track)
+        code, errors = 2, [f"material checker failed: {exc}"]
     if code:
         for error in errors:
             print(f"ERR  {error}", file=sys.stderr)
