@@ -13,8 +13,8 @@ metadata:
 L0 本体层：content/ontology/concepts.json + content/ontology/flow.json
 L1 游戏规则层：content/games/{game}/concepts.json + flow.json + instances.json
 L2 Runtime 层：backend/BoardAI.Api（Chat + Rules + Catalog + Content + ASR/TTS）
-L3 教案/动画源：script.full.json + full.anim.json + _stage/*.stage.json
-L4 运行产物：full.runtime.json + full.compiled.json + TTS 音频 + content manifests
+L3 动画源：tutorial/tracks/*.track.json + sections/<id>/{track}.{anim,script}.json + shared/stage/*.stage.json
+L4 运行产物：tutorial/{track}.runtime.json + tutorial/anim/v2/{track}.compiled.json + TTS 音频 + content manifests
 L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 ```
 
@@ -139,15 +139,15 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 - LLM 负责：理解语言、生成查询计划、组织答案。
 - 程序负责：实体解析、规则查询、条件/顺序/边界判断。
 - 回答风格：一到两句、汉字数字、无 markdown、TTS 友好。
-- Android 问答面板已有 PTT → ASR → `/api/chat` → 回答 TTS 的代码路径；完整真机端到端验收仍待复测。
+- Android 问答面板已有 PTT → 后端 ASR → `/api/chat` → 回答 TTS 的代码路径；ASR 默认在 API 进程内直连火山，`Voice:AsrMode=python` 可回退旧 Python 桥；完整真机端到端验收仍待复测。
 
 ## 6. 讲规动画
 
 独立文档见 `tutorial-animation.md`。一句话架构：
 
 ```text
-口播脚本 → TTS 冻结 → 动画源(state_ops/camera_ops/clips + time_anchors)
-→ compile_tutorial.py → runtime + compiled → Unity 播放
+section-first 源（script/anim/camera/state_ops/clips + time_anchors）
+→ compile_tutorial.py（section 级连续 TTS）→ runtime + compiled → Unity 播放
 ```
 
 ## 7. 关键约定

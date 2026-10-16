@@ -151,7 +151,7 @@ metadata:
 - 每项以触发条件、实际修改和验收记录收口，风险项先补复现；不因其他 checker 全绿而自动勾选。
 - [x] 同步过期文档：current-state 已撤下完成的跨平台 path bug 待办；后续更新索引入口、QA 门禁和缓存语义的文档，统一“问答后重播/精确恢复”的产品行为说明。
   - 实施记录（2026-10-09）：更新 `current-state.md`、`architecture.md`、`tools.md`、`README.md`、`project-overview.md`、`docs/ops/start-services.md`；索引身份路径、版本化 alias、pre-commit 入口和九款规则 hash 对齐已写入。产品行为统一为：进入问答前正在播放则先暂停，Unity 确认后记录 `cueId + cue 内位置`，继续播放用 `PlayCueAt` 精确恢复；问答前本就暂停则不自动播放。
-- [ ] 完成已有交付验收：full 逐 cue 视觉重审、PTT → ASR → chat → TTS → 回到动画，以及多设备长时间使用；范围见 [current-state.md](current-state.md)。
+- [ ] 完成已有交付验收：full 逐 cue 视觉重审、PTT → ASR → chat → TTS → 回到动画，以及多设备长时间使用；范围见 [current-state.md](../../memory/current-state.md)。
   - 2026-10-09 自动门禁：`check_anim_v2` 83 cues / 0 warnings、`validate_anim_rules_v2` 83 cues / 0 warnings、`audit_anim_v2` 53 cues / 0 errors / 0 warnings、`check_card_identity_v2` 569 states 0 error；Android JVM 上次基线 89/89，本轮未改 Android 代码。
   - 未完成：full 逐 cue 真人视觉、PTT → ASR → chat → TTS → 回到动画真机链路、多设备/长时间使用仍需在 Unity/Android 真机和实际服务上人工执行；当前工作区无可用 Android 设备与 Unity 播放环境，不能据此勾选。
 
@@ -160,9 +160,9 @@ metadata:
 - [x] 修复整句相关性被子词覆盖、同来源重复关键词累加；整句关键词要求全词覆盖，重复取最大值。
 - [x] 外观 identify 不再用通用名直接确认；explain 联合全文/名称补漏，计划候选保留 15 条，boundary 支持对象与槽位。
 - [x] 自动语义确认检查整句证据和领先分差；133/133 xUnit、85 条既有 gold 目标全部在直接命中或前三、7 条新增回归全部前三。直接确认由 82 降至 77，须保留这项代价。
-- [x] 启动真实 API 重放同一组 71 次聊天（0 HTTP 错误），保存 65 个查询排名；白色骰子重复六次均查到激活骰，旧版四次；Favor 测试、point bonus 卡不再误自动确认无关对象。报告：[检索排序修改与实测](../../docs/reviews/retrieval-ranking-2026-10-09.md)。
+- [x] 启动真实 API 重放同一组 71 次聊天（0 HTTP 错误），保存 65 个查询排名；白色骰子重复六次均查到激活骰，旧版四次；Favor 测试、point bonus 卡不再误自动确认无关对象。报告：[检索排序修改与实测](../../../docs/reviews/retrieval-ranking-2026-10-09.md)。
 - [x] 新增 53 条手写自然问句，覆盖九款游戏、中英混写、三条虚构实体、两条歧义题；48 条正例按主题分成 dev 20 / holdout 28，标组件及真实 JSON 事实路径，FAQ 答案不作真值。另存两条规则事实回答验收要求；全部问题的最终答案标注仍待补。
-- [x] 用同一个前 60 候选池比较事实片段、RRF、两种 cross encoder 输入；没有稳定胜过整段 CLS，暂不接正式查询。发现 BGE 原实现错误使用 mean pooling，切为 CLS；holdout 首位 6→17/28、前三 17→23/28。完整证据：[后续实测](../../docs/reviews/retrieval-followup-2026-10-09.md)。
+- [x] 用同一个前 60 候选池比较事实片段、RRF、两种 cross encoder 输入；没有稳定胜过整段 CLS，暂不接正式查询。发现 BGE 原实现错误使用 mean pooling，切为 CLS；holdout 首位 6→17/28、前三 17→23/28。完整证据：[后续实测](../../../docs/reviews/retrieval-followup-2026-10-09.md)。
 - [x] CLS 双端编码与索引迁移：C# / Python 长短输入对齐，九款 18 个索引版本同时校验；本地 active alias 已切 CLS，旧索引保留。向量 profile 不匹配时拒绝查询；召回底线 0.50 不用于自动确认。
 - [x] 从本地规则书核查升级、即时奖励、建造牌替代要求；补齐正在执行的模组升级后要到自己下一回合才能使用新等级的遗漏，三种实际聊天问法正确保留限定。未将未核验 FAQ 概括写成同类卡牌通则。
 - [x] evidence 单候选恢复：保留历史 unresolved，新增 pendingCount / resolvedByQueryIndex；同规则版本后续精确查询满足关系及候选匹配才恢复，Android 同步消费。后端 161/161、Android 91/91、Python animation 165/165、实验 5/5。
@@ -178,5 +178,5 @@ metadata:
 
 1. **Splendor Quick 版**：围绕摆好桌面、看懂一回合、完成首次购买与知道终局编排最小教案；复用现有原语，新增 cue 先由用户审核。验收以首次接触的玩家能开始游戏为准，记录讲解时间与需要店员补充的内容。
 2. **小范围店内试点**：从少量真实桌次收集首次开局时间、人工介入次数、问答等待时间与未解决问题。据此决定内容与交互投入，形成可重复发布、部署与使用的操作流程。
-3. **Civolution Flow Guide MVP**：沿已确定方向，先做顶层 8 阶段游标与终局计分助手；程序控流程/算分，玩家提供条件和数量；支持不确定时进入问答并返回原节点。以真实一局的流程与计分验收，详见 [flow-guide.md](flow-guide.md)。
+3. **Civolution Flow Guide MVP**：沿已确定方向，先做顶层 8 阶段游标与终局计分助手；程序控流程/算分，玩家提供条件和数量；支持不确定时进入问答并返回原节点。以真实一局的流程与计分验收，详见 [flow-guide.md](../../memory/flow-guide.md)。
 4. **验证第二款游戏的生产流程**：结合试点选择一款有需求、规则已具备的游戏，完成规则问答与 Quick 教程的整套交付；记录教案、素材、QA、编译与发布工时，以及是否必须改通用引擎。用实际边际成本决定后续扩展节奏。

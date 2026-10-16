@@ -1,6 +1,6 @@
 ---
 name: project-overview
-description: Board AI 项目定位、功能、阶段与技术选型（2026-10-07 当前版）
+description: Board AI 项目定位、功能、阶段与技术选型（2026-10-16 当前版）
 metadata:
   type: project
 ---
@@ -52,23 +52,23 @@ metadata:
 - LLM：`ILLMService` 抽象，当前 DeepSeek 兼容接口；system prompt 配置在 `appsettings.json`。
 - 检索：Qdrant 独立进程 + `bge-base-zh-v1.5` fp32 ONNX。
 - TTS：默认火山豆包标准语音合成小模型 v1（`standard`）；旧语音合成 2.0 通过 `--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 兼容。
-- 语音：后端 Python 短进程桥（`tools/voice/asr_once.py` / `tts_once.py`），Android 不直接接触火山凭证。
+- 语音：ASR 默认由 .NET API 进程内直连火山（`Voice:AsrMode=native`）；`tools/voice/asr_once.py` 作为 `Voice:AsrMode=python` 回退；TTS 仍走 Python 短进程（`tools/voice/tts_once.py`）。Android 不直接接触火山凭证。
 - 部署：Windows 本地主机 + 店内内网；模型、音频、视频、PDF、原始照片、内容 manifest 生成物不进 Git。
 
 ## 开发阶段
 
 1. **世界模型 / 本体**：已完成，持续小步扩展。当前 `content/ontology/concepts.json` 有 89 个概念。
 2. **Rule DSL**：已完成 Splendor 首版，后续游戏沿用。
-3. **Runtime / 意图接口**：已完成；单工具 `execute_plan` + 三层回答 + 向量检索。后端 `GameRulesService` 已完成服务化拆分，121 条 xUnit 全绿；全文/name 索引与 Python CLI 共用身份路径和版本契约，九款真实规则数据回归对齐。
+3. **Runtime / 意图接口**：已完成；单工具 `execute_plan` + 三层回答 + 向量检索。后端 `GameRulesService` 已完成服务化拆分，161 条 xUnit 全绿；全文/name 索引与 Python CLI 共用身份路径和版本契约，九款真实规则数据回归对齐。
 4. **扩游戏与元信息**：进行中；已有 9 款游戏规则数据。catalog 与 manifest v1 仅 Splendor 落地：`content/catalog/splendor.json` 已入 Git，`content/manifests/splendor.json` 为生成物。Android 首页读取 `/api/catalog/games`，内容更新走 manifest。
-5. **Tutorial Tree / 讲规动画**：当前重点之一；Splendor full 69 cue（cue id 已语义化）已跑通，终局与真卡身份收口，time_anchors 与 QA 同置已落地；quick 未做，正式视觉验收待定。
+5. **Tutorial Tree / 讲规动画**：当前重点之一；Splendor 已迁移到 section-first 源，full 67 cue / quick 24 cue 均已跑通编译与静态检查，quick 已成为 catalog 默认 track；full 逐 cue 真人视觉重审、quick 视觉验收待完成。
 6. **Controller / 语音问答**：已有首版能力；后端有一句话 ASR + TTS、Android PTT、回答音频自动播放/重播/继续播放。继续播放会先停回答音频，再按进入问答时记录的 cueId + 位置精确恢复；端到端真机验收仍待复测。
 7. **UI / 客户端**：已有首版客户端；UaaL 原生壳、Compose 控制、首页、资源管理、问答面板已落地。店内平板规模验收仍未完成。
 
-## 当前重心（2026-10-07）
+## 当前重心（2026-10-16）
 
-- 近期执行：Splendor 终局计分、真卡身份与合并 cue TTS 已收口；当前转向 full 逐 cue 重审、Android/语音端到端验收。
-- 后续排列：动画逐 cue 重审与 Quick → Flow Guide；内容 catalog/manifest 扩展和 Android 真机验收可并行。
+- 近期执行：Splendor quick 逐 cue 精修收尾；之后 full 逐 cue 真人视觉重审、Android/语音端到端验收。
+- 后续排列：动画 full/quick 收口 → Flow Guide；内容 catalog/manifest 扩展和 Android 真机验收可并行。
 
 ## 数据流总览
 
@@ -81,8 +81,8 @@ metadata:
   → TTS 播放
 
 讲规动画离线流程：
-  script.full.json（口播） + full.anim.json（动画源）
-  → compile_tutorial.py（TTS / runtime / compiled）
+  tutorial/tracks/*.track.json + sections/<id>/{track}.{script,anim}.json + shared/stage/*.stage.json
+  → compile_tutorial.py（section 级 TTS / runtime / compiled）
   → Unity 播放 compiled
 ```
 

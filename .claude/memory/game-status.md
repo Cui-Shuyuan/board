@@ -1,6 +1,6 @@
 ---
 name: game-status
-description: 九款游戏规则数据、流程、QA 与待办状态（以当前 JSON 文件和校验结果为准）
+description: 九款游戏规则数据、流程、QA 与待办状态（以当前 JSON 文件和校验结果为准；Splendor 动画基线 2026-10-16）
 metadata:
   type: project
 ---
@@ -23,14 +23,14 @@ metadata:
 
 ## Splendor
 
-- `concepts.json` 与 `flow.json` 已完成，是 Runtime 首个验证游戏。
-- 讲规动画 full 版：69 cue（cue id 已语义化），TTS、runtime、compiled、Unity 播放器与对账链已跑通；终局计分与真卡身份已收口。
-- `time_anchors` 已全量迁移并 commit（`38971d4`）；源数据保留 anchor，compiled 输出数值 `at`。
-- 口播 QA 已与 cue 同置流程落地：问题可/优先写在 `full.anim.json` 的 `qa` 字段，历史问题仍在 `_qa/questions.json`；`qa_anim_ask.py` 自动提取发送。
-- 当前工作不是“动画时间锚点收口”；动画遗留见 `tutorial-animation.md`。
-- 发展卡身份保真（方案 B）已主体完成：28 个 face-up 卡位各有独立真卡模板/扫描，`check_card_identity_v2.py` 当前 555 个中间状态 0 error。
-- **下一步：Splendor full 重新过动画**；扫描件已补，重点重看 `action.cards.*` / `action.nobles.*` / `action.reserve.*` 等市场与发展区 cue 的真卡画面，以及 `setup.gems.005.1` 的宝石数量复位、终局示例的双发展区与贵族表现。
-- catalog + manifest 已生成：`content/catalog/splendor.json` 入 Git；`content/manifests/splendor.json` 为生成物，不入 Git。
+- `concepts.json` 与 `flow.json` 已完成，是 Runtime 与动画首个验证游戏。
+- 动画源已迁移到 section-first：`tutorial/{tracks,sections,shared}/`；full 67 cue / 12 section / 338 anchors，quick 24 cue / 11 section / 106 anchors。
+- full：`check_anim_v2` / `validate_anim_rules_v2` 0 warnings，`audit_anim_v2` 53 cues 0 errors，`check_card_identity_v2` 553 states 0 error。
+- quick：`check_anim_v2` / `validate_anim_rules_v2` 0 warnings，`audit_anim_v2` 17 cues 0 errors，`check_card_identity_v2` 333 states 0 error；catalog 默认 `tutorial_track=quick`。
+- QA 与 cue 同置：问题优先写 cue 的 `qa` 字段；外置历史问题放 `sections/<id>/qa.json`，由 `qa_anim_ask.py` 合并发送。
+- 发展卡身份保真（方案 B）已主体完成：28 个 face-up 卡位各有独立真卡模板/扫描。
+- 当前下一步：quick 精修收尾与视觉验收；full 67 cue 从头重审（市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族）。
+- catalog + manifest 已生成：`content/catalog/splendor.json` 入 Git；`content/manifests/splendor.json` 为生成物，不入 Git；当前 quick 改动尚未重新 build manifest。
 - 路径：`content/games/splendor/`。
 
 ## Civolution

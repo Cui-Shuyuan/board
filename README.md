@@ -49,7 +49,7 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
    - 支持播放、字幕、分段跳转、问答打断后精确恢复到进入问答时的 cue 内位置。
 
 5. **语音链路**
-   - 后端 Python 短进程桥接火山引擎 ASR / TTS，Android 不接触服务密钥。
+   - ASR 默认由 .NET API 进程直连火山引擎；TTS 仍通过 Python 短进程桥接。Android 不接触服务密钥；`Voice:AsrMode=python` 可回退 ASR Python 桥。
    - Android 端已有 PTT、识别文本回填、回答 TTS、重播/继续播放；继续播放会先停回答音频，再按记录的 cueId + 位置精确恢复。完整真机验收待复测。
 
 6. **Flow Guide（下一步）**
@@ -62,8 +62,8 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
 L0 本体层      content/ontology/concepts.json + flow.json
 L1 游戏规则层  content/games/{game}/concepts.json + flow.json + instances.json
 L2 Runtime     backend/BoardAI.Api（Chat + Rules + Catalog + Content + ASR/TTS）
-L3 动画源      script.full.json + full.anim.json + _stage/*.stage.json
-L4 编译产物    full.runtime.json + full.compiled.json + TTS 音频 + content manifests
+L3 动画源      tutorial/tracks/*.track.json + sections/<id>/{track}.{anim,script}.json + shared/stage/*.stage.json
+L4 编译产物    tutorial/{track}.runtime.json + tutorial/anim/v2/{track}.compiled.json + TTS 音频 + content manifests
 L5 客户端      Android UaaL 原生壳（Kotlin + Compose）+ Unity as a Library
 ```
 
@@ -82,11 +82,9 @@ L5 客户端      Android UaaL 原生壳（Kotlin + Compose）+ Unity as a Libra
 ### 讲规动画数据流
 
 ```text
-script.full.json（口播文字）
-full.anim.json（动画事件 / 状态 / camera）
-_stage/*.stage.json（zone / template / 机位）
-  → compile_tutorial.py（TTS + runtime + compiled）
-  → Unity 播放 full.compiled.json
+tracks/*.track.json + sections/<id>/{track}.{script,anim}.json + shared/stage/*.stage.json
+  → compile_tutorial.py（section 级连续 TTS + runtime + compiled）
+  → Unity 播放 {track}.compiled.json
 ```
 
 ## 目录结构
@@ -111,7 +109,7 @@ tools/
   media/                  素材处理
   ops/                    环境与脚本检查
   qa/                     QA / 检索 gold set
-  voice/                  ASR / TTS Python 桥
+  voice/                  ASR fallback / TTS Python 桥
 docs/                     运维与专题文档
 doc/                      规则书、研究材料、原始扫描（多数不进 Git）
 assets/                  图标与通用资源
@@ -202,41 +200,51 @@ python3 tools/voice/tts_once.py \
 
 ## 讲规动画
 
-当前试点：**Splendor full**，69 cue；口播、TTS / runtime / compiled / Unity 播放器 / 采样对账链已跑通，发展卡真卡身份与终局 cue 已收口。
+当前试点：**Splendor**。两条 track 都已迁移到 section-first 源：
+
+- `full`：67 cue / 12 section / 338 anchors，适合完整讲规，终局与真卡身份已收口。
+- `quick`：24 cue / 11 section / 106 anchors，catalog 默认 track，讲“摆桌 → 一回合 → 首次购买 → 贵族/终局”。
+
+口播、TTS / runtime / compiled / Unity 播放器 / 采样对账链已跑通；quick 正在做逐 cue 精修，full 尚未从头到尾真人重审。
 
 ### 关键文件
 
 ```text
-content/games/splendor/tutorial/script.full.json              口播脚本
-content/games/splendor/tutorial/anim/v2/full.anim.json        动画源
-content/games/splendor/tutorial/anim/v2/_stage/*.stage.json   zone / template / shot
-content/games/splendor/tutorial/full.runtime.json             编译产物：音频与字幕时间轴
-content/games/splendor/tutorial/anim/v2/full.compiled.json    编译产物：Unity 只读
+content/games/splendor/tutorial/tracks/{full,quick}.track.json          section 顺序
+content/games/splendor/tutorial/sections/<id>/{track}.script.json        口播脚本
+content/games/splendor/tutorial/sections/<id>/{track}.anim.json          动画源
+content/games/splendor/tutorial/sections/<id>/qa.json                    可选外置 QA
+content/games/splendor/tutorial/shared/stage/*.stage.json               zone / template / 机位
+content/games/splendor/tutorial/{full,quick}.runtime.json               编译产物：音频与字幕时间轴
+content/games/splendor/tutorial/anim/v2/{full,quick}.compiled.json      编译产物：Unity 只读
 ```
 
 ### 常用命令
 
 ```bash
-# 总控：文字差量 → TTS → runtime → compiled
-python3 animation/compile_tutorial.py --game splendor --track full
+# 总控：section 文本差量 → 连续 TTS → runtime → compiled
+python3 animation/compile_tutorial.py --game splendor --track quick
 python3 animation/compile_tutorial.py --game splendor --track full --skip-tts
 
 # 编译与检查
-python3 animation/compile_animation_v2.py --game splendor --track full --check
-python3 animation/check_anim_v2.py --game splendor --track full
-python3 animation/validate_anim_rules_v2.py --game splendor --track full
-python3 animation/audit_anim_v2.py --game splendor --track full
+python3 animation/section_source.py --game splendor --track quick --check
+python3 animation/compile_animation_v2.py --game splendor --track quick --check
+python3 animation/check_anim_v2.py --game splendor --track quick
+python3 animation/validate_anim_rules_v2.py --game splendor --track quick
+python3 animation/audit_anim_v2.py --game splendor --track quick
+python3 animation/check_card_identity_v2.py --game splendor --track quick
 
 # Unity 采样对账
-./animation/dump_anim_v2.sh --game splendor --track full
-python3 animation/check_anim_v2_sample.py --game splendor --track full
+./animation/dump_anim_v2.sh --game splendor --track quick
+python3 animation/check_anim_v2_sample.py --game splendor --track quick
 ```
 
 ### 写作入口
 
 - 动画编写指南：[content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md](content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md)
 - 数据模型详细说明：[content/games/splendor/tutorial/anim/v2/README.md](content/games/splendor/tutorial/anim/v2/README.md)
-- 动画工具链概览：[animation/README.md](animation/README.md)
+- 生产说明：[content/games/splendor/tutorial/anim/README.md](content/games/splendor/tutorial/anim/README.md)
+- 工具链概览：[animation/README.md](animation/README.md)
 
 ## Android / Unity 客户端
 
@@ -272,13 +280,13 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 |---|---|---|
 | 规则 JSON | `python3 tools/content/validate_rules.py --errors-only` | 9 款游戏规则数据校验 |
 | 密钥扫描 | `python3 tools/ops/check_no_secrets.py` | 防止明文密钥入库 |
-| 后端 | `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` | 当前 121/121 |
-| 动画契约 | `python3 animation/check_anim_v2.py --game splendor --track full` | 契约 vs compiled |
-| 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放 |
-| 动画审计 | `python3 animation/audit_anim_v2.py --game splendor --track full` | 跨 cue 守恒 / 补牌 / pointer |
+| 后端 | `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` | 当前 161/161 |
+| 动画契约 | `python3 animation/check_anim_v2.py --game splendor --track full` | 契约 vs compiled；full 67 cues |
+| 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放；full 67 cues |
+| 动画审计 | `python3 animation/audit_anim_v2.py --game splendor --track full` | 跨 cue 守恒 / 补牌 / pointer；full 53 cues |
 | 卡身份 | `python3 animation/check_card_identity_v2.py --game splendor --track full` | 同一 state 无重复真卡 |
-| Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 69 cue 状态对账 |
-| 单元测试 | `python3 -m unittest animation/test_compile_animation_v2.py animation/test_audit_anim_v2.py` | 动画工具测试 |
+| Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 67 cue 状态对账 |
+| 单元测试 | `python3 -m unittest discover -s animation -p 'test_*.py'` | 当前 188/188 |
 
 ## 开发约定
 
@@ -301,13 +309,14 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 
 简要状态：
 
-- 后端服务化拆分完成，xUnit 121/121；索引契约已对九款真实规则数据做 CLI/API 版本 hash 回归。
+- 后端服务化拆分完成，xUnit 161/161；索引契约已对九款真实规则数据做 CLI/API 版本 hash 回归。
 - 9 款游戏有规则数据，8 款有 `flow.json`；Splendor 是 Runtime + 动画试点。
-- Splendor full 69 cue；QA、time_anchors、compiled、Unity 采样链可运行，终局与真卡身份已收口。
+- Splendor section-first 源已完成：full 67 cue / 338 anchors，quick 24 cue / 106 anchors；QA、time_anchors、compiled、Unity 采样链可运行。
 - Android UaaL / 内容更新 / 播放器 / 问答语音首版已落地；完整真机端到端验收待复测。
-- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 69 cue，逐 cue 看真卡画面。
+- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 67 cue，逐 cue 看真卡画面。
 - 其余 8 款游戏 catalog / manifest 待补。
-- Flow Guide 尚未开始；动画 Quick 版尚未开始。
+- 当前工作区有未提交的 quick 精修；quick 视觉验收、full 逐 cue 重审、Android 真机端到端验收尚未闭环。
+- Flow Guide 尚未开始，排在动画收口之后。
 
 ## 文档索引
 
@@ -317,12 +326,13 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 | [.claude/memory/MEMORY.md](.claude/memory/MEMORY.md) | 项目记忆索引，新会话第一步 |
 | [.claude/memory/current-state.md](.claude/memory/current-state.md) | 当前进度、HEAD、待办与不建议事项 |
 | [.claude/memory/architecture.md](.claude/memory/architecture.md) | 本体 / Runtime / 检索 / 客户端架构 |
-| [.claude/memory/tutorial-animation.md](.claude/memory/tutorial-animation.md) | 讲规动画 v3 数据模型、文件与生产流程 |
+| [.claude/memory/tutorial-animation.md](.claude/memory/tutorial-animation.md) | 讲规动画 section-first 数据模型、文件与生产流程 |
 | [.claude/memory/conventions.md](.claude/memory/conventions.md) | JSON / 本体 / pipeline / QA 规范 |
 | [.claude/memory/tools.md](.claude/memory/tools.md) | 服务、命令、测试、脚本入口 |
 | [backend/BoardAI.Api/README.md](backend/BoardAI.Api/README.md) | 后端接口、配置与调用示例 |
 | [clients/android/README.md](clients/android/README.md) | UaaL 构建、内容更新、资源管理 |
 | [animation/README.md](animation/README.md) | 动画工具链与 checker 分工 |
+| [docs/tutorial/README.md](docs/tutorial/README.md) | Tutorial 模块数据与产物、常用命令 |
 | [content/games/splendor/tutorial/anim/v2/README.md](content/games/splendor/tutorial/anim/v2/README.md) | 动画数据模型细节 |
 | [content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md](content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md) | 动画编写指南 |
 | [docs/ops/start-services.md](docs/ops/start-services.md) | Qdrant / API / 语音服务启动 |

@@ -3,6 +3,7 @@
 这里保存历史文档、开发日志和旧版记忆，用于追溯决策，不是新会话的必读材料。
 
 - `memory/2026-09-23/`：整理前的 `.claude/memory/` 全量旧文档。当前有效信息已蒸馏到 `.claude/memory/` 下的新文档。
+- `memory/2026-10-16/`：已完成的执行待办归档（`animation-refactor-todo.md`、`project-review-todo.md`）。当前有效状态与未闭环验收项已蒸馏到 `.claude/memory/current-state.md`。
 - `chat-history/`：早期完整讨论和聊天记录。
 - `tutorial/`：已退役的讲规路线文档。
 
