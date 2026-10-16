@@ -107,3 +107,6 @@ content/games/*/tutorial/anim/*.exitstate.json
 content/games/*/tutorial/anim/v2/*.v2sample.json
 # section-first 装配中间产物：可由 sections/ + tracks/ 随时重建，不是源真值。
 content/games/*/tutorial/build/
+
+# 动画 Board API QA 留档：只本地保存，不入 Git
+content/games/*/tutorial/anim/_qa/ask_log_*
