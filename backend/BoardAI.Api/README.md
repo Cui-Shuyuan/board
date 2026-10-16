@@ -5,7 +5,7 @@
 1. **Chat 接口**：接收 `game_id` 和完整 `messages`（可带 Android 播放 context），LLM 生成 `execute_plan`，服务端执行规则查询并返回 TTS 友好回答。
 2. **Rules 接口**：读取 `content/ontology/` 与 `content/games/` 下的结构化规则，提供类型 / 概念 / 检索 / action 条件 / 查询计划 / 索引重建。
 3. **Catalog / Content 接口**：提供 Android 首页游戏目录，以及 manifest 驱动的版本化内容下载、缓存与断点续传。
-4. **ASR / TTS 接口**：通过 `tools/voice/` 下的 Python 短进程桥接火山引擎，Android 不接触服务密钥。
+4. **ASR / TTS 接口**：ASR 默认在 API 进程内通过 C# `ClientWebSocket` 直连火山引擎；TTS 仍通过 `tools/voice/` Python 短进程桥接。Android 不接触服务密钥，`Voice:AsrMode=python` 可回退 ASR Python 桥。
 
 ## 运行
 
@@ -144,7 +144,7 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 `GET /api/catalog/games` 在 catalog JSON 基础上补齐能力字段：
 
 - `rules_ready` / `tutorial_ready`：规则问答与教程是否可用；
-- `tutorial_tracks`：可播放 track 列表（例如 `["full"]`）；
+- `tutorial_tracks`：可播放 track 列表（Splendor 目前为 `["quick","full"]`，默认 `tutorial_track=quick`）；
 - 旧字段 `tutorial_track` 仅作兼容；只有 `rules_ready=true` 且 `tutorial_ready=false` 的规则-only 游戏不会暴露教程下载元数据。
 
 ## 项目结构
@@ -159,11 +159,13 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 - `Services/GameRulesService.cs`：薄 facade；业务拆为 `RulesContentStore` / `RulesConceptCatalog` / `RulesNameIndexService` / `RulesSearchService` / `RulesIndexService` / `RulesFlowService` / `RulesReferenceService` / `RulesFactService` / `RulesPlanService`
 - `Services/ChatOrchestratorService.cs`：查询计划循环与回答组织
 - `Services/VectorSearchService.cs` / `Services/EmbeddingService.cs`：Qdrant / ONNX 检索
-- `Services/AsrService.cs` / `Services/TtsService.cs` / `Services/VoiceProcessRunner.cs`：语音桥
+- `Services/AsrService.cs` / `Services/VolcengineAsrClient.cs`：ASR 服务入口与进程内火山 WebSocket 客户端
+- `Services/TtsService.cs` / `Services/VoiceProcessRunner.cs`：TTS Python 短进程桥（兼容 ASR 回退）
+- `Infrastructure/DotEnvLoader.cs`：为进程内 ASR 读取仓库根 `.env`
 - `Models/`：请求/响应/配置模型
 
 ## 后续扩展方向
 
-1. 按 `.claude/memory/current-state.md` 推进：Splendor full 逐 cue 重审、其余 8 款游戏 catalog / manifest。
+1. 按 `.claude/memory/current-state.md` 推进：Splendor quick 收尾、full 逐 cue 重审、其余 8 款游戏 catalog / manifest。
 2. Flow Guide（下一产品方向）：程序维护流程游标，条件判断交玩家回答；首个目标是 Civolution 顶层时代/阶段循环与终局计分助手。
 3. 语音 / Android 真机端到端验收，以及问答打断后回到动画的完整链路复测。

@@ -50,4 +50,4 @@ Catalog 能力字段：
 
 - `rules_ready`：有可问答规则数据。
 - `tutorial_ready`：有完整教程 runtime 包；补 manifest 不等于教程就绪。
-- `tutorial_tracks`：可播放 track 列表，例如 `["full"]`；无教程时为空。
+- `tutorial_tracks`：可播放 track 列表，例如 Splendor 的 `["quick","full"]`；无教程时为空。

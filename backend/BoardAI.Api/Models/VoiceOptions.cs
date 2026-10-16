@@ -1,13 +1,24 @@
 namespace BoardAI.Api.Models;
 
 /// <summary>
-/// Configuration for the v1 Python bridge that talks to Volcengine ASR/TTS.
-/// Relative script paths are resolved against the repository root by
-/// BoardPaths so the API can run from bin/ without machine-specific paths.
+/// Configuration for Volcengine speech services.
+///
+/// ASR defaults to the in-process C# client; setting AsrMode to "python"
+/// keeps the legacy short-lived Python bridge fallback. TTS still uses the
+/// Python bridge. Relative script paths are resolved against the repository
+/// root by BoardPaths so the API can run from bin/ without machine-specific
+/// paths.
 /// </summary>
 public class VoiceOptions
 {
     public string PythonExe { get; set; } = "python";
+
+    /// <summary>
+    /// ASR implementation: "native" calls Volcengine directly in the API
+    /// process, "python" keeps the legacy Python bridge fallback.
+    /// </summary>
+    public string AsrMode { get; set; } = "native";
+
     public string AsrScript { get; set; } = "tools/voice/asr_once.py";
     public string TtsScript { get; set; } = "tools/voice/tts_once.py";
     public int AsrTimeoutSeconds { get; set; } = 75;

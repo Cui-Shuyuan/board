@@ -1,35 +1,60 @@
-# embedding （确保qdrant进程正在运行）
+# 本地服务启动与内容发布
 
-CLI 与后端 `POST /api/rules/admin/rebuild-index/{game}` 共用同一索引契约：
-先写 `board_{game}__v{version}` / `...__name` 两个具体 collection，校验点数后
-原子切换 `board_{game}__active` / `..._active_name` 别名；失败保留旧索引。
-Python CLI 默认连 `http://localhost:6333`，可用环境变量指向其他实例：
+仓库路径示例：Windows `D:\workspace\board`；WSL `/mnt/d/workspace/board`。以下命令以仓库根为工作目录。
 
-```bash
-QDRANT_URL=http://<host>:6333 python3 tools/indexing/rebuild_index.py --game <game_name>
+## 1. Qdrant
+
+启动 Windows 原生 Qdrant（建议在 Qdrant 自身目录启动，避免在仓库根生成 storage）：
+
+```powershell
+cd D:\qdrant
+qdrant.exe
 ```
 
-## 单个游戏
-D:\Python\Python312\python.exe D:\workspace\board\tools\indexing\rebuild_index.py --game <game_name>
+- HTTP `6333` 给 Python 索引脚本；gRPC `6334` 给 .NET API。
+- Python CLI 默认连 `http://localhost:6333`，可用 `QDRANT_URL` 指向其他实例。
 
-## 全部游戏
-D:\Python\Python312\python.exe D:\workspace\board\tools\indexing\rebuild_index.py --all
+## 2. 重建向量索引
 
-# 启动服务
+```bash
+# 单款
+python3 tools/indexing/rebuild_index.py --game splendor
+# 全部九款
+python3 tools/indexing/rebuild_index.py --all
+# 只构建、不切换 alias
+python3 tools/indexing/rebuild_index.py --all --no-switch
+```
 
-## 启动 Qdrant
-D:\qdrant\qdrant.exe
+后端等价入口：`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all`。规则 JSON 改文件由 `RulesDocumentStore` 自动 freshness；语义检索必须重建索引。
 
-## 启动 API
-（在 D:\workspace\board\backend\BoardAI.Api 路径下）
-dotnet run
+## 3. 启动 BoardAI.Api
 
-或者 dotnet run --rebuild-index <game_name>
+```bash
+cd backend/BoardAI.Api
+dotnet run --urls "http://0.0.0.0:5000"
+```
 
-# 内容发布（不可变 manifest / release）
+API key 只走环境变量：
 
-`content/manifests/*.json` 和 `content/releases/` 是生成物，不入 Git；
-`tools/ops/sync_workspaces.sh` 只搬 Git 提交，不会同步这两个目录。
+```bash
+export LLM__ApiKey="sk-..."
+# 兼容旧变量名：DEEPSEEK_API_KEY
+```
+
+Windows 下同样可用 `set LLM__ApiKey=...`。
+
+验证：
+
+```bash
+curl -s http://localhost:5000/api/rules/games/splendor/types
+curl -X POST http://localhost:5000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"game_id":"splendor","messages":[{"role":"user","content":"贵族怎么获得？"}]}'
+```
+
+## 4. 内容发布（不可变 manifest / release）
+
+`content/manifests/*.json` 与 `content/releases/` 是生成物，不入 Git；`tools/ops/sync_workspaces.sh` 只搬 Git 提交，不会同步这两个目录。
 
 生产 API 主机在内容源更新后必须执行：
 
@@ -37,16 +62,20 @@ dotnet run
 python3 tools/content/build_content_manifest.py --game <game_name>
 ```
 
-该命令生成 `content/manifests/{game}.json` 与 `content/releases/{game}/{version}/`，
-版本化接口只读取 release 目录。若生产机不方便运行构建，则必须把已校验的
-`content/manifests/{game}.json` 和对应的 `content/releases/{game}/{version}/`
-单独部署到 API 仓库根目录下；只同步代码不会让客户端拿到新内容。
+生成：
 
-# 语音服务配置（标准 TTS + 一句话 ASR）
+- `content/manifests/{game}.json`
+- `content/releases/{game}/{version}/`
 
-语音服务默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**；
-需要 `seed-tts-2.0` 双向流式接口时设置 `DOUBAO_TTS_PROVIDER=seed2`。
-仓库根目录 `.env` 建议配置：
+版本化接口只读取 release 目录；只同步代码不会让客户端拿到新内容。若生产机不方便运行构建，必须把已校验的 manifest 和 release 目录单独部署到 API 仓库根目录下。
+
+## 5. 语音服务配置
+
+语音服务默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**；需要 `seed-tts-2.0` 双向流式接口时设置 `DOUBAO_TTS_PROVIDER=seed2`。
+
+ASR 默认在 `BoardAI.Api` 进程内直连火山，不再启动 Python 子进程；只有显式设置 `Voice__AsrMode=python`（或 `appsettings` 中 `Voice:AsrMode=python`）时才回退 `tools/voice/asr_once.py`。
+
+仓库根 `.env` 建议：
 
 ```dotenv
 VOLCENGINE_API_KEY=...
@@ -57,13 +86,10 @@ DOUBAO_TTS_ENDPOINT=wss://openspeech.bytedance.com/api/v1/tts/ws_binary
 DOUBAO_TTS_RESOURCE_ID=volc.tts.default
 
 VOLCENGINE_ASR_ENDPOINT=wss://openspeech.bytedance.com/api/v2/asr
-# v2 一句话小模型可能不接受共享 API Key（403 resource not granted）；
-# 三件套齐全时 asr_once.py 自动优先用 console token，无需额外设置。
-# 想强制试共享 API Key 再设 VOLCENGINE_ASR_AUTH=apikey。
 # 一句话小模型使用 AppID/AccessToken + cluster=volcengine_input：
-# VOLCENGINE_ASR_APP_ID=...   # 或 VOLCENGINE_APP_ID
-# VOLCENGINE_ASR_ACCESS_TOKEN=...  # 或 VOLCENGINE_ACCESS_TOKEN
-# VOLCENGINE_ASR_CLUSTER=volcengine_input  # 或 VOLCENGINE_CLUSTER；不是 TTS 的 volcano_tts，也不是 SECRET_KEY
+# VOLCENGINE_ASR_APP_ID=...         或 VOLCENGINE_APP_ID
+# VOLCENGINE_ASR_ACCESS_TOKEN=...   或 VOLCENGINE_ACCESS_TOKEN
+# VOLCENGINE_ASR_CLUSTER=volcengine_input  或 VOLCENGINE_CLUSTER
 ```
 
 切回语音合成 2.0：
@@ -74,24 +100,25 @@ DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts
 DOUBAO_RESOURCE_ID=seed-tts-2.0
 ```
 
-文本 TTS 自检（不依赖真人语音）：
+自检：
 
 ```bash
-PYTHONPATH=... python3 tools/voice/tts_once.py \
+PYTHONPATH=. python3 tools/voice/tts_once.py \
   --text "这是一次语音测试" \
   --out-file /tmp/tts-test.mp3
-```
 
-后端 `/api/tts` 自检：
-
-```bash
 curl -X POST http://localhost:5000/api/tts \
   -H "Content-Type: application/json" \
   -d '{"text":"这是一次语音测试"}' \
   --output /tmp/backend-tts.mp3
+
+# ASR：16k/16bit/单声道 WAV
+curl -X POST http://localhost:5000/api/asr/once \
+  -H "Content-Type: audio/wav" \
+  --data-binary @/path/to/16k-mono.wav
 ```
 
-Android 真机验收（由用户执行）：
+## 6. Android 真机验收（由用户执行）
 
 1. 启动 Qdrant 与 `BoardAI.Api`，确认手机能访问 `BOARD_API_BASE_URL`。
 2. 打开教程问答面板，按住“按住说话”录入一句中文，松开。
@@ -100,3 +127,4 @@ Android 真机验收（由用户执行）：
 5. 进入问答前若动画正在播放，打开面板时先暂停；Unity 回传暂停状态后，Android 记录当前 `cueId + cue 内位置`。点“继续播放”时发送 `PlayCueAt`，精确恢复到进入问答时的位置，而不是从头重播当前小节。
 6. 进入问答前若动画本来就处于暂停/未播放状态，关闭面板只回到对应界面，不自动播放；有未完成 ASR/TTS/chat 请求时先取消，再恢复。
 7. 连续 PTT、切换会话、关闭面板/返回首页交错时，迟到 ASR/TTS/chat 结果必须被 generation 丢弃；回答音频在会话结束或关闭面板时清理。
+8. 真机端到端完成后，再关闭“完整真机验收待复测”缺口。

@@ -57,9 +57,11 @@ public class Program
         builder.Services.AddSingleton<GameRulesService>();
         builder.Services.AddScoped<ChatOrchestratorService>();
 
-        // v1 voice bridge: .NET starts short-lived Python scripts; credentials
-        // stay in the Python process environment / repo .env.
+        // Voice: ASR defaults to an in-process C# Volcengine client; the
+        // legacy Python bridge remains available through Voice:AsrMode=python.
+        // TTS still uses the bridge for now.
         builder.Services.AddSingleton<VoiceProcessRunner>();
+        builder.Services.AddSingleton<VolcengineAsrClient>();
         builder.Services.AddScoped<AsrService>();
         builder.Services.AddScoped<TtsService>();
 

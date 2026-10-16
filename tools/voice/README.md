@@ -1,8 +1,11 @@
-# Voice bridge (ASR + TTS)
+# Voice bridge (ASR fallback + TTS)
 
-This directory contains the v1 Python bridge used by `BoardAI.Api`. The API
-starts these scripts as short-lived child processes; Android never talks to
-Volcengine directly and no key is shipped in the APK.
+`BoardAI.Api` 的 ASR 默认已经改为在 .NET API 进程内直连火山 WebSocket
+（`Voice:AsrMode=native`），不再为每次识别启动 Python 子进程。本目录的
+`asr_once.py` 保留为离线自检 / 回退路径（`Voice:AsrMode=python`）；TTS 仍默认
+通过本目录的 Python 短进程桥接。
+
+Android 始终只调用 `BoardAI.Api`，不直接接触火山凭证，APK 中不包含密钥。
 
 ## Dependencies
 
@@ -91,7 +94,8 @@ need to change because the content type remains `audio/mpeg`.
 
 ## ASR: one-sentence small-model
 
-`tools/voice/asr_once.py` still uses the v2 one-sentence WebSocket protocol:
+进程内默认实现和 `tools/voice/asr_once.py` 回退实现使用同一套 v2 一句话
+WebSocket 协议。下面是协议与配置参考，便于排查和离线自检：
 
 | Item | Value |
 |---|---|
@@ -117,9 +121,22 @@ VOLCENGINE_ACCESS_TOKEN=...
 VOLCENGINE_ASR_CLUSTER=volcengine_input
 ```
 
-`asr_once.py` automatically prefers these console-token credentials when all three
-are present. Set `VOLCENGINE_ASR_AUTH=apikey` only to force the shared-key
-experiment.
+`asr_once.py` and the native C# client automatically prefer these console-token
+credentials when all three are present. Set `VOLCENGINE_ASR_AUTH=apikey` only to
+force the shared-key experiment.
+
+Native mode runs in-process; start the API normally and keep `Voice:AsrMode=native`.
+To fall back to the Python bridge, set:
+
+```json
+{
+  "Voice": {
+    "AsrMode": "python"
+  }
+}
+```
+
+or use the environment override `Voice__AsrMode=python`.
 
 Android keeps calling:
 

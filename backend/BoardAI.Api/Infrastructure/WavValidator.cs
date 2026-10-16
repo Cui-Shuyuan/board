@@ -15,8 +15,8 @@ public sealed record WavInfo(
 /// <summary>
 /// Minimal RIFF/WAVE header validation.  It intentionally does not decode
 /// audio or inspect every chunk; it just ensures the bytes are a plausible
-/// PCM WAV and enforces the one-shot duration/size limits before Python sees
-/// the file.
+/// PCM WAV and enforces the one-shot duration/size limits before the ASR
+/// client sees the file.
 /// </summary>
 public static class WavValidator
 {
