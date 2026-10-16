@@ -113,7 +113,7 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 
 ## 当前遗留
 
-- 工作区有未提交的 quick 精修与新增 QA 留档；需按流程提交。
+- quick 精修与 full/quick 开场盒面 no-zone stage 已提交（`425fd14`）；QA 留档按约定不入 Git，quick/full 正式视觉验收仍未闭环。
 - quick 正式视觉验收、full 67 cue 从头重审、Unity 采样截图确认仍未闭环。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 仍未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。

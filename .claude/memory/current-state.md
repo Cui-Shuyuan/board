@@ -21,7 +21,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 - **Splendor quick 已是可播放 track**：当前 24 cue / 11 section / 106 anchors；catalog 默认 `tutorial_track=quick`，`tutorial_tracks=[quick,full]`。
 - 最近 quick 收口内容包括：卡背三级展示、牌面/桌面镜头拆分、拿宝石提示与归还计数、黄金替代购买、贵族单/多张与分流选择、终局计分说明。相关提交集中在 `188a60d` 前后。
 - 动画原语近期新增：`label_mode: add|replace` + `label_key`、`marker_key`、箭头 `arrow_direction` 与尾部文字、label 文本框自动适配。
-- 工作区当前有**未提交**的 quick 精修（`quick_end`、`quick_nobles`、`quick_reserve`、`quick_gold`、Unity 播放/标注代码等）和 2026-10-15/16 的新增 QA 留档；提交前按约定同步 QA 与 change log。
+- 本轮 quick 精修（`quick_end`、`quick_nobles`、`quick_reserve`、`quick_gold`、Unity 播放/标注等）以及 full/quick 开场盒面 no-zone stage 已提交到 `425fd14`；Android 统一问答入口、PTT 自动发送/上划取消与 API 进程内 ASR 也已提交。QA 留档仍按约定不入 Git。
 
 ## Splendor 验收基线（本轮已跑）
 
@@ -29,7 +29,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 - quick：24 cue / 11 section / 106 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 17 cues / 0 errors；`check_card_identity_v2` 333 states / 0 error。
 - `compile_animation_v2 --check` 对两轨均为 “up to date”；`section_source.py --check` 解析通过。
 - Python animation/索引回归 188/188；后端 xUnit 161/161；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
-- Android JVM 最近一次记录为 91/91；当前测试源码为 12 个测试文件 / 93 个 `@Test`，WSL 侧因 Windows SDK/AAPT 无法直接重跑，真机端到端仍未验收。
+- Android JVM 当前 12 个测试文件 / 93 个 `@Test` 全绿；真机端到端仍未验收。
 
 ## 当前已具备的能力
 
@@ -41,7 +41,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 当前优先待办
 
-1. **收尾 quick 精修并提交**：当前工作区未提交的 quick_end / quick_nobles / quick_reserve / quick_gold 调整需完成 QA、change log、静态检查与截图确认；quick 视觉验收仍未闭环。
+1. **quick 视觉验收与内容发布**：quick 精修已提交并通过静态检查；继续完成 quick 截图确认，之后按流程 build manifest/release 并更新测试设备。
 2. **Splendor full 逐 cue 重审**：真卡身份阻塞已解除，但还没有从头到尾重新过 67 cue；重点检查市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族表现。
 3. **Android 真机端到端验收**：PTT → ASR → chat → 回答 TTS → 回到动画/继续播放，以及打断后回跳重播。
 4. **内容版本**：quick 当前改动尚未重新 build manifest；发布前运行 `python3 tools/content/build_content_manifest.py --game splendor` 并部署 release。
@@ -52,7 +52,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 - 检索回答层未宣称整体正确：81 次真实聊天 0 HTTP 错误，但仍有白色骰子额外编造、未知职业卡过度宣称不存在、终局九类计分请求触发 60 秒上限等问题；需要事实覆盖、计划拆分和答案级逐事实验收。
 - 自然问句标签仍需补“需要哪些事实/允许的答案路径”，并用新验证集校准确无答案与歧义处理；多候选恢复当前保守不恢复。
-- 其他主机部署时需同步迁移 CLS 索引与 API 配置；本轮本地未 push 时不能默认远端已部署。
+- 其他主机部署时需同步迁移 CLS 索引与 API 配置；代码已 push 不等于远端已部署或内容已发布。
 - 历史验收证据与完整列表见 `.claude/archive/memory/2026-10-16/project-review-todo.md` 和 `docs/reviews/retrieval-*-2026-10-09.md`。
 
 ## 当前不建议做
