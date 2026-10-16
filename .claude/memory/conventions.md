@@ -125,7 +125,7 @@ JSON 格式：
 - 一 cue 一事，只带判定需要的事实；不用教程自造词，不整桌抄状态。规则自动发生的事就说成自动。
 - 问题优先写进当前 cue 的 `qa` 字段；外置历史问题放 `sections/<section_id>/qa.json`。`animation/qa_anim_ask.py --game <game> --track <track> --only <qualified_cue>` 合并提取并自动发送/留档；脚本只负责问答与日志，**不负责生成问题**。
 - `compile_tutorial.py --validate-qa` / `--validate-qa-all` 使用同一套 section-aware 合并结果做门禁；没有手写问题且非 `qa_exempt` 的 cue 直接失败。
-- 本地 `validate_anim_rules*` 是精确算术层；Board API 问答是独立裁判层。两层都过，这一步才算站得住。
+- 本地 `validate_anim_rules*` 是精确算术层；Board API 问答通过 `POST /api/chat` 判断。两层都过，这一步才算站得住。
 - `offstage` / 可见性隐藏只用于引擎确实需要的隐藏；不得用来把非法棋盘状态“画成合法”。任何隐藏后，每色宝石、黄金、卡牌实物总数仍必须守恒。
 
 ## 11. 相关旧文档

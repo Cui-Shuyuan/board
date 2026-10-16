@@ -101,7 +101,7 @@ content/games/<game>/tutorial/
 
 ## 6. 未执行 / 需剩余验收
 
-- **Board API 合法性 QA 未在本轮重新发送**：`http://127.0.0.1:5000` 未运行。迁移后的 compiled 与迁移前逐字段一致，所以没有新增规则事实；但独立裁判层本轮没有产生新日志留档。
+- **Board API 合法性 QA 未在本轮重新发送**：`http://127.0.0.1:5000` 未运行。迁移后的 compiled 与迁移前逐字段一致，所以没有新增规则事实；本轮没有 Board API 判断留档。
 - **Unity 采样/截图视觉验收未执行**：本轮没有可用的 Unity 运行环境；只跑了 `check_unity_scripts.py`。
 - **Android 真机端到端未执行**：与本次重构无关链路，仍按项目原验收待办处理。
 - **quick_nobles/003 的 example setup 后 facts**：checker 因 cue 后续仍有购牌状态变化而输出 NOTE，改为人工/后续增强“阶段快照对比”；没有把它报告成通过。

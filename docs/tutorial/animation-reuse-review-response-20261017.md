@@ -129,7 +129,7 @@
 
 ## 9. 仍需外部环境 / 人工确认
 
-- **Board API 合法性 QA 未执行**：本机 API 未运行；R1–R6 为 checker/编译链修复，未新增规则事实，但独立裁判层仍未在本轮留档。
+- **Board API 合法性 QA 未执行**：本机 API 未运行；R1–R6 为 checker/编译链修复，未新增规则事实，本轮没有 Board API 判断留档。
 - **Unity 采样与真人视觉验收未执行**：包括 `hold_after_audio` 在真实播放器中的实际 hold 时长、音频/动画切点、quick 多贵族节奏。
 - **`nobles/source.001` 音频窗口超出**：`--strict-timing` 报 2 个无 hold 的 action 超出现有音频窗口（5.300s vs 5.075s；7.200s vs 5.075s）。为保持已审核播放行为，本轮没有擅自加 `hold_after_audio` 或改动作时序；需用户/作者决定加 hold、调整音频或接受现有切分，并重新视觉验收。
 - **严格音频窗口门禁的最终策略**：当前默认构建输出 WARN 并成功，`--strict-timing` 可失败；是否将 `nobles/source.001` 的已知例外修完后把 strict 设为默认，需要内容与视觉复核后决定。
