@@ -224,6 +224,53 @@ class MaterialLibraryTests(unittest.TestCase):
             self.assertEqual({"count": 2}, contract["postconditions"]["zones"]["board"])
             self.assertEqual("board", usages[0].bindings["zone"])
 
+
+    def test_unknown_use_field_and_illegal_binding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tut = self._tutorial(Path(tmp))
+            action = action_doc(aid="fake.cap")
+            action["roles"] = [{"name": "zone", "type": "zone", "required": True,
+                                "accepts": ["allowed"]}]
+            action["steps"] = [{"id": "seed", "events": [{
+                "op": "create", "count": 1, "anchor": "@add",
+                "target": {"space": "entity", "zone": "$zone", "template": "piece"},
+            }]}]
+            write(tut / "library/actions/fake.cap.action.json", action)
+            lib = ml.load_materials("fake", tut)
+            bad_bind = {"cues": [{"id": "c1", "entry": "initial",
+                                  "use": [{"ref": "fake.cap", "bind": {"zone": "other"},
+                                           "timing": {"add": {"at": 0.1}}}]}]}
+            with self.assertRaisesRegex(ml.MaterialError, "accepts"):
+                lib.expand_section("sec", "tr", bad_bind)
+            bad_field = {"cues": [{"id": "c1", "entry": "initial",
+                                   "use": [{"ref": "fake.cap", "bogus": 1}]}]}
+            with self.assertRaisesRegex(ml.MaterialError, "unknown use field"):
+                lib.expand_section("sec", "tr", bad_field)
+
+    def test_optional_steps_can_be_omitted_but_required_steps_cannot(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tut = self._tutorial(Path(tmp))
+            action = action_doc(aid="fake.steps")
+            action["steps"] = [
+                {"id": "required", "events": [{
+                    "op": "create", "count": 1, "anchor": "@add",
+                    "target": {"space": "entity", "zone": "box", "template": "piece"}}]},
+                {"id": "optional", "status": "optional", "events": [{
+                    "op": "create", "count": 1, "anchor": "@add",
+                    "target": {"space": "entity", "zone": "box", "template": "piece"}}]},
+            ]
+            write(tut / "library/actions/fake.steps.action.json", action)
+            lib = ml.load_materials("fake", tut)
+            good = {"cues": [{"id": "c1", "entry": "initial",
+                              "use": [{"ref": "fake.steps", "omit": ["optional"],
+                                       "timing": {"add": {"at": 0.1}}}]}]}
+            out, _, _ = lib.expand_section("sec", "tr", good)
+            self.assertEqual(1, len(out["cues"][0]["events"]))
+            bad = {"cues": [{"id": "c1", "entry": "initial",
+                             "use": [{"ref": "fake.steps", "omit": ["required"]}]}]}
+            with self.assertRaisesRegex(ml.MaterialError, "required and cannot be omitted"):
+                lib.expand_section("sec", "tr", bad)
+
     def test_section_source_hash_tracks_only_referenced_materials(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

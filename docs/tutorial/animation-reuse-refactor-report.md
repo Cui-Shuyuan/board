@@ -75,7 +75,7 @@ content/games/<game>/tutorial/
 
 | 命令/检查 | 结果 |
 |---|---|
-| `python3 -m unittest discover -s animation -p 'test_*.py'` | **201/201 OK**（原 188 + 素材库 9 + 非卡牌夹具 4） |
+| `python3 -m unittest discover -s animation -p 'test_*.py'` | **203/203 OK**（原 188 + 素材库 11 + 非卡牌夹具 4） |
 | `python3 animation/material_cli.py validate --game splendor` | OK，14 materials loaded |
 | `python3 animation/check_materials.py --game splendor` | full 29 usages / quick 16 usages，各 42 项前后置与 example 事实检查；quick_nobles/003 的 example setup 后仍有购买动作，checker 明确 NOTE 跳过“cue 末尾 facts 对比” |
 | `python3 animation/section_source.py --game splendor --track {full,quick} --check` | OK，67 / 24 cues |
