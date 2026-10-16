@@ -15,6 +15,7 @@ metadata:
 - 非卡牌虚构夹具在 `tests/fixtures/worker_toy/`：detailed/compact 验证参数化与不同编排，same 验证相同事实不同 timing 得到相同语义状态；对应测试 `animation/test_worker_toy_fixture.py`。
 - 修改共享素材：`python3 animation/material_cli.py impact --game splendor --material <id>`；纯动画素材变化不会触发 TTS 重合成。
 - R1–R6 复核修复见 `docs/tutorial/animation-reuse-review-response-20261017.md`；R7/R8 见 `docs/tutorial/animation-reuse-review-round2-response-20261017.md`：嵌套 example 共用 variant/omit 语义，严格时间检查使用编译器有效起止时间。
+- Board API QA 已实际执行：quick 10/10 通过；full 43 问中 `take_gems/limit.001.2` 独立裁判持续失败，`setup_gems/003.1`、`nobles/repeat.001.1` 判定不稳定。QA 留档不入 Git，不能宣称 Board API 层全部通过。
 
 ## 定位与现状
 
@@ -128,6 +129,7 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 
 - quick 精修与 full/quick 开场盒面 no-zone stage 已提交（`425fd14`）；QA 留档按约定不入 Git，quick/full 正式视觉验收仍未闭环。
 - quick 正式视觉验收、full 67 cue 从头重审、Unity 采样截图确认仍未闭环。
+- Board API QA：quick 全绿；full `take_gems/limit.001.2` 负向题仍失败，另有 2 条问题措辞/LLM 判定待人工收敛。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 仍未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。
 - Android PTT → ASR → chat → TTS → 回动画的真机链路仍未验收。

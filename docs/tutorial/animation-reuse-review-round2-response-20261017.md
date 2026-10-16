@@ -99,3 +99,55 @@ quick 的 002/003 超出均由已有 `hold_after_audio` 覆盖，严格模式输
 - **Unity 采样 / 真人视觉验收未执行**：尤其是 `nobles/source.001` 在真实播放中的切点，以及 quick 002/003 的 `hold_after_audio` 实际 hold 时长。
 - **`nobles/source.001` 内容决策**：加 hold / 调时序 / 接受现有切分，三选一，并重新视觉验收。
 - **严格时间门禁默认策略**：R8 修完后诊断已可信；建议处理完上述例外后，再将 `--strict-timing` 接入默认构建。
+
+## 6. Board API 合法性 QA（后端已启动后补跑）
+
+后端在 Windows 主机 `127.0.0.1:5000` 监听；WSL 无法直达 Windows loopback，因此使用 Windows Python `D:\Python\Python312\python.exe` 和 `BOARDAI_API=http://127.0.0.1:5000/api/chat` 执行 `qa_anim_ask.py`。QA 留档按约定不入 Git。
+
+### quick
+
+```bash
+python animation/qa_anim_ask.py --game splendor --track quick --jobs 4 --tag round2-quick
+```
+
+结果：**10/10 通过**，0 可疑。
+
+### full
+
+```bash
+python animation/qa_anim_ask.py --game splendor --track full --jobs 4 --tag round2-full-v2
+```
+
+结果：43 问，**40 通过 / 3 可疑**：
+
+1. `take_gems/limit.001.2`
+   - 手写问题期望：`不合法`（A 手上无钻石却选择还 2 枚钻石）。
+   - LLM 回答：“合法，还哪几种颜色完全由你自己选。”
+   - 定向重跑仍为“合法”。这是本 cue Board API 独立裁判层的**真实失败**，不是解析器误判。
+2. `setup_gems/003.1`
+   - 期望：`有问题`（不能先按四人局摆 7 颗再收回）。
+   - 本次回答“合法”；定向重跑回答“有问题”。判定不稳定，问题本身也有“后面会收回”造成的歧义，建议人工重写手写问句或明确“当前设置瞬间的状态”。
+3. `nobles/repeat.001.1`
+   - 期望：`合法`（下回合结束时补拿最后一块贵族）。
+   - 本次回答“有问题”；定向重跑的两个同名问题均回答“合法”。属于 LLM 解释不稳定。
+
+定向重跑：
+
+```bash
+python animation/qa_anim_ask.py --game splendor --track full \
+  --only take_gems/limit.001.2,setup_gems/003.1,nobles/repeat.001.1 \
+  --jobs 1 --tag round2-retry
+```
+
+结果：4 问中 3 通过，唯一持续失败仍是 `take_gems/limit.001.2`。
+
+### QA 元数据修正
+
+跑 QA 时发现两条既有负向题只写问题、没有 `expect`，脚本因此把正确负答误报为可疑：
+
+- `take_gems/limit.001.2` 增加 `"expect": "不合法"`；
+- `setup_gems/003.1` 增加 `"expect": "有问题"`。
+
+只补期望词，未改问题文本、动画事件或旁白。补完后 full QA 能正确把这些题纳入通过/失败判定，也暴露出上述真实模型失败。
+
+**结论**：Board API 层已实际执行，不是“未运行”。quick 全绿；full 仍有 `take_gems/limit.001.2` 的独立裁判失败，以及两条不稳定/歧义问题。因此不能宣称 Board API QA 全部通过；需要人工决定是修问题措辞、修模型侧提示，还是接受该负向题由人工复核。

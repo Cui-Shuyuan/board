@@ -15,7 +15,8 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 最近进展
 
-- **素材化重构与 R1–R6 复核修复已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；编译链按调用边界检查 action/example 契约、递归保留嵌套 usage、强制类别约束与 namespace 隔离、QA HEAD 基线包含 library。Splendor 抽出 10 actions / 3 examples / 1 presentation，full 31、quick 20 处 usage（含嵌套）；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 detailed/compact/same 走同一编译链。
+- **素材化重构与 R1–R8 复核修复已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；编译链按调用边界检查 action/example 契约、递归保留嵌套 usage、强制类别约束与 namespace 隔离、QA HEAD 基线包含 library。Splendor 抽出 10 actions / 3 examples / 1 presentation，full 31、quick 20 处 usage（含嵌套）；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 detailed/compact/same 走同一编译链。
+- **Board API QA 已补跑（2026-10-17）**：quick 10/10 通过；full 43 问中 `take_gems/limit.001.2` 独立裁判持续失败，`setup_gems/003.1`、`nobles/repeat.001.1` 判定不稳定。QA 留档按约定不入 Git；不能宣称 Board API 层全部通过。
 - **section-first 动画源已完成**：track 只排序 section，源真值为 `tutorial/{tracks,sections,shared}/`；旧单文件 `script.{track}.json` / `anim/v2/{track}.anim.json` / `anim/v2/_stage/` 已删除，`build/` 是忽略的装配中间产物。
 - cue id 统一为 qualified id `<section_id>/<local_id>`；section 内可写 local，跨 section 必须 qualified；`entry: "section:<id>"` 回到 section 起点。
 - TTS 按 section 生成一段连续音频，section 内多条 cue 共享 `audio` 并用 `audio_start` 切画面。
