@@ -1,0 +1,53 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "worker_toy.action.seed_workers",
+  "kind": "action",
+  "game": "worker_toy",
+  "title": "放两名同种工人到待命区",
+  "description": "放两名同种工人到待命区",
+  "roles": [
+    {
+      "name": "worker_source",
+      "type": "zone",
+      "required": false,
+      "default": "workshop"
+    }
+  ],
+  "params": [
+    {
+      "name": "count",
+      "type": "integer",
+      "required": false,
+      "default": 2
+    }
+  ],
+  "steps": [
+    {
+      "id": "seed",
+      "events": [
+        {
+          "op": "create",
+          "count": "$count",
+          "to": "face_up",
+          "anchor": "@seed",
+          "target": {
+            "space": "entity",
+            "zone": "$worker_source",
+            "template": "worker",
+            "palette": "worker",
+            "concept": "worker"
+          }
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "postconditions": {
+      "zones": {
+        "$worker_source": {
+          "count": "$count"
+        }
+      }
+    }
+  }
+}

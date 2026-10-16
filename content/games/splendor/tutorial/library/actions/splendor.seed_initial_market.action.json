@@ -1,0 +1,438 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.seed_initial_market",
+  "kind": "action",
+  "game": "splendor",
+  "title": "铺设三摞发展卡并翻开 3×4 市场",
+  "description": "确定性开局动作：三副牌堆垫入固定底牌，洗混后按 L1/L2/L3 各翻 4 张到市场。牌堆真实顺序和 12 个市场槽位是 Splendor 开局事实，调用处只改时序和节奏。",
+  "instructions": [
+    "这是行动片段，不含镜头、旁白或屏幕 overlay；presentation 留在各 track 的内联事件或 presentation 素材。",
+    "调用方用 timing 标记 @seat_l1/@seat_l2/@seat_l3、@shuffle、@deal 绑定到本 cue 的锚点。"
+  ],
+  "roles": [
+    {
+      "name": "deck_l1",
+      "type": "zone",
+      "required": false,
+      "default": "deck_level_1"
+    },
+    {
+      "name": "deck_l2",
+      "type": "zone",
+      "required": false,
+      "default": "deck_level_2"
+    },
+    {
+      "name": "deck_l3",
+      "type": "zone",
+      "required": false,
+      "default": "deck_level_3"
+    },
+    {
+      "name": "market",
+      "type": "zone",
+      "required": false,
+      "default": "card_market"
+    }
+  ],
+  "params": [
+    {
+      "name": "stack_dur",
+      "type": "number",
+      "required": false,
+      "default": 0.0
+    },
+    {
+      "name": "shuffle_dur",
+      "type": "number",
+      "required": false,
+      "default": 1.1
+    },
+    {
+      "name": "draw_dur",
+      "type": "number",
+      "required": false,
+      "default": 0.34
+    }
+  ],
+  "steps": [
+    {
+      "id": "seat_decks",
+      "events": [
+        {
+          "op": "stack",
+          "dur": "$stack_dur",
+          "capacity": 40,
+          "real_templates": "card_l1_emerald_32,card_l1_ruby_38,card_l1_diamond_18,card_l1_sapphire_15,card_l1_onyx_3",
+          "pad_template": "blank_card_1",
+          "to": "face_down",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l1"
+          },
+          "anchor": "@seat_l1"
+        },
+        {
+          "op": "stack",
+          "dur": "$stack_dur",
+          "capacity": 30,
+          "real_templates": "card_l2_sapphire_49,card_l2_onyx_45,card_l2_ruby_70,card_l2_emerald_60,card_l2_diamond_55",
+          "pad_template": "blank_card_2",
+          "to": "face_down",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l2"
+          },
+          "anchor": "@seat_l2"
+        },
+        {
+          "op": "stack",
+          "dur": "$stack_dur",
+          "capacity": 20,
+          "real_templates": "card_l3_ruby_88,card_l3_diamond_81,card_l3_emerald_84,card_l3_onyx_74,card_l3_sapphire_78",
+          "pad_template": "blank_card_3",
+          "to": "face_down",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l3"
+          },
+          "anchor": "@seat_l3"
+        }
+      ]
+    },
+    {
+      "id": "shuffle_decks",
+      "events": [
+        {
+          "op": "shuffle",
+          "dur": "$shuffle_dur",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l1"
+          },
+          "anchor": "@shuffle"
+        },
+        {
+          "op": "shuffle",
+          "dur": "$shuffle_dur",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l2"
+          },
+          "anchor": "@shuffle"
+        },
+        {
+          "op": "shuffle",
+          "dur": "$shuffle_dur",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l3"
+          },
+          "anchor": "@shuffle"
+        }
+      ]
+    },
+    {
+      "id": "deal_market",
+      "events": [
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 0,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 1,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 2,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 3,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 4,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 5,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 6,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 7,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 8,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 9,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 10,
+          "anchor": "@deal"
+        },
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_l3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market"
+          },
+          "order": 11,
+          "anchor": "@deal"
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "postconditions": {
+      "zones": {
+        "$market": {
+          "count": 12
+        },
+        "$deck_l1": {
+          "count": 36
+        },
+        "$deck_l2": {
+          "count": 26
+        },
+        "$deck_l3": {
+          "count": 16
+        }
+      }
+    }
+  },
+  "rules": [
+    "rulebook:setup"
+  ]
+}

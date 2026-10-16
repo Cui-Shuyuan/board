@@ -34,284 +34,6 @@
           "anchor": "quick_setup_gems/002.start"
         },
         {
-          "op": "create",
-          "dur": 0.0,
-          "count": 4,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 2.005
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 4,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 2.005
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 4,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 2.005
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 4,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 2.005
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 4,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 2.005
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 3.485
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 3.485
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 3.485
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 3.485
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 3.485
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 5.035
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 5.035
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 5.035
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 5.035
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 7,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          },
-          "anchor": "quick_setup_gems/002.b1.start",
-          "offset": 5.035
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_diamond",
-            "template": "gem",
-            "palette": "gem_diamond"
-          },
-          "anchor": "quick_setup_gems/002.b1.end",
-          "offset": -2.645
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_sapphire",
-            "template": "gem",
-            "palette": "gem_sapphire"
-          },
-          "anchor": "quick_setup_gems/002.b1.end",
-          "offset": -2.645
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_ruby",
-            "template": "gem",
-            "palette": "gem_ruby"
-          },
-          "anchor": "quick_setup_gems/002.b1.end",
-          "offset": -2.645
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_emerald",
-            "template": "gem",
-            "palette": "gem_emerald"
-          },
-          "anchor": "quick_setup_gems/002.b1.end",
-          "offset": -2.645
-        },
-        {
-          "op": "destroy",
-          "dur": 0.0,
-          "count": 3,
-          "from_back": true,
-          "target": {
-            "space": "entity",
-            "zone": "gem_supply_onyx",
-            "template": "gem",
-            "palette": "gem_onyx"
-          },
-          "anchor": "quick_setup_gems/002.b1.end",
-          "offset": -2.645
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 5,
-          "target": {
-            "space": "entity",
-            "zone": "gold_supply",
-            "template": "gem",
-            "palette": "gem_gold"
-          },
-          "anchor": "quick_setup_gems/002.b1.end",
-          "offset": -2.645
-        },
-        {
           "op": "highlight",
           "dur": 0.275,
           "grow": 1.2,
@@ -321,6 +43,40 @@
           },
           "anchor": "quick_setup_gems/002.b1.end",
           "offset": -0.755
+        }
+      ],
+      "use": [
+        {
+          "ref": "splendor.action.seed_gem_supply",
+          "timing": {
+            "add_four": {
+              "anchor": "b1.start",
+              "offset": 2.005
+            },
+            "add_five": {
+              "anchor": "b1.start",
+              "offset": 3.485
+            },
+            "add_seven": {
+              "anchor": "b1.start",
+              "offset": 5.035
+            },
+            "remove_three": {
+              "anchor": "b1.end",
+              "offset": -2.645
+            }
+          },
+          "insert_at": 2
+        },
+        {
+          "ref": "splendor.action.seed_gold_supply",
+          "timing": {
+            "add_gold": {
+              "anchor": "b1.end",
+              "offset": -2.645
+            }
+          },
+          "insert_at": 2
         }
       ]
     }

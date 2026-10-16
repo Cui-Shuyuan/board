@@ -1,0 +1,212 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.seed_noble_hand_core",
+  "kind": "action",
+  "game": "splendor",
+  "title": "为单贵族示例铺 4 红 + 3 黑",
+  "description": "单贵族示例共用的核心手牌身份：红宝石三张具体 ruby_33/35/37/40 与黑卡 onyx_905/906/907 各一张。各版本只需再绑定既有前情差异。",
+  "roles": [
+    {
+      "name": "hand",
+      "type": "zone",
+      "required": false,
+      "default": "player_development"
+    }
+  ],
+  "params": [
+    {
+      "name": "setup_flag",
+      "type": "boolean",
+      "required": false,
+      "default": false
+    }
+  ],
+  "steps": [
+    {
+      "id": "seed_core",
+      "events": [
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_ruby_33",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_ruby_35",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_ruby_37",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_onyx_905",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_onyx_906",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$hand",
+            "template": "card_l1_onyx_907",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "anchor": "@add",
+          "setup": "$setup_flag"
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "postconditions": {
+      "zones": {
+        "$hand": {
+          "contains": [
+            {
+              "template": "card_l1_ruby_33"
+            },
+            {
+              "template": "card_l1_ruby_35"
+            },
+            {
+              "template": "card_l1_ruby_37"
+            },
+            {
+              "template": "card_l1_ruby_40"
+            },
+            {
+              "template": "card_l1_onyx_905"
+            },
+            {
+              "template": "card_l1_onyx_906"
+            },
+            {
+              "template": "card_l1_onyx_907"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "rules": [
+    "rulebook:nobles"
+  ]
+}

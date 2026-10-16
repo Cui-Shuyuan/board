@@ -1,0 +1,94 @@
+{
+  "schema": "tutorial-stage/v2",
+  "game": "worker_toy",
+  "id": "worker_table",
+  "zones": [
+    {
+      "id": "workshop",
+      "concept": "<zone>",
+      "label": "待命区",
+      "layout": {
+        "x": -2,
+        "y": 0,
+        "w": 1.4,
+        "h": 1.0
+      }
+    },
+    {
+      "id": "action_slot_a",
+      "concept": "<zone>",
+      "label": "行动格 A",
+      "layout": {
+        "x": 0,
+        "y": 0.9,
+        "w": 0.9,
+        "h": 0.9
+      }
+    },
+    {
+      "id": "action_slot_b",
+      "concept": "<zone>",
+      "label": "行动格 B",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "w": 0.9,
+        "h": 0.9
+      }
+    },
+    {
+      "id": "resource_pool",
+      "concept": "<zone>",
+      "label": "资源区",
+      "layout": {
+        "x": 2,
+        "y": 0.9,
+        "w": 1.4,
+        "h": 0.9
+      }
+    },
+    {
+      "id": "score_marker",
+      "concept": "<zone>",
+      "label": "分数标记",
+      "layout": {
+        "x": 2,
+        "y": 0,
+        "w": 1.2,
+        "h": 0.7
+      }
+    }
+  ],
+  "templates": [
+    {
+      "id": "worker",
+      "face_image": "media/worker_cutout.png",
+      "back_image": "media/worker_cutout.png"
+    },
+    {
+      "id": "resource",
+      "face_image": "media/resource_cutout.png",
+      "back_image": "media/resource_cutout.png"
+    }
+  ],
+  "shots": [
+    {
+      "id": "shot_workshop",
+      "zones": [
+        "workshop",
+        "action_slot_a",
+        "action_slot_b"
+      ],
+      "fill": 0.76
+    },
+    {
+      "id": "shot_result",
+      "zones": [
+        "action_slot_b",
+        "resource_pool",
+        "score_marker"
+      ],
+      "fill": 0.8
+    }
+  ]
+}

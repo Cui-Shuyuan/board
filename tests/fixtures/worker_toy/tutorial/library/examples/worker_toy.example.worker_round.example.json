@@ -1,0 +1,119 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "worker_toy.example.worker_round",
+  "kind": "example",
+  "game": "worker_toy",
+  "title": "虚构夹具：两名同种工人分工后获得资源",
+  "description": "同一个例子由 detailed / compact 两种编排复用；绑定不同行动格和资源区，工人都使用同一模板但因实例身份不同不得判重。",
+  "roles": [
+    {
+      "name": "worker_source",
+      "type": "zone",
+      "required": false,
+      "default": "workshop"
+    },
+    {
+      "name": "slot_a",
+      "type": "zone",
+      "required": false,
+      "default": "action_slot_a"
+    },
+    {
+      "name": "slot_b",
+      "type": "zone",
+      "required": false,
+      "default": "action_slot_b"
+    },
+    {
+      "name": "resource_zone",
+      "type": "zone",
+      "required": false,
+      "default": "resource_pool"
+    }
+  ],
+  "params": [
+    {
+      "name": "amount",
+      "type": "integer",
+      "required": false,
+      "default": 2
+    }
+  ],
+  "steps": [
+    {
+      "id": "seed_workers",
+      "use": [
+        {
+          "ref": "worker_toy.action.seed_workers",
+          "bind": {
+            "worker_source": "${worker_source}",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "place_a",
+      "use": [
+        {
+          "ref": "worker_toy.action.place_worker",
+          "bind": {
+            "worker_source": "${worker_source}",
+            "action_zone": "${slot_a}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "place_b",
+      "use": [
+        {
+          "ref": "worker_toy.action.place_worker",
+          "bind": {
+            "worker_source": "${worker_source}",
+            "action_zone": "${slot_b}"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gain",
+      "use": [
+        {
+          "ref": "worker_toy.action.gain_resource",
+          "bind": {
+            "resource_zone": "${resource_zone}",
+            "amount": "${amount}"
+          }
+        }
+      ]
+    }
+  ],
+  "facts": {
+    "objects": [
+      {
+        "id": "worker.a",
+        "template": "worker",
+        "zone": "action_slot_a",
+        "face": "up"
+      },
+      {
+        "id": "worker.b",
+        "template": "worker",
+        "zone": "action_slot_b",
+        "face": "up"
+      }
+    ],
+    "zones": {
+      "workshop": {
+        "count": 0
+      },
+      "action_slot_a": {
+        "count": 1
+      },
+      "action_slot_b": {
+        "count": 1
+      }
+    }
+  }
+}

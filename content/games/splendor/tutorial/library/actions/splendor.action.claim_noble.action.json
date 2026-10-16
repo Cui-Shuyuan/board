@@ -1,0 +1,74 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.claim_noble",
+  "kind": "action",
+  "game": "splendor",
+  "title": "把一位贵族移动到玩家贵族区",
+  "description": "共享拿取贵族动作；来源可以是贵族市场，也可以是另一位玩家的贵族区（用于讲解条件与归属转移）。",
+  "roles": [
+    {
+      "name": "noble_source_zone",
+      "type": "zone",
+      "required": false,
+      "default": "noble_market"
+    },
+    {
+      "name": "noble_target_zone",
+      "type": "zone",
+      "required": false,
+      "default": "player_nobles"
+    }
+  ],
+  "params": [
+    {
+      "name": "noble_template",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "noble_palette",
+      "type": "string",
+      "required": false,
+      "default": "noble"
+    },
+    {
+      "name": "noble_concept",
+      "type": "string",
+      "required": false,
+      "default": "noble"
+    },
+    {
+      "name": "claim_dur",
+      "type": "number",
+      "required": false,
+      "default": 0.8
+    }
+  ],
+  "steps": [
+    {
+      "id": "claim",
+      "events": [
+        {
+          "op": "take",
+          "dur": "$claim_dur",
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "$noble_source_zone",
+            "template": "$noble_template",
+            "palette": "$noble_palette",
+            "concept": "$noble_concept"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$noble_target_zone"
+          },
+          "anchor": "@claim"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    "rulebook:nobles"
+  ]
+}

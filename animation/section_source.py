@@ -35,6 +35,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
+try:  # package-style import
+    from .material_library import MaterialLibrary, MaterialUsage
+except ImportError:  # direct script/module import with animation/ on sys.path
+    from material_library import MaterialLibrary, MaterialUsage
+
 ROOT = Path(__file__).resolve().parent.parent
 TRACK_SOURCE_SCHEMA = "tutorial-track/v1"
 ANIM_SOURCE_SCHEMA = "tutorial-anim/v2"
@@ -216,6 +221,7 @@ class TrackSource:
     qid_to_local: dict[str, str]
     qid_to_cue: dict[str, dict]
     qa_asks: list[dict]
+    material_usages: list[MaterialUsage] = field(default_factory=list)
 
     @property
     def tutorial(self) -> Path:
@@ -307,6 +313,32 @@ def load_track_source(game: str, track: str, *, verbose: bool = False) -> TrackS
     _remember(descriptor_path)
     _remember(base_path)
 
+    def _remember_stage(rel) -> None:
+        value = str(rel or "").strip().replace("\\", "/")
+        if not value:
+            return
+        try:
+            _remember(resolve_stage_path(value, tutorial))
+        except FileNotFoundError:
+            # The compiler/checker will report the missing stage with full context.
+            return
+
+    def _remember_cue_stages(anim_doc: dict) -> None:
+        for cue in (anim_doc.get("cues") or []):
+            if isinstance(cue, dict):
+                _remember_stage(cue.get("stage"))
+
+    for tree in (base_anim.get("trees") or []):
+        if isinstance(tree, dict):
+            _remember_stage(tree.get("stage"))
+
+    material_lib = None
+    material_usages: list[MaterialUsage] = []
+    if (tutorial / "library").is_dir():
+        material_lib = MaterialLibrary.load(tutorial, game)
+        for warning in material_lib.warnings:
+            print(f"WARN material: {warning}", file=sys.stderr)
+
     for order, sid in enumerate(section_ids):
         section_dir = tutorial / "sections" / sid
         section_meta_path = section_dir / "section.json"
@@ -335,6 +367,14 @@ def load_track_source(game: str, track: str, *, verbose: bool = False) -> TrackS
             raise ValueError(f"{anim_path}: section must be {sid!r}")
         if str(script.get("section") or sid) != sid:
             raise ValueError(f"{script_path}: section must be {sid!r}")
+        _remember_cue_stages(anim)
+        if material_lib is not None:
+            anim, usages, material_files = material_lib.expand_section(
+                sid, track, anim, where=str(anim_path)
+            )
+            material_usages.extend(usages)
+            for path in material_files:
+                _remember(path)
         qa = _read_json(qa_path) if qa_path.is_file() else None
         if qa is not None and not isinstance(qa, dict):
             raise ValueError(f"{qa_path}: qa must be an object when present")
@@ -702,6 +742,7 @@ def load_track_source(game: str, track: str, *, verbose: bool = False) -> TrackS
         qid_to_local=qid_to_local,
         qid_to_cue=qid_to_cue,
         qa_asks=qa_asks,
+        material_usages=material_usages,
     )
 
 

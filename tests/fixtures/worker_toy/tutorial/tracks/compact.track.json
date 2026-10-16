@@ -1,0 +1,11 @@
+{
+  "schema": "tutorial-track/v1",
+  "game": "worker_toy",
+  "track": "compact",
+  "title": "Worker Toy compact",
+  "version": "0.1.0",
+  "sections": [
+    "board"
+  ],
+  "base_anim": "../shared/compact.base.anim.json"
+}

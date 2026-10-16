@@ -1,0 +1,61 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "worker_toy",
+  "track": "detailed",
+  "section": "board",
+  "cues": [
+    {
+      "id": "round",
+      "entry": "initial",
+      "tree": "main",
+      "example": {
+        "ref": "worker_toy.example.worker_round"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_workshop",
+          "at": 0.0
+        }
+      ],
+      "use": [
+        {
+          "ref": "worker_toy.example.worker_round",
+          "bind": {
+            "slot_a": "action_slot_a",
+            "slot_b": "action_slot_b",
+            "resource_zone": "resource_pool",
+            "amount": 2
+          },
+          "timing": {
+            "seed": {
+              "at": 0.2
+            },
+            "place": [
+              {
+                "at": 0.8
+              },
+              {
+                "at": 1.4
+              }
+            ],
+            "gain": {
+              "at": 2.2
+            }
+          },
+          "insert_at": 1
+        }
+      ],
+      "script": {
+        "story": "虚构工人夹具",
+        "enter": {
+          "zones": {}
+        },
+        "exit": {
+          "zones": {}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.take_setup_gem",
+  "kind": "action",
+  "game": "splendor",
+  "title": "为示例从供应堆取指定颜色宝石",
+  "description": "示例准备动作：从指定颜色供应堆按数量取宝石到示例玩家持有区。调用处必须绑定颜色。",
+  "roles": [
+    {
+      "name": "supply_zone",
+      "type": "zone",
+      "required": true,
+      "accepts": [
+        "gem_supply_*"
+      ]
+    },
+    {
+      "name": "hand_zone",
+      "type": "zone",
+      "required": false,
+      "default": "player_holding"
+    }
+  ],
+  "params": [
+    {
+      "name": "color",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "count",
+      "type": "integer",
+      "required": false,
+      "default": 1
+    }
+  ],
+  "steps": [
+    {
+      "id": "take_gem",
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": "$count",
+          "setup": true,
+          "target": {
+            "space": "entity",
+            "zone": "$supply_zone",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<${color}>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$hand_zone"
+          },
+          "anchor": "@setup_take"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    "rulebook:taking_gems"
+  ]
+}

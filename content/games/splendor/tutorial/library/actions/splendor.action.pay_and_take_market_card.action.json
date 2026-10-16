@@ -1,0 +1,207 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.pay_and_take_market_card",
+  "kind": "action",
+  "game": "splendor",
+  "title": "支付 1–2 种宝石并购买市场卡",
+  "description": "共享购买动作的付款与取牌状态序列。付款颜色、数量、时长和卡牌身份全部由调用处绑定；默认第二笔付款可省略，以覆盖不同售价和折扣前情。",
+  "roles": [
+    {
+      "name": "hand_zone",
+      "type": "zone",
+      "required": false,
+      "default": "player_holding"
+    },
+    {
+      "name": "market_zone",
+      "type": "zone",
+      "required": false,
+      "default": "card_market"
+    },
+    {
+      "name": "development_zone",
+      "type": "zone",
+      "required": false,
+      "default": "player_development"
+    }
+  ],
+  "params": [
+    {
+      "name": "pay1_zone",
+      "type": "zone",
+      "required": true,
+      "accepts": [
+        "gem_supply_*"
+      ]
+    },
+    {
+      "name": "pay1_color",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "pay1_count",
+      "type": "integer",
+      "required": false,
+      "default": 1
+    },
+    {
+      "name": "pay1_stagger",
+      "type": "number",
+      "required": false,
+      "default": 0.12
+    },
+    {
+      "name": "pay2_zone",
+      "type": "zone",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "pay2_color",
+      "type": "string",
+      "required": false,
+      "default": null
+    },
+    {
+      "name": "pay2_count",
+      "type": "integer",
+      "required": false,
+      "default": 1
+    },
+    {
+      "name": "pay2_stagger",
+      "type": "number",
+      "required": false,
+      "default": 0.12
+    },
+    {
+      "name": "pay_dur",
+      "type": "number",
+      "required": false,
+      "default": 0.5
+    },
+    {
+      "name": "take_dur",
+      "type": "number",
+      "required": false,
+      "default": 0.8
+    },
+    {
+      "name": "card_to",
+      "type": "string",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "card_template",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "card_palette",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "card_concept",
+      "type": "string",
+      "required": false,
+      "default": "development_card_level_1"
+    },
+    {
+      "name": "card_bonus",
+      "type": "string",
+      "required": true
+    }
+  ],
+  "steps": [
+    {
+      "id": "pay_1",
+      "events": [
+        {
+          "op": "pay",
+          "dur": "$pay_dur",
+          "quantity": "$pay1_count",
+          "target": {
+            "space": "entity",
+            "zone": "$hand_zone",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<${pay1_color}>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$pay1_zone"
+          },
+          "anchor": "@pay1",
+          "stagger": "$pay1_stagger"
+        }
+      ]
+    },
+    {
+      "id": "pay_2",
+      "status": "optional",
+      "events": [
+        {
+          "op": "pay",
+          "dur": "$pay_dur",
+          "quantity": "$pay2_count",
+          "target": {
+            "space": "entity",
+            "zone": "$hand_zone",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<${pay2_color}>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$pay2_zone"
+          },
+          "anchor": "@pay2",
+          "stagger": "$pay2_stagger"
+        }
+      ]
+    },
+    {
+      "id": "take_card",
+      "events": [
+        {
+          "op": "take",
+          "dur": "$take_dur",
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "$market_zone",
+            "template": "$card_template",
+            "palette": "$card_palette",
+            "concept": "$card_concept",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "$card_bonus"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$development_zone"
+          },
+          "anchor": "@take_card",
+          "to": "$card_to"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    "rulebook:development_card_purchase"
+  ]
+}

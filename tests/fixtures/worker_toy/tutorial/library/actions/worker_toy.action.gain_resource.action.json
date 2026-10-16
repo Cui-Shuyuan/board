@@ -1,0 +1,53 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "worker_toy.action.gain_resource",
+  "kind": "action",
+  "game": "worker_toy",
+  "title": "获得资源进展",
+  "description": "获得资源进展",
+  "roles": [
+    {
+      "name": "resource_zone",
+      "type": "zone",
+      "required": false,
+      "default": "resource_pool"
+    }
+  ],
+  "params": [
+    {
+      "name": "amount",
+      "type": "integer",
+      "required": false,
+      "default": 2
+    }
+  ],
+  "steps": [
+    {
+      "id": "gain",
+      "events": [
+        {
+          "op": "create",
+          "count": "$amount",
+          "to": "face_up",
+          "anchor": "@gain",
+          "target": {
+            "space": "entity",
+            "zone": "$resource_zone",
+            "template": "resource",
+            "palette": "resource",
+            "concept": "resource"
+          }
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "postconditions": {
+      "zones": {
+        "$resource_zone": {
+          "count": "$amount"
+        }
+      }
+    }
+  }
+}

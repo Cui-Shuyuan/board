@@ -1,0 +1,349 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.example.noble_single",
+  "kind": "example",
+  "game": "splendor",
+  "title": "单贵族示例：4 红 + 3 黑满足 noble_1",
+  "description": "full/quick 共用核心对象身份，版本差异作为显式 variant：full 从 cards 分支继承一张白卡，quick 从设置后的空手牌开始并预置付款宝石。",
+  "roles": [],
+  "params": [],
+  "facts": {
+    "objects": [
+      {
+        "id": "noble_single.card.card_l1_ruby_33",
+        "kind": "development_card",
+        "template": "card_l1_ruby_33",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
+      {
+        "id": "noble_single.card.card_l1_ruby_35",
+        "kind": "development_card",
+        "template": "card_l1_ruby_35",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
+      {
+        "id": "noble_single.card.card_l1_ruby_37",
+        "kind": "development_card",
+        "template": "card_l1_ruby_37",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
+      {
+        "id": "noble_single.card.card_l1_ruby_40",
+        "kind": "development_card",
+        "template": "card_l1_ruby_40",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<ruby>"
+          }
+        ]
+      },
+      {
+        "id": "noble_single.card.card_l1_onyx_905",
+        "kind": "development_card",
+        "template": "card_l1_onyx_905",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<onyx>"
+          }
+        ]
+      },
+      {
+        "id": "noble_single.card.card_l1_onyx_906",
+        "kind": "development_card",
+        "template": "card_l1_onyx_906",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<onyx>"
+          }
+        ]
+      },
+      {
+        "id": "noble_single.card.card_l1_onyx_907",
+        "kind": "development_card",
+        "template": "card_l1_onyx_907",
+        "palette": "card_level_1",
+        "concept": "development_card_level_1",
+        "zone": "player_development",
+        "face": "up",
+        "parts": [
+          {
+            "key": "bonus",
+            "value": "<onyx>"
+          }
+        ]
+      }
+    ],
+    "nobles": [
+      "noble_1"
+    ],
+    "condition": {
+      "ruby": 4,
+      "onyx": 4
+    }
+  },
+  "variants": [
+    {
+      "id": "quick_from_setup",
+      "description": "从 quick 设置后的空玩家发展区出发，补齐 4 红 + 3 黑，并预置 2 蓝 2 白为示例付款做准备。",
+      "facts": {
+        "zones": {
+          "player_development": {
+            "count": 7
+          },
+          "player_holding": {
+            "count": 4
+          },
+          "card_market": {
+            "count": 12
+          },
+          "deck_level_1": {
+            "count": 29
+          }
+        },
+        "holding": {
+          "gem_sapphire": 2,
+          "gem_diamond": 2
+        }
+      },
+      "steps": [
+        {
+          "id": "strip_deck",
+          "events": [
+            {
+              "op": "destroy",
+              "dur": 0.0,
+              "count": 7,
+              "setup": true,
+              "from_back": true,
+              "anchor": "@start",
+              "target": {
+                "space": "entity",
+                "zone": "deck_level_1",
+                "template": "blank_card_1",
+                "palette": "card_level_1",
+                "concept": "development_card_level_1"
+              }
+            }
+          ]
+        },
+        {
+          "id": "seed_core",
+          "use": [
+            {
+              "ref": "splendor.action.seed_noble_hand_core",
+              "bind": {
+                "hand": "player_development",
+                "setup_flag": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "swap_market",
+          "events": [
+            {
+              "op": "transfer",
+              "dur": 0.0,
+              "setup": true,
+              "quantity": 1,
+              "to": "face_down",
+              "anchor": "@start",
+              "target": {
+                "space": "entity",
+                "zone": "card_market",
+                "template": "card_l1_sapphire_15",
+                "palette": "card_level_1",
+                "concept": "development_card_level_1",
+                "parts": [
+                  {
+                    "key": "bonus",
+                    "value": "<sapphire>"
+                  }
+                ]
+              },
+              "destination": {
+                "space": "entity",
+                "zone": "deck_level_1"
+              }
+            },
+            {
+              "op": "transfer",
+              "dur": 0.0,
+              "setup": true,
+              "quantity": 1,
+              "to": "face_up",
+              "order": 3,
+              "anchor": "@start",
+              "target": {
+                "space": "entity",
+                "zone": "deck_level_1",
+                "template": "card_l1_onyx_3",
+                "palette": "card_level_1",
+                "concept": "development_card_level_1",
+                "parts": [
+                  {
+                    "key": "bonus",
+                    "value": "<onyx>"
+                  }
+                ]
+              },
+              "destination": {
+                "space": "entity",
+                "zone": "card_market"
+              }
+            }
+          ]
+        },
+        {
+          "id": "preload_gems",
+          "use": [
+            {
+              "ref": "splendor.action.take_setup_gem",
+              "bind": {
+                "supply_zone": "gem_supply_sapphire",
+                "hand_zone": "player_holding",
+                "color": "sapphire",
+                "count": 2
+              }
+            },
+            {
+              "ref": "splendor.action.take_setup_gem",
+              "bind": {
+                "supply_zone": "gem_supply_diamond",
+                "hand_zone": "player_holding",
+                "color": "diamond",
+                "count": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "full_from_cards_intro",
+      "description": "从 full cards 分支继承 1 张白色折扣卡与 3 枚宝石，补齐 4 红 + 3 黑，并补回 deck_level_1 顶牌保持后续购买与补位一致。",
+      "facts": {
+        "zones": {
+          "player_development": {
+            "count": 8
+          },
+          "player_holding": {
+            "count": 3
+          },
+          "card_market": {
+            "count": 12
+          },
+          "deck_level_1": {
+            "count": 28
+          }
+        },
+        "holding": {
+          "gem_diamond": 1,
+          "gem_sapphire": 1,
+          "gem_emerald": 1
+        }
+      },
+      "steps": [
+        {
+          "id": "strip_deck",
+          "events": [
+            {
+              "op": "destroy",
+              "dur": 0.0,
+              "count": 8,
+              "from_back": true,
+              "anchor": "@start",
+              "target": {
+                "space": "entity",
+                "zone": "deck_level_1",
+                "template": "blank_card_1",
+                "palette": "card_level_1",
+                "concept": "development_card_level_1"
+              }
+            }
+          ]
+        },
+        {
+          "id": "seed_core",
+          "use": [
+            {
+              "ref": "splendor.action.seed_noble_hand_core",
+              "bind": {
+                "hand": "player_development",
+                "setup_flag": false
+              }
+            }
+          ]
+        },
+        {
+          "id": "restore_deck_top",
+          "events": [
+            {
+              "op": "create",
+              "dur": 0.0,
+              "count": 1,
+              "to": "face_down",
+              "anchor": "@start",
+              "target": {
+                "space": "entity",
+                "zone": "deck_level_1",
+                "template": "card_l1_onyx_908",
+                "palette": "card_level_1",
+                "concept": "development_card_level_1",
+                "parts": [
+                  {
+                    "key": "bonus",
+                    "value": "<onyx>"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "default_variant": "quick_from_setup"
+}

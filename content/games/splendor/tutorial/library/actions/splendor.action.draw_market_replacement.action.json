@@ -1,0 +1,93 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.draw_market_replacement",
+  "kind": "action",
+  "game": "splendor",
+  "title": "从牌堆抽一张补进市场槽位",
+  "description": "共享补位动作：从指定等级牌堆抽具体下一张，翻开放回指定市场顺序。",
+  "roles": [
+    {
+      "name": "market_zone",
+      "type": "zone",
+      "required": false,
+      "default": "card_market"
+    }
+  ],
+  "params": [
+    {
+      "name": "deck_zone",
+      "type": "zone",
+      "required": true,
+      "accepts": [
+        "deck_level_*"
+      ]
+    },
+    {
+      "name": "draw_template",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "draw_palette",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "draw_concept",
+      "type": "string",
+      "required": false,
+      "default": "development_card_level_1"
+    },
+    {
+      "name": "draw_bonus",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "draw_order",
+      "type": "integer",
+      "required": true
+    },
+    {
+      "name": "draw_dur",
+      "type": "number",
+      "required": false,
+      "default": 0.6
+    }
+  ],
+  "steps": [
+    {
+      "id": "draw_replacement",
+      "events": [
+        {
+          "op": "draw",
+          "dur": "$draw_dur",
+          "quantity": 1,
+          "to": "face_up",
+          "order": "$draw_order",
+          "target": {
+            "space": "entity",
+            "zone": "$deck_zone",
+            "template": "$draw_template",
+            "palette": "$draw_palette",
+            "concept": "$draw_concept",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "$draw_bonus"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$market_zone"
+          },
+          "anchor": "@draw"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    "rulebook:development_card_purchase"
+  ]
+}

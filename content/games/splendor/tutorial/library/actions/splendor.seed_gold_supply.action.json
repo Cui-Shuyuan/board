@@ -1,0 +1,48 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.seed_gold_supply",
+  "kind": "action",
+  "game": "splendor",
+  "title": "置入 5 枚黄金供应",
+  "description": "确定性状态动作：黄金供应堆创建 5 枚。",
+  "roles": [],
+  "params": [],
+  "steps": [
+    {
+      "id": "seed_gold",
+      "events": [
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 5,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "template": "gem",
+            "palette": "gem_gold"
+          },
+          "anchor": "@add_gold"
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "preconditions": {
+      "zones": {
+        "gold_supply": {
+          "count": 0
+        }
+      }
+    },
+    "postconditions": {
+      "zones": {
+        "gold_supply": {
+          "count": 5
+        }
+      }
+    }
+  },
+  "rules": [
+    "rulebook:setup"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.create_starting_marker",
+  "kind": "action",
+  "game": "splendor",
+  "title": "放置起始玩家标记",
+  "description": "确定性状态动作：在起始玩家标记区创建标记。",
+  "roles": [
+    {
+      "name": "marker_zone",
+      "type": "zone",
+      "required": false,
+      "default": "player_marker"
+    }
+  ],
+  "params": [],
+  "steps": [
+    {
+      "id": "create_marker",
+      "events": [
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "$marker_zone",
+            "template": "starting_marker",
+            "palette": "",
+            "concept": "starting_player_marker"
+          },
+          "anchor": "@add"
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "preconditions": {
+      "zones": {
+        "$marker_zone": {
+          "count": 0
+        }
+      }
+    },
+    "postconditions": {
+      "zones": {
+        "$marker_zone": {
+          "count": 1
+        }
+      }
+    }
+  },
+  "rules": [
+    "rulebook:setup"
+  ]
+}

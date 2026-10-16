@@ -1,0 +1,46 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "worker_toy.action.place_worker",
+  "kind": "action",
+  "game": "worker_toy",
+  "title": "把一名工人从待命区放到行动格",
+  "description": "把一名工人从待命区放到行动格",
+  "roles": [
+    {
+      "name": "worker_source",
+      "type": "zone",
+      "required": true
+    },
+    {
+      "name": "action_zone",
+      "type": "zone",
+      "required": true
+    }
+  ],
+  "params": [],
+  "steps": [
+    {
+      "id": "place",
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.3,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "@place",
+          "target": {
+            "space": "entity",
+            "zone": "$worker_source",
+            "template": "worker",
+            "palette": "worker",
+            "concept": "worker"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "$action_zone"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -372,368 +372,85 @@
           "shot": "shot_decks_market",
           "realizes": "<ontology::timing>",
           "anchor": "setup_cards/002.1.start"
-        },
-        {
-          "op": "stack",
-          "dur": 0.0,
-          "capacity": 40,
-          "real_templates": "card_l1_emerald_32,card_l1_ruby_38,card_l1_diamond_18,card_l1_sapphire_15,card_l1_onyx_3",
-          "pad_template": "blank_card_1",
-          "to": "face_down",
-          "anchor": "setup_cards/002.1.start",
-          "offset": 0.05,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1"
-          }
-        },
-        {
-          "op": "stack",
-          "dur": 0.0,
-          "capacity": 30,
-          "real_templates": "card_l2_sapphire_49,card_l2_onyx_45,card_l2_ruby_70,card_l2_emerald_60,card_l2_diamond_55",
-          "pad_template": "blank_card_2",
-          "to": "face_down",
-          "anchor": "setup_cards/002.1.start",
-          "offset": 0.052,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_2"
-          }
-        },
-        {
-          "op": "stack",
-          "dur": 0.0,
-          "capacity": 20,
-          "real_templates": "card_l3_ruby_88,card_l3_diamond_81,card_l3_emerald_84,card_l3_onyx_74,card_l3_sapphire_78",
-          "pad_template": "blank_card_3",
-          "to": "face_down",
-          "anchor": "setup_cards/002.1.start",
-          "offset": 0.054,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_3"
-          }
-        },
-        {
-          "op": "shuffle",
-          "dur": 1.1,
-          "anchor": "setup_cards/002.1.b1.start",
-          "offset": 0.015,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1"
-          }
-        },
-        {
-          "op": "shuffle",
-          "dur": 1.1,
-          "anchor": "setup_cards/002.1.b1.start",
-          "offset": 0.015,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_2"
-          }
-        },
-        {
-          "op": "shuffle",
-          "dur": 1.1,
-          "anchor": "setup_cards/002.1.b1.start",
-          "offset": 0.015,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_3"
-          }
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b1.end",
-          "offset": 0.015,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<emerald>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 0
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.start",
-          "offset": -0.07,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 1
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.start",
-          "offset": 0.32,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 2
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.start",
-          "offset": 0.71,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_1",
-            "concept": "development_card_level_1",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<sapphire>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 3
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.start",
-          "offset": 1.1,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_2",
-            "concept": "development_card_level_2",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<sapphire>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 4
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.start",
-          "offset": 1.49,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_2",
-            "concept": "development_card_level_2",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<onyx>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 5
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.start",
-          "offset": 1.88,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_2",
-            "concept": "development_card_level_2",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 6
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.end",
-          "offset": -1.585,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_2",
-            "concept": "development_card_level_2",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<emerald>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 7
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.end",
-          "offset": -1.195,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_3",
-            "concept": "development_card_level_3",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<ruby>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 8
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.end",
-          "offset": -0.805,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_3",
-            "concept": "development_card_level_3",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<diamond>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 9
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.end",
-          "offset": -0.415,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_3",
-            "concept": "development_card_level_3",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<emerald>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 10
-        },
-        {
-          "op": "draw",
-          "dur": 0.34,
-          "quantity": 1,
-          "to": "face_up",
-          "anchor": "setup_cards/002.1.b2.end",
-          "offset": -0.025,
-          "target": {
-            "space": "entity",
-            "zone": "deck_level_3",
-            "concept": "development_card_level_3",
-            "parts": [
-              {
-                "key": "bonus",
-                "value": "<onyx>"
-              }
-            ]
-          },
-          "destination": {
-            "space": "entity",
-            "zone": "card_market"
-          },
-          "order": 11
         }
-      ]
+      ],
+      "use": [
+        {
+          "ref": "splendor.example.initial_market",
+          "timing": {
+            "seat_l1": {
+              "anchor": "start",
+              "offset": 0.05
+            },
+            "seat_l2": {
+              "anchor": "start",
+              "offset": 0.052
+            },
+            "seat_l3": {
+              "anchor": "start",
+              "offset": 0.054
+            },
+            "shuffle": {
+              "anchor": "b1.start",
+              "offset": 0.015
+            },
+            "deal": [
+              {
+                "anchor": "b1.end",
+                "offset": 0.015
+              },
+              {
+                "anchor": "b2.start",
+                "offset": -0.07
+              },
+              {
+                "anchor": "b2.start",
+                "offset": 0.32
+              },
+              {
+                "anchor": "b2.start",
+                "offset": 0.71
+              },
+              {
+                "anchor": "b2.start",
+                "offset": 1.1
+              },
+              {
+                "anchor": "b2.start",
+                "offset": 1.49
+              },
+              {
+                "anchor": "b2.start",
+                "offset": 1.88
+              },
+              {
+                "anchor": "b2.end",
+                "offset": -1.585
+              },
+              {
+                "anchor": "b2.end",
+                "offset": -1.195
+              },
+              {
+                "anchor": "b2.end",
+                "offset": -0.805
+              },
+              {
+                "anchor": "b2.end",
+                "offset": -0.415
+              },
+              {
+                "anchor": "b2.end",
+                "offset": -0.025
+              }
+            ]
+          },
+          "insert_at": 1
+        }
+      ],
+      "example": {
+        "ref": "splendor.example.initial_market"
+      }
     }
   ],
   "time_anchors": [

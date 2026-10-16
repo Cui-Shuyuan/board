@@ -1,0 +1,11 @@
+{
+  "schema": "tutorial-track/v1",
+  "game": "worker_toy",
+  "track": "detailed",
+  "title": "Worker Toy detailed",
+  "version": "0.1.0",
+  "sections": [
+    "board"
+  ],
+  "base_anim": "../shared/detailed.base.anim.json"
+}

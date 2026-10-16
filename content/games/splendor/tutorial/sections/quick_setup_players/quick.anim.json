@@ -20,48 +20,17 @@
           "dur": 0.0,
           "shot": "shot_nobles",
           "anchor": "quick_setup_players/001.start"
-        },
+        }
+      ],
+      "use": [
         {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_1",
-            "palette": "noble",
-            "concept": "noble"
+          "ref": "splendor.action.seed_noble_market",
+          "timing": {
+            "show": {
+              "anchor": "start"
+            }
           },
-          "anchor": "quick_setup_players/001.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_4",
-            "palette": "noble",
-            "concept": "noble"
-          },
-          "anchor": "quick_setup_players/001.start"
-        },
-        {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "to": "face_up",
-          "target": {
-            "space": "entity",
-            "zone": "noble_market",
-            "template": "noble_5",
-            "palette": "noble",
-            "concept": "noble"
-          },
-          "anchor": "quick_setup_players/001.start"
+          "insert_at": 1
         }
       ]
     },
@@ -117,19 +86,6 @@
           "anchor": "quick_setup_players/002.start"
         },
         {
-          "op": "create",
-          "dur": 0.0,
-          "count": 1,
-          "target": {
-            "space": "entity",
-            "zone": "player_marker",
-            "template": "starting_marker",
-            "palette": "",
-            "concept": "starting_player_marker"
-          },
-          "anchor": "quick_setup_players/002.start"
-        },
-        {
           "op": "highlight",
           "dur": 0.321,
           "grow": 1.08,
@@ -138,6 +94,17 @@
             "id": "marker_intro"
           },
           "anchor": "quick_setup_players/002.start"
+        }
+      ],
+      "use": [
+        {
+          "ref": "splendor.action.create_starting_marker",
+          "timing": {
+            "add": {
+              "anchor": "start"
+            }
+          },
+          "insert_at": 3
         }
       ]
     },

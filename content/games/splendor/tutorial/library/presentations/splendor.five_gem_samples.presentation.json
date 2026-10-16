@@ -1,0 +1,102 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.presentation.five_gem_samples",
+  "kind": "presentation",
+  "game": "splendor",
+  "title": "屏幕展示五色宝石样本",
+  "description": "纯表现素材：在 screen overlay 中并排显示钻石、蓝宝石、红宝石、翡翠、缟玛瑙样本，不创建规则实体、不参与守恒。",
+  "roles": [],
+  "params": [],
+  "steps": [
+    {
+      "id": "show_samples",
+      "events": [
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.15,
+            "y": 0.29,
+            "w": 0.11,
+            "h": 0.2
+          },
+          "dur": 0.0,
+          "image": "media/card/白宝石_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_diamond"
+          },
+          "anchor": "@show"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.29,
+            "y": 0.29,
+            "w": 0.11,
+            "h": 0.2
+          },
+          "dur": 0.0,
+          "image": "media/card/蓝宝石_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_sapphire"
+          },
+          "anchor": "@show"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.43,
+            "y": 0.29,
+            "w": 0.11,
+            "h": 0.2
+          },
+          "dur": 0.0,
+          "image": "media/card/红宝石_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_ruby"
+          },
+          "anchor": "@show"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.57,
+            "y": 0.29,
+            "w": 0.11,
+            "h": 0.2
+          },
+          "dur": 0.0,
+          "image": "media/card/绿宝石_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_emerald"
+          },
+          "anchor": "@show"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.71,
+            "y": 0.29,
+            "w": 0.11,
+            "h": 0.2
+          },
+          "dur": 0.0,
+          "image": "media/card/黑宝石_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "gem_sample_onyx"
+          },
+          "anchor": "@show"
+        }
+      ]
+    }
+  ]
+}

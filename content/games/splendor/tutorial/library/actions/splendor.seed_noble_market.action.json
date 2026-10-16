@@ -1,0 +1,78 @@
+{
+  "schema": "tutorial-material/v1",
+  "id": "splendor.action.seed_noble_market",
+  "kind": "action",
+  "game": "splendor",
+  "title": "翻开 3 位贵族",
+  "description": "确定性状态动作：按 noble_1 / noble_4 / noble_5 翻开三位贵族。",
+  "roles": [
+    {
+      "name": "noble_zone",
+      "type": "zone",
+      "required": false,
+      "default": "noble_market"
+    }
+  ],
+  "params": [],
+  "steps": [
+    {
+      "id": "show_nobles",
+      "events": [
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$noble_zone",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "@show"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$noble_zone",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "@show"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "$noble_zone",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "@show"
+        }
+      ]
+    }
+  ],
+  "contract": {
+    "postconditions": {
+      "zones": {
+        "$noble_zone": {
+          "count": 3
+        }
+      }
+    }
+  },
+  "rules": [
+    "rulebook:setup"
+  ]
+}

@@ -36,7 +36,7 @@ qdrant.exe
 python3 tools/content/validate_rules.py --errors-only   # 当前 0 errors / 72 warnings
 python3 tools/content/normalize_json.py
 python3 tools/ops/check_no_secrets.py
-python3 -m unittest discover -s animation -p 'test_*.py'   # 当前 188/188
+python3 -m unittest discover -s animation -p 'test_*.py'   # 当前 201/201（含素材库/夹具测试）
 ```
 
 后端：
@@ -102,6 +102,9 @@ python3 animation/compile_tutorial.py --game splendor --track quick --validate-q
 检查：
 
 ```bash
+python3 animation/material_cli.py validate --game splendor
+python3 animation/check_materials.py --game splendor --track quick
+python3 animation/material_cli.py impact --game splendor --material splendor.action.seed_gem_supply --check
 python3 animation/section_source.py --game splendor --track quick --check
 python3 animation/compile_animation_v2.py --game splendor --track quick
 python3 animation/compile_animation_v2.py --game splendor --track quick --check
@@ -118,7 +121,7 @@ python3 tools/ops/check_unity_scripts.py
 - QA：`animation/qa_anim_ask.py --game splendor --track quick --only <qualified_cue>`；问题必须手写，放在 cue 的 `qa` 或 `sections/<id>/qa.json`。
 - 一次性迁移脚本已移到 `animation/archive/`。
 - `animation/cue_graph_v2.py` 支持 insert/delete/split/merge，但截至当前尚未接入 `compile_tutorial.py` 总控。
-- 写作入口：`content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`、`.../v2/README.md`、`animation/README.md`。
+- 写作入口：`docs/tutorial/animation-materials-authoring-guide.md`、`content/games/splendor/tutorial/anim/v2/LLM-ANIMATION-GUIDE.md`、`.../v2/README.md`、`animation/README.md`。
 
 ## 7. Content / Catalog / Manifest
 

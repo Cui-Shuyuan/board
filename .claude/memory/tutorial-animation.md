@@ -7,6 +7,14 @@ metadata:
 
 # 讲规动画（当前版）
 
+## 素材化重构（2026-10-17）
+
+- 引入 `tutorial-material/v1` 素材库：`tutorial/library/{actions,examples,presentations}/`，由 `animation/material_library.py` 加载/校验/展开；cue 用 `use` + `example` 引用，不再在 full/quick 各存一份局面与动作。
+- `animation/material_cli.py` 提供 `validate` / `impact --check --rebuild` / `stale` / `expand-cue`；`animation/check_materials.py` 用 compiled state 校验 action 前后置与 example 事实。
+- Splendor 已抽 10 个 action、3 个 example、1 个 presentation，full 29 / quick 16 处引用；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致。
+- 非卡牌虚构夹具在 `tests/fixtures/worker_toy/`，同一 example 以 detailed/compact 两种编排、不同角色绑定和时间编译；对应测试 `animation/test_worker_toy_fixture.py`。
+- 修改共享素材：`python3 animation/material_cli.py impact --game splendor --material <id>`；纯动画素材变化不会触发 TTS 重合成。
+
 ## 定位与现状
 
 - 离线编译的静态数字资产；口播稿主导，TTS 冻结后音频时长是动画硬边界。播放端只做确定性播放，不实时调 LLM。
@@ -24,6 +32,9 @@ metadata:
 - `sections/<section_id>/<track>.anim.json`：cue / events / camera / anchors / parent / entry / 可选 `qa`。
 - `sections/<section_id>/<track>.script.json`：口播文本、beats、refs。
 - `sections/<section_id>/qa.json`：section 外置手写 QA，可空。
+- `library/actions/*.action.json`：可复用状态动作，只含状态原语。
+- `library/examples/*.example.json`：具体示例事实、稳定对象身份、variants。
+- `library/presentations/*.presentation.json`：可复用机位/高亮/标注等纯表现。
 - `shared/<track>.base.anim.json`：track 公共 schema / worlds / trees。
 - `shared/stage/*.stage.json`：跨 section 的 stage、zone、模板、命名机位。
 - `build/`：`section_source.py` 装配出的中间产物，不进 Git、不是源真值。
@@ -71,10 +82,11 @@ metadata:
 
 ## 生产流程
 
+0. 先查 `library/` 是否已有可复用示例/动作/表现；能共享就不要复制到轨道。
 1. 改 section 文字脚本：`sections/<id>/<track>.script.json`。
 2. 针对本 cue 改动手写最小合法性 QA，优先放进该 cue 的 `qa` 字段；外置历史问题放 `sections/<id>/qa.json`。改动 events/state/contract 后 QA 必须同步改。
-3. 改 `sections/<id>/<track>.anim.json` 与 `shared/stage/`。
-4. 编译与检查：`compile_tutorial.py`（增量 section TTS / runtime / compiled）、`compile_animation_v2.py --check`、`check_anim_v2`、`validate_anim_rules_v2`、`audit_anim_v2`、`check_card_identity_v2`。
+3. 改 `sections/<id>/<track>.anim.json`（含 `use`/`example` 与 `timing`）与 `shared/stage/`；共享定义优先改 `library/`。
+4. 素材与编译检查：`material_cli.py validate`、`check_materials.py`、`section_source.py --check`、`compile_tutorial.py`、`compile_animation_v2.py --check`、`check_anim_v2`、`validate_anim_rules_v2`、`audit_anim_v2`、`check_card_identity_v2`。
 5. 发送 QA：`python3 animation/qa_anim_ask.py --game splendor --track <track> --only <qualified_cue>`；脚本只发送/留档，不生成问题。
 6. Unity 采样对账与截图视觉验收。
 

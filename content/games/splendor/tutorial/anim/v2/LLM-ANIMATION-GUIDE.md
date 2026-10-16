@@ -1,9 +1,11 @@
 # LLM 动画制作指导（v2 / v3 runtime）
 
-本文是写给“负责写动画脚本的 LLM/人”的唯一开工入口。先读本文，再动当前 section 的
-`sections/<section_id>/<track>.anim.json` 与 `shared/stage/`；不要先改 compiled，也不要让 Unity 侧兜底。
+本文是写给“负责写动画脚本的 LLM/人”的唯一开工入口。先读本文，先查 `library/`，再动当前 section 的
+`sections/<section_id>/<track>.anim.json`、`library/` 与 `shared/stage/`；不要先改 compiled，也不要让 Unity 侧兜底。
 
 ## 0. 总原则
+
+0. **能共享的不要写两遍。** 状态动作、具体示例事实、纯表现先查 `../library/`；找到后通过 cue 的 `use`/`example` 引用并绑定角色、参数、时间。`library/` 的完整制作流程见 `docs/tutorial/animation-materials-authoring-guide.md`。
 
 1. **脚本是文字版动画。** 动画里出现的每个状态、机位、高亮、时间点，都必须能在
    源脚本中直接找到声明；编译器只做确定性的坐标/时间映射和差分编译。
@@ -19,6 +21,9 @@
 | `content/games/splendor/tutorial/sections/<id>/<track>.script.json` | 口播文字、cue 切分、group、beats、refs |
 | `content/games/splendor/tutorial/sections/<id>/<track>.anim.json` | 动画事件、camera、状态操作、时间锚点、parent/entry、可选 `qa` |
 | `content/games/splendor/tutorial/sections/<id>/qa.json` | 可选的外置手写 QA |
+| `content/games/splendor/tutorial/library/actions/*.action.json` | 可复用状态动作（tutorial-material/v1） |
+| `content/games/splendor/tutorial/library/examples/*.example.json` | 具体教学示例/事实/显式变体 |
+| `content/games/splendor/tutorial/library/presentations/*.presentation.json` | 可复用纯表现素材 |
 | `content/games/splendor/tutorial/shared/stage/*.stage.json` | zone 大小/位置/布局、template、命名机位 shots |
 | `content/games/splendor/tutorial/<track>.runtime.json` | 编译产物：音频、时长、字级字幕 timing |
 | `content/games/splendor/tutorial/anim/v2/<track>.compiled.json` | 编译产物，Unity 只读 |
