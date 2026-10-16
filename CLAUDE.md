@@ -13,7 +13,7 @@
 
 ## 当前状态
 
-一句话见 `.claude/memory/current-state.md`：Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已服务化拆分，xUnit 161/161；Splendor full 67 cue、quick 24 cue 已迁移到 section-first + reusable materials 源且静态检查全绿；库内 10 actions / 3 examples / 1 presentation，R1–R6 复核修复与构建门禁完成；下一步是 quick/full 逐 cue 真人视觉重审、Android 真机端到端验收，之后进入 Flow Guide。
+一句话见 `.claude/memory/current-state.md`：Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已服务化拆分，xUnit 161/161；Splendor full 67 cue、quick 24 cue 已迁移到 section-first + reusable materials 源且静态检查全绿；库内 10 actions / 3 examples / 1 presentation，R1–R8 复核修复与构建门禁完成；下一步是 quick/full 逐 cue 真人视觉重审、Android 真机端到端验收，之后进入 Flow Guide。
 
 ## 关键文件
 

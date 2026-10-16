@@ -29,7 +29,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 - full：67 cue / 12 section / 338 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 53 cues / 0 errors；`check_card_identity_v2` 553 states / 0 error。
 - quick：24 cue / 11 section / 106 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 17 cues / 0 errors；`check_card_identity_v2` 333 states / 0 error。
 - `compile_animation_v2 --check` 对两轨均为 “up to date”；`section_source.py --check` 解析通过。
-- Python animation/索引回归 224/224；后端 xUnit 161/161；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
+- Python animation/索引回归 227/227；后端 xUnit 161/161；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
 - Android JVM 当前 12 个测试文件 / 93 个 `@Test` 全绿；真机端到端仍未验收。
 
 ## 当前已具备的能力

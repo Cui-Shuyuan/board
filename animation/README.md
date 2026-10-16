@@ -24,6 +24,7 @@ python3 animation/material_cli.py impact --game splendor --material splendor.act
 python3 animation/material_cli.py expand-cue --game splendor --track quick --cue quick_nobles/001 --anchors
 python3 animation/check_materials.py --game splendor --track quick
 python3 animation/check_materials.py --game splendor --strict-timing
+# 严格模式当前已知例外：nobles/source.001 两个无 hold 动作超音频窗口，见 round2 response
 ```
 
 常用检查：

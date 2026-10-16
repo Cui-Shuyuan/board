@@ -36,7 +36,7 @@ qdrant.exe
 python3 tools/content/validate_rules.py --errors-only   # 当前 0 errors / 72 warnings
 python3 tools/content/normalize_json.py
 python3 tools/ops/check_no_secrets.py
-python3 -m unittest discover -s animation -p 'test_*.py'   # 当前 224/224（含素材库/夹具/边界/门禁测试）
+python3 -m unittest discover -s animation -p 'test_*.py'   # 当前 227/227（含素材库/夹具/边界/门禁测试）
 ```
 
 后端：

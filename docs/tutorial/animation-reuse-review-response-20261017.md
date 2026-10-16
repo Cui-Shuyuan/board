@@ -1,3 +1,5 @@
+> 第二轮复核 R7/R8 已修复，见 `docs/tutorial/animation-reuse-review-round2-response-20261017.md`。
+
 # 动画素材复核修复报告（2026-10-17，R1–R6）
 
 复核依据：`docs/tutorial/animation-reuse-review-20261017.md`。
