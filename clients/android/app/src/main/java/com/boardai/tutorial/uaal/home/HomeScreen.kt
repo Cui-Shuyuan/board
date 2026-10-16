@@ -12,16 +12,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +37,9 @@ import com.boardai.tutorial.uaal.content.shortCardText
 import com.boardai.tutorial.uaal.history.RecentGame
 
 private val HomeBackground = Color(0xFF0F1116)
+private val HomeModeQuestionSelected = Color(0xFFFFC107)
+private val HomeModeUnselectedBackground = Color(0xFF151A22)
+private val HomeModeUnselectedContent = Color(0xFF758092)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -50,6 +56,8 @@ fun HomeScreen(
     playbackError: String?,
     contentStatuses: Map<String, ContentStatus>,
     onOpenResourceManager: () -> Unit,
+    mode: HomeMode,
+    onModeChange: (HomeMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchResults = if (query.isBlank()) {
@@ -58,12 +66,13 @@ fun HomeScreen(
         GameSearch.search(games, query)
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(HomeBackground)
             .windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility)
     ) {
+        Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -87,6 +96,11 @@ fun HomeScreen(
                 query = query,
                 onQueryChange = onQueryChange,
                 modifier = Modifier.padding(top = 12.dp)
+            )
+            HomeModeSelector(
+                mode = mode,
+                onModeChange = onModeChange,
+                modifier = Modifier.padding(top = 10.dp)
             )
         }
 
@@ -230,6 +244,62 @@ fun HomeScreen(
             }
             }
         }
+        }
+    }
+}
+
+@Composable
+private fun HomeModeSelector(
+    mode: HomeMode,
+    onModeChange: (HomeMode) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        HomeModeButton(
+            label = "播放动画",
+            selected = mode == HomeMode.ANIMATION,
+            selectedBackground = Color(0xFF20415F),
+            selectedContentColor = Color.White,
+            onClick = { onModeChange(HomeMode.ANIMATION) },
+            modifier = Modifier.weight(1f)
+        )
+        HomeModeButton(
+            label = "提问",
+            selected = mode == HomeMode.QUESTION,
+            selectedBackground = HomeModeQuestionSelected,
+            selectedContentColor = Color(0xFF1B1B1B),
+            onClick = { onModeChange(HomeMode.QUESTION) },
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun HomeModeButton(
+    label: String,
+    selected: Boolean,
+    selectedBackground: Color,
+    selectedContentColor: Color,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(40.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(if (selected) selectedBackground else HomeModeUnselectedBackground)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            color = if (selected) selectedContentColor else HomeModeUnselectedContent,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold
+        )
     }
 }
 

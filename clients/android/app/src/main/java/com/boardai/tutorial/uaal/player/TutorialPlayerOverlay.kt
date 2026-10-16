@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
+import com.boardai.tutorial.uaal.qa.QA_ENTRY_BUTTON_BOTTOM_PADDING_DP
+import com.boardai.tutorial.uaal.qa.QA_ENTRY_BUTTON_END_PADDING_DP
+import com.boardai.tutorial.uaal.qa.QaEntryButton
 import com.boardai.tutorial.uaal.qa.QaPanel
 import com.boardai.tutorial.uaal.qa.QaRepository
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
@@ -301,11 +304,6 @@ fun TutorialPlayerOverlay(
                         revealControls()
                         uiState.showChapters = true
                     },
-                    onOpenQa = {
-                        uiState.showChapters = false
-                        uiState.scrubbing = false
-                        onOpenQa(resumeCueId, resumePositionInCue, wasPlayingBeforeQuestion)
-                    },
                     onSeekRelative = { delta -> seekBy(delta, reveal = true) },
                     onPrevious = {
                         revealControls()
@@ -383,6 +381,21 @@ fun TutorialPlayerOverlay(
             )
         }
 
+        if (!qaOpen) {
+            QaEntryButton(
+                onClick = {
+                    uiState.showChapters = false
+                    uiState.scrubbing = false
+                    onOpenQa(resumeCueId, resumePositionInCue, wasPlayingBeforeQuestion)
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(
+                        end = QA_ENTRY_BUTTON_END_PADDING_DP.dp,
+                        bottom = QA_ENTRY_BUTTON_BOTTOM_PADDING_DP.dp
+                    )
+            )
+        }
 
         AnimatedVisibility(
             visible = qaOpen,

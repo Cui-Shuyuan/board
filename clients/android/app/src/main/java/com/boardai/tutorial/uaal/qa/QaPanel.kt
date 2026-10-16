@@ -7,7 +7,8 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -58,6 +60,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
@@ -66,16 +69,18 @@ import com.boardai.tutorial.uaal.voice.AsrRepository
 import com.boardai.tutorial.uaal.voice.AudioRecorder
 import com.boardai.tutorial.uaal.voice.TtsRepository
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val QA_VOICE_TAG = "BoardAI-QaVoice"
 
 private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
+private val QaPanelOpaqueColor = Color(0xFF1B1B20)
 
-/** Rules-only QA is opened from the home screen, so closing returns there. */
-internal fun closeLabelForQaMode(isRulesOnly: Boolean): String =
-    if (isRulesOnly) "返回" else "继续播放"
+/** Standalone QA is opened from the home screen, so closing returns there. */
+internal fun closeLabelForQaMode(isStandalone: Boolean): String =
+    if (isStandalone) "返回" else "继续播放"
 
 /**
  * Full-height text QA panel with the composer pinned to the bottom.
@@ -98,7 +103,7 @@ fun QaPanel(
     requestRecordPermission: (onResult: (Boolean) -> Unit) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
-    isRulesOnly: Boolean = false
+    isStandalone: Boolean = false
 ) {
     val currentContext = buildQaContext(game, status, timeline)
     val session = QaSessionHolder.sessionState.value
@@ -112,6 +117,7 @@ fun QaPanel(
     val answerPlayer = remember { AnswerAudioPlayer() }
 
     var input by remember { mutableStateOf("") }
+    var autoSendText by remember { mutableStateOf<String?>(null) }
     var sendState by remember { mutableStateOf<QaSendState>(QaSendState.Idle) }
     val sending = sendState is QaSendState.Sending
 
@@ -124,7 +130,10 @@ fun QaPanel(
             tts = ttsRepository,
             autoTtsStore = SharedPrefsQaAutoTtsStore(appContext),
             hasRecordPermission = hasRecordPermission,
-            onRecognizedText = { input = it },
+            onRecognizedText = { recognized ->
+                input = recognized
+                autoSendText = recognized
+            },
             log = { message -> Log.d(QA_VOICE_TAG, message) }
         )
     }
@@ -140,6 +149,13 @@ fun QaPanel(
         val targetIndex = if (sending) messages.size else messages.lastIndex
         if (messages.isNotEmpty() || sending) {
             listState.animateScrollToItem(targetIndex)
+        }
+    }
+
+    LaunchedEffect(voiceState.voiceStatus) {
+        if (voiceState.voiceStatus == "已取消") {
+            delay(3_000)
+            voiceController.clearVoiceStatus()
         }
     }
 
@@ -170,11 +186,12 @@ fun QaPanel(
         repository.cancelActiveRequests()
         voiceController.startNewSession()
         input = ""
+        autoSendText = null
         sendState = QaSendState.Idle
     }
 
-    fun sendQuestion() {
-        val question = input.trim()
+    fun sendQuestion(questionOverride: String? = null) {
+        val question = (questionOverride ?: input).trim()
         if (question.isBlank() || sending) return
         val context = buildQaContext(game, status, timeline)
         val activeSession = QaSessionHolder.ensureSession(context)
@@ -243,13 +260,23 @@ fun QaPanel(
         }
     }
 
+    LaunchedEffect(autoSendText) {
+        val pending = autoSendText ?: return@LaunchedEffect
+        autoSendText = null
+        if (pending.isNotBlank()) {
+            sendQuestion(pending)
+        }
+    }
+
+    val panelColor = if (isStandalone) QaPanelOpaqueColor else QaPanelColor
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(QaPanelColor)
+                .background(panelColor)
                 .padding(horizontal = 16.dp)
         ) {
             QaTopBar(
@@ -261,7 +288,7 @@ fun QaPanel(
                     onClose()
                 },
                 onNewSession = { startNewSession() },
-                isRulesOnly = isRulesOnly
+                isStandalone = isStandalone
             )
 
             if (messages.isEmpty() && !sending) {
@@ -310,6 +337,7 @@ fun QaPanel(
                     }
                 },
                 onStopListening = { voiceController.onPttUp() },
+                onCancelListening = { voiceController.cancelRecording() },
                 onSend = { sendQuestion() }
             )
         }
@@ -321,7 +349,7 @@ private fun QaTopBar(
     gameName: String,
     onClose: () -> Unit,
     onNewSession: () -> Unit,
-    isRulesOnly: Boolean
+    isStandalone: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -333,7 +361,7 @@ private fun QaTopBar(
             modifier = Modifier.align(Alignment.CenterStart)
         ) {
             Text(
-                text = closeLabelForQaMode(isRulesOnly),
+                text = closeLabelForQaMode(isStandalone),
                 color = Color.White.copy(alpha = 0.9f),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium
@@ -497,113 +525,60 @@ private fun QaComposer(
     recording: Boolean,
     onStartListening: () -> Unit,
     onStopListening: () -> Unit,
+    onCancelListening: () -> Unit,
     onSend: () -> Unit
 ) {
     var pttPressed by remember { mutableStateOf(false) }
+    var cancelSelected by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 6.dp, bottom = 12.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(Modifier.weight(1f))
-            Text(
-                text = "回答自动播报",
-                color = Color.White.copy(alpha = 0.90f),
-                fontSize = 13.sp
-            )
-            Spacer(Modifier.width(8.dp))
-            Switch(
-                checked = autoTtsEnabled,
-                onCheckedChange = onAutoTtsEnabledChange,
-                modifier = Modifier.semantics {
-                    contentDescription = "回答自动播报"
+        if (!errorMessage.isNullOrBlank() || !voiceStatus.isNullOrBlank()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (!errorMessage.isNullOrBlank()) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                } else {
+                    Spacer(Modifier.weight(1f))
                 }
-            )
-        }
 
-        if (!errorMessage.isNullOrBlank()) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-        }
-
-        if (!voiceStatus.isNullOrBlank()) {
-            Text(
-                text = voiceStatus,
-                color = QaAccentYellow,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
+                if (!voiceStatus.isNullOrBlank()) {
+                    Text(
+                        text = voiceStatus,
+                        color = QaAccentYellow,
+                        fontSize = 13.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(start = 12.dp)
+                    )
+                }
+            }
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom
         ) {
-            Box(
-                modifier = Modifier
-                    .height(52.dp)
-                    .width(98.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        if (pttPressed || recording) {
-                            Color.White
-                        } else {
-                            QaAccentYellow
-                        }
-                    )
-                    .pointerInput(sending) {
-                        if (!sending) {
-                            detectTapGestures(
-                                onPress = {
-                                    pttPressed = true
-                                    try {
-                                        onStartListening()
-                                        tryAwaitRelease()
-                                    } finally {
-                                        pttPressed = false
-                                        onStopListening()
-                                    }
-                                }
-                            )
-                        }
-                    }
-                    .semantics {
-                        role = Role.Button
-                        contentDescription = "按住说话"
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = when {
-                        recording -> "放手结束"
-                        pttPressed -> "聆听中…"
-                        else -> "按住说话"
-                    },
-                    color = Color(0xFF1B1B1B),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(Modifier.width(8.dp))
-
             OutlinedTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier
                     .weight(1f)
-                    .widthIn(min = 140.dp),
+                    .widthIn(min = 120.dp),
                 enabled = !sending,
                 placeholder = {
                     Text(
@@ -615,6 +590,164 @@ private fun QaComposer(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(onSend = { onSend() })
             )
+
+            Spacer(Modifier.width(8.dp))
+
+            Row(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "回答自动播报",
+                    color = Color.White.copy(alpha = 0.90f),
+                    fontSize = 12.sp,
+                    maxLines = 1
+                )
+                Spacer(Modifier.width(4.dp))
+                Switch(
+                    checked = autoTtsEnabled,
+                    onCheckedChange = onAutoTtsEnabledChange,
+                    modifier = Modifier.semantics {
+                        contentDescription = "回答自动播报"
+                    }
+                )
+            }
+
+            Spacer(Modifier.width(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .height(52.dp)
+                    .width(98.dp)
+            ) {
+                if (pttPressed || recording || cancelSelected) {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(y = (-76).dp)
+                            .zIndex(2f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = if (cancelSelected) "松手取消" else "上划取消",
+                            color = if (cancelSelected) {
+                                Color(0xFFE5484D)
+                            } else {
+                                Color.White.copy(alpha = 0.92f)
+                            },
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                        Spacer(Modifier.height(3.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (cancelSelected) {
+                                        Color(0xFFE5484D)
+                                    } else {
+                                        Color(0xCC3A3F4B)
+                                    }
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "✕",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (pttPressed || recording) {
+                                Color.White
+                            } else {
+                                QaAccentYellow
+                            }
+                        )
+                        .pointerInput(sending) {
+                            if (!sending) {
+                                awaitEachGesture {
+                                    val down = awaitFirstDown(requireUnconsumed = false)
+                                    down.consume()
+                                    val cancelCenterX = size.width / 2f
+                                    val cancelActivationY = (-24).dp.toPx()
+                                    val cancelHalfWidth = size.width / 2f + 16.dp.toPx()
+                                    pttPressed = true
+                                    cancelSelected = false
+                                    onStartListening()
+
+                                    var completed = false
+                                    try {
+                                        while (true) {
+                                            val event = awaitPointerEvent()
+                                            val change = event.changes.firstOrNull {
+                                                it.id == down.id
+                                            }
+                                            if (change == null) {
+                                                onCancelListening()
+                                                completed = true
+                                                break
+                                            }
+
+                                            if (!change.pressed) {
+                                                if (cancelSelected) {
+                                                    onCancelListening()
+                                                } else {
+                                                    onStopListening()
+                                                }
+                                                completed = true
+                                                change.consume()
+                                                break
+                                            }
+
+                                            val insideHorizontal =
+                                                change.position.x >= cancelCenterX - cancelHalfWidth &&
+                                                    change.position.x <= cancelCenterX + cancelHalfWidth
+                                            val overCancel =
+                                                change.position.y <= cancelActivationY && insideHorizontal
+                                            if (overCancel != cancelSelected) {
+                                                cancelSelected = overCancel
+                                            }
+                                            change.consume()
+                                        }
+                                    } finally {
+                                        pttPressed = false
+                                        if (!completed) {
+                                            onCancelListening()
+                                        }
+                                        cancelSelected = false
+                                    }
+                                }
+                            }
+                        }
+                        .semantics {
+                            role = Role.Button
+                            contentDescription = "按住说话"
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = when {
+                            recording -> "放手结束"
+                            pttPressed -> "聆听中…"
+                            else -> "按住说话"
+                        },
+                        color = Color(0xFF1B1B1B),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             Spacer(Modifier.width(8.dp))
 

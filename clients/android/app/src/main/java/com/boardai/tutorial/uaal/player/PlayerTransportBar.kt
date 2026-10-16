@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.BuildConfig
 import com.boardai.tutorial.uaal.UnityStatus
+import com.boardai.tutorial.uaal.qa.QA_ENTRY_BUTTON_HEIGHT_DP
+import com.boardai.tutorial.uaal.qa.QA_ENTRY_BUTTON_WIDTH_DP
 import com.boardai.tutorial.uaal.timeline.TimelineTarget
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 
@@ -84,7 +85,6 @@ internal fun PlayerTransportBar(
     onVolumeChange: (Float) -> Unit,
     onVolumeChangeFinished: () -> Unit,
     onOpenChapters: () -> Unit,
-    onOpenQa: () -> Unit,
     onSeekRelative: (Float) -> Unit,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
@@ -246,41 +246,16 @@ internal fun PlayerTransportBar(
                     onClick = onOpenChapters
                 )
                 Spacer(Modifier.width(8.dp))
-                PlayerAskButton(
-                    modifier = Modifier.width(104.dp),
-                    onClick = onOpenQa
+                // Reserve the exact area occupied by the always-visible QaEntryButton
+                // anchored by TutorialPlayerOverlay, so transport controls never
+                // slide underneath it.
+                Spacer(
+                    Modifier
+                        .width(QA_ENTRY_BUTTON_WIDTH_DP.dp)
+                        .height(QA_ENTRY_BUTTON_HEIGHT_DP.dp)
                 )
             }
 
         }
-    }
-}
-
-@Composable
-private fun PlayerAskButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    Box(
-        modifier = modifier
-            .height(56.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color(0xFFFFC107))
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "提问",
-            color = Color(0xFF1B1B1B),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }

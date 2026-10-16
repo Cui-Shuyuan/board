@@ -83,6 +83,19 @@ class QaVoiceController(
         handleRecorded(recorder.stop())
     }
 
+    /**
+     * The guest released the PTT button inside the upstream cancel target.
+     * Discard the recording before [handleRecorded] can start an ASR request.
+     */
+    fun cancelRecording() {
+        log("PTT cancelled before recognition: isRecording=${_state.value.isRecording}")
+        if (!_state.value.isRecording) return
+        recordingToken += 1
+        recorder.cancel()
+        setRecording(false)
+        setVoiceStatus("已取消")
+    }
+
     fun setAutoTtsEnabled(enabled: Boolean) {
         _state.value = _state.value.copy(autoTtsEnabled = enabled)
         autoTtsStore.setEnabled(enabled)
@@ -128,6 +141,10 @@ class QaVoiceController(
     fun stopPlayback() {
         player.stop()
         setPlayingMessageId(null)
+    }
+
+    fun clearVoiceStatus() {
+        setVoiceStatus(null)
     }
 
     fun close() {

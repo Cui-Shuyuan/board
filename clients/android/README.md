@@ -7,7 +7,7 @@
 - Kotlin `MainActivity` + Jetpack Compose 全屏控制层，Unity 仍作为底层渲染区域；
 - 首页游戏目录 / 搜索 / 历史 / 资源管理，manifest 驱动的本地内容仓库与增量下载 / 断点续传 v1；
 - 教程播放器控制层（时间轴 / 章节 / 播放控制）与 Unity 状态回传；
-- 问答面板、按住说话 PTT、ASR 回填、回答 TTS、自动播报 / 重播 / 继续播放；
+- 问答面板、按住说话 PTT（位于发送键左侧）、上划任意高度进入取消通道后松手可放弃本次识别，左右或下滑会恢复发送、ASR 识别完成后自动发送、回答 TTS、自动播报 / 重播 / 继续播放；
 - 通过固定 GameObject `AndroidTutorialBridge` 的字符串协议控制播放。
 
 不变的是：不拆仓、不改游戏 JSON / animation / compiled 语义，Unity 仍只负责确定性播放。
@@ -122,7 +122,7 @@ python3 tools/ops/check_unity_scripts.py
 
 ### JVM 单元测试
 
-当前 8 个测试文件覆盖内容状态 / 版本清理 / 更新器 / 首页协调 / 播放会话 / 时间轴 / Unity 加载队列 / 问答语音控制器：
+当前 12 个测试文件覆盖内容状态 / 版本清理 / 更新器 / 首页协调 / 播放会话 / 时间轴 / Unity 加载队列 / 问答语音控制器：
 
 ```bat
 cd D:\workspace\board\clients\android
@@ -170,7 +170,8 @@ D:\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe ^
 
 - `ComposeView` 通过 `android.R.id.content.addView` 全屏叠加在 Unity SurfaceView 上方；画面区域触摸透传给 Unity，只有实际控件接收 Compose 手势；
 - 顶部 `PlayerTopBar` 提供返回首页与当前章节路径；
-- 底部 `PlayerTransportBar` 集中了合并时间轴 / 章节分段 / 进度与播放头（`PlayerTimelineBar`）、cue 文本、上一 cue / 下一 cue、中央播放 / 暂停、-15 秒 / +15 秒、音量、章节列表、提问入口与 debug 调试开关；
+- 底部 `PlayerTransportBar` 集中了合并时间轴 / 章节分段 / 进度与播放头（`PlayerTimelineBar`）、cue 文本、上一 cue / 下一 cue、中央播放 / 暂停、-15 秒 / +15 秒、音量、章节列表与 debug 调试开关；
+- 首页使用“播放动画 / 提问”模式切换，同一套游戏列表按当前模式复用：选“播放动画”后点游戏进入教程，选“提问”后点游戏直接进入问答；播放页仍保留右下角常驻的 `QaEntryButton`，点击默认使用当前游戏与当前播放位置；
 - 单击画面显示 / 隐藏控制层，双击左 / 右半屏相对快退 / 快进，进度条支持拖动 seek；
 - 打开问答时暂停动画并淡出控制层，关闭后按原播放状态继续或重播；
 - 控制按钮暂时保留无 ripple 的 Compose 自定义实现，Material ripple 留作后续单独验证。

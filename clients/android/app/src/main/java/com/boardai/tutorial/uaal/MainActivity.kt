@@ -34,6 +34,7 @@ import com.boardai.tutorial.uaal.content.GameContentPromptDialog
 import com.boardai.tutorial.uaal.history.PlayHistoryRepository
 import com.boardai.tutorial.uaal.home.AndroidHomeContentScheduler
 import com.boardai.tutorial.uaal.home.HomeContentCoordinator
+import com.boardai.tutorial.uaal.home.HomeMode
 import com.boardai.tutorial.uaal.home.HomeScreen
 import com.boardai.tutorial.uaal.home.ResourceManagerOverlay
 import com.boardai.tutorial.uaal.home.TrackPickerDialog
@@ -73,7 +74,8 @@ class MainActivity : UnityPlayerGameActivity() {
 
     private val searchQuery = mutableStateOf("")
     private val qaOpen = mutableStateOf(false)
-    private val rulesQaGame = mutableStateOf<GameCatalogEntry?>(null)
+    private val homeMode = mutableStateOf(HomeMode.ANIMATION)
+    private val standaloneQaGame = mutableStateOf<GameCatalogEntry?>(null)
     private val debugOverlayEnabled = mutableStateOf(BuildConfig.DEBUG)
 
     private var qaWasPlayingBeforeQuestion = false
@@ -110,8 +112,7 @@ class MainActivity : UnityPlayerGameActivity() {
             },
             onToast = { message -> showToast(message) },
             onOpenRulesQa = { game ->
-                rulesQaGame.value = game
-                QaSessionHolder.ensureSession(buildQaContext(game, null, null))
+                openHomeQa(game)
             },
             log = { message, throwable ->
                 if (throwable == null) {
@@ -225,8 +226,8 @@ class MainActivity : UnityPlayerGameActivity() {
     private fun handleBackRequest(): Boolean {
         val homeState = homeContent.state.value
         return when {
-            rulesQaGame.value != null -> {
-                closeRulesQa()
+            standaloneQaGame.value != null -> {
+                closeStandaloneQa()
                 true
             }
             qaOpen.value -> {
@@ -312,7 +313,7 @@ class MainActivity : UnityPlayerGameActivity() {
                         val timeline = playerState.timeline
                         val selected = playerState.selectedGame
                         val showPlayer = selected != null && playerState.playerActive
-                        val rulesQa = rulesQaGame.value
+                        val standaloneQa = standaloneQaGame.value
 
                         val keepScreenOn = shouldKeepScreenOn()
                         LaunchedEffect(keepScreenOn) {
@@ -382,7 +383,7 @@ class MainActivity : UnityPlayerGameActivity() {
                                 recentGames = homeState.recentGames,
                                 query = searchQuery.value,
                                 onQueryChange = { searchQuery.value = it },
-                                onGameClick = { game -> homeContent.onGameClick(game) },
+                                onGameClick = { game -> onHomeGameClick(game) },
                                 onRetry = {
                                     homeContent.refreshCatalog(showLoading = true)
                                 },
@@ -393,13 +394,15 @@ class MainActivity : UnityPlayerGameActivity() {
                                 contentStatuses = homeState.contentStatuses,
                                 onOpenResourceManager = {
                                     homeContent.openResourceManager()
-                                }
+                                },
+                                mode = homeMode.value,
+                                onModeChange = { mode -> homeMode.value = mode }
                             )
                         }
 
-                        if (!showPlayer && rulesQa != null) {
+                        if (!showPlayer && standaloneQa != null) {
                             QaPanel(
-                                game = rulesQa,
+                                game = standaloneQa,
                                 status = null,
                                 timeline = null,
                                 repository = qaRepository,
@@ -409,8 +412,8 @@ class MainActivity : UnityPlayerGameActivity() {
                                 requestRecordPermission = { callback ->
                                     requestRecordPermission(callback)
                                 },
-                                onClose = { closeRulesQa() },
-                                isRulesOnly = true
+                                onClose = { closeStandaloneQa() },
+                                isStandalone = true
                             )
                         }
 
@@ -553,17 +556,34 @@ class MainActivity : UnityPlayerGameActivity() {
     private fun clearQaState() {
         qaRepository.cancelActiveRequests()
         qaOpen.value = false
-        rulesQaGame.value = null
+        standaloneQaGame.value = null
         qaWasPlayingBeforeQuestion = false
         qaResumeCueId = null
         qaResumePositionInCue = 0f
         QaSessionHolder.clear()
     }
 
-    private fun closeRulesQa() {
+    private fun closeStandaloneQa() {
         qaRepository.cancelActiveRequests()
-        rulesQaGame.value = null
+        standaloneQaGame.value = null
         QaSessionHolder.clear()
+    }
+
+    private fun onHomeGameClick(game: GameCatalogEntry) {
+        when (homeMode.value) {
+            HomeMode.ANIMATION -> homeContent.onGameClick(game)
+            HomeMode.QUESTION -> openHomeQa(game)
+        }
+    }
+
+    private fun openHomeQa(game: GameCatalogEntry) {
+        if (!game.rulesReady) {
+            showToast("《${game.nameZh}》暂无可用的规则问答")
+            return
+        }
+        qaRepository.cancelActiveRequests()
+        standaloneQaGame.value = game
+        QaSessionHolder.ensureSession(buildQaContext(game, null, null))
     }
 
     private fun returnToHome() {

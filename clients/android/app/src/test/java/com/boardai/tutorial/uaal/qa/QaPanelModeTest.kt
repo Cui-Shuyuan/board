@@ -6,11 +6,11 @@ import org.junit.Test
 class QaPanelModeTest {
     @Test
     fun tutorialQaCloseLabelContinuesPlayback() {
-        assertEquals("继续播放", closeLabelForQaMode(isRulesOnly = false))
+        assertEquals("继续播放", closeLabelForQaMode(isStandalone = false))
     }
 
     @Test
-    fun rulesOnlyQaCloseLabelReturnsToHome() {
-        assertEquals("返回", closeLabelForQaMode(isRulesOnly = true))
+    fun standaloneQaCloseLabelReturnsToHome() {
+        assertEquals("返回", closeLabelForQaMode(isStandalone = true))
     }
 }
