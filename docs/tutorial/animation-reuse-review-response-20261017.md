@@ -112,7 +112,7 @@
 
 ## 8. 实际验证
 
-- `animation` unittest：**223/223 OK**
+- `animation` unittest：**224/224 OK**
 - `material_cli validate --game splendor`：14 materials
 - `check_materials --game splendor`：full 31 usages / 118 checks；quick 20 usages / 109 checks；0 errors
 - `check_materials --game splendor --strict-timing`：发现既有 `nobles/source.001` 2 个无 hold 的音频窗口超出，返回 1（见剩余事项）

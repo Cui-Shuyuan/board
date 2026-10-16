@@ -202,6 +202,33 @@ class MaterialCheckerBoundaryTests(unittest.TestCase):
         self.assertEqual(1, code)
         self.assertTrue(any("stale/divergent" in e for e in errors), errors)
 
+
+    def test_strict_timing_turns_audio_window_overrun_into_error(self):
+        actions = {
+            "case.long_create": action("case.long_create", steps=[{
+                "id": "e",
+                "events": [dict(create_event("a", count=1), dur=1.0)],
+            }]),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tut = self._fixture(root, actions, [
+                {"ref": "case.long_create", "timing": {"e": {"at": 0.2}}},
+            ])
+            write(tut / "full.runtime.json", {"cues": [
+                {"id": "s/c1", "audio": "a.mp3", "audio_start": 0.0,
+                 "duration": 1.0},
+            ]})
+            game, track = "casegame", "full"
+            with mock.patch.object(section_source, "ROOT", root), \
+                    mock.patch.object(anim_compile, "ROOT", root):
+                self.assertEqual(0, anim_compile.main(["--game", game, "--track", track]))
+                code, errors = cm.check_track(game, track, strict_timing=False)
+                self.assertEqual(0, code, errors)
+                code, errors = cm.check_track(game, track, strict_timing=True)
+        self.assertEqual(1, code)
+        self.assertTrue(any("beyond audio window" in e for e in errors), errors)
+
     def test_build_gate_restores_previous_compiled_output_on_contract_failure(self):
         actions = {
             "case.create_one": action("case.create_one", contract={

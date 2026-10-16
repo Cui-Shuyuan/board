@@ -496,6 +496,7 @@ def check_track(game: str, track: str, *, quiet: bool = False,
         times = compiler.event_times.get(usage.cue) or []
         entry = None
         exit = None
+        where = f"{usage.cue} {usage.source_chain()}"
         if usage.event_count > 0:
             start = usage.event_start
             stop = start + usage.event_count
@@ -526,8 +527,6 @@ def check_track(game: str, track: str, *, quiet: bool = False,
                         report.append(msg + "; add an explicit hold_after_audio or tighten timing")
                     else:
                         warnings.append(msg + "; no hold_after_audio")
-
-        where = f"{usage.cue} {usage.source_chain()}"
 
         if asset.kind == "action" and usage.contract:
             checks += 1
