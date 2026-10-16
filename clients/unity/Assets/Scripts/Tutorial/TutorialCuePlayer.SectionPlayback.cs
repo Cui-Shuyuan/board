@@ -50,6 +50,8 @@ namespace BoardGameTutorial
             pausedBeforePlay = startPaused;
             currentSubtitle = "";
             fallbackClock = 0f;
+            lastPosition = Mathf.Max(0f, localTime);
+            playbackFinished = false;
 
             var cue = doc.cues[index];
             if (!v2AnimPlayer.LoadCue(cue.id))
@@ -106,10 +108,28 @@ namespace BoardGameTutorial
                         {
                             if (audioSource.time >= next.audio_start - 0.02f)
                             {
+                                // If this cue explicitly asks to finish its animation
+                                // before the next narration starts, pause the section
+                                // audio at the boundary and let the animation catch up.
+                                if (v2AnimPlayer != null && v2AnimPlayer.CurrentCueHoldAfterAudio)
+                                {
+                                    float holdLocal = Mathf.Max(0f, audioSource.time - cue.audio_start);
+                                    if (v2AnimPlayer.TotalDuration > holdLocal + 0.02f)
+                                    {
+                                        bool wasPlaying = audioSource.isPlaying;
+                                        animationHoldActive = true;
+                                        animationHoldLocal = holdLocal;
+                                        audioSource.Pause();
+                                        yield return HoldAnimationToEnd(holdLocal);
+                                        animationHoldActive = false;
+                                        if (wasPlaying && !isPaused && audioSource != null) audioSource.UnPause();
+                                    }
+                                }
                                 currentIndex = nextIndex;
                                 cue = next;
                                 v2AnimPlayer.LoadCue(cue.id);
-                                v2AnimPlayer.Seek(Mathf.Max(0f, audioSource.time - cue.audio_start));
+                                lastPosition = Mathf.Max(0f, audioSource.time - cue.audio_start);
+                                v2AnimPlayer.Seek(lastPosition);
                                 UpdateSubtitle();
                             }
                         }
@@ -120,12 +140,44 @@ namespace BoardGameTutorial
 
             currentSubtitle = "";
             previousIndex = currentIndex;
+            playbackFinished = true;
             if (pauseAtCueEnd) yield break;
             if (autoAdvance && currentIndex + 1 < doc.cues.Count)
             {
+                if (v2AnimPlayer != null && v2AnimPlayer.CurrentCueHoldAfterAudio
+                    && audioSource != null && audioSource.clip != null)
+                {
+                    float currentLocal = Mathf.Max(0f, audioSource.clip.length - cue.audio_start);
+                    animationHoldActive = true;
+                    animationHoldLocal = currentLocal;
+                    yield return HoldAnimationToEnd(currentLocal);
+                    animationHoldActive = false;
+                }
                 v2AnimPlayer.Complete();
                 PlayCue(currentIndex + 1, true);
             }
+        }
+
+        private System.Collections.IEnumerator HoldAnimationToEnd(float startLocal)
+        {
+            if (v2AnimPlayer == null) yield break;
+            float animDuration = v2AnimPlayer.TotalDuration;
+            float holdLocal = Mathf.Max(0f, startLocal);
+            animationHoldLocal = holdLocal;
+            while (holdLocal < animDuration - 0.02f)
+            {
+                if (isPaused)
+                {
+                    yield return null;
+                    continue;
+                }
+                holdLocal += Time.deltaTime;
+                animationHoldLocal = Mathf.Min(holdLocal, animDuration);
+                v2AnimPlayer.Seek(animationHoldLocal);
+                UpdateSubtitle();
+                yield return null;
+            }
+            v2AnimPlayer.Seek(animDuration);
         }
     }
 }

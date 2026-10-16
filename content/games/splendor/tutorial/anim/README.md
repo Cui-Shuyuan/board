@@ -1,59 +1,58 @@
 # 讲规动画生产说明（Splendor）
 
 > LLM/人编写动画前先读 [v2/LLM-ANIMATION-GUIDE.md](v2/LLM-ANIMATION-GUIDE.md)。
->
 > 数据模型细节与字段说明见 [v2/README.md](v2/README.md)。
+
+当前为 **section-first** 源模型，旧的 `script.full.json` / `anim/v2/full.anim.json` / `anim/v2/_stage/` 已删除。
 
 ## 数据链路
 
 ```text
-script.full.json                                          口播文字 / cue 切分 / beats / refs（文字唯一编辑源）
-                │
-animation/compile_tutorial.py                             总控：增量 TTS → runtime → compiled
-  ├─ full.runtime.json                                    音频 / 字幕 / 时长
-  └─ anim/v2/full.anim.json                               手写动画源：
-       script.story/note/camera/enter/exit                文字与契约
-       tree / transition                                  树与舞台
-       events                                             原语执行层
-                │
-animation/compile_animation_v2.py                          确定性编译器
-  animation/anim_geometry_v2.py                            唯一几何源
-                ▼
-anim/v2/full.compiled.json                                 Unity 只读 compiled
-                ▼
-Unity TutorialAnimPlayer                                  Unity 薄适配
+tracks/{full,quick}.track.json                    section 顺序与 track 元信息
+  └─ sections/<id>/section.json                   section 元信息 / 默认 entry / tree / tts_asset
+      sections/<id>/{track}.script.json            口播文字 / beats / refs（文字唯一编辑源）
+      sections/<id>/{track}.anim.json              动画源：script / tree / contract / events / camera
+      sections/<id>/qa.json                        可选外置手写 QA
+shared/stage/*.stage.json                          跨 section 的 zone / template / 机位
+        │
+        ▼  animation/section_source.py
+tutorial/build/{track}.{script,anim}.json          装配中间产物（不进 Git）
+        │
+        ▼  animation/compile_tutorial.py
+tutorial/{track}.runtime.json                      音频 / 字幕 / 时长
+tutorial/anim/v2/{track}.compiled.json             Unity 只读 compiled
+        │
+        ▼  Unity TutorialCuePlayer / TutorialAnimPlayer
 ```
 
 ## 生产顺序
 
-1. 先改 `script.full.json` 的口播文字 / cue 切分，再改 `full.anim.json` 的 `script`、契约与 `events`；
-2. 对改到规则事实的 cue，按改动点手写最小合法性 QA（cue 的 `qa` 字段或 `_qa/questions.json`）；
-3. 跑总控编译：`python3 animation/compile_tutorial.py --game splendor --track full`；
-4. 跑静态、编译、规则与采样检查；
-5. 视觉验收通过后再定稿。
+1. 改 `sections/<id>/{track}.script.json` 的口播文字 / cue 切分，再改同 section 的 `{track}.anim.json` 的 `script`、契约与 `events`。
+2. 对改到规则事实的 cue，按改动点手写最小合法性 QA，优先写在该 cue 的 `qa` 字段；历史外置问题放 `sections/<id>/qa.json`。改 events/state/contract 后 QA 必须同步改。
+3. 跑总控编译：`python3 animation/compile_tutorial.py --game splendor --track quick`（或 `full`）。
+4. 跑 section 解析、compiled、规则、守恒与卡身份检查。
+5. Unity 采样对账、截图视觉验收通过后再定稿；每条调整按约定写 `docs/animation-change-log/entries.jsonl`。
 
 ## 检查命令
 
 ```bash
-# 1. 静态 schema / 文字结构与字段
-python3 animation/anim_schema_v2.py content/games/splendor/tutorial/anim/v2/full.anim.json
+# 1. section 源解析
+python3 animation/section_source.py --game splendor --track quick --check
 
 # 2. 编译并检查 compiled 是否最新
-python3 animation/compile_animation_v2.py --game splendor --track full
-python3 animation/compile_animation_v2.py --game splendor --track full --check
+python3 animation/compile_animation_v2.py --game splendor --track quick
+python3 animation/compile_animation_v2.py --game splendor --track quick --check
 
-# 3. v2 契约 vs 编译快照（静态对账）
-python3 animation/check_anim_v2.py --game splendor --track full
+# 3. v2 契约 vs 编译快照
+python3 animation/check_anim_v2.py --game splendor --track quick
 
-# 4. Splendor 规则过账
-python3 animation/validate_anim_rules_v2.py --game splendor --track full
+# 4. Splendor 规则过账 / 跨 cue 守恒 / 卡身份
+python3 animation/validate_anim_rules_v2.py --game splendor --track quick
+python3 animation/audit_anim_v2.py --game splendor --track quick
+python3 animation/check_card_identity_v2.py --game splendor --track quick
 
-# 5. C# 编译
+# 5. Unity C# 编译
 python3 tools/ops/check_unity_scripts.py
-
-# 6. Unity 采样 + 对账（需 Windows 工作区同步、Unity 批处理）
-./animation/dump_anim_v2.sh --game splendor --track full
-python3 animation/check_anim_v2_sample.py --game splendor --track full
 ```
 
-当前 Splendor full 为 83 cue，检查基线为 `check_anim_v2` / `validate_anim_rules_v2` 83 cues 0 warnings、`audit_anim_v2` 53 cues 0 errors。
+当前基线：full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors。`check_anim_v2` / `validate_anim_rules_v2` 两轨均 0 warnings；full `audit_anim_v2` 53 cues 0 errors、quick 17 cues 0 errors。

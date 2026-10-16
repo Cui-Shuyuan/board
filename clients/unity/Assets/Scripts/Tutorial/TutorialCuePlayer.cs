@@ -143,6 +143,8 @@ namespace BoardGameTutorial
         {
             get
             {
+                if (animationHoldActive) return animationHoldLocal;
+                if (playbackFinished) return lastPosition;
                 if (audioSource == null || audioSource.clip == null) return 0f;
                 var cue = CurrentCue;
                 if (cue != null && cue.section_audio)

@@ -172,7 +172,9 @@
       "start": 139.536,
       "duration": 11.28,
       "cue_ids": [
-        "quick_nobles/001"
+        "quick_nobles/001",
+        "quick_nobles/002",
+        "quick_nobles/003"
       ]
     },
     {
@@ -4403,10 +4405,10 @@
         "3 回合与行动",
         "3.4 贵族"
       ],
-      "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，就拿取这位贵族；同时满足多位时，选一位拿取。",
+      "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，",
       "audio": "media/tts/quick/quick.nobles.mp3",
       "audio_start": 0.0,
-      "duration": 11.28,
+      "duration": 6.69,
       "start": 139.536,
       "refs": [],
       "subtitles": [
@@ -4461,7 +4463,7 @@
         },
         {
           "t": 2.33,
-          "end": 6.365,
+          "end": 6.69,
           "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，",
           "words": [
             {
@@ -4603,131 +4605,177 @@
               "confidence": 0.9677
             }
           ]
-        },
+        }
+      ],
+      "animation": null,
+      "section_audio": true
+    },
+    {
+      "id": "quick_nobles/002",
+      "section": "quick_nobles",
+      "local_id": "002",
+      "section_index": 9,
+      "local_index": 1,
+      "cue_index": 21,
+      "group": "3.4 贵族",
+      "group_path": [
+        "3 回合与行动",
+        "3.4 贵族"
+      ],
+      "text": "就拿取这位贵族；",
+      "audio": "media/tts/quick/quick.nobles.mp3",
+      "audio_start": 6.69,
+      "duration": 1.8,
+      "start": 146.226,
+      "refs": [],
+      "subtitles": [
         {
-          "t": 6.69,
-          "end": 8.085,
+          "t": 0.0,
+          "end": 1.8,
           "text": "就拿取这位贵族；",
           "words": [
             {
               "word": "就",
-              "start": 6.69,
-              "end": 6.945,
+              "start": 0.0,
+              "end": 0.255,
               "confidence": 0.8969
             },
             {
               "word": "拿",
-              "start": 6.945,
-              "end": 7.165,
+              "start": 0.255,
+              "end": 0.475,
               "confidence": 0.9576
             },
             {
               "word": "取",
-              "start": 7.165,
-              "end": 7.365,
+              "start": 0.475,
+              "end": 0.675,
               "confidence": 0.911
             },
             {
               "word": "这",
-              "start": 7.365,
-              "end": 7.505,
+              "start": 0.675,
+              "end": 0.815,
               "confidence": 0.9117
             },
             {
               "word": "位",
-              "start": 7.505,
-              "end": 7.625,
+              "start": 0.815,
+              "end": 0.935,
               "confidence": 0.9506
             },
             {
               "word": "贵",
-              "start": 7.625,
-              "end": 7.805,
+              "start": 0.935,
+              "end": 1.115,
               "confidence": 0.9742
             },
             {
               "word": "族；",
-              "start": 7.805,
-              "end": 8.085,
+              "start": 1.115,
+              "end": 1.395,
               "confidence": 0.9036
             }
           ]
-        },
+        }
+      ],
+      "animation": null,
+      "section_audio": true
+    },
+    {
+      "id": "quick_nobles/003",
+      "section": "quick_nobles",
+      "local_id": "003",
+      "section_index": 9,
+      "local_index": 2,
+      "cue_index": 22,
+      "group": "3.4 贵族",
+      "group_path": [
+        "3 回合与行动",
+        "3.4 贵族"
+      ],
+      "text": "同时满足多位时，选一位拿取。",
+      "audio": "media/tts/quick/quick.nobles.mp3",
+      "audio_start": 8.49,
+      "duration": 2.79,
+      "start": 148.026,
+      "refs": [],
+      "subtitles": [
         {
-          "t": 8.49,
-          "end": 11.28,
+          "t": 0.0,
+          "end": 2.79,
           "text": "同时满足多位时，选一位拿取。",
           "words": [
             {
               "word": "同",
-              "start": 8.49,
-              "end": 8.635,
+              "start": 0.0,
+              "end": 0.145,
               "confidence": 0.896
             },
             {
               "word": "时",
-              "start": 8.635,
-              "end": 8.825,
+              "start": 0.145,
+              "end": 0.335,
               "confidence": 0.957
             },
             {
               "word": "满",
-              "start": 8.825,
-              "end": 9.005,
+              "start": 0.335,
+              "end": 0.515,
               "confidence": 0.9408
             },
             {
               "word": "足",
-              "start": 9.005,
-              "end": 9.225,
+              "start": 0.515,
+              "end": 0.735,
               "confidence": 0.9686
             },
             {
               "word": "多",
-              "start": 9.225,
-              "end": 9.385,
+              "start": 0.735,
+              "end": 0.895,
               "confidence": 0.8294
             },
             {
               "word": "位",
-              "start": 9.385,
-              "end": 9.535,
+              "start": 0.895,
+              "end": 1.045,
               "confidence": 0.9235
             },
             {
               "word": "时，",
-              "start": 9.535,
-              "end": 9.915,
+              "start": 1.045,
+              "end": 1.425,
               "confidence": 0.9593
             },
             {
               "word": "选",
-              "start": 9.995,
-              "end": 10.245,
+              "start": 1.505,
+              "end": 1.755,
               "confidence": 0.9032
             },
             {
               "word": "一",
-              "start": 10.245,
-              "end": 10.375,
+              "start": 1.755,
+              "end": 1.885,
               "confidence": 0.8942
             },
             {
               "word": "位",
-              "start": 10.375,
-              "end": 10.405,
+              "start": 1.885,
+              "end": 1.915,
               "confidence": 0.1757
             },
             {
               "word": "拿",
-              "start": 10.405,
-              "end": 10.465,
+              "start": 1.915,
+              "end": 1.975,
               "confidence": 0.149
             },
             {
               "word": "取。",
-              "start": 10.465,
-              "end": 10.525,
+              "start": 1.975,
+              "end": 2.035,
               "confidence": 0.1159
             }
           ]
@@ -4742,7 +4790,7 @@
       "local_id": "001",
       "section_index": 10,
       "local_index": 0,
-      "cue_index": 21,
+      "cue_index": 23,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"

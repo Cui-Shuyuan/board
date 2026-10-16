@@ -3143,6 +3143,17 @@
         "player_b_nobles"
       ],
       "fill": 0.82
+    },
+    {
+      "id": "shot_player_a_nobles",
+      "zones": [
+        "player_holding",
+        "player_reserved",
+        "player_development",
+        "player_nobles"
+      ],
+      "fill": 0.85,
+      "desc": "玩家A持有/保留/发展/贵族区；用于购买发展卡后立即拿取贵族的完整过程，不包含市场。"
     }
   ],
   "groups": [
@@ -3245,6 +3256,61 @@
         "h": 0.39
       },
       "note": "结算说明专用文字槽：放在玩家 A 手牌区（player_reserved）与玩家 B 宝石区（player_b_holding）之间的空位；按 shot_endgame_compare 正俯视投影，文字块中心约在屏幕 (0.51, 0.21)，用左对齐起点 x=0.395 补偿左侧文字对齐。槽位加大到 0.60x0.39，② 的三行大字上下不再被裁切。"
+    },
+    {
+      "id": "noble_score_hint",
+      "space": "screen",
+      "rect": {
+        "x": 0.0494,
+        "y": 0.1,
+        "w": 0.1,
+        "h": 0.075
+      },
+      "note": "贵族讲解：分数圈上方文字槽，label_align=center；中心约在分数圈圆心正上方。"
+    },
+    {
+      "id": "noble_condition_hint",
+      "space": "screen",
+      "rect": {
+        "x": 0.03,
+        "y": 0.66,
+        "w": 0.28,
+        "h": 0.12
+      },
+      "note": "贵族讲解：贵族板块正下方条件文字槽，label_align=center。"
+    },
+    {
+      "id": "noble_lens_condition_box",
+      "space": "screen",
+      "rect": {
+        "x": 0.09,
+        "y": 0.4,
+        "w": 0.15,
+        "h": 0.08
+      },
+      "note": "quick_nobles/002 左侧放大镜里贵族条件区域的固定框；镜片目标为 noble_1。"
+    },
+    {
+      "id": "end_score_a",
+      "space": "screen",
+      "rect": {
+        "x": 0.2,
+        "y": 0.2,
+        "w": 0.28,
+        "h": 0.1
+      },
+      "note": "quick_end 终局分数：玩家A发展区上方。"
+    },
+    {
+      "id": "end_score_b",
+      "space": "screen",
+      "rect": {
+        "x": 0.6,
+        "y": 0.2,
+        "w": 0.28,
+        "h": 0.1
+      },
+      "note": "quick_end 终局分数：玩家B发展区上方。"
     }
   ]
 }

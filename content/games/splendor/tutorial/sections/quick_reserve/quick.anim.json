@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "玩家A从市场保留标价3黑的一级蓝卡 card_l1_sapphire_15，再从黄金供应堆拿1枚黄金；为保持牌堆补位仍是真卡，cue 起始先把一级牌堆中一张 blank 换成真卡 card_l1_onyx_1，再从牌堆补到市场空位。这样 cue003 能合法用3黑买下这张保留卡，同时把黄金留给下一 section。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -22,6 +22,42 @@
         }
       },
       "events": [
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "count": 1,
+          "setup": true,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true,
+          "anchor": "quick_reserve/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_down",
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "anchor": "quick_reserve/001.start"
+        },
         {
           "op": "camera",
           "dur": 0.0,
@@ -51,7 +87,15 @@
           "target": {
             "space": "entity",
             "zone": "card_market",
-            "order": 9
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
           },
           "anchor": "quick_reserve/001.b1.start",
           "offset": 2.549
@@ -64,11 +108,13 @@
           "target": {
             "space": "entity",
             "zone": "card_market",
-            "concept": "development_card_level_3",
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<diamond>"
+                "value": "<sapphire>"
               }
             ]
           },
@@ -84,15 +130,17 @@
           "dur": 0.5,
           "quantity": 1,
           "to": "face_up",
-          "order": 9,
+          "order": 3,
           "target": {
             "space": "entity",
-            "zone": "deck_level_3",
-            "concept": "development_card_level_3",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
             "parts": [
               {
                 "key": "bonus",
-                "value": "<sapphire>"
+                "value": "<onyx>"
               }
             ]
           },
@@ -118,6 +166,12 @@
           },
           "anchor": "quick_reserve/001.b1.end",
           "offset": -0.836
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A从市场拿一张标价3枚黑宝石的一级蓝卡，背面朝上放到自己的保留区，再从黄金供应堆拿1枚黄金，并从一级牌堆补一张发展卡到市场空位。这个保留结算合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
         }
       ]
     },
@@ -231,7 +285,7 @@
       "tree": "main",
       "script": {
         "story": "保留的牌，之后可以在自己回合花钱买下。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "购买保留牌完整过程：静默补入3枚黑宝石作为本次购买资源（保留时拿到的1枚黄金留给下一 section 演示万能替代）；镜头用 shot_player_a 同时看住持有区、保留区和发展区；先高亮保留的 card_l1_sapphire_15，支付3枚黑宝石，再把保留牌翻面送入发展区，最后框出它的价格并在口播结束后停留。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -243,9 +297,37 @@
       },
       "events": [
         {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 3,
+          "anchor": "quick_reserve/003.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.563,
+          "anchor": "quick_reserve/003.start"
+        },
+        {
           "op": "camera",
           "dur": 0.0,
-          "shot": "shot_reserved",
+          "shot": "shot_player_a",
+          "realizes": "<ontology::timing>",
           "anchor": "quick_reserve/003.start"
         },
         {
@@ -261,11 +343,6 @@
           "label_key": "action_hint"
         },
         {
-          "op": "wait",
-          "dur": 4.032,
-          "anchor": "quick_reserve/003.start"
-        },
-        {
           "op": "label",
           "dur": 0.0,
           "text": "保留的牌，之后可以在自己回合花钱买下",
@@ -278,15 +355,100 @@
         },
         {
           "op": "highlight",
-          "dur": 0.455,
+          "dur": 0.4,
           "peak_alpha": 0.65,
           "target": {
             "space": "entity",
             "zone": "player_reserved",
-            "order": 0
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
           },
           "anchor": "quick_reserve/003.b1.start",
-          "offset": 0.635
+          "offset": 0.15
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 3,
+          "stagger": 0.12,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          },
+          "anchor": "quick_reserve/003.b1.start",
+          "offset": 0.55
+        },
+        {
+          "op": "flip",
+          "dur": 0.7,
+          "quantity": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          },
+          "axis": "long",
+          "direction": "ccw",
+          "anchor": "quick_reserve/003.b1.start",
+          "offset": 1.35
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_1",
+          "dur": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "anchor": "quick_reserve/003.b1.start",
+          "offset": 2.15
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A之前保留了一张标价3枚黑宝石的一级蓝卡，保留时获得1枚黄金；现在玩家A手里有3枚黑宝石和这1枚黄金。玩家A支付3枚黑宝石，把这张保留卡翻开放到自己的发展区并保留那枚黄金。这个购买结算合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
         }
       ]
     }

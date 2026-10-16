@@ -1,5 +1,7 @@
 # v2 动画管线（v3 运行时模型）
 
+> 当前生产源为 section-first：`sections/<id>/<track>.anim.json` + `shared/stage/` + `tracks/<track>.track.json`。本文描述编译/运行时模型；具体写文件路径见 `../README.md`。
+>
 > LLM/人编写动画脚本前，先读 [LLM-ANIMATION-GUIDE.md](LLM-ANIMATION-GUIDE.md)。
 
 ## 数据模型：三条时间轴
@@ -17,7 +19,7 @@
 2. **`camera_ops`** — 机位时间轴。
    stage 里定义命名机位 `shots`（zones + fill，可选 `view_offset_x` /
    `view_offset_z` 平移机位中心），cue 的 `camera` 事件只写
-   `{"op":"camera","at":...,"shot":"shot_market"}`。编译器把 shot 解析成
+   `{"op":"camera","anchor":...,"shot":"shot_market"}`。编译器把 shot 解析成
    center/ortho/pitch/rect 写进 `camera_ops`。没有 camera 事件的 cue
    沿用上一条 cue 的终态机位（`camera_in`）。
 
@@ -33,11 +35,11 @@
 
 空间有 `zone + order -> x/z`，时间也有同样的映射层：`anchor + offset -> at`。
 
-- 轨道顶层 `time_anchors` 是“时间坐标声明”，一开始就全部写好；
-  当前 full 轨道有 388 个锚点，覆盖每条 cue 的 start/end 和每个 beat 的 start/end。
+- section 内 `time_anchors` 是“时间坐标声明”，装配后进入轨道源；
+  当前 full 338 个锚点、quick 106 个锚点，覆盖每条 cue 的 start/end 和每个 beat 的 start/end。
 - 所有事件写 `anchor`；只有原始时间点没有正好落在锚点上时，
   才补一个相对 `offset`。
-- 编译器从 `script.{track}.json` 的 beat 文本 + `{track}.runtime.json` 的
+- 编译器从 `sections/<id>/{track}.script.json` 的 beat 文本 + `{track}.runtime.json` 的
   TTS word timing 里解析出 cue 内秒数。匹配时按**词流顺序**做
   “去标点/空白后的连续文本”匹配，所以 TTS 把一句话切成多个 subtitle event
   也能正确对上。
@@ -56,16 +58,18 @@
 
 ```json
 "time_anchors": [
-  { "id": "setup.cards.001.1.start",
-    "cue": "setup.cards.001.1", "edge": "cue_start" },
-  { "id": "setup.cards.001.1.b1.start",
-    "cue": "setup.cards.001.1", "beat": "setup.cards.001.1.b1", "edge": "start" }
+  { "id": "setup_cards/001.1.start",
+    "cue": "001.1", "edge": "cue_start" },
+  { "id": "setup_cards/001.1.b1.start",
+    "cue": "001.1", "beat": "setup_cards/001.1.b1", "edge": "start" }
 ]
 ```
 
+section 源里的 `cue` 字段写 local id；经 `section_source.py` 装配后统一为 qualified id。
+
 ```json
-{ "op": "camera", "anchor": "setup.cards.001.1.start", "shot": "shot_card_face" }
-{ "op": "create", "anchor": "setup.cards.001.1.b1.start",
+{ "op": "camera", "anchor": "setup_cards/001.1.start", "shot": "shot_card_face" }
+{ "op": "create", "anchor": "setup_cards/001.1.b1.start",
   "target": { "space": "entity", "zone": "showcase", "template": "sample_card_1" } }
 ```
 
@@ -81,9 +85,8 @@
 
 维护：
 
-- 一次性迁移脚本：`animation/migrate_time_anchors_v2.py`；
-- 改完 `script.{track}.json` / TTS 后，如果 beat 增删或时间漂移，重跑该脚本：
-  它会重新生成 `time_anchors`，并把仍是裸 `at` 的事件并入最近锚点；
+- 一次性迁移脚本已归档：`animation/archive/migrate_time_anchors_v2.py`，不再运行；
+- 改完 `sections/<id>/{track}.script.json` / TTS 后，如果 beat 增删或时间漂移，由编译流程重新解析锚点：
 - 锚点解析失败、文本对不上、同一 beat 文本歧义都会直接编译失败，不会静默 fallback 到秒数。
 
 ## 父子 cue 属性继承
@@ -106,12 +109,11 @@
 - `id`、`parent`、`transition`：结构字段。`transition` 缺省固定为 `continue`，不会继承父级的
   `world_cut` 等切换语义。
 
-例：`setup.starting_player.001.1` 只显式写自己变化的 `camera`（`shot_holding`）和台词；
-`setup.starting_player.001.2` 连 `tree`、`transition`、`enter/exit` 都不写，自动继承父节点，
+例：`setup_players/starting.001.1` 只显式写自己变化的 `camera`（`shot_holding`）和台词；
+`setup_players/starting.001.2` 连 `tree`、`transition`、`enter/exit` 都不写，自动继承父节点，
 镜头也自然保持 `shot_holding`。
 
-`full.anim.json` 已按这套规则做过一次确定性最小化：当前文件里 83 条 cue 中，
-38 条没有写 `enter`、30 条没有写 `exit`、72 条没有写 `transition`；`tree` 因当前跨 stage/展示树结构全部显式写出——缺省值都是继承，不是遗漏。
+当前 section-first 源按同一规则做确定性最小化：section 内大部分 cue 的 `enter` / `exit` / `transition` 缺省继承，缺省值都是继承，不是遗漏。需要改状态分叉时才显式写 `entry`。
 
 ## 全景 shot
 
@@ -132,10 +134,10 @@ stage 里定义 shot 时，`zones` 可以写 `["*"]`：
 `animation/cue_graph_v2.py` 是 v2 的链表式结构编辑工具，只负责轨道结构：
 
 ```bash
-python animation/cue_graph_v2.py insert --source full.anim.json   --after A --new B --cue-file B.json
-python animation/cue_graph_v2.py delete --source full.anim.json --cue B
-python animation/cue_graph_v2.py split  --source full.anim.json   --cue A --at 1.5 --new A.s2
-python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --second A.s2
+python animation/cue_graph_v2.py insert --source sections/<id>/<track>.anim.json   --after A --new B --cue-file B.json
+python animation/cue_graph_v2.py delete --source sections/<id>/<track>.anim.json --cue B
+python animation/cue_graph_v2.py split  --source sections/<id>/<track>.anim.json   --cue A --at 1.5 --new A.s2
+python animation/cue_graph_v2.py merge  --source sections/<id>/<track>.anim.json   --first A --second A.s2
 ```
 
 它维护的是：
@@ -145,7 +147,7 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 - 删除/合并时把 children 重接到新的 state owner。
 
 它**不替写** story/note、TTS 音频和 runtime；这些属于单独的口播层。结构改完后仍需按
-`sections/<id>/full.script.json → TTS → runtime → sections/<id>/full.anim.json → compiled` 的链路补齐对应资产。
+`sections/<id>/<track>.script.json → TTS → runtime → sections/<id>/<track>.anim.json → compiled` 的链路补齐对应资产。
 
 ## 素材路径约定
 
@@ -185,8 +187,8 @@ python animation/cue_graph_v2.py merge  --source full.anim.json   --first A --se
 源数据只改 section-first 目录：
 
 - `content/games/splendor/tutorial/tracks/full.track.json`：section 顺序
-- `content/games/splendor/tutorial/sections/<id>/full.script.json`：口播文本/refs
-- `content/games/splendor/tutorial/sections/<id>/full.anim.json`：动画事件/camera/parent/entry
+- `content/games/splendor/tutorial/sections/<id>/<track>.script.json`：口播文本/refs
+- `content/games/splendor/tutorial/sections/<id>/<track>.anim.json`：动画事件/camera/parent/entry
 
 看效果前跑一次：
 
@@ -199,8 +201,8 @@ python3 animation/compile_tutorial.py --game splendor --track full
 1. 对照当前 `full.tts.lrc` 文本，只找出真正变了的 section；
 2. 只为这些 section 做连续增量 TTS（生成 mp3 + subtitle）；
 3. 更新 `tts_manifest.json` / `full.tts.lrc`；
-4. 重建 `full.runtime.json`；
-5. 编译 `full.compiled.json`；
+4. 重建 `{track}.runtime.json`；
+5. 编译 `{track}.compiled.json`；
 6. 可选 `--validate-qa` 调 BoardAI 做合法性校验。
 
 只想检查将发生什么、不动文件：

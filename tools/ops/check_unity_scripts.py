@@ -760,6 +760,7 @@ namespace UnityEngine.Networking
         public string error;
         public DownloadHandler downloadHandler;
         public string url;
+        public bool isDone;
         public static UnityWebRequestMultimedia GetAudioClip(string uri, UnityEngine.AudioType audioType) => null;
         public UnityWebRequestAsyncOperation SendWebRequest() => null;
         public void Dispose() { }
@@ -769,6 +770,16 @@ namespace UnityEngine.Networking
     public class DownloadHandlerAudioClip : DownloadHandler
     {
         public static UnityEngine.AudioClip GetContent(UnityWebRequest request) => null;
+    }
+
+    public static class UnityWebRequestTexture
+    {
+        public static UnityWebRequest GetTexture(string uri, bool nonReadable) => null;
+    }
+
+    public class DownloadHandlerTexture : DownloadHandler
+    {
+        public static UnityEngine.Texture2D GetContent(UnityWebRequest request) => null;
     }
 
     public class UnityWebRequestMultimedia : UnityWebRequest

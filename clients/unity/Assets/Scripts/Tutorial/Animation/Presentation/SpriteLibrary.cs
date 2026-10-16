@@ -36,6 +36,22 @@ namespace BoardGameTutorial.Animation
             return LoadFile(relative, shape);
         }
 
+        public bool HasCached(string relative, string shape)
+        {
+            return !string.IsNullOrEmpty(relative) && cache.ContainsKey(CacheKey(relative, shape));
+        }
+
+        public void RegisterPreloaded(string relative, string shape, Sprite sprite)
+        {
+            if (string.IsNullOrEmpty(relative) || sprite == null) return;
+            cache[CacheKey(relative, shape)] = sprite;
+        }
+
+        private static string CacheKey(string relative, string shape)
+        {
+            return relative + "|" + (shape ?? "");
+        }
+
         public Sprite LoadBack(CompiledTemplateDef tpl, string palette = null)
         {
             string path = ResolveBackPath(tpl, palette);
@@ -65,7 +81,7 @@ namespace BoardGameTutorial.Animation
         private Sprite LoadFile(string relative, string shape)
         {
             if (string.IsNullOrEmpty(relative) || string.IsNullOrEmpty(gameRoot)) return null;
-            string key = relative + "|" + (shape ?? "");
+            string key = CacheKey(relative, shape);
             if (cache.TryGetValue(key, out var cached)) return cached;
 
             string path = Path.IsPathRooted(relative) ? relative : Path.Combine(gameRoot, relative);

@@ -383,28 +383,60 @@ namespace BoardGameTutorial
                         annotation.LabelH * Screen.height);
                 }
             }
-            // 统一文字说明格式：深色描边 + 白色正文，不画背景框；
+            // 统一文字说明格式：深色描边 + 白色正文，不画背景框。
+            string align = (annotation.LabelAlign ?? "").Trim().ToLowerInvariant();
+            TextAnchor anchor = TextAnchor.MiddleLeft;
+            if (align == "center") anchor = TextAnchor.MiddleCenter;
+            else if (align == "right") anchor = TextAnchor.MiddleRight;
+            float centerX = rect.x + rect.width * 0.5f;
+            float centerY = rect.y + rect.height * 0.5f;
             // 先按每行最多 LabelMaxCharsPerLine 个字自动换行，再交给 GUI 排版。
             string wrappedText = WrapLabelText(annotation.Text, LabelMaxCharsPerLine);
             rect = FitLabelRect(rect, wrappedText);
+            if (anchor == TextAnchor.MiddleCenter)
+            {
+                // FitLabelRect grows from the authored top-left.  For centered
+                // labels, grow around the authored center instead so the text
+                // stays visually centered on the target.
+                rect.x = centerX - rect.width * 0.5f;
+                rect.y = centerY - rect.height * 0.5f;
+                if (rect.x < 0f) rect.x = 0f;
+                if (rect.y < 0f) rect.y = 0f;
+                if (rect.x + rect.width > Screen.width)
+                    rect.x = Mathf.Max(0f, Screen.width - rect.width);
+                if (rect.y + rect.height > Screen.height)
+                    rect.y = Mathf.Max(0f, Screen.height - rect.height);
+            }
             Color color = ResolvedAnnotationColor(annotation, Color.white);
             Color savedGuiColor = GUI.color;
-            GUI.color = color;
-            float shadowScale = Mathf.Max(1f, overlayLabelStyle.fontSize / 34f);
-            for (int i = 0; i < SubtitleOutlineOffsets.Length; i++)
+            TextAnchor savedAnchor = overlayLabelStyle.alignment;
+            TextAnchor savedShadowAnchor = labelShadowStyle.alignment;
+            overlayLabelStyle.alignment = anchor;
+            labelShadowStyle.alignment = anchor;
+            try
             {
-                Vector2 offset = SubtitleOutlineOffsets[i];
-                GUI.Label(
-                    new Rect(
-                        rect.x + offset.x * shadowScale,
-                        rect.y + offset.y * shadowScale,
-                        rect.width,
-                        rect.height),
-                    wrappedText,
-                    labelShadowStyle);
+                GUI.color = color;
+                float shadowScale = Mathf.Max(1f, overlayLabelStyle.fontSize / 34f);
+                for (int i = 0; i < SubtitleOutlineOffsets.Length; i++)
+                {
+                    Vector2 offset = SubtitleOutlineOffsets[i];
+                    GUI.Label(
+                        new Rect(
+                            rect.x + offset.x * shadowScale,
+                            rect.y + offset.y * shadowScale,
+                            rect.width,
+                            rect.height),
+                        wrappedText,
+                        labelShadowStyle);
+                }
+                GUI.Label(rect, wrappedText, overlayLabelStyle);
             }
-            GUI.Label(rect, wrappedText, overlayLabelStyle);
-            GUI.color = savedGuiColor;
+            finally
+            {
+                overlayLabelStyle.alignment = savedAnchor;
+                labelShadowStyle.alignment = savedShadowAnchor;
+                GUI.color = savedGuiColor;
+            }
         }
 
         private bool TryGetAnnotationScreenRect(FrameState frame, VisualAnnotationState annotation, out Rect rect)

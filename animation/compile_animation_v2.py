@@ -1205,6 +1205,7 @@ class Compiler:
                 "transition": transition,
                 "stage": stage_id,
                 "demo": bool(cue.get("demo")),
+                "hold_after_audio": bool(cue.get("hold_after_audio")),
                 "duration": round(self.duration(cue, clips), 6),
                 "camera_in": camera_in,
                 "camera_ops": camera_ops,
@@ -1242,6 +1243,7 @@ class Compiler:
                 "transition": result.pop("transition"),
                 "stage": result.pop("stage"),
                 "demo": result.pop("demo"),
+                "hold_after_audio": result.pop("hold_after_audio"),
                 "duration": result.pop("duration"),
                 "camera_in": result.pop("camera_in"),
                 "camera_ops": result.pop("camera_ops"),
@@ -2500,6 +2502,7 @@ class Compiler:
         label_color = norm(ev.get("label_color"))
         label_mode = norm(ev.get("label_mode"))
         label_key = norm(ev.get("label_key"))
+        label_align = norm(ev.get("label_align"))
         overlays = {o.get("id"): o for o in (stage.get("overlays") or [])
                     if isinstance(o, dict) and o.get("id")}
         if ann_space == "world" and not overlay_id:
@@ -2533,6 +2536,8 @@ class Compiler:
                 c["label_mode"] = label_mode
             if label_key:
                 c["label_key"] = label_key
+            if label_align:
+                c["label_align"] = label_align
             clips.append(c)
         elif overlay_id:
             overlay = overlays.get(overlay_id)
@@ -2573,6 +2578,8 @@ class Compiler:
                 c["label_mode"] = label_mode
             if label_key:
                 c["label_key"] = label_key
+            if label_align:
+                c["label_align"] = label_align
             clips.append(c)
         else:
             raise ValueError(f"cue {cue_id}: label needs an entity target or overlay id")

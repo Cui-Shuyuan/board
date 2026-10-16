@@ -18,6 +18,8 @@ namespace BoardGameTutorial
 {
     public partial class TutorialCuePlayer : MonoBehaviour
     {
+        private Coroutine spritePreloadRoutine;
+
         public bool LoadRuntime()
         {
             gameRoot = ResolveGameRoot();
@@ -47,6 +49,8 @@ namespace BoardGameTutorial
                 Debug.LogError($"[TutorialCuePlayer] missing compiled animation for track={track}");
                 return false;
             }
+            if (spritePreloadRoutine != null) StopCoroutine(spritePreloadRoutine);
+            spritePreloadRoutine = StartCoroutine(v2AnimPlayer.PreloadCutoutSpritesRoutine());
             v2AnimPlayer.animationEnabled = enableCueAnimation;
             ApplyDebugOverlay();
             return true;

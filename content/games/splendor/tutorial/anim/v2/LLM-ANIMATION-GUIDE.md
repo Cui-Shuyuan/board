@@ -1,7 +1,7 @@
 # LLM 动画制作指导（v2 / v3 runtime）
 
-本文是写给“负责写动画脚本的 LLM/人”的唯一开工入口。先读本文，再动
-`full.anim.json`；不要先改 compiled，也不要让 Unity 侧兜底。
+本文是写给“负责写动画脚本的 LLM/人”的唯一开工入口。先读本文，再动当前 section 的
+`sections/<section_id>/<track>.anim.json` 与 `shared/stage/`；不要先改 compiled，也不要让 Unity 侧兜底。
 
 ## 0. 总原则
 
@@ -15,16 +15,18 @@
 
 | 文件 | 职责 |
 |---|---|
-| `content/games/splendor/tutorial/script.full.json` | 口播文字、cue 切分、group、beats、refs |
-| `content/games/splendor/tutorial/anim/v2/full.anim.json` | 动画事件、camera、状态操作、时间锚点、parent/entry |
-| `content/games/splendor/tutorial/anim/v2/_stage/*.stage.json` | zone 大小/位置/布局、template、命名机位 shots |
-| `content/games/splendor/tutorial/full.runtime.json` | 编译产物：音频、时长、字级字幕 timing |
-| `content/games/splendor/tutorial/anim/v2/full.compiled.json` | 编译产物，Unity 只读 |
+| `content/games/splendor/tutorial/tracks/<track>.track.json` | section 顺序与 track 元信息 |
+| `content/games/splendor/tutorial/sections/<id>/<track>.script.json` | 口播文字、cue 切分、group、beats、refs |
+| `content/games/splendor/tutorial/sections/<id>/<track>.anim.json` | 动画事件、camera、状态操作、时间锚点、parent/entry、可选 `qa` |
+| `content/games/splendor/tutorial/sections/<id>/qa.json` | 可选的外置手写 QA |
+| `content/games/splendor/tutorial/shared/stage/*.stage.json` | zone 大小/位置/布局、template、命名机位 shots |
+| `content/games/splendor/tutorial/<track>.runtime.json` | 编译产物：音频、时长、字级字幕 timing |
+| `content/games/splendor/tutorial/anim/v2/<track>.compiled.json` | 编译产物，Unity 只读 |
 
 ## 1.1 story / note 的写法
 
 - `script.story`：本条讲规要点，与当前口播含义一致。完整口播及 beat 切分以
-  `script.full.json` 为准。
+  `sections/<id>/<track>.script.json` 为准。
 - `script.note`：当前画面、演示前提、为什么这样演，以及必要的制作约束。
   区分屏幕展示图与真实组件；错误示例说明错误点，分支示例说明入口及恢复方式。
 - 动作、数量、时序、取景及继承关系以 `events`、`enter/exit`、
@@ -124,13 +126,13 @@
 ```json
 // 桌面卡牌外框：镜头移动要跟
 { "op": "shape", "shape": "box", "space": "world",
-  "anchor": "action.cards.market.001.1.start",
+  "anchor": "cards/market.001.1.start",
   "target": { "space": "entity", "zone": "card_market", "order": 2 },
   "part": "whole" }
 
 // 指向 mask 上某处：镜头移动不能跟
 { "op": "shape", "shape": "arrow", "space": "screen",
-  "anchor": "action.cards.cost.001.1.start",
+  "anchor": "cards/cost.001.1.start",
   "target": { "space": "screen", "id": "purchase_card" },
   "part": "cost_2",
   "offset": { "x": 0.02, "y": -0.03 } }
@@ -140,6 +142,11 @@
   "anchor": "...", "target": { "space": "entity", "zone": "card_market", "order": 2 },
   "part": "prestige" }
 ```
+
+标注增强：
+
+- `point` / `shape` 支持可选 `marker_key`：同一 target 上不同 `marker_key` 的标注互不覆盖；需要同时保留多个指示物或箭头时使用。
+- `arrow` 支持可选 `arrow_direction: left | right | up | down` 与 `text`：`arrow_direction` 控制指向，`text` 在箭头尾部显示说明文字。
 
 规则：
 
@@ -170,7 +177,7 @@
     翻的过程中运行时会把牌的渲染层保持在**源层**，落地后才切到目标层，这样
     从牌堆顶拿起时不会先沉到牌堆下面去；`direction=ccw` 从源位置的玩家视角
     看是逆时针（铰链在局部 -X 侧长边，自由边向上翻过）。
-    `action.reserve.private.002` 用 `axis=long, direction=ccw, destination=deck_peek` 把牌堆顶的牌沿
+    `reserve/private.002` 用 `axis=long, direction=ccw, destination=deck_peek` 把牌堆顶的牌沿
     长边逆时针翻入牌堆旁的查看位。
 
   `shuffle` 也写在实体事件序列里，但它是牌堆的**纯视觉**抖动：只生成抖动 clip，
@@ -201,7 +208,7 @@
   - `draw`：牌堆顶 → `destination`，一张牌，默认 `to=face_up`，视觉是带落点的
     `axis/direction` edge flip；**必须写 destination**。给玩家抽牌和给市场补牌都用
     `draw`，市场槽位用 `order` 指定；`dur` 不写时默认 0.6s。
-    `action.reserve.private.002`（抽给玩家）：
+    `reserve/private.002`（抽给玩家）：
     `{ "op": "draw", "target": { "space": "entity", "zone": "deck_level_1" },
        "destination": { "space": "entity", "zone": "deck_peek" },
        "axis": "long", "direction": "ccw", "dur": 0.2 }`
@@ -285,6 +292,7 @@ overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里
 屏幕 `label` 支持 Unity rich text 内联标签（如 `<color=#FF2020>11</color>`），也可用可选 `"label_color": "#FF2020"` 指定整条文字颜色；未写时保持默认白色正文 + 深色描边，富文本标签不占自动换行字数。
 `label` 还支持可选 `"label_mode": "add" | "replace"`：默认 `add`，同一槽位的多条 label 会各自出现；`replace` 表示同一目标上最新开始的 label 生效。需要无缝切换时写 `replace` 并让前后两条 label 的 `dur` 轻微重叠；需要停顿间隔时保持默认 `add` 并留空档。
 `replace` 可再写可选 `"label_key": "<logical-text-id>"`，指定它要替换哪一条逻辑文本；同一 overlay 上不同 `label_key` 可以独立替换、互不影响。不写时按整个目标替换。
+`label` 支持可选 `"label_align": "left" | "center" | "right"`，默认 `left`；需要把文字居中放在卡片/板块下方时写 `center`。
 label 的文本框会按实际文本的行数和长度自动扩展，并保持在屏幕内；overlay 的 rect 主要决定锚点和排版起点，不应再写死过小的高度去裁切文字。
 Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 
@@ -315,7 +323,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 - `rect`：屏幕比例坐标（左上角原点），同时规定放大镜的位置和大小。
 - `zoom`：放大倍率。`zoom=1` 表示镜头刚好框住目标包围盒；`>1` 推近放大，`<1` 拉远。
 - `padding`：目标世界包围盒外扩量；调小会让画面更满、目标更大。
-- `view_center_x` / `view_center_z` / `view_ortho_size`：可选的世界取景锁定参数，给定时直接使用这三个值，不再按 target 包围盒 + `zoom`/`padding` 重新取景。用于目标数量变化但镜片必须和另一条 cue 完全一致的场景（例：`action.nobles.repeat.001.1` 沿用 `action.nobles.choice.001.1` 的镜片取景）。
+- `view_center_x` / `view_center_z` / `view_ortho_size`：可选的世界取景锁定参数，给定时直接使用这三个值，不再按 target 包围盒 + `zoom`/`padding` 重新取景。用于目标数量变化但镜片必须和另一条 cue 完全一致的场景（例：`nobles/repeat.001.1` 沿用 `nobles/choice.001.1` 的镜片取景）。
 - `target` 仍只支持 `space="entity"`；取 `zone` + 选择器匹配到的全部实体，
   按它们的 world 包围盒确定镜头中心，再生成 lens 参数。
 - `layer` 用于同一 cue 内多个放大镜的前后层叠；`id` 省略时默认 `magnifier`。
@@ -328,7 +336,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 所有事件（包括 camera）都不要再写裸 `at`：
 
 ```json
-{ "op": "create", "anchor": "setup.cards.001.1.b1.start",
+{ "op": "create", "anchor": "setup_cards/001.1.b1.start",
   "target": { "space": "entity", "zone": "showcase", "template": "sample_card_1" } }
 ```
 
@@ -344,7 +352,7 @@ Splendor full 现有参考：`hint_action_first`、`hint_limit`。
 `offset` 只用于“锚点之后/之前的精确偏移”：
 
 ```json
-{ "op": "highlight", "anchor": "action.take.same.001.b1.start",
+{ "op": "highlight", "anchor": "take_gems/same.001.b1.start",
   "offset": 0.25,
   "target": { "space": "entity", "zone": "gem_supply_emerald" } }
 ```
@@ -368,7 +376,7 @@ stage 里定义：
 cue 里用 anchor 指向 shot：
 
 ```json
-{ "op": "camera", "anchor": "setup.cards.001.1.start", "shot": "shot_card_face" }
+{ "op": "camera", "anchor": "setup_cards/001.1.start", "shot": "shot_card_face" }
 ```
 
 规则：

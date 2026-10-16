@@ -1,5 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -36,6 +40,7 @@ namespace BoardGameTutorial.Animation
         public string CueId { get; private set; }
         public bool IsLoaded { get; private set; }
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
+        public bool CurrentCueHoldAfterAudio => currentCue != null && currentCue.hold_after_audio;
         public CompiledCueDef CurrentCue => currentCue;
         public FrameState CurrentFrame { get; private set; }
         public Camera Camera => cameraDirector.Camera;
@@ -91,6 +96,104 @@ namespace BoardGameTutorial.Animation
             binder.Init(animRoot.transform, stageRuntime, sprites, cameraDirector.Camera);
             IsLoaded = true;
             return true;
+        }
+
+        private sealed class SpritePreloadRequest
+        {
+            public UnityWebRequest Request;
+            public string Relative;
+            public string Shape;
+        }
+
+        /// <summary>
+        /// Background preload for cutout images referenced by the compiled track.
+        /// PNG decode/upload is done through UnityWebRequestTexture so later seeks
+        /// do not have to synchronously decode all first-seen sprites.
+        /// </summary>
+        public IEnumerator PreloadCutoutSpritesRoutine()
+        {
+            if (!IsLoaded || runtime.Track == null || string.IsNullOrEmpty(gameRoot)) yield break;
+
+            var wanted = new HashSet<string>(StringComparer.Ordinal);
+            var ordered = new List<KeyValuePair<string, string>>();
+            void Add(string relative, string shape)
+            {
+                if (string.IsNullOrEmpty(relative)) return;
+                if (!relative.EndsWith("_cutout.png", StringComparison.OrdinalIgnoreCase)) return;
+                string key = relative + "|" + (shape ?? "");
+                if (!wanted.Add(key)) return;
+                ordered.Add(new KeyValuePair<string, string>(relative, shape ?? ""));
+            }
+
+            foreach (var stage in runtime.Track.stages ?? new List<CompiledStageDef>())
+            {
+                foreach (var tpl in stage.templates ?? new List<CompiledTemplateDef>())
+                {
+                    string shape = string.IsNullOrEmpty(tpl.shape) ? "card" : tpl.shape;
+                    Add(tpl.face_image, shape);
+                    Add(tpl.back_image, shape);
+                    foreach (var p in tpl.face_image_by_palette ?? new List<PaletteImageDef>())
+                    {
+                        Add(p.face_image, shape);
+                        Add(p.back_image, shape);
+                    }
+                }
+            }
+            foreach (var cue in runtime.Track.cues ?? new List<CompiledCueDef>())
+            {
+                foreach (var clip in cue.clips ?? new List<CompiledClipDef>())
+                {
+                    if (!string.IsNullOrEmpty(clip.picture)) Add(clip.picture, "card");
+                }
+            }
+
+            int next = 0;
+            const int concurrency = 4;
+            var active = new List<SpritePreloadRequest>();
+            while (next < ordered.Count || active.Count > 0)
+            {
+                while (active.Count < concurrency && next < ordered.Count)
+                {
+                    var pair = ordered[next++];
+                    if (sprites.HasCached(pair.Key, pair.Value)) continue;
+                    string fullPath = Path.IsPathRooted(pair.Key) ? pair.Key : Path.Combine(gameRoot, pair.Key);
+                    if (!File.Exists(fullPath)) continue;
+                    string uri;
+                    try { uri = new Uri(fullPath).AbsoluteUri; }
+                    catch { continue; }
+                    var request = UnityWebRequestTexture.GetTexture(uri, false);
+                    request.SendWebRequest();
+                    active.Add(new SpritePreloadRequest
+                    {
+                        Request = request,
+                        Relative = pair.Key,
+                        Shape = pair.Value,
+                    });
+                }
+
+                for (int i = active.Count - 1; i >= 0; i--)
+                {
+                    var item = active[i];
+                    if (item == null || item.Request == null || !item.Request.isDone) continue;
+                    active.RemoveAt(i);
+                    if (item.Request.result == UnityWebRequest.Result.Success)
+                    {
+                        var texture = DownloadHandlerTexture.GetContent(item.Request);
+                        if (texture != null)
+                        {
+                            texture.wrapMode = TextureWrapMode.Clamp;
+                            try { texture.Apply(true); } catch { /* already non-readable */ }
+                            texture.filterMode = texture.mipmapCount > 1 ? FilterMode.Trilinear : FilterMode.Bilinear;
+                            var sprite = Sprite.Create(texture,
+                                new Rect(0f, 0f, texture.width, texture.height),
+                                new Vector2(0.5f, 0.5f), 100f);
+                            sprites.RegisterPreloaded(item.Relative, item.Shape, sprite);
+                        }
+                    }
+                    item.Request.Dispose();
+                }
+                yield return null;
+            }
         }
 
         /// <summary>

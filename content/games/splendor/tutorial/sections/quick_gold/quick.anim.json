@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。",
-        "note": "黄金替代演示：承接保留行动，玩家 A 已有保留牌和保留时取得的 1 枚黄金；静默补入 3 枚黑宝石，先让观众看到持有区；口播到“买卡时”再浮出示意卡（card_l1_emerald_32，价格 4 黑），框出价格并用 1 枚黄金替代 1 枚黑宝石；归还 3 黑 + 1 黄金后把真卡拿入发展区，并从一级牌堆补一张真卡回市场。",
+        "note": "承接购买保留卡后的状态：玩家 A 已买下保留牌，手里仍留着保留时取得的 1 枚黄金；静默补入 3 枚黑宝石，先让观众看到持有区；口播到“买卡时”再浮出示意卡（card_l1_emerald_32，价格 4 黑），框出价格并用 1 枚黄金替代 1 枚黑宝石；归还 3 黑 + 1 黄金后把真卡拿入发展区，并从一级牌堆补一张真卡回市场。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -213,26 +213,6 @@
           },
           "anchor": "quick_gold/001.b1.start",
           "offset": 5.45
-        },
-        {
-          "op": "hide",
-          "dur": 0.0,
-          "target": {
-            "space": "screen",
-            "id": "scene_backdrop"
-          },
-          "anchor": "quick_gold/001.end",
-          "offset": -0.38
-        },
-        {
-          "op": "hide",
-          "dur": 0.0,
-          "target": {
-            "space": "screen",
-            "id": "purchase_card"
-          },
-          "anchor": "quick_gold/001.end",
-          "offset": -0.38
         }
       ],
       "qa": [

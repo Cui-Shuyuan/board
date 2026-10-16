@@ -167,6 +167,7 @@ namespace BoardGameTutorial.Animation
         public string label_color;
         public string label_mode;
         public string label_key;
+        public string label_align;
         public bool screen_space;
         public float label_x;
         public float label_y;
@@ -262,6 +263,7 @@ namespace BoardGameTutorial.Animation
         public string transition;
         public string stage;
         public bool demo;
+        public bool hold_after_audio;
         public float duration;
         public CompiledCameraDef camera_in;
         public List<CompiledCameraOpDef> camera_ops = new List<CompiledCameraOpDef>();

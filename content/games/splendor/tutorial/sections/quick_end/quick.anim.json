@@ -11,7 +11,7 @@
       "tree": "main",
       "script": {
         "story": "当有人获得十五分，游戏进入最后一轮；确保所有玩家回合数相同后，游戏结束；分多者获胜。",
-        "note": "Quick 初稿，时间待 TTS 后重排。",
+        "note": "参考 full 终局示例：玩家A三张发展卡共10分，并拿取2枚贵族6分，总分16；玩家B三张发展卡共6分，并拿取1枚贵族3分，总分9。每位玩家另有2张零分发展卡，表示此前累计的折扣来源；两人局只用3枚贵族，A拿2枚、B拿1枚。镜头 shot_endgame_compare 同时展示双方发展区和贵族区；发展卡声望圈使用 full 的 part_w/part_h 尺寸，贵族声望圈用 noble_prestige 尺寸；A、B 分数分别放在屏幕左上和右上。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -23,26 +23,623 @@
       },
       "events": [
         {
-          "op": "camera",
-          "dur": 0.0,
-          "shot": "shot_board",
+          "op": "wait",
+          "dur": 8.688,
           "anchor": "quick_end/001.start"
         },
         {
-          "op": "wait",
-          "dur": 8.256,
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true,
           "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "template": "blank_card_2",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "template": "blank_card_2",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "template": "blank_card_3",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "template": "blank_card_3",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_3",
+            "template": "blank_card_3",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l2_ruby_69",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_sapphire_77",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_onyx_909",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_ruby_87",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_nobles"
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "target": {
+            "space": "entity",
+            "zone": "noble_market",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_nobles"
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "destroy",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "blank_card_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "from_back": true,
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_34",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_901",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "create",
+          "dur": 0.0,
+          "setup": true,
+          "count": 1,
+          "to": "face_up",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_902",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_endgame_compare",
+          "realizes": "<ontology::timing>",
+          "anchor": "quick_end/001.start"
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l2_ruby_69",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_sapphire_77",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_onyx_909",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_ruby_87",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "noble_prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles",
+            "template": "noble_1",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.44,
+          "part_h": 0.44,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "noble_prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_nobles",
+            "template": "noble_4",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.44,
+          "part_h": 0.44,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "noble_prestige",
+          "target": {
+            "space": "entity",
+            "zone": "player_b_nobles",
+            "template": "noble_5",
+            "palette": "noble",
+            "concept": "noble"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1,
+          "part_w": 0.44,
+          "part_h": 0.44,
+          "size": 80
         },
         {
           "op": "label",
           "dur": 0.0,
-          "text": "达到15分触发最后一轮\n所有玩家回合数相同时\n游戏结束，分多者获胜",
+          "text": "分数：16/15（获胜）",
+          "label_align": "center",
           "target": {
             "space": "screen",
-            "id": "hint_endgame"
+            "id": "end_score_a"
           },
           "anchor": "quick_end/001.b1.start",
-          "offset": 0.089
+          "offset": 0.1
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "分数：9/15",
+          "label_align": "center",
+          "target": {
+            "space": "screen",
+            "id": "end_score_b"
+          },
+          "anchor": "quick_end/001.b1.start",
+          "offset": 0.1
+        }
+      ],
+      "demo": true,
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。玩家A的发展卡共提供10点声望，并拥有2枚贵族；玩家B的发展卡共提供6点声望，并拥有1枚贵族。玩家A总声望16，玩家B总声望9。这个终局计分状态合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
         }
       ]
     }

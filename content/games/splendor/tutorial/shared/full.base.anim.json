@@ -11,11 +11,23 @@
   },
   "worlds": [
     {
+      "id": "box",
+      "why": "盒面纯展示世界：没有规则 zone / 状态，只负责第一节整屏显示游戏盒封面。"
+    },
+    {
       "id": "real",
       "why": "真实牌桌：三摞牌堆、市场、贵族、供应堆、玩家区与后续所有规则操作都在这棵树里维护。"
     }
   ],
   "trees": [
+    {
+      "id": "box",
+      "world": "box",
+      "stage": "shared/stage/splendor.box.stage.json",
+      "purpose": "第一节盒面展示：stage 中没有任何 zone / template，避免主树空 zone 或 zone 框入镜。",
+      "initial": "board.default_picture=media/box.png；无 zone、无 template。",
+      "extent_note": "使用 splendor.box.stage.json 自己的整桌 extent；纯展示，不承载规则状态。"
+    },
     {
       "id": "main",
       "world": "real",

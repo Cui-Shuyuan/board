@@ -18,6 +18,11 @@ namespace BoardGameTutorial
 {
     public partial class TutorialCuePlayer : MonoBehaviour
     {
+        private bool animationHoldActive;
+        private float animationHoldLocal;
+        private float lastPosition;
+        private bool playbackFinished;
+
         public void PlayCue(
             int index,
             bool continueState = false,
@@ -27,6 +32,10 @@ namespace BoardGameTutorial
             if (doc == null || doc.cues == null || doc.cues.Count == 0) return;
             index = Mathf.Clamp(index, 0, doc.cues.Count - 1);
             if (playbackRoutine != null) StopCoroutine(playbackRoutine);
+            animationHoldActive = false;
+            animationHoldLocal = 0f;
+            lastPosition = Mathf.Max(0f, localTime);
+            playbackFinished = false;
             playbackRoutine = StartCoroutine(
                 PlayCueRoutine(
                     index,
@@ -75,6 +84,7 @@ namespace BoardGameTutorial
             pausedBeforePlay = startPaused;
             currentSubtitle = "";
             fallbackClock = 0f;
+            lastPosition = Mathf.Max(0f, localTime);
 
             var cue = doc.cues[index];
             if (!v2AnimPlayer.LoadCue(cue.id))
@@ -126,6 +136,7 @@ namespace BoardGameTutorial
             }
             currentSubtitle = "";
             previousIndex = index;
+            playbackFinished = true;
 
             if (pauseAtCueEnd) yield break;
             if (autoAdvance && index + 1 < doc.cues.Count)
@@ -174,9 +185,9 @@ namespace BoardGameTutorial
         public void Pause()
         {
             if (audioSource == null || audioSource.clip == null || isPaused) return;
-            if (!audioSource.isPlaying) return;
+            if (!audioSource.isPlaying && !animationHoldActive) return;
 
-            audioSource.Pause();
+            if (audioSource.isPlaying) audioSource.Pause();
             isPaused = true;
             UpdateSubtitle();
         }
@@ -184,6 +195,16 @@ namespace BoardGameTutorial
         public void Resume()
         {
             if (audioSource == null || audioSource.clip == null || !isPaused) return;
+
+            // During the hold-after-audio window the audio clock is already
+            // paused on purpose; resuming means "continue the animation hold",
+            // not "unpause the audio".
+            if (animationHoldActive)
+            {
+                isPaused = false;
+                UpdateSubtitle();
+                return;
+            }
 
             if (pausedBeforePlay)
             {
@@ -283,6 +304,12 @@ namespace BoardGameTutorial
         /// </summary>
         public void SeekTo(float localSeconds)
         {
+            if (playbackFinished)
+            {
+                if (CurrentCue != null)
+                    PlayCueAt(CurrentCue.id, localSeconds, isPaused);
+                return;
+            }
             if (audioSource == null || audioSource.clip == null)
             {
                 if (CurrentCue != null)
@@ -310,6 +337,7 @@ namespace BoardGameTutorial
             {
                 audioSource.time = clamped;
             }
+            lastPosition = clamped;
             if (v2AnimPlayer != null) v2AnimPlayer.Seek(clamped);
             UpdateSubtitle();
         }
@@ -370,9 +398,18 @@ namespace BoardGameTutorial
 
             if (v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
             {
-                float t = audioSource != null && audioSource.clip != null ? Position : fallbackClock;
-                if (!isPaused && (audioSource == null || audioSource.clip == null))
-                    fallbackClock += Time.deltaTime;
+                float t;
+                if (audioSource != null && audioSource.clip != null)
+                {
+                    if (audioSource.isPlaying || isPaused || animationHoldActive)
+                        lastPosition = Position;
+                    t = lastPosition;
+                }
+                else
+                {
+                    if (!isPaused) fallbackClock += Time.deltaTime;
+                    t = fallbackClock;
+                }
                 v2AnimPlayer.Seek(t);
             }
 
