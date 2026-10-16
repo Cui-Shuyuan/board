@@ -118,7 +118,7 @@ python animation/qa_anim_ask.py --game splendor --track quick --jobs 4 --tag rou
 python animation/qa_anim_ask.py --game splendor --track full --jobs 4 --tag round2-full-v2
 ```
 
-自动脚本结果：43 问，40 通过 / 3 可疑。逐条人工复核如下：
+自动脚本按既有期望/默认正向词统计，标记 43 问中的 3 条待人工阅读。下面是根据原始问答的人工复核，不作为代码级验收结论：
 
 1. `take_gems/limit.001.2` —— **不是失败**
    - 手写问题：A 持有白3、蓝3、红3、绿2、黑1，选择还回 2 枚钻石。
@@ -133,8 +133,19 @@ python animation/qa_anim_ask.py --game splendor --track full --jobs 4 --tag roun
    - LLM 一次回答“有问题”（按条件满足后不能拖到下一回合），一次回答“合法”（按每回合至多一枚）。
    - 结论：LLM 缺少“上一回合已经拿过一块、每回合至多一块”的必要条件，没有向玩家追问；重跑结果不一。回答整体可接受，暂不修改问答 prompt。
 
+### 执行方法修正（重要）
+
+本轮 Board API QA 的目标是让独立裁判回答手写问题，避免执行者自行决定场景对不对，而不是验证 API 功能，也不是验证执行者的预判。
+
+首轮我把自己的判断预先写成了 `expect`，再用自动统计去对齐，这偏离了 QA 的意图。错误已于本次复核中纠正：
+
+- 不把执行者临场判断写成 `expect`；
+- 原样运行手写问题，原样记录 LLM 回答；
+- 自动脚本的“可疑”只作为待人工阅读标记，不作为最终验收结论；
+- 问句是否有歧义、模型是否缺少必要前提，按人工阅读记录，不为了得到某个回答而反复追问或改 prompt。
+
 ### QA 元数据
 
 首轮自动脚本曾给 `take_gems/limit.001.2` 和 `setup_gems/003.1` 补过 `expect`，人工复核后确认这两个 `expect` 不符合原始问句意图，已恢复为原始手写 QA，不做 prompt 修改。
 
-**结论**：Board API 层已实际执行；quick 全绿，full 没有发现代码级阻塞失败。自动化脚本仍可能因 LLM 缺少前提而把 2/3 的个别回答标成可疑，这是保守判定，不是本轮 checker/编译链缺陷。Board API 的进一步收敛交给后续内容维护，不在本轮改 prompt。
+**结论**：Board API 层已实际执行并原样留档；quick 的回答全部是正向判定，full 的 2/3 属于 LLM 缺少前提未追问、回答质量可接受。本轮不把自动统计当作对错裁决，也不修改问答 prompt；Board API 的进一步收敛交给后续内容维护。

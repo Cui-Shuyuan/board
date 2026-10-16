@@ -15,7 +15,7 @@ metadata:
 - 非卡牌虚构夹具在 `tests/fixtures/worker_toy/`：detailed/compact 验证参数化与不同编排，same 验证相同事实不同 timing 得到相同语义状态；对应测试 `animation/test_worker_toy_fixture.py`。
 - 修改共享素材：`python3 animation/material_cli.py impact --game splendor --material <id>`；纯动画素材变化不会触发 TTS 重合成。
 - R1–R6 复核修复见 `docs/tutorial/animation-reuse-review-response-20261017.md`；R7/R8 见 `docs/tutorial/animation-reuse-review-round2-response-20261017.md`：嵌套 example 共用 variant/omit 语义，严格时间检查使用编译器有效起止时间。
-- Board API QA 已实际执行：quick 10/10 通过；full 自动脚本 43 问中 3 问被保守标为可疑。人工复核：`take_gems/limit.001.2` 实际合法（白宝石=钻石）；`setup_gems/003.1`、`nobles/repeat.001.1` 属 LLM 缺少前提未追问，回答质量可接受，暂不修改 prompt。QA 留档不入 Git。
+- Board API QA 已实际执行：quick 10/10 通过；full 自动脚本 43 问中 3 问被标为待人工阅读。人工复核：`take_gems/limit.001.2` 实际合法（白宝石=钻石）；`setup_gems/003.1`、`nobles/repeat.001.1` 属 LLM 缺少前提未追问，回答质量可接受，暂不修改 prompt。QA 目标是独立裁判，不采用执行者预判；QA 留档不入 Git。
 
 ## 定位与现状
 
