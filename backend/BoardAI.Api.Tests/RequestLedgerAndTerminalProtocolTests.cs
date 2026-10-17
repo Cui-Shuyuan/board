@@ -104,6 +104,11 @@ public sealed class RequestLedgerAndTerminalProtocolTests
         Assert.Equal(3, llm.CallCount);
         Assert.Equal("answer", result.Orchestration!.Outcome);
         Assert.Contains(result.Orchestration.ProtocolErrors, error => error == "protocol_validation_error");
+        Assert.Equal(1, result.Orchestration.ProtocolRepairModelCallCount);
+        Assert.Contains(result.Orchestration.Timeline, span =>
+            span.Category == "model"
+            && span.ProtocolRepair
+            && span.Name == "model_protocol_repair_answer_submission");
         Assert.Contains(llm.AllMessages, message =>
             message.Role == "tool"
             && message.Content?.Contains("未在本请求交付", StringComparison.Ordinal) == true);

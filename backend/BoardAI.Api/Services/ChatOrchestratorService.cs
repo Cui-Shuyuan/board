@@ -388,6 +388,7 @@ public class ChatOrchestratorService
 
                         ledger.RecordProtocolValidationError();
                         protocolCorrections++;
+                        protocolRepairPending = true;
                         var validationError = "{\"error\":\"" + EscapeJson(terminal.Error) + "\"}";
                         messages.Add(new ChatMessage
                         {
