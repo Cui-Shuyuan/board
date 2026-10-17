@@ -20,6 +20,7 @@ public class ChatOrchestratorService
     private readonly string _orchestrationMode;
     private readonly string _configFingerprint;
     private readonly string _toolContractFingerprint;
+    private readonly RuleToolResultProjector _toolResultProjector;
     private readonly int _maxToolRounds;
     private readonly int _maxToolCallsPerRound;
     private readonly int _maxTotalToolCalls;
@@ -73,6 +74,7 @@ public class ChatOrchestratorService
         _maxConversationMessages = Math.Max(2, llmOptions.MaxConversationMessages);
         _toolContractFingerprint = HashFingerprint(
             JsonSerializer.Serialize(BuildTools("template"), ToolResultOptions));
+        _toolResultProjector = new RuleToolResultProjector(llmOptions.MaxEvidencePackChars);
     }
 
     public async Task<string> ProcessAsync(
@@ -696,7 +698,31 @@ public class ChatOrchestratorService
             var root = doc.RootElement;
             if (root.ValueKind != JsonValueKind.Object) return;
             if (!TryGetProperty(root, "Results", out var results) || results.ValueKind != JsonValueKind.Array)
+            {
+                if (root.TryGetProperty("queries", out var projectedQueries)
+                    && projectedQueries.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var item in projectedQueries.EnumerateArray())
+                    {
+                        var queryIndex = item.TryGetProperty("query_index", out var qi) && qi.ValueKind == JsonValueKind.Number
+                            ? qi.GetInt32()
+                            : 0;
+                        var relation = ReadFlexibleString(item, "relation", "Relation");
+                        var entity = ReadFlexibleString(item, "entity", "Entity");
+                        var intent = ReadFlexibleString(item, "intent", "Intent");
+                        var status = ReadFlexibleString(item, "status", "Status");
+                        var resolution = ReadFlexibleString(item, "resolution", "Resolution");
+                        var coverage = ReadFlexibleString(item, "coverage", "Coverage");
+                        var targets = ReadFlexibleStringArray(item, "resolved_targets", "ResolvedTargets");
+                        var evidenceIds = ReadFlexibleStringArray(item, "evidence_ids", "EvidenceIds");
+                        _logger.LogInformation(
+                            "[Chat] projected plan provenance: game={GameId}, query={QueryIndex}, relation={Relation}, entity={Entity}, intent={Intent}, status={Status}, resolution={Resolution}, coverage={Coverage}, targets=[{Targets}], evidenceIds=[{EvidenceIds}]",
+                            gameId, queryIndex, relation, entity, intent, status, resolution, coverage,
+                            string.Join(", ", targets), string.Join(", ", evidenceIds));
+                    }
+                }
                 return;
+            }
 
             foreach (var item in results.EnumerateArray())
             {
@@ -961,6 +987,9 @@ public class ChatOrchestratorService
                 var root = doc.RootElement;
                 if (root.ValueKind != JsonValueKind.Object) return;
 
+                if (TryAddProjectedPlanResult(root))
+                    return;
+
                 string? planVersion = null;
                 if (root.TryGetProperty("RulesVersion", out var versionProp)
                     && versionProp.ValueKind == JsonValueKind.String)
@@ -979,6 +1008,78 @@ public class ChatOrchestratorService
             {
                 // 非 plan 结果或解析失败——不参与 tier 判定
             }
+        }
+
+        private bool TryAddProjectedPlanResult(JsonElement root)
+        {
+            if (!root.TryGetProperty("queries", out var queries)
+                || queries.ValueKind != JsonValueKind.Array)
+                return false;
+
+            string? planVersion = null;
+            if (root.TryGetProperty("rules_version", out var versionProp)
+                && versionProp.ValueKind == JsonValueKind.String)
+            {
+                planVersion = versionProp.GetString();
+                RulesVersion ??= planVersion;
+            }
+
+            var evidenceById = new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+            if (root.TryGetProperty("evidence_catalog", out var catalog)
+                && catalog.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var evidence in catalog.EnumerateArray())
+                {
+                    var evidenceId = ReadFlexibleString(evidence, "evidence_id", "EvidenceId");
+                    if (!string.IsNullOrWhiteSpace(evidenceId))
+                        evidenceById[evidenceId] = evidence;
+                }
+            }
+
+            foreach (var item in queries.EnumerateArray())
+            {
+                var evidenceIds = ReadFlexibleStringArray(item, "evidence_ids", "EvidenceIds");
+                var query = new QueryEvidence
+                {
+                    QueryIndex = item.TryGetProperty("query_index", out var qi) && qi.ValueKind == JsonValueKind.Number
+                        ? qi.GetInt32()
+                        : 0,
+                    Relation = ReadFlexibleString(item, "relation", "Relation"),
+                    Entity = ReadFlexibleString(item, "entity", "Entity"),
+                    Intent = ReadFlexibleString(item, "intent", "Intent"),
+                    Status = ReadFlexibleString(item, "status", "Status"),
+                    Source = ReadFlexibleString(item, "source", "Source"),
+                    Resolution = ReadFlexibleString(item, "resolution", "Resolution"),
+                    Coverage = ReadFlexibleString(item, "coverage", "Coverage"),
+                    RulesVersion = planVersion,
+                    Message = ReadFlexibleNullableString(item, "message", "Message"),
+                    ResolvedTargets = ReadFlexibleStringArray(item, "resolved_targets", "ResolvedTargets"),
+                    EvidenceIds = evidenceIds
+                };
+
+                foreach (var evidenceId in evidenceIds)
+                {
+                    if (!evidenceById.TryGetValue(evidenceId, out var evidence)) continue;
+                    var type = ReadFlexibleString(evidence, "type", "Type");
+                    if (!string.IsNullOrWhiteSpace(type)) query.PayloadTypes.Add(type);
+                    var canonical = ReadFlexibleString(evidence, "canonical_path", "CanonicalPath");
+                    if (!string.IsNullOrWhiteSpace(canonical))
+                        query.EvidenceCanonicalPaths.Add(canonical);
+                    if (type == QueryPayloadTypes.Definition
+                        && evidence.TryGetProperty("content", out var content)
+                        && content.ValueKind == JsonValueKind.Object)
+                    {
+                        var concept = ParseEvidenceConcept(content);
+                        if (concept != null && !query.Matched.Any(existing => existing.Id == concept.Id))
+                            query.Matched.Add(concept);
+                    }
+                }
+
+                query.Candidates = ParseProjectedCandidates(item);
+                query.HasData = evidenceIds.Count > 0 || query.Matched.Count > 0;
+                Queries.Add(query);
+            }
+            return true;
         }
 
         public AnswerEvidence Build()
@@ -1321,6 +1422,57 @@ public class ChatOrchestratorService
         return result;
     }
 
+    private static EvidenceConcept? ParseEvidenceConcept(JsonElement element)
+    {
+        if (element.ValueKind != JsonValueKind.Object) return null;
+        var id = element.TryGetProperty("id", out var idProp) && idProp.ValueKind == JsonValueKind.String
+            ? idProp.GetString() ?? ""
+            : "";
+        if (string.IsNullOrWhiteSpace(id)) return null;
+        return new EvidenceConcept
+        {
+            Id = id,
+            Name = ExtractNameZh(element)
+        };
+    }
+
+    private static List<EvidenceConcept> ParseProjectedCandidates(JsonElement item)
+    {
+        var result = new List<EvidenceConcept>();
+        if (!item.TryGetProperty("candidates", out var candidates)
+            || candidates.ValueKind != JsonValueKind.Array)
+            return result;
+
+        foreach (var candidate in candidates.EnumerateArray())
+        {
+            var id = ReadFlexibleString(candidate, "id", "Id");
+            var path = ReadFlexibleString(candidate, "canonical_path", "CanonicalPath");
+            if (string.IsNullOrWhiteSpace(id)) id = path;
+            if (string.IsNullOrWhiteSpace(id)) continue;
+            var concept = new EvidenceConcept
+            {
+                Id = id,
+                Name = ReadFlexibleString(candidate, "label", "Label"),
+                Type = ReadFlexibleNullableString(candidate, "type", "Type"),
+                MatchReason = ReadFlexibleNullableString(candidate, "reason", "Reason"),
+                ReadStatus = ReadFlexibleNullableString(candidate, "read_status", "ReadStatus"),
+                EvidenceId = ReadFlexibleNullableString(candidate, "evidence_id", "EvidenceId")
+            };
+            var targetResolved = candidate.TryGetProperty("target_resolved", out var tr)
+                ? tr
+                : candidate.TryGetProperty("TargetResolved", out tr) ? tr : default;
+            if (targetResolved.ValueKind is JsonValueKind.True or JsonValueKind.False)
+                concept.TargetResolved = targetResolved.GetBoolean();
+            var score = candidate.TryGetProperty("score", out var sp)
+                ? sp
+                : candidate.TryGetProperty("Score", out sp) ? sp : default;
+            if (score.ValueKind == JsonValueKind.Number)
+                concept.Score = score.GetSingle();
+            result.Add(concept);
+        }
+        return result;
+    }
+
     private static string ExtractNameZh(JsonElement element)
     {
         if (element.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.Object)
@@ -1503,8 +1655,9 @@ query 字段语义：
                             return Finish("{\"error\":\"plan is required，arguments 顶层必须有 plan 键。\"}");
                         var planResult = await _rulesService.ExecutePlanAsync(
                             gameId, plan, question, cancellationToken);
+                        var projected = _toolResultProjector.Project(gameId, planResult);
                         return Finish(_rulesService.AnnotateReferences(
-                            JsonSerializer.Serialize(planResult, ToolResultOptions), gameId));
+                            JsonSerializer.Serialize(projected, ToolResultOptions), gameId));
                     }
 
                 case "get_game_flow":

@@ -1,0 +1,119 @@
+{
+  "generated_from_head": "9724b8d + phase-04 working tree",
+  "comparisons": [
+    {
+      "game": "wingspan",
+      "label": "rule_lookup_bird_card",
+      "plan": {
+        "queries": [
+          {
+            "relation": "rule_lookup",
+            "entity": "bird_card",
+            "intent": "鸟牌怎么获得"
+          }
+        ]
+      },
+      "internal_flat_chars": 14517,
+      "projected_chars": 13328,
+      "reduction_ratio": 0.918,
+      "evidence_catalog_count": 5,
+      "omitted_evidence_count": 1,
+      "serialized_chars_reported": 13324,
+      "queries": [
+        {
+          "relation": "rule_lookup",
+          "resolution": "exact",
+          "coverage": "partial",
+          "evidenceIds": [
+            "ev_fc02ca61795f43ab",
+            "ev_07ec506537a88078",
+            "ev_b1f2e448562d41aa",
+            "ev_294c721434343250",
+            "ev_828d3362135edc99"
+          ],
+          "omissions": [
+            {
+              "reason": "budget_truncated",
+              "canonical_path": "bird_card",
+              "field_path": "rule_candidates",
+              "continuation": {
+                "operation": "rule_lookup",
+                "entity": "bird_card",
+                "scope": null,
+                "offset": 3,
+                "limit": 3,
+                "include": []
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "game": "agricola",
+      "label": "cost_build_rooms",
+      "plan": {
+        "queries": [
+          {
+            "relation": "cost",
+            "entity": "build_rooms"
+          }
+        ]
+      },
+      "internal_flat_chars": 27697,
+      "projected_chars": 13563,
+      "reduction_ratio": 0.49,
+      "evidence_catalog_count": 8,
+      "omitted_evidence_count": 0,
+      "serialized_chars_reported": 13559,
+      "queries": [
+        {
+          "relation": "cost",
+          "resolution": "exact",
+          "coverage": "complete",
+          "evidenceIds": [
+            "ev_fc31c7d4fa64c3f7",
+            "ev_a70fe1a287904f09",
+            "ev_2b873e706ea7aebe",
+            "ev_8a0575340e9b6abf",
+            "ev_aed8c0f87c79ef80",
+            "ev_4ce6114361745daa",
+            "ev_56e5281eb15a815f",
+            "ev_f64f5a22aef29e23"
+          ],
+          "omissions": []
+        }
+      ]
+    },
+    {
+      "game": "agricola",
+      "label": "flow_harvest_feeding",
+      "plan": {
+        "queries": [
+          {
+            "relation": "flow",
+            "scope": "local",
+            "entity": "harvest_feeding"
+          }
+        ]
+      },
+      "internal_flat_chars": 3204,
+      "projected_chars": 3400,
+      "reduction_ratio": 1.061,
+      "evidence_catalog_count": 1,
+      "omitted_evidence_count": 0,
+      "serialized_chars_reported": 3397,
+      "queries": [
+        {
+          "relation": "flow",
+          "resolution": "exact",
+          "coverage": "complete",
+          "evidenceIds": [
+            "ev_94f43fdae8668f41"
+          ],
+          "omissions": []
+        }
+      ]
+    }
+  ]
+}

@@ -91,6 +91,8 @@ public class QueryEvidence
 
     /// <summary>program 模式中该子问题装入的正式证据 id。</summary>
     public List<string> EvidenceIds { get; set; } = new();
+    /// <summary>工具结果中该 query 实际引用的正式证据 canonical path。</summary>
+    public List<string> EvidenceCanonicalPaths { get; set; } = new();
 
     /// <summary>program 模式中该子问题的最终处理状态：answered / clarify / unavailable / not_needed。</summary>
     public string? OutcomeStatus { get; set; }
@@ -103,8 +105,11 @@ public class EvidenceConcept
     public string? Type { get; set; }
     public string? Description { get; set; }
     public float? Score { get; set; }
-    /// <summary>候选分数来源：intent / entity / intent+entity / exact_identity / question_hint。</summary>
+    /// <summary>候选分数来源：intent / entity / intent+entity / exact_identity / question_hint / reference。</summary>
     public string? MatchReason { get; set; }
+    public string? ReadStatus { get; set; }
+    public bool? TargetResolved { get; set; }
+    public string? EvidenceId { get; set; }
 }
 
 
