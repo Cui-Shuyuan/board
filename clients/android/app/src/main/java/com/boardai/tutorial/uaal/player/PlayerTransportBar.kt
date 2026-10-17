@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,14 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.boardai.tutorial.uaal.BuildConfig
 import com.boardai.tutorial.uaal.UnityStatus
 import com.boardai.tutorial.uaal.qa.QA_ENTRY_BUTTON_HEIGHT_DP
 import com.boardai.tutorial.uaal.qa.QA_ENTRY_BUTTON_WIDTH_DP
@@ -74,8 +70,6 @@ internal fun PlayerTransportBar(
     activeVersion: String?,
     volume: Float,
     paused: Boolean,
-    debugOverlayEnabled: Boolean,
-    onToggleDebugOverlay: () -> Unit,
     scrubbing: Boolean,
     scrubGlobal: Float,
     scrubTarget: TimelineTarget?,
@@ -221,24 +215,6 @@ internal fun PlayerTransportBar(
                     modifier = Modifier.width(40.dp)
                 )
                 Spacer(Modifier.weight(1f))
-                if (BuildConfig.DEBUG) {
-                    Text(
-                        text = "调试",
-                        color = Color.White.copy(alpha = 0.90f),
-                        fontSize = 12.sp,
-                        maxLines = 1
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Switch(
-                        checked = debugOverlayEnabled,
-                        onCheckedChange = { onToggleDebugOverlay() },
-                        enabled = status?.unityReady == true,
-                        modifier = Modifier.semantics {
-                            contentDescription = "调试"
-                        }
-                    )
-                    Spacer(Modifier.width(8.dp))
-                }
                 PlayerControlButton(
                     label = "章节",
                     compact = true,

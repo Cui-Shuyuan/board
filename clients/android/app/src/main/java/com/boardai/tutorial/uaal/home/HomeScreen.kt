@@ -15,21 +15,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.boardai.tutorial.uaal.BuildConfig
 import com.boardai.tutorial.uaal.catalog.GameCatalogEntry
 import com.boardai.tutorial.uaal.catalog.GameSearch
 import com.boardai.tutorial.uaal.content.ContentStatus
@@ -58,6 +63,8 @@ fun HomeScreen(
     onOpenResourceManager: () -> Unit,
     mode: HomeMode,
     onModeChange: (HomeMode) -> Unit,
+    debugEnabled: Boolean = false,
+    onToggleDebug: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val searchResults = if (query.isBlank()) {
@@ -82,6 +89,23 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.weight(1f))
+                if (BuildConfig.DEBUG) {
+                    Text(
+                        text = "调试",
+                        color = Color.White.copy(alpha = 0.85f),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Switch(
+                        checked = debugEnabled,
+                        onCheckedChange = { onToggleDebug() },
+                        modifier = Modifier.semantics {
+                            contentDescription = "调试"
+                        }
+                    )
+                    Spacer(Modifier.width(10.dp))
+                }
                 Text(
                     text = "资源管理",
                     color = Color(0xFF8AB4F8),
@@ -252,6 +276,8 @@ fun HomeScreen(
 private fun HomeModeSelector(
     mode: HomeMode,
     onModeChange: (HomeMode) -> Unit,
+    debugEnabled: Boolean = false,
+    onToggleDebug: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(

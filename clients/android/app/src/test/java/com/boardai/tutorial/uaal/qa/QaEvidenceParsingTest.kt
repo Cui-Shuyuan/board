@@ -38,11 +38,13 @@ class QaEvidenceParsingTest {
               {"relation":"identify","status":"unresolved","resolvedByQueryIndex":1,"candidates":[{"id":"activation_die"}]},
               {"relation":"explain","status":"ok","hasData":true,"matched":[{"id":"activation_die"}]}
             ]}}"""
-        val evidence = parseQaChatResponse(body).evidence!!
+        val result = parseQaChatResponse(body)
+        val evidence = result.evidence!!
         assertEquals("unresolved", evidence.queries[0].status)
         assertEquals(1, evidence.queries[0].resolvedByQueryIndex)
+        assertEquals(1, evidence.candidateSelectionCount)
         assertTrue(evidence.missingQueries.isEmpty())
-        assertNull(qaEvidenceNotice(evidence))
+        assertTrue(qaAnswerDebugSummary(result, 6870).endsWith("｜经过一次候选选择"))
     }
 
     @Test
@@ -52,9 +54,15 @@ class QaEvidenceParsingTest {
                 {"relation":"identify","entity":"白色骰子","status":"unresolved","resolvedByQueryIndex":$index,
                  "candidates":[{"id":"activation_die"}]}
             ]}}"""
-            val evidence = parseQaChatResponse(body).evidence!!
+            val result = parseQaChatResponse(body)
+            val evidence = result.evidence!!
             assertEquals(1, evidence.missingQueries.size)
-            assertTrue(qaEvidenceNotice(evidence)!!.contains("白色骰子"))
+            assertEquals(if (index >= 0) 1 else 0, evidence.candidateSelectionCount)
+            if (index >= 0) {
+                assertTrue(qaAnswerDebugSummary(result, 1000).endsWith("｜经过一次候选选择"))
+            } else {
+                assertFalse(qaAnswerDebugSummary(result, 1000).contains("候选选择"))
+            }
         }
     }
 
@@ -64,7 +72,7 @@ class QaEvidenceParsingTest {
 
         assertEquals("旧后端回答", result.reply)
         assertNull(result.evidence)
-        assertNull(qaEvidenceNotice(result.evidence))
+        assertEquals("回答完成｜1.23 秒", qaAnswerDebugSummary(result, 1230))
     }
 
     @Test
@@ -96,19 +104,44 @@ class QaEvidenceParsingTest {
         assertEquals(0, evidence.citedEvidenceCount)
         assertEquals(2, evidence.modelCallCount)
         assertEquals(1, evidence.omittedEvidenceCount)
-        assertNull(qaEvidenceNotice(evidence))
     }
 
     @Test
-    fun evidenceNoticeListsMissingQueriesAndHandlesTier2Tier3() {
-        val partial = parseQaChatResponse(PARTIAL_EVIDENCE_BODY).evidence
-        assertEquals("本次回答未覆盖：火星规则（no_match）", qaEvidenceNotice(partial))
+    fun debugSummaryMatchesRequestedFormat() {
+        val body = """{
+          "reply":"贵族靠发展卡吸引。",
+          "evidence":{
+            "tier":"tier1","isComplete":true,"queryCount":2,"citedEvidenceCount":2,
+            "modelCallCount":3,"repairCount":0,
+            "queries":[
+              {"relation":"identify","entity":"贵族","status":"unresolved",
+               "resolvedByQueryIndex":1,"candidates":[{"id":"noble"}]},
+              {"relation":"explain","entity":"贵族","status":"ok","hasData":true,
+               "matched":[{"id":"noble"}]}
+            ]
+          },
+          "orchestration":{"modelCallCount":3,"protocolRepairModelCallCount":0}
+        }"""
+        val result = parseQaChatResponse(body)
 
-        val tier2 = QaAnswerEvidence(tier = "tier2", hasCandidates = true)
-        assertEquals("本次回答只有候选，请确认具体对象。", qaEvidenceNotice(tier2))
+        assertEquals(
+            "回答完成｜6.87 秒｜模型调用 3 次｜规则查询 2 次｜正式证据 2 条｜协议纠偏 0 次｜经过一次候选选择",
+            qaAnswerDebugSummary(result, 6870)
+        )
+    }
 
-        val tier3 = QaAnswerEvidence(tier = "tier3", queryCount = 0)
-        assertEquals("本次回答未使用规则库数据。", qaEvidenceNotice(tier3))
+    @Test
+    fun debugSummaryUsesOrchestrationProtocolRepairCountWhenEvidenceIsSilent() {
+        val body = """{
+          "reply":"回答",
+          "evidence":{"queryCount":1,"citedEvidenceCount":1},
+          "orchestration":{"modelCallCount":4,"protocolRepairModelCallCount":1}
+        }"""
+        val result = parseQaChatResponse(body)
+
+        assertTrue(result.orchestration?.protocolRepairCount == 1)
+        assertTrue(qaAnswerDebugSummary(result, 2500).contains("模型调用 4 次"))
+        assertTrue(qaAnswerDebugSummary(result, 2500).contains("协议纠偏 1 次"))
     }
 
     private companion object {

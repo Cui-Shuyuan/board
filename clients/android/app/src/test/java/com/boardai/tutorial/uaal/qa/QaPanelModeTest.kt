@@ -45,4 +45,20 @@ class QaPanelModeTest {
     fun invalidThresholdDoesNotCloseQa() {
         assertFalse(shouldCloseQaOnUpSwipe(totalDyPx = -100f, thresholdPx = 0f))
     }
+
+    @Test
+    fun asrRecognizingStatusControlsTemporaryBubble() {
+        assertTrue(isAsrRecognizing("识别中…"))
+        assertFalse(isAsrRecognizing("识别失败，可键盘输入"))
+        assertFalse(isAsrRecognizing(null))
+    }
+
+    @Test
+    fun listeningLabelCyclesAsciiDots() {
+        assertEquals("正在聆听.", qaListeningLabel(1))
+        assertEquals("正在聆听..", qaListeningLabel(2))
+        assertEquals("正在聆听...", qaListeningLabel(3))
+        assertEquals("正在聆听.", qaListeningLabel(0))
+        assertEquals("正在聆听...", qaListeningLabel(9))
+    }
 }

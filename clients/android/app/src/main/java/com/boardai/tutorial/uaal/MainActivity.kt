@@ -361,8 +361,7 @@ class MainActivity : UnityPlayerGameActivity() {
                                 activeVersion = playerState.activeVersion,
                                 activeTrack = playerState.activeTrack,
                                 qaOpen = qaOpen.value,
-                                debugOverlayEnabled = debugOverlayEnabled.value,
-                                onToggleDebugOverlay = { toggleDebugOverlay() },
+                                debugInfoEnabled = debugOverlayEnabled.value,
                                 qaRepository = qaRepository,
                                 asrRepository = asrRepository,
                                 ttsRepository = ttsRepository,
@@ -396,7 +395,9 @@ class MainActivity : UnityPlayerGameActivity() {
                                     homeContent.openResourceManager()
                                 },
                                 mode = homeMode.value,
-                                onModeChange = { mode -> homeMode.value = mode }
+                                onModeChange = { mode -> homeMode.value = mode },
+                                debugEnabled = debugOverlayEnabled.value,
+                                onToggleDebug = { toggleDebugOverlay() }
                             )
                         }
 
@@ -413,7 +414,8 @@ class MainActivity : UnityPlayerGameActivity() {
                                     requestRecordPermission(callback)
                                 },
                                 onClose = { closeStandaloneQa() },
-                                isStandalone = true
+                                isStandalone = true,
+                                debugInfoEnabled = debugOverlayEnabled.value
                             )
                         }
 

@@ -1,6 +1,8 @@
 package com.boardai.tutorial.uaal.qa
 
+import android.os.SystemClock
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -9,6 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +55,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
@@ -138,7 +143,8 @@ fun QaPanel(
     requestRecordPermission: (onResult: (Boolean) -> Unit) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
-    isStandalone: Boolean = false
+    isStandalone: Boolean = false,
+    debugInfoEnabled: Boolean = false
 ) {
     val currentContext = buildQaContext(game, status, timeline)
     val session = QaSessionHolder.sessionState.value
@@ -146,6 +152,8 @@ fun QaPanel(
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val appContext = LocalContext.current.applicationContext
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     val activeChatJob = remember { mutableStateOf<Job?>(null) }
 
     val audioRecorder = remember { AudioRecorder(appContext) }
@@ -166,13 +174,15 @@ fun QaPanel(
             autoTtsStore = SharedPrefsQaAutoTtsStore(appContext),
             hasRecordPermission = hasRecordPermission,
             onRecognizedText = { recognized ->
-                input = recognized
+                // Voice input is sent directly. Keep any text draft intact so
+                // the user can switch back to the keyboard without losing it.
                 autoSendText = recognized
             },
             log = { message -> Log.d(QA_VOICE_TAG, message) }
         )
     }
     val voiceState by voiceController.state.collectAsState()
+    val recognizing = isAsrRecognizing(voiceState.voiceStatus)
 
     LaunchedEffect(game?.id) {
         if (game != null) {
@@ -180,17 +190,24 @@ fun QaPanel(
         }
     }
 
-    LaunchedEffect(messages.size, sending) {
-        val targetIndex = if (sending) messages.size else messages.lastIndex
-        if (messages.isNotEmpty() || sending) {
-            listState.animateScrollToItem(targetIndex)
+    LaunchedEffect(messages.size, sending, recognizing) {
+        val extraItemCount = (if (recognizing) 1 else 0) + (if (sending) 1 else 0)
+        val itemCount = messages.size + extraItemCount
+        if (itemCount > 0) {
+            listState.animateScrollToItem(itemCount - 1)
         }
     }
 
     LaunchedEffect(voiceState.voiceStatus) {
-        if (voiceState.voiceStatus == "已取消") {
-            delay(3_000)
-            voiceController.clearVoiceStatus()
+        when (voiceState.voiceStatus) {
+            "已取消" -> {
+                delay(3_000)
+                voiceController.clearVoiceStatus()
+            }
+            "识别失败，可键盘输入" -> {
+                Toast.makeText(appContext, voiceState.voiceStatus, Toast.LENGTH_SHORT).show()
+                voiceController.clearVoiceStatus()
+            }
         }
     }
 
@@ -239,7 +256,9 @@ fun QaPanel(
             Log.d(QA_VOICE_TAG, "chat send ignored: session changed while composing")
             return
         }
-        input = ""
+        if (questionOverride == null) {
+            input = ""
+        }
         sendState = QaSendState.Sending
         val history = QaSessionHolder.session
             ?.takeIf { it.generation == sessionGeneration }
@@ -247,6 +266,7 @@ fun QaPanel(
             .orEmpty()
 
         activeChatJob.value = scope.launch {
+            val startedAtMs = SystemClock.elapsedRealtime()
             val result = repository.send(
                 gameId = activeSession.gameId.ifBlank { context.gameId },
                 messages = history,
@@ -260,17 +280,16 @@ fun QaPanel(
             result.onSuccess { chat ->
                 val replyText = chat.reply.trim().ifBlank { "（未收到回答）" }
                 val evidence = chat.evidence
-                if (evidence != null && (evidence.tier == "partial" || evidence.missingQueries.isNotEmpty())) {
-                    Log.d(
-                        QA_VOICE_TAG,
-                        "answer evidence: tier=${evidence.tier}, missing=" +
-                            evidence.missingQueries.joinToString("、") { "${it.relation}:${it.entity}:${it.status}" }
-                    )
-                }
+                val debugSummary = qaAnswerDebugSummary(
+                    chat,
+                    SystemClock.elapsedRealtime() - startedAtMs
+                )
+                Log.i(QA_VOICE_TAG, debugSummary)
                 val replyMessage = QaMessage(
                     role = QaMessage.ROLE_ASSISTANT,
                     content = replyText,
-                    evidence = evidence
+                    evidence = evidence,
+                    debugSummary = debugSummary
                 )
                 if (!QaSessionHolder.appendMessage(replyMessage, context, sessionGeneration)) {
                     Log.d(QA_VOICE_TAG, "stale chat reply ignored: session changed")
@@ -311,7 +330,14 @@ fun QaPanel(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
+            }
     ) {
         Column(
             modifier = Modifier
@@ -329,7 +355,7 @@ fun QaPanel(
                 onSwipeUpToClose = { closePanel() }
             )
 
-            if (messages.isEmpty() && !sending) {
+            if (messages.isEmpty() && !sending && !recognizing) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -359,8 +385,12 @@ fun QaPanel(
                             canReplay = message.role == QaMessage.ROLE_ASSISTANT &&
                                 !voiceState.ttsBusy &&
                                 message.content.isNotBlank(),
+                            debugInfoEnabled = debugInfoEnabled,
                             onReplay = { voiceController.replayAnswer(message) }
                         )
+                    }
+                    if (recognizing) {
+                        item(key = "qa-recognizing") { QaRecognizingBubble() }
                     }
                     if (sending) {
                         item { QaTypingBubble() }
@@ -375,7 +405,6 @@ fun QaPanel(
                 onAutoTtsEnabledChange = { voiceController.setAutoTtsEnabled(it) },
                 sending = sending,
                 errorMessage = (sendState as? QaSendState.Error)?.message,
-                voiceStatus = voiceState.voiceStatus,
                 recording = voiceState.isRecording,
                 onStartListening = {
                     when (voiceController.onPttDown()) {
@@ -452,10 +481,11 @@ private fun QaMessageBubble(
     message: QaMessage,
     isPlaying: Boolean,
     canReplay: Boolean,
+    debugInfoEnabled: Boolean,
     onReplay: () -> Unit
 ) {
     val isUser = message.role == QaMessage.ROLE_USER
-    val evidenceNotice = qaEvidenceNotice(message.evidence)
+    val debugSummary = message.debugSummary.takeIf { debugInfoEnabled && !isUser }
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
@@ -502,9 +532,9 @@ private fun QaMessageBubble(
                 )
             }
 
-            if (evidenceNotice != null) {
+            if (debugSummary != null) {
                 Text(
-                    text = evidenceNotice,
+                    text = debugSummary,
                     color = QaAccentYellow.copy(alpha = 0.92f),
                     fontSize = 11.sp,
                     lineHeight = 15.sp,
@@ -567,6 +597,60 @@ private fun QaTypingBubble() {
 }
 
 @Composable
+private fun QaRecognizingBubble() {
+    val transition = rememberInfiniteTransition(label = "qa-recognizing")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = "正在识别语音" },
+        horizontalArrangement = Arrangement.End
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 14.dp,
+                        topEnd = 14.dp,
+                        bottomStart = 14.dp,
+                        bottomEnd = 3.dp
+                    )
+                )
+                .background(QaAccentYellow)
+                .padding(horizontal = 14.dp, vertical = 12.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                repeat(3) { index ->
+                    val lift by transition.animateFloat(
+                        initialValue = 0f,
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(
+                                durationMillis = 420,
+                                delayMillis = index * 130
+                            ),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "qa-recognizing-dot-$index"
+                    )
+                    Box(
+                        modifier = Modifier
+                            .offset(y = (-2).dp * lift)
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Color(0xFF1B1B1B).copy(alpha = 0.35f + 0.65f * lift)
+                            )
+                    )
+                    if (index < 2) {
+                        Spacer(Modifier.width(5.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun QaComposer(
     value: String,
     onValueChange: (String) -> Unit,
@@ -574,77 +658,132 @@ private fun QaComposer(
     onAutoTtsEnabledChange: (Boolean) -> Unit,
     sending: Boolean,
     errorMessage: String?,
-    voiceStatus: String?,
     recording: Boolean,
     onStartListening: () -> Unit,
     onStopListening: () -> Unit,
     onCancelListening: () -> Unit,
     onSend: () -> Unit
 ) {
-    var pttPressed by remember { mutableStateOf(false) }
-    var cancelSelected by remember { mutableStateOf(false) }
+    var inputMode by remember { mutableStateOf(QaInputMode.TEXT) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    fun switchInputMode() {
+        if (inputMode == QaInputMode.TEXT) {
+            focusManager.clearFocus()
+            keyboardController?.hide()
+            inputMode = QaInputMode.VOICE
+        } else {
+            // Show the text field without forcing focus or opening the
+            // keyboard. The user can tap the field when ready.
+            inputMode = QaInputMode.TEXT
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 6.dp, bottom = 12.dp)
     ) {
-        if (!errorMessage.isNullOrBlank() || !voiceStatus.isNullOrBlank()) {
-            Row(
+        if (!errorMessage.isNullOrBlank()) {
+            Text(
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (!errorMessage.isNullOrBlank()) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 12.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
-                    )
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
-
-                if (!voiceStatus.isNullOrBlank()) {
-                    Text(
-                        text = voiceStatus,
-                        color = QaAccentYellow,
-                        fontSize = 13.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(start = 12.dp)
-                    )
-                }
-            }
+                    .padding(bottom = 4.dp)
+            )
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Bottom
         ) {
-            OutlinedTextField(
-                value = value,
-                onValueChange = onValueChange,
+            Button(
+                onClick = { switchInputMode() },
+                enabled = !sending && !recording,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White.copy(alpha = 0.15f),
+                    contentColor = Color.White,
+                    disabledContainerColor = Color.White.copy(alpha = 0.08f),
+                    disabledContentColor = Color.White.copy(alpha = 0.38f)
+                ),
                 modifier = Modifier
-                    .weight(1f)
-                    .widthIn(min = 120.dp),
-                enabled = !sending,
-                placeholder = {
-                    Text(
-                        text = "输入问题…",
-                        color = Color.White.copy(alpha = 0.42f)
-                    )
-                },
-                maxLines = 4,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(onSend = { onSend() })
-            )
+                    .height(52.dp)
+                    .width(86.dp)
+                    .semantics {
+                        contentDescription = if (inputMode == QaInputMode.TEXT) {
+                            "切换到语音输入"
+                        } else {
+                            "切换到键盘输入"
+                        }
+                    },
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = if (inputMode == QaInputMode.TEXT) "语音" else "键盘",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
             Spacer(Modifier.width(8.dp))
+
+            if (inputMode == QaInputMode.TEXT) {
+                OutlinedTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    modifier = Modifier
+                        .weight(1f)
+                        .widthIn(min = 120.dp),
+                    enabled = !sending,
+                    placeholder = {
+                        Text(
+                            text = "输入问题…",
+                            color = Color.White.copy(alpha = 0.42f)
+                        )
+                    },
+                    maxLines = 4,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { onSend() })
+                )
+                Spacer(Modifier.width(8.dp))
+
+                Button(
+                    onClick = onSend,
+                    enabled = !sending && value.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = QaAccentYellow,
+                        contentColor = Color(0xFF1B1B1B),
+                        disabledContainerColor = QaAccentYellow.copy(alpha = 0.28f),
+                        disabledContentColor = Color(0xFF1B1B1B).copy(alpha = 0.55f)
+                    ),
+                    modifier = Modifier.height(52.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "发送",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+            } else {
+                QaPushToTalkButton(
+                    sending = sending,
+                    recording = recording,
+                    onStartListening = onStartListening,
+                    onStopListening = onStopListening,
+                    onCancelListening = onCancelListening,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+            }
 
             Row(
                 modifier = Modifier.align(Alignment.CenterVertically),
@@ -665,160 +804,174 @@ private fun QaComposer(
                     }
                 )
             }
+        }
+    }
+}
 
-            Spacer(Modifier.width(8.dp))
+@Composable
+private fun QaPushToTalkButton(
+    sending: Boolean,
+    recording: Boolean,
+    onStartListening: () -> Unit,
+    onStopListening: () -> Unit,
+    onCancelListening: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var pttPressed by remember { mutableStateOf(false) }
+    var cancelSelected by remember { mutableStateOf(false) }
+    var listeningDotCount by remember { mutableStateOf(1) }
+    val listening = pttPressed || recording
 
-            Box(
+    LaunchedEffect(listening) {
+        if (!listening) {
+            listeningDotCount = 1
+            return@LaunchedEffect
+        }
+        while (true) {
+            delay(450)
+            listeningDotCount = listeningDotCount % 3 + 1
+        }
+    }
+
+    Box(modifier = modifier) {
+        if (pttPressed || recording || cancelSelected) {
+            Column(
                 modifier = Modifier
-                    .height(52.dp)
-                    .width(98.dp)
+                    .align(Alignment.TopCenter)
+                    .offset(y = (-76).dp)
+                    .zIndex(2f),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (pttPressed || recording || cancelSelected) {
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .offset(y = (-76).dp)
-                            .zIndex(2f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = if (cancelSelected) "松手取消" else "上划取消",
-                            color = if (cancelSelected) {
-                                Color(0xFFE5484D)
-                            } else {
-                                Color.White.copy(alpha = 0.92f)
-                            },
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1
-                        )
-                        Spacer(Modifier.height(3.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    if (cancelSelected) {
-                                        Color(0xFFE5484D)
-                                    } else {
-                                        Color(0xCC3A3F4B)
-                                    }
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "✕",
-                                color = Color.White,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-                }
-
+                Text(
+                    text = if (cancelSelected) "松手取消" else "上划取消",
+                    color = if (cancelSelected) {
+                        Color(0xFFE5484D)
+                    } else {
+                        Color.White.copy(alpha = 0.92f)
+                    },
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
+                )
+                Spacer(Modifier.height(3.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(12.dp))
+                        .size(36.dp)
+                        .clip(CircleShape)
                         .background(
-                            if (pttPressed || recording) {
-                                Color.White
+                            if (cancelSelected) {
+                                Color(0xFFE5484D)
                             } else {
-                                QaAccentYellow
+                                Color(0xCC3A3F4B)
                             }
-                        )
-                        .pointerInput(sending) {
-                            if (!sending) {
-                                awaitEachGesture {
-                                    val down = awaitFirstDown(requireUnconsumed = false)
-                                    down.consume()
-                                    val cancelCenterX = size.width / 2f
-                                    val cancelActivationY = (-24).dp.toPx()
-                                    val cancelHalfWidth = size.width / 2f + 16.dp.toPx()
-                                    pttPressed = true
-                                    cancelSelected = false
-                                    onStartListening()
-
-                                    var completed = false
-                                    try {
-                                        while (true) {
-                                            val event = awaitPointerEvent()
-                                            val change = event.changes.firstOrNull {
-                                                it.id == down.id
-                                            }
-                                            if (change == null) {
-                                                onCancelListening()
-                                                completed = true
-                                                break
-                                            }
-
-                                            if (!change.pressed) {
-                                                if (cancelSelected) {
-                                                    onCancelListening()
-                                                } else {
-                                                    onStopListening()
-                                                }
-                                                completed = true
-                                                change.consume()
-                                                break
-                                            }
-
-                                            val insideHorizontal =
-                                                change.position.x >= cancelCenterX - cancelHalfWidth &&
-                                                    change.position.x <= cancelCenterX + cancelHalfWidth
-                                            val overCancel =
-                                                change.position.y <= cancelActivationY && insideHorizontal
-                                            if (overCancel != cancelSelected) {
-                                                cancelSelected = overCancel
-                                            }
-                                            change.consume()
-                                        }
-                                    } finally {
-                                        pttPressed = false
-                                        if (!completed) {
-                                            onCancelListening()
-                                        }
-                                        cancelSelected = false
-                                    }
-                                }
-                            }
-                        }
-                        .semantics {
-                            role = Role.Button
-                            contentDescription = "按住说话"
-                        },
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = when {
-                            recording -> "放手结束"
-                            pttPressed -> "聆听中…"
-                            else -> "按住说话"
-                        },
-                        color = Color(0xFF1B1B1B),
-                        fontSize = 12.sp,
+                        text = "✕",
+                        color = Color.White,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
+        }
 
-            Spacer(Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    if (pttPressed || recording) {
+                        Color.White
+                    } else {
+                        QaAccentYellow
+                    }
+                )
+                .pointerInput(sending) {
+                    if (!sending) {
+                        awaitEachGesture {
+                            val down = awaitFirstDown(requireUnconsumed = false)
+                            down.consume()
+                            val cancelCenterX = size.width / 2f
+                            val cancelActivationY = (-24).dp.toPx()
+                            val cancelHalfWidth = size.width / 2f + 16.dp.toPx()
+                            pttPressed = true
+                            cancelSelected = false
+                            onStartListening()
 
-            Button(
-                onClick = onSend,
-                enabled = !sending && value.isNotBlank(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = QaAccentYellow,
-                    contentColor = Color(0xFF1B1B1B),
-                    disabledContainerColor = QaAccentYellow.copy(alpha = 0.28f),
-                    disabledContentColor = Color(0xFF1B1B1B).copy(alpha = 0.55f)
-                ),
-                modifier = Modifier.height(52.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
+                            var completed = false
+                            try {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    val change = event.changes.firstOrNull {
+                                        it.id == down.id
+                                    }
+                                    if (change == null) {
+                                        onCancelListening()
+                                        completed = true
+                                        break
+                                    }
+
+                                    if (!change.pressed) {
+                                        if (cancelSelected) {
+                                            onCancelListening()
+                                        } else {
+                                            onStopListening()
+                                        }
+                                        completed = true
+                                        change.consume()
+                                        break
+                                    }
+
+                                    val insideHorizontal =
+                                        change.position.x >= cancelCenterX - cancelHalfWidth &&
+                                            change.position.x <= cancelCenterX + cancelHalfWidth
+                                    val overCancel =
+                                        change.position.y <= cancelActivationY && insideHorizontal
+                                    if (overCancel != cancelSelected) {
+                                        cancelSelected = overCancel
+                                    }
+                                    change.consume()
+                                }
+                            } finally {
+                                pttPressed = false
+                                if (!completed) {
+                                    onCancelListening()
+                                }
+                                cancelSelected = false
+                            }
+                        }
+                    }
+                }
+                .semantics {
+                    role = Role.Button
+                    contentDescription = "按住说话"
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            if (listening) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = qaListeningLabel(listeningDotCount),
+                        color = Color(0xFF1B1B1B),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = "放手结束",
+                        color = Color(0xFF1B1B1B).copy(alpha = 0.72f),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
+                    )
+                }
+            } else {
                 Text(
-                    text = "发送",
-                    fontSize = 14.sp,
+                    text = "按住说话",
+                    color = Color(0xFF1B1B1B),
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
             }

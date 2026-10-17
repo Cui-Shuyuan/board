@@ -7,8 +7,12 @@
 - Kotlin `MainActivity` + Jetpack Compose 全屏控制层，Unity 仍作为底层渲染区域；
 - 首页游戏目录 / 搜索 / 历史 / 资源管理，manifest 驱动的本地内容仓库与增量下载 / 断点续传 v1；
 - 教程播放器控制层（时间轴 / 章节 / 播放控制）与 Unity 状态回传；
-- 问答面板、按住说话 PTT（位于发送键左侧）、上划任意高度进入取消通道后松手可放弃本次识别，左右或下滑会恢复发送、ASR 识别完成后自动发送、回答 TTS、自动播报 / 重播 / 继续播放；
+- 问答面板支持键盘 / 语音模式切换，切换按钮固定在输入行最左侧：文字模式显示输入框和发送按钮，语音模式只显示“按住说话”并在松手后直接发送识别结果；切回文字模式不自动弹出键盘，点输入框后才唤起；切换模式保留未发送的文字草稿，语音识别不覆盖文字草稿；
+- 语音 PTT 录音时按钮内显示动态“正在聆听.” / “正在聆听..” / “正在聆听...”和“放手结束”；输入区不再常驻语音状态文字；
+- 松手后的 ASR 识别期间，消息区右侧显示带跳动圆点的临时用户气泡；识别失败时移除并弹出短 Toast，识别成功后由识别出的用户消息气泡接替；
+- 语音 PTT 上划任意高度进入取消通道后松手可放弃本次识别，左右或下滑会恢复发送、ASR 识别完成后自动发送、回答 TTS、自动播报 / 重播 / 继续播放；
 - 问答页支持在顶部栏或空白区域向上滑动返回播放页；消息列表内上滑仍用于滚动，避免手势冲突；
+- 点击问答页空白区域会清除输入焦点并收起软键盘；
 - 播放页支持向下滑动打开问答页；从底部播放控制条起手的滑动不触发，避免和音量/进度操作冲突；
 - 通过固定 GameObject `AndroidTutorialBridge` 的字符串协议控制播放。
 
@@ -249,11 +253,12 @@ public bool UnityTouchControlsEnabled
 
 ## Debug APK 调试模式（当前 cue + zone 范围）
 
-只有 Debug APK 会在播放控制条显示调试开关；该开关复用“回答自动播报”同款的“标签 + Switch”组件样式，标签紧贴开关：
+只有 Debug APK 会在首页顶部显示统一的“调试”开关；开关状态对动画与问答共用：
 
 - Debug APK 启动时默认开启调试；Release 初始状态关闭；
 - 打开后，Unity 左上角显示当前 cue 的序号/id、章节路径、文本和播放时间，同时绘制当前 stage 中所有 on-stage zone 的彩色范围框与名称；
-- 关闭后两者消失；
+- 打开后，问答回答下方显示一行回答完成摘要，例如 `回答完成｜6.87 秒｜模型调用 3 次｜规则查询 2 次｜正式证据 2 条｜协议纠偏 0 次｜经过一次候选选择`；关闭时不显示该行；
+- 摘要行同时写入 Android Logcat，tag 为 `BoardAI-QaVoice`，不受 UI 开关影响；
 - 开关状态保存在原生 Compose 状态和 Unity `TutorialCuePlayer` 请求状态中，换游戏 / 内容 reload 后保留。
 
 Release APK 没有调试入口，并且原生层会显式关闭 Unity 调试开关：`MainActivity.onUnityReady()` 在 `playerSession.onUnityReady()` 之后发送 `SetDebugBuild("0")`。Unity 侧 `TutorialAnimPlayer` 的键盘 Z 切换受 `debugToggleEnabled` 门禁，release 下无法通过键盘打开。
@@ -261,7 +266,8 @@ Release APK 没有调试入口，并且原生层会显式关闭 Unity 调试开�
 相关代码位置：
 
 - `MainActivity.kt`: `debugOverlayEnabled`、`toggleDebugOverlay()`、`onUnityReady()`
-- `TutorialPlayerOverlay.kt` / `PlayerTransportBar.kt`: `debugOverlayEnabled` 参数和调试 Switch 行
+- `HomeScreen.kt`: 首页统一调试 Switch
+- `qa/QaEvidence.kt` / `qa/QaPanel.kt`: 回答完成摘要生成、日志和 Debug 可见性
 - `AndroidTutorialBridge.cs`: `SetDebugBuild(string)` / `SetDebugOverlay(string)`
 - `TutorialCuePlayer.cs`: `SetDebugBuildAllowed(bool)` / `SetDebugOverlay(bool)` / `ApplyDebugOverlay()`
 - `TutorialAnimPlayer.cs`: `debugToggleEnabled` / `SetDebugOverlay(bool)`

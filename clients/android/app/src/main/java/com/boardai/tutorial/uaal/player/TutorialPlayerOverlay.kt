@@ -71,8 +71,7 @@ fun TutorialPlayerOverlay(
     activeVersion: String?,
     activeTrack: String? = null,
     qaOpen: Boolean,
-    debugOverlayEnabled: Boolean,
-    onToggleDebugOverlay: () -> Unit,
+    debugInfoEnabled: Boolean,
     qaRepository: QaRepository,
     asrRepository: AsrRepository,
     ttsRepository: TtsRepository,
@@ -330,8 +329,6 @@ fun TutorialPlayerOverlay(
                     activeVersion = activeVersion,
                     volume = display.volume,
                     paused = display.paused,
-                    debugOverlayEnabled = debugOverlayEnabled,
-                    onToggleDebugOverlay = onToggleDebugOverlay,
                     scrubbing = uiState.scrubbing,
                     scrubGlobal = uiState.scrubGlobal,
                     scrubTarget = uiState.scrubTarget,
@@ -472,7 +469,8 @@ fun TutorialPlayerOverlay(
                 hasRecordPermission = hasRecordPermission,
                 requestRecordPermission = requestRecordPermission,
                 onClose = onCloseQa,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                debugInfoEnabled = debugInfoEnabled
             )
         }
     }

@@ -13,7 +13,9 @@ data class QaMessage(
     val content: String,
     val timestamp: Long = System.currentTimeMillis(),
     /** Optional answer evidence; never sent to the backend. */
-    val evidence: QaAnswerEvidence? = null
+    val evidence: QaAnswerEvidence? = null,
+    /** Debug-only one-line answer summary; never sent to the backend. */
+    val debugSummary: String? = null
 ) {
     companion object {
         const val ROLE_USER = "user"

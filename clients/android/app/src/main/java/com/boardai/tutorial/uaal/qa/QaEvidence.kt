@@ -2,6 +2,7 @@ package com.boardai.tutorial.uaal.qa
 
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Locale
 
 /**
  * One successful chat response. [evidence] is optional so an old backend that
@@ -9,7 +10,14 @@ import org.json.JSONObject
  */
 data class QaChatResult(
     val reply: String,
-    val evidence: QaAnswerEvidence? = null
+    val evidence: QaAnswerEvidence? = null,
+    val orchestration: QaOrchestrationSummary? = null
+)
+
+/** Minimal /api/chat orchestration metadata used by the debug summary line. */
+data class QaOrchestrationSummary(
+    val modelCallCount: Int = 0,
+    val protocolRepairCount: Int = 0
 )
 
 /** Evidence summary parsed from ChatResponse.evidence. */
@@ -30,7 +38,10 @@ data class QaAnswerEvidence(
     val evidenceReadCount: Int = 0,
     val citedEvidenceCount: Int = 0,
     val modelCallCount: Int = 0,
+    val repairCount: Int = 0,
     val omittedEvidenceCount: Int = 0,
+    /** Raw backend-confirmed candidate selections, before client recovery validation. */
+    val candidateSelectionCount: Int = 0,
     val queries: List<QaEvidenceQuery> = emptyList()
 ) {
     val missingQueries: List<QaEvidenceQuery>
@@ -74,30 +85,42 @@ data class QaEvidenceConcept(
 )
 
 /**
- * Builds a lightweight, user-visible notice. Returns null when the backend did
- * not report any missing query; tier2/tier3 receive a short explanation even
- * though they have no per-query unresolved item.
+ * Builds the debug-only answer completion line.  The elapsed time is measured
+ * by the client so it includes transport time; all counters come from the
+ * backend evidence/orchestration metadata.
  */
-internal fun qaEvidenceNotice(evidence: QaAnswerEvidence?): String? {
-    if (evidence == null) return null
-
-    // A clarify/conversation is already a complete user-facing outcome; showing the
-    // old "missing query" notice would confuse "not enough information to answer"
-    // with a protocol failure. Evidence read also does not prove answer correctness.
-    if (evidence.orchestrationOutcome?.lowercase() in setOf("clarify", "conversation")) {
-        return null
+internal fun qaAnswerDebugSummary(result: QaChatResult, elapsedMs: Long): String {
+    val seconds = String.format(Locale.US, "%.2f", elapsedMs.coerceAtLeast(0L) / 1000.0)
+    val evidence = result.evidence ?: return "回答完成｜$seconds 秒"
+    val modelCalls = maxOf(evidence.modelCallCount, result.orchestration?.modelCallCount ?: 0)
+    val protocolRepairs = maxOf(
+        evidence.repairCount,
+        result.orchestration?.protocolRepairCount ?: 0
+    )
+    val summary = "回答完成｜$seconds 秒" +
+        "｜模型调用 $modelCalls 次" +
+        "｜规则查询 ${evidence.queryCount} 次" +
+        "｜正式证据 ${evidence.citedEvidenceCount} 条" +
+        "｜协议纠偏 $protocolRepairs 次"
+    return if (evidence.candidateSelectionCount > 0) {
+        summary + "｜经过${chineseNumber(evidence.candidateSelectionCount)}次候选选择"
+    } else {
+        summary
     }
+}
 
-    val missing = evidence.missingQueries
-    if (missing.isNotEmpty()) {
-        return "本次回答未覆盖：" + missing.joinToString("、") { it.displayLabel }
-    }
-
-    return when (evidence.tier.lowercase()) {
-        "tier2" -> "本次回答只有候选，请确认具体对象。"
-        "tier3" -> if (evidence.queryCount == 0) "本次回答未使用规则库数据。" else "本次回答未找到可用的规则依据。"
-        else -> null
-    }
+private fun chineseNumber(value: Int): String = when (value) {
+    1 -> "一"
+    2 -> "两"
+    3 -> "三"
+    4 -> "四"
+    5 -> "五"
+    6 -> "六"
+    7 -> "七"
+    8 -> "八"
+    9 -> "九"
+    10 -> "十"
+    else -> value.toString()
 }
 
 /**
@@ -111,8 +134,20 @@ internal fun parseQaChatResponse(body: String): QaChatResult {
     val evidence = runCatching {
         json.objectValue("evidence", "Evidence")?.let(::parseAnswerEvidence)
     }.getOrNull()
-    return QaChatResult(reply = reply, evidence = evidence)
+    val orchestration = runCatching {
+        json.objectValue("orchestration", "Orchestration")?.let(::parseOrchestrationSummary)
+    }.getOrNull()
+    return QaChatResult(reply = reply, evidence = evidence, orchestration = orchestration)
 }
+
+private fun parseOrchestrationSummary(json: JSONObject): QaOrchestrationSummary =
+    QaOrchestrationSummary(
+        modelCallCount = json.intValue("modelCallCount", "ModelCallCount"),
+        protocolRepairCount = json.intValue(
+            "protocolRepairModelCallCount",
+            "ProtocolRepairModelCallCount"
+        )
+    )
 
 private fun parseAnswerEvidence(json: JSONObject): QaAnswerEvidence {
     val queriesJson = json.arrayValue("queries", "Queries")
@@ -123,6 +158,16 @@ private fun parseAnswerEvidence(json: JSONObject): QaAnswerEvidence {
                 add(parseEvidenceQuery(item))
             }
         }
+    }
+    val rawCandidateSelectionCount = queries.count { it.resolvedByQueryIndex != null }
+    val candidateSelectionCount = if (json.hasAnyValue(
+            "candidateSelectionCount",
+            "CandidateSelectionCount"
+        )
+    ) {
+        json.intValue("candidateSelectionCount", "CandidateSelectionCount")
+    } else {
+        rawCandidateSelectionCount
     }
 
     return QaAnswerEvidence(
@@ -141,7 +186,9 @@ private fun parseAnswerEvidence(json: JSONObject): QaAnswerEvidence {
         evidenceReadCount = json.intValue("evidenceReadCount", "EvidenceReadCount"),
         citedEvidenceCount = json.intValue("citedEvidenceCount", "CitedEvidenceCount"),
         modelCallCount = json.intValue("modelCallCount", "ModelCallCount"),
+        repairCount = json.intValue("repairCount", "RepairCount"),
         omittedEvidenceCount = json.intValue("omittedEvidenceCount", "OmittedEvidenceCount"),
+        candidateSelectionCount = candidateSelectionCount,
         queries = queries.mapIndexed { index, query ->
             val later = query.resolvedByQueryIndex?.let { queries.getOrNull(it) }
             val validRecovery = query.resolvedByQueryIndex?.let { it > index } == true
