@@ -52,8 +52,89 @@ public class GetConceptResult
         "related 是 matched 直接引用的概念，已自动扩展一层；related 内概念的引用已标注中文名，如需更深一层的详情请用其 ID 继续调用 get_concept。";
 }
 
+
+
+/// <summary>
+/// 统一查询结果中的正式负载类型。类型字符串沿用契约名，未知类型必须由消费者
+/// 明确报 unsupported，而不是继续当作 ok + 空正文。
+/// </summary>
+public static class QueryPayloadTypes
+{
+    public const string Definition = "definition";
+    public const string CatalogPage = "catalog_page";
+    public const string FlowSlice = "flow_slice";
+    public const string RelationFacts = "relation_facts";
+    public const string ComputedFact = "computed_fact";
+}
+
+/// <summary>一次查询的结果覆盖范围，不代表最终自然语言回答一定充分。</summary>
+public static class QueryCoverageStatuses
+{
+    public const string Complete = "complete";
+    public const string Partial = "partial";
+    public const string Unknown = "unknown";
+}
+
+/// <summary>目标解析状态；与 coverage 分开记录。</summary>
+public static class QueryResolutionStatuses
+{
+    public const string Exact = "exact";
+    public const string Candidates = "candidates";
+    public const string NotFound = "not_found";
+    public const string Unsupported = "unsupported";
+    public const string Invalid = "invalid";
+}
+
+/// <summary>正式读取到的有类型负载。Content 保留原始节点/章节；Data 只放该负载自己的结构化字段。</summary>
+public sealed class QueryPayload
+{
+    public string Type { get; set; } = string.Empty;
+    public string CanonicalPath { get; set; } = string.Empty;
+    public string? RulesVersion { get; set; }
+    /// <summary>complete | partial | unknown；只描述本负载覆盖的字段/范围。</summary>
+    public string Completeness { get; set; } = QueryCoverageStatuses.Complete;
+    public JsonElement? Content { get; set; }
+    public Dictionary<string, JsonElement>? Data { get; set; }
+    public string? DefinitionSource { get; set; }
+}
+
+/// <summary>无法交付某一部分时的明确原因与续读入口。</summary>
+public sealed class QueryOmission
+{
+    public string Reason { get; set; } = string.Empty;
+    public string? CanonicalPath { get; set; }
+    public string? FieldPath { get; set; }
+    public QueryContinuation? Continuation { get; set; }
+}
+
+/// <summary>程序生成的续读描述；模型不得自行拼接任意路径。</summary>
+public sealed class QueryContinuation
+{
+    public string Operation { get; set; } = string.Empty;
+    public string? Entity { get; set; }
+    public string? Scope { get; set; }
+    public int? Offset { get; set; }
+    public int? Limit { get; set; }
+    public List<string> Include { get; set; } = new();
+}
+
+/// <summary>错误/空结果分类，避免把“规则库没有”与“预算没读完”混成一句话。</summary>
+public static class QueryOmissionReasons
+{
+    public const string NoRuleCoverage = "no_rule_coverage";
+    public const string UnsupportedRelation = "unsupported_relation";
+    public const string FieldMissing = "field_missing";
+    public const string BudgetTruncated = "budget_truncated";
+    public const string AmbiguousIdentity = "ambiguous_identity";
+    public const string Oversized = "oversized";
+    public const string ContinuationRequired = "continuation_required";
+    public const string InvalidRequest = "invalid_request";
+}
+
 public class PlanExecutionResult
 {
+    public string RequestId { get; set; } = "";
+    public string Game { get; set; } = "";
     public List<PlanItemResult> Results { get; set; } = new();
     public string Note { get; set; } = "";
     /// <summary>本次 execute_plan 绑定的规则内容版本（快照哈希）；直接构造 plan 服务且无请求 scope 时为 null。</summary>
@@ -64,6 +145,20 @@ public class PlanItemResult
 {
     /// <summary>本 query 在当次 execute_plan 中的零基下标。</summary>
     public int QueryIndex { get; set; }
+    /// <summary>当次 execute_plan 内稳定 query id；用于账本与 trace 对账。</summary>
+    public string QueryId { get; set; } = "";
+    /// <summary>结果绑定的规则内容版本；由 ExecutePlanAsync 统一回填。</summary>
+    public string? RulesVersion { get; set; }
+    /// <summary>精确目标解析状态：exact | candidates | not_found | unsupported | invalid。</summary>
+    public string Resolution { get; set; } = "";
+    /// <summary>规范路径集合；身份以 (game, rules_version, canonical_path) 为准。</summary>
+    public List<string> ResolvedTargets { get; set; } = new();
+    /// <summary>有类型的正式负载；消费者必须穷举类型，未知类型显式 unsupported。</summary>
+    public List<QueryPayload> Payloads { get; set; } = new();
+    /// <summary>本次查询范围的数据覆盖：complete | partial | unknown。</summary>
+    public string Coverage { get; set; } = QueryCoverageStatuses.Unknown;
+    /// <summary>本次未交付的字段/范围及原因；不得用空数组伪装完整。</summary>
+    public List<QueryOmission> Omissions { get; set; } = new();
     public string Relation { get; set; } = "";
     public string Entity { get; set; } = "";
     /// <summary>当前子问题要知道什么（用户意图）；单 query 缺省时可由服务端回填客人原问句。</summary>

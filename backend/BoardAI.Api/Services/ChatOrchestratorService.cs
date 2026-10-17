@@ -19,6 +19,7 @@ public class ChatOrchestratorService
     private readonly LLMOptions _llmOptions;
     private readonly string _orchestrationMode;
     private readonly string _configFingerprint;
+    private readonly string _toolContractFingerprint;
     private readonly int _maxToolRounds;
     private readonly int _maxToolCallsPerRound;
     private readonly int _maxTotalToolCalls;
@@ -70,6 +71,8 @@ public class ChatOrchestratorService
         _maxRequestTimeout = TimeSpan.FromSeconds(Math.Max(1, llmOptions.MaxRequestSeconds));
         _maxRepeatedFailures = Math.Max(1, llmOptions.MaxRepeatedFailures);
         _maxConversationMessages = Math.Max(2, llmOptions.MaxConversationMessages);
+        _toolContractFingerprint = HashFingerprint(
+            JsonSerializer.Serialize(BuildTools("template"), ToolResultOptions));
     }
 
     public async Task<string> ProcessAsync(
@@ -162,6 +165,11 @@ public class ChatOrchestratorService
         CancellationToken cancellationToken)
     {
         var sw = Stopwatch.StartNew();
+        var requestTrace = new ChatOrchestrationTrace
+        {
+            RequestId = "chat_" + Guid.NewGuid().ToString("N")[..12],
+            Mode = "legacy"
+        };
 
         if (string.IsNullOrWhiteSpace(gameId))
         {
@@ -173,9 +181,9 @@ public class ChatOrchestratorService
 
         var systemPrompt = _legacySystemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
         _logger.LogInformation(
-            "[Chat] legacy mode={Mode}, promptFingerprint={PromptFingerprint}, configFingerprint={ConfigFingerprint}, model={Model}, thinking={Thinking}",
-            _orchestrationMode, PromptFingerprint(_legacySystemPromptTemplate), _configFingerprint,
-            _llmOptions.Model, _llmOptions.Thinking);
+            "[Chat] legacy mode={Mode}, promptFingerprint={PromptFingerprint}, toolContractFingerprint={ToolFingerprint}, configFingerprint={ConfigFingerprint}, model={Model}, thinking={Thinking}",
+            _orchestrationMode, PromptFingerprint(_legacySystemPromptTemplate), _toolContractFingerprint,
+            _configFingerprint, _llmOptions.Model, _llmOptions.Thinking);
 
         var messages = new List<ChatMessage>();
 
@@ -225,7 +233,13 @@ public class ChatOrchestratorService
                 effectiveToken.ThrowIfCancellationRequested();
                 roundsExecuted = round + 1;
 
+                var modelCallStartMs = sw.Elapsed.TotalMilliseconds;
+                var modelCallStopwatch = Stopwatch.StartNew();
                 var response = await _llmService.ChatWithMessagesAsync(messages, tools, effectiveToken);
+                modelCallStopwatch.Stop();
+                AddModelTimelineSpan(
+                    requestTrace, modelCallStartMs, modelCallStopwatch.Elapsed.TotalMilliseconds,
+                    "model_planning", "tool_loop", response.Usage, roundsExecuted);
                 var assistantMessage = response.Choices?.FirstOrDefault()?.Message
                     ?? throw new InvalidOperationException("LLM returned empty response.");
 
@@ -262,7 +276,7 @@ public class ChatOrchestratorService
                     LogEvidenceSummary(gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted, protocolCorrections, sw.Elapsed.TotalMilliseconds);
                     _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
                         gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
-                    return new ChatProcessResult(reply, builtEvidence);
+                    return new ChatProcessResult(reply, builtEvidence, FinalizeLegacyTrace(requestTrace, sw));
                 }
 
                 _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
@@ -305,9 +319,18 @@ public class ChatOrchestratorService
                         lastToolCallSignature = toolCallSignature;
                     }
 
+                    var toolStartMs = sw.Elapsed.TotalMilliseconds;
                     var toolStopwatch = Stopwatch.StartNew();
                     var result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
                     toolStopwatch.Stop();
+                    AddTimelineSpan(requestTrace, new ChatTimelineSpan
+                    {
+                        Name = toolCall.Function.Name,
+                        Category = "tool",
+                        StartMs = toolStartMs,
+                        DurationMs = toolStopwatch.Elapsed.TotalMilliseconds,
+                        ResultChars = result.Length
+                    });
                     totalToolCallsExecuted++;
                     effectiveToken.ThrowIfCancellationRequested();
 
@@ -383,8 +406,8 @@ public class ChatOrchestratorService
 
             var finalReply = await RequestFinalAnswerAsync(
                 gameId, question, messages, evidence, stopReason, roundsExecuted,
-                totalToolCallsExecuted, protocolCorrections, sw, effectiveToken);
-            return new ChatProcessResult(finalReply, evidence.Build());
+                totalToolCallsExecuted, protocolCorrections, sw, requestTrace, effectiveToken);
+            return new ChatProcessResult(finalReply, evidence.Build(), FinalizeLegacyTrace(requestTrace, sw));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -400,12 +423,62 @@ public class ChatOrchestratorService
             _logger.LogInformation(
                 "[Chat] Game {GameId}, request timeout: rounds={Rounds}, elapsed={Elapsed:F0}ms",
                 gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds);
-            return new ChatProcessResult(BuildIncompleteReply("request_timeout", evidence), evidence.Build());
+            return new ChatProcessResult(
+                BuildIncompleteReply("request_timeout", evidence),
+                evidence.Build(),
+                FinalizeLegacyTrace(requestTrace, sw));
         }
         finally
         {
             sw.Stop();
         }
+    }
+
+    private static void AddModelTimelineSpan(
+        ChatOrchestrationTrace trace,
+        double startMs,
+        double durationMs,
+        string name,
+        string stage,
+        LLMUsage? usage,
+        int sequence)
+    {
+        var span = new ChatTimelineSpan
+        {
+            Name = name,
+            Category = "model",
+            StartMs = startMs,
+            DurationMs = durationMs,
+            PromptTokens = usage?.PromptTokens,
+            CompletionTokens = usage?.CompletionTokens,
+            ReasoningTokens = usage?.CompletionTokenDetails?.ReasoningTokens
+        };
+        AddTimelineSpan(trace, span);
+        trace.ModelCallCount++;
+        trace.ModelCalls.Add(new ChatModelCallTrace
+        {
+            Sequence = trace.ModelCalls.Count + 1,
+            Stage = stage,
+            Reason = name,
+            Succeeded = true,
+            ElapsedMs = Math.Round(durationMs, 2),
+            PromptTokens = span.PromptTokens,
+            CompletionTokens = span.CompletionTokens,
+            ReasoningTokens = span.ReasoningTokens
+        });
+    }
+
+    private static void AddTimelineSpan(ChatOrchestrationTrace trace, ChatTimelineSpan span)
+    {
+        trace.Timeline.Add(span);
+    }
+
+    private static ChatOrchestrationTrace FinalizeLegacyTrace(
+        ChatOrchestrationTrace trace, Stopwatch requestStopwatch)
+    {
+        var elapsed = requestStopwatch.Elapsed.TotalMilliseconds;
+        trace.TimelineAccounting = ChatTimelineAccountingCalculator.Compute(trace.Timeline, elapsed);
+        return trace;
     }
 
     private static string PromptFingerprint(string prompt) => HashFingerprint(prompt);
@@ -489,6 +562,7 @@ public class ChatOrchestratorService
         int totalToolCallsExecuted,
         int protocolCorrections,
         Stopwatch sw,
+        ChatOrchestrationTrace requestTrace,
         CancellationToken cancellationToken)
     {
         messages.Add(new ChatMessage
@@ -502,7 +576,13 @@ public class ChatOrchestratorService
 
         try
         {
+            var summaryStartMs = sw.Elapsed.TotalMilliseconds;
+            var summaryStopwatch = Stopwatch.StartNew();
             var finalResponse = await _llmService.ChatWithMessagesAsync(messages, null, cancellationToken);
+            summaryStopwatch.Stop();
+            AddModelTimelineSpan(
+                requestTrace, summaryStartMs, summaryStopwatch.Elapsed.TotalMilliseconds,
+                "model_final_answer", "summary", finalResponse.Usage, 1);
             var finalMessage = finalResponse.Choices?.FirstOrDefault()?.Message;
             var finalReply = finalMessage?.Content ?? string.Empty;
             if (string.IsNullOrWhiteSpace(finalReply))
@@ -656,9 +736,11 @@ public class ChatOrchestratorService
         foreach (var query in evidence.Queries)
         {
             _logger.LogInformation(
-                "[Chat] evidence query: game={GameId}, query={QueryIndex}, relation={Relation}, entity={Entity}, intent={Intent}, status={Status}, source={Source}, hasData={HasData}, resolvedBy={ResolvedBy}, confirmedCandidate={ConfirmedCandidate}, confirmedByRelation={ConfirmedRelation}",
+                "[Chat] evidence query: game={GameId}, query={QueryIndex}, relation={Relation}, entity={Entity}, intent={Intent}, status={Status}, resolution={Resolution}, coverage={Coverage}, source={Source}, hasData={HasData}, payloadTypes=[{PayloadTypes}], omissions=[{Omissions}], resolvedBy={ResolvedBy}, confirmedCandidate={ConfirmedCandidate}, confirmedByRelation={ConfirmedRelation}",
                 gameId, query.QueryIndex, query.Relation, query.Entity, query.Intent, query.Status,
-                query.Source, query.HasData, query.ResolvedByQueryIndex, query.ConfirmedCandidateId,
+                query.Resolution, query.Coverage, query.Source, query.HasData,
+                string.Join(",", query.PayloadTypes), string.Join(",", query.OmissionReasons),
+                query.ResolvedByQueryIndex, query.ConfirmedCandidateId,
                 query.ConfirmedByRelation);
         }
         _logger.LogInformation(
@@ -1060,50 +1142,140 @@ public class ChatOrchestratorService
         }
     }
 
-    private static QueryEvidence ParseQueryEvidence(JsonElement item, string? rulesVersion)
+    internal static QueryEvidence ParseQueryEvidence(JsonElement item, string? rulesVersion)
     {
-        var status = item.TryGetProperty("Status", out var sp) ? sp.GetString() ?? "" : "";
+        var status = ReadFlexibleString(item, "Status", "status");
         var query = new QueryEvidence
         {
             QueryIndex = item.TryGetProperty("QueryIndex", out var qi) && qi.ValueKind == JsonValueKind.Number
                 ? qi.GetInt32()
-                : 0,
-            Relation = item.TryGetProperty("Relation", out var rp) ? rp.GetString() ?? "" : "",
-            Entity = item.TryGetProperty("Entity", out var ep) ? ep.GetString() ?? "" : "",
-            Intent = item.TryGetProperty("Intent", out var ip) ? ip.GetString() ?? "" : "",
+                : item.TryGetProperty("queryIndex", out var camelQi) && camelQi.ValueKind == JsonValueKind.Number
+                    ? camelQi.GetInt32()
+                    : 0,
+            Relation = ReadFlexibleString(item, "Relation", "relation"),
+            Entity = ReadFlexibleString(item, "Entity", "entity"),
+            Intent = ReadFlexibleString(item, "Intent", "intent"),
             Status = status,
-            Source = item.TryGetProperty("Source", out var src) ? src.GetString() ?? "" : "",
+            Source = ReadFlexibleString(item, "Source", "source"),
+            Resolution = ReadFlexibleString(item, "Resolution", "resolution"),
+            Coverage = ReadFlexibleString(item, "Coverage", "coverage"),
             RulesVersion = rulesVersion,
-            Message = item.TryGetProperty("Message", out var mp) ? mp.GetString() : null,
-            Matched = ParseMatchedArray(item, "Matched"),
-            Candidates = ParseCandidateArray(item, "Candidates"),
-            References = ParseMatchedArray(item, "Related")
+            Message = ReadFlexibleNullableString(item, "Message", "message"),
+            Matched = ParseMatchedArray(item, "Matched", "matched"),
+            Candidates = ParseCandidateArray(item, "Candidates", "candidates"),
+            References = ParseMatchedArray(item, "Related", "related")
         };
 
-        if (item.TryGetProperty("FlowContext", out var flow) && flow.ValueKind == JsonValueKind.Array)
+        var flow = ReadFlexibleArray(item, "FlowContext", "flowContext");
+        if (flow.HasValue)
         {
-            query.FlowContext = flow.EnumerateArray()
+            query.FlowContext = flow.Value.EnumerateArray()
                 .Where(x => x.ValueKind == JsonValueKind.String)
                 .Select(x => x.GetString() ?? "")
                 .Where(x => !string.IsNullOrEmpty(x))
                 .ToList();
         }
 
+        query.ResolvedTargets = ReadFlexibleStringArray(item, "ResolvedTargets", "resolvedTargets");
+        var payloads = ReadFlexibleArray(item, "Payloads", "payloads");
+        if (payloads.HasValue)
+        {
+            foreach (var payload in payloads.Value.EnumerateArray())
+            {
+                if (payload.ValueKind != JsonValueKind.Object) continue;
+                var type = ReadFlexibleString(payload, "Type", "type");
+                if (!string.IsNullOrWhiteSpace(type)) query.PayloadTypes.Add(type);
+            }
+        }
+        var omissions = ReadFlexibleArray(item, "Omissions", "omissions");
+        if (omissions.HasValue)
+        {
+            foreach (var omission in omissions.Value.EnumerateArray())
+            {
+                if (omission.ValueKind != JsonValueKind.Object) continue;
+                var reason = ReadFlexibleString(omission, "Reason", "reason");
+                if (!string.IsNullOrWhiteSpace(reason)) query.OmissionReasons.Add(reason);
+            }
+        }
+
+        var knownPayloads = new HashSet<string>(StringComparer.Ordinal)
+        {
+            QueryPayloadTypes.Definition,
+            QueryPayloadTypes.CatalogPage,
+            QueryPayloadTypes.FlowSlice,
+            QueryPayloadTypes.RelationFacts,
+            QueryPayloadTypes.ComputedFact
+        };
+        var unknownPayload = query.PayloadTypes.Any(type => !knownPayloads.Contains(type));
+        var hasCatalogPayload = query.PayloadTypes.Contains(QueryPayloadTypes.CatalogPage);
         var hasCatalog = item.TryGetProperty("Catalog", out var catalog)
             && catalog.ValueKind == JsonValueKind.Object;
-        query.HasData = status == "ok" && (query.Matched.Count > 0 || hasCatalog);
+        var hasFormalPayload = query.PayloadTypes.Any(knownPayloads.Contains);
+        var hasLegacyData = query.Matched.Count > 0 || hasCatalog;
+
+        // 新契约存在时以 payload 为准；list 的 CatalogPage 是合法数据，不能判成空证据成功。
+        query.HasData = status == "ok"
+            && !unknownPayload
+            && (payloads.HasValue ? hasFormalPayload : hasLegacyData)
+            && (hasFormalPayload || hasLegacyData || !payloads.HasValue);
+        if (unknownPayload)
+        {
+            query.Status = "unsupported";
+            query.Resolution = QueryResolutionStatuses.Unsupported;
+            query.Coverage = QueryCoverageStatuses.Unknown;
+            query.HasData = false;
+        }
 
         return query;
     }
 
-    private static List<EvidenceConcept> ParseMatchedArray(JsonElement item, string property)
+    private static string ReadFlexibleString(JsonElement item, string pascal, string camel)
+    {
+        if (item.TryGetProperty(pascal, out var value) && value.ValueKind == JsonValueKind.String)
+            return value.GetString() ?? "";
+        if (item.TryGetProperty(camel, out value) && value.ValueKind == JsonValueKind.String)
+            return value.GetString() ?? "";
+        return "";
+    }
+
+    private static string? ReadFlexibleNullableString(JsonElement item, string pascal, string camel)
+    {
+        if (item.TryGetProperty(pascal, out var value) && value.ValueKind == JsonValueKind.String)
+            return value.GetString();
+        if (item.TryGetProperty(camel, out value) && value.ValueKind == JsonValueKind.String)
+            return value.GetString();
+        return null;
+    }
+
+    private static JsonElement? ReadFlexibleArray(JsonElement item, string pascal, string camel)
+    {
+        if (item.TryGetProperty(pascal, out var value) && value.ValueKind == JsonValueKind.Array)
+            return value;
+        if (item.TryGetProperty(camel, out value) && value.ValueKind == JsonValueKind.Array)
+            return value;
+        return null;
+    }
+
+    private static List<string> ReadFlexibleStringArray(JsonElement item, string pascal, string camel)
+    {
+        var array = ReadFlexibleArray(item, pascal, camel);
+        if (!array.HasValue) return new List<string>();
+        return array.Value.EnumerateArray()
+            .Where(value => value.ValueKind == JsonValueKind.String)
+            .Select(value => value.GetString() ?? "")
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .ToList();
+    }
+
+    private static List<EvidenceConcept> ParseMatchedArray(JsonElement item, string pascalProperty, string? camelProperty = null)
     {
         var result = new List<EvidenceConcept>();
-        if (!item.TryGetProperty(property, out var array) || array.ValueKind != JsonValueKind.Array)
+        var array = ReadFlexibleArray(item, pascalProperty, camelProperty ?? char.ToLowerInvariant(pascalProperty[0]) + pascalProperty[1..]);
+        if (!array.HasValue)
             return result;
 
         var seen = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var element in array.EnumerateArray())
+        foreach (var element in array.Value.EnumerateArray())
         {
             var id = element.TryGetProperty("id", out var idProp) ? idProp.GetString() ?? "" : "";
             if (string.IsNullOrEmpty(id) || !seen.Add(id)) continue;
@@ -1117,26 +1289,31 @@ public class ChatOrchestratorService
         return result;
     }
 
-    private static List<EvidenceConcept> ParseCandidateArray(JsonElement item, string property)
+    private static List<EvidenceConcept> ParseCandidateArray(JsonElement item, string pascalProperty, string? camelProperty = null)
     {
         var result = new List<EvidenceConcept>();
-        if (!item.TryGetProperty(property, out var array) || array.ValueKind != JsonValueKind.Array)
+        var array = ReadFlexibleArray(item, pascalProperty, camelProperty ?? char.ToLowerInvariant(pascalProperty[0]) + pascalProperty[1..]);
+        if (!array.HasValue)
             return result;
 
-        foreach (var element in array.EnumerateArray())
+        foreach (var element in array.Value.EnumerateArray())
         {
-            var id = element.TryGetProperty("Id", out var idProp) ? idProp.GetString() ?? "" : "";
+            var id = element.TryGetProperty("Id", out var idProp) ? idProp.GetString() ?? ""
+                : element.TryGetProperty("id", out idProp) ? idProp.GetString() ?? "" : "";
             if (string.IsNullOrEmpty(id)) continue;
             var candidate = new EvidenceConcept
             {
                 Id = id,
-                Name = element.TryGetProperty("Name", out var nameProp) ? nameProp.GetString() ?? "" : "",
-                Type = element.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null,
-                Description = element.TryGetProperty("Description", out var descProp) ? descProp.GetString() : null,
-                MatchReason = element.TryGetProperty("MatchReason", out var reasonProp) ? reasonProp.GetString() : null
+                Name = ReadFlexibleString(element, "Name", "name"),
+                Type = ReadFlexibleNullableString(element, "Type", "type"),
+                Description = ReadFlexibleNullableString(element, "Description", "description"),
+                MatchReason = ReadFlexibleNullableString(element, "MatchReason", "matchReason")
             };
-            if (element.TryGetProperty("Score", out var scoreProp) && scoreProp.ValueKind == JsonValueKind.Number)
-                candidate.Score = scoreProp.GetSingle();
+            var scoreElement = element.TryGetProperty("Score", out var scoreProp)
+                ? scoreProp
+                : element.TryGetProperty("score", out scoreProp) ? scoreProp : default;
+            if (scoreElement.ValueKind == JsonValueKind.Number)
+                candidate.Score = scoreElement.GetSingle();
             result.Add(candidate);
         }
 

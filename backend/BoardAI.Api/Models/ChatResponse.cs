@@ -57,9 +57,14 @@ public class QueryEvidence
     public string Intent { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public string Source { get; set; } = string.Empty;
+    public string Resolution { get; set; } = string.Empty;
+    public string Coverage { get; set; } = string.Empty;
     public string? RulesVersion { get; set; }
     public string? Message { get; set; }
     public bool HasData { get; set; }
+    public List<string> PayloadTypes { get; set; } = new();
+    public List<string> ResolvedTargets { get; set; } = new();
+    public List<string> OmissionReasons { get; set; } = new();
 
     /// <summary>候选被后续精确查询确认时，指向 Queries 中该查询的零基索引；不覆盖原 Status。</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -136,6 +141,98 @@ public class ChatOrchestrationTrace
     public List<ChatModelCallTrace> ModelCalls { get; set; } = new();
     public List<string> ProtocolErrors { get; set; } = new();
     public List<ChatQuestionTrace> Questions { get; set; } = new();
+    /// <summary>本次请求的单调时钟时间线；模型/tool/搜索/装配 span 都相对请求起点。</summary>
+    public List<ChatTimelineSpan> Timeline { get; set; } = new();
+    public ChatTimelineAccounting? TimelineAccounting { get; set; }
+}
+
+/// <summary>一个可对账的请求内时间 span。并行 span 共用并发组，不能简单相加当总耗时。</summary>
+public class ChatTimelineSpan
+{
+    public string Name { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    /// <summary>相对请求开始时刻的单调时钟偏移。</summary>
+    public double StartMs { get; set; }
+    public double DurationMs { get; set; }
+    public string? ConcurrencyGroup { get; set; }
+    public int? PromptTokens { get; set; }
+    public int? CompletionTokens { get; set; }
+    public int? ReasoningTokens { get; set; }
+    public int? ResultChars { get; set; }
+}
+
+/// <summary>span 覆盖对账。CoveredMs 是区间并集，OverlapMs 是并行/重叠量，不是耗时相加。</summary>
+public class ChatTimelineAccounting
+{
+    public double ElapsedMs { get; set; }
+    public double CoveredMs { get; set; }
+    public double UnaccountedMs { get; set; }
+    public double OverlapMs { get; set; }
+    public bool IsReconciled { get; set; }
+    public int SpanCount { get; set; }
+    public List<string> ParallelGroups { get; set; } = new();
+}
+
+internal static class ChatTimelineAccountingCalculator
+{
+    public static ChatTimelineAccounting Compute(
+        IEnumerable<ChatTimelineSpan> spans,
+        double elapsedMs,
+        double toleranceMs = 1.0)
+    {
+        var ordered = spans
+            .Where(span => span.DurationMs >= 0 && span.StartMs >= 0)
+            .OrderBy(span => span.StartMs)
+            .ThenBy(span => span.StartMs + span.DurationMs)
+            .ToList();
+        var union = 0d;
+        var overlap = 0d;
+        var currentStart = 0d;
+        var currentEnd = 0d;
+        var hasInterval = false;
+        foreach (var span in ordered)
+        {
+            var start = span.StartMs;
+            var end = span.StartMs + span.DurationMs;
+            if (!hasInterval)
+            {
+                hasInterval = true;
+                currentStart = start;
+                currentEnd = end;
+                continue;
+            }
+
+            if (start <= currentEnd + toleranceMs)
+            {
+                overlap += Math.Max(0, currentEnd - start);
+                currentEnd = Math.Max(currentEnd, end);
+            }
+            else
+            {
+                union += currentEnd - currentStart;
+                currentStart = start;
+                currentEnd = end;
+            }
+        }
+        if (hasInterval) union += currentEnd - currentStart;
+
+        var feasible = ordered.All(span => span.StartMs + span.DurationMs <= elapsedMs + toleranceMs);
+        var unaccounted = Math.Max(0, elapsedMs - union);
+        return new ChatTimelineAccounting
+        {
+            ElapsedMs = Math.Round(elapsedMs, 2),
+            CoveredMs = Math.Round(union, 2),
+            UnaccountedMs = Math.Round(unaccounted, 2),
+            OverlapMs = Math.Round(overlap, 2),
+            IsReconciled = feasible && unaccounted >= -toleranceMs,
+            SpanCount = ordered.Count,
+            ParallelGroups = ordered
+                .Select(span => span.ConcurrencyGroup)
+                .Where(group => !string.IsNullOrWhiteSpace(group))
+                .Distinct(StringComparer.Ordinal)
+                .ToList()!
+        };
+    }
 }
 
 public class ChatModelCallTrace

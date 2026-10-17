@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Group program `unavailable` runs into deterministic diagnostic buckets.
+"""Group program/legacy unavailable runs into deterministic diagnostic buckets.
 
-The bucket uses observable trace data only. It does not claim that evidence
-presence proves sufficiency; `expected_target_in_pack` still needs manual review.
+The bucketing order is deliberately "later layers first": once acceptable formal
+evidence was delivered to the model, a retrieval-candidate miss must not be
+reported as the earliest failure. Path matching uses canonical path identity.
+Historical values without canonical identity are marked unknown rather than
+being guessed from their last segment.
 """
 from __future__ import annotations
 
@@ -12,13 +15,116 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 
+CANONICAL_MARKERS = ("::", "/", ".")
 
-def matches(expected: str, values: list[str]) -> bool:
-    for value in values:
-        local = value.split("::")[-1] if "::" in value else value
-        if value == expected or local == expected or local.endswith("." + expected):
-            return True
+
+def _is_canonical_identity(value: str) -> bool:
+    return any(marker in value for marker in CANONICAL_MARKERS)
+
+
+def match_identity(expected: str, values: list[str]) -> bool | None:
+    """Return True/False when identity is observable, None when only legacy
+    non-canonical values exist and a suffix heuristic would be needed."""
+    if not expected:
+        return None
+    if not values:
+        return False
+    if expected in values:
+        return True
+    expected_canonical = _is_canonical_identity(expected)
+    values_canonical = any(_is_canonical_identity(value) for value in values)
+    # Canonical-vs-canonical is a real miss. Mixed formats cannot prove a miss
+    # without the prohibited last-segment heuristic, so report unknown.
+    if expected_canonical and values_canonical:
+        return False
+    if expected_canonical or values_canonical:
+        return None
     return False
+
+
+def _collect_run_layers(run: dict) -> dict:
+    orchestration = run.get("orchestration") or {}
+    trace_questions = orchestration.get("questions") or []
+    packed: list[str] = []
+    retrieval: list[str] = []
+    packed_observable = False
+    retrieval_observable = False
+
+    for question in trace_questions:
+        if "evidenceCanonicalPaths" in question:
+            packed_observable = True
+            packed.extend(question.get("evidenceCanonicalPaths") or [])
+        if "retrievalCandidatePaths" in question:
+            retrieval_observable = True
+            retrieval.extend(question.get("retrievalCandidatePaths") or [])
+
+    # Legacy/old program traces expose evidence.queries. Matched is a formal-read
+    # and tool-delivery proxy; candidates are raw retrieval candidates.
+    for query in (run.get("evidence") or {}).get("queries") or []:
+        if "matched" in query:
+            packed_observable = True
+            packed.extend((item.get("id") or "") for item in query.get("matched") or [])
+        if "candidates" in query:
+            retrieval_observable = True
+            retrieval.extend((item.get("id") or "") for item in query.get("candidates") or [])
+
+    return {
+        "packed": [p for p in packed if p],
+        "retrieval": [p for p in retrieval if p],
+        "packed_observable": packed_observable,
+        "retrieval_observable": retrieval_observable,
+    }
+
+
+def classify(run: dict) -> dict:
+    layers = _collect_run_layers(run)
+    expected = run.get("expected_rule_ids") or []
+    retrieval_hits = [match_identity(exp, layers["retrieval"]) for exp in expected]
+    packed_hits = [match_identity(exp, layers["packed"]) for exp in expected]
+
+    retrieval_expected = _combine_observability(retrieval_hits) if layers["retrieval_observable"] else None
+    pack_expected = _combine_observability(packed_hits) if layers["packed_observable"] else None
+
+    # Earliest-failure order: delivered evidence wins over retrieval diagnostics.
+    if not expected:
+        bucket = "unknown_no_expected_target"
+        earliest = "unknown"
+    elif pack_expected is True:
+        bucket = "expected_target_delivered_but_unavailable"
+        earliest = "respond_or_sufficiency"
+    elif not layers["packed_observable"] or not layers["retrieval_observable"]:
+        bucket = "unknown_observability"
+        earliest = "unknown"
+    elif retrieval_expected is True:
+        bucket = "retrieval_hit_not_formally_delivered"
+        earliest = "navigation_or_formal_read"
+    elif retrieval_expected is False:
+        bucket = "no_retrieval_or_formal_hit"
+        earliest = "plan_or_retrieval"
+    else:
+        bucket = "unknown_identity_format"
+        earliest = "unknown"
+
+    return {
+        "retrieval_paths": layers["retrieval"],
+        "packed_paths": layers["packed"],
+        "retrieval_expected": retrieval_expected,
+        "pack_expected": pack_expected,
+        "earliest_failure_hint": earliest,
+        "bucket": bucket,
+        "manual_review_required": True,
+        "match_method": "canonical_exact_only",
+    }
+
+
+def _combine_observability(values: list[bool | None]) -> bool | None:
+    if not values:
+        return None
+    if any(value is True for value in values):
+        return True
+    if all(value is False for value in values):
+        return False
+    return None
 
 
 def main():
@@ -38,66 +144,22 @@ def main():
         orchestration = run.get("orchestration") or {}
         if orchestration.get("outcome") != "unavailable":
             continue
-        trace_questions = orchestration.get("questions") or []
-        packed = []
-        retrieval = []
-        for question in trace_questions:
-            packed.extend(question.get("evidenceCanonicalPaths") or [])
-            retrieval.extend(question.get("retrievalCandidatePaths") or [])
-        has_layer_fields = any(
-            ("evidenceCanonicalPaths" in question) or ("retrievalCandidatePaths" in question)
-            for question in trace_questions
-        )
-        if not trace_questions or not has_layer_fields:
-            for query in (run.get("evidence") or {}).get("queries") or []:
-                packed.extend((item.get("id") or "") for item in query.get("matched") or [])
-                retrieval.extend((item.get("id") or "") for item in query.get("candidates") or [])
+        classification = classify(run)
         expected = run.get("expected_rule_ids") or []
-        retrieval_expected = any(matches(exp, retrieval) for exp in expected) if expected else None
-        pack_expected = any(matches(exp, packed) for exp in expected) if expected else None
-        if not expected:
-            bucket = "unknown_no_expected_target"
-            earliest_failure_hint = "unknown"
-        elif not packed:
-            bucket = "no_formal_evidence_packed"
-            earliest_failure_hint = "pack_or_before"
-        elif pack_expected is True:
-            bucket = "expected_target_packed_but_unavailable"
-            earliest_failure_hint = "respond_or_evidence_sufficiency"
-        elif pack_expected is False:
-            bucket = "other_evidence_packed_target_missing"
-            earliest_failure_hint = "pack_or_before"
-        else:
-            bucket = "unknown_no_expected_target"
-            earliest_failure_hint = "unknown"
-
-        # This is only a triage hint. A target can be retrieved and packed yet
-        # still be insufficient for the user's actual intent; manual review is
-        # required before calling it a Respond failure.
-        if retrieval_expected is True and pack_expected is False:
-            earliest_failure_hint = "retrieval_to_pack"
-        elif retrieval_expected is False:
-            earliest_failure_hint = "plan_or_retrieval"
         rows.append({
             "run_id": run["run_id"],
             "question_id": run["question_id"],
             "game": run["game"],
             "question": run["question"],
             "expected_rule_ids": expected,
-            "retrieval_paths": retrieval,
-            "packed_paths": packed,
-            "retrieval_expected": retrieval_expected,
-            "pack_expected": pack_expected,
-            "earliest_failure_hint": earliest_failure_hint,
-            "manual_review_required": True,
+            **classification,
             "outcome": orchestration.get("outcome"),
             "evidence_count": orchestration.get("evidenceCount"),
             "supplement_count": orchestration.get("supplementCount"),
             "repair_count": orchestration.get("repairCount"),
-            "question_trace": trace_questions,
+            "question_trace": orchestration.get("questions") or [],
             "judge_pass": judged.get(run["run_id"], {}).get("pass"),
             "judge_reason": judged.get(run["run_id"], {}).get("reason"),
-            "bucket": bucket,
         })
 
     by_question = defaultdict(list)

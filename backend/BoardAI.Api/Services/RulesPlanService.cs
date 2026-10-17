@@ -106,6 +106,8 @@ public sealed class RulesPlanService
 
         var result = new PlanExecutionResult
         {
+            RequestId = "plan_" + Guid.NewGuid().ToString("N")[..12],
+            Game = game,
             RulesVersion = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
                 ? snapshot.Version
                 : null
@@ -141,7 +143,10 @@ public sealed class RulesPlanService
             var item = await ExecutePlanQueryAsync(
                 game, relation, entity, explicitIntent, question, cancellationToken);
             item.QueryIndex = queryIndex;
+            item.QueryId = $"{result.RequestId}:{queryIndex}";
+            item.RulesVersion = result.RulesVersion;
             item.Intent = displayIntent;
+            NormalizeResultContract(item, result.RulesVersion);
             result.Results.Add(item);
             cancellationToken.ThrowIfCancellationRequested();
         }
@@ -188,7 +193,13 @@ public sealed class RulesPlanService
                 Relation = relation,
                 Entity = entity,
                 Status = "unsupported",
-                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list/identify）。"
+                Resolution = QueryResolutionStatuses.Unsupported,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list/identify）。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.UnsupportedRelation, FieldPath = "relation" }
+                }
             };
         }
 
@@ -213,46 +224,108 @@ public sealed class RulesPlanService
                 foreach (var hint in hints)
                     search.Results.Add(new ConceptSummary
                     {
-                        Id = RulesTextUtils.GetElementId(hint),
-                        Name = hint.TryGetProperty("name", out var hintName) && hintName.TryGetProperty("zh", out var hintZh)
-                            ? hintZh.GetString() ?? "" : RulesTextUtils.GetElementId(hint),
-                        Description = RulesTextUtils.ExtractDescriptionZh(hint)
+                        Id = RulesTextUtils.GetElementId(hint.Element),
+                        Path = hint.CanonicalPath,
+                        Name = hint.Element.TryGetProperty("name", out var hintName) && hintName.TryGetProperty("zh", out var hintZh)
+                            ? hintZh.GetString() ?? "" : RulesTextUtils.GetElementId(hint.Element),
+                        Description = RulesTextUtils.ExtractDescriptionZh(hint.Element)
                     });
             }
             return new PlanItemResult
             {
                 Relation = relation, Entity = entity,
                 Status = search.Results.Count > 0 ? "unresolved" : "no_match",
+                Resolution = search.Results.Count > 0
+                    ? QueryResolutionStatuses.Candidates
+                    : QueryResolutionStatuses.NotFound,
+                Coverage = QueryCoverageStatuses.Unknown,
                 RetrievalQueries = new List<string> { entity },
                 Candidates = search.Results,
-                Message = "按完整描述检索的候选概念（含定义与匹配分数）。请核对颜色、形状和位置，再用确切 id 发起 explain；通用概念命中不能证明已识别客人描述的组件。"
+                Message = "按完整描述检索的候选概念（含定义与匹配分数）。请核对颜色、形状和位置，再用确切 id 发起 explain；通用概念命中不能证明已识别客人描述的组件。",
+                Omissions =
+                {
+                    new QueryOmission
+                    {
+                        Reason = search.Results.Count > 0
+                            ? QueryOmissionReasons.AmbiguousIdentity
+                            : QueryOmissionReasons.NoRuleCoverage,
+                        FieldPath = "entity"
+                    }
+                }
             };
         }
 
         // flow/list 不需要实体解析
         if (relation == "flow")
         {
-            var gameConcept = _catalog.GetConcepts(game, "game");
-            return gameConcept.Count > 0
-                ? new PlanItemResult
-                {
-                    Relation = relation, Entity = entity, Status = "ok", Matched = gameConcept.ToList(),
-                    RetrievalQueries = new List<string>()
-                }
-                : new PlanItemResult
+            var gameConcept = _catalog.GetConceptsWithPaths(game, "game").ToList();
+            if (gameConcept.Count == 0)
+            {
+                return new PlanItemResult
                 {
                     Relation = relation,
                     Entity = entity,
                     Status = "no_match",
-                    Message = "规则库中没有该游戏的流程定义，无法返回任何流程数据。请向客人说明这部分规则未被规则库覆盖，不要自行补写规则。"
+                    Resolution = QueryResolutionStatuses.NotFound,
+                    Coverage = QueryCoverageStatuses.Unknown,
+                    Message = "规则库中没有该游戏的流程定义，无法返回任何流程数据。请向客人说明这部分规则未被规则库覆盖，不要自行补写规则。",
+                    Omissions =
+                    {
+                        new QueryOmission { Reason = QueryOmissionReasons.NoRuleCoverage, FieldPath = "flow" }
+                    }
                 };
+            }
+
+            var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
+                ? snapshot.Version
+                : null;
+            return new PlanItemResult
+            {
+                Relation = relation,
+                Entity = entity,
+                Status = "ok",
+                Resolution = QueryResolutionStatuses.Exact,
+                Coverage = QueryCoverageStatuses.Complete,
+                Source = "exact_id",
+                Matched = gameConcept.Select(hit => hit.Element).ToList(),
+                ResolvedTargets = gameConcept.Select(hit => hit.CanonicalPath).ToList(),
+                Payloads = gameConcept.Select(hit => new QueryPayload
+                {
+                    Type = QueryPayloadTypes.Definition,
+                    CanonicalPath = hit.CanonicalPath,
+                    RulesVersion = version,
+                    Completeness = QueryCoverageStatuses.Complete,
+                    Content = hit.Element.Clone()
+                }).ToList(),
+                RetrievalQueries = new List<string>()
+            };
         }
         if (relation == "list")
         {
+            var catalog = _searchService.ListAllConceptIds(game);
+            var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
+                ? snapshot.Version
+                : null;
             return new PlanItemResult
             {
-                Relation = relation, Entity = entity, Status = "ok",
-                Catalog = _searchService.ListAllConceptIds(game),
+                Relation = relation,
+                Entity = entity,
+                Status = "ok",
+                Resolution = QueryResolutionStatuses.Exact,
+                Coverage = QueryCoverageStatuses.Complete,
+                Source = "exact_id",
+                Catalog = catalog,
+                Payloads =
+                {
+                    new QueryPayload
+                    {
+                        Type = QueryPayloadTypes.CatalogPage,
+                        CanonicalPath = "catalog",
+                        RulesVersion = version,
+                        Completeness = QueryCoverageStatuses.Complete,
+                        Content = JsonSerializer.SerializeToElement(catalog)
+                    }
+                },
                 RetrievalQueries = new List<string>()
             };
         }
@@ -274,7 +347,7 @@ public sealed class RulesPlanService
         var hasIntent = !string.IsNullOrWhiteSpace(intent);
         var exactIsProcessNode = matched.Any(item =>
         {
-            var id = RulesTextUtils.GetElementId(item);
+            var id = RulesTextUtils.GetElementId(item.Element);
             var type = GetConceptTypeMap(game).GetValueOrDefault(id, "");
             return type is "actions" or "triggers" or "conditions" or "flow";
         });
@@ -282,12 +355,12 @@ public sealed class RulesPlanService
         // 它本身就是用户要的规则节点，不应被宽泛 intent 再次打散。
         var shouldSupplementExactIdentity = hasIntent && !exactIsProcessNode;
         var exactKeys = matched
-            .Select(RulesTextUtils.GetElementId)
+            .Select(item => RulesTextUtils.GetElementId(item.Element))
             .Where(id => !string.IsNullOrEmpty(id))
             .Distinct(StringComparer.Ordinal)
             .ToList();
         var exactCandidates = matched
-            .Select(item => ToConceptSummary(game, item))
+            .Select(item => ToConceptSummary(game, item.Element, item.CanonicalPath))
             .Where(item => !string.IsNullOrEmpty(item.Id))
             .ToList();
         var retrievalQueries = new List<string>();
@@ -335,14 +408,14 @@ public sealed class RulesPlanService
         if (matched.Count == 0 && (merged.Count == 0 || merged[0].Score < 0.55f))
         {
             var qhits = ResolveFromQuestion(game, question, out _)
-                .Where(el => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(el)))
+                .Where(hit => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(hit.Element)))
                 .ToList();
             var mergedKeys = merged
                 .Select(RulesSearchRanking.CandidateKey)
                 .ToHashSet(StringComparer.Ordinal);
             foreach (var hint in qhits)
             {
-                var candidate = ToConceptSummary(game, hint);
+                var candidate = ToConceptSummary(game, hint.Element, hint.CanonicalPath);
                 if (string.IsNullOrEmpty(candidate.Id) || !mergedKeys.Add(RulesSearchRanking.CandidateKey(candidate)))
                     continue;
                 candidate.MatchReason = "question_hint";
@@ -366,9 +439,15 @@ public sealed class RulesPlanService
                     Relation = relation,
                     Entity = entity,
                     Status = "unresolved",
+                    Resolution = QueryResolutionStatuses.Candidates,
+                    Coverage = QueryCoverageStatuses.Unknown,
                     RetrievalQueries = retrievalQueries,
                     Candidates = merged,
-                    Message = "实体名称已有命中，但完整 intent 保留了对象之外的动作/场景疑点，且检索指向了其他规则节点。候选描述只用于选择目标：若其中某项直接回答 intent，请用它的准确 id、保持原 relation 和 intent 再查询一次以获取正式事实。"
+                    Message = "实体名称已有命中，但完整 intent 保留了对象之外的动作/场景疑点，且检索指向了其他规则节点。候选描述只用于选择目标：若其中某项直接回答 intent，请用它的准确 id、保持原 relation 和 intent 再查询一次以获取正式事实。",
+                    Omissions =
+                    {
+                        new QueryOmission { Reason = QueryOmissionReasons.AmbiguousIdentity, FieldPath = "target" }
+                    }
                 };
             }
 
@@ -383,7 +462,8 @@ public sealed class RulesPlanService
             var autoTop = merged[0];
             if (RulesSearchRanking.CanAutoResolve(merged))
             {
-                var autoMatched = _catalog.GetConcepts(game, autoTop.Id).ToList();
+                var autoMatched = PreferGameIdentity(
+                    autoTop.Id, _catalog.GetConceptsWithPaths(game, autoTop.Id).ToList());
                 if (autoMatched.Count > 0)
                 {
                     return BuildOkResult(
@@ -397,9 +477,15 @@ public sealed class RulesPlanService
                 Relation = relation,
                 Entity = entity,
                 Status = "unresolved",
+                Resolution = QueryResolutionStatuses.Candidates,
+                Coverage = QueryCoverageStatuses.Unknown,
                 RetrievalQueries = retrievalQueries,
                 Candidates = merged,
-                Message = "实体未精确命中——程序结合名称定位与完整 intent 检索出以下候选（含分数与来源）。候选描述只用于选择目标；请从中挑选真正回答 intent 的概念，用它的 id 或中文名、保持原 relation 和 intent 重新发起查询。"
+                Message = "实体未精确命中——程序结合名称定位与完整 intent 检索出以下候选（含分数与来源）。候选描述只用于选择目标；请从中挑选真正回答 intent 的概念，用它的 id 或中文名、保持原 relation 和 intent 重新发起查询。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.AmbiguousIdentity, FieldPath = "target" }
+                }
             };
         }
 
@@ -408,8 +494,14 @@ public sealed class RulesPlanService
             Relation = relation,
             Entity = entity,
             Status = "no_match",
+            Resolution = QueryResolutionStatuses.NotFound,
+            Coverage = QueryCoverageStatuses.Unknown,
             RetrievalQueries = retrievalQueries,
-            Message = $"程序未能在规则库中找到与「{entity}」足够相近的概念，本查询无法获得任何规则数据。请先尝试：一、用 list 浏览概念目录确认是否真的没有相近概念（也许名字不同）；二、用 identify 按外观或位置描述再找一次。若确认规则库中没有此规则事实，请向客人说明未查到，不要基于记忆补写规则。"
+            Message = $"程序未能在规则库中找到与「{entity}」足够相近的概念，本查询无法获得任何规则数据。请先尝试：一、用 list 浏览概念目录确认是否真的没有相近概念（也许名字不同）；二、用 identify 按外观或位置描述再找一次。若确认规则库中没有此规则事实，请向客人说明未查到，不要基于记忆补写规则。",
+            Omissions =
+            {
+                new QueryOmission { Reason = QueryOmissionReasons.NoRuleCoverage, FieldPath = "entity" }
+            }
         };
     }
 
@@ -522,7 +614,7 @@ public sealed class RulesPlanService
     }
 
 
-    private ConceptSummary ToConceptSummary(string game, JsonElement element)
+    private ConceptSummary ToConceptSummary(string game, JsonElement element, string? canonicalPath = null)
     {
         var id = RulesTextUtils.GetElementId(element);
         var name = "";
@@ -535,7 +627,7 @@ public sealed class RulesPlanService
         return new ConceptSummary
         {
             Id = id,
-            Path = id,
+            Path = string.IsNullOrEmpty(canonicalPath) ? id : canonicalPath,
             Name = string.IsNullOrEmpty(name) ? id : name,
             Type = type,
             Description = RulesTextUtils.ExtractDescriptionZh(element)
@@ -553,25 +645,49 @@ public sealed class RulesPlanService
         string game,
         string relation,
         string entity,
-        List<JsonElement> matched,
+        List<ConceptPathHit> matched,
         string source,
         string question,
         CancellationToken cancellationToken,
         IReadOnlyList<string>? retrievalQueries = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var resolvedId = RulesTextUtils.GetElementId(matched[0]);
+        var matchedElements = matched.Select(hit => hit.Element).ToList();
+        var resolvedId = RulesTextUtils.GetElementId(matchedElements[0]);
+        var rulesVersion = RulesSnapshotScope.Current is { } scope && scope.Game == game
+            ? scope.Version
+            : null;
 
         var item = new PlanItemResult
         {
             Relation = relation,
             Entity = entity,
             Status = "ok",
+            Resolution = QueryResolutionStatuses.Exact,
             Source = source,
-            Matched = matched,
-            Related = _referenceService.ExpandRelated(game, matched, light: source == "question_hit"),
+            ResolvedTargets = matched.Select(hit => hit.CanonicalPath)
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Distinct(StringComparer.Ordinal)
+                .ToList(),
+            Coverage = QueryCoverageStatuses.Complete,
+            Matched = matchedElements,
+            Related = _referenceService.ExpandRelated(game, matchedElements, light: source == "question_hit"),
             RetrievalQueries = retrievalQueries?.ToList() ?? new List<string>()
         };
+
+        // 每个规范路径都交付一个完整定义负载；正文不再从 matched 再复制一次给模型。
+        foreach (var hit in matched)
+        {
+            item.Payloads.Add(new QueryPayload
+            {
+                Type = QueryPayloadTypes.Definition,
+                CanonicalPath = hit.CanonicalPath,
+                RulesVersion = rulesVersion,
+                Completeness = QueryCoverageStatuses.Complete,
+                DefinitionSource = source,
+                Content = hit.Element.Clone()
+            });
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
         var localId = resolvedId.Contains("::") ? resolvedId[(resolvedId.IndexOf("::", StringComparison.Ordinal) + 2)..] : resolvedId;
@@ -585,24 +701,74 @@ public sealed class RulesPlanService
         // condition 关系：额外提取「能不能」答案所需的三要素——条件谓词、费用、目标约束
         if (relation == "condition" && matched.Count > 0)
         {
-            var el = matched[0];
+            var el = matched[0].Element;
             item.Condition = ExtractTopField(el, "<ontology::condition>");
             item.Cost = ExtractTopField(el, "<ontology::cost>");
             item.Target = ExtractTopField(el, "target");
+            var fields = new Dictionary<string, JsonElement>();
+            if (item.Condition.HasValue) fields["condition"] = item.Condition.Value;
+            if (item.Cost.HasValue) fields["cost"] = item.Cost.Value;
+            if (item.Target.HasValue) fields["target"] = item.Target.Value;
+            item.Payloads.Add(new QueryPayload
+            {
+                Type = QueryPayloadTypes.RelationFacts,
+                CanonicalPath = matched[0].CanonicalPath,
+                RulesVersion = rulesVersion,
+                Completeness = fields.Count > 0 ? QueryCoverageStatuses.Complete : QueryCoverageStatuses.Partial,
+                Data = fields.Count > 0 ? fields : null
+            });
+            if (fields.Count == 0)
+            {
+                item.Coverage = QueryCoverageStatuses.Partial;
+                item.Omissions.Add(new QueryOmission
+                {
+                    Reason = QueryOmissionReasons.FieldMissing,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    FieldPath = "condition|cost|target"
+                });
+            }
         }
 
         // ordering 关系：同级选项顺序 + 位置 + 循环结构（回答「之后是什么/何时结束」）
-        if (relation == "ordering" && pos != null)
+        if (relation == "ordering")
         {
-            item.Siblings = pos.Siblings;
-            item.PositionIndex = pos.Index;
-            item.Loop = pos.Loop;
+            if (pos != null)
+            {
+                item.Siblings = pos.Siblings;
+                item.PositionIndex = pos.Index;
+                item.Loop = pos.Loop;
+                var fields = new Dictionary<string, JsonElement>();
+                if (pos.Siblings.Count > 0)
+                    fields["siblings"] = JsonSerializer.SerializeToElement(pos.Siblings);
+                if (pos.Index >= 0)
+                    fields["position_index"] = JsonSerializer.SerializeToElement(pos.Index);
+                if (pos.Loop.HasValue)
+                    fields["loop"] = pos.Loop.Value.Clone();
+                item.Payloads.Add(new QueryPayload
+                {
+                    Type = QueryPayloadTypes.RelationFacts,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    RulesVersion = rulesVersion,
+                    Completeness = QueryCoverageStatuses.Complete,
+                    Data = fields
+                });
+            }
+            else
+            {
+                item.Coverage = QueryCoverageStatuses.Partial;
+                item.Omissions.Add(new QueryOmission
+                {
+                    Reason = QueryOmissionReasons.FieldMissing,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    FieldPath = "flow_position"
+                });
+            }
         }
 
         // boundary 关系：溢出/下溢/圈事件等边界字段 + 缺省语义说明
         if (relation == "boundary" && matched.Count > 0)
         {
-            var el = matched[0];
+            var el = matched[0].Element;
             var boundary = new Dictionary<string, JsonElement>();
             foreach (var key in new[]
                      {
@@ -614,6 +780,14 @@ public sealed class RulesPlanService
                 if (v.HasValue) boundary[key] = v.Value;
             }
             item.Boundary = boundary.Count > 0 ? boundary : null;
+            item.Payloads.Add(new QueryPayload
+            {
+                Type = QueryPayloadTypes.RelationFacts,
+                CanonicalPath = matched[0].CanonicalPath,
+                RulesVersion = rulesVersion,
+                Completeness = QueryCoverageStatuses.Complete,
+                Data = boundary
+            });
             item.Message = "未声明溢出/下溢补偿的轨道：缺省语义=该方向无事发生或该方向不会发生（见 ontology <ontology::overflow_compensation> 定义）。";
         }
 
@@ -621,20 +795,37 @@ public sealed class RulesPlanService
         // quantity.numeric 分支选择与求和。程序算得出的数不交给 LLM 从散文里读（1+1 交给计算器）。
         // 问题不含数量词/分数词、或命中概念无结构化数据时返回 null，序列化时省略。
         if (!string.IsNullOrWhiteSpace(question))
-            item.Facts = _factService.ExtractFacts(game, matched, question);
+            item.Facts = _factService.ExtractFacts(game, matchedElements, question);
+        if (item.Facts is { Count: > 0 })
+        {
+            foreach (var fact in item.Facts)
+            {
+                item.Payloads.Add(new QueryPayload
+                {
+                    Type = QueryPayloadTypes.ComputedFact,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    RulesVersion = rulesVersion,
+                    Completeness = QueryCoverageStatuses.Complete,
+                    Content = fact.Clone()
+                });
+            }
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
         return item;
     }
 
 
-    private List<JsonElement> ResolvePlanEntity(string game, string entity, out List<ConceptSummary> candidates, out string source)
+    private List<ConceptPathHit> ResolvePlanEntity(
+        string game, string entity, out List<ConceptSummary> candidates, out string source)
     {
         candidates = new List<ConceptSummary>();
         source = "";
         entity = entity.Trim();
+        if (string.IsNullOrEmpty(entity)) return new List<ConceptPathHit>();
 
-        var byId = _catalog.GetConcepts(game, entity).ToList();
+        var byId = PreferGameIdentity(
+            entity, _catalog.GetConceptsWithPaths(game, entity).ToList());
         if (byId.Count > 0)
         {
             source = "exact_id";
@@ -647,8 +838,12 @@ public sealed class RulesPlanService
         var lookup = _nameIndex.GetExactLookup(game);
         if (lookup.TryGetValue(entity, out var hits))
         {
-            var exact = new List<JsonElement>();
-            foreach (var h in hits) exact.AddRange(_catalog.GetConcepts(game, h.Id));
+            var exact = new List<ConceptPathHit>();
+            var seenPaths = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var h in hits)
+                foreach (var pathHit in PreferGameIdentity(h.Id, _catalog.GetConceptsWithPaths(game, h.Id).ToList()))
+                    if (seenPaths.Add(pathHit.CanonicalPath))
+                        exact.Add(pathHit);
             if (exact.Count > 0)
             {
                 source = hits[0].Kind;
@@ -662,13 +857,28 @@ public sealed class RulesPlanService
         if (containing.Count == 1)
         {
             source = "contain_unique";
-            return _catalog.GetConcepts(game, containing[0].Key).ToList();
+            return PreferGameIdentity(
+                containing[0].Key, _catalog.GetConceptsWithPaths(game, containing[0].Key).ToList());
         }
 
         candidates = containing
-            .Select(kv => new ConceptSummary { Id = kv.Key, Name = kv.Value })
+            .Select(kv => new ConceptSummary { Id = kv.Key, Path = kv.Key, Name = kv.Value })
             .ToList();
-        return new List<JsonElement>();
+        return new List<ConceptPathHit>();
+    }
+
+    /// <summary>
+    /// 无命名空间时游戏层身份优先；只有游戏层没有该 id 时才回退到本体。
+    /// 显式 ontology:: 查询仍只返回本体，保证两个同名 id 不会互相命中。
+    /// </summary>
+    private static List<ConceptPathHit> PreferGameIdentity(string requested, List<ConceptPathHit> hits)
+    {
+        if (hits.Count == 0 || requested.StartsWith("ontology::", StringComparison.Ordinal))
+            return hits;
+        var gameHits = hits
+            .Where(hit => !hit.CanonicalPath.StartsWith("ontology::", StringComparison.Ordinal))
+            .ToList();
+        return gameHits.Count > 0 ? gameHits : hits;
     }
 
 
@@ -681,10 +891,10 @@ public sealed class RulesPlanService
     private const int MaxQuestionHits = 4;
 
 
-    private List<JsonElement> ResolveFromQuestion(string game, string question, out string source)
+    private List<ConceptPathHit> ResolveFromQuestion(string game, string question, out string source)
     {
         source = "";
-        if (string.IsNullOrWhiteSpace(question)) return new List<JsonElement>();
+        if (string.IsNullOrWhiteSpace(question)) return new List<ConceptPathHit>();
 
         var lookup = _nameIndex.GetExactLookup(game);
 
@@ -699,25 +909,28 @@ public sealed class RulesPlanService
                 idx = question.IndexOf(key, idx + 1, StringComparison.OrdinalIgnoreCase);
             }
         }
-        if (spans.Count == 0) return new List<JsonElement>();
+        if (spans.Count == 0) return new List<ConceptPathHit>();
 
         spans.Sort((a, b) => a.Len != b.Len ? b.Len.CompareTo(a.Len) : a.Start.CompareTo(b.Start));
 
         var takenUntil = -1;
-        var result = new List<JsonElement>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var result = new List<ConceptPathHit>();
+        var seenPaths = new HashSet<string>(StringComparer.Ordinal);
         foreach (var (key, start, len) in spans)
         {
             if (start < takenUntil) continue; // 被更长的名字覆盖（如「家庭成员」盖住「成员」）
             takenUntil = start + len;
             foreach (var h in lookup[key])
             {
-                if (!seen.Add(h.Id)) continue;
-                result.AddRange(_catalog.GetConcepts(game, h.Id));
-                if (result.Count >= MaxQuestionHits)
+                foreach (var pathHit in PreferGameIdentity(h.Id, _catalog.GetConceptsWithPaths(game, h.Id).ToList()))
                 {
-                    source = "question_hit";
-                    return result;
+                    if (!seenPaths.Add(pathHit.CanonicalPath)) continue;
+                    result.Add(pathHit);
+                    if (result.Count >= MaxQuestionHits)
+                    {
+                        source = "question_hit";
+                        return result;
+                    }
                 }
             }
         }
@@ -726,7 +939,99 @@ public sealed class RulesPlanService
         return result;
     }
 
+    private static readonly HashSet<string> KnownPayloadTypes = new(StringComparer.Ordinal)
+    {
+        QueryPayloadTypes.Definition,
+        QueryPayloadTypes.CatalogPage,
+        QueryPayloadTypes.FlowSlice,
+        QueryPayloadTypes.RelationFacts,
+        QueryPayloadTypes.ComputedFact
+    };
 
+    /// <summary>
+    /// 在结果离开发起服务前补齐 resolution/coverage，并拒绝未知 payload 静默成功。
+    /// 这是内部契约归一化，不改变已有检索决策。
+    /// </summary>
+    private static void NormalizeResultContract(PlanItemResult item, string? rulesVersion)
+    {
+        item.RulesVersion ??= rulesVersion;
+        if (string.IsNullOrWhiteSpace(item.QueryId))
+            item.QueryId = "query_" + Guid.NewGuid().ToString("N")[..12];
+
+        foreach (var payload in item.Payloads)
+            payload.RulesVersion ??= item.RulesVersion;
+
+        var unknownPayload = item.Payloads.FirstOrDefault(payload => !KnownPayloadTypes.Contains(payload.Type));
+        if (unknownPayload != null)
+        {
+            item.Status = "unsupported";
+            item.Resolution = QueryResolutionStatuses.Unsupported;
+            item.Coverage = QueryCoverageStatuses.Unknown;
+            item.Payloads.Clear();
+            item.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.UnsupportedRelation,
+                CanonicalPath = unknownPayload.CanonicalPath,
+                FieldPath = "payload.type"
+            });
+            item.Message = "程序返回了消费者不认识的 payload 类型，已按 unsupported 处理。";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(item.Resolution))
+        {
+            item.Resolution = item.Status switch
+            {
+                "ok" => QueryResolutionStatuses.Exact,
+                "unresolved" => QueryResolutionStatuses.Candidates,
+                "unsupported" => QueryResolutionStatuses.Unsupported,
+                "no_match" => QueryResolutionStatuses.NotFound,
+                _ => QueryResolutionStatuses.Invalid
+            };
+        }
+
+        if (item.Resolution == QueryResolutionStatuses.Exact)
+        {
+            item.Candidates = null;
+            if (item.Payloads.Count == 0 && item.Status == "ok")
+            {
+                item.Resolution = QueryResolutionStatuses.Invalid;
+                item.Status = "unsupported";
+                item.Coverage = QueryCoverageStatuses.Unknown;
+                item.Omissions.Add(new QueryOmission
+                {
+                    Reason = QueryOmissionReasons.ContinuationRequired,
+                    FieldPath = "payloads"
+                });
+            }
+        }
+
+        if (item.Payloads.Count > 0)
+        {
+            var payloadPaths = item.Payloads
+                .Select(payload => payload.CanonicalPath)
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+            foreach (var path in payloadPaths)
+                if (!item.ResolvedTargets.Contains(path, StringComparer.Ordinal))
+                    item.ResolvedTargets.Add(path);
+
+            if (item.Coverage != QueryCoverageStatuses.Partial)
+            {
+                item.Coverage = item.Payloads.All(payload =>
+                        payload.Completeness == QueryCoverageStatuses.Complete)
+                    ? QueryCoverageStatuses.Complete
+                    : QueryCoverageStatuses.Partial;
+            }
+        }
+        else if (string.IsNullOrWhiteSpace(item.Coverage))
+        {
+            item.Coverage = item.Resolution == QueryResolutionStatuses.Exact
+                ? QueryCoverageStatuses.Partial
+                : QueryCoverageStatuses.Unknown;
+        }
+    }
 
     /// <summary>提取概念顶层的指定字段（无则 null）。</summary>
     private static JsonElement? ExtractTopField(JsonElement element, string key)

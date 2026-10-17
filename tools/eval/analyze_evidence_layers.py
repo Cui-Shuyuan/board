@@ -22,16 +22,40 @@ def ids(items):
     return out
 
 
-def matches(expected: str, values: list[str]) -> bool:
-    for value in values:
-        if value == expected:
-            return True
-        local = value.split("::")[-1] if "::" in value else value
-        if local == expected:
-            return True
-        if local.endswith("." + expected):
-            return True
+CANONICAL_MARKERS = ("::", "/", ".")
+
+
+def _canonical_identity(value: str) -> bool:
+    return any(marker in value for marker in CANONICAL_MARKERS)
+
+
+def match_identity(expected: str, values: list[str]) -> bool | None:
+    """Canonical exact match; None means the historical format cannot prove
+    identity without a prohibited last-segment heuristic."""
+    if not expected:
+        return None
+    if not values:
+        return False
+    if expected in values:
+        return True
+    expected_canonical = _canonical_identity(expected)
+    values_canonical = any(_canonical_identity(value) for value in values)
+    if expected_canonical and values_canonical:
+        return False
+    if expected_canonical or values_canonical:
+        return None
     return False
+
+
+def matches_any(expected: list[str], values: list[str]) -> bool | None:
+    states = [match_identity(item, values) for item in expected]
+    if not states:
+        return None
+    if any(state is True for state in states):
+        return True
+    if all(state is False for state in states):
+        return False
+    return None
 
 
 def trace_questions(run: dict) -> list[dict]:
@@ -108,9 +132,9 @@ def main():
             "retrieval_paths": list(dict.fromkeys(retrieval)),
             "packed_paths": None if packed is None else list(dict.fromkeys(packed)),
             "cited_paths": None if cited is None else list(dict.fromkeys(cited)),
-            "retrieval_hit": any(matches(exp, retrieval) for exp in expected),
-            "pack_hit": None if packed is None else any(matches(exp, packed) for exp in expected),
-            "citation_hit": None if cited is None else any(matches(exp, cited) for exp in expected),
+            "retrieval_hit": matches_any(expected, retrieval),
+            "pack_hit": None if packed is None else matches_any(expected, packed),
+            "citation_hit": None if cited is None else matches_any(expected, cited),
             "answer_pass": judged.get(run["run_id"], {}).get("pass"),
             "orchestration_outcome": orchestration.get("outcome"),
             "coverage_statuses": [q.get("coverageStatus") for q in question_trace if q.get("coverageStatus")],
@@ -127,7 +151,7 @@ def main():
         subset = [row for row in rows if row["version"] == version]
         def rate(key):
             vals = [row[key] for row in subset if row[key] is not None]
-            return round(sum(bool(v) for v in vals) / len(vals), 4) if vals else None
+            return round(sum(1 for v in vals if v is True) / len(vals), 4) if vals else None
         coverage = Counter(
             status for row in subset for status in row["coverage_statuses"]
         )

@@ -56,14 +56,40 @@ def collect_ids(items):
     return out
 
 
-def matches_expected(expected: str, values: list[str]) -> bool:
-    for value in values or []:
-        if value == expected:
-            return True
-        local = value.split("::")[-1] if "::" in value else value
-        if local == expected or local.endswith("." + expected):
-            return True
+CANONICAL_MARKERS = ("::", "/", ".")
+
+
+def _is_canonical_identity(value: str) -> bool:
+    return any(marker in value for marker in CANONICAL_MARKERS)
+
+
+def matches_expected(expected: str, values: list[str]) -> bool | None:
+    """Canonical exact-path match. Historical bare ids that would only match
+    via a last-segment heuristic return None (unknown) instead of a fake hit."""
+    if not expected:
+        return None
+    if not values:
+        return False
+    if expected in values:
+        return True
+    expected_canonical = _is_canonical_identity(expected)
+    values_canonical = any(_is_canonical_identity(value) for value in values)
+    if expected_canonical and values_canonical:
+        return False
+    if expected_canonical or values_canonical:
+        return None
     return False
+
+
+def matches_any(expected: set[str], values: list[str]) -> bool | None:
+    states = [matches_expected(exp, values) for exp in expected]
+    if not states:
+        return None
+    if any(state is True for state in states):
+        return True
+    if all(state is False for state in states):
+        return False
+    return None
 
 
 def analyze_evidence(question: dict, response: dict) -> dict:
@@ -108,15 +134,15 @@ def analyze_evidence(question: dict, response: dict) -> dict:
     packed_paths = list(dict.fromkeys(packed_paths))
     cited_paths = list(dict.fromkeys(cited_paths))
     retrieval_layer_hit = (
-        any(matches_expected(exp, retrieval_paths) for exp in expected)
+        matches_any(expected, retrieval_paths)
         if expected and retrieval_observable else None
     )
     pack_layer_hit = (
-        any(matches_expected(exp, packed_paths) for exp in expected)
+        matches_any(expected, packed_paths)
         if expected and packed_observable else None
     )
     citation_layer_hit = (
-        any(matches_expected(exp, cited_paths) for exp in expected)
+        matches_any(expected, cited_paths)
         if expected and cited_observable else None
     )
     return {
