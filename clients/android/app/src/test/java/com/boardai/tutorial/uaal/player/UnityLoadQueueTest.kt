@@ -106,6 +106,53 @@ class UnityLoadQueueTest {
     }
 
     @Test
+    fun queueLoadForCueTimelineTrackSendsSharedSwitchFlag() {
+        queue.queueLoad(GAME_ID, VERSION_ROOT, "quick", cueTimelinePlanActive = true)
+
+        queue.onUnityReady()
+
+        assertEquals(
+            listOf(
+                "SetUnityTouchControlsEnabled" to "false",
+                "LoadGameWithRoot" to
+                    "$GAME_ID|$VERSION_ROOT|quick|cue_timeline=1",
+                "RequestStatus" to ""
+            ),
+            commands
+        )
+    }
+
+    @Test
+    fun queueLoadNeverDropsActualPlanModeFlag() {
+        queue.queueLoad(GAME_ID, VERSION_ROOT, "full", cueTimelinePlanActive = true)
+
+        queue.onUnityReady()
+
+        assertTrue(
+            commands.contains(
+                "LoadGameWithRoot" to
+                    "$GAME_ID|$VERSION_ROOT|full|cue_timeline=1"
+            )
+        )
+    }
+
+    @Test
+    fun queueLoadFallbackRuntimeSendsLegacyPayloadWithoutFlag() {
+        queue.queueLoad(GAME_ID, VERSION_ROOT, "quick", cueTimelinePlanActive = false)
+
+        queue.onUnityReady()
+
+        assertEquals(
+            listOf(
+                "SetUnityTouchControlsEnabled" to "false",
+                "LoadGameWithRoot" to "$GAME_ID|$VERSION_ROOT|quick",
+                "RequestStatus" to ""
+            ),
+            commands
+        )
+    }
+
+    @Test
     fun queueLoadAfterReadySendsImmediately() {
         queue.onUnityReady()
         commands.clear()

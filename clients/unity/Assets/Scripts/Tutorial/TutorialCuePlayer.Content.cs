@@ -43,6 +43,10 @@ namespace BoardGameTutorial
                 return false;
             }
             NormalizeDoc();
+            // The flag comes from the bridge/content switch, never from a
+            // second Inspector default.  Missing/invalid plans disable the
+            // entire track so no per-cue mixed timeline can be produced.
+            LoadCueTimelineTrackPlan();
 
             if (!v2AnimPlayer.LoadTrack(gameRoot, track))
             {

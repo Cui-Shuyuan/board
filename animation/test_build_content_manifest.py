@@ -140,6 +140,33 @@ class BuildContentManifestTest(unittest.TestCase):
         self.assertEqual(version_before, second["version"])
         self.assertEqual(files_before, self.manifest()["files"])
 
+    def test_cue_timeline_plan_is_packaged_and_hashed(self) -> None:
+        first = self.publish()
+        plan = self.game_dir / "tutorial" / "full.cue-timeline.json"
+        plan.write_text(
+            json.dumps({
+                "schema": "tutorial-cue-plan-set/v1",
+                "schema_version": 1,
+                "game_id": self.game,
+                "track": "full",
+                "course": {"start": 0.0, "duration": 1.0},
+                "cues": [],
+            }),
+            encoding="utf-8",
+        )
+
+        second = self.publish()
+        paths = [entry["path"] for entry in self.manifest()["files"]]
+
+        self.assertNotEqual(first["version"], second["version"])
+        self.assertIn("tutorial/full.cue-timeline.json", paths)
+        released = (
+            self.release_dir(second["version"])
+            / "tutorial"
+            / "full.cue-timeline.json"
+        )
+        self.assertEqual(released.read_bytes(), plan.read_bytes())
+
     def test_editing_runtime_bytes_changes_version(self) -> None:
         first = self.publish()
         (self.game_dir / "media" / "tts" / "full" / "one.mp3").write_bytes(b"mp3-v2")

@@ -63,6 +63,10 @@ data class UnityStatus(
     val cueTotal: Int = 0,
     val position: Float = 0f,
     val duration: Float = 0f,
+    val cueTimelinePlanActive: Boolean = false,
+    val cueStart: Float = 0f,
+    val globalPosition: Float = 0f,
+    val courseDuration: Float = 0f,
     val touchControlsEnabled: Boolean = false
 )
 
@@ -83,6 +87,10 @@ object UnityStatusHolder {
                 cueTotal = obj.optInt("cueTotal", 0),
                 position = obj.optDouble("position", 0.0).toFloat(),
                 duration = obj.optDouble("duration", 0.0).toFloat(),
+                cueTimelinePlanActive = obj.optBoolean("cueTimelinePlanActive", false),
+                cueStart = obj.optDouble("cueStart", 0.0).toFloat(),
+                globalPosition = obj.optDouble("globalPosition", 0.0).toFloat(),
+                courseDuration = obj.optDouble("courseDuration", 0.0).toFloat(),
                 touchControlsEnabled = obj.optBoolean("touchControlsEnabled", false)
             )
         } catch (_: Exception) {

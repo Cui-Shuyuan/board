@@ -273,6 +273,7 @@ namespace BoardGameTutorial
 
             player.gameId = string.IsNullOrWhiteSpace(gameId) ? "" : gameId.Trim();
             player.tutorialRoot = "";
+            player.SetCueTimelineTrackEnabled(false);
             player.ReloadGame();
             Debug.Log("[AndroidTutorialBridge] LoadGame(" + player.gameId + ") forwarded.");
             PostStatus();
@@ -310,23 +311,36 @@ namespace BoardGameTutorial
             string versionRoot = (trackSeparator < 0
                 ? payload.Substring(separator + 1)
                 : payload.Substring(separator + 1, trackSeparator - separator - 1)).Trim();
-            string track = trackSeparator < 0
+            string trackAndOptions = trackSeparator < 0
                 ? "full"
                 : payload.Substring(trackSeparator + 1).Trim();
+            int optionSeparator = trackAndOptions.IndexOf('|');
+            string track = (optionSeparator < 0
+                ? trackAndOptions
+                : trackAndOptions.Substring(0, optionSeparator)).Trim();
+            string options = optionSeparator < 0
+                ? ""
+                : trackAndOptions.Substring(optionSeparator + 1).Trim();
             if (gameId.Length == 0 || versionRoot.Length == 0)
             {
                 Debug.LogWarning("[AndroidTutorialBridge] LoadGameWithRoot missing game/root: " + payload);
                 return;
             }
             if (track.Length == 0) track = "full";
+            bool cueTimelinePlanActive = ParseCueTimelineOption(options);
 
             player.gameId = gameId;
             player.tutorialRoot = versionRoot;
             player.track = track;
+            // Android sends the mode it actually selected from the same
+            // content catalog switch and plan validation.  Unity must not
+            // derive a separate track default here.
+            player.SetCueTimelineTrackEnabled(cueTimelinePlanActive);
             player.ReloadGame();
             Debug.Log(
                 "[AndroidTutorialBridge] LoadGameWithRoot(game=" + gameId +
-                ", root=" + versionRoot + ", track=" + track + ") forwarded.");
+                ", root=" + versionRoot + ", track=" + track +
+                ", cueTimelinePlan=" + cueTimelinePlanActive + ") forwarded.");
             PostStatus();
         }
 
@@ -455,6 +469,19 @@ namespace BoardGameTutorial
             return fallback;
         }
 
+        private static bool ParseCueTimelineOption(string options)
+        {
+            if (string.IsNullOrWhiteSpace(options)) return false;
+            string[] parts = options.Split('|');
+            for (int i = 0; i < parts.Length; i++)
+            {
+                string part = parts[i].Trim();
+                if (part == "cue_timeline=1") return true;
+                if (part == "cue_timeline=0") return false;
+            }
+            return false;
+        }
+
         private void PostStatusIfChanged()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -506,6 +533,10 @@ namespace BoardGameTutorial
                 cueTotal = player.TotalCueCount,
                 position = player.Position,
                 duration = player.Duration,
+                cueTimelinePlanActive = player.CueTimelineTrackPlanActive,
+                cueStart = player.CueTimelineCueStart,
+                globalPosition = player.CueTimelineGlobalPosition,
+                courseDuration = player.CueTimelineCourseDuration,
                 touchControlsEnabled = player.UnityTouchControlsEnabled,
             };
 
@@ -541,6 +572,10 @@ namespace BoardGameTutorial
             public int cueTotal;
             public float position;
             public float duration;
+            public bool cueTimelinePlanActive;
+            public float cueStart;
+            public float globalPosition;
+            public float courseDuration;
             public bool touchControlsEnabled;
         }
     }

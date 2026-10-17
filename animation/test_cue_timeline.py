@@ -538,6 +538,28 @@ class LegacyAdapterTests(unittest.TestCase):
         self.assertEqual(runtime, runtime_before)
         self.assertEqual(compiled, compiled_before)
 
+    def test_plan_set_has_version_and_navigation_metadata(self):
+        runtime = self._runtime([
+            self._cue(
+                "c/a", 0.0, 1.0, section_audio=True,
+                text="navigation text",
+                group_path=["chapter", "section"],
+                refs=["ref.one"],
+            )
+        ])
+        document = timeline.adapt_legacy_runtime(
+            runtime, {"cues": [{"id": "c/a", "duration": 1.0}]})
+        self.assertEqual(document["schema_version"], timeline.PLAN_SET_VERSION)
+        self.assertEqual(document["cues"][0]["text"], "navigation text")
+        self.assertEqual(
+            document["cues"][0]["group_path"], ["chapter", "section"])
+        self.assertEqual(document["cues"][0]["refs"], ["ref.one"])
+
+        bad_version = copy.deepcopy(document)
+        bad_version["schema_version"] = 2
+        with self.assertRaisesRegex(timeline.CueTimelineError, "schema_version"):
+            timeline.validate_plan_set(bad_version)
+
 
 if __name__ == "__main__":
     unittest.main()

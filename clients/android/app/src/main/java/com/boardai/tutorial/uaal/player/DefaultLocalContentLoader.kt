@@ -19,7 +19,11 @@ class DefaultLocalContentLoader(
         val gameRoot = contentStore.gameRoot(active.version, game.id)
         if (!gameRoot.isDirectory) return null
 
-        val timeline = loadTimeline(gameRoot, track) ?: return null
+        val timeline = loadTimeline(
+            gameRoot = gameRoot,
+            track = track,
+            planEnabled = track in game.cueTimelineTracks
+        ) ?: return null
         return LoadedLocalContent(
             version = active.version,
             versionRoot = contentStore.versionRoot(active.version, game.id),
@@ -28,11 +32,19 @@ class DefaultLocalContentLoader(
         )
     }
 
-    private fun loadTimeline(gameRoot: File, track: String): TutorialTimeline? {
+    private fun loadTimeline(
+        gameRoot: File,
+        track: String,
+        planEnabled: Boolean
+    ): TutorialTimeline? {
         if (!gameRoot.isDirectory) return null
 
         return try {
-            TutorialTimeline.load(gameRoot, track)
+            TutorialTimeline.load(
+                gameRoot = gameRoot,
+                track = track,
+                planEnabled = planEnabled
+            )
         } catch (_: Throwable) {
             null
         }

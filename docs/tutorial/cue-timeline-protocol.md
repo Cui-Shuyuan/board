@@ -1,6 +1,6 @@
 # Cue Timeline Protocol v1
 
-状态：Phase 3 已实现 Unity 侧音频/视觉/字幕执行器和 feature-flagged 控制器接线；只对 3 个 allowlist 迁移样例生效，`useCueTimelineV1` 默认关闭。Android `TutorialTimeline` 未切换，旧 `section_audio` / `audio_plan` 路径保留，真机音频输出尚未验证。
+状态：Phase 4 已建立 Unity 与 Android 共同读取的生成后 plan set，并把 Splendor `quick` track 作为整体迁移到新时间轴。track 级开关来自内容 catalog 的 `cue_timeline_tracks`；默认关闭。开启时 Android 先验证整条 track 的 plan，然后把实际使用的模式通过 `LoadGameWithRoot` payload 传给 Unity。旧 `runtime` / `compiled` / `section_audio` / `audio_plan` 路径全部保留；`full` 尚未迁移。真机全 quick track 音频仍待用户实际听测。
 
 本文先固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
 
@@ -10,6 +10,113 @@
 - 共享 `AudioSource` 交接标记；
 - 用 `AudioSource.isPlaying == false` 直接判定自然完成；
 - 固定提前量或延后量补偿 MP3 定位。
+
+## Phase 4：track 级共享 plan 与开关
+
+### 4.1 实现范围
+
+Phase 4 只迁移 `quick` track，`full` 继续走旧 runtime 路径，留给 Phase 5。迁移粒度是 track，不是 cue：
+
+- 一个 track 要么全部 cue 使用 `{track}.cue-timeline.json` 中的 `course.start` / `course.duration`；
+- 要么全部 cue 使用旧 `{track}.runtime.json`；
+- 不允许同一 track 内部分 cue 用 plan duration、部分 cue 用 runtime duration。
+
+原因很直接：旧 runtime 的每条 cue 的 `start` 是按旧 duration 累加出来的；新 plan 的有效 duration 可能因为编译动画更长而改变。只要混合，后续 cue 的全局起点就会同时存在两套坐标系，Android 进度条、章节跳转、QA context、Unity 状态和音频完成事件会逐步漂移且无法恢复一致。因此 loader 在发现缺 cue、额外 cue、顺序错位、总时长不一致、schema/version 不匹配时，必须整条 track 回退，而不是逐 cue 回退。
+
+### 4.2 生成入口与文件
+
+```bash
+python3 animation/build_cue_timeline.py --game splendor --track quick
+```
+
+输出：
+
+```text
+content/games/splendor/tutorial/quick.cue-timeline.json
+```
+
+生成器只读取：
+
+```text
+content/games/splendor/tutorial/quick.runtime.json
+content/games/splendor/tutorial/anim/v2/quick.compiled.json
+```
+
+不会修改任何已有 runtime/compiled 文件。生成结果使用：
+
+- plan set schema：`tutorial-cue-plan-set/v1`
+- plan set `schema_version`：`1`
+- 单 cue schema：`tutorial-cue-plan/v1`
+
+每个 cue 至少包含：
+
+- `cue_id`；
+- `course.start` / `course.duration`；
+- `tracks`（audio/visual/subtitle 执行数据；字幕窗口在 `subtitles`）；
+- `entry`。
+
+有效 duration 由 Phase 1 legacy adapter 计算：
+
+```text
+max(旧 runtime duration, audio track 内容结束, compiled animation duration)
+```
+
+后续 cue 的 `course.start` 由这个有效 duration 重新累加；仅保留 legacy runtime 中显式存在的 gap。输出同时携带 `text`、`group_path`、`refs` 等非时间元数据，供 Android 章节树/预览使用，但这些字段不参与播放时钟。
+
+生成器会再次执行 `validate_plan_set`，并且重复运行必须产生逐字节相同的文件。内容发布脚本 `tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json` 加入 release 文件集合、manifest entry、大小与 SHA-256 完整性校验。
+
+### 4.3 共享 track 级开关
+
+开关唯一来源是内容 catalog：
+
+```json
+"cue_timeline_tracks": ["quick"]
+```
+
+- 缺省或空数组表示关闭；此时 quick/full 行为与 Phase 3 分支完全一致。
+- 当前只允许把 `quick` 放进该数组；`full` 不迁移。
+- Android `GameCatalogEntry` 解析该字段，并据此决定 `TutorialTimeline` 是否尝试 plan。
+- Android 只有在整条 plan 校验通过后才把 `cueTimelinePlanActive=1` 写入 `LoadGameWithRoot` payload；否则传旧 payload，Unity 会整条 track 使用 legacy。
+- Unity 不再使用独立 Inspector 开关决定 track 模式；它只消费 Android 传来的实际模式。这样不会出现 Android 用 plan、Unity 用旧时长，或反向漂移。
+
+payload 示例：
+
+```text
+splendor|/content/versions/{version}|quick|cue_timeline=1
+```
+
+旧的 `game|root` 与 `game|root|track` payload 继续兼容，默认按旧路径处理。
+
+### 4.4 Android loader
+
+`TutorialTimeline.load(...)` 保留旧 runtime loader，并新增 `planEnabled` 模式：
+
+- `planEnabled=true` 时读取 `tutorial/{track}.cue-timeline.json`；
+- 严格校验 schema、`schema_version=1`、track、course、每 cue `course.start/duration`、tracks 结构、segment 时间范围、cue 顺序/覆盖与总时长；
+- 校验通过后，总时长、章节首 cue start、cue start/duration、`globalToCue` / `cueIndexToGlobal`、进度条、seek 和 QA context 全部使用 plan；
+- plan 缺失、JSON 非法、schema/version 不匹配、cue 覆盖不完整或总时长不一致时，记录明确 warning，并回退整条 track 的 runtime timing；
+- `planEnabled=false` 时完全保留旧 runtime 行为，即使 plan 文件存在也不读取。
+
+### 4.5 Unity loader 与控制器
+
+Unity 新增 plan set loader，读取与 Android 完全相同的 `{track}.cue-timeline.json`，并用 runtime cue id 顺序校验完整覆盖。track 模式开启时：
+
+- quick 的每个 cue 都从同一 plan set 取 `CueTimelinePlan`，不再按 cue 临时合成时间轴；
+- `PlayCue` / `PlayCueAt` / `SeekTo` / `SeekRelative` / autoAdvance / cancel 全部由 plan 驱动的同一个 `CuePlaybackController` 执行；
+- 控制器 `position` / `duration` / `cueIndex` 和状态上报中的 cue 全局位置、track 总时长与 Android plan 同源；
+- generation 取消语义不变，旧回调不能改变新 cue/timeline。
+
+Phase 3 的 `useCueTimelineV1` + allowlist 代码仅作兼容保留；track 模式开启时该 allowlist 分支完全不执行。plan 校验失败时整个 track 回退 legacy，不会回退到 Phase 3 单 cue 混合模式。
+
+### 4.6 回退策略
+
+Android 与 Unity 都要求整条 track 的 plan 是可解析、版本匹配、cue 覆盖完整且连续的。任一检查失败时：
+
+- Android：明确日志 + 使用 legacy runtime 的整条 track；
+- Unity：明确日志 + `fallback=legacy-track`，所有 cue 走旧播放路径；
+- 不允许只对成功解析的 cue 使用 plan。
+
+真实设备上的 quick 全 track 音频/视觉/字幕主观验收仍需用户执行；自动化测试只能证明时间轴、schema、映射和执行路径一致，不能替代听测。
 
 ## 1. 调查证据
 

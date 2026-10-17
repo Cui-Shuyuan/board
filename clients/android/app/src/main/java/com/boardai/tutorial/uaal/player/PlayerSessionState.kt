@@ -12,5 +12,6 @@ data class PlayerSessionState(
     val timeline: TutorialTimeline? = null,
     val activeTrack: String? = null,
     val activeVersion: String? = null,
+    val cueTimelinePlanActive: Boolean = false,
     val playbackError: String? = null
 )

@@ -26,7 +26,14 @@ data class GameCatalogEntry(
     val rulesReady: Boolean = true,
     val tutorialReady: Boolean = tutorialTrack.isNotBlank(),
     val tutorialTracks: List<String> =
-        if (tutorialTrack.isNotBlank()) listOf(tutorialTrack) else emptyList()
+        if (tutorialTrack.isNotBlank()) listOf(tutorialTrack) else emptyList(),
+    /**
+     * Tracks whose complete cue timeline has been migrated to the shared
+     * `tutorial/{track}.cue-timeline.json` plan.  This is the single feature
+     * switch source: Android uses it to decide the timeline mode and forwards
+     * the actual selected mode to Unity in the LoadGameWithRoot payload.
+     */
+    val cueTimelineTracks: List<String> = emptyList()
 ) {
     fun toJson(): JSONObject {
         val json = JSONObject()
@@ -41,6 +48,7 @@ data class GameCatalogEntry(
             .put("rules_ready", rulesReady)
             .put("tutorial_ready", tutorialReady)
             .put("tutorial_tracks", JSONArray(tutorialTracks))
+            .put("cue_timeline_tracks", JSONArray(cueTimelineTracks))
         if (tutorialReady && tutorialTrack.isNotBlank()) {
             json.put("tutorial_track", tutorialTrack)
         }
@@ -78,6 +86,11 @@ data class GameCatalogEntry(
                 rawTracks.isNotEmpty()
             }
             val tutorialTracks = if (tutorialReady) rawTracks else emptyList()
+            val cueTimelineTracks = json
+                .optJSONArray("cue_timeline_tracks")
+                .toStringList()
+                .filter { it in tutorialTracks }
+                .distinct()
             val rulesReady = if (json.has("rules_ready")) {
                 json.optBoolean("rules_ready", true)
             } else {
@@ -115,7 +128,8 @@ data class GameCatalogEntry(
                 contentFileCount = contentFileCount,
                 rulesReady = rulesReady,
                 tutorialReady = tutorialReady && tutorialTracks.isNotEmpty(),
-                tutorialTracks = tutorialTracks
+                tutorialTracks = tutorialTracks,
+                cueTimelineTracks = cueTimelineTracks
             )
         }
     }

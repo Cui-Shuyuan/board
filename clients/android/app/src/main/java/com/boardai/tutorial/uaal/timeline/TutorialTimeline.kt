@@ -6,6 +6,19 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.max
 
+enum class TimelineSource {
+    RUNTIME,
+    CUE_PLAN
+}
+
+internal fun logTimelineFallback(message: String) {
+    try {
+        android.util.Log.w("TutorialTimeline", message)
+    } catch (_: Throwable) {
+        System.err.println("[TutorialTimeline] $message")
+    }
+}
+
 /**
  * Native model of `tutorial/{track}.runtime.json`.
  *
@@ -21,8 +34,11 @@ import kotlin.math.max
 class TutorialTimeline private constructor(
     val cues: List<TimelineCue>,
     val totalDuration: Float,
-    val rootChapters: List<ChapterNode>
+    val rootChapters: List<ChapterNode>,
+    val source: TimelineSource = TimelineSource.RUNTIME,
+    val fallbackReason: String? = null
 ) {
+    val usesCueTimelinePlan: Boolean get() = source == TimelineSource.CUE_PLAN
     val cueCount: Int get() = cues.size
 
     val allChapters: List<ChapterNode> = buildList {
@@ -163,7 +179,21 @@ class TutorialTimeline private constructor(
         const val CHAPTER_START_SNAP_SECONDS = 0.5f
         private const val MAX_ACTIONS_PER_CUE = 8
 
-        fun load(gameRoot: File, track: String = "full"): TutorialTimeline {
+        /**
+         * Loads one track.
+         *
+         * [planEnabled] comes from the shared content switch
+         * (`cue_timeline_tracks` in the catalog).  When true the complete plan
+         * set is validated and used for every cue.  Any missing/invalid/
+         * mismatched plan falls back to the legacy runtime for the whole track;
+         * there is deliberately no per-cue fallback.
+         */
+        fun load(
+            gameRoot: File,
+            track: String = "full",
+            planEnabled: Boolean = false,
+            logger: (String) -> Unit = ::logTimelineFallback
+        ): TutorialTimeline {
             val runtimeFile = File(gameRoot, "tutorial/$track.runtime.json")
             require(runtimeFile.isFile) {
                 "missing runtime file: ${runtimeFile.absolutePath}"
@@ -172,13 +202,13 @@ class TutorialTimeline private constructor(
             val root = JSONObject(runtimeFile.readText(Charsets.UTF_8))
             val cueArray = root.optJSONArray("cues") ?: JSONArray()
 
-            val parsed = ArrayList<TimelineCue>(cueArray.length())
+            val runtimeCues = ArrayList<TimelineCue>(cueArray.length())
             for (i in 0 until cueArray.length()) {
                 val item = cueArray.optJSONObject(i) ?: continue
                 val id = item.optString("id", "")
                 if (id.isBlank()) continue
 
-                parsed += TimelineCue(
+                runtimeCues += TimelineCue(
                     id = id,
                     index = i,
                     start = item.optDouble("start", 0.0).toFloat().coerceAtLeast(0f),
@@ -188,22 +218,71 @@ class TutorialTimeline private constructor(
                     refs = item.optJSONArray("refs").toStringList()
                 )
             }
+            require(runtimeCues.isNotEmpty()) {
+                "runtime timeline has no usable cues: ${runtimeFile.absolutePath}"
+            }
+
+            var source = TimelineSource.RUNTIME
+            var fallbackReason: String? = null
+            var orderedCues: List<TimelineCue> = runtimeCues
+            var total = runtimeCues.maxOfOrNull { it.start + it.duration } ?: 0f
+
+            if (planEnabled) {
+                try {
+                    val plan = CueTimelinePlanLoader.load(
+                        gameRoot = gameRoot,
+                        track = track,
+                        runtimeCueIds = runtimeCues.map { it.id }
+                    )
+                    orderedCues = plan.cues.mapIndexed { index, planCue ->
+                        TimelineCue(
+                            id = planCue.id,
+                            index = index,
+                            start = planCue.start,
+                            duration = planCue.duration,
+                            text = planCue.text,
+                            groupPath = planCue.groupPath,
+                            refs = planCue.refs
+                        )
+                    }
+                    total = plan.totalDuration
+                    source = TimelineSource.CUE_PLAN
+                } catch (error: Throwable) {
+                    fallbackReason = error.message ?: error.javaClass.simpleName
+                    logger(
+                        "cue timeline plan disabled for track='$track'; " +
+                            "falling back to legacy runtime for the whole track: " +
+                            fallbackReason
+                    )
+                    orderedCues = runtimeCues
+                    total = runtimeCues.maxOfOrNull { it.start + it.duration } ?: 0f
+                    source = TimelineSource.RUNTIME
+                }
+            }
 
             val zoneBindings = loadZoneBindings(gameRoot, track)
             val actionsByCue = loadActionsByCue(gameRoot, track, zoneBindings)
-            val sorted = parsed
-                .sortedWith(compareBy<TimelineCue> { it.start }.thenBy { it.index })
-                .mapIndexed { index, cue ->
-                    cue.copy(index = index, actions = actionsByCue[cue.id].orEmpty())
-                }
+            // Runtime mode retains its historical start-sort behavior.  Plan
+            // mode is already required to be in runtime order by the loader so
+            // Unity's cueIndex and Android's cueIndex stay identical.
+            val indexed = if (source == TimelineSource.CUE_PLAN) {
+                orderedCues.mapIndexed { index, cue -> cue.copy(index = index) }
+            } else {
+                orderedCues
+                    .sortedWith(compareBy<TimelineCue> { it.start }.thenBy { it.index })
+                    .mapIndexed { index, cue -> cue.copy(index = index) }
+            }.map { cue ->
+                cue.copy(actions = actionsByCue[cue.id].orEmpty())
+            }
 
-            val total = sorted.maxOfOrNull { it.start + it.duration } ?: 0f
-            val chapters = buildChapterTree(sorted)
+            val chapters = buildChapterTree(indexed)
 
             return TutorialTimeline(
-                cues = sorted,
+                cues = indexed,
                 totalDuration = total,
-                rootChapters = chapters
+                rootChapters = chapters,
+                source = source,
+                fallbackReason = fallbackReason
             )
         }
 

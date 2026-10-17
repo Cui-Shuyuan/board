@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using BoardGameTutorial.Animation;
 using UnityEngine;
 
@@ -34,6 +35,17 @@ namespace BoardGameTutorial
         [Tooltip("显式 authored visual hold 时长；不是音频 pre-roll/post-roll。")]
         public float cueTimelineCompositeHoldSeconds = 0.75f;
 
+        // Phase 4 track mode.  This is not an independent Inspector default:
+        // the Android bridge sets it from the shared content catalog switch
+        // (`cue_timeline_tracks`) and then Unity loads the exact same plan file
+        // that Android used.  Missing/invalid plans disable the whole track and
+        // fall back to legacy playback for every cue.
+        private bool cueTimelineTrackRequested;
+        private bool cueTimelineTrackReady;
+        private bool cueTimelineTrackFallbackLogged;
+        private string cueTimelineTrackLoadError = "";
+        private CueTimelinePlanSet cueTimelineTrackPlanSet;
+
         private CueTimelineFeatureGate cueTimelineGate;
         private CuePlaybackController cueTimelineController;
         private UnityCueAudioExecutor cueTimelineAudioExecutor;
@@ -44,6 +56,141 @@ namespace BoardGameTutorial
         private bool cueTimelineActive;
         private bool cueTimelineAdvanceRequested;
         private CueTimelinePlan cueTimelinePlan;
+
+        /// <summary>
+        /// Applies the Android-provided track switch before ReloadGame().  The
+        /// caller must send the actual mode Android selected (plan vs runtime),
+        /// not a second independent default.
+        /// </summary>
+        public void SetCueTimelineTrackEnabled(bool enabled)
+        {
+            cueTimelineTrackRequested = enabled;
+            cueTimelineTrackReady = false;
+            cueTimelineTrackFallbackLogged = false;
+            cueTimelineTrackLoadError = "";
+            cueTimelineTrackPlanSet = null;
+            Debug.Log("[CueTimelineV1][Plan] track mode requested=" + enabled
+                + " track=" + track);
+        }
+
+        public bool CueTimelineTrackModeRequested
+        {
+            get { return cueTimelineTrackRequested; }
+        }
+
+        public bool CueTimelineTrackPlanActive
+        {
+            get
+            {
+                return cueTimelineTrackReady
+                    && cueTimelineTrackPlanSet != null
+                    && cueTimelineActive
+                    && cueTimelinePlan != null;
+            }
+        }
+
+        public float CueTimelineCueStart
+        {
+            get
+            {
+                if (CueTimelineTrackPlanActive && cueTimelinePlan != null)
+                    return Mathf.Max(0f, (float)cueTimelinePlan.course.start);
+                return CurrentCue != null ? CurrentCue.start : 0f;
+            }
+        }
+
+        public float CueTimelineGlobalPosition
+        {
+            get { return Mathf.Max(0f, CueTimelineCueStart + Position); }
+        }
+
+        public float CueTimelineCourseDuration
+        {
+            get
+            {
+                return cueTimelineTrackReady && cueTimelineTrackPlanSet != null
+                    && cueTimelineTrackPlanSet.course != null
+                    ? Mathf.Max(0f, (float)cueTimelineTrackPlanSet.course.duration)
+                    : 0f;
+            }
+        }
+
+        private bool LoadCueTimelineTrackPlan()
+        {
+            cueTimelineTrackPlanSet = null;
+            cueTimelineTrackReady = false;
+            cueTimelineTrackLoadError = "";
+            cueTimelineTrackFallbackLogged = false;
+
+            if (!cueTimelineTrackRequested) return false;
+            if (doc == null || doc.cues == null || doc.cues.Count == 0)
+            {
+                cueTimelineTrackLoadError = "runtime has no cues";
+                LogCueTimelineTrackFallback();
+                return false;
+            }
+            if (string.IsNullOrEmpty(gameRoot) || string.IsNullOrEmpty(track))
+            {
+                cueTimelineTrackLoadError = "gameRoot or track is empty";
+                LogCueTimelineTrackFallback();
+                return false;
+            }
+
+            string path = Path.Combine(
+                gameRoot, "tutorial", track + ".cue-timeline.json");
+            try
+            {
+                if (!File.Exists(path))
+                    throw new FileNotFoundException("missing plan file", path);
+
+                CueTimelinePlanSet parsed = JsonUtility.FromJson<CueTimelinePlanSet>(
+                    File.ReadAllText(path));
+                var expectedCueIds = new List<string>(doc.cues.Count);
+                for (int i = 0; i < doc.cues.Count; i++)
+                {
+                    TutorialCue cue = doc.cues[i];
+                    if (cue == null || string.IsNullOrEmpty(cue.id))
+                        throw new ArgumentException(
+                            "runtime cue id is empty at index " + i);
+                    expectedCueIds.Add(cue.id);
+                }
+
+                string error;
+                if (!CueTimelinePlanSetValidator.TryValidate(
+                    parsed, gameId, track, expectedCueIds, out error))
+                    throw new ArgumentException(error);
+
+                cueTimelineTrackPlanSet = parsed;
+                cueTimelineTrackReady = true;
+                Debug.Log("[CueTimelineV1][Plan] loaded track=" + track
+                    + " cues=" + parsed.cues.Count
+                    + " duration=" + parsed.course.duration.ToString("0.000")
+                    + " path=" + path);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                cueTimelineTrackLoadError = ex.Message;
+                LogCueTimelineTrackFallback();
+                return false;
+            }
+        }
+
+        private void LogCueTimelineTrackFallback()
+        {
+            if (cueTimelineTrackFallbackLogged) return;
+            cueTimelineTrackFallbackLogged = true;
+            Debug.LogWarning("[CueTimelineV1][Plan] fallback=legacy-track track="
+                + track + " reason=" + cueTimelineTrackLoadError);
+        }
+
+        private CueTimelinePlan FindTrackPlanForCue(string cueId)
+        {
+            if (!cueTimelineTrackReady || cueTimelineTrackPlanSet == null)
+                return null;
+            return CueTimelinePlanSetValidator.FindCue(
+                cueTimelineTrackPlanSet, cueId);
+        }
 
         private void EnsureCueTimelineController()
         {
@@ -79,6 +226,38 @@ namespace BoardGameTutorial
             plan = null;
             if (doc == null || doc.cues == null || index < 0 || index >= doc.cues.Count)
                 return false;
+
+            // Track mode and the Phase 3 per-cue allowlist are mutually
+            // exclusive.  In track mode every cue comes from the single shared
+            // plan set; if the set is unavailable all cues stay on legacy.
+            if (cueTimelineTrackRequested)
+            {
+                if (!cueTimelineTrackReady || cueTimelineTrackPlanSet == null)
+                {
+                    LogCueTimelineTrackFallback();
+                    return false;
+                }
+
+                TutorialCue trackCue = doc.cues[index];
+                CueTimelinePlan trackPlan = FindTrackPlanForCue(
+                    trackCue != null ? trackCue.id : "");
+                if (trackPlan == null)
+                {
+                    cueTimelineTrackLoadError =
+                        "plan set has no cue at runtime index " + index;
+                    cueTimelineTrackReady = false;
+                    LogCueTimelineTrackFallback();
+                    return false;
+                }
+
+                EnsureCueTimelineController();
+                RefreshCueTimelineRuntimePaths();
+                plan = trackPlan;
+                Debug.Log("[CueTimelineV1][Plan] cue ready cue=" + trackPlan.cue_id
+                    + " start=" + trackPlan.course.start.ToString("0.000")
+                    + " duration=" + trackPlan.course.duration.ToString("0.000"));
+                return true;
+            }
 
             if (cueTimelineGate == null) cueTimelineGate = new CueTimelineFeatureGate();
             cueTimelineGate.Enabled = useCueTimelineV1;
@@ -294,6 +473,9 @@ namespace BoardGameTutorial
             cueTimelineActive = false;
             cueTimelineAdvanceRequested = false;
             cueTimelinePlan = null;
+            cueTimelineTrackPlanSet = null;
+            cueTimelineTrackReady = false;
+            cueTimelineTrackFallbackLogged = false;
             if (cueTimelineAudioExecutor != null) cueTimelineAudioExecutor.Dispose();
             if (cueTimelineVisualExecutor != null) cueTimelineVisualExecutor.Dispose();
             if (cueTimelineAudioSource != null)

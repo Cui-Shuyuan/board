@@ -22,6 +22,7 @@ from typing import Any
 SOURCE_SCHEMA = "tutorial-cue-source/v1"
 PLAN_SCHEMA = "tutorial-cue-plan/v1"
 PLAN_SET_SCHEMA = "tutorial-cue-plan-set/v1"
+PLAN_SET_VERSION = 1
 
 TRACK_KINDS = frozenset({"visual", "audio"})
 TRACK_TAIL_POLICIES = {
@@ -613,6 +614,10 @@ def validate_plan_set(document: dict) -> dict:
         raise CueTimelineError(
             f"document.schema: expected {PLAN_SET_SCHEMA!r}, "
             f"got {document.get('schema')!r}")
+    if document.get("schema_version") != PLAN_SET_VERSION:
+        raise CueTimelineError(
+            f"document.schema_version: expected {PLAN_SET_VERSION}, "
+            f"got {document.get('schema_version')!r}")
     cues = _list(document.get("cues"), "document.cues")
     if not cues:
         raise CueTimelineError("document.cues: must not be empty")
@@ -914,6 +919,12 @@ def adapt_legacy_runtime(runtime: dict,
             "tracks": tracks,
             "subtitles": copy.deepcopy(cue.get("subtitles") or []),
         }
+        # Navigation/presentation metadata is not timing data.  Keeping it in
+        # the plan makes the generated plan self-contained for Android chapter
+        # trees while the legacy runtime stays the fallback source of truth.
+        for metadata_key in ("text", "group_path", "refs"):
+            if metadata_key in cue:
+                plan[metadata_key] = copy.deepcopy(cue.get(metadata_key))
         if cue_diagnostics:
             plan["diagnostics"] = copy.deepcopy(cue_diagnostics)
             for diagnostic in cue_diagnostics:
@@ -925,6 +936,7 @@ def adapt_legacy_runtime(runtime: dict,
 
     document = {
         "schema": PLAN_SET_SCHEMA,
+        "schema_version": PLAN_SET_VERSION,
         "game_id": runtime.get("game_id"),
         "track": runtime.get("track"),
         "course": {

@@ -357,6 +357,86 @@ internal static class Program
         return subtitles;
     }
 
+    private static CueTimelinePlan PlanAt(string cueId, double start, double duration)
+    {
+        var plan = new CueTimelinePlan
+        {
+            schema = "tutorial-cue-plan/v1",
+            cue_id = cueId,
+            entry = "fixture/previous",
+            course = new CueTimelineCourse { start = start, duration = duration },
+            tracks = new List<CueTimelineTrack>
+            {
+                new CueTimelineTrack
+                {
+                    id = "audio.main",
+                    kind = "audio",
+                    tail_policy = "silence",
+                    segments = new List<CueTimelineSegment>
+                    {
+                        new CueTimelineSegment
+                        {
+                            id = "a.silence", type = "silence",
+                            cue_start = 0.0, duration = duration,
+                        },
+                    },
+                },
+            },
+        };
+        return plan;
+    }
+
+    private static CueTimelinePlanSet PlanSetFixture()
+    {
+        return new CueTimelinePlanSet
+        {
+            schema = CueTimelinePlanSetValidator.Schema,
+            schema_version = CueTimelinePlanSetValidator.SchemaVersion,
+            game_id = "fixture",
+            track = "quick",
+            course = new CueTimelineCourse { start = 0.0, duration = 5.0 },
+            cues = new List<CueTimelinePlan>
+            {
+                PlanAt("q/a", 0.0, 2.0),
+                PlanAt("q/b", 2.0, 3.0),
+            },
+        };
+    }
+
+    private static void TestCueTimelinePlanSetValidation()
+    {
+        var set = PlanSetFixture();
+        var expectedIds = new List<string> { "q/a", "q/b" };
+        string error;
+        Check(CueTimelinePlanSetValidator.TryValidate(
+            set, "fixture", "quick", expectedIds, out error),
+            "plan set accepts complete track coverage: " + error);
+
+        var wrongVersion = PlanSetFixture();
+        wrongVersion.schema_version = 2;
+        Check(!CueTimelinePlanSetValidator.TryValidate(
+            wrongVersion, "fixture", "quick", expectedIds, out error),
+            "plan set rejects schema version mismatch");
+
+        var missingCue = PlanSetFixture();
+        missingCue.cues.RemoveAt(1);
+        Check(!CueTimelinePlanSetValidator.TryValidate(
+            missingCue, "fixture", "quick", expectedIds, out error),
+            "plan set rejects partial cue coverage");
+
+        var overlap = PlanSetFixture();
+        overlap.cues[1].course.start = 1.5;
+        Check(!CueTimelinePlanSetValidator.TryValidate(
+            overlap, "fixture", "quick", expectedIds, out error),
+            "plan set rejects overlapping cue starts");
+
+        var wrongTotal = PlanSetFixture();
+        wrongTotal.course.duration = 9.0;
+        Check(!CueTimelinePlanSetValidator.TryValidate(
+            wrongTotal, "fixture", "quick", expectedIds, out error),
+            "plan set rejects incorrect track duration");
+    }
+
     private static void TestCueStateMachineAndReadyGating()
     {
         Check(CuePlaybackStateMachine.CanTransition(CuePlaybackState.Idle, CuePlaybackState.Preparing),
@@ -1439,6 +1519,7 @@ internal static class Program
         TestAnnotationsAndMagnifier();
         TestSameTimeCompiledOrderIsStable();
 
+        TestCueTimelinePlanSetValidation();
         TestCueStateMachineAndReadyGating();
         TestPreparationFailureIsNotCompletion();
         TestCueClockAdvancesAndPauses();

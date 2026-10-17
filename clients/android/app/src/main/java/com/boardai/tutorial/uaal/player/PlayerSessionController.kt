@@ -66,11 +66,17 @@ class PlayerSessionController(
                     timeline = loaded.timeline,
                     activeTrack = resolvedTrack.takeIf { it.isNotBlank() },
                     activeVersion = loaded.version,
+                    cueTimelinePlanActive = loaded.timeline.usesCueTimelinePlan,
                     playbackError = null
                 )
                 onRecordPlay(game.id)
                 onSetPreparingGame(null)
-                loadQueue.queueLoad(game.id, loaded.versionRoot.absolutePath, resolvedTrack)
+                loadQueue.queueLoad(
+                    gameId = game.id,
+                    versionRoot = loaded.versionRoot.absolutePath,
+                    track = resolvedTrack,
+                    cueTimelinePlanActive = loaded.timeline.usesCueTimelinePlan
+                )
             }
         }
     }

@@ -10,7 +10,8 @@ recursively copying the game directory.  Unity reads:
 
   * tutorial/{track}.runtime.json
   * tutorial/anim/v2/{track}.compiled.json
-  * media paths referenced by the runtime/compiled JSON (TTS mp3, card scans,
+  * tutorial/{track}.cue-timeline.json when the track has a Phase 4 plan
+  * media paths referenced by those JSON documents (TTS mp3, card scans,
     marker scans, etc.)
 
 QA logs, animation sources, stage sources, README files, Python tools,
@@ -270,7 +271,14 @@ def collect_runtime_files(game_dir: Path) -> list[Path]:
             )
         package[compiled_relative] = compiled_path
 
-        for source_path in (runtime_path, compiled_path):
+        source_paths = [runtime_path, compiled_path]
+        plan_relative = f"tutorial/{track}.cue-timeline.json"
+        plan_path = game_dir / plan_relative
+        if plan_path.is_file():
+            package[plan_relative] = plan_path
+            source_paths.append(plan_path)
+
+        for source_path in source_paths:
             try:
                 document = json.loads(source_path.read_text(encoding="utf-8"))
             except json.JSONDecodeError as exc:
