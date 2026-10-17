@@ -38,6 +38,15 @@ class CompareVersionIdentityTests(unittest.TestCase):
                     {"category": "protocol", "durationMs": 1, "selfDurationMs": 1},
                 ],
                 "timelineAccounting": {"isReconciled": True, "coveredMs": 120},
+                "timelineCategories": [
+                    {"category": "model", "selfMs": 88},
+                    {"category": "tool", "selfMs": 3},
+                    {"category": "search", "selfMs": 7},
+                    {"category": "read", "selfMs": 4},
+                    {"category": "assembly", "selfMs": 2},
+                    {"category": "serialization", "selfMs": 1},
+                    {"category": "protocol", "selfMs": 1},
+                ],
             },
         }
         result = module.analyze_evidence({}, response)
@@ -53,9 +62,10 @@ class CompareVersionIdentityTests(unittest.TestCase):
         self.assertEqual(result["assembly_span_ms"], 3)
         self.assertEqual(result["serialization_span_ms"], 2)
         self.assertEqual(result["protocol_span_ms"], 1)
-        self.assertEqual(result["model_self_ms"], 90)
-        self.assertEqual(result["tool_self_ms"], 4)
-        self.assertEqual(result["assembly_self_ms"], 3)
+        self.assertEqual(result["model_self_ms"], 88)
+        self.assertEqual(result["tool_self_ms"], 3)
+        self.assertEqual(result["assembly_self_ms"], 2)
+        self.assertTrue(result["timeline_category_costs_observable"])
         self.assertTrue(result["timeline_reconciled"])
 
 

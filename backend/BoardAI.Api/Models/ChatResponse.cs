@@ -157,6 +157,17 @@ public class ChatOrchestrationTrace
     /// <summary>本次请求的单调时钟时间线；模型/tool/搜索/装配 span 都相对请求起点。</summary>
     public List<ChatTimelineSpan> Timeline { get; set; } = new();
     public ChatTimelineAccounting? TimelineAccounting { get; set; }
+    /// <summary>按类别分配的 exclusive 时间；用于避免父 span 与搜索/读取等子 span 重复累计。</summary>
+    public List<ChatTimelineCategoryCost> TimelineCategories { get; set; } = new();
+}
+
+public class ChatTimelineCategoryCost
+{
+    public string Category { get; set; } = "";
+    public int SpanCount { get; set; }
+    public double InclusiveMs { get; set; }
+    public double SelfMs { get; set; }
+    public double SubtractedChildMs { get; set; }
 }
 
 /// <summary>一个可对账的请求内时间 span。并行 span 共用并发组，不能简单相加当总耗时。</summary>
@@ -233,6 +244,80 @@ internal static class ChatTimelineAccountingCalculator
             if (hasCurrent) childUnion += currentEnd - currentStart;
             span.SelfDurationMs = Math.Round(Math.Max(0, span.DurationMs - childUnion), 3);
         }
+    }
+
+    public static List<ChatTimelineCategoryCost> ComputeCategoryCosts(
+        IEnumerable<ChatTimelineSpan> spans,
+        double toleranceMs = 0.001)
+    {
+        var list = spans
+            .Where(span => span.DurationMs > 0)
+            .ToList();
+
+        static double UnionLength(
+            IEnumerable<(double Start, double End)> intervals, double tolerance)
+        {
+            var ordered = intervals
+                .OrderBy(interval => interval.Start)
+                .ThenBy(interval => interval.End)
+                .ToList();
+            var union = 0d;
+            var currentStart = 0d;
+            var currentEnd = 0d;
+            var hasCurrent = false;
+            foreach (var interval in ordered)
+            {
+                if (!hasCurrent)
+                {
+                    currentStart = interval.Start;
+                    currentEnd = interval.End;
+                    hasCurrent = true;
+                }
+                else if (interval.Start <= currentEnd + tolerance)
+                {
+                    currentEnd = Math.Max(currentEnd, interval.End);
+                }
+                else
+                {
+                    union += currentEnd - currentStart;
+                    currentStart = interval.Start;
+                    currentEnd = interval.End;
+                }
+            }
+            if (hasCurrent) union += currentEnd - currentStart;
+            return union;
+        }
+
+        var costs = new List<ChatTimelineCategoryCost>();
+        foreach (var group in list.GroupBy(span => span.Category, StringComparer.Ordinal))
+        {
+            var ownSpans = group.ToList();
+            var ownIntervals = ownSpans
+                .Select(span => (span.StartMs, span.StartMs + span.DurationMs))
+                .ToList();
+            var ownInclusive = UnionLength(ownIntervals, toleranceMs);
+            var childIntervals = list
+                .Where(span => !string.Equals(span.Category, group.Key, StringComparison.Ordinal))
+                .Where(span => ownIntervals.Any(own =>
+                    span.StartMs >= own.Item1 - toleranceMs
+                    && span.StartMs + span.DurationMs <= own.Item2 + toleranceMs))
+                .Select(span => (span.StartMs, span.StartMs + span.DurationMs))
+                .ToList();
+            var childUnion = UnionLength(childIntervals, toleranceMs);
+            var self = Math.Max(0, ownInclusive - childUnion);
+            costs.Add(new ChatTimelineCategoryCost
+            {
+                Category = group.Key,
+                SpanCount = ownSpans.Count,
+                InclusiveMs = Math.Round(ownInclusive, 3),
+                SelfMs = Math.Round(self, 3),
+                SubtractedChildMs = Math.Round(childUnion, 3)
+            });
+        }
+        return costs
+            .OrderByDescending(cost => cost.InclusiveMs)
+            .ThenBy(cost => cost.Category, StringComparer.Ordinal)
+            .ToList();
     }
 
     public static ChatTimelineAccounting Compute(

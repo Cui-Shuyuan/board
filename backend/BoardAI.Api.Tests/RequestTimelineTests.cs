@@ -95,6 +95,31 @@ public sealed class RequestTimelineTests
         Assert.Equal(100, spans.Sum(span => span.SelfDurationMs));
     }
 
+    [Fact]
+    public void CategoryCosts_SubtractNestedChildIntervals_AndDoNotDoubleCountParentAssembly()
+    {
+        var spans = new List<ChatTimelineSpan>
+        {
+            new() { Name = "tool", Category = "tool", StartMs = 0, DurationMs = 100 },
+            new() { Name = "plan", Category = "assembly", StartMs = 5, DurationMs = 75 },
+            new() { Name = "search", Category = "search", StartMs = 10, DurationMs = 30 },
+            new() { Name = "read", Category = "read", StartMs = 50, DurationMs = 10 },
+            new() { Name = "model", Category = "model", StartMs = 110, DurationMs = 90 }
+        };
+
+        var costs = ChatTimelineAccountingCalculator.ComputeCategoryCosts(spans)
+            .ToDictionary(cost => cost.Category, cost => cost);
+
+        Assert.Equal(100, costs["tool"].InclusiveMs);
+        Assert.Equal(25, costs["tool"].SelfMs);
+        Assert.Equal(75, costs["assembly"].InclusiveMs);
+        Assert.Equal(35, costs["assembly"].SelfMs);
+        Assert.Equal(30, costs["search"].SelfMs);
+        Assert.Equal(10, costs["read"].SelfMs);
+        Assert.Equal(90, costs["model"].SelfMs);
+        Assert.Equal(190, costs.Values.Sum(cost => cost.SelfMs));
+    }
+
     private static LLMChatResponse ToolResponse(string arguments) => new()
     {
         Usage = new LLMUsage { PromptTokens = 11, CompletionTokens = 3 },

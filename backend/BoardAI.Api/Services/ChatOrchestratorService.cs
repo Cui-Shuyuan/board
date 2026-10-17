@@ -635,6 +635,7 @@ public class ChatOrchestratorService
             });
         }
         ChatTimelineAccountingCalculator.ComputeSelfDurations(trace.Timeline);
+        trace.TimelineCategories = ChatTimelineAccountingCalculator.ComputeCategoryCosts(trace.Timeline);
         var repairSpans = trace.Timeline.Where(span => span.ProtocolRepair).ToList();
         trace.ProtocolRepairModelCallCount = repairSpans.Count(span => span.Category == "model");
         trace.ProtocolRepairMs = Math.Round(repairSpans.Sum(span => span.DurationMs), 2);

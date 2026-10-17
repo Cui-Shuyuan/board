@@ -157,6 +157,24 @@ def analyze_evidence(question: dict, response: dict) -> dict:
 
     timeline = orchestration.get("timeline") or orchestration.get("Timeline") or []
     timeline_spans = timeline if isinstance(timeline, list) else []
+    timeline_categories = (
+        orchestration.get("timelineCategories")
+        or orchestration.get("TimelineCategories")
+        or []
+    )
+    if not isinstance(timeline_categories, list):
+        timeline_categories = []
+    category_self_costs = {}
+    for item in timeline_categories:
+        if not isinstance(item, dict):
+            continue
+        category = flexible(item, "category", "Category", default="")
+        self_ms = flexible(item, "selfMs", "SelfMs", default=None)
+        if category and self_ms is not None:
+            try:
+                category_self_costs[category] = float(self_ms)
+            except (TypeError, ValueError):
+                pass
 
     def span_sum(category):
         total = 0.0
@@ -188,6 +206,13 @@ def analyze_evidence(question: dict, response: dict) -> dict:
             except (TypeError, ValueError):
                 return None
         return round(total, 2) if observed else 0.0
+
+    def category_self(category):
+        if category_self_costs:
+            return round(category_self_costs.get(category, 0.0), 2)
+        # Older traces may not have server-side category costs; fall back to
+        # per-span self durations but mark observability separately.
+        return span_self_sum(category)
 
     accounting = orchestration.get("timelineAccounting") or orchestration.get("TimelineAccounting") or {}
     return {
@@ -245,14 +270,15 @@ def analyze_evidence(question: dict, response: dict) -> dict:
         "assembly_span_ms": span_sum("assembly"),
         "serialization_span_ms": span_sum("serialization"),
         "protocol_span_ms": span_sum("protocol"),
-        "model_self_ms": span_self_sum("model"),
-        "tool_self_ms": span_self_sum("tool"),
-        "search_self_ms": span_self_sum("search"),
-        "read_self_ms": span_self_sum("read"),
-        "navigation_self_ms": span_self_sum("navigation"),
-        "assembly_self_ms": span_self_sum("assembly"),
-        "serialization_self_ms": span_self_sum("serialization"),
-        "protocol_self_ms": span_self_sum("protocol"),
+        "model_self_ms": category_self("model"),
+        "tool_self_ms": category_self("tool"),
+        "search_self_ms": category_self("search"),
+        "read_self_ms": category_self("read"),
+        "navigation_self_ms": category_self("navigation"),
+        "assembly_self_ms": category_self("assembly"),
+        "serialization_self_ms": category_self("serialization"),
+        "protocol_self_ms": category_self("protocol"),
+        "timeline_category_costs_observable": bool(category_self_costs),
         "timeline_covered_ms": flexible(accounting, "coveredMs", "CoveredMs"),
         "timeline_unaccounted_ms": flexible(accounting, "unaccountedMs", "UnaccountedMs"),
         "timeline_overlap_ms": flexible(accounting, "overlapMs", "OverlapMs"),
