@@ -32,16 +32,20 @@ public sealed class PromptIsolationTests
 
         Assert.Equal("LEGACY_FINAL", reply);
         Assert.NotNull(captured);
-        Assert.Equal("execute_plan", Assert.Single(captured!.ToolNames));
+        Assert.Contains("execute_plan", captured!.ToolNames);
+        Assert.Contains("submit_answer", captured.ToolNames);
         var system = captured.Messages.First(message => message.Role == "system").Content!;
         Assert.Contains("LEGACY_ONLY testgame", system);
         Assert.DoesNotContain("PROGRAM_ONLY", system);
         Assert.Equal("system", captured.Messages[0].Role);
         Assert.Contains(captured.Messages, message => message.Role == "user" && message.Content == "测试问题");
-        var schema = Assert.Single(captured.ToolSchemas);
-        Assert.Contains("\"name\":\"execute_plan\"", schema);
-        Assert.Contains("\"queries\"", schema);
-        Assert.Contains("\"required\":[\"relation\"]", schema);
+        Assert.Contains(captured.ToolSchemas, schema =>
+            schema.Contains("\"name\":\"execute_plan\"", StringComparison.Ordinal)
+            && schema.Contains("\"queries\"", StringComparison.Ordinal)
+            && schema.Contains("\"required\":[\"relation\"]", StringComparison.Ordinal));
+        Assert.Contains(captured.ToolSchemas, schema =>
+            schema.Contains("\"name\":\"submit_answer\"", StringComparison.Ordinal)
+            && schema.Contains("\"outcome\"", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -132,7 +136,8 @@ public sealed class PromptIsolationTests
         var legacy = llm.GetProperty("LegacySystemPrompt").GetString() ?? "";
         var program = llm.GetProperty("ProgramSystemPrompt").GetString() ?? "";
 
-        Assert.Contains("你只有一个工具 execute_plan", legacy);
+        Assert.Contains("你有两个工具", legacy);
+        Assert.Contains("submit_answer", legacy);
         Assert.Contains("查询计划编写", legacy);
         Assert.DoesNotContain("你只有一个工具 execute_plan", program);
         Assert.DoesNotContain("execute_plan", program);

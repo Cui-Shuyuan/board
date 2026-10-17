@@ -218,7 +218,7 @@ public sealed class ChatOrchestratorServiceTests
     }
 
     [Fact]
-    public async Task ProcessAsync_UnconfirmedCandidateFinalAnswer_GetsOneTargetedConfirmationCorrection()
+    public async Task ProcessAsync_UnresolvedCandidate_NoLongerForcesMechanicalConfirmationRound()
     {
         using var fixture = new RulesFixture();
         using var rules = fixture.CreateService();
@@ -228,31 +228,25 @@ public sealed class ChatOrchestratorServiceTests
             correctionSeen |= call.Messages.Any(message =>
                 message.Role == "user" && message.Content?.Contains("先不要直接回答") == true);
 
-            if (call.HasTools)
+            if (call.HasTools && call.Index == 1)
             {
-                if (call.Index == 1)
-                    return Task.FromResult(ToolCallResponse(
-                        """{"plan":{"queries":[{"relation":"identify","entity":"小装置","intent":"确认用户问的是哪个组件"}]}}""",
-                        call.Index));
-                if (call.Index == 2)
-                    return Task.FromResult(FinalResponse("未确认就下结论"));
                 return Task.FromResult(ToolCallResponse(
-                    """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"确认用户问的是哪个组件"}]}}""",
+                    """{"plan":{"queries":[{"relation":"identify","entity":"小装置","intent":"确认用户问的是哪个组件"}]}}""",
                     call.Index));
             }
 
-            return Task.FromResult(FinalResponse("FINAL"));
+            return Task.FromResult(FinalResponse("请确认你指的是哪一个组件。"));
         });
         var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
 
         var result = await sut.ProcessWithEvidenceAsync("testgame", History());
 
-        Assert.Equal("FINAL", result.Reply);
-        Assert.True(correctionSeen);
-        Assert.Equal(3, llm.ToolCallCount);
-        Assert.Equal(1, llm.SummaryCount);
-        Assert.Equal("tier1", result.Evidence.Tier);
-        Assert.Equal("widget", result.Evidence.Queries[0].ConfirmedCandidateId);
+        Assert.Equal("请确认你指的是哪一个组件。", result.Reply);
+        Assert.False(correctionSeen);
+        Assert.Equal(2, llm.ToolCallCount);
+        Assert.Equal(0, llm.SummaryCount);
+        Assert.Equal("tier2", result.Evidence.Tier);
+        Assert.True(result.Evidence.HasCandidates);
     }
 
     [Theory]

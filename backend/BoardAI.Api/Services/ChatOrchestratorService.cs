@@ -212,6 +212,7 @@ public class ChatOrchestratorService
 
         var tools = BuildTools(gameId);
         var evidence = new AnswerEvidenceCollector();
+        var ledger = new RuleRequestLedger();
         var roundsExecuted = 0;
         string? stopReason = null;
 
@@ -251,34 +252,22 @@ public class ChatOrchestratorService
                         gameId, roundsExecuted, assistantMessage.ReasoningContent);
                 }
 
-                // If LLM returned a final answer (no tool calls), enforce the candidate-confirmation
-                // protocol once when an unresolved candidate is still the only route to a rule fact.
+                // A plain final message remains a compatibility fallback for clients/tests,
+                // but a bare unresolved candidate no longer forces a mechanical extra round.
+                // The model can answer, clarify, or choose submit_answer for structured
+                // evidence validation in this same model call.
                 if (assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0)
                 {
                     var reply = assistantMessage.Content ?? string.Empty;
-                    if (ShouldRequestCandidateConfirmation(
-                            evidence, protocolCorrections, round, totalToolCallsExecuted))
-                    {
-                        protocolCorrections++;
-                        _logger.LogWarning(
-                            "[Chat] Game {GameId}, Round {Round} blocked premature final answer: unresolved candidate(s) still pending; issuing one targeted confirmation correction",
-                            gameId, roundsExecuted);
-                        if (!string.IsNullOrWhiteSpace(reply))
-                            messages.Add(new ChatMessage { Role = "assistant", Content = reply });
-                        messages.Add(new ChatMessage
-                        {
-                            Role = "user",
-                            Content = BuildCandidateConfirmationCorrection(evidence)
-                        });
-                        continue;
-                    }
-
                     sw.Stop();
                     var builtEvidence = evidence.Build();
+                    builtEvidence.OrchestrationOutcome ??= "answer";
+                    requestTrace.Outcome = "answer";
                     LogEvidenceSummary(gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted, protocolCorrections, sw.Elapsed.TotalMilliseconds);
                     _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
                         gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
-                    return new ChatProcessResult(reply, builtEvidence, FinalizeLegacyTrace(requestTrace, sw));
+                    return new ChatProcessResult(
+                        reply, builtEvidence, FinalizeLegacyTrace(requestTrace, sw, ledger));
                 }
 
                 _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
@@ -321,30 +310,98 @@ public class ChatOrchestratorService
                         lastToolCallSignature = toolCallSignature;
                     }
 
-                    var toolStartMs = sw.Elapsed.TotalMilliseconds;
-                    var toolStopwatch = Stopwatch.StartNew();
-                    var result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
-                    toolStopwatch.Stop();
-                    AddTimelineSpan(requestTrace, new ChatTimelineSpan
+                    if (toolCall.Function.Name == "submit_answer")
                     {
-                        Name = toolCall.Function.Name,
-                        Category = "tool",
-                        StartMs = toolStartMs,
-                        DurationMs = toolStopwatch.Elapsed.TotalMilliseconds,
-                        ResultChars = result.Length
-                    });
+                        var terminal = HandleTerminalSubmission(toolCall, evidence, ledger);
+                        if (terminal.IsValid)
+                        {
+                            sw.Stop();
+                            var terminalEvidence = evidence.Build();
+                            terminalEvidence.OrchestrationOutcome = terminal.Outcome;
+                            terminalEvidence.ModelCallCount = requestTrace.ModelCallCount;
+                            terminalEvidence.CitedEvidenceCount = terminal.EvidenceCount;
+                            requestTrace.Outcome = terminal.Outcome;
+                            LogEvidenceSummary(
+                                gameId, terminalEvidence, roundsExecuted, totalToolCallsExecuted + 1,
+                                protocolCorrections, sw.Elapsed.TotalMilliseconds);
+                            _logger.LogInformation(
+                                "[Chat] Game {GameId}, terminal submit_answer outcome={Outcome}, evidenceCount={EvidenceCount}, reply={Reply}",
+                                gameId, terminal.Outcome, terminal.EvidenceCount, terminal.Text);
+                            return new ChatProcessResult(
+                                terminal.Text, terminalEvidence,
+                                FinalizeLegacyTrace(requestTrace, sw, ledger));
+                        }
+
+                        ledger.RecordProtocolValidationError();
+                        protocolCorrections++;
+                        var validationError = "{\"error\":\"" + EscapeJson(terminal.Error) + "\"}";
+                        messages.Add(new ChatMessage
+                        {
+                            Role = "tool",
+                            ToolCallId = toolCall.Id,
+                            Content = validationError
+                        });
+                        totalToolCallsExecuted++;
+                        stopReason = GetToolStopReason(
+                            1, repeatedCallCount, repeatedFailureCount);
+                        if (protocolCorrections >= _maxRepeatedFailures)
+                            stopReason = "protocol_validation_failures";
+                        if (stopReason != null)
+                        {
+                            AppendSkippedToolResults(messages, assistantMessage.ToolCalls, toolIndex + 1, stopReason);
+                            break;
+                        }
+                        continue;
+                    }
+
+                    var rulesVersion = RulesSnapshotScope.Current is { Game: var scopeGame } scope
+                        && scopeGame == gameId
+                            ? scope.Version
+                            : null;
+                    var ledgerKey = ledger.BuildKey(
+                        toolCall.Function.Name, toolCall.Function.Arguments, rulesVersion);
+                    string result;
+                    var reused = ledger.TryGet(ledgerKey, out var cachedResult);
+                    if (reused)
+                    {
+                        result = cachedResult;
+                        ledger.RecordReuse(ledgerKey);
+                    }
+                    else
+                    {
+                        var toolStartMs = sw.Elapsed.TotalMilliseconds;
+                        var toolStopwatch = Stopwatch.StartNew();
+                        result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
+                        toolStopwatch.Stop();
+                        AddTimelineSpan(requestTrace, new ChatTimelineSpan
+                        {
+                            Name = toolCall.Function.Name,
+                            Category = "tool",
+                            StartMs = toolStartMs,
+                            DurationMs = toolStopwatch.Elapsed.TotalMilliseconds,
+                            ResultChars = result.Length
+                        });
+                        if (toolCall.Function.Name == "execute_plan")
+                            ledger.Store(ledgerKey, result);
+                    }
                     totalToolCallsExecuted++;
                     effectiveToken.ThrowIfCancellationRequested();
 
                     _logger.LogInformation(
-                        "[Chat] tool timing: game={GameId}, tool={ToolName}, elapsedMs={Elapsed:F0}",
-                        gameId, toolCall.Function.Name, toolStopwatch.Elapsed.TotalMilliseconds);
+                        "[Chat] tool timing: game={GameId}, tool={ToolName}, reused={Reused}",
+                        gameId, toolCall.Function.Name, reused);
                     _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}",
                         gameId, toolCall.Function.Name, FormatForLog(result));
                     if (toolCall.Function.Name == "execute_plan")
                     {
-                        evidence.AddPlanResult(result);
-                        LogPlanProvenance(gameId, result);
+                        // Duplicate calls are visible in the message list as a re-delivery,
+                        // but the collector must not count the same query/evidence again.
+                        if (!reused)
+                        {
+                            evidence.AddPlanResult(result);
+                            ledger.ObserveToolResult(result);
+                            LogPlanProvenance(gameId, result);
+                        }
                     }
 
                     if (TryGetToolError(result, out var errorText))
@@ -409,7 +466,11 @@ public class ChatOrchestratorService
             var finalReply = await RequestFinalAnswerAsync(
                 gameId, question, messages, evidence, stopReason, roundsExecuted,
                 totalToolCallsExecuted, protocolCorrections, sw, requestTrace, effectiveToken);
-            return new ChatProcessResult(finalReply, evidence.Build(), FinalizeLegacyTrace(requestTrace, sw));
+            var finalEvidence = evidence.Build();
+            finalEvidence.OrchestrationOutcome ??= "answer";
+            requestTrace.Outcome ??= "answer";
+            return new ChatProcessResult(
+                finalReply, finalEvidence, FinalizeLegacyTrace(requestTrace, sw, ledger));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -425,10 +486,11 @@ public class ChatOrchestratorService
             _logger.LogInformation(
                 "[Chat] Game {GameId}, request timeout: rounds={Rounds}, elapsed={Elapsed:F0}ms",
                 gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds);
+            requestTrace.Outcome = "request_timeout";
             return new ChatProcessResult(
                 BuildIncompleteReply("request_timeout", evidence),
                 evidence.Build(),
-                FinalizeLegacyTrace(requestTrace, sw));
+                FinalizeLegacyTrace(requestTrace, sw, ledger));
         }
         finally
         {
@@ -476,10 +538,17 @@ public class ChatOrchestratorService
     }
 
     private static ChatOrchestrationTrace FinalizeLegacyTrace(
-        ChatOrchestrationTrace trace, Stopwatch requestStopwatch)
+        ChatOrchestrationTrace trace, Stopwatch requestStopwatch, RuleRequestLedger ledger)
     {
         var elapsed = requestStopwatch.Elapsed.TotalMilliseconds;
         trace.TimelineAccounting = ChatTimelineAccountingCalculator.Compute(trace.Timeline, elapsed);
+        trace.ReusedToolCallCount = ledger.ToolCallsReused;
+        trace.ExecutedToolCallCount = ledger.ToolCallsExecuted;
+        trace.DeliveredEvidenceCount = ledger.DeliveredEvidenceCount;
+        trace.DeliveredEvidenceChars = ledger.DeliveredEvidenceChars;
+        trace.CandidateAutoReadCount = ledger.CandidateAutoReadCount;
+        trace.ProtocolErrors.AddRange(
+            Enumerable.Repeat("protocol_validation_error", ledger.ProtocolValidationErrors));
         return trace;
     }
 
@@ -646,48 +715,6 @@ public class ChatOrchestratorService
             : "我还没有拿到足够的规则事实。";
 
         return "抱歉，" + reasonText + "，" + evidenceText + "请缩小问题范围，或者换一种更具体的问法。";
-    }
-
-    private bool ShouldRequestCandidateConfirmation(
-        AnswerEvidenceCollector evidence,
-        int protocolCorrections,
-        int currentRound,
-        int totalToolCallsExecuted)
-    {
-        if (protocolCorrections >= 1) return false;
-        if (currentRound + 1 >= _maxToolRounds) return false;
-        if (totalToolCallsExecuted >= _maxTotalToolCalls) return false;
-
-        var built = evidence.Build();
-        return built.Queries.Any(query =>
-            query.Status == "unresolved"
-            && query.ResolvedByQueryIndex == null
-            && query.Candidates.Count > 0);
-    }
-
-    private static string BuildCandidateConfirmationCorrection(AnswerEvidenceCollector evidence)
-    {
-        var pending = evidence.Build().Queries
-            .Where(query => query.Status == "unresolved"
-                && query.ResolvedByQueryIndex == null
-                && query.Candidates.Count > 0)
-            .ToList();
-        var lines = new List<string>
-        {
-            "先不要直接回答。上一轮返回的是尚未确认的候选，候选描述只能用于选择目标，不能当作正式规则事实。",
-            "如果这些候选确实属于客人当前问题，请调用 execute_plan，保持原 relation 和 intent，把 entity 改成最相关候选的准确 id 或准确中文名，用本轮返回的正式事实再回答。",
-            "如果某个 pending query 只是多余查询、不属于客人需要解决的问题，不必为了清空内部状态而查询或编造；但不要从未确认候选的描述里下结论。",
-            "这是唯一一次协议纠偏。"
-        };
-        foreach (var query in pending)
-        {
-            var candidateText = string.Join("、", query.Candidates.Take(8)
-                .Select(candidate => string.IsNullOrWhiteSpace(candidate.Name)
-                    ? candidate.Id
-                    : $"{candidate.Id}({candidate.Name})"));
-            lines.Add($"未确认 query {query.QueryIndex}：relation={query.Relation}；entity={query.Entity}；intent={query.Intent}；候选={candidateText}");
-        }
-        return string.Join("\n", lines);
     }
 
     private void LogPlanProvenance(string gameId, string toolResult)
@@ -1497,7 +1524,7 @@ public class ChatOrchestratorService
                 Function = new FunctionDefinition
                 {
                     Name = "execute_plan",
-                    Description = @"唯一工具：查询计划执行器。把客人的规则问题编译成结构化查询计划，程序会执行实体定位、完整意图检索、正式读取和结构导航。relation 选择：
+                    Description = @"规则查询工具：查询计划执行器。把客人的规则问题编译成结构化查询计划，程序会执行实体定位、完整意图检索、正式读取和结构导航。relation 选择：
 - explain：X 是什么 / 怎么结算 / 怎么做 / 有什么效果 / 有几个
 - condition：能不能 X / X 有什么前提 / 什么限制（读取 condition+cost+target 及声明引用）
 - cost：X 要支付什么 / 费用及适用范围
@@ -1577,8 +1604,126 @@ query 字段语义：
                     }
                     """).RootElement
                 }
+            },
+            new()
+            {
+                Function = new FunctionDefinition
+                {
+                    Name = "submit_answer",
+                    Description = @"终态提交工具。回答已生成时用这一次模型调用同时提交最终文本，不额外增加检查轮次。
+outcome 只能是 answer | clarify | unavailable。
+- answer：必须给出本请求中实际交付过的 evidence_ids；程序会校验 evidence id 存在且当前请求已交付。引用只证明出处存在，不证明全文蕴含。
+- clarify：可以无引用；请在 clarification.missing_kind 与 clarification.requested_information 说明唯一会改变答案的必要信息。不要为了清空 pending 反复追问。
+- unavailable：必须给出 unavailable_reason=no_rule_coverage | unresolved_identity | budget_exhausted。
+text 必须与 outcome 一致，简洁、TTS 友好。",
+                    Parameters = JsonDocument.Parse("""
+                    {
+                      "type": "object",
+                      "properties": {
+                        "outcome": {
+                          "type": "string",
+                          "enum": ["answer", "clarify", "unavailable"]
+                        },
+                        "text": { "type": "string" },
+                        "evidence_ids": {
+                          "type": "array",
+                          "items": { "type": "string" },
+                          "description": "answer 时必填；只能引用本请求 evidence_catalog 中实际交付的 evidence_id。"
+                        },
+                        "clarification": {
+                          "type": "object",
+                          "properties": {
+                            "missing_kind": { "type": "string" },
+                            "requested_information": { "type": "string" }
+                          },
+                          "required": ["missing_kind", "requested_information"]
+                        },
+                        "unavailable_reason": {
+                          "type": "string",
+                          "enum": ["no_rule_coverage", "unresolved_identity", "budget_exhausted"]
+                        }
+                      },
+                      "required": ["outcome", "text"]
+                    }
+                    """).RootElement
+                }
             }
         };
+    }
+
+    private static TerminalSubmission HandleTerminalSubmission(
+        ToolCall toolCall,
+        AnswerEvidenceCollector evidence,
+        RuleRequestLedger ledger)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(toolCall.Function.Arguments);
+            var root = doc.RootElement;
+            if (root.ValueKind != JsonValueKind.Object)
+                return TerminalSubmission.Invalid("submit_answer 参数必须是 JSON object。");
+
+            var outcome = ReadFlexibleString(root, "outcome", "Outcome").Trim().ToLowerInvariant();
+            var text = ReadFlexibleString(root, "text", "Text").Trim();
+            if (outcome is not ("answer" or "clarify" or "unavailable"))
+                return TerminalSubmission.Invalid("outcome 必须是 answer、clarify 或 unavailable。");
+            if (string.IsNullOrWhiteSpace(text))
+                return TerminalSubmission.Invalid("text 不能为空。");
+
+            var evidenceIds = ReadFlexibleStringArray(root, "evidence_ids", "EvidenceIds")
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+            if (outcome == "answer")
+            {
+                if (evidenceIds.Count == 0)
+                    return TerminalSubmission.Invalid(
+                        "outcome=answer 时必须引用本请求已交付的 evidence_ids；没有正式依据请改用 clarify 或 unavailable。");
+                var missing = evidenceIds
+                    .Where(id => !ledger.IsDeliveredEvidenceId(id))
+                    .ToList();
+                if (missing.Count > 0)
+                    return TerminalSubmission.Invalid(
+                        "以下 evidence_id 未在本请求交付或不存在：" + string.Join("、", missing)
+                        + "。只能引用工具结果 evidence_catalog 中的 evidence_id。");
+            }
+            else if (outcome == "clarify")
+            {
+                if (root.TryGetProperty("clarification", out var clarification)
+                    && clarification.ValueKind == JsonValueKind.Object)
+                {
+                    var missingKind = ReadFlexibleString(clarification, "missing_kind", "MissingKind");
+                    var requested = ReadFlexibleString(clarification, "requested_information", "RequestedInformation");
+                    if (string.IsNullOrWhiteSpace(missingKind) || string.IsNullOrWhiteSpace(requested))
+                        return TerminalSubmission.Invalid(
+                            "clarify 的 clarification.missing_kind 与 requested_information 都不能为空。");
+                }
+            }
+            else
+            {
+                var reason = ReadFlexibleString(root, "unavailable_reason", "UnavailableReason");
+                if (reason is not ("no_rule_coverage" or "unresolved_identity" or "budget_exhausted"))
+                    return TerminalSubmission.Invalid(
+                        "unavailable 必须给出 unavailable_reason=no_rule_coverage、unresolved_identity 或 budget_exhausted。");
+            }
+
+            return TerminalSubmission.Valid(outcome, text, evidenceIds.Count);
+        }
+        catch (JsonException)
+        {
+            return TerminalSubmission.Invalid("submit_answer 参数不是合法 JSON。");
+        }
+    }
+
+    private static string EscapeJson(string value)
+        => JsonSerializer.Serialize(value, ToolResultOptions).Trim('"');
+
+    private sealed record TerminalSubmission(
+        bool IsValid, string Outcome, string Text, int EvidenceCount, string Error)
+    {
+        public static TerminalSubmission Valid(string outcome, string text, int evidenceCount)
+            => new(true, outcome, text, evidenceCount, "");
+        public static TerminalSubmission Invalid(string error)
+            => new(false, "", "", 0, error);
     }
 
     private async Task<string> ExecuteToolAsync(

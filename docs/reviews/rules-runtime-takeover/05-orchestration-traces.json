@@ -1,0 +1,141 @@
+{
+  "generated_from_head": "80c550a + phase-05 working tree",
+  "scenarios": [
+    {
+      "label": "auto_read_then_answer",
+      "llmCalls": 2,
+      "reply": "小装置是测试对象。",
+      "outcome": "answer",
+      "queryCount": 1,
+      "evidenceIds": [
+        "ev_768fae31e9eddc27"
+      ],
+      "reusedToolCalls": 0,
+      "executedToolCalls": 1,
+      "deliveredEvidence": 1,
+      "candidateAutoReads": 0,
+      "protocolErrors": [],
+      "timeline": [
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 14.9,
+          "duration_ms": 0.4
+        },
+        {
+          "name": "execute_plan",
+          "category": "tool",
+          "start_ms": 19.5,
+          "duration_ms": 38
+        },
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 61.8,
+          "duration_ms": 2.9
+        }
+      ],
+      "accounting": {
+        "ElapsedMs": 65.35,
+        "CoveredMs": 41.32,
+        "UnaccountedMs": 24.04,
+        "OverlapMs": 0,
+        "IsReconciled": true,
+        "SpanCount": 3,
+        "ParallelGroups": []
+      }
+    },
+    {
+      "label": "duplicate_plan_reuse",
+      "llmCalls": 3,
+      "reply": "复用后的回答。",
+      "outcome": "answer",
+      "queryCount": 1,
+      "evidenceIds": [
+        "ev_768fae31e9eddc27"
+      ],
+      "reusedToolCalls": 1,
+      "executedToolCalls": 1,
+      "deliveredEvidence": 1,
+      "candidateAutoReads": 0,
+      "protocolErrors": [],
+      "timeline": [
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 0.4,
+          "duration_ms": 0.1
+        },
+        {
+          "name": "execute_plan",
+          "category": "tool",
+          "start_ms": 0.5,
+          "duration_ms": 0.2
+        },
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 0.8,
+          "duration_ms": 0
+        },
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 1.1,
+          "duration_ms": 0
+        }
+      ],
+      "accounting": {
+        "ElapsedMs": 1.17,
+        "CoveredMs": 0.79,
+        "UnaccountedMs": 0.38,
+        "OverlapMs": 0,
+        "IsReconciled": true,
+        "SpanCount": 4,
+        "ParallelGroups": []
+      }
+    },
+    {
+      "label": "clarify_without_evidence",
+      "llmCalls": 2,
+      "reply": "请确认你指的是哪个组件。",
+      "outcome": "clarify",
+      "queryCount": 1,
+      "evidenceIds": [],
+      "reusedToolCalls": 0,
+      "executedToolCalls": 1,
+      "deliveredEvidence": 0,
+      "candidateAutoReads": 0,
+      "protocolErrors": [],
+      "timeline": [
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 0.3,
+          "duration_ms": 0.1
+        },
+        {
+          "name": "execute_plan",
+          "category": "tool",
+          "start_ms": 0.3,
+          "duration_ms": 35.9
+        },
+        {
+          "name": "model_planning",
+          "category": "model",
+          "start_ms": 37.7,
+          "duration_ms": 0
+        }
+      ],
+      "accounting": {
+        "ElapsedMs": 37.78,
+        "CoveredMs": 35.98,
+        "UnaccountedMs": 1.8,
+        "OverlapMs": 0,
+        "IsReconciled": true,
+        "SpanCount": 3,
+        "ParallelGroups": []
+      }
+    }
+  ]
+}

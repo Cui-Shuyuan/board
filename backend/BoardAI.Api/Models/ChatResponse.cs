@@ -143,6 +143,11 @@ public class ChatOrchestrationTrace
     public double RetrievalMs { get; set; }
     public double RespondMs { get; set; }
     public double ValidationMs { get; set; }
+    public int ReusedToolCallCount { get; set; }
+    public int ExecutedToolCallCount { get; set; }
+    public int DeliveredEvidenceCount { get; set; }
+    public int DeliveredEvidenceChars { get; set; }
+    public int CandidateAutoReadCount { get; set; }
     public List<ChatModelCallTrace> ModelCalls { get; set; } = new();
     public List<string> ProtocolErrors { get; set; } = new();
     public List<ChatQuestionTrace> Questions { get; set; } = new();
