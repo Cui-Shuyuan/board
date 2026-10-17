@@ -113,3 +113,7 @@ content/games/*/tutorial/build/
 
 # 动画 Board API QA 留档：只本地保存，不入 Git
 content/games/*/tutorial/anim/_qa/ask_log_*
+
+# 历史归档只保留本地，不纳入版本管理
+archive/
+.claude/archive/
