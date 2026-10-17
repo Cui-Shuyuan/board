@@ -1,0 +1,83 @@
+{
+  "created_at": "2026-10-17T10:06:55.077198+00:00",
+  "question_file": "tools\\qa\\program_evidence_repair_dev_questions.jsonl",
+  "question_file_sha256": "0467cc6cef346dc77744a129a38cf73a694120a9117122b4c01fcad3f21c3dce",
+  "question_count": 31,
+  "repeats": 3,
+  "seed": 20261017,
+  "planned_chat_count": 186,
+  "budget_chat_count": 186,
+  "git_commit": "59574e3233b5ae4a45ccf2eaf0b3cb61b5d34a62",
+  "pre_registration_path": "docs\\reviews\\rules-runtime-takeover\\06-pre-registration.json",
+  "pre_registration_sha256": "aaaee3d3f7cbc90c54b1bb68829efccbd9d033fb994fdb859acf8abff36bc05e",
+  "pre_registered_metrics": [
+    "paired answer pass rate: point estimate not below baseline; paired bootstrap 95% CI lower bound > -3pp",
+    "fabricated/wrong-rule rate: point estimate not increased; manual review of new errors",
+    "P50 chat latency at least 10% lower; P95 no more than 5% higher",
+    "mechanical confirmation and repeated bottom-query counts lower",
+    "legitimate alternative evidence accepted; evidence hit is not answer correctness"
+  ],
+  "old_api": "http://localhost:5001",
+  "new_api": "http://localhost:5002",
+  "warmups": {
+    "old": [
+      {
+        "version": "old",
+        "game": "splendor",
+        "status": 200,
+        "latency_ms": 6728.74,
+        "ok": true
+      },
+      {
+        "version": "old",
+        "game": "agricola",
+        "status": 200,
+        "latency_ms": 1762.73,
+        "ok": true
+      }
+    ],
+    "new": [
+      {
+        "version": "new",
+        "game": "splendor",
+        "status": 200,
+        "latency_ms": 8799.18,
+        "ok": true
+      },
+      {
+        "version": "new",
+        "game": "agricola",
+        "status": 200,
+        "latency_ms": 3037.91,
+        "ok": true
+      }
+    ]
+  },
+  "old_rules_games": [
+    "agricola",
+    "ark-nova",
+    "brass-birmingham",
+    "castles-of-burgundy",
+    "civolution",
+    "puerto-rico",
+    "seasons",
+    "splendor",
+    "wingspan"
+  ],
+  "new_rules_games": [
+    "agricola",
+    "ark-nova",
+    "brass-birmingham",
+    "castles-of-burgundy",
+    "civolution",
+    "puerto-rico",
+    "seasons",
+    "splendor",
+    "wingspan"
+  ],
+  "finished_at": "2026-10-17T10:14:48.057083+00:00",
+  "elapsed_seconds": 452.47,
+  "written_runs_this_invocation": 186,
+  "skipped_existing_runs": 0,
+  "total_run_ids": 186
+}

@@ -8,3 +8,4 @@
 - [06 预注册、能力矩阵与最终状态](06-final-status.md)
 - [07 五项 review 收口](07-review-fixes.md)
 - [08 续读分页与自身耗时收口](08-continuation-pagination-and-self-time.md)
+- [09 31 题小规模真实同轮对照](09-small-real-comparison.md)

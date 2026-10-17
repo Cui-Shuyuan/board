@@ -1,0 +1,30 @@
+{
+  "judge_files": [
+    ".tmp/rules-runtime-takeover-small-final/comparison/judge-deepseek-v4-flash.jsonl",
+    ".tmp/rules-runtime-takeover-small-final/comparison/judge-deepseek-chat.jsonl"
+  ],
+  "run_count": 186,
+  "run_level_full_agreement": 0.7742,
+  "by_version": {
+    "old": {
+      "n": 93,
+      "consensus_pass_rate": 0.5914,
+      "individual_judge_pass_rates": [
+        0.5914,
+        0.8387
+      ]
+    },
+    "new": {
+      "n": 93,
+      "consensus_pass_rate": 0.6774,
+      "individual_judge_pass_rates": [
+        0.6774,
+        0.8817
+      ]
+    }
+  },
+  "consensus_pass_counts": {
+    "new": 63,
+    "old": 55
+  }
+}
