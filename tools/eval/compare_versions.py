@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import json
 import random
+import subprocess
 import threading
 import time
 import urllib.error
@@ -145,6 +146,32 @@ def analyze_evidence(question: dict, response: dict) -> dict:
         matches_any(expected, cited_paths)
         if expected and cited_observable else None
     )
+
+    def flexible(obj, *names, default=None):
+        if not isinstance(obj, dict):
+            return default
+        for name in names:
+            if name in obj:
+                return obj[name]
+        return default
+
+    timeline = orchestration.get("timeline") or orchestration.get("Timeline") or []
+    timeline_spans = timeline if isinstance(timeline, list) else []
+
+    def span_sum(category):
+        total = 0.0
+        for span in timeline_spans:
+            if not isinstance(span, dict):
+                continue
+            if flexible(span, "category", "Category", default="") != category:
+                continue
+            try:
+                total += float(flexible(span, "durationMs", "DurationMs", default=0) or 0)
+            except (TypeError, ValueError):
+                pass
+        return round(total, 2)
+
+    accounting = orchestration.get("timelineAccounting") or orchestration.get("TimelineAccounting") or {}
     return {
         "tier": evidence.get("tier"),
         "has_data": evidence.get("hasData"),
@@ -182,6 +209,19 @@ def analyze_evidence(question: dict, response: dict) -> dict:
         "successful_evidence_reads": orchestration.get("successfulEvidenceReads"),
         "binding_reuses": orchestration.get("evidenceBindingReuses"),
         "effective_max_pack_chars": orchestration.get("effectiveMaxEvidencePackChars"),
+        "reused_tool_call_count": orchestration.get("reusedToolCallCount"),
+        "executed_tool_call_count": orchestration.get("executedToolCallCount"),
+        "delivered_evidence_chars": orchestration.get("deliveredEvidenceChars"),
+        "delivered_evidence_count": orchestration.get("deliveredEvidenceCount"),
+        "candidate_auto_read_count": orchestration.get("candidateAutoReadCount"),
+        "protocol_validation_error_count": len(orchestration.get("protocolErrors") or []),
+        "timeline_span_count": len(timeline_spans),
+        "model_span_ms": span_sum("model"),
+        "tool_span_ms": span_sum("tool"),
+        "timeline_covered_ms": flexible(accounting, "coveredMs", "CoveredMs"),
+        "timeline_unaccounted_ms": flexible(accounting, "unaccountedMs", "UnaccountedMs"),
+        "timeline_overlap_ms": flexible(accounting, "overlapMs", "OverlapMs"),
+        "timeline_reconciled": flexible(accounting, "isReconciled", "IsReconciled"),
     }
 
 
@@ -259,13 +299,29 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=0, help="Only run first N questions for a smoke test")
     parser.add_argument("--resume", action="store_true", help="Skip run_ids already present in out/runs.jsonl")
     parser.add_argument("--pair-workers", type=int, default=1, help="How many old/new pairs may be in flight at once")
+    parser.add_argument("--budget-chats", type=int, default=1014,
+                        help="Pre-registered maximum chat calls; planning fails closed if exceeded")
+    parser.add_argument("--pre-registration", type=Path, default=None,
+                        help="Frozen metric/threshold document to hash into the manifest")
     args = parser.parse_args()
 
     questions = [json.loads(line) for line in args.questions.read_text(encoding="utf-8").splitlines() if line.strip()]
     if args.limit:
         questions = questions[: args.limit]
+    planned_chats = len(questions) * args.repeats * 2
+    if planned_chats > args.budget_chats:
+        parser.error(f"planned {planned_chats} chats exceeds pre-registered budget {args.budget_chats}")
     args.out.mkdir(parents=True, exist_ok=True)
     rng = random.Random(args.seed)
+    try:
+        git_commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL, text=True
+        ).strip()
+    except Exception:  # noqa: BLE001
+        git_commit = "unknown"
+    pre_registration_sha256 = None
+    if args.pre_registration:
+        pre_registration_sha256 = hashlib.sha256(args.pre_registration.read_bytes()).hexdigest()
 
     manifest = {
         "created_at": datetime.now(timezone.utc).isoformat(),
@@ -274,6 +330,18 @@ def main() -> int:
         "question_count": len(questions),
         "repeats": args.repeats,
         "seed": args.seed,
+        "planned_chat_count": planned_chats,
+        "budget_chat_count": args.budget_chats,
+        "git_commit": git_commit,
+        "pre_registration_path": str(args.pre_registration) if args.pre_registration else None,
+        "pre_registration_sha256": pre_registration_sha256,
+        "pre_registered_metrics": [
+            "paired answer pass rate: point estimate not below baseline; paired bootstrap 95% CI lower bound > -3pp",
+            "fabricated/wrong-rule rate: point estimate not increased; manual review of new errors",
+            "P50 chat latency at least 10% lower; P95 no more than 5% higher",
+            "mechanical confirmation and repeated bottom-query counts lower",
+            "legitimate alternative evidence accepted; evidence hit is not answer correctness",
+        ],
         "old_api": args.old_api,
         "new_api": args.new_api,
         "warmups": {},

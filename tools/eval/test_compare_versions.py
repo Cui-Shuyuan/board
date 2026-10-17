@@ -18,5 +18,28 @@ class CompareVersionIdentityTests(unittest.TestCase):
         self.assertFalse(module.matches_any({"feeding"}, ["actions/harvest"]))
 
 
+    def test_timeline_and_ledger_fields_are_extracted(self):
+        response = {
+            "evidence": {"queries": []},
+            "orchestration": {
+                "reusedToolCallCount": 1,
+                "executedToolCallCount": 2,
+                "deliveredEvidenceChars": 1234,
+                "timeline": [
+                    {"category": "model", "durationMs": 100},
+                    {"category": "tool", "durationMs": 20},
+                ],
+                "timelineAccounting": {"isReconciled": True, "coveredMs": 120},
+            },
+        }
+        result = module.analyze_evidence({}, response)
+        self.assertEqual(result["reused_tool_call_count"], 1)
+        self.assertEqual(result["executed_tool_call_count"], 2)
+        self.assertEqual(result["delivered_evidence_chars"], 1234)
+        self.assertEqual(result["model_span_ms"], 100)
+        self.assertEqual(result["tool_span_ms"], 20)
+        self.assertTrue(result["timeline_reconciled"])
+
+
 if __name__ == "__main__":
     unittest.main()

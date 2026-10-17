@@ -5,3 +5,4 @@
 - [03 操作路由、自动正式读取和有界导航](03-operation-routing-and-navigation.md)
 - [04 面向问题的正式证据交付](04-evidence-delivery.md)
 - [05 请求账本、终态协议和有界调度](05-request-ledger-and-orchestration.md)
+- [06 预注册、能力矩阵与最终状态](06-final-status.md)

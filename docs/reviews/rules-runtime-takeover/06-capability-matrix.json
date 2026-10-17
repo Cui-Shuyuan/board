@@ -1,0 +1,528 @@
+{
+  "ontology_concept_count": 89,
+  "game_count": 9,
+  "games": [
+    {
+      "game": "agricola",
+      "concepts": {
+        "declared_ids": 127,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          " cooking_hearth",
+          "ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE",
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "ontology::multiple_choice_enum.FILTER"
+        ],
+        "unresolved_reference_count": 5
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 31,
+        "duplicate_local_ids": {},
+        "declared_arrays": 10,
+        "branches": 8,
+        "loops": 2,
+        "conditions_on_nodes": 4
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 82,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 9,
+        "cost_fields": 13,
+        "target_fields": 4,
+        "content_or_effect_fields": 25,
+        "natural_language_only_nodes": 0,
+        "score_table_present": true
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": true,
+        "deterministic_scoring": true
+      },
+      "actionable_gaps": [
+        "unresolved_concept_references"
+      ]
+    },
+    {
+      "game": "ark-nova",
+      "concepts": {
+        "declared_ids": 62,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "animals_action",
+          "association_action",
+          "association_task_conservation_project",
+          "association_task_partner_zoo",
+          "association_task_reputation",
+          "association_task_university",
+          "break",
+          "build_action",
+          "cards_action",
+          "clear_release_enclosure",
+          "conservation_bonus_2",
+          "discard_final_scoring_card_if_no_10cp",
+          "donation",
+          "endgame_trigger",
+          "final_scoring",
+          "final_turn_cycle",
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "ontology::multiple_choice_enum.FILTER",
+          "ontology::multiple_choice_enum.FIRST_MATCH"
+        ],
+        "unresolved_reference_count": 28
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 120,
+        "duplicate_local_ids": {},
+        "declared_arrays": 29,
+        "branches": 28,
+        "loops": 1,
+        "conditions_on_nodes": 32
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 62,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 0,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 0,
+        "natural_language_only_nodes": 0,
+        "score_table_present": true
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": false,
+        "deterministic_scoring": true
+      },
+      "actionable_gaps": [
+        "unresolved_concept_references",
+        "no_structured_cost_fields",
+        "no_structured_condition_fields"
+      ]
+    },
+    {
+      "game": "brass-birmingham",
+      "concepts": {
+        "declared_ids": 86,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "ontology::multiple_choice_enum.CHOOSE_AT_LEAST_ONE",
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "ontology::multiple_choice_enum.FILTER",
+          "ontology::multiple_choice_enum.MATCH"
+        ],
+        "unresolved_reference_count": 5
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 56,
+        "duplicate_local_ids": {},
+        "declared_arrays": 14,
+        "branches": 13,
+        "loops": 3,
+        "conditions_on_nodes": 5
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 47,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 10,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 10,
+        "natural_language_only_nodes": 0,
+        "score_table_present": false
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": true,
+        "deterministic_scoring": false
+      },
+      "actionable_gaps": [
+        "unresolved_concept_references",
+        "no_structured_cost_fields",
+        "no_score_table"
+      ]
+    },
+    {
+      "game": "castles-of-burgundy",
+      "concepts": {
+        "declared_ids": 105,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "ontology::multiple_choice_enum.FILTER",
+          "ontology::multiple_choice_enum.MATCH"
+        ],
+        "unresolved_reference_count": 4
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 44,
+        "duplicate_local_ids": {},
+        "declared_arrays": 12,
+        "branches": 11,
+        "loops": 2,
+        "conditions_on_nodes": 5
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 73,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 9,
+        "cost_fields": 1,
+        "target_fields": 0,
+        "content_or_effect_fields": 17,
+        "natural_language_only_nodes": 0,
+        "score_table_present": true
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": true,
+        "deterministic_scoring": true
+      },
+      "actionable_gaps": [
+        "unresolved_concept_references"
+      ]
+    },
+    {
+      "game": "civolution",
+      "concepts": {
+        "declared_ids": 146,
+        "instance_ids": 27,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "action_phase_end",
+          "action_turn_cycle",
+          "activate_income_chip",
+          "activate_module",
+          "activate_stage_tile",
+          "adjust_die_value",
+          "adjust_weather_indicator",
+          "advance_beyond_end",
+          "build_boat",
+          "build_farm",
+          "build_settlement",
+          "build_statue",
+          "complete_building_project",
+          "deus_ex_machina",
+          "event_era_scoring",
+          "explore_adjacent_sites",
+          "explore_site",
+          "extra_find",
+          "favor_test",
+          "final_scoring"
+        ],
+        "unresolved_reference_count": 104
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 278,
+        "duplicate_local_ids": {
+          "draw_cards": 2,
+          "return_cards": 2,
+          "_skip": 10,
+          "adjust_dice": 3,
+          "take_activation_die": 2,
+          "roll_die": 2,
+          "transfer_to_dice_space": 2,
+          "take_fate_die": 2,
+          "transfer_to_fate_dice": 2
+        },
+        "declared_arrays": 77,
+        "branches": 75,
+        "loops": 3,
+        "conditions_on_nodes": 39
+      },
+      "members": {
+        "explicit_collection_owners": 6,
+        "schema_type_relations": 146,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 0,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 0,
+        "natural_language_only_nodes": 0,
+        "score_table_present": true
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": false,
+        "deterministic_scoring": true
+      },
+      "actionable_gaps": [
+        "duplicate_flow_local_ids_require_canonical_paths",
+        "unresolved_concept_references",
+        "no_structured_cost_fields",
+        "no_structured_condition_fields"
+      ]
+    },
+    {
+      "game": "puerto-rico",
+      "concepts": {
+        "declared_ids": 95,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "builders_yard",
+          "city_hall",
+          "customs_house",
+          "factory",
+          "fire_station",
+          "fortress",
+          "hacienda",
+          "harbor",
+          "hospital",
+          "large_market",
+          "large_warehouse",
+          "office",
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "ontology::multiple_choice_enum.FILTER",
+          "residence",
+          "school",
+          "small_market",
+          "small_warehouse",
+          "string, any"
+        ],
+        "unresolved_reference_count": 21
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 33,
+        "duplicate_local_ids": {},
+        "declared_arrays": 6,
+        "branches": 5,
+        "loops": 1,
+        "conditions_on_nodes": 2
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 62,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 0,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 8,
+        "natural_language_only_nodes": 0,
+        "score_table_present": true
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": false,
+        "deterministic_scoring": true
+      },
+      "actionable_gaps": [
+        "unresolved_concept_references",
+        "no_structured_cost_fields",
+        "no_structured_condition_fields"
+      ]
+    },
+    {
+      "game": "seasons",
+      "concepts": {
+        "declared_ids": 32,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [],
+        "unresolved_reference_count": 0
+      },
+      "flow": {
+        "present": false,
+        "identified_nodes": 0,
+        "duplicate_local_ids": {},
+        "declared_arrays": 0,
+        "branches": 0,
+        "loops": 0,
+        "conditions_on_nodes": 0
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 32,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 0,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 0,
+        "natural_language_only_nodes": 0,
+        "score_table_present": false
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": false,
+        "member_enumeration": true,
+        "condition_cost_target_reads": false,
+        "deterministic_scoring": false
+      },
+      "actionable_gaps": [
+        "missing_flow_file",
+        "no_structured_cost_fields",
+        "no_structured_condition_fields",
+        "no_score_table"
+      ]
+    },
+    {
+      "game": "splendor",
+      "concepts": {
+        "declared_ids": 41,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "main_gameplay",
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "ontology::multiple_choice_enum.FILTER",
+          "string, any",
+          "string, concept_ref",
+          "string, integer"
+        ],
+        "unresolved_reference_count": 7
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 32,
+        "duplicate_local_ids": {},
+        "declared_arrays": 7,
+        "branches": 7,
+        "loops": 1,
+        "conditions_on_nodes": 3
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 22,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 6,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 6,
+        "natural_language_only_nodes": 2,
+        "score_table_present": false
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": true,
+        "deterministic_scoring": false
+      },
+      "actionable_gaps": [
+        "unresolved_concept_references",
+        "no_structured_cost_fields",
+        "no_score_table",
+        "some_rules_are_natural_language_only"
+      ]
+    },
+    {
+      "game": "wingspan",
+      "concepts": {
+        "declared_ids": 33,
+        "instance_ids": 0,
+        "duplicate_ids": {},
+        "unresolved_references": [
+          "adjudicate_victory",
+          "all_action_cubes_used_this_round",
+          "draw_cards_action",
+          "end_of_round_scoring",
+          "gain_food_action",
+          "lay_eggs_action",
+          "ontology::multiple_choice_enum.CHOOSE_ONE",
+          "ontology::multiple_choice_enum.EXECUTE_ALL",
+          "pass_first_player",
+          "play_bird",
+          "refill_bird_tray",
+          "score_birds",
+          "score_bonus_cards",
+          "score_cached_food",
+          "score_eggs",
+          "score_round_goals",
+          "score_tucked_cards"
+        ],
+        "unresolved_reference_count": 17
+      },
+      "flow": {
+        "present": true,
+        "identified_nodes": 64,
+        "duplicate_local_ids": {
+          "_skip": 4
+        },
+        "declared_arrays": 18,
+        "branches": 17,
+        "loops": 2,
+        "conditions_on_nodes": 0
+      },
+      "members": {
+        "explicit_collection_owners": 0,
+        "schema_type_relations": 33,
+        "provable_membership_basis": true
+      },
+      "rules": {
+        "condition_fields": 0,
+        "cost_fields": 0,
+        "target_fields": 0,
+        "content_or_effect_fields": 0,
+        "natural_language_only_nodes": 0,
+        "score_table_present": false
+      },
+      "capabilities": {
+        "canonical_paths": true,
+        "scoped_flow": true,
+        "member_enumeration": true,
+        "condition_cost_target_reads": false,
+        "deterministic_scoring": false
+      },
+      "actionable_gaps": [
+        "duplicate_flow_local_ids_require_canonical_paths",
+        "unresolved_concept_references",
+        "no_structured_cost_fields",
+        "no_structured_condition_fields",
+        "no_score_table"
+      ]
+    }
+  ],
+  "summary": {
+    "games_with_scoped_flow": 8,
+    "games_with_member_basis": 9,
+    "games_with_condition_cost_target": 4,
+    "games_with_score_table": 5,
+    "games_with_unresolved_refs": 8
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "plan": "rules-runtime-takeover/06",
+  "registered_at": "2026-10-17",
+  "status": "partially_blocked_missing_new_sealed_set_and_real_model_run",
+  "baseline_commit": "ffac498890ccf9fdd10bb180b0dc37e9b88ed585",
+  "question_sets": {
+    "development_31": {
+      "role": "development_diagnostic",
+      "random_sample": false,
+      "status": "existing_development_set"
+    },
+    "historical_133": {
+      "path": "tools/qa/historical_133_questions.jsonl",
+      "sha256": "052041b972d292622ca8678b3df307785089494435253099302250a4fe625e75",
+      "role": "historical_used_set",
+      "random_sample": false,
+      "status": "restored_from_existing_tmp_artifact"
+    },
+    "sealed_36": {
+      "role": "new_holdout_9_games_x4",
+      "status": "not_created_before_implementation",
+      "created_before_tuning": false,
+      "usable_as_unbiased_final_holdout": false,
+      "note": "Implementation and prompt tuning were already complete. Creating questions now cannot restore a pre-tuning holdout; it must be reported as post-hoc."
+    }
+  },
+  "planned_final_chats": {
+    "questions_if_sealed_set_exists": 169,
+    "versions": 2,
+    "repeats_per_question_version": 3,
+    "max_chat_calls": 1014,
+    "actual_chat_calls_executed": 0,
+    "formula": "(133 historical + 36 sealed) * 2 versions * 3 repeats"
+  },
+  "model_and_sampling": {
+    "model_planned": "deepseek-v4-flash",
+    "thinking_planned": "low",
+    "explicit_temperature": null,
+    "explicit_top_p": null,
+    "explicit_max_tokens": null,
+    "note": "Frozen baseline config; no provider run was executed in this environment."
+  },
+  "evaluation_design": {
+    "interleaved_and_randomized": true,
+    "paired_old_new": true,
+    "warmup_required": true,
+    "judges": "two independent blind judges with strict consensus and disagreement retained",
+    "question_cluster_unit": "question id; three repeats are not independent samples",
+    "manual_review": "all new fabricated/wrong-rule cases and missing/ambiguous evidence"
+  },
+  "thresholds": {
+    "answer_correctness": {
+      "point_estimate": "not below baseline",
+      "paired_bootstrap_95_ci_lower_bound": "> -3pp",
+      "new_systematic_errors": "not allowed"
+    },
+    "fabricated_or_wrong_rule": {
+      "point_estimate": "not increased"
+    },
+    "latency": {
+      "p50": "at least 10% lower",
+      "p95": "no more than 5% higher"
+    },
+    "program_takeover": {
+      "mechanical_confirmation_count": "must decrease",
+      "repeated_bottom_query_execution": "exact duplicate contract test executes once"
+    },
+    "evidence": {
+      "layers": ["retrieval_candidate", "formal_read", "delivered_to_model", "cited", "answer_review"],
+      "legitimate_alternatives_allowed": true,
+      "evidence_hit_is_not_answer_correctness_proof": true
+    }
+  },
+  "budget_estimate": {
+    "token_cost": "unknown",
+    "latency": "unknown",
+    "reason": "No real model calls executed; provider pricing/current token distribution not measured. Do not treat deterministic char counts as token counts."
+  },
+  "rollout_decision": {
+    "quality_verified": false,
+    "performance_verified": false,
+    "android_runtime_verified": false,
+    "eligible_to_claim_full_epic_completion": false,
+    "action": "Keep as candidate implementation; do not claim production default upgrade or epic complete."
+  }
+}

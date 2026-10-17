@@ -88,6 +88,12 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
         retrieval_ms = [x for x in ((r.get("deterministic") or {}).get("retrieval_ms") for r in rows) if x is not None]
         respond_ms = [x for x in ((r.get("deterministic") or {}).get("respond_ms") for r in rows) if x is not None]
         pack_chars = [x for x in (((r.get("orchestration") or {}).get("evidencePackChars")) for r in rows) if x is not None]
+        reused_tool_calls = [x for x in ((r.get("deterministic") or {}).get("reused_tool_call_count") for r in rows) if x is not None]
+        executed_tool_calls = [x for x in ((r.get("deterministic") or {}).get("executed_tool_call_count") for r in rows) if x is not None]
+        delivered_chars = [x for x in ((r.get("deterministic") or {}).get("delivered_evidence_chars") for r in rows) if x is not None]
+        model_span_ms = [x for x in ((r.get("deterministic") or {}).get("model_span_ms") for r in rows) if x is not None]
+        tool_span_ms = [x for x in ((r.get("deterministic") or {}).get("tool_span_ms") for r in rows) if x is not None]
+        reconciled = [x for x in ((r.get("deterministic") or {}).get("timeline_reconciled") for r in rows) if x is not None]
         return {
             "n": len(rows),
             "pass_rate": bool_mean(pass_flags),
@@ -131,6 +137,13 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
             "repair_nonzero_rate": bool_mean([(x or 0) > 0 for x in repairs]) if repairs else None,
             "evidence_pack_chars_mean": round(statistics.mean(pack_chars), 1) if pack_chars else None,
             "evidence_pack_chars_p95": round(percentile(pack_chars, .95), 1) if pack_chars else None,
+            "reused_tool_calls_mean": round(statistics.mean(reused_tool_calls), 3) if reused_tool_calls else None,
+            "executed_tool_calls_mean": round(statistics.mean(executed_tool_calls), 3) if executed_tool_calls else None,
+            "delivered_evidence_chars_mean": round(statistics.mean(delivered_chars), 1) if delivered_chars else None,
+            "model_span_ms_mean": round(statistics.mean(model_span_ms), 1) if model_span_ms else None,
+            "tool_span_ms_mean": round(statistics.mean(tool_span_ms), 1) if tool_span_ms else None,
+            "timeline_reconciled_rate": bool_mean(reconciled) if reconciled else None,
+            "timeline_observable_runs": len(reconciled),
         }
 
     return {"all": summary(merged), "positive": summary(pos), "negative": summary(neg), "merged": merged}
@@ -205,6 +218,12 @@ def summarize_groups(merged: list[dict], key: str) -> list[dict]:
     return rows
 
 
+def _delta(old, new):
+    if old is None or new is None:
+        return "N/A"
+    return f"{new - old:+.2f}"
+
+
 def format_rate(value) -> str:
     return "N/A" if value is None else f"{value:.1%}"
 
@@ -233,6 +252,10 @@ def write_markdown(analysis: dict, path: Path):
         f"| 无关扩展率 | {old_all['irrelevant_expansion_rate']:.1%} | {new_all['irrelevant_expansion_rate']:.1%} | {(new_all['irrelevant_expansion_rate']-old_all['irrelevant_expansion_rate'])*100:+.1f}pp |",
         f"| 人数反推率 | {old_all['player_count_inference_rate']:.1%} | {new_all['player_count_inference_rate']:.1%} | {(new_all['player_count_inference_rate']-old_all['player_count_inference_rate'])*100:+.1f}pp |",
         f"| 旧 direct_expected_hit（语义不完全等价） | {old_all['direct_expected_hit_rate_positive']:.1%} | {new_all['direct_expected_hit_rate_positive']:.1%} | {(new_all['direct_expected_hit_rate_positive']-old_all['direct_expected_hit_rate_positive'])*100:+.1f}pp |",
+        f"| 程序工具复用均值 | {old_all.get('reused_tool_calls_mean')} | {new_all.get('reused_tool_calls_mean')} | {_delta(old_all.get('reused_tool_calls_mean'), new_all.get('reused_tool_calls_mean'))} |",
+        f"| 程序实际工具执行均值 | {old_all.get('executed_tool_calls_mean')} | {new_all.get('executed_tool_calls_mean')} | {_delta(old_all.get('executed_tool_calls_mean'), new_all.get('executed_tool_calls_mean'))} |",
+        f"| 模型可见证据字符均值 | {old_all.get('delivered_evidence_chars_mean')} | {new_all.get('delivered_evidence_chars_mean')} | {_delta(old_all.get('delivered_evidence_chars_mean'), new_all.get('delivered_evidence_chars_mean'))} |",
+        f"| 时间线对账率 | {format_rate(old_all.get('timeline_reconciled_rate'))} | {format_rate(new_all.get('timeline_reconciled_rate'))} | {format_rate_delta(old_all.get('timeline_reconciled_rate'), new_all.get('timeline_reconciled_rate'))} |",
         f"| 正例直达或候选前三（旧口径） | {old_all['recoverable_top3_rate_positive']:.1%} | {new_all['recoverable_top3_rate_positive']:.1%} | {(new_all['recoverable_top3_rate_positive']-old_all['recoverable_top3_rate_positive'])*100:+.1f}pp |",
         f"| 逐层：检索候选规范路径命中 | {format_rate(old_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate(new_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate_delta(old_all.get('retrieval_layer_hit_rate_positive'), new_all.get('retrieval_layer_hit_rate_positive'))} |",
         f"| 逐层：正式装包规范路径命中（可观察 n） | {old_all.get('pack_layer_observable_runs', 0)} | {new_all.get('pack_layer_observable_runs', 0)} | - |",

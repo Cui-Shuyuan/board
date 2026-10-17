@@ -15,6 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 最近进展
 
+- **规则问答程序接管史诗（2026-10-17，分支 `feat/rules-runtime-takeover`）**：完成 01–05 确定性实现与独立提交（`d1ff8e8`→`abb58ae`）：typed query payload、canonical flow scope/成员枚举、rule_lookup 自动正式读取、薄证据交付/预算、request ledger + submit_answer 终态。后端 256/256、Python eval 10/10、规则校验 0 errors。06 预注册与 9 游戏能力矩阵已生成；但新封存 36 题未在实现前建立、真实 1014 次同轮聊天执行 0 次、Android 因缺 SDK 未跑，故不宣称质量/延迟收益或史诗完成；默认 `OrchestrationMode=legacy` 未改，分支为候选实现，详见 `docs/reviews/rules-runtime-takeover/06-final-status.md`。
 - **Program 问答证据修复与基线隔离（2026-10-17）**：legacy/program prompt 分字段隔离，legacy 原文从 `a992cfe` 恢复并通过 SHA-256 断言；R1–R5 的证据身份、关联边、读取/绑定/装包计数、公平轮询、最终序列化预算、语义投影与分层 trace 已落地。后端 xUnit 220/220。31 题开发诊断集 ×3 双评共识中 legacy 68.8% vs 修复 program 37.6%，program 调用均值 2.29、P50 5,110ms，仍未过质量门槛，默认保持 legacy。报告 `docs/reviews/program-qa-evidence-repair-and-diagnosis-2026-10-17.md`。未跑 798 全量，未切换 Thinking。
 
 - **去除问答过拟合并完成耗时归因（2026-10-17）**：删除组件数量/人数正则重答及相关强制提示，删除按字符数判断场景和将精确对象 intent 分数清零的处理，保留意图检索和候选确认。后端 181/181 测试通过。702 次历史聊天逐条对齐日志：新增平均 1357ms 中模型请求约 1158ms、工具约 199ms；模型调用次数 2.33→3.35，不能归因于纯思考变慢。报告 `docs/reviews/qa-generalization-latency-2026-10-17.md`。本次代码尚未重新跑 702 次真实模型质量评测，历史分数不能直接视为修订版结果。
