@@ -10,6 +10,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -44,6 +45,11 @@ import com.boardai.tutorial.uaal.voice.AsrRepository
 import com.boardai.tutorial.uaal.voice.TtsRepository
 
 private const val QA_TRANSITION_MILLIS = 280
+
+internal const val QA_SWIPE_DOWN_OPEN_DP = 56f
+
+internal fun shouldOpenQaOnDownSwipe(totalDyPx: Float, thresholdPx: Float): Boolean =
+    thresholdPx > 0f && totalDyPx >= thresholdPx
 
 /**
  * Full-screen native control layer.
@@ -147,6 +153,10 @@ fun TutorialPlayerOverlay(
     val totalDurationState = rememberUpdatedState(display.totalDuration)
     val onCommandState = rememberUpdatedState(onCommand)
     val gesturePolicyState = rememberUpdatedState(gesturePolicy)
+    val onOpenQaState = rememberUpdatedState(onOpenQa)
+    val resumeCueIdState = rememberUpdatedState(resumeCueId)
+    val resumePositionState = rememberUpdatedState(resumePositionInCue)
+    val wasPlayingBeforeQuestionState = rememberUpdatedState(wasPlayingBeforeQuestion)
 
     fun finishScrubFromGesture() {
         uiState.finishScrubFromGesture(
@@ -224,6 +234,45 @@ fun TutorialPlayerOverlay(
                         onDragCancel = {
                             if (dragActive) finishScrubFromGesture()
                             dragActive = false
+                        }
+                    )
+                }
+            }
+            .pointerInput(qaOpen, uiState.showChapters) {
+                if (!qaOpen && !uiState.showChapters) {
+                    var dragActive = false
+                    var totalDyPx = 0f
+                    var triggered = false
+                    val thresholdPx = QA_SWIPE_DOWN_OPEN_DP.dp.toPx()
+                    val bottomChromeHeightPx = 142.dp.toPx()
+
+                    detectVerticalDragGestures(
+                        onDragStart = { offset ->
+                            // Keep the playback transport interactive.  When
+                            // it is visible, a drag starting on the bottom
+                            // chrome must belong to volume/progress controls,
+                            // not to the QA pull-down gesture.
+                            val inBottomChrome = uiState.controlsVisible &&
+                                offset.y >= size.height - bottomChromeHeightPx
+                            dragActive = !inBottomChrome
+                            totalDyPx = 0f
+                            triggered = false
+                        },
+                        onVerticalDrag = { change, dragAmount ->
+                            if (dragActive && !triggered) {
+                                totalDyPx += dragAmount
+                                if (shouldOpenQaOnDownSwipe(totalDyPx, thresholdPx)) {
+                                    triggered = true
+                                    change.consume()
+                                    uiState.showChapters = false
+                                    uiState.scrubbing = false
+                                    onOpenQaState.value(
+                                        resumeCueIdState.value,
+                                        resumePositionState.value,
+                                        wasPlayingBeforeQuestionState.value
+                                    )
+                                }
+                            }
                         }
                     )
                 }
@@ -386,7 +435,11 @@ fun TutorialPlayerOverlay(
                 onClick = {
                     uiState.showChapters = false
                     uiState.scrubbing = false
-                    onOpenQa(resumeCueId, resumePositionInCue, wasPlayingBeforeQuestion)
+                    onOpenQaState.value(
+                        resumeCueIdState.value,
+                        resumePositionState.value,
+                        wasPlayingBeforeQuestionState.value
+                    )
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
