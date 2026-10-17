@@ -958,6 +958,65 @@ class CompileAnimationV2Tests(unittest.TestCase):
         self.assertEqual(1, len(puts), puts)
         self.assertTrue(puts[0]["item"]["Id"].endswith("#2"))
 
+    def test_staggered_multi_gem_transfer_stacks_in_arrival_order(self):
+        stage = _stage_doc("s1", ["player_holding", "gem_supply_onyx"])
+        # Destination supply is a visible stack.  The first arriving gem has
+        # to occupy the base slot, not the top slot reserved for the last gem.
+        stage["zones"][1]["display"] = {
+            "mode": "stack",
+            "dx": -0.03,
+            "dz": -0.03,
+            "max_visible": 7,
+        }
+        gem_parts = [{"key": "color", "value": "<onyx>"}]
+        track = {
+            "schema": "tutorial-anim/v2",
+            "kind": "animation_track",
+            "game": "splendor",
+            "track": "test",
+            "default_tree": "main",
+            "time_anchors": [],
+            "worlds": [{"id": "w", "why": "test"}],
+            "trees": [{"id": "main", "world": "w", "stage": "s1.stage.json",
+                       "purpose": "p", "initial": "i", "extent_note": "e"}],
+            "cues": [
+                _cue_doc(
+                    "c1", "main", entry="initial", transition="world_cut",
+                    events=[
+                        {"op": "create", "at": 0.0, "count": 4, "to": "face_up",
+                         "target": {"space": "entity", "zone": "player_holding",
+                                    "template": "gem", "palette": "gem_onyx",
+                                    "concept": "gem", "parts": gem_parts}},
+                        {"op": "transfer", "at": 1.0, "dur": 0.5, "quantity": 4,
+                         "target": {"space": "entity", "zone": "player_holding",
+                                    "concept": "gem", "parts": gem_parts},
+                         "destination": {"space": "entity", "zone": "gem_supply_onyx"}},
+                    ],
+                ),
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = _write_test_track(Path(tmp), track, {"s1.stage.json": stage})
+            compiled = compile_anim.Compiler(path).compile()
+        cue = _compiled_cue(compiled, "c1")
+        moves = sorted(
+            (clip for clip in cue["clips"] if clip.get("kind") == "move"),
+            key=lambda clip: clip["at"],
+        )
+        self.assertEqual(4, len(moves), moves)
+        self.assertEqual([0, 1, 2, 3], [clip["to_order"] for clip in moves])
+        self.assertEqual([0, 1, 2, 3], sorted(
+            clip["to_order"] for clip in moves))
+        puts = sorted(
+            (op for op in cue["state_ops"]
+             if op.get("op") == "put"
+             and op.get("item", {}).get("ZoneId") == "gem_supply_onyx"),
+            key=lambda op: op["at"],
+        )
+        self.assertEqual(4, len(puts), puts)
+        self.assertEqual([0, 1, 2, 3], [op["item"]["Order"] for op in puts])
+        self.assertEqual([0, 1, 2, 3], [op["item"]["Layer"] for op in puts])
+
     def test_transfer_multiple_gems_defaults_to_short_stagger(self):
         stage = _stage_doc("s1", ["gem_supply_onyx", "player_holding"])
         gem_parts = [{"key": "color", "value": "<onyx>"}]

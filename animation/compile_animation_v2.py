@@ -681,6 +681,32 @@ class StateModel:
                 rec["to_order"] = rec["item"]["order"]
         return records
 
+    def restack_records_in_record_order(self, records: list, zone: str) -> None:
+        """Make staggered arrivals stack chronologically.
+
+        ``transfer`` preserves the source top-to-bottom order when it puts a
+        batch on a stack destination.  That is correct for a instantaneous
+        batch move, but wrong for a visible staggered gem flight: the first
+        gem must land at the base slot, the second must land above it, and so
+        on.  This helper is called only after the compiler has established a
+        positive visual stagger.
+        """
+        if not records or zone not in self.stack_zones:
+            return
+        moved_ids = {rec["item"]["id"] for rec in records}
+        existing = [it for it in self.items
+                    if it.get("zone") == zone and it.get("id") not in moved_ids]
+        base_order = max((int(it.get("order", 0) or 0) for it in existing),
+                         default=-1) + 1
+        base_layer = max((int(it.get("layer", 0) or 0) for it in existing),
+                         default=-1) + 1
+        for idx, rec in enumerate(records):
+            it = rec["item"]
+            it["order"] = base_order + idx
+            it["layer"] = base_layer + idx
+            rec["to_order"] = int(it["order"])
+            rec["to_layer"] = int(it["layer"])
+
     def move_order(self, item: dict, zone: str, order: int):
         """Renumber one item to an explicit slot inside a non-pile zone.
 
@@ -1935,6 +1961,15 @@ class Compiler:
             stagger = DEFAULT_GEM_STAGGER
         else:
             stagger = 0.0
+
+        if (not is_setup and stagger > 0.0 and len(records) > 1
+                and all(is_gem_item(rec["item"]) for rec in records)
+                and bool(ev.get("to_top", True))
+                and ev.get("layer") is None):
+            # Multi-gem flights are visibly sequential.  The first arrival
+            # must occupy the first/base slot, and each later gem must stack
+            # above the one that arrived before it.
+            state.restack_records_in_record_order(records, dest)
 
         records_with_times = []
         for index, rec in enumerate(records):

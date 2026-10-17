@@ -883,6 +883,27 @@ internal static class Program
         return input;
     }
 
+    private static CueTimelineLegacyCueInput SampleLongAnimationInput()
+    {
+        var input = new CueTimelineLegacyCueInput
+        {
+            cue_id = "quick_nobles/002",
+            course_start = 160.525,
+            runtime_duration = 1.66,
+            audio_asset = "media/tts/quick/quick.nobles.mp3",
+            audio_start = 8.32,
+            section_audio = true,
+            compiled_visual_duration = 6.2,
+            sample_rate = 24000,
+        };
+        input.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.nobles.002", cue_start = 0.0, duration = 1.66,
+            text = "就拿取这位贵族；",
+        });
+        return input;
+    }
+
     private static CueTimelineLegacyCueInput SampleCompositeInput()
     {
         var input = new CueTimelineLegacyCueInput
@@ -1133,6 +1154,49 @@ internal static class Program
         Check(compositeController.SeekTo(10.398), "composite seek to cue boundary");
         Check(compositeController.State == CuePlaybackState.Completed,
             "composite cue completes only at planned boundary");
+    }
+
+    private static void TestAnimationLongerThanAudioUsesPlanDuration()
+    {
+        CueTimelinePlan plan;
+        string error;
+        Check(CueTimelineLegacyPlanFactory.TryBuild(
+                SampleLongAnimationInput(), out plan, out error),
+            "long-animation sample plan builds: " + error);
+
+        CueTimelineTrack audio = CueTimelineTrackResolver.FindTrack(plan, "audio");
+        CueTimelineTrack visual = CueTimelineTrackResolver.FindTrack(plan, "visual");
+        CheckClose(6.2, plan.course.duration, 1e-9,
+            "animation-longer-than-audio cue duration comes from compiled visual timeline");
+        Check(audio != null && audio.segments.Count == 1,
+            "long-animation sample keeps its short audio segment");
+        CheckClose(1.66, audio.segments[0].EndCueTime, 1e-9,
+            "audio ends before the visual timeline");
+        Check(visual != null && visual.segments.Count == 1
+              && visual.segments[0].type == "animation",
+            "long-animation sample is a single animation segment, not a wait segment");
+        CheckClose(6.2, visual.segments[0].EndCueTime, 1e-9,
+            "visual animation itself reaches the cue duration");
+
+        var clock = new ManualCueClock();
+        var fakeAudio = new FakeAudioExecutor(clock);
+        var fakeVisual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(
+            clock, fakeAudio, fakeVisual, new CueTimelineSubtitleExecutor());
+        int completions = 0;
+        controller.Completed += delegate { completions++; };
+        Check(controller.Prepare(plan), "long-animation cue prepare");
+        Check(controller.Play(), "long-animation cue play");
+        clock.Advance(1.66);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Playing,
+            "audio completion does not cut the longer visual timeline");
+        Check(completions == 0, "no completion at audio end");
+        clock.Advance(4.54);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed,
+            "cue completes only when the visual timeline reaches its end");
+        Check(completions == 1, "long-animation cue completes exactly once");
     }
 
     private static void TestFailureCannotAutoAdvance()
@@ -1392,6 +1456,7 @@ internal static class Program
         TestLegacyPlanFactorySamples();
         TestPlayAtPausedAndAudioSync();
         TestSampleControllerSequences();
+        TestAnimationLongerThanAudioUsesPlanDuration();
         TestFailureCannotAutoAdvance();
 
         if (failures == 0)

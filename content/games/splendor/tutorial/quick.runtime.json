@@ -109,7 +109,7 @@
         "quick_take_gems/002",
         "quick_take_gems/003"
       ],
-      "duration": 25.707
+      "duration": 26.843
     },
     {
       "id": "quick_cards",
@@ -121,7 +121,7 @@
       "order": 6,
       "asset": "quick.cards",
       "audio": "media/tts/quick/quick.cards.mp3",
-      "start": 85.414,
+      "start": 86.55,
       "cue_ids": [
         "quick_cards/title_3_2",
         "quick_cards/001",
@@ -140,7 +140,7 @@
       "order": 7,
       "asset": "quick.reserve",
       "audio": "media/tts/quick/quick.reserve.mp3",
-      "start": 118.635,
+      "start": 119.771,
       "cue_ids": [
         "quick_reserve/title_3_3",
         "quick_reserve/001",
@@ -159,7 +159,7 @@
       "order": 8,
       "asset": "quick.gold",
       "audio": "media/tts/quick/quick.gold.mp3",
-      "start": 142.818,
+      "start": 143.954,
       "cue_ids": [
         "quick_gold/001"
       ],
@@ -175,7 +175,7 @@
       "order": 9,
       "asset": "quick.nobles",
       "audio": "media/tts/quick/quick.nobles.mp3",
-      "start": 150.714,
+      "start": 151.85,
       "cue_ids": [
         "quick_nobles/title_3_4",
         "quick_nobles/001",
@@ -193,7 +193,7 @@
       "order": 10,
       "asset": "quick.end",
       "audio": "media/tts/quick/quick.end.mp3",
-      "start": 163.909,
+      "start": 165.045,
       "cue_ids": [
         "quick_end/title_4",
         "quick_end/001"
@@ -2012,41 +2012,41 @@
         "3 回合与行动",
         "3.1 拿宝石"
       ],
-      "text": "3.1 拿宝石。",
+      "text": "3.1，拿宝石。",
       "audio": "media/tts/quick/quick.take.mp3",
       "audio_start": 0.0,
-      "duration": 2.745,
+      "duration": 3.215,
       "start": 59.707,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.745,
-          "text": "3.1 拿宝石。",
+          "end": 3.215,
+          "text": "3.1，拿宝石。",
           "words": [
             {
-              "word": "3.1",
-              "start": 1.005,
-              "end": 1.035,
-              "confidence": 0.2773
+              "word": "3.1，",
+              "start": 1.115,
+              "end": 1.145,
+              "confidence": 0.2866
             },
             {
               "word": "拿",
-              "start": 1.035,
-              "end": 1.195,
-              "confidence": 0.8791
+              "start": 1.385,
+              "end": 1.585,
+              "confidence": 0.9533
             },
             {
               "word": "宝",
-              "start": 1.195,
-              "end": 1.375,
-              "confidence": 0.9695
+              "start": 1.585,
+              "end": 1.775,
+              "confidence": 0.959
             },
             {
               "word": "石。",
-              "start": 1.375,
-              "end": 1.745,
-              "confidence": 0.9682
+              "start": 1.775,
+              "end": 2.215,
+              "confidence": 0.9481
             }
           ]
         }
@@ -2058,7 +2058,7 @@
           "type": "clip",
           "file": "media/tts/quick/quick.take.mp3",
           "start": 0.0,
-          "end": 1.745
+          "end": 2.215
         },
         {
           "type": "silence",
@@ -2080,135 +2080,135 @@
       ],
       "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。",
       "audio": "media/tts/quick/quick.take.mp3",
-      "audio_start": 2.31,
-      "duration": 4.125,
-      "start": 62.452,
+      "audio_start": 2.7,
+      "duration": 4.345,
+      "start": 62.922,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.125,
+          "end": 4.345,
           "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。",
           "words": [
             {
               "word": "拿",
               "start": 0.0,
               "end": 0.075,
-              "confidence": 0.5539
+              "confidence": 0.6986
             },
             {
               "word": "宝",
               "start": 0.075,
-              "end": 0.145,
-              "confidence": 0.5026
+              "end": 0.235,
+              "confidence": 0.9501
             },
             {
               "word": "石",
-              "start": 0.145,
-              "end": 0.365,
-              "confidence": 0.8712
+              "start": 0.235,
+              "end": 0.435,
+              "confidence": 0.9308
             },
             {
               "word": "有",
-              "start": 0.365,
-              "end": 0.505,
-              "confidence": 0.9585
+              "start": 0.435,
+              "end": 0.555,
+              "confidence": 0.9157
             },
             {
               "word": "两",
-              "start": 0.505,
-              "end": 0.675,
-              "confidence": 0.8476
+              "start": 0.555,
+              "end": 0.725,
+              "confidence": 0.8452
             },
             {
               "word": "种",
-              "start": 0.675,
-              "end": 0.835,
+              "start": 0.725,
+              "end": 0.895,
               "confidence": 0.9691
             },
             {
               "word": "方",
-              "start": 0.835,
-              "end": 0.985,
-              "confidence": 0.9661
+              "start": 0.895,
+              "end": 1.075,
+              "confidence": 0.9545
             },
             {
               "word": "式：",
-              "start": 0.985,
-              "end": 1.015,
-              "confidence": 0.1978
+              "start": 1.075,
+              "end": 1.105,
+              "confidence": 0.1003
             },
             {
               "word": "一",
-              "start": 1.615,
-              "end": 1.765,
-              "confidence": 0.9279
+              "start": 1.715,
+              "end": 1.865,
+              "confidence": 0.9571
             },
             {
               "word": "是",
-              "start": 1.765,
-              "end": 1.975,
-              "confidence": 0.8165
+              "start": 1.865,
+              "end": 2.165,
+              "confidence": 0.7718
             },
             {
               "word": "拿",
-              "start": 1.975,
-              "end": 2.195,
-              "confidence": 0.9369
+              "start": 2.165,
+              "end": 2.375,
+              "confidence": 0.9314
             },
             {
               "word": "三",
-              "start": 2.195,
-              "end": 2.425,
-              "confidence": 0.979
+              "start": 2.375,
+              "end": 2.595,
+              "confidence": 0.9689
             },
             {
               "word": "枚",
-              "start": 2.425,
-              "end": 2.605,
-              "confidence": 0.9643
+              "start": 2.595,
+              "end": 2.745,
+              "confidence": 0.9711
             },
             {
               "word": "不",
-              "start": 2.605,
-              "end": 2.725,
-              "confidence": 0.9225
+              "start": 2.745,
+              "end": 2.885,
+              "confidence": 0.9326
             },
             {
               "word": "同",
-              "start": 2.725,
-              "end": 2.905,
-              "confidence": 0.9392
+              "start": 2.885,
+              "end": 3.085,
+              "confidence": 0.9516
             },
             {
               "word": "颜",
-              "start": 2.905,
-              "end": 3.075,
-              "confidence": 0.9641
+              "start": 3.085,
+              "end": 3.245,
+              "confidence": 0.9606
             },
             {
               "word": "色",
-              "start": 3.075,
-              "end": 3.245,
-              "confidence": 0.9723
+              "start": 3.245,
+              "end": 3.415,
+              "confidence": 0.9643
             },
             {
               "word": "的",
-              "start": 3.245,
-              "end": 3.325,
-              "confidence": 0.9755
+              "start": 3.415,
+              "end": 3.505,
+              "confidence": 0.9568
             },
             {
               "word": "宝",
-              "start": 3.325,
-              "end": 3.495,
-              "confidence": 0.9474
+              "start": 3.505,
+              "end": 3.675,
+              "confidence": 0.9109
             },
             {
               "word": "石。",
-              "start": 3.495,
-              "end": 3.845,
-              "confidence": 0.962
+              "start": 3.675,
+              "end": 4.005,
+              "confidence": 0.9489
             }
           ]
         }
@@ -2230,87 +2230,87 @@
       ],
       "text": "二是拿两枚相同颜色的宝石。",
       "audio": "media/tts/quick/quick.take.mp3",
-      "audio_start": 6.435,
-      "duration": 2.63,
-      "start": 66.577,
+      "audio_start": 7.045,
+      "duration": 2.74,
+      "start": 67.267,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.63,
+          "end": 2.74,
           "text": "二是拿两枚相同颜色的宝石。",
           "words": [
             {
               "word": "二",
               "start": 0.0,
-              "end": 0.14,
-              "confidence": 0.9629
+              "end": 0.13,
+              "confidence": 0.9443
             },
             {
               "word": "是",
-              "start": 0.14,
+              "start": 0.13,
               "end": 0.33,
-              "confidence": 0.8751
+              "confidence": 0.8806
             },
             {
               "word": "拿",
               "start": 0.33,
-              "end": 0.56,
-              "confidence": 0.7529
+              "end": 0.55,
+              "confidence": 0.6931
             },
             {
               "word": "两",
-              "start": 0.56,
-              "end": 0.73,
-              "confidence": 0.943
+              "start": 0.55,
+              "end": 0.75,
+              "confidence": 0.9129
             },
             {
               "word": "枚",
-              "start": 0.73,
-              "end": 0.92,
-              "confidence": 0.953
+              "start": 0.75,
+              "end": 0.96,
+              "confidence": 0.9486
             },
             {
               "word": "相",
-              "start": 0.92,
-              "end": 1.13,
-              "confidence": 0.9507
+              "start": 0.96,
+              "end": 1.17,
+              "confidence": 0.9419
             },
             {
               "word": "同",
-              "start": 1.13,
-              "end": 1.32,
-              "confidence": 0.9506
+              "start": 1.17,
+              "end": 1.37,
+              "confidence": 0.9679
             },
             {
               "word": "颜",
-              "start": 1.32,
-              "end": 1.46,
-              "confidence": 0.948
+              "start": 1.37,
+              "end": 1.52,
+              "confidence": 0.9471
             },
             {
               "word": "色",
-              "start": 1.46,
-              "end": 1.61,
-              "confidence": 0.967
+              "start": 1.52,
+              "end": 1.68,
+              "confidence": 0.9681
             },
             {
               "word": "的",
-              "start": 1.61,
-              "end": 1.71,
-              "confidence": 0.976
+              "start": 1.68,
+              "end": 1.77,
+              "confidence": 0.9454
             },
             {
               "word": "宝",
-              "start": 1.71,
-              "end": 1.86,
-              "confidence": 0.93
+              "start": 1.77,
+              "end": 1.93,
+              "confidence": 0.9716
             },
             {
               "word": "石。",
-              "start": 1.86,
-              "end": 2.23,
-              "confidence": 0.9616
+              "start": 1.93,
+              "end": 2.28,
+              "confidence": 0.9344
             }
           ]
         }
@@ -2332,208 +2332,208 @@
       ],
       "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。",
       "audio": "media/tts/quick/quick.take.mp3",
-      "audio_start": 9.065,
-      "duration": 6.77,
-      "start": 69.207,
+      "audio_start": 9.785,
+      "duration": 6.95,
+      "start": 70.007,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.37,
+          "end": 4.5,
           "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，",
           "words": [
             {
               "word": "拿",
               "start": 0.0,
-              "end": 0.16,
-              "confidence": 0.8124
+              "end": 0.17,
+              "confidence": 0.8692
             },
             {
               "word": "两",
-              "start": 0.16,
-              "end": 0.3,
-              "confidence": 0.9076
+              "start": 0.17,
+              "end": 0.32,
+              "confidence": 0.9439
             },
             {
               "word": "枚",
-              "start": 0.3,
-              "end": 0.44,
-              "confidence": 0.9476
+              "start": 0.32,
+              "end": 0.46,
+              "confidence": 0.9423
             },
             {
               "word": "同",
-              "start": 0.44,
-              "end": 0.65,
-              "confidence": 0.9773
+              "start": 0.46,
+              "end": 0.66,
+              "confidence": 0.973
             },
             {
               "word": "色",
-              "start": 0.65,
-              "end": 0.86,
-              "confidence": 0.9661
+              "start": 0.66,
+              "end": 0.88,
+              "confidence": 0.9547
             },
             {
               "word": "时，",
-              "start": 0.86,
-              "end": 1.23,
-              "confidence": 0.9648
+              "start": 0.88,
+              "end": 1.24,
+              "confidence": 0.9663
             },
             {
               "word": "这",
-              "start": 1.36,
-              "end": 1.49,
-              "confidence": 0.9829
+              "start": 1.38,
+              "end": 1.52,
+              "confidence": 0.9811
             },
             {
               "word": "种",
-              "start": 1.49,
-              "end": 1.63,
-              "confidence": 0.9661
+              "start": 1.52,
+              "end": 1.67,
+              "confidence": 0.9666
             },
             {
               "word": "宝",
-              "start": 1.63,
-              "end": 1.81,
-              "confidence": 0.9725
+              "start": 1.67,
+              "end": 1.85,
+              "confidence": 0.9798
             },
             {
               "word": "石",
-              "start": 1.81,
-              "end": 2.1,
-              "confidence": 0.9294
+              "start": 1.85,
+              "end": 2.16,
+              "confidence": 0.9345
             },
             {
               "word": "在",
-              "start": 2.1,
-              "end": 2.29,
-              "confidence": 0.9791
+              "start": 2.16,
+              "end": 2.38,
+              "confidence": 0.9831
             },
             {
               "word": "供",
-              "start": 2.29,
-              "end": 2.47,
-              "confidence": 0.9399
+              "start": 2.38,
+              "end": 2.6,
+              "confidence": 0.9241
             },
             {
               "word": "应",
-              "start": 2.47,
-              "end": 2.59,
-              "confidence": 0.7938
+              "start": 2.6,
+              "end": 2.71,
+              "confidence": 0.8981
             },
             {
               "word": "堆",
-              "start": 2.59,
-              "end": 2.79,
-              "confidence": 0.788
+              "start": 2.71,
+              "end": 2.92,
+              "confidence": 0.8362
             },
             {
               "word": "里",
-              "start": 2.79,
-              "end": 2.98,
-              "confidence": 0.9074
+              "start": 2.92,
+              "end": 3.11,
+              "confidence": 0.9027
             },
             {
               "word": "必",
-              "start": 2.98,
-              "end": 3.13,
-              "confidence": 0.9178
+              "start": 3.11,
+              "end": 3.27,
+              "confidence": 0.8911
             },
             {
               "word": "须",
-              "start": 3.13,
-              "end": 3.33,
-              "confidence": 0.9792
+              "start": 3.27,
+              "end": 3.47,
+              "confidence": 0.9828
             },
             {
               "word": "至",
-              "start": 3.33,
-              "end": 3.46,
-              "confidence": 0.955
+              "start": 3.47,
+              "end": 3.62,
+              "confidence": 0.9635
             },
             {
               "word": "少",
-              "start": 3.46,
-              "end": 3.65,
-              "confidence": 0.9804
+              "start": 3.62,
+              "end": 3.81,
+              "confidence": 0.9795
             },
             {
               "word": "剩",
-              "start": 3.65,
-              "end": 3.84,
-              "confidence": 0.8241
+              "start": 3.81,
+              "end": 4.0,
+              "confidence": 0.775
             },
             {
               "word": "四",
-              "start": 3.84,
-              "end": 4.09,
-              "confidence": 0.8462
+              "start": 4.0,
+              "end": 4.26,
+              "confidence": 0.8543
             },
             {
               "word": "枚，",
-              "start": 4.09,
-              "end": 4.37,
-              "confidence": 0.9231
+              "start": 4.26,
+              "end": 4.5,
+              "confidence": 0.9127
             }
           ]
         },
         {
-          "t": 4.685,
-          "end": 6.77,
+          "t": 4.835,
+          "end": 6.95,
           "text": "拿完还要至少剩两枚。",
           "words": [
             {
               "word": "拿",
-              "start": 4.685,
-              "end": 4.89,
-              "confidence": 0.7325
+              "start": 4.835,
+              "end": 5.03,
+              "confidence": 0.7709
             },
             {
               "word": "完",
-              "start": 4.89,
-              "end": 5.14,
-              "confidence": 0.9131
+              "start": 5.03,
+              "end": 5.26,
+              "confidence": 0.8695
             },
             {
               "word": "还",
-              "start": 5.14,
-              "end": 5.3,
-              "confidence": 0.8937
+              "start": 5.26,
+              "end": 5.43,
+              "confidence": 0.9089
             },
             {
               "word": "要",
-              "start": 5.3,
-              "end": 5.44,
-              "confidence": 0.9661
+              "start": 5.43,
+              "end": 5.58,
+              "confidence": 0.9715
             },
             {
               "word": "至",
-              "start": 5.44,
-              "end": 5.58,
-              "confidence": 0.9362
+              "start": 5.58,
+              "end": 5.74,
+              "confidence": 0.9615
             },
             {
               "word": "少",
-              "start": 5.58,
-              "end": 5.68,
-              "confidence": 0.5606
+              "start": 5.74,
+              "end": 5.85,
+              "confidence": 0.6002
             },
             {
               "word": "剩",
-              "start": 5.68,
-              "end": 5.74,
-              "confidence": 0.1817
+              "start": 5.85,
+              "end": 5.91,
+              "confidence": 0.1713
             },
             {
               "word": "两",
-              "start": 5.74,
-              "end": 5.8,
-              "confidence": 0.0881
+              "start": 5.91,
+              "end": 5.97,
+              "confidence": 0.0836
             },
             {
               "word": "枚。",
-              "start": 5.8,
-              "end": 5.86,
-              "confidence": 0.2209
+              "start": 5.97,
+              "end": 6.03,
+              "confidence": 0.2118
             }
           ]
         }
@@ -2555,286 +2555,286 @@
       ],
       "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
       "audio": "media/tts/quick/quick.take.mp3",
-      "audio_start": 15.835,
-      "duration": 9.437,
-      "start": 75.977,
+      "audio_start": 16.735,
+      "duration": 9.593,
+      "start": 76.957,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.41,
+          "end": 4.5,
           "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；",
           "words": [
             {
               "word": "宝",
               "start": 0.0,
-              "end": 0.17,
-              "confidence": 0.9641
-            },
-            {
-              "word": "石",
-              "start": 0.17,
-              "end": 0.4,
-              "confidence": 0.8272
-            },
-            {
-              "word": "和",
-              "start": 0.4,
-              "end": 0.54,
-              "confidence": 0.905
-            },
-            {
-              "word": "黄",
-              "start": 0.54,
-              "end": 0.76,
+              "end": 0.18,
               "confidence": 0.9639
             },
             {
+              "word": "石",
+              "start": 0.18,
+              "end": 0.41,
+              "confidence": 0.8125
+            },
+            {
+              "word": "和",
+              "start": 0.41,
+              "end": 0.55,
+              "confidence": 0.9117
+            },
+            {
+              "word": "黄",
+              "start": 0.55,
+              "end": 0.74,
+              "confidence": 0.954
+            },
+            {
               "word": "金",
-              "start": 0.76,
-              "end": 0.93,
-              "confidence": 0.9437
+              "start": 0.74,
+              "end": 0.95,
+              "confidence": 0.9324
             },
             {
               "word": "总",
-              "start": 0.93,
-              "end": 1.11,
-              "confidence": 0.959
+              "start": 0.95,
+              "end": 1.13,
+              "confidence": 0.9661
             },
             {
               "word": "数",
-              "start": 1.11,
-              "end": 1.39,
-              "confidence": 0.9772
+              "start": 1.13,
+              "end": 1.4,
+              "confidence": 0.971
             },
             {
               "word": "最",
-              "start": 1.39,
-              "end": 1.55,
-              "confidence": 0.9687
+              "start": 1.4,
+              "end": 1.58,
+              "confidence": 0.9612
             },
             {
               "word": "多",
-              "start": 1.55,
-              "end": 1.67,
-              "confidence": 0.9791
+              "start": 1.58,
+              "end": 1.72,
+              "confidence": 0.9835
             },
             {
               "word": "十",
-              "start": 1.67,
-              "end": 1.95,
-              "confidence": 0.9567
+              "start": 1.72,
+              "end": 2.0,
+              "confidence": 0.9582
             },
             {
               "word": "枚，",
-              "start": 1.95,
-              "end": 2.21,
-              "confidence": 0.9082
+              "start": 2.0,
+              "end": 2.25,
+              "confidence": 0.9101
             },
             {
               "word": "超",
-              "start": 2.5,
-              "end": 2.75,
-              "confidence": 0.9761
+              "start": 2.59,
+              "end": 2.81,
+              "confidence": 0.9694
             },
             {
               "word": "过",
-              "start": 2.75,
-              "end": 2.99,
-              "confidence": 0.9391
+              "start": 2.81,
+              "end": 3.04,
+              "confidence": 0.9561
             },
             {
               "word": "要",
-              "start": 2.99,
-              "end": 3.16,
-              "confidence": 0.8865
+              "start": 3.04,
+              "end": 3.21,
+              "confidence": 0.8632
             },
             {
               "word": "立",
-              "start": 3.16,
-              "end": 3.32,
-              "confidence": 0.8786
+              "start": 3.21,
+              "end": 3.39,
+              "confidence": 0.8867
             },
             {
               "word": "刻",
-              "start": 3.32,
-              "end": 3.49,
-              "confidence": 0.9342
+              "start": 3.39,
+              "end": 3.56,
+              "confidence": 0.9591
             },
             {
               "word": "归",
-              "start": 3.49,
-              "end": 3.65,
-              "confidence": 0.8957
+              "start": 3.56,
+              "end": 3.73,
+              "confidence": 0.9187
             },
             {
               "word": "还",
-              "start": 3.65,
-              "end": 3.79,
-              "confidence": 0.8535
+              "start": 3.73,
+              "end": 3.87,
+              "confidence": 0.8941
             },
             {
               "word": "到",
-              "start": 3.79,
-              "end": 3.92,
-              "confidence": 0.9652
+              "start": 3.87,
+              "end": 4.0,
+              "confidence": 0.9817
             },
             {
               "word": "十",
-              "start": 3.92,
-              "end": 4.15,
-              "confidence": 0.9689
+              "start": 4.0,
+              "end": 4.25,
+              "confidence": 0.9735
             },
             {
               "word": "枚；",
-              "start": 4.15,
-              "end": 4.41,
-              "confidence": 0.947
+              "start": 4.25,
+              "end": 4.5,
+              "confidence": 0.9352
             }
           ]
         },
         {
-          "t": 4.825,
-          "end": 9.437,
+          "t": 4.905,
+          "end": 9.593,
           "text": "自己持有的宝石和已买的卡都放在面前，属于公开信息。",
           "words": [
             {
               "word": "自",
-              "start": 4.825,
-              "end": 4.91,
-              "confidence": 0.9031
+              "start": 4.905,
+              "end": 5.03,
+              "confidence": 0.9083
             },
             {
               "word": "己",
-              "start": 4.91,
-              "end": 5.07,
-              "confidence": 0.9716
+              "start": 5.03,
+              "end": 5.18,
+              "confidence": 0.9807
             },
             {
               "word": "持",
-              "start": 5.07,
-              "end": 5.24,
-              "confidence": 0.8192
+              "start": 5.18,
+              "end": 5.36,
+              "confidence": 0.8233
             },
             {
               "word": "有",
-              "start": 5.24,
-              "end": 5.35,
-              "confidence": 0.8351
+              "start": 5.36,
+              "end": 5.48,
+              "confidence": 0.8449
             },
             {
               "word": "的",
-              "start": 5.35,
-              "end": 5.45,
-              "confidence": 0.9725
+              "start": 5.48,
+              "end": 5.59,
+              "confidence": 0.9697
             },
             {
               "word": "宝",
-              "start": 5.45,
-              "end": 5.63,
-              "confidence": 0.9431
+              "start": 5.59,
+              "end": 5.78,
+              "confidence": 0.9527
             },
             {
               "word": "石",
-              "start": 5.63,
-              "end": 5.89,
-              "confidence": 0.8196
+              "start": 5.78,
+              "end": 6.05,
+              "confidence": 0.8068
             },
             {
               "word": "和",
-              "start": 5.89,
-              "end": 6.13,
-              "confidence": 0.8609
+              "start": 6.05,
+              "end": 6.24,
+              "confidence": 0.9195
             },
             {
               "word": "已",
-              "start": 6.13,
-              "end": 6.22,
-              "confidence": 0.6519
+              "start": 6.24,
+              "end": 6.37,
+              "confidence": 0.6207
             },
             {
               "word": "买",
-              "start": 6.22,
-              "end": 6.4,
-              "confidence": 0.97
+              "start": 6.37,
+              "end": 6.56,
+              "confidence": 0.9577
             },
             {
               "word": "的",
-              "start": 6.4,
-              "end": 6.49,
-              "confidence": 0.914
+              "start": 6.56,
+              "end": 6.66,
+              "confidence": 0.9043
             },
             {
               "word": "卡",
-              "start": 6.49,
-              "end": 6.77,
-              "confidence": 0.8701
+              "start": 6.66,
+              "end": 6.94,
+              "confidence": 0.8961
             },
             {
               "word": "都",
-              "start": 6.77,
-              "end": 6.93,
-              "confidence": 0.9322
+              "start": 6.94,
+              "end": 7.08,
+              "confidence": 0.9307
             },
             {
               "word": "放",
-              "start": 6.93,
-              "end": 7.1,
-              "confidence": 0.9785
+              "start": 7.08,
+              "end": 7.25,
+              "confidence": 0.977
             },
             {
               "word": "在",
-              "start": 7.1,
-              "end": 7.24,
-              "confidence": 0.9751
+              "start": 7.25,
+              "end": 7.39,
+              "confidence": 0.9844
             },
             {
               "word": "面",
-              "start": 7.24,
-              "end": 7.39,
-              "confidence": 0.9833
+              "start": 7.39,
+              "end": 7.55,
+              "confidence": 0.9737
             },
             {
               "word": "前，",
-              "start": 7.39,
-              "end": 7.75,
-              "confidence": 0.9457
+              "start": 7.55,
+              "end": 7.91,
+              "confidence": 0.9477
             },
             {
               "word": "属",
-              "start": 7.9,
-              "end": 8.12,
-              "confidence": 0.9776
+              "start": 8.03,
+              "end": 8.26,
+              "confidence": 0.9789
             },
             {
               "word": "于",
-              "start": 8.12,
-              "end": 8.24,
-              "confidence": 0.9776
+              "start": 8.26,
+              "end": 8.38,
+              "confidence": 0.9709
             },
             {
               "word": "公",
-              "start": 8.24,
-              "end": 8.39,
-              "confidence": 0.9582
+              "start": 8.38,
+              "end": 8.54,
+              "confidence": 0.954
             },
             {
               "word": "开",
-              "start": 8.39,
-              "end": 8.57,
-              "confidence": 0.9455
+              "start": 8.54,
+              "end": 8.72,
+              "confidence": 0.8936
             },
             {
               "word": "信",
-              "start": 8.57,
-              "end": 8.75,
-              "confidence": 0.9269
+              "start": 8.72,
+              "end": 8.9,
+              "confidence": 0.9525
             },
             {
               "word": "息。",
-              "start": 8.75,
-              "end": 8.88,
-              "confidence": 0.8849
+              "start": 8.9,
+              "end": 9.2,
+              "confidence": 0.9812
             }
           ]
         }
@@ -2858,7 +2858,7 @@
       "audio": "media/tts/quick/quick.cards.mp3",
       "audio_start": 0.0,
       "duration": 3.085,
-      "start": 85.414,
+      "start": 86.55,
       "refs": [],
       "subtitles": [
         {
@@ -2936,7 +2936,7 @@
       "audio": "media/tts/quick/quick.cards.mp3",
       "audio_start": 2.6,
       "duration": 8.285,
-      "start": 88.499,
+      "start": 89.635,
       "refs": [],
       "subtitles": [
         {
@@ -3171,7 +3171,7 @@
       "audio": "media/tts/quick/quick.cards.mp3",
       "audio_start": 10.885,
       "duration": 13.05,
-      "start": 96.784,
+      "start": 97.92,
       "refs": [],
       "subtitles": [
         {
@@ -3563,7 +3563,7 @@
       "audio": "media/tts/quick/quick.cards.mp3",
       "audio_start": 23.935,
       "duration": 8.801,
-      "start": 109.834,
+      "start": 110.97,
       "refs": [],
       "subtitles": [
         {
@@ -3821,7 +3821,7 @@
       "audio": "media/tts/quick/quick.reserve.mp3",
       "audio_start": 0.0,
       "duration": 3.045,
-      "start": 118.635,
+      "start": 119.771,
       "refs": [],
       "subtitles": [
         {
@@ -3899,7 +3899,7 @@
       "audio": "media/tts/quick/quick.reserve.mp3",
       "audio_start": 2.55,
       "duration": 8.785,
-      "start": 121.68,
+      "start": 122.816,
       "refs": [],
       "subtitles": [
         {
@@ -4177,7 +4177,7 @@
       "audio": "media/tts/quick/quick.reserve.mp3",
       "audio_start": 11.335,
       "duration": 8.865,
-      "start": 130.465,
+      "start": 131.601,
       "refs": [],
       "subtitles": [
         {
@@ -4461,7 +4461,7 @@
       "audio": "media/tts/quick/quick.reserve.mp3",
       "audio_start": 20.2,
       "duration": 3.488,
-      "start": 139.33,
+      "start": 140.466,
       "refs": [],
       "subtitles": [
         {
@@ -4593,7 +4593,7 @@
       "audio": "media/tts/quick/quick.gold.mp3",
       "audio_start": 0.0,
       "duration": 7.896,
-      "start": 142.818,
+      "start": 143.954,
       "refs": [],
       "subtitles": [
         {
@@ -4834,7 +4834,7 @@
       "audio": "media/tts/quick/quick.nobles.mp3",
       "audio_start": 0.0,
       "duration": 2.795,
-      "start": 150.714,
+      "start": 151.85,
       "refs": [],
       "subtitles": [
         {
@@ -4894,7 +4894,7 @@
       "audio": "media/tts/quick/quick.nobles.mp3",
       "audio_start": 2.44,
       "duration": 5.88,
-      "start": 153.509,
+      "start": 154.645,
       "refs": [],
       "subtitles": [
         {
@@ -5111,7 +5111,7 @@
       "audio": "media/tts/quick/quick.nobles.mp3",
       "audio_start": 8.32,
       "duration": 1.66,
-      "start": 159.389,
+      "start": 160.525,
       "refs": [],
       "subtitles": [
         {
@@ -5183,7 +5183,7 @@
       "audio": "media/tts/quick/quick.nobles.mp3",
       "audio_start": 9.98,
       "duration": 2.86,
-      "start": 161.049,
+      "start": 162.185,
       "refs": [],
       "subtitles": [
         {
@@ -5284,7 +5284,7 @@
       "audio": "media/tts/quick/quick.end.mp3",
       "audio_start": 0.0,
       "duration": 2.695,
-      "start": 163.909,
+      "start": 165.045,
       "refs": [],
       "subtitles": [
         {
@@ -5355,7 +5355,7 @@
       "audio": "media/tts/quick/quick.end.mp3",
       "audio_start": 2.26,
       "duration": 8.012,
-      "start": 166.604,
+      "start": 167.74,
       "refs": [],
       "subtitles": [
         {
