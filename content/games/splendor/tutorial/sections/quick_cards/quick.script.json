@@ -5,6 +5,22 @@
   "section": "quick_cards",
   "cues": [
     {
+      "id": "title_3_2",
+      "group": "3.2 购买发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.2 购买发展卡"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_cards/title_3_2.b1",
+          "text": "3.2 购买发展卡。"
+        }
+      ]
+    },
+    {
       "id": "001",
       "group": "3.2 购买发展卡",
       "group_path": [

@@ -5,6 +5,22 @@
   "section": "quick_reserve",
   "cues": [
     {
+      "id": "title_3_3",
+      "group": "3.3 保留发展卡",
+      "group_path": [
+        "3 回合与行动",
+        "3.3 保留发展卡"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_reserve/title_3_3.b1",
+          "text": "3.3 保留发展卡。"
+        }
+      ]
+    },
+    {
       "id": "001",
       "group": "3.3 保留发展卡",
       "group_path": [

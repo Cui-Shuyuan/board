@@ -5,10 +5,25 @@
   "section": "intro",
   "cues": [
     {
-      "id": "001",
-      "group": "1 背景介绍",
+      "id": "title_1",
+      "group": "1 背景",
       "group_path": [
-        "1 背景介绍"
+        "1 背景"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "intro/title_1.b1",
+          "text": "一，背景。"
+        }
+      ]
+    },
+    {
+      "id": "001",
+      "group": "1 背景",
+      "group_path": [
+        "1 背景"
       ],
       "refs": [
         "rulebook:background"

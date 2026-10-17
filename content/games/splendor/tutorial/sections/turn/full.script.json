@@ -5,6 +5,21 @@
   "section": "turn",
   "cues": [
     {
+      "id": "title_3",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "turn/title_3.b1",
+          "text": "3 行动。"
+        }
+      ]
+    },
+    {
       "id": "001",
       "group": "3 行动",
       "group_path": [

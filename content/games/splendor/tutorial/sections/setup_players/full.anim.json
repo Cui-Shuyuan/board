@@ -5,6 +5,49 @@
   "section": "setup_players",
   "cues": [
     {
+      "id": "title_2_3",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "2.3 贵族板块",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "setup_players/title_2_3.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "2.3 贵族板块",
+          "label_align": "center",
+          "anchor": "setup_players/title_2_3.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.37,
+          "anchor": "setup_players/title_2_3.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "nobles.001.1",
       "qa_exempt": true,
       "parent": "setup_gems/005.2",
@@ -235,6 +278,49 @@
       ]
     },
     {
+      "id": "title_2_4",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "2.4 起始玩家",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "setup_players/title_2_4.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "2.4 起始玩家",
+          "label_align": "center",
+          "anchor": "setup_players/title_2_4.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 2.915,
+          "anchor": "setup_players/title_2_4.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "starting.001.1",
       "parent": "nobles.002",
       "timing": [
@@ -407,6 +493,49 @@
           "insert_at": 7
         }
       ]
+    },
+    {
+      "id": "title_2_5",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "2.5 设置完成",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "setup_players/title_2_5.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "2.5 设置完成",
+          "label_align": "center",
+          "anchor": "setup_players/title_2_5.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 2.845,
+          "anchor": "setup_players/title_2_5.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
     },
     {
       "id": "end.001.1",
@@ -606,6 +735,72 @@
       "id": "setup_players/end.001.1.b2.end",
       "cue": "end.001.1",
       "beat": "setup_players/end.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "setup_players/title_2_5.start",
+      "cue": "title_2_5",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_players/title_2_5.end",
+      "cue": "title_2_5",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_players/title_2_5.b1.start",
+      "cue": "title_2_5",
+      "beat": "setup_players/title_2_5.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_players/title_2_5.b1.end",
+      "cue": "title_2_5",
+      "beat": "setup_players/title_2_5.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup_players/title_2_4.start",
+      "cue": "title_2_4",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_players/title_2_4.end",
+      "cue": "title_2_4",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_players/title_2_4.b1.start",
+      "cue": "title_2_4",
+      "beat": "setup_players/title_2_4.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_players/title_2_4.b1.end",
+      "cue": "title_2_4",
+      "beat": "setup_players/title_2_4.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup_players/title_2_3.start",
+      "cue": "title_2_3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_players/title_2_3.end",
+      "cue": "title_2_3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_players/title_2_3.b1.start",
+      "cue": "title_2_3",
+      "beat": "setup_players/title_2_3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_players/title_2_3.b1.end",
+      "cue": "title_2_3",
+      "beat": "setup_players/title_2_3.b1",
       "edge": "end"
     }
   ]

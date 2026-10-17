@@ -293,7 +293,11 @@ overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里
   "anchor": "<cue>.start", "target": { "space": "screen", "id": "hint_text" } }
 ```
 
-不要按 cue 单独调字号或加框；如果文字太长，优先缩短文案或调整槽位宽高。
+普通说明文字不要按 cue 单独调字号或加框；如果文字太长，优先缩短文案或调整槽位宽高。章节标题是例外：可在 label 事件上写 `size`（1080p 参考像素）指定单条 label 的字号，例如章节标题用 `size: 136` + `label_align: "center"` + 专用 `section_title` overlay；普通说明保持默认字号。
+
+章节标题需要压暗场景时，额外发一个全屏 `overlay_show`：`overlay: "section_title_dim"`、`rect: {x:0,y:0,w:1,h:1}`、`background: "#000000"`、`dim_alpha: 0.8`。`dim_alpha` 表示遮罩透明度，0.8 即背景保留约 20% 可见度；该模式只隐藏 zone debug 层、不隐藏真实画面。
+
+章节标题和 TTS cue 需要自然停顿时，用 cue 字段 `pause_after_speech_seconds`（例如 `1.0`），不要用 `hold_after_audio` 在连续 section 音频的 cue 边界硬停。播放端会在该 cue 最后一个字幕 word 结束后暂停指定秒数，再跳到下一 cue 的 `audio_start`，避免停顿切进下一个词。
 屏幕 `label` 支持 Unity rich text 内联标签（如 `<color=#FF2020>11</color>`），也可用可选 `"label_color": "#FF2020"` 指定整条文字颜色；未写时保持默认白色正文 + 深色描边，富文本标签不占自动换行字数。
 `label` 还支持可选 `"label_mode": "add" | "replace"`：默认 `add`，同一槽位的多条 label 会各自出现；`replace` 表示同一目标上最新开始的 label 生效。需要无缝切换时写 `replace` 并让前后两条 label 的 `dur` 轻微重叠；需要停顿间隔时保持默认 `add` 并留空档。
 `replace` 可再写可选 `"label_key": "<logical-text-id>"`，指定它要替换哪一条逻辑文本；同一 overlay 上不同 `label_key` 可以独立替换、互不影响。不写时按整个目标替换。

@@ -5,6 +5,49 @@
   "section": "quick_nobles",
   "cues": [
     {
+      "id": "title_3_4",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.4 贵族",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "quick_nobles/title_3_4.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.4 贵族",
+          "label_align": "center",
+          "anchor": "quick_nobles/title_3_4.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.44,
+          "anchor": "quick_nobles/title_3_4.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "001",
       "parent": "quick_setup_players/003",
       "entry": "quick_setup_players/003",
@@ -623,6 +666,28 @@
       "id": "quick_nobles/003.b1.end",
       "cue": "003",
       "beat": "quick_nobles/003.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_nobles/title_3_4.start",
+      "cue": "title_3_4",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_nobles/title_3_4.end",
+      "cue": "title_3_4",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_nobles/title_3_4.b1.start",
+      "cue": "title_3_4",
+      "beat": "quick_nobles/title_3_4.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_nobles/title_3_4.b1.end",
+      "cue": "title_3_4",
+      "beat": "quick_nobles/title_3_4.b1",
       "edge": "end"
     }
   ]

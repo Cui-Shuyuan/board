@@ -5,6 +5,21 @@
   "section": "end",
   "cues": [
     {
+      "id": "title_4",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "end/title_4.b1",
+          "text": "4 游戏结束。"
+        }
+      ]
+    },
+    {
       "id": "trigger.001",
       "group": "4 游戏结束",
       "group_path": [

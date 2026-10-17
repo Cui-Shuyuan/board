@@ -5,6 +5,22 @@
   "section": "purchase_reserved",
   "cues": [
     {
+      "id": "title_3_4",
+      "group": "3.4 购买保留的发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.4 购买保留的发展卡牌"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "purchase_reserved/title_3_4.b1",
+          "text": "3.4 购买保留的发展卡牌。"
+        }
+      ]
+    },
+    {
       "id": "001",
       "group": "3.4 购买保留的发展卡牌",
       "group_path": [

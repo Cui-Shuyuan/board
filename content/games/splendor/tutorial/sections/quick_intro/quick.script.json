@@ -5,10 +5,25 @@
   "section": "quick_intro",
   "cues": [
     {
-      "id": "001",
-      "group": "1 开始",
+      "id": "title_1",
+      "group": "1 背景",
       "group_path": [
-        "1 开始"
+        "1 背景"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_intro/title_1.b1",
+          "text": "一，背景。"
+        }
+      ]
+    },
+    {
+      "id": "001",
+      "group": "1 背景",
+      "group_path": [
+        "1 背景"
       ],
       "refs": [],
       "pause_after": 0.0,

@@ -5,6 +5,49 @@
   "section": "quick_setup_cards",
   "cues": [
     {
+      "id": "title_2",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "2 设置",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "quick_setup_cards/title_2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "2 设置",
+          "label_align": "center",
+          "anchor": "quick_setup_cards/title_2.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 2.99,
+          "anchor": "quick_setup_cards/title_2.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "001.1",
       "parent": "quick_intro/001",
       "tree": "main",
@@ -375,6 +418,28 @@
       "id": "quick_setup_cards/001.2.b4.end",
       "cue": "001.2",
       "beat": "quick_setup_cards/001.2.b4",
+      "edge": "end"
+    },
+    {
+      "id": "quick_setup_cards/title_2.start",
+      "cue": "title_2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_setup_cards/title_2.end",
+      "cue": "title_2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_setup_cards/title_2.b1.start",
+      "cue": "title_2",
+      "beat": "quick_setup_cards/title_2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_setup_cards/title_2.b1.end",
+      "cue": "title_2",
+      "beat": "quick_setup_cards/title_2.b1",
       "edge": "end"
     }
   ]

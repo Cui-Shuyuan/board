@@ -5,10 +5,60 @@
   "section": "quick_intro",
   "cues": [
     {
-      "id": "001",
-      "entry": "initial",
+      "id": "title_1",
       "tree": "box",
-      "transition": "world_cut",
+      "qa_exempt": true,
+      "script": {
+        "story": "1 背景",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。",
+        "enter": {
+          "picture": "media/box.png",
+          "zones": {}
+        },
+        "exit": {
+          "picture": "media/box.png",
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "quick_intro/title_1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "1 背景",
+          "label_align": "center",
+          "anchor": "quick_intro/title_1.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.08,
+          "anchor": "quick_intro/title_1.start"
+        }
+      ],
+      "entry": "initial",
+      "pause_after_speech_seconds": 1.0
+    },
+    {
+      "id": "001",
+      "tree": "box",
       "script": {
         "story": "璀璨宝石的目标，是成为最负盛名的商人。所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。",
         "note": "Quick 初稿，时间待 TTS 后重排。",
@@ -40,7 +90,8 @@
           "dur": 10.296,
           "anchor": "quick_intro/001.start"
         }
-      ]
+      ],
+      "parent": "title_1"
     }
   ],
   "time_anchors": [
@@ -64,6 +115,28 @@
       "id": "quick_intro/001.b1.end",
       "cue": "001",
       "beat": "quick_intro/001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_intro/title_1.start",
+      "cue": "title_1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_intro/title_1.end",
+      "cue": "title_1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_intro/title_1.b1.start",
+      "cue": "title_1",
+      "beat": "quick_intro/title_1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_intro/title_1.b1.end",
+      "cue": "title_1",
+      "beat": "quick_intro/title_1.b1",
       "edge": "end"
     }
   ]

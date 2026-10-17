@@ -5,6 +5,49 @@
   "section": "nobles",
   "cues": [
     {
+      "id": "title_3_2_2",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.2.2 贵族结算",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "nobles/title_3_2_2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.2.2 贵族结算",
+          "label_align": "center",
+          "anchor": "nobles/title_3_2_2.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.41,
+          "anchor": "nobles/title_3_2_2.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "intro.001",
       "parent": "cards/limit.001.1",
       "tree": "main",
@@ -3790,6 +3833,28 @@
       "id": "nobles/summary.001.3.b1.end",
       "cue": "summary.001.3",
       "beat": "nobles/summary.001.3.b1",
+      "edge": "end"
+    },
+    {
+      "id": "nobles/title_3_2_2.start",
+      "cue": "title_3_2_2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "nobles/title_3_2_2.end",
+      "cue": "title_3_2_2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "nobles/title_3_2_2.b1.start",
+      "cue": "title_3_2_2",
+      "beat": "nobles/title_3_2_2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "nobles/title_3_2_2.b1.end",
+      "cue": "title_3_2_2",
+      "beat": "nobles/title_3_2_2.b1",
       "edge": "end"
     }
   ]

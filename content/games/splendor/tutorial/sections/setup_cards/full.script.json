@@ -5,6 +5,22 @@
   "section": "setup_cards",
   "cues": [
     {
+      "id": "title_2_1",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_cards/title_2_1.b1",
+          "text": "2.1 发展卡牌。"
+        }
+      ]
+    },
+    {
       "id": "001.1",
       "group": "2.1 发展卡牌",
       "group_path": [

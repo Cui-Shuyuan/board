@@ -5,6 +5,49 @@
   "section": "reserve",
   "cues": [
     {
+      "id": "title_3_3",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.3 保留一张发展卡牌",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "reserve/title_3_3.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.3 保留一张发展卡牌",
+          "label_align": "center",
+          "anchor": "reserve/title_3_3.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 4.37,
+          "anchor": "reserve/title_3_3.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "intro.001.1",
       "parent": "nobles/summary.001.3",
       "timing": [
@@ -2102,6 +2145,28 @@
       "id": "reserve/not_purchase.001.b1.end",
       "cue": "not_purchase.001",
       "beat": "reserve/not_purchase.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "reserve/title_3_3.start",
+      "cue": "title_3_3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "reserve/title_3_3.end",
+      "cue": "title_3_3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "reserve/title_3_3.b1.start",
+      "cue": "title_3_3",
+      "beat": "reserve/title_3_3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "reserve/title_3_3.b1.end",
+      "cue": "title_3_3",
+      "beat": "reserve/title_3_3.b1",
       "edge": "end"
     }
   ]

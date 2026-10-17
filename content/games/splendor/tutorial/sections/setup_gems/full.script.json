@@ -5,6 +5,22 @@
   "section": "setup_gems",
   "cues": [
     {
+      "id": "title_2_2",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_gems/title_2_2.b1",
+          "text": "2.2 宝石与黄金。"
+        }
+      ]
+    },
+    {
       "id": "001.1",
       "group": "2.2 宝石与黄金",
       "group_path": [

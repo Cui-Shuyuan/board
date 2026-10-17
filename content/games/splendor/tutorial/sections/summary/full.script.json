@@ -5,6 +5,22 @@
   "section": "summary",
   "cues": [
     {
+      "id": "title_3_5",
+      "group": "3.5 回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "summary/title_3_5.b1",
+          "text": "3.5 回合结束与循环。"
+        }
+      ]
+    },
+    {
       "id": "001",
       "group": "3.5 回合结束与循环",
       "group_path": [

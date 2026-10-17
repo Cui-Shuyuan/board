@@ -5,6 +5,22 @@
   "section": "reserve",
   "cues": [
     {
+      "id": "title_3_3",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve/title_3_3.b1",
+          "text": "3.3 保留一张发展卡牌。"
+        }
+      ]
+    },
+    {
       "id": "intro.001.1",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [

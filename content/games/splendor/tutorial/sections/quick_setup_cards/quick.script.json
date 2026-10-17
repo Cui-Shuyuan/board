@@ -5,6 +5,21 @@
   "section": "quick_setup_cards",
   "cues": [
     {
+      "id": "title_2",
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "quick_setup_cards/title_2.b1",
+          "text": "2 设置。"
+        }
+      ]
+    },
+    {
       "id": "001.1",
       "group": "2 设置",
       "group_path": [

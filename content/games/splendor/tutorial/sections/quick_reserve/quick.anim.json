@@ -5,6 +5,49 @@
   "section": "quick_reserve",
   "cues": [
     {
+      "id": "title_3_3",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.3 保留发展卡",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "quick_reserve/title_3_3.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.3 保留发展卡",
+          "label_align": "center",
+          "anchor": "quick_reserve/title_3_3.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.55,
+          "anchor": "quick_reserve/title_3_3.start"
+        }
+      ],
+      "pause_after_speech_seconds": 1.0
+    },
+    {
       "id": "001",
       "parent": "quick_setup_players/003",
       "entry": "quick_setup_players/003",
@@ -518,6 +561,28 @@
       "id": "quick_reserve/003.b1.end",
       "cue": "003",
       "beat": "quick_reserve/003.b1",
+      "edge": "end"
+    },
+    {
+      "id": "quick_reserve/title_3_3.start",
+      "cue": "title_3_3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "quick_reserve/title_3_3.end",
+      "cue": "title_3_3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "quick_reserve/title_3_3.b1.start",
+      "cue": "title_3_3",
+      "beat": "quick_reserve/title_3_3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "quick_reserve/title_3_3.b1.end",
+      "cue": "title_3_3",
+      "beat": "quick_reserve/title_3_3.b1",
       "edge": "end"
     }
   ]

@@ -5,6 +5,23 @@
   "section": "cards",
   "cues": [
     {
+      "id": "title_3_2_1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "cards/title_3_2_1.b1",
+          "text": "3.2.1 认识发展卡牌。"
+        }
+      ]
+    },
+    {
       "id": "intro.001",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [

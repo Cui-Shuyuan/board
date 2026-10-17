@@ -5,6 +5,23 @@
   "section": "nobles",
   "cues": [
     {
+      "id": "title_3_2_2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "nobles/title_3_2_2.b1",
+          "text": "3.2.2 贵族结算。"
+        }
+      ]
+    },
+    {
       "id": "intro.001",
       "group": "3.2.2 贵族结算",
       "group_path": [
