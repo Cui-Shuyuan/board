@@ -1,6 +1,6 @@
 # Program 问答第二轮：事实包修复、基线隔离与分阶段诊断
 
-日期：2026-10-17。执行对象：DeepSeek V4.1 Flash。对应计划：`docs/plans/program-qa-evidence-repair-and-diagnosis-plan.md`。
+日期：2026-10-17。执行对象：DeepSeek V4.1 Flash。对应计划：`archive/plans/2026-10-17/program-qa-evidence-repair-and-diagnosis-plan.md`。
 
 ## 1. 结论
 
