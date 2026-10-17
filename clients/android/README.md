@@ -47,27 +47,27 @@ clients/unity/Assets/Scripts/Tutorial/TutorialTouchControls.cs
 
 ## 构建环境：集中配置
 
-机器相关路径全部集中到 `build-uaal.bat` 顶部配置块；`gradlew.bat` 只从该配置块读取路径。
+本机绝对路径统一记录在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）；README 中的 `%..._WIN%` 均引用该文件中的同名键。`build-uaal.bat` 仍有自己的可移植默认配置块，调用前用下列变量值覆盖即可。
 
-默认值：
-
-| 变量 | 默认值 |
+| 环境变量 | 配置键（`config/local.properties`） |
 | --- | --- |
-| `UNITY_ROOT` | `D:\Unity\Hub\Editor\6000.5.8f1` |
-| `UNITY_EXE` | `%UNITY_ROOT%\Editor\Unity.exe` |
-| `JAVA_HOME` | `%UNITY_ROOT%\Editor\Data\PlaybackEngines\AndroidPlayer\OpenJDK` |
-| `ANDROID_HOME` | `%UNITY_ROOT%\Editor\Data\PlaybackEngines\AndroidPlayer\SDK` |
-| `UNITY_GRADLE_HOME` | `%UNITY_ROOT%\Editor\Data\PlaybackEngines\AndroidPlayer\Tools\gradle` |
-| `GRADLE_USER_HOME` | `%~d0\gradle-home-boardai` |
+| `UNITY_ROOT` | `UNITY_ROOT_WIN` |
+| `UNITY_EXE` | `UNITY_EXE_WIN` |
+| `JAVA_HOME` | `JAVA_HOME_WIN` |
+| `ANDROID_HOME` | `ANDROID_HOME_WIN` |
+| `UNITY_GRADLE_HOME` | `UNITY_GRADLE_HOME_WIN` |
+| `GRADLE_USER_HOME` | `GRADLE_USER_HOME_WIN` |
 
-可在调用前覆盖任意变量，例如：
+可在调用前用配置文件中的值覆盖任意变量，例如：
 
 ```bat
-set UNITY_EXE=D:\MyUnity\Editor\Unity.exe
-set JAVA_HOME=C:\Java\jdk-17
-set ANDROID_HOME=D:\Android\Sdk
-set UNITY_GRADLE_HOME=D:\MyUnity\...\Tools\gradle
-set GRADLE_USER_HOME=D:\gradle-home-boardai
+rem 先把 config/local.properties 中对应值设成这些 *_WIN 环境变量
+set UNITY_ROOT=%UNITY_ROOT_WIN%
+set UNITY_EXE=%UNITY_EXE_WIN%
+set JAVA_HOME=%JAVA_HOME_WIN%
+set ANDROID_HOME=%ANDROID_HOME_WIN%
+set UNITY_GRADLE_HOME=%UNITY_GRADLE_HOME_WIN%
+set GRADLE_USER_HOME=%GRADLE_USER_HOME_WIN%
 ```
 
 `gradlew.bat` 行为：
@@ -76,10 +76,9 @@ set GRADLE_USER_HOME=D:\gradle-home-boardai
 2. 否则回退到标准 Gradle Wrapper；
 3. `JAVA_HOME` 未设置时直接使用 `PATH` 中的 `java`。
 
-`local.properties` 由 `build-uaal.bat` 在缺失时根据 `ANDROID_HOME` 生成，不入 Git。可复制 `local.properties.example` 后手工维护：
+`local.properties` 由 `build-uaal.bat` 在缺失时根据 `ANDROID_HOME` 生成，不入 Git；其中 `sdk.dir` 取 `config/local.properties` 的 `ANDROID_HOME_WIN`（写成正斜杠）。手工维护时只需确认 API 地址：
 
 ```properties
-sdk.dir=D:/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK
 board.api.baseUrl=http://127.0.0.1:5000
 ```
 
@@ -95,7 +94,8 @@ board.api.baseUrl=http://127.0.0.1:5000
 4. 输出 APK 路径。
 
 ```bat
-cd D:\workspace\board\clients\android
+rem %BOARD_WORKSPACE_WIN% 来自 config/local.properties
+cd %BOARD_WORKSPACE_WIN%\clients\android
 build-uaal.bat
 ```
 
@@ -108,9 +108,10 @@ clients\android\app\build\outputs\apk\debug\app-debug.apk
 如果只想在 Unity 已导出后重新构建原生壳：
 
 ```bat
-cd D:\workspace\board\clients\android
-set JAVA_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\OpenJDK
-set UNITY_GRADLE_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\Tools\gradle
+rem 变量值来自 config/local.properties
+cd %BOARD_WORKSPACE_WIN%\clients\android
+set JAVA_HOME=%JAVA_HOME_WIN%
+set UNITY_GRADLE_HOME=%UNITY_GRADLE_HOME_WIN%
 gradlew.bat assembleDebug
 ```
 
@@ -125,7 +126,8 @@ python3 tools/ops/check_unity_scripts.py
 当前 12 个测试文件覆盖内容状态 / 版本清理 / 更新器 / 首页协调 / 播放会话 / 时间轴 / Unity 加载队列 / 问答语音控制器：
 
 ```bat
-cd D:\workspace\board\clients\android
+rem %BOARD_WORKSPACE_WIN% 来自 config/local.properties
+cd %BOARD_WORKSPACE_WIN%\clients\android
 gradlew.bat testDebugUnitTest
 ```
 
@@ -145,19 +147,20 @@ clients/unity/Assets/Editor/AndroidDebugBuild.cs
 clients/unity/Builds/Android/BoardAI.apk
 ```
 
-Windows 中文用户名下，Unity 内部 Gradle 的 prefab 步骤会因为 `C:\Users\<中文名>\.gradle` 编码问题失败，所以直接构建旧 APK 时也必须设置 ASCII 的 `GRADLE_USER_HOME`：
+Windows 中文用户名下，Unity 内部 Gradle 的 prefab 步骤会因为 `%USERPROFILE%\.gradle` 编码问题失败，所以直接构建旧 APK 时也必须设置 ASCII 的 `GRADLE_USER_HOME`：
 
 ```bat
-set GRADLE_USER_HOME=D:\gradle-home-boardai
-set JAVA_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\OpenJDK
-set ANDROID_HOME=D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK
+rem 变量值来自 config/local.properties
+set GRADLE_USER_HOME=%GRADLE_USER_HOME_WIN%
+set JAVA_HOME=%JAVA_HOME_WIN%
+set ANDROID_HOME=%ANDROID_HOME_WIN%
 set ANDROID_SDK_ROOT=%ANDROID_HOME%
 
-D:\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe ^
+%UNITY_EXE_WIN% ^
   -batchmode -quit ^
-  -projectPath D:\workspace\board\clients\unity ^
+  -projectPath %BOARD_WORKSPACE_WIN%\clients\unity ^
   -executeMethod AndroidDebugBuild.BuildApk ^
-  -logFile D:\workspace\board\clients\unity\Builds\Android\build.log
+  -logFile %BOARD_WORKSPACE_WIN%\clients\unity\Builds\Android\build.log
 ```
 
 该入口与 UaaL 正式客户端互不影响，不会覆盖 `com.boardai.tutorial.uaal`。
@@ -310,8 +313,9 @@ Android 构建不挂载 `TutorialTouchControls`：
 
 PC 侧：
 
-```bash
-cd D:\workspace\board
+```bat
+rem %BOARD_WORKSPACE_WIN% 来自 config/local.properties
+cd /d %BOARD_WORKSPACE_WIN%
 python3 tools/content/build_content_manifest.py --game splendor
 ```
 
@@ -372,19 +376,12 @@ board-content/
 
 ### 配置服务端地址与 adb reverse
 
-本机 adb 使用 Unity 自带 Android SDK，Windows 路径：
+本机 adb 路径统一记录在 `config/local.properties`：
 
-```text
-D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\platform-tools\adb.exe
-```
+- Windows 键：`ADB_WIN`
+- WSL 键：`ADB_WSL`
 
-WSL 路径：
-
-```text
-/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb.exe
-```
-
-下文 `%ADB%` 均指该可执行文件。
+下文 `%ADB%` 均指 `%ADB_WIN%`；WSL 中使用 `"$ADB_WSL"`。
 
 `local.properties`：
 
@@ -445,13 +442,13 @@ Android 上：
 安装：
 
 ```bat
-%ADB% install -r D:\workspace\board\clients\android\app\build\outputs\apk\debug\app-debug.apk
+%ADB% install -r %BOARD_WORKSPACE_WIN%\clients\android\app\build\outputs\apk\debug\app-debug.apk
 ```
 
 如果 MIUI 报 `INSTALL_FAILED_USER_RESTRICTED`：
 
 ```bat
-%ADB% push D:\workspace\board\clients\android\app\build\outputs\apk\debug\app-debug.apk /sdcard/Download/BoardAI-uaal.apk
+%ADB% push %BOARD_WORKSPACE_WIN%\clients\android\app\build\outputs\apk\debug\app-debug.apk /sdcard/Download/BoardAI-uaal.apk
 ```
 
 然后手机手动安装。
@@ -462,8 +459,8 @@ Android 上：
 %ADB% logcat -c
 %ADB% shell monkey -p com.boardai.tutorial.uaal -c android.intent.category.LAUNCHER 1
 ping -n 20 127.0.0.1 >nul
-%ADB% logcat -d -v time > D:\workspace\board\clients\unity\Builds\Android\native-shell-logcat.txt
-%ADB% logcat -d -s Unity:V > D:\workspace\board\clients\unity\Builds\Android\native-shell-unity-logcat.txt
+%ADB% logcat -d -v time > %BOARD_WORKSPACE_WIN%\clients\unity\Builds\Android\native-shell-logcat.txt
+%ADB% logcat -d -s Unity:V > %BOARD_WORKSPACE_WIN%\clients\unity\Builds\Android\native-shell-unity-logcat.txt
 ```
 
 已在本机 Redmi K30 Pro / Android 10 / arm64-v8a 上验证：
@@ -484,6 +481,7 @@ ping -n 20 127.0.0.1 >nul
 
 ## 不提交
 
+- `config/local.properties`（仓库根目录的本机绝对路径配置）
 - `clients/android/build/`
 - `clients/android/app/build/`
 - `clients/android/.gradle/`

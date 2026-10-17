@@ -34,11 +34,11 @@ dotnet run --urls "http://0.0.0.0:5000"
 - `Embedding:ModelDir` 为空时默认使用 `{仓库根}/backend/BoardAI.Api/ml_models/bge-base-zh-v1.5-fp32`；相对路径按仓库根解析，绝对路径原样使用。
 - `ContentController`、`Program.cs`、`GameRulesService` 共用同一套解析逻辑。
 
-示例：
+本机路径统一记录在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）。按该文件设置以下变量后运行：
 
-```bash
-set BOARD_BASE_PATH=D:\path\to\board
-set Embedding__ModelDir=D:\models\bge-base-zh-v1.5-fp32
+```bat
+set BOARD_BASE_PATH=%BOARD_WORKSPACE_WIN%
+set Embedding__ModelDir=%EMBEDDING_MODEL_DIR_WIN%
 dotnet run --urls "http://0.0.0.0:5000"
 ```
 

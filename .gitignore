@@ -23,6 +23,9 @@ obj/
 .env
 .env.local
 
+# Machine-specific absolute paths (template: config/local.properties.example)
+config/local.properties
+
 # Qdrant runtime data
 backend/BoardAI.Api/storage/
 # 误在仓库目录内启动 Qdrant 留下的存储/二进制残渣

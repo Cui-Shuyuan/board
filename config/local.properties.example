@@ -1,0 +1,21 @@
+# Copy this file to config/local.properties and fill in the machine-specific
+# values. config/local.properties is ignored by Git; never commit real paths.
+# README commands reference these keys as %KEY% (Windows) or $KEY (WSL).
+
+# Repository roots
+BOARD_WORKSPACE_WIN=<Windows path to this repository>
+BOARD_WORKSPACE_WSL=<WSL path to this repository>
+
+# Unity / Android toolchain
+UNITY_ROOT_WIN=<Unity editor root>
+UNITY_EXE_WIN=<Unity.exe path>
+JAVA_HOME_WIN=<JDK home used by the Android build>
+ANDROID_HOME_WIN=<Android SDK root>
+UNITY_GRADLE_HOME_WIN=<Unity bundled Gradle directory>
+GRADLE_USER_HOME_WIN=<ASCII Gradle user home>
+ADB_WIN=<adb.exe path on Windows>
+ADB_WSL=<adb executable path visible from WSL>
+
+# Local external tools
+QDRANT_HOME_WIN=<Qdrant directory>
+EMBEDDING_MODEL_DIR_WIN=<embedding model directory>

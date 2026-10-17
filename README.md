@@ -120,6 +120,8 @@ protocol/                协议资料
 
 ## 快速开始
 
+> 本机绝对路径统一配置在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）。下文 `%BOARD_WORKSPACE_WIN%`、`%QDRANT_HOME_WIN%`、`%ADB_WIN%` 等均引用该文件中的同名键。
+
 ### 1. 环境依赖
 
 | 组件 | 用途 | 备注 |
@@ -133,9 +135,9 @@ protocol/                协议资料
 
 ### 2. 启动 Qdrant
 
-```bash
-# Windows 示例
-cd D:\qdrant
+```bat
+rem Windows 示例；%QDRANT_HOME_WIN% 来自 config/local.properties
+cd %QDRANT_HOME_WIN%
 qdrant.exe
 ```
 
@@ -253,7 +255,8 @@ Android 是 UaaL 原生壳（Kotlin + Jetpack Compose），Unity 作为底层渲
 ### 构建
 
 ```bat
-cd D:\workspace\board\clients\android
+rem %BOARD_WORKSPACE_WIN% 来自 config/local.properties
+cd %BOARD_WORKSPACE_WIN%\clients\android
 build-uaal.bat
 ```
 
@@ -268,8 +271,9 @@ gradlew.bat assembleDebug
 ### 真机开发常用
 
 ```bat
-adb reverse tcp:5000 tcp:5000
-adb install -r clients\android\app\build\outputs\apk\debug\app-debug.apk
+rem %ADB_WIN% / %BOARD_WORKSPACE_WIN% 来自 config/local.properties
+%ADB_WIN% reverse tcp:5000 tcp:5000
+%ADB_WIN% install -r %BOARD_WORKSPACE_WIN%\clients\android\app\build\outputs\apk\debug\app-debug.apk
 ```
 
 Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入；默认 `http://127.0.0.1:5000`，配合 `adb reverse` 使用。
@@ -296,7 +300,7 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 - **动画是手写静态资产**：按“文字脚本 → 手写 QA → 原语 events → 编译 → 检查 → Unity 采样对账”的顺序改。
 - **QA 必须手写并随 cue 同步**：逐条写问题，不能让过期问题重复问新动作。
 - **隐藏不是账**：`offstage` / 不可见不能用来掩盖非法棋盘状态；实物总数仍必须守恒。
-- **不要提交生成物 / 密钥 / 大文件**：模型、音频、PDF、原始扫描、内容 manifest、APK、Unity Library、采样产物均不入 Git。
+- **不要提交生成物 / 密钥 / 大文件 / 本机路径配置**：模型、音频、PDF、原始扫描、内容 manifest、APK、Unity Library、采样产物、`config/local.properties` 均不入 Git。
 - 每个可验收节点做一次 commit。
 
 ## 当前状态与待办

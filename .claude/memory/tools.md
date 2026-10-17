@@ -23,7 +23,8 @@ dotnet run --urls "http://0.0.0.0:5000"
 ### Qdrant
 
 ```powershell
-cd D:\qdrant
+# %QDRANT_HOME_WIN% 来自根目录 config/local.properties
+cd %QDRANT_HOME_WIN%
 qdrant.exe
 ```
 
@@ -150,18 +151,18 @@ Unity 批处理采样使用 Windows 编辑器路径；运行时快捷键 `G` 开
 
 ### 测试机 ADB
 
-本机没有独立加入 PATH 的 `adb`，使用 Unity 自带 Android SDK 里的 Windows `adb.exe`；WSL 可直接调用：
+本机没有独立加入 PATH 的 `adb`，使用 Unity 自带 Android SDK 里的 Windows `adb.exe`。绝对路径统一记录在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）：
+
+- Windows 键：`ADB_WIN`
+- WSL 键：`ADB_WSL`
+
+WSL 使用示例：
 
 ```bash
-ADB=/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb.exe
+# 先从 config/local.properties 取得 ADB_WSL
+ADB="$ADB_WSL"
 "$ADB" devices -l
 "$ADB" reverse tcp:5000 tcp:5000
-```
-
-Windows 路径为：
-
-```text
-D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\platform-tools\adb.exe
 ```
 
 - WSL 中的 `.exe` 调用的是 Windows adb server；不要直接运行裸 `adb`（WSL 内通常不存在）。
@@ -182,5 +183,5 @@ D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\pla
 ## 10. 环境注意
 
 - WSL 启动 Windows 服务时环境变量不会自动传入，可在 `cmd.exe /c "set KEY=...&& dotnet ..."` 里设置。
-- Windows 路径示例 `D:\workspace\board`；WSL 路径 `/mnt/d/workspace/board`，以实际工作区为准。
+- 工作区、Unity、adb 等机器路径从根目录 `config/local.properties` 的 `*_WIN` / `*_WSL` 键读取；不要把实际绝对路径写回 README。
 - 模型、音频、视频、PDF、原始扫描、QA 留档、manifest/release 等生成物不进 Git。
