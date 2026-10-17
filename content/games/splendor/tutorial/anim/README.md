@@ -59,6 +59,6 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 python3 tools/ops/check_unity_scripts.py
 ```
 
-当前基线：full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors。`check_anim_v2` / `validate_anim_rules_v2` 两轨均 0 warnings；full `audit_anim_v2` 53 cues 0 errors、quick 17 cues 0 errors。素材迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。
+当前基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。`check_anim_v2` / `validate_anim_rules_v2` 两轨均 0 warnings；full `audit_anim_v2` 61 cues 0 errors、quick 23 cues 0 errors。素材迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。
 
 共享素材工作流与影响范围：见 `docs/tutorial/animation-materials-authoring-guide.md`。

@@ -146,7 +146,7 @@ python3 animation/check_anim_v2_sample.py --game splendor --track quick
 python3 tools/ops/check_unity_scripts.py
 ```
 
-- 当前 full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors；静态检查全绿。
+- 当前 full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors；静态检查全绿。
 - 源真值：`content/games/splendor/tutorial/{tracks,sections,shared}/`；`build/` 与 `anim/v2/{track}.compiled.json` 按源生成。
 - QA：`animation/qa_anim_ask.py --game splendor --track quick --only <qualified_cue>`；问题必须手写，放在 cue 的 `qa` 或 `sections/<id>/qa.json`。
 - 一次性迁移脚本已移到 `animation/archive/`。

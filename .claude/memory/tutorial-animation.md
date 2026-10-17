@@ -21,8 +21,8 @@ metadata:
 
 - 离线编译的静态数字资产；口播稿主导，TTS 冻结后音频时长是动画硬边界。播放端只做确定性播放，不实时调 LLM。
 - 试点《璀璨宝石》：
-  - full：67 cue / 12 section / 338 time anchors；`check_anim_v2`、`validate_anim_rules_v2` 0 warnings，`audit_anim_v2` 53 cues 0 errors，`check_card_identity_v2` 553 states 0 error。
-  - quick：24 cue / 11 section / 106 time anchors；检查 0 warnings，audit 17 cues 0 errors，卡身份 333 states 0 error；已是 catalog 默认 track。
+  - full：81 cue / 12 section / 394 time anchors；`check_anim_v2`、`validate_anim_rules_v2` 0 warnings，`audit_anim_v2` 61 cues 0 errors，`check_card_identity_v2` 567 states 0 error。
+  - quick：32 cue / 11 section / 138 time anchors；检查 0 warnings，audit 23 cues 0 errors，卡身份 341 states 0 error；已是 catalog 默认 track。
 - 两条 track 都已完成 section-first 迁移、编译和静态检查；正式视觉验收、full 逐 cue 重审仍未闭环。
 
 ## Section-first 源模型
@@ -128,7 +128,7 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 ## 当前遗留
 
 - quick 精修与 full/quick 开场盒面 no-zone stage 已提交（`425fd14`）；QA 留档按约定不入 Git，quick/full 正式视觉验收仍未闭环。
-- quick 正式视觉验收、full 67 cue 从头重审、Unity 采样截图确认仍未闭环。
+- quick 正式视觉验收、full 81 cue 从头重审、Unity 采样截图确认仍未闭环。
 - Board API QA：quick 全绿；full 3 条需上下文的回答均非代码缺陷（1 条白宝石=钻石，2 条为 LLM 缺前提未追问）；暂不修改 prompt。
 - `cue_graph_v2.py` 的 insert/delete/split/merge 仍未接入 `compile_tutorial.py` 总控。
 - 尚无编辑前后 compiled 自动回归断言。

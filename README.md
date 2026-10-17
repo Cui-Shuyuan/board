@@ -204,8 +204,8 @@ python3 tools/voice/tts_once.py \
 
 当前试点：**Splendor**。两条 track 都已迁移到 section-first 源：
 
-- `full`：67 cue / 12 section / 338 anchors，适合完整讲规，终局与真卡身份已收口。
-- `quick`：24 cue / 11 section / 106 anchors，catalog 默认 track，讲“摆桌 → 一回合 → 首次购买 → 贵族/终局”。
+- `full`：81 cue / 12 section / 394 anchors，适合完整讲规，终局与真卡身份已收口；每个进度条章节起点有独立标题 cue。
+- `quick`：32 cue / 11 section / 138 anchors，catalog 默认 track，讲“摆桌 → 一回合 → 首次购买 → 贵族/终局”；每个进度条章节起点有独立标题 cue。
 
 口播、TTS / runtime / compiled / Unity 播放器 / 采样对账链已跑通；quick 正在做逐 cue 精修，full 尚未从头到尾真人重审。
 
@@ -285,11 +285,11 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 | 规则 JSON | `python3 tools/content/validate_rules.py --errors-only` | 9 款游戏规则数据校验 |
 | 密钥扫描 | `python3 tools/ops/check_no_secrets.py` | 防止明文密钥入库 |
 | 后端 | `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo` | 当前 161/161 |
-| 动画契约 | `python3 animation/check_anim_v2.py --game splendor --track full` | 契约 vs compiled；full 67 cues |
-| 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放；full 67 cues |
+| 动画契约 | `python3 animation/check_anim_v2.py --game splendor --track full` | 契约 vs compiled；full 81 cues |
+| 动画规则 | `python3 animation/validate_anim_rules_v2.py --game splendor --track full` | 单 cue 事件重放；full 81 cues |
 | 动画审计 | `python3 animation/audit_anim_v2.py --game splendor --track full` | 跨 cue 守恒 / 补牌 / pointer；full 53 cues |
 | 卡身份 | `python3 animation/check_card_identity_v2.py --game splendor --track full` | 同一 state 无重复真卡 |
-| Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 67 cue 状态对账 |
+| Unity 采样 | `python3 animation/check_anim_v2_sample.py --game splendor --track full` | 81 cue 状态对账 |
 | 单元测试 | `python3 -m unittest discover -s animation -p 'test_*.py'` | 当前 188/188 |
 
 ## 开发约定
@@ -315,9 +315,9 @@ Android 端 API 地址通过 `local.properties` 的 `board.api.baseUrl` 注入�
 
 - 后端服务化拆分完成，xUnit 161/161；索引契约已对九款真实规则数据做 CLI/API 版本 hash 回归。
 - 9 款游戏有规则数据，8 款有 `flow.json`；Splendor 是 Runtime + 动画试点。
-- Splendor section-first 源已完成：full 67 cue / 338 anchors，quick 24 cue / 106 anchors；QA、time_anchors、compiled、Unity 采样链可运行。
+- Splendor section-first 源已完成：full 81 cue / 394 anchors，quick 32 cue / 138 anchors；QA、time_anchors、compiled、Unity 采样链可运行。
 - Android UaaL / 内容更新 / 播放器 / 问答语音首版已落地；完整真机端到端验收待复测。
-- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 67 cue，逐 cue 看真卡画面。
+- Splendor 发展卡身份保真已完成扫描/模板/state 检查；下一步重新过 full 81 cue，逐 cue 看真卡画面。
 - 其余 8 款游戏 catalog / manifest 待补。
 - 当前工作区有未提交的 quick 精修；quick 视觉验收、full 逐 cue 重审、Android 真机端到端验收尚未闭环。
 - Flow Guide 尚未开始，排在动画收口之后。

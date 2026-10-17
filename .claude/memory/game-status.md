@@ -24,12 +24,12 @@ metadata:
 ## Splendor
 
 - `concepts.json` 与 `flow.json` 已完成，是 Runtime 与动画首个验证游戏。
-- 动画源已迁移到 section-first：`tutorial/{tracks,sections,shared}/`；full 67 cue / 12 section / 338 anchors，quick 24 cue / 11 section / 106 anchors。
+- 动画源已迁移到 section-first：`tutorial/{tracks,sections,shared}/`；full 81 cue / 12 section / 394 anchors，quick 32 cue / 11 section / 138 anchors。
 - full：`check_anim_v2` / `validate_anim_rules_v2` 0 warnings，`audit_anim_v2` 53 cues 0 errors，`check_card_identity_v2` 553 states 0 error。
 - quick：`check_anim_v2` / `validate_anim_rules_v2` 0 warnings，`audit_anim_v2` 17 cues 0 errors，`check_card_identity_v2` 333 states 0 error；catalog 默认 `tutorial_track=quick`。
 - QA 与 cue 同置：问题优先写 cue 的 `qa` 字段；外置历史问题放 `sections/<id>/qa.json`，由 `qa_anim_ask.py` 合并发送。
 - 发展卡身份保真（方案 B）已主体完成：28 个 face-up 卡位各有独立真卡模板/扫描。
-- 当前下一步：quick 精修收尾与视觉验收；full 67 cue 从头重审（市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族）。
+- 当前下一步：quick 精修收尾与视觉验收；full 81 cue 从头重审（章节标题、市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族）。
 - catalog + manifest 已生成：`content/catalog/splendor.json` 入 Git；`content/manifests/splendor.json` 为生成物，不入 Git；当前 quick 改动尚未重新 build manifest。
 - 路径：`content/games/splendor/`。
 

@@ -11,10 +11,11 @@ metadata:
 
 ## 一句话
 
-Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，xUnit 198/198；Splendor full / quick 已迁移到 section-first + reusable materials 源模型，共享局面/动作/表现从 `tutorial/library/` 引用；full 67 cue、quick 24 cue 静态检查全绿，素材库单测与两轨迁移对账已完成。当前正在做 quick / full 真人视觉重审、Android 真机端到端验收，最后进入 Flow Guide。
+Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，xUnit 198/198；Splendor full / quick 已迁移到 section-first + reusable materials 源模型，共享局面/动作/表现从 `tutorial/library/` 引用；full 81 cue、quick 32 cue 静态检查全绿，素材库单测与两轨迁移对账已完成；每个进度条章节起点新增独立标题 cue。当前正在做 quick / full 真人视觉重审、Android 真机端到端验收，最后进入 Flow Guide。
 
 ## 最近进展
 
+- **Splendor 章节标题卡（2026-10-17）**：quick/full 在每个进度条章节分段起点新增独立 TTS 标题 cue；quick/full 第一章统一改为“1 背景”，口播用“一，背景。”保证数字读一声；标题字号 136，章节出现时用 80% 黑色遮罩保留约 20% 背景、隐藏 zone debug，标题音频结束后额外停 1 秒。quick 32 cue / full 81 cue，静态检查全绿，原 seed2 教程音色保持一致。
 - **协议小对照与失败人工复核（2026-10-17，候选 `47231f8`）**：统一终态提示后 Thinking=low/auto 的 plain final 从上一轮 33.3% 降至 14.0%；Thinking=disabled/auto 降至 3.2%、P50 3148ms、P95 4565ms、reasoning tokens 全 0；修复终态修复计数后复跑的 disabled/required（C2）为 0% plain final、0 校验错误/0 修复、P50 2892ms、P95 4477ms。A/B/C2 均 0 HTTP 错误；continuation 使用均取得新证据。未新增在线 judge 调用；人工复核认为 Seasons 卡牌直给水晶是未交付依据，Ark Nova/Wingspan 主要是 judge 材料缺结构化字段，Agricola 为表述歧义；暂无已确认系统性规则错误。新增 `tools/eval/analyze_protocol_variants.py` 从原始 runs 自动汇总，`fetch_rule_details.py` 保留结构化 cost/target 字段供后续盲评。下一候选为 disabled+required，但质量仍未知，不切默认；详见 `docs/reviews/rules-runtime-takeover/10-protocol-variants-and-manual-review.md`。
 - **规则问答 31 题真实小对照已跑（2026-10-17，候选 `59574e3` vs 基线 `ffac498`）**：186/186 次聊天同轮交错，HTTP/judge 错误均为 0；双盲共识严格通过率基线 59.1% → 候选 67.7%（+8.6pp），错误规则率 36.6% → 29.0%，但配对 CI95 下界 -3.2pp，未严格过 -3pp 门槛。候选 P50 3594→4009ms（+11.5%，未达 -10%），P95 8010→6676ms（-16.7%，达标）。协议修复率 33.3%，平均单次修复约 1.1s；continuation 实际使用 3/93 run 且均取得新证据。self-time 显示模型约 87.6%、程序内部约 11.6%。原始产物在 `.tmp/rules-runtime-takeover-small-final/`，报告 `docs/reviews/rules-runtime-takeover/09-small-real-comparison.md`；暂不进入完整实验或切换发布。
 - **规则问答 runtime 两个 follow-up 收口（2026-10-17，分支 `feat/rules-runtime-takeover`）**：rule_lookup continuation 真正使用 offset/limit 读下一页，并在 handle 中保存原始 intent；时间线新增扣除嵌套子 span 的 self duration，inclusive/self 双口径进入 eval 脚本，协议修复调用独立标记且成功提交 answer 也计入。后端 270/270、Python eval 10/10。真实模型 31 题同轮小对照（186 次聊天）仍未执行（无凭据/API），新 36 题继续封存；详见 `docs/reviews/rules-runtime-takeover/08-continuation-pagination-and-self-time.md`。
@@ -31,15 +32,15 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 - **section-first 动画源已完成**：track 只排序 section，源真值为 `tutorial/{tracks,sections,shared}/`；旧单文件 `script.{track}.json` / `anim/v2/{track}.anim.json` / `anim/v2/_stage/` 已删除，`build/` 是忽略的装配中间产物。
 - cue id 统一为 qualified id `<section_id>/<local_id>`；section 内可写 local，跨 section 必须 qualified；`entry: "section:<id>"` 回到 section 起点。
 - TTS 按 section 生成一段连续音频，section 内多条 cue 共享 `audio` 并用 `audio_start` 切画面。
-- **Splendor quick 已是可播放 track**：当前 24 cue / 11 section / 106 anchors；catalog 默认 `tutorial_track=quick`，`tutorial_tracks=[quick,full]`。
+- **Splendor quick 已是可播放 track**：当前 32 cue / 11 section / 138 anchors；catalog 默认 `tutorial_track=quick`，`tutorial_tracks=[quick,full]`。
 - 最近 quick 收口内容包括：卡背三级展示、牌面/桌面镜头拆分、拿宝石提示与归还计数、黄金替代购买、贵族单/多张与分流选择、终局计分说明。相关提交集中在 `188a60d` 前后。
 - 动画原语近期新增：`label_mode: add|replace` + `label_key`、`marker_key`、箭头 `arrow_direction` 与尾部文字、label 文本框自动适配。
 - 本轮 quick 精修（`quick_end`、`quick_nobles`、`quick_reserve`、`quick_gold`、Unity 播放/标注等）以及 full/quick 开场盒面 no-zone stage 已提交到 `425fd14`；Android 统一问答入口、PTT 自动发送/上划取消与 API 进程内 ASR 也已提交。QA 留档仍按约定不入 Git。
 
 ## Splendor 验收基线（本轮已跑）
 
-- full：67 cue / 12 section / 338 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 53 cues / 0 errors；`check_card_identity_v2` 553 states / 0 error。
-- quick：24 cue / 11 section / 106 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 17 cues / 0 errors；`check_card_identity_v2` 333 states / 0 error。
+- full：81 cue / 12 section / 394 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 61 cues / 0 errors；`check_card_identity_v2` 567 states / 0 error。
+- quick：32 cue / 11 section / 138 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 23 cues / 0 errors；`check_card_identity_v2` 341 states / 0 error。
 - `compile_animation_v2 --check` 对两轨均为 “up to date”；`section_source.py --check` 解析通过。
 - Python animation/索引回归 227/227；后端 xUnit 198/198；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
 - Android JVM 当前 13 个测试文件 / 104 个测试全绿；真机端到端仍未验收。
@@ -55,7 +56,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 ## 当前优先待办
 
 1. **quick 视觉验收与内容发布**：quick 精修已提交并通过静态检查；继续完成 quick 截图确认，之后按流程 build manifest/release 并更新测试设备。
-2. **Splendor full 逐 cue 重审**：真卡身份阻塞已解除，但还没有从头到尾重新过 67 cue；重点检查市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族表现。
+2. **Splendor full 逐 cue 重审**：真卡身份阻塞已解除，但还没有从头到尾重新过 81 cue；重点检查章节标题、市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族表现。
 3. **Android 真机端到端验收**：PTT → ASR → chat → 回答 TTS → 回到动画/继续播放，以及打断后回跳重播。
 4. **内容版本**：quick 当前改动尚未重新 build manifest；发布前运行 `python3 tools/content/build_content_manifest.py --game splendor` 并部署 release。
 5. **Flow Guide**：动画逐 cue 收口后开始 Civolution 顶层 8 阶段循环 + 终局计分助手。

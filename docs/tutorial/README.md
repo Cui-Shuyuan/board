@@ -24,7 +24,7 @@ content/games/splendor/tutorial/anim/v2/{full,quick}.compiled.json       编译�
 - `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，不是源真值。
 - 旧单文件 `script.{track}.json`、`anim/v2/{track}.anim.json`、`anim/v2/_stage/` 已删除；不要再去改这些路径。
 - TTS 以 section 为单位连续生成，section 内多条 cue 共享同一音频，用 `audio_start` 切画面。
-- 当前 full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors。
+- 当前 full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
 
