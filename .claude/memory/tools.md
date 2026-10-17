@@ -83,6 +83,19 @@ python3 tools/indexing/retrieval_lab.py --out .tmp/retrieval-lab --reranker back
 - 当前指标：85 条中 77 直接命中、8 条候选前三、0 wrong/no_match；7 条回归全部前三。自然问句正例首位/前三和 reranker 结论只见 `docs/reviews/retrieval-*-2026-10-09.md`。
 - `retrieval_lab.py` 只读，不自动下载模型，reranker/片段/RRF 未接正式查询。
 
+## 4.1 新旧版本全面对比
+
+```bash
+python3 tools/eval/compare_versions.py --questions tools/qa/comprehensive_eval_questions.jsonl   --old-api http://172.17.208.1:5001 --new-api http://172.17.208.1:5002   --out .tmp/comprehensive-eval/main --repeats 3
+python3 tools/eval/build_question_ground_truth.py --questions tools/qa/comprehensive_eval_questions.jsonl   --api http://172.17.208.1:5002 --out .tmp/comprehensive-eval/question_ground_truth.json
+python3 tools/eval/fetch_rule_details.py --runs .tmp/comprehensive-eval/main/runs.jsonl   --api http://172.17.208.1:5002 --out .tmp/comprehensive-eval/main/rule_details.json
+# judge 在具备 DeepSeek key 的环境运行，见 tools/eval/README.md
+python3 tools/eval/combine_judges.py --judge .tmp/comprehensive-eval/main/judge.jsonl   --judge .tmp/comprehensive-eval/main/judge-deepseek-chat.jsonl   --out .tmp/comprehensive-eval/main/judge-consensus.jsonl   --summary .tmp/comprehensive-eval/main/judge-consensus-summary.json
+python3 tools/eval/analyze_compare.py --runs .tmp/comprehensive-eval/main/runs.jsonl   --judge .tmp/comprehensive-eval/main/judge-consensus.jsonl   --out-dir .tmp/comprehensive-eval/main/analysis-consensus
+```
+
+最近一次报告：`docs/reviews/version-comparison-2026-10-17.md`。完整操作见 `tools/eval/README.md`。
+
 ## 5. 语音桥
 
 - ASR 默认由 `BoardAI.Api` 进程内 C# `VolcengineAsrClient` 处理；`tools/voice/asr_once.py` 是 `Voice:AsrMode=python` 回退/自检脚本。TTS 仍走 `tools/voice/tts_once.py`；两者由 `POST /api/asr/once`、`POST /api/tts` 暴露。

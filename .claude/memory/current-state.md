@@ -15,6 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 最近进展
 
+- **新旧版本全面对比已完成（2026-10-17）**：使用 117 条覆盖九款游戏的问题集，每问两版各重复 3 次，共 702 次真实聊天；两 judge 保守共识严格回答成功率旧版 60.4% → 新版 75.5%（+15.1pp，95% CI +8.0~+22.2pp，McNemar p=0.0002），规则直接命中率 61.3% → 80.3%。新版质量胜出，但端到端中位延迟 2732ms → 3572ms。报告见 `docs/reviews/version-comparison-2026-10-17.md`，题集与评测工具在 `tools/qa/comprehensive_eval_questions.jsonl`、`tools/eval/`。
 - **查询意图保留与回答收敛已落地（2026-10-17）**：`execute_plan` query 增加 `intent`；RulesPlanService 将 entities 身份定位与完整 intent 场景召回合并，对象名精确命中仍可被设置/获得/结算动作候选补充。ChatOrchestrator 增加未确认候选的定向协议纠偏、证据确认关联（含多候选/相近 intent）、组件数量与玩家人数反推守卫，并记录 plan provenance / tool timing。新增 13 行 / 14 子查询意图回归与真实 LLM 回归报告 `docs/reviews/rules-query-intent-answer-2026-10-17.md`；后端 xUnit 173/173，gold 77 direct + 8 top3，7 条旧回归目标全在前三。
 - **素材化重构与 R1–R8 复核修复已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；编译链按调用边界检查 action/example 契约、递归保留嵌套 usage、强制类别约束与 namespace 隔离、QA HEAD 基线包含 library。Splendor 抽出 10 actions / 3 examples / 1 presentation，full 31、quick 20 处 usage（含嵌套）；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 detailed/compact/same 走同一编译链。
 - **Board API QA 已补跑（2026-10-17）**：quick 10/10 通过；full 43 问中 3 问的回答需结合上下文（`take_gems/limit.001.2` 白宝石=钻石；另 2 条为 LLM 缺前提未追问，回答可接受）。合法性由 Board API 调 `/api/chat` 判断并留档；QA 留档按约定不入 Git，暂不修改问答 prompt。
