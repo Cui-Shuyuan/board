@@ -111,14 +111,69 @@ internal sealed class RuleEvidencePack
     [JsonPropertyName("rules_version")]
     public string? RulesVersion { get; set; }
 
+    [JsonPropertyName("evidence_catalog")]
+    public List<RuleEvidenceItem> EvidenceCatalog { get; set; } = new();
+
     [JsonPropertyName("questions")]
     public List<EvidenceQuestionPack> Questions { get; set; } = new();
 
     [JsonPropertyName("omitted_evidence_count")]
     public int OmittedEvidenceCount { get; set; }
 
+    [JsonPropertyName("omitted_items")]
+    public List<OmittedEvidenceInfo> OmittedItems { get; set; } = new();
+
+    [JsonPropertyName("stats")]
+    public RuleEvidenceStats Stats { get; set; } = new();
+
     [JsonPropertyName("warnings")]
     public List<string> Warnings { get; set; } = new();
+
+    /// <summary>元信息单独超过字符预算时，事实包已退化为显式预算不足。</summary>
+    [JsonIgnore]
+    public bool MetadataBudgetExceeded { get; set; }
+
+    /// <summary>退化清空 omitted_items 后仍保留的原始计数。</summary>
+    [JsonIgnore]
+    public int? RetainedOmittedCount { get; set; }
+}
+
+internal sealed class RuleEvidenceStats
+{
+    [JsonPropertyName("read_attempts")]
+    public int ReadAttempts { get; set; }
+    [JsonPropertyName("successful_reads")]
+    public int SuccessfulReads { get; set; }
+    [JsonPropertyName("unique_contents")]
+    public int UniqueContents { get; set; }
+    [JsonPropertyName("binding_reuses")]
+    public int BindingReuses { get; set; }
+    [JsonPropertyName("pack_items")]
+    public int PackItems { get; set; }
+    [JsonPropertyName("omitted")]
+    public int Omitted { get; set; }
+    [JsonPropertyName("effective_max_pack_chars")]
+    public int EffectiveMaxPackChars { get; set; }
+    [JsonPropertyName("effective_max_evidence_total")]
+    public int EffectiveMaxEvidenceTotal { get; set; }
+    [JsonPropertyName("effective_max_evidence_per_question")]
+    public int EffectiveMaxEvidencePerQuestion { get; set; }
+    [JsonPropertyName("effective_max_candidates_per_question")]
+    public int EffectiveMaxCandidatesPerQuestion { get; set; }
+}
+
+internal sealed class OmittedEvidenceInfo
+{
+    [JsonPropertyName("question_id")]
+    public string QuestionId { get; set; } = "";
+    [JsonPropertyName("canonical_path")]
+    public string CanonicalPath { get; set; } = "";
+    [JsonPropertyName("role")]
+    public string Role { get; set; } = "";
+    [JsonPropertyName("reason")]
+    public string Reason { get; set; } = "";
+    [JsonPropertyName("dependency_impact")]
+    public string DependencyImpact { get; set; } = "";
 }
 
 internal sealed class EvidenceQuestionPack
@@ -147,14 +202,34 @@ internal sealed class EvidenceQuestionPack
     [JsonPropertyName("candidates")]
     public List<CandidateSummary> Candidates { get; set; } = new();
 
-    [JsonPropertyName("evidence")]
-    public List<RuleEvidenceItem> Evidence { get; set; } = new();
+    [JsonPropertyName("evidence_bindings")]
+    public List<RuleEvidenceBinding> EvidenceBindings { get; set; } = new();
+
+    [JsonPropertyName("coverage_status")]
+    public string CoverageStatus { get; set; } = "unknown";
 
     [JsonPropertyName("omitted_evidence_count")]
     public int OmittedEvidenceCount { get; set; }
 
+    [JsonPropertyName("omitted_items")]
+    public List<OmittedEvidenceInfo> OmittedItems { get; set; } = new();
+
     [JsonPropertyName("warnings")]
     public List<string> Warnings { get; set; } = new();
+}
+
+internal sealed class RuleEvidenceBinding
+{
+    [JsonPropertyName("evidence_id")]
+    public string EvidenceId { get; set; } = "";
+    [JsonPropertyName("role")]
+    public string Role { get; set; } = "candidate";
+    [JsonPropertyName("parent_path")]
+    public string? ParentPath { get; set; }
+    [JsonPropertyName("rank")]
+    public int Rank { get; set; }
+    [JsonPropertyName("added_in_round")]
+    public string AddedInRound { get; set; } = "initial";
 }
 
 internal sealed class CandidateSummary
@@ -195,14 +270,17 @@ internal sealed class RuleEvidenceItem
     [JsonPropertyName("name")]
     public string Name { get; set; } = "";
 
-    [JsonPropertyName("role")]
-    public string Role { get; set; } = "target";
-
     [JsonPropertyName("read_status")]
     public string ReadStatus { get; set; } = "ok";
 
+    [JsonPropertyName("content_hash")]
+    public string ContentHash { get; set; } = "";
+
     [JsonPropertyName("projection")]
     public string? Projection { get; set; }
+
+    [JsonPropertyName("projection_complete")]
+    public bool ProjectionComplete { get; set; } = true;
 
     [JsonPropertyName("source")]
     public JsonElement? Source { get; set; }

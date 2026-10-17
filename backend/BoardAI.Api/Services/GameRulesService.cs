@@ -67,6 +67,14 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     }
 
 
+    /// <summary>带规范路径的正式概念读取，供程序事实包构建使用。</summary>
+    public ConceptReadResult ReadConceptWithExpansionWithPaths(string game, string id)
+    {
+        using var scope = UseSnapshot(game);
+        return _referenceService.ReadConceptWithExpansionWithPaths(game, id);
+    }
+
+
     public async Task<SearchConceptsResult> SearchConceptsAsync(
         string game, string query, string searchMode = "full", CancellationToken cancellationToken = default)
     {

@@ -46,8 +46,18 @@ public sealed class ProgramControlledOrchestrationTests
         Assert.True(result.Evidence.EvidenceReadCount >= 1);
         Assert.Equal(1, result.Evidence.CitedEvidenceCount);
         Assert.Equal("answer", result.Evidence.OrchestrationOutcome);
-        Assert.Equal("q1", Assert.Single(result.Orchestration.Questions).QuestionId);
-        Assert.Equal("answered", result.Orchestration.Questions[0].OutcomeStatus);
+        var questionTrace = Assert.Single(result.Orchestration.Questions);
+        Assert.Equal("q1", questionTrace.QuestionId);
+        Assert.Equal("answered", questionTrace.OutcomeStatus);
+        Assert.Contains("widget", questionTrace.EvidenceCanonicalPaths);
+        Assert.Contains("widget", questionTrace.CitedCanonicalPaths);
+        Assert.Single(questionTrace.EvidenceIds);
+        Assert.Single(questionTrace.CitedEvidenceIds);
+        Assert.Equal(questionTrace.EvidenceIds.Count, questionTrace.EvidenceCount);
+        Assert.True(result.Orchestration.EvidenceReadAttempts >= 1);
+        Assert.True(result.Orchestration.SuccessfulEvidenceReads >= 1);
+        Assert.True(result.Orchestration.EvidencePackChars > 0);
+        Assert.True(result.Orchestration.EffectiveMaxEvidencePackChars > 0);
         Assert.Equal(2, llm.CallCount);
     }
 
@@ -141,6 +151,9 @@ public sealed class ProgramControlledOrchestrationTests
         Assert.Equal(3, result.Orchestration.ModelCallCount);
         Assert.Equal(1, result.Orchestration.SupplementCount);
         Assert.Equal(0, result.Orchestration.RepairCount);
+        var questionTrace = Assert.Single(result.Orchestration.Questions);
+        Assert.Contains("widget", questionTrace.EvidenceCanonicalPaths);
+        Assert.Contains("use_widget", questionTrace.EvidenceCanonicalPaths);
         Assert.Equal(3, llm.CallCount);
     }
 
@@ -185,6 +198,50 @@ public sealed class ProgramControlledOrchestrationTests
     }
 
     [Fact]
+    public async Task DuplicateQuestionResultInNeedMore_IsRepairedInsteadOfThrowingInternalError()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new FakeProgramLlm(call =>
+        {
+            if (call.ToolName == "submit_understanding")
+                return Structured("submit_understanding", """
+                {"request_kind":"rules","questions":[{"entity":"widget","relation":"explain","intent":"小装置是什么"}]}
+                """);
+            if (call.Index == 2)
+                return Structured("submit_answer", """
+                {
+                  "kind":"need_more","reply":"",
+                  "question_results":[{"question_id":"q1","status":"unavailable","evidence_ids":[]}],
+                  "need_more":{"question_id":"q1","missing_information":"补充使用条件","supplement_entity":"use_widget","supplement_relation":"condition","supplement_intent":"使用条件"}
+                }
+                """);
+            if (call.Index == 3)
+                return Structured("submit_answer", """
+                {
+                  "kind":"need_more","reply":"",
+                  "question_results":[
+                    {"question_id":"q1","status":"unavailable","evidence_ids":[]},
+                    {"question_id":"q1","status":"unavailable","evidence_ids":[]}
+                  ],
+                  "need_more":{"question_id":"q1","missing_information":"仍缺条件","supplement_entity":"widget","supplement_relation":"explain","supplement_intent":"再补充"}
+                }
+                """);
+            return Structured("submit_answer", AnswerJson("answer", "小装置是测试对象。", "q1", "answered", "e1"));
+        });
+        var sut = CreateService(llm, rules);
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History("小装置是什么"));
+
+        Assert.Equal("answer", result.Orchestration!.Outcome);
+        Assert.Equal(1, result.Orchestration.RepairCount);
+        Assert.DoesNotContain(result.Orchestration.ProtocolErrors,
+            error => error.Contains("internal_error", StringComparison.Ordinal));
+        Assert.Contains(result.Orchestration.ProtocolErrors,
+            error => error.Contains("question_id 重复", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task InvalidEvidenceReference_TriggersOneRepairBeforeAcceptance()
     {
         using var fixture = new RulesFixture();
@@ -208,6 +265,49 @@ public sealed class ProgramControlledOrchestrationTests
         Assert.Equal(3, result.Orchestration.ModelCallCount);
         Assert.Contains(result.Orchestration.ProtocolErrors, error => error.Contains("evidence_id", StringComparison.Ordinal));
         Assert.Equal(3, llm.CallCount);
+    }
+
+    [Fact]
+    public async Task CrossQuestionPackEvidenceReference_IsAcceptedWithoutRepair()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new FakeProgramLlm(call =>
+        {
+            if (call.ToolName == "submit_understanding")
+                return Structured("submit_understanding", """
+                {
+                  "request_kind":"rules",
+                  "questions":[
+                    {"entity":"use_widget","relation":"explain","intent":"使用小装置是什么"},
+                    {"entity":"use_widget","relation":"condition","intent":"使用小装置需要什么条件"}
+                  ]
+                }
+                """);
+            return Structured("submit_answer", """
+            {
+              "kind":"answer",
+              "reply":"小装置要先满足条件。",
+              "question_results":[
+                {"question_id":"q1","status":"answered","evidence_ids":["e1"]},
+                {"question_id":"q2","status":"answered","evidence_ids":["e1"]}
+              ]
+            }
+            """);
+        });
+        var sut = CreateService(llm, rules);
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History("使用小装置需要什么条件"));
+
+        Assert.Equal("answer", result.Orchestration!.Outcome);
+        Assert.Equal(0, result.Orchestration.RepairCount);
+        Assert.Equal(2, result.Orchestration.ModelCallCount);
+        Assert.Empty(result.Orchestration.ProtocolErrors);
+        var q2 = result.Orchestration.Questions.Single(question => question.QuestionId == "q2");
+        var cited = Assert.Single(q2.CitedEvidenceIds);
+        Assert.Equal("e1", cited);
+        Assert.DoesNotContain(cited, q2.EvidenceIds);
+        Assert.Contains("use_widget", q2.CitedCanonicalPaths);
     }
 
     [Fact]

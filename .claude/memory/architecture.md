@@ -132,7 +132,7 @@ Understand（一次结构化理解）
 
 ### 配置与缓存
 
-- system prompt 唯一来源：`appsettings.json` 的 `LLM:SystemPrompt`，支持 `{game_name}`。
+- system prompt 分路径配置：`appsettings.json` 的 `LLM:LegacySystemPrompt` 与 `LLM:ProgramSystemPrompt`，均支持 `{game_name}`；`OrchestrationMode` 只接受 `legacy`/`program`，非法值启动失败。legacy 基线提示从 `a992cfe` 原文恢复，运行时记录模式、提示/配置指纹和规则版本，不打印密钥。
 - API key 只走环境变量，不写仓库。
 - `RulesDocumentStore` 以文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务。
 - 规则文档变化时，`ClearDerivedCaches()` 清名称索引、Plan 类型缓存、Flow 位置缓存、Fact score 缓存。

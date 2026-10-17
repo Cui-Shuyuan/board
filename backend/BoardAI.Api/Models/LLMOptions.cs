@@ -6,7 +6,10 @@ public class LLMOptions
     public string BaseUrl { get; set; } = "https://api.deepseek.com/v1/";
     public string Model { get; set; } = "deepseek-v4-pro";
     public string ApiKey { get; set; } = string.Empty;
-    public string SystemPrompt { get; set; } = string.Empty;
+    /// <summary>legacy 自由工具循环专用提示，必须与 a992cfe 基线保持一致。</summary>
+    public string LegacySystemPrompt { get; set; } = string.Empty;
+    /// <summary>program 两阶段编排专用提示；不包含 execute_plan 自由循环要求。</summary>
+    public string ProgramSystemPrompt { get; set; } = string.Empty;
     /// <summary>
     /// 思考模式控制：default（不传参数，模型默认开启）| disabled（thinking.type=disabled）|
     /// low（reasoning_effort=low）。disabled 与 low 不能同时使用。

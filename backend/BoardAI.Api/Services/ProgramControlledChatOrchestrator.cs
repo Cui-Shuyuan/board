@@ -58,12 +58,7 @@ internal sealed class ProgramControlledChatOrchestrator
 
         try
         {
-            var understandingMessages = new List<ChatMessage>(baseMessages);
-            understandingMessages.Add(new ChatMessage
-            {
-                Role = "system",
-                Content = BuildUnderstandInstruction()
-            });
+            var understandingMessages = WithStageInstruction(baseMessages, BuildUnderstandInstruction());
 
             var understanding = await SubmitUnderstandingAsync(
                 gameId, question, understandingMessages, budget, trace, cancellationToken);
@@ -98,10 +93,14 @@ internal sealed class ProgramControlledChatOrchestrator
             trace.RetrievalMs = retrievalStarted.Elapsed.TotalMilliseconds;
             trace.PackId = pack.PackId;
             trace.RulesVersion = pack.RulesVersion;
-            trace.EvidenceCount = pack.Questions.Sum(q => q.Evidence.Count);
+            trace.EvidenceCount = pack.EvidenceCatalog.Count;
             trace.OmittedEvidenceCount = pack.OmittedEvidenceCount;
             trace.CandidateReadFailureCount = builder.CandidateReadFailureCount;
             trace.EvidencePackChars = builder.LastPackChars;
+            trace.EvidenceReadAttempts = builder.LastStats.ReadAttempts;
+            trace.SuccessfulEvidenceReads = builder.LastStats.SuccessfulReads;
+            trace.EvidenceBindingReuses = builder.LastStats.BindingReuses;
+            trace.EffectiveMaxEvidencePackChars = builder.LastStats.EffectiveMaxPackChars;
             UpdateQuestionTrace(trace, pack);
 
             var respondMessages = BuildRespondMessages(baseMessages, question, pack);
@@ -154,18 +153,23 @@ internal sealed class ProgramControlledChatOrchestrator
                 if (supplementCount >= Math.Max(0, _options.MaxSupplementQueries)
                     || !budget.CanCall)
                 {
+                    var resultById = parsedAnswer.QuestionResults
+                        .Where(result => !string.IsNullOrWhiteSpace(result.QuestionId))
+                        .GroupBy(result => result.QuestionId, StringComparer.Ordinal)
+                        .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
                     answer = new AnswerResultDto
                     {
                         Kind = ChatOrchestrationKinds.Unavailable,
                         Reply = "当前规则依据仍不足，无法继续补查。请缩小问题范围，或补充你指代的具体对象。",
-                        QuestionResults = parsedAnswer.QuestionResults.Count > 0
-                            ? parsedAnswer.QuestionResults
-                            : questions.Select(q => new QuestionResultDto
-                            {
-                                QuestionId = q.QuestionId,
-                                Status = "unavailable",
-                                Reason = "supplement_budget_exhausted"
-                            }).ToList()
+                        QuestionResults = questions.Select(question =>
+                            resultById.TryGetValue(question.QuestionId, out var result)
+                                ? result
+                                : new QuestionResultDto
+                                {
+                                    QuestionId = question.QuestionId,
+                                    Status = "unavailable",
+                                    Reason = "supplement_budget_exhausted"
+                                }).ToList()
                     };
                     break;
                 }
@@ -190,9 +194,14 @@ internal sealed class ProgramControlledChatOrchestrator
 
                 supplementCount++;
                 trace.SupplementCount++;
-                trace.EvidenceCount = pack.Questions.Sum(q => q.Evidence.Count);
+                trace.EvidenceCount = pack.EvidenceCatalog.Count;
                 trace.OmittedEvidenceCount = pack.OmittedEvidenceCount;
+                trace.CandidateReadFailureCount = builder.CandidateReadFailureCount;
                 trace.EvidencePackChars = builder.LastPackChars;
+                trace.EvidenceReadAttempts = builder.LastStats.ReadAttempts;
+                trace.SuccessfulEvidenceReads = builder.LastStats.SuccessfulReads;
+                trace.EvidenceBindingReuses = builder.LastStats.BindingReuses;
+                trace.EffectiveMaxEvidencePackChars = builder.LastStats.EffectiveMaxPackChars;
                 UpdateQuestionTrace(trace, pack);
                 respondMessages = BuildRespondMessages(baseMessages, question, pack);
             }
@@ -208,7 +217,7 @@ internal sealed class ProgramControlledChatOrchestrator
             trace.RespondMs = trace.ModelCalls
                 .Where(call => string.Equals(call.Stage, "respond", StringComparison.Ordinal))
                 .Sum(call => call.ElapsedMs);
-            ApplyAnswerToQuestionTrace(trace, answer);
+            ApplyAnswerToQuestionTrace(trace, answer, pack);
             var evidence = BuildAnswerEvidence(pack, questions, answer, trace);
             trace.EvidenceCount = evidence.EvidenceReadCount;
             trace.OmittedEvidenceCount = evidence.OmittedEvidenceCount;
@@ -385,6 +394,14 @@ internal sealed class ProgramControlledChatOrchestrator
                 parsed.NeedMore.SupplementIntent = (parsed.NeedMore.SupplementIntent ?? "").Trim();
                 if (string.IsNullOrWhiteSpace(parsed.NeedMore.SupplementIntent))
                     parsed.NeedMore.SupplementIntent = parsed.NeedMore.MissingInformation.Trim();
+                var needMoreResultIds = parsed.QuestionResults
+                    .Select(result => result.QuestionId)
+                    .ToList();
+                if (needMoreResultIds.Count != needMoreResultIds.Distinct(StringComparer.Ordinal).Count())
+                {
+                    error = "question_results 中 question_id 重复。";
+                    return false;
+                }
                 answer = parsed;
                 return true;
             }
@@ -411,8 +428,7 @@ internal sealed class ProgramControlledChatOrchestrator
                 }
             }
 
-            var evidenceIds = pack.Questions
-                .SelectMany(q => q.Evidence)
+            var evidenceIds = pack.EvidenceCatalog
                 .Select(e => e.EvidenceId)
                 .ToHashSet(StringComparer.Ordinal);
             foreach (var result in parsed.QuestionResults)
@@ -531,18 +547,30 @@ internal sealed class ProgramControlledChatOrchestrator
         string question,
         RuleEvidencePack pack)
     {
-        var messages = new List<ChatMessage>(baseMessages);
-        messages.Add(new ChatMessage
-        {
-            Role = "system",
-            Content = BuildRespondInstruction()
-        });
+        var messages = WithStageInstruction(baseMessages, BuildRespondInstruction());
         messages.Add(new ChatMessage
         {
             Role = "user",
             Content = "用户原问题：\n" + question
                 + "\n\n程序已读取的正式规则事实包：\n"
                 + JsonSerializer.Serialize(pack, RulesJsonUtils.RelaxedJsonOptions)
+        });
+        return messages;
+    }
+
+    private static List<ChatMessage> WithStageInstruction(
+        IEnumerable<ChatMessage> baseMessages,
+        string instruction)
+    {
+        var messages = baseMessages.ToList();
+        var insertAt = 0;
+        while (insertAt < messages.Count
+               && string.Equals(messages[insertAt].Role, "system", StringComparison.OrdinalIgnoreCase))
+            insertAt++;
+        messages.Insert(insertAt, new ChatMessage
+        {
+            Role = "system",
+            Content = instruction
         });
         return messages;
     }
@@ -560,6 +588,7 @@ internal sealed class ProgramControlledChatOrchestrator
         + "只调用 submit_answer。answer 必须为每个子问题给出 question_results，"
         + "answered 必须引用事实包中真实存在的 evidence_id；不能引用候选摘要或包外内容。"
         + "如果用户指代或现场条件不足以判断，返回 clarify；如果规则读取不足、未找到或预算不足，返回 unavailable。"
+        + "事实包包含全局 evidence_catalog；questions[].evidence_bindings 把 evidence_id 绑定到具体子问题、角色和父路径，用于定位，不是证据身份边界。可引用 evidence_catalog 中任一真实 evidence_id，优先引用该子问题绑定的条目；不能引用包外内容。"
         + "如果确实需要一次补充检索，返回 need_more，并明确缺失信息、补充 entity/relation/intent。"
         + "用户提供的信息不是已经验证的现场状态；不要把动画演示当成用户棋盘状态。"
         + "回复保持简短、TTS 友好、不使用无关扩展。";
@@ -728,8 +757,13 @@ internal sealed class ProgramControlledChatOrchestrator
     private static void UpdateQuestionTrace(ChatOrchestrationTrace trace, RuleEvidencePack pack)
     {
         var byId = trace.Questions.ToDictionary(q => q.QuestionId, StringComparer.Ordinal);
+        var catalog = pack.EvidenceCatalog.ToDictionary(e => e.EvidenceId, StringComparer.Ordinal);
         foreach (var q in pack.Questions)
         {
+            var boundIds = q.EvidenceBindings
+                .Select(b => b.EvidenceId)
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
             var item = new ChatQuestionTrace
             {
                 QuestionId = q.QuestionId,
@@ -737,15 +771,29 @@ internal sealed class ProgramControlledChatOrchestrator
                 Relation = q.Relation,
                 Intent = q.Intent,
                 RetrievalStatus = q.RetrievalStatus,
+                CoverageStatus = q.CoverageStatus,
                 CandidateCount = q.Candidates.Count,
-                EvidenceCount = q.Evidence.Count,
-                EvidenceIds = q.Evidence.Select(e => e.EvidenceId).ToList()
+                EvidenceCount = boundIds.Count,
+                RetrievalCandidatePaths = q.Candidates.Select(c => string.IsNullOrWhiteSpace(c.Path) ? c.Id : c.Path).ToList(),
+                EvidenceIds = boundIds,
+                EvidenceCanonicalPaths = boundIds
+                    .Where(catalog.ContainsKey)
+                    .Select(id => catalog[id].CanonicalPath)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList(),
+                OmittedEvidence = q.OmittedItems.Select(o => $"{o.CanonicalPath}:{o.Reason}").ToList()
             };
             if (byId.TryGetValue(item.QuestionId, out var old))
             {
                 item.OutcomeStatus = old.OutcomeStatus;
-                if (old.EvidenceIds.Count > 0)
-                    item.EvidenceIds = old.EvidenceIds;
+                item.EvidenceIds = old.EvidenceIds
+                    .Concat(item.EvidenceIds)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList();
+                item.EvidenceCanonicalPaths = old.EvidenceCanonicalPaths
+                    .Concat(item.EvidenceCanonicalPaths)
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList();
                 var index = trace.Questions.IndexOf(old);
                 if (index >= 0)
                     trace.Questions[index] = item;
@@ -759,15 +807,26 @@ internal sealed class ProgramControlledChatOrchestrator
         }
     }
 
-    private static void ApplyAnswerToQuestionTrace(ChatOrchestrationTrace trace, AnswerResultDto answer)
+    private static void ApplyAnswerToQuestionTrace(
+        ChatOrchestrationTrace trace,
+        AnswerResultDto answer,
+        RuleEvidencePack pack)
     {
-        var results = answer.QuestionResults.ToDictionary(r => r.QuestionId, StringComparer.Ordinal);
+        var results = answer.QuestionResults
+            .Where(result => !string.IsNullOrWhiteSpace(result.QuestionId))
+            .GroupBy(result => result.QuestionId, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+        var catalog = pack.EvidenceCatalog.ToDictionary(e => e.EvidenceId, StringComparer.Ordinal);
         foreach (var question in trace.Questions)
         {
             if (!results.TryGetValue(question.QuestionId, out var result)) continue;
             question.OutcomeStatus = result.Status;
-            if (result.EvidenceIds.Count > 0)
-                question.EvidenceIds = result.EvidenceIds.Distinct(StringComparer.Ordinal).ToList();
+            question.CitedEvidenceIds = result.EvidenceIds.Distinct(StringComparer.Ordinal).ToList();
+            question.CitedCanonicalPaths = question.CitedEvidenceIds
+                .Where(catalog.ContainsKey)
+                .Select(id => catalog[id].CanonicalPath)
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
         }
     }
 
@@ -777,7 +836,7 @@ internal sealed class ProgramControlledChatOrchestrator
         AnswerResultDto answer,
         ChatOrchestrationTrace trace)
     {
-        var allEvidence = pack.Questions.SelectMany(q => q.Evidence).ToList();
+        var allEvidence = pack.EvidenceCatalog.ToList();
         var cited = answer.QuestionResults
             .SelectMany(r => r.EvidenceIds ?? new List<string>())
             .Where(id => !string.IsNullOrWhiteSpace(id))
@@ -798,7 +857,7 @@ internal sealed class ProgramControlledChatOrchestrator
             HasData = allEvidence.Count > 0,
             HasCandidates = pack.Questions.Any(q => q.Candidates.Count > 0),
             QueryCount = pack.Questions.Count,
-            OkCount = pack.Questions.Count(q => q.Evidence.Count > 0),
+            OkCount = pack.Questions.Count(q => q.EvidenceBindings.Count > 0),
             UnresolvedCount = pack.Questions.Count(q => q.RetrievalStatus == "unresolved"),
             NoMatchCount = pack.Questions.Count(q => q.RetrievalStatus == "no_match"),
             UnsupportedCount = pack.Questions.Count(q => q.RetrievalStatus is "unsupported" or "read_failed"),
@@ -823,27 +882,32 @@ internal sealed class ProgramControlledChatOrchestrator
 
     private static List<QueryEvidence> BuildQueryEvidence(RuleEvidencePack pack, AnswerResultDto answer)
     {
-        var results = answer.QuestionResults.ToDictionary(r => r.QuestionId, StringComparer.Ordinal);
+        var results = answer.QuestionResults
+            .Where(result => !string.IsNullOrWhiteSpace(result.QuestionId))
+            .GroupBy(result => result.QuestionId, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
         var output = new List<QueryEvidence>();
         for (var index = 0; index < pack.Questions.Count; index++)
         {
             var q = pack.Questions[index];
             results.TryGetValue(q.QuestionId, out var result);
-            var matchedIds = q.Evidence
-                .Where(e => e.Role is "target" or "candidate")
-                .Select(e => e.EvidenceId)
-                .ToHashSet(StringComparer.Ordinal);
-            var references = q.Evidence
-                .Where(e => e.Role == "related")
-                .Select(e => new EvidenceConcept { Id = e.CanonicalPath, Name = e.Name, Description = "related evidence" })
-                .ToList();
-            var matched = q.Evidence
-                .Where(e => e.Role is "target" or "candidate")
-                .Select(e => new EvidenceConcept
+            var bound = GetBoundEvidence(pack, q);
+            var matched = bound
+                .Where(item => item.Binding.Role is "target" or "candidate")
+                .Select(item => new EvidenceConcept
                 {
-                    Id = e.CanonicalPath,
-                    Name = e.Name,
-                    Description = e.EvidenceId
+                    Id = item.Evidence.CanonicalPath,
+                    Name = item.Evidence.Name,
+                    Description = item.Evidence.EvidenceId
+                })
+                .ToList();
+            var references = bound
+                .Where(item => item.Binding.Role == "related")
+                .Select(item => new EvidenceConcept
+                {
+                    Id = item.Evidence.CanonicalPath,
+                    Name = item.Evidence.Name,
+                    Description = item.Evidence.EvidenceId
                 })
                 .ToList();
             var query = new QueryEvidence
@@ -852,10 +916,10 @@ internal sealed class ProgramControlledChatOrchestrator
                 Relation = q.Relation,
                 Entity = q.Entity,
                 Intent = q.Intent,
-                Status = q.Evidence.Count > 0 ? "ok" : q.RetrievalStatus,
+                Status = bound.Count > 0 ? "ok" : q.RetrievalStatus,
                 Source = "program_pack",
                 RulesVersion = pack.RulesVersion,
-                HasData = q.Evidence.Count > 0,
+                HasData = bound.Count > 0,
                 Matched = matched,
                 References = references,
                 Candidates = q.Candidates.Select(c => new EvidenceConcept
@@ -876,9 +940,22 @@ internal sealed class ProgramControlledChatOrchestrator
         return output;
     }
 
+    private static List<(RuleEvidenceItem Evidence, RuleEvidenceBinding Binding)> GetBoundEvidence(
+        RuleEvidencePack pack, EvidenceQuestionPack question)
+    {
+        var catalog = pack.EvidenceCatalog.ToDictionary(e => e.EvidenceId, StringComparer.Ordinal);
+        return question.EvidenceBindings
+            .Where(b => catalog.ContainsKey(b.EvidenceId))
+            .Select(b => (catalog[b.EvidenceId], b))
+            .ToList();
+    }
+
     private static int CountUnanswered(AnswerResultDto answer, IReadOnlyList<ProgramSubQuestion> questions)
     {
-        var statuses = answer.QuestionResults.ToDictionary(r => r.QuestionId, r => r.Status, StringComparer.Ordinal);
+        var statuses = answer.QuestionResults
+            .Where(result => !string.IsNullOrWhiteSpace(result.QuestionId))
+            .GroupBy(result => result.QuestionId, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.First().Status, StringComparer.Ordinal);
         return questions.Count(q => !statuses.TryGetValue(q.QuestionId, out var status)
             || status is "clarify" or "unavailable");
     }

@@ -124,7 +124,11 @@ public class ChatOrchestrationTrace
     public int EvidenceCount { get; set; }
     public int OmittedEvidenceCount { get; set; }
     public int CandidateReadFailureCount { get; set; }
+    public int EvidenceReadAttempts { get; set; }
+    public int SuccessfulEvidenceReads { get; set; }
+    public int EvidenceBindingReuses { get; set; }
     public int EvidencePackChars { get; set; }
+    public int EffectiveMaxEvidencePackChars { get; set; }
     public double UnderstandMs { get; set; }
     public double RetrievalMs { get; set; }
     public double RespondMs { get; set; }
@@ -153,8 +157,19 @@ public class ChatQuestionTrace
     public string Relation { get; set; } = string.Empty;
     public string Intent { get; set; } = string.Empty;
     public string RetrievalStatus { get; set; } = string.Empty;
+    public string CoverageStatus { get; set; } = string.Empty;
     public int CandidateCount { get; set; }
     public int EvidenceCount { get; set; }
     public string? OutcomeStatus { get; set; }
+    /// <summary>Raw retrieval candidate canonical paths in rank order.</summary>
+    public List<string> RetrievalCandidatePaths { get; set; } = new();
+    /// <summary>Formal evidence IDs bound to this question.</summary>
     public List<string> EvidenceIds { get; set; } = new();
+    /// <summary>Formal evidence canonical paths bound to this question.</summary>
+    public List<string> EvidenceCanonicalPaths { get; set; } = new();
+    /// <summary>Evidence IDs actually cited by the answer.</summary>
+    public List<string> CitedEvidenceIds { get; set; } = new();
+    /// <summary>Canonical paths for cited evidence when it exists in this pack.</summary>
+    public List<string> CitedCanonicalPaths { get; set; } = new();
+    public List<string> OmittedEvidence { get; set; } = new();
 }

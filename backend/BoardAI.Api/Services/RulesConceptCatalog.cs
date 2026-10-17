@@ -180,23 +180,28 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
     }
 
 
-    public IReadOnlyList<JsonElement> GetConcepts(string game, string id)
+    public IReadOnlyList<JsonElement> GetConcepts(string game, string id) =>
+        GetConceptsWithPaths(game, id).Select(hit => hit.Element).ToList();
+
+
+    /// <summary>
+    /// 返回命中节点及其规范路径。普通概念路径为 id；本体概念保留
+    /// ontology:: 前缀以区分同 id 的游戏概念；局部槽位使用 owner.slot。
+    /// </summary>
+    public IReadOnlyList<ConceptPathHit> GetConceptsWithPaths(string game, string id)
     {
-        var results = new List<JsonElement>();
+        var results = new List<ConceptPathHit>();
         if (string.IsNullOrWhiteSpace(id)) return results;
 
-        // Parse namespace prefix if present, e.g. "ontology::resource"
         var (ns, localId) = RulesTextUtils.ParseNamespace(id);
 
-        // Search ontology when no namespace or explicitly "ontology"
         if (string.IsNullOrEmpty(ns) || ns == "ontology")
         {
             var ontology = _content.LoadOntology();
             if (TryFindInArray(ontology.RootElement, "concepts", localId, out var ontologyConcept))
-                results.Add(ontologyConcept);
+                results.Add(new ConceptPathHit { CanonicalPath = "ontology::" + localId, Element = ontologyConcept });
         }
 
-        // Search game concepts when no namespace
         if (string.IsNullOrEmpty(ns))
         {
             var concepts = _content.LoadGameConcepts(game);
@@ -205,43 +210,35 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
                 foreach (var type in RulesConceptTypes.ConceptArrayTypes)
                 {
                     if (TryFindInArray(concepts.RootElement, type, localId, out var concept))
-                        results.Add(concept);
+                        results.Add(new ConceptPathHit { CanonicalPath = localId, Element = concept });
                 }
 
                 foreach (var key in GetTopLevelRefKeys(concepts))
                 {
                     if (key == localId && concepts.RootElement.TryGetProperty(key, out var topLevel))
-                        results.Add(topLevel);
+                        results.Add(new ConceptPathHit { CanonicalPath = key, Element = topLevel });
                 }
             }
 
-            // Search flow
             var flow = _content.LoadGameFlow(game);
-            if (flow != null)
-            {
-                if (TryFindFlowProcedure(flow.RootElement, localId, out var procedure))
-                    results.Add(procedure);
-            }
+            if (flow != null && TryFindFlowProcedure(flow.RootElement, localId, out var procedure))
+                results.Add(new ConceptPathHit { CanonicalPath = localId, Element = procedure });
 
-            // Search instances (effects, modules, cards, tiles, sites, chips)
             var instances = _content.LoadGameInstances(game);
             if (instances != null)
             {
                 foreach (var type in RulesConceptTypes.InstanceArrayTypes)
                 {
                     if (TryFindInArray(instances.RootElement, type, localId, out var instance))
-                        results.Add(instance);
+                        results.Add(new ConceptPathHit { CanonicalPath = localId, Element = instance });
                 }
             }
 
-            // Search slots (bare-key slot names within concepts, e.g. population/expansion)
-            if (concepts != null)
+            if (concepts != null
+                && TryFindSlotByAddress(concepts.RootElement, "", localId, out var slot, out var slotPath)
+                && (localId.Contains('.') || results.Count == 0))
             {
-                // 支持局部槽位路径（owner.slot）与无歧义的普通 slot id；
-                // 若同名全局概念已命中，则只有显式路径才继续返回槽位，避免混入两个结果。
-                var slot = FindSlotByAddress(concepts.RootElement, "", localId);
-                if (slot.HasValue && (localId.Contains('.') || results.Count == 0))
-                    results.Add(slot.Value);
+                results.Add(new ConceptPathHit { CanonicalPath = slotPath, Element = slot });
             }
         }
 
@@ -255,6 +252,15 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
     /// </summary>
     private static JsonElement? FindSlotByAddress(JsonElement node, string ownerPath, string target)
     {
+        return TryFindSlotByAddress(node, ownerPath, target, out var found, out _) ? found : null;
+    }
+
+    /// <summary>返回局部槽位节点和完整 owner.slot 路径。</summary>
+    private static bool TryFindSlotByAddress(
+        JsonElement node, string ownerPath, string target, out JsonElement found, out string canonicalPath)
+    {
+        found = default;
+        canonicalPath = "";
         if (node.ValueKind == JsonValueKind.Object)
         {
             var currentOwner = ownerPath;
@@ -280,9 +286,13 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
                         var slotPath = JoinPath(currentOwner, slotId);
                         if (string.Equals(slotPath, target, StringComparison.Ordinal)
                             || (!target.Contains('.') && string.Equals(slotId, target, StringComparison.Ordinal)))
-                            return slot;
-                        var nested = FindSlotByAddress(slot, slotPath, target);
-                        if (nested.HasValue) return nested;
+                        {
+                            found = slot;
+                            canonicalPath = slotPath;
+                            return true;
+                        }
+                        if (TryFindSlotByAddress(slot, slotPath, target, out found, out canonicalPath))
+                            return true;
                         continue;
                     }
 
@@ -293,9 +303,13 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
                         var slotPath = JoinPath(currentOwner, prop.Name);
                         if (string.Equals(slotPath, target, StringComparison.Ordinal)
                             || (!target.Contains('.') && string.Equals(prop.Name, target, StringComparison.Ordinal)))
-                            return prop.Value;
-                        var nested = FindSlotByAddress(prop.Value, slotPath, target);
-                        if (nested.HasValue) return nested;
+                        {
+                            found = prop.Value;
+                            canonicalPath = slotPath;
+                            return true;
+                        }
+                        if (TryFindSlotByAddress(prop.Value, slotPath, target, out found, out canonicalPath))
+                            return true;
                     }
                 }
             }
@@ -303,19 +317,19 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
             foreach (var prop in node.EnumerateObject())
             {
                 if (prop.Name == "slots") continue;
-                var found = FindSlotByAddress(prop.Value, currentOwner, target);
-                if (found.HasValue) return found;
+                if (TryFindSlotByAddress(prop.Value, currentOwner, target, out found, out canonicalPath))
+                    return true;
             }
         }
         else if (node.ValueKind == JsonValueKind.Array)
         {
             foreach (var item in node.EnumerateArray())
             {
-                var found = FindSlotByAddress(item, ownerPath, target);
-                if (found.HasValue) return found;
+                if (TryFindSlotByAddress(item, ownerPath, target, out found, out canonicalPath))
+                    return true;
             }
         }
-        return null;
+        return false;
     }
 
     private static string JoinPath(string ownerPath, string slotId) =>

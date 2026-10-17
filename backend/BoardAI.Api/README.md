@@ -44,7 +44,7 @@ dotnet run --urls "http://0.0.0.0:5000"
 
 ## 配置 LLM
 
-`appsettings.json` 只保存 Provider / BaseUrl / Model / SystemPrompt，`LLM:ApiKey` 保持空串；密钥只走环境变量（推荐，避免把 key 提交到仓库）：
+`appsettings.json` 只保存 Provider / BaseUrl / Model / LegacySystemPrompt / ProgramSystemPrompt 等非密钥配置，`LLM:ApiKey` 保持空串；密钥只走环境变量（推荐，避免把 key 提交到仓库）。`OrchestrationMode` 只接受 `legacy`/`program`，非法值会在启动时显式失败：
 
 ```bash
 set LLM__ApiKey=sk-xxxxxxxx

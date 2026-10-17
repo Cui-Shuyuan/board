@@ -53,67 +53,76 @@ public sealed class RulesReferenceService
 
     public GetConceptResult GetConceptsWithExpansion(string game, string id)
     {
-        var matched = _catalog.GetConcepts(game, id).ToList();
-        if (matched.Count == 0)
-            return new GetConceptResult();
-
-        var (_, localId) = RulesTextUtils.ParseNamespace(id);
-
-        // 排除集合：查询概念自身 + 已命中的概念（避免 related 里出现 matched 副本）
-        var excluded = new HashSet<string>(StringComparer.Ordinal) { localId };
-        foreach (var element in matched)
+        var read = ReadConceptWithExpansionWithPaths(game, id);
+        return new GetConceptResult
         {
-            var matchedId = RulesTextUtils.GetElementId(element);
-            if (!string.IsNullOrEmpty(matchedId))
-                excluded.Add(matchedId);
-        }
+            Matched = read.Matched.Select(hit => hit.Element).ToList(),
+            Related = read.Related.Select(hit => hit.Element).ToList(),
+            Note = read.Note
+        };
+    }
 
-        var related = new List<JsonElement>();
-        var seen = new HashSet<string>(StringComparer.Ordinal);
-        // 已扩展概念 id——不同引用串（如 <score_track> 与 <ontology::score_track>）可能解析到同一概念，按解析结果去重
-        var appendedIds = new HashSet<string>(StringComparer.Ordinal);
+
+    /// <summary>
+    /// 带规范路径的一层引用扩展。正文按 canonical path 去重，但关联边按
+    /// (父路径, 子路径) 保留；每个 related 携带自己的真实路径与引用它的父路径，
+    /// 不继承某个父节点的路径。
+    /// </summary>
+    public ConceptReadResult ReadConceptWithExpansionWithPaths(string game, string id)
+    {
+        var read = new ConceptReadResult();
+        var matched = _catalog.GetConceptsWithPaths(game, id).ToList();
+        if (matched.Count == 0)
+            return read;
+
+        read.Matched = matched;
+        var (_, localId) = RulesTextUtils.ParseNamespace(id);
+        var excluded = new HashSet<string>(StringComparer.Ordinal) { localId };
+        foreach (var hit in matched)
+            excluded.Add(hit.CanonicalPath);
+
+        var seenRefs = new HashSet<string>(StringComparer.Ordinal);
+        var appendedEdges = new HashSet<string>(StringComparer.Ordinal);
         var truncated = false;
 
-        foreach (var element in matched)
+        foreach (var hit in matched)
         {
-            var text = JsonSerializer.Serialize(element, RulesJsonUtils.RelaxedJsonOptions);
-            foreach (Match m in RulesJsonUtils.ConceptRefRegex.Matches(text))
+            var text = JsonSerializer.Serialize(hit.Element, RulesJsonUtils.RelaxedJsonOptions);
+            foreach (Match match in RulesJsonUtils.ConceptRefRegex.Matches(text))
             {
-                var raw = m.Groups[1].Value;
-                if (!seen.Add(raw)) continue;
+                var raw = match.Groups[1].Value;
+                if (!seenRefs.Add(hit.CanonicalPath + "\u0000" + raw)) continue;
 
                 var local = raw.Contains("::")
                     ? raw[(raw.IndexOf("::", StringComparison.Ordinal) + 2)..]
                     : raw;
                 if (excluded.Contains(local)) continue;
 
-                foreach (var found in _catalog.GetConcepts(game, raw))
+                foreach (var found in _catalog.GetConceptsWithPaths(game, raw))
                 {
-                    var foundId = RulesTextUtils.GetElementId(found);
-                    if (!string.IsNullOrEmpty(foundId) && !appendedIds.Add(foundId))
-                        continue; // 已扩展过该概念
-                    if (related.Count >= MaxRelatedConcepts)
+                    var edgeKey = hit.CanonicalPath + "\u0000" + found.CanonicalPath;
+                    if (excluded.Contains(found.CanonicalPath) || !appendedEdges.Add(edgeKey))
+                        continue;
+                    if (read.Related.Count >= MaxRelatedConcepts)
                     {
                         truncated = true;
                         break;
                     }
-                    related.Add(found);
+                    found.ParentPath = hit.CanonicalPath;
+                    read.Related.Add(found);
                 }
                 if (truncated) break;
             }
             if (truncated) break;
         }
 
-        var result = new GetConceptResult { Matched = matched, Related = related };
         if (truncated)
         {
-            result.Note +=
+            read.Note +=
                 $"本次直接引用较多，related 仅返回首现顺序的前 {MaxRelatedConcepts} 个；其余引用请用具体 ID 继续调用 get_concept。";
         }
-        return result;
+        return read;
     }
-
-
 
 
     /// <summary>

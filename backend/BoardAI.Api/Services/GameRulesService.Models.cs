@@ -107,3 +107,20 @@ public class ListConceptsResult
     public int TotalCount { get; set; }
     public string Note { get; set; } = "Exhaustive listing of ALL concept IDs and names grouped by type. Use this to confirm a concept doesn't exist or to browse the full catalog.";
 }
+
+/// <summary>正式读取结果中的稳定路径+原始 JSON 节点。</summary>
+public sealed class ConceptPathHit
+{
+    public string CanonicalPath { get; set; } = string.Empty;
+    public JsonElement Element { get; set; }
+    /// <summary>仅 related 命中使用：引用该条目的父节点规范路径；matched 为 null。</summary>
+    public string? ParentPath { get; set; }
+}
+
+/// <summary>带规范路径的概念读取结果，供事实包构建使用。</summary>
+public sealed class ConceptReadResult
+{
+    public List<ConceptPathHit> Matched { get; set; } = new();
+    public List<ConceptPathHit> Related { get; set; } = new();
+    public string Note { get; set; } = "";
+}

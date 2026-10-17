@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-> 最后更新：2026-10-16 · 当前分支 `refactor/section-first-animation`，HEAD `188a60d`（2026-10-15）；完整旧待办已归档 `.claude/archive/memory/2026-10-16/`。
+> 最后更新：2026-10-17 · 当前分支 `refactor/section-first-animation`；完整旧待办已归档 `.claude/archive/memory/2026-10-16/`。
 
 # 当前状态
 
@@ -14,6 +14,8 @@ metadata:
 Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，xUnit 198/198；Splendor full / quick 已迁移到 section-first + reusable materials 源模型，共享局面/动作/表现从 `tutorial/library/` 引用；full 67 cue、quick 24 cue 静态检查全绿，素材库单测与两轨迁移对账已完成。当前正在做 quick / full 真人视觉重审、Android 真机端到端验收，最后进入 Flow Guide。
 
 ## 最近进展
+
+- **Program 问答证据修复与基线隔离（2026-10-17）**：legacy/program prompt 分字段隔离，legacy 原文从 `a992cfe` 恢复并通过 SHA-256 断言；R1–R5 的证据身份、关联边、读取/绑定/装包计数、公平轮询、最终序列化预算、语义投影与分层 trace 已落地。后端 xUnit 220/220。31 题开发诊断集 ×3 双评共识中 legacy 68.8% vs 修复 program 37.6%，program 调用均值 2.29、P50 5,110ms，仍未过质量门槛，默认保持 legacy。报告 `docs/reviews/program-qa-evidence-repair-and-diagnosis-2026-10-17.md`。未跑 798 全量，未切换 Thinking。
 
 - **去除问答过拟合并完成耗时归因（2026-10-17）**：删除组件数量/人数正则重答及相关强制提示，删除按字符数判断场景和将精确对象 intent 分数清零的处理，保留意图检索和候选确认。后端 181/181 测试通过。702 次历史聊天逐条对齐日志：新增平均 1357ms 中模型请求约 1158ms、工具约 199ms；模型调用次数 2.33→3.35，不能归因于纯思考变慢。报告 `docs/reviews/qa-generalization-latency-2026-10-17.md`。本次代码尚未重新跑 702 次真实模型质量评测，历史分数不能直接视为修订版结果。
 - **新旧版本全面对比已完成（2026-10-17）**：使用 117 条覆盖九款游戏的问题集，每问两版各重复 3 次，共 702 次真实聊天；两 judge 保守共识严格回答成功率旧版 60.4% → 新版 75.5%（+15.1pp，95% CI +8.0~+22.2pp，McNemar p=0.0002），规则直接命中率 61.3% → 80.3%。新版质量胜出，但端到端中位延迟 2732ms → 3572ms。报告见 `docs/reviews/version-comparison-2026-10-17.md`，题集与评测工具在 `tools/qa/comprehensive_eval_questions.jsonl`、`tools/eval/`。

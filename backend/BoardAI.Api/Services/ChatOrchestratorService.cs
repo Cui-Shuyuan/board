@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -12,10 +13,12 @@ public class ChatOrchestratorService
 {
     private readonly ILLMService _llmService;
     private readonly GameRulesService _rulesService;
-    private readonly string _systemPromptTemplate;
+    private readonly string _legacySystemPromptTemplate;
+    private readonly string _programSystemPromptTemplate;
     private readonly ILogger<ChatOrchestratorService> _logger;
     private readonly LLMOptions _llmOptions;
     private readonly string _orchestrationMode;
+    private readonly string _configFingerprint;
     private readonly int _maxToolRounds;
     private readonly int _maxToolCallsPerRound;
     private readonly int _maxTotalToolCalls;
@@ -48,8 +51,19 @@ public class ChatOrchestratorService
 
         var llmOptions = options.Value;
         _llmOptions = llmOptions;
-        _systemPromptTemplate = llmOptions.SystemPrompt;
-        _orchestrationMode = llmOptions.OrchestrationMode;
+        _legacySystemPromptTemplate = llmOptions.LegacySystemPrompt;
+        _programSystemPromptTemplate = llmOptions.ProgramSystemPrompt;
+        _orchestrationMode = (llmOptions.OrchestrationMode ?? "").Trim().ToLowerInvariant();
+        if (_orchestrationMode is not ("legacy" or "program"))
+            throw new InvalidOperationException(
+                $"LLM:OrchestrationMode must be 'legacy' or 'program', got '{llmOptions.OrchestrationMode}'.");
+        _configFingerprint = HashFingerprint(
+            $"{llmOptions.Provider}|{llmOptions.BaseUrl}|{llmOptions.Model}|{llmOptions.Thinking}|"
+            + $"{_orchestrationMode}|{llmOptions.MaxToolRounds}|{llmOptions.MaxToolCallsPerRound}|"
+            + $"{llmOptions.MaxTotalToolCalls}|{llmOptions.MaxCandidatesPerQuestion}|"
+            + $"{llmOptions.MaxEvidencePerQuestion}|{llmOptions.MaxEvidenceTotal}|"
+            + $"{llmOptions.MaxEvidenceJsonChars}|{llmOptions.MaxEvidencePackChars}|"
+            + $"{llmOptions.MaxSupplementQueries}|legacy:{_legacySystemPromptTemplate}|program:{_programSystemPromptTemplate}");
         _maxToolRounds = Math.Max(1, llmOptions.MaxToolRounds);
         _maxToolCallsPerRound = Math.Max(1, llmOptions.MaxToolCallsPerRound);
         _maxTotalToolCalls = Math.Max(1, llmOptions.MaxTotalToolCalls);
@@ -84,7 +98,11 @@ public class ChatOrchestratorService
     {
         using var rulesScope = _rulesService.BeginRequestScope(gameId);
 
-        var systemPrompt = _systemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
+        var systemPrompt = _programSystemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
+        _logger.LogInformation(
+            "[Chat] program mode={Mode}, promptFingerprint={PromptFingerprint}, configFingerprint={ConfigFingerprint}, model={Model}, thinking={Thinking}",
+            _orchestrationMode, PromptFingerprint(_programSystemPromptTemplate), _configFingerprint,
+            _llmOptions.Model, _llmOptions.Thinking);
         var messages = new List<ChatMessage>();
         if (!string.IsNullOrWhiteSpace(systemPrompt))
             messages.Add(new ChatMessage { Role = "system", Content = systemPrompt });
@@ -153,7 +171,11 @@ public class ChatOrchestratorService
         // 一轮 Chat 可能执行多个 execute_plan / 注解；整轮绑定同一规则版本。
         using var rulesScope = _rulesService.BeginRequestScope(gameId);
 
-        var systemPrompt = _systemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
+        var systemPrompt = _legacySystemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
+        _logger.LogInformation(
+            "[Chat] legacy mode={Mode}, promptFingerprint={PromptFingerprint}, configFingerprint={ConfigFingerprint}, model={Model}, thinking={Thinking}",
+            _orchestrationMode, PromptFingerprint(_legacySystemPromptTemplate), _configFingerprint,
+            _llmOptions.Model, _llmOptions.Thinking);
 
         var messages = new List<ChatMessage>();
 
@@ -384,6 +406,14 @@ public class ChatOrchestratorService
         {
             sw.Stop();
         }
+    }
+
+    private static string PromptFingerprint(string prompt) => HashFingerprint(prompt);
+
+    private static string HashFingerprint(string value)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(value ?? ""));
+        return Convert.ToHexString(hash)[..12].ToLowerInvariant();
     }
 
     private static List<ChatMessage> TrimHistory(List<ChatMessage> history, int maxMessages)
