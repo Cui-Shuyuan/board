@@ -31,8 +31,10 @@ def cue_text(cue: dict) -> str:
 
 def _load_section_subtitles(game_dir: Path, cue_entry: dict, duration: float) -> list[dict]:
     rel = cue_entry.get("subtitle_file")
-    path = game_dir / normalize_relative(rel, game_dir) if rel else Path()
-    if path and path.exists():
+    if not rel:
+        return []
+    path = game_dir / normalize_relative(rel, game_dir)
+    if path.is_file():
         events = load_subtitles(path, "", duration)
         # load_subtitles returns normalized t/end/text/words already.
         return [e for e in events if e.get("words")]
@@ -134,6 +136,37 @@ def _slice_subtitles(events: list[dict], cue_start: float, cue_end: float) -> li
     return out
 
 
+def _cue_local_id(cue: dict) -> str:
+    local_id = str(cue.get("local_id") or "").strip()
+    if local_id:
+        return local_id
+    raw_id = str(cue.get("id") or "").strip()
+    return raw_id.rsplit("/", 1)[-1]
+
+
+def _is_title_cue(cue: dict) -> bool:
+    return _cue_local_id(cue).lower().startswith("title")
+
+
+def _pause_after_speech_seconds(section, cue: dict) -> float:
+    anim_cue = getattr(section, "anim_by_local", {}).get(_cue_local_id(cue))
+    if not isinstance(anim_cue, dict):
+        return 0.0
+    return max(0.0, float(anim_cue.get("pause_after_speech_seconds", 0.0) or 0.0))
+
+
+def _last_spoken_word_end(events: list[dict], cue_start: float, cue_end: float) -> float | None:
+    last_end: float | None = None
+    for event in events:
+        for word in event.get("words") or []:
+            ws = float(word.get("start", 0.0) or 0.0)
+            we = float(word.get("end", ws) or ws)
+            if we <= cue_start + 1e-6 or ws >= cue_end - 1e-6:
+                continue
+            last_end = max(last_end or cue_start, min(we, cue_end))
+    return last_end
+
+
 def _pseudo_words(text: str, duration: float) -> list[dict]:
     chars = [ch for ch in str(text or "") if ch.isalnum()]
     if not chars:
@@ -195,6 +228,7 @@ def build_section_runtime(game: str, track: str, *, force: bool = False,
         cue_texts = [cue_text(c) for c in source_cues]
         starts = _match_cue_starts(cue_texts, _word_stream(events), duration)
         section_start = section_cursor
+        cue_cursor = section_start
 
         section_meta = {
             "id": sec.id,
@@ -204,16 +238,41 @@ def build_section_runtime(game: str, track: str, *, force: bool = False,
             "asset": str(entry.get("asset") or sec.id),
             "audio": audio_rel,
             "start": round(section_start, 3),
-            "duration": round(duration, 3),
             "cue_ids": [str(c.get("id")) for c in source_cues],
         }
-        sections_out.append(section_meta)
 
         for i, (source_cue, cue_start) in enumerate(zip(source_cues, starts)):
             local_end = starts[i + 1] if i + 1 < len(starts) else duration
             cue_end = max(cue_start + 0.001, local_end)
-            cue_duration = max(0.001, cue_end - cue_start)
+            raw_cue_duration = max(0.001, cue_end - cue_start)
             text = cue_texts[i]
+
+            # Chapter-title cues need an authored pause that belongs to the
+            # cue itself, not a player-side pause at a waveform boundary.  The
+            # plan trims the TTS clip at its last spoken word and appends real
+            # timeline silence.  Normal body cues keep the legacy continuous
+            # section-audio mode for now.
+            audio_plan: list[dict[str, Any]] | None = None
+            planned_duration = raw_cue_duration
+            title_pause = _pause_after_speech_seconds(sec, source_cue)
+            if _is_title_cue(source_cue) and title_pause > 0.0:
+                speech_end = _last_spoken_word_end(events, cue_start, cue_end)
+                clip_end = min(cue_end, max(cue_start + 0.001, speech_end or cue_end))
+                planned_duration = max(0.001, clip_end - cue_start) + title_pause
+                audio_plan = [
+                    {
+                        "type": "clip",
+                        "file": audio_rel,
+                        "start": round(cue_start, 3),
+                        "end": round(clip_end, 3),
+                    },
+                    {
+                        "type": "silence",
+                        "duration": round(title_pause, 3),
+                    },
+                ]
+            cue_duration = planned_duration
+
             subtitles = _slice_subtitles(events, cue_start, cue_end)
             if not subtitles:
                 subtitles = [{
@@ -237,12 +296,13 @@ def build_section_runtime(game: str, track: str, *, force: bool = False,
                         max(float(sub.get("end", 0.0) or 0.0), float(sub.get("t", 0.0) or 0.0)),
                     )
                 last["end"] = round(cue_duration, 3)
+
             group = source_cue.get("group") or sec.meta.get("title") or sec.id
             group_path = source_cue.get("group_path") or sec.meta.get("group_path") or [group]
-            cues_out.append({
+            cue_out = {
                 "id": str(source_cue.get("id")),
                 "section": sec.id,
-                "local_id": str(source_cue.get("local_id") or source_cue.get("id")),
+                "local_id": str(source_cue.get("local_id") or _cue_local_id(source_cue)),
                 "section_index": sec.order,
                 "local_index": i,
                 "cue_index": global_index,
@@ -252,18 +312,24 @@ def build_section_runtime(game: str, track: str, *, force: bool = False,
                 "audio": audio_rel,
                 "audio_start": round(cue_start, 3),
                 "duration": round(cue_duration, 3),
-                "start": round(section_start + cue_start, 3),
+                "start": round(cue_cursor, 3),
                 "refs": list(source_cue.get("refs") or []),
                 "subtitles": subtitles,
                 "animation": None,
-                "section_audio": True,
-            })
+                "section_audio": audio_plan is None,
+            }
+            if audio_plan is not None:
+                cue_out["audio_plan"] = audio_plan
+            cues_out.append(cue_out)
+            cue_cursor += cue_duration
             global_index += 1
 
-        section_cursor = section_start + duration + gap
+        section_meta["duration"] = round(cue_cursor - section_start, 3)
+        sections_out.append(section_meta)
+        section_cursor = cue_cursor + gap
 
     runtime = {
-        "schema_version": 2,
+        "schema_version": 3,
         "game_id": game,
         "track": track,
         "title": source.script_doc.get("title") or f"{game} {track}",

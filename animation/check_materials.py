@@ -399,12 +399,18 @@ def _runtime_windows(game: str, track: str) -> dict[str, float]:
     for cues in groups.values():
         cues.sort(key=lambda c: float(c.get("audio_start", 0.0) or 0.0))
         for i, cue in enumerate(cues):
+            cue_id = str(cue.get("id"))
+            if isinstance(cue.get("audio_plan"), list) and cue.get("audio_plan"):
+                # A plan cue owns its total duration, including internal gaps
+                # and silence; audio_start no longer implies the cue boundary.
+                windows[cue_id] = max(0.0, float(cue.get("duration", 0.0) or 0.0))
+                continue
             start = float(cue.get("audio_start", 0.0) or 0.0)
             if i + 1 < len(cues):
                 nxt = float(cues[i + 1].get("audio_start", 0.0) or 0.0)
-                windows[str(cue.get("id"))] = max(0.0, nxt - start)
+                windows[cue_id] = max(0.0, nxt - start)
             else:
-                windows[str(cue.get("id"))] = max(
+                windows[cue_id] = max(
                     0.0, float(cue.get("duration", 0.0) or 0.0)
                 )
     return windows

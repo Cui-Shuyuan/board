@@ -57,6 +57,7 @@ namespace BoardGameTutorial
         public string animation;
         public float audio_start;
         public bool section_audio;
+        public List<TutorialAudioPlanSegment> audio_plan;
 
         /// <summary>
         /// 本条 cue 的**入口状态**来自哪条 cue 的终态。
@@ -71,6 +72,16 @@ namespace BoardGameTutorial
         /// 写同一个 entry。
         /// </summary>
         public string entry;
+    }
+
+    [Serializable]
+    public class TutorialAudioPlanSegment
+    {
+        public string type;
+        public string file;
+        public float start;
+        public float end;
+        public float duration;
     }
 
     [Serializable]

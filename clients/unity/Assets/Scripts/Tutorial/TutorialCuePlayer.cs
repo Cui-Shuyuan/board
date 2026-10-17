@@ -131,7 +131,9 @@ namespace BoardGameTutorial
         public string CurrentCueText => CurrentCue != null ? CurrentCue.text : "";
         public string CurrentCueGroupPath => CurrentCue != null && CurrentCue.group_path != null
             ? string.Join(" > ", CurrentCue.group_path) : "";
-        public bool IsPlaying => audioSource != null && audioSource.isPlaying;
+        public bool IsPlaying => audioPlanActive
+            ? !isPaused && !playbackFinished
+            : (audioSource != null && audioSource.isPlaying);
         public TutorialCueDoc Document => doc;
         public TutorialAnimPlayer AnimPlayer => v2AnimPlayer;
         public bool IsPaused => isPaused;
@@ -145,8 +147,10 @@ namespace BoardGameTutorial
             {
                 if (animationHoldActive) return animationHoldLocal;
                 if (playbackFinished) return lastPosition;
-                if (audioSource == null || audioSource.clip == null) return 0f;
                 var cue = CurrentCue;
+                if (cue != null && HasAudioPlan(cue))
+                    return Mathf.Clamp(audioPlanLocal, 0f, Mathf.Max(0f, Duration));
+                if (audioSource == null || audioSource.clip == null) return 0f;
                 if (cue != null && cue.section_audio)
                     return Mathf.Clamp(audioSource.time - cue.audio_start, 0f, Mathf.Max(0f, cue.duration));
                 return audioSource.time;
@@ -158,6 +162,11 @@ namespace BoardGameTutorial
             get
             {
                 var cue = CurrentCue;
+                if (cue != null && HasAudioPlan(cue))
+                {
+                    float planned = AudioPlanDuration(cue);
+                    return Mathf.Max(0f, planned > 0f ? planned : cue.duration);
+                }
                 if (cue != null && cue.section_audio) return Mathf.Max(0f, cue.duration);
                 return audioSource != null && audioSource.clip != null ? audioSource.clip.length : 0f;
             }
@@ -266,6 +275,10 @@ namespace BoardGameTutorial
                 sectionAudioClip = null;
             }
             sectionAudioPath = "";
+            audioPlanActive = false;
+            audioPlanLocal = 0f;
+            audioPlanAwaitingStart = false;
+            audioPlanSegmentIsClip = false;
             if (v2AnimPlayer != null)
             {
                 v2AnimPlayer.ClearScene();

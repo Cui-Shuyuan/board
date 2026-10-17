@@ -28,9 +28,10 @@ data class ZoneBinding(
 /**
  * One cue on the tutorial's continuous global audio timeline.
  *
- * [start] is the cue's global start time in seconds.  [duration] is the audio
- * clip duration in seconds.  The same model is used by the native seek bar and
- * chapter menu; it does not own or mutate any Unity state.
+ * [start] is the cue's global start time in seconds.  [duration] is the cue's
+ * complete playable duration: for an audio-plan cue this includes every clip
+ * and internal silence segment.  The same model is used by the native seek bar
+ * and chapter menu; it does not own or mutate any Unity state.
  */
 data class TimelineCue(
     val id: String,

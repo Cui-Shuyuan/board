@@ -119,6 +119,7 @@ namespace BoardGameTutorial
                 var cue = doc.cues[i];
                 if (cue.group_path == null) cue.group_path = new List<string>();
                 if (cue.refs == null) cue.refs = new List<string>();
+                if (cue.audio_plan == null) cue.audio_plan = new List<TutorialAudioPlanSegment>();
                 if (cue.subtitles == null) cue.subtitles = new List<TutorialCueSubtitle>();
                 foreach (var subtitle in cue.subtitles)
                     if (subtitle.words == null) subtitle.words = new List<TutorialCueWord>();

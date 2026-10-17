@@ -95,17 +95,21 @@ class SectionRuntimePipelineTests(unittest.TestCase):
         write(tutorial / "sections" / "a" / "full.anim.json", {
             "section": "a",
             "cues": [
-                {"id": "001", "entry": "initial", "tree": "main", "events": []},
-                {"id": "002", "tree": "main", "events": []},
+                {
+                    "id": "title_a", "entry": "initial", "tree": "main",
+                    "pause_after_speech_seconds": 1.5, "events": [],
+                },
+                {"id": "001", "tree": "main", "events": []},
             ],
             "time_anchors": [],
         })
         write(tutorial / "sections" / "a" / "full.script.json", {
             "section": "a",
             "cues": [
-                {"id": "001", "group": "1 A", "refs": [], "beats": [{"id": "a.001.b1", "text": "第一句"}]},
-                {"id": "002", "group": "1 A", "refs": [],
-                 "beats": [{"id": "a.002.b1", "text": "第二句"}]},
+                {"id": "title_a", "group": "1 A", "refs": [],
+                 "beats": [{"id": "a.title_a.b1", "text": "第一句"}]},
+                {"id": "001", "group": "1 A", "refs": [],
+                 "beats": [{"id": "a.001.b1", "text": "第二句"}]},
             ],
         })
         return {
@@ -116,7 +120,7 @@ class SectionRuntimePipelineTests(unittest.TestCase):
                 "duration": 4.0,
                 "file": "content/games/fake/media/tts/full/sec.a.mp3",
                 "subtitle_file": "content/games/fake/media/tts/full/sec.a.subtitle.json",
-                "cue_ids": ["a/001", "a/002"],
+                "cue_ids": ["a/title_a", "a/001"],
             }],
         }
 
@@ -131,7 +135,7 @@ class SectionRuntimePipelineTests(unittest.TestCase):
             self.assertEqual(entries[0]["id"], "a")
             self.assertEqual(entries[0]["asset"], "sec.a")
             self.assertEqual(entries[0]["text"], "第一句第二句")
-            self.assertEqual(entries[0]["cue_ids"], ["a/001", "a/002"])
+            self.assertEqual(entries[0]["cue_ids"], ["a/title_a", "a/001"])
 
     def test_build_section_runtime_expands_one_audio_into_cues(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -142,14 +146,25 @@ class SectionRuntimePipelineTests(unittest.TestCase):
                  mock.patch.object(section_source, "ROOT", root):
                 out = bsr.build_section_runtime("fake", "full", force=True, manifest=manifest)
             runtime = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(runtime["schema_version"], 3)
             self.assertEqual(runtime["units"], "section")
             self.assertEqual(len(runtime["sections"]), 1)
             self.assertEqual(len(runtime["cues"]), 2)
             first, second = runtime["cues"]
-            self.assertTrue(first["section_audio"])
+            self.assertFalse(first["section_audio"])
+            self.assertEqual(len(first["audio_plan"]), 2)
+            self.assertEqual(first["audio_plan"][0]["type"], "clip")
+            self.assertEqual(first["audio_plan"][1]["type"], "silence")
+            self.assertAlmostEqual(first["audio_plan"][0]["start"], 0.0, places=3)
+            self.assertAlmostEqual(first["audio_plan"][0]["end"], 1.0, places=3)
+            self.assertAlmostEqual(first["audio_plan"][1]["duration"], 1.5, places=3)
+            self.assertAlmostEqual(first["duration"], 2.5, places=3)
+            self.assertAlmostEqual(second["start"], first["duration"], places=3)
             self.assertEqual(first["audio"], second["audio"])
             self.assertAlmostEqual(first["audio_start"], 0.0, places=3)
             self.assertGreater(second["audio_start"], first["audio_start"])
+            self.assertTrue(second["section_audio"])
+            self.assertNotIn("audio_plan", second)
             self.assertAlmostEqual(second["subtitles"][0]["t"], 0.0, places=3)
             self.assertAlmostEqual(first["subtitles"][-1]["end"], first["duration"], places=3)
             self.assertAlmostEqual(second["subtitles"][-1]["end"], second["duration"], places=3)

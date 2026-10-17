@@ -31,11 +31,18 @@ namespace BoardGameTutorial
         {
             if (doc == null || doc.cues == null || doc.cues.Count == 0) return;
             index = Mathf.Clamp(index, 0, doc.cues.Count - 1);
+            if (!preserveSectionAudioPreRollOnNextPlay)
+                sectionAudioPreRolledCueIndex = -1;
+            preserveSectionAudioPreRollOnNextPlay = false;
             if (playbackRoutine != null) StopCoroutine(playbackRoutine);
             animationHoldActive = false;
             animationHoldLocal = 0f;
             lastPosition = Mathf.Max(0f, localTime);
             playbackFinished = false;
+            audioPlanActive = false;
+            audioPlanLocal = 0f;
+            audioPlanAwaitingStart = false;
+            audioPlanSegmentIsClip = false;
             playbackRoutine = StartCoroutine(
                 PlayCueRoutine(
                     index,
@@ -71,6 +78,12 @@ namespace BoardGameTutorial
             float localTime,
             bool startPaused)
         {
+            if (IsAudioPlanCue(index))
+            {
+                yield return PlayAudioPlanCueRoutine(index, Mathf.Max(0f, localTime), startPaused);
+                yield break;
+            }
+
             if (IsSectionAudioCue(index))
             {
                 yield return PlaySectionCueRoutine(index, Mathf.Max(0f, localTime), startPaused);
@@ -184,7 +197,19 @@ namespace BoardGameTutorial
 
         public void Pause()
         {
-            if (audioSource == null || audioSource.clip == null || isPaused) return;
+            if (isPaused) return;
+
+            if (audioPlanActive)
+            {
+                isPaused = true;
+                if (audioPlanSegmentIsClip && audioSource != null
+                    && audioSource.clip != null && audioSource.isPlaying)
+                    audioSource.Pause();
+                UpdateSubtitle();
+                return;
+            }
+
+            if (audioSource == null || audioSource.clip == null) return;
             if (!audioSource.isPlaying && !animationHoldActive) return;
 
             if (audioSource.isPlaying) audioSource.Pause();
@@ -194,7 +219,28 @@ namespace BoardGameTutorial
 
         public void Resume()
         {
-            if (audioSource == null || audioSource.clip == null || !isPaused) return;
+            if (!isPaused) return;
+
+            if (audioPlanActive)
+            {
+                isPaused = false;
+                if (audioPlanSegmentIsClip && audioSource != null && audioSource.clip != null)
+                {
+                    if (audioPlanAwaitingStart)
+                    {
+                        audioPlanAwaitingStart = false;
+                        audioSource.Play();
+                    }
+                    else if (!audioSource.isPlaying)
+                    {
+                        audioSource.UnPause();
+                    }
+                }
+                UpdateSubtitle();
+                return;
+            }
+
+            if (audioSource == null || audioSource.clip == null) return;
 
             // During the hold-after-audio window the audio clock is already
             // paused on purpose; resuming means "continue the animation hold",
@@ -304,6 +350,11 @@ namespace BoardGameTutorial
         /// </summary>
         public void SeekTo(float localSeconds)
         {
+            if (CurrentCue != null && HasAudioPlan(CurrentCue))
+            {
+                PlayCueAt(CurrentCue.id, localSeconds, isPaused);
+                return;
+            }
             if (playbackFinished)
             {
                 if (CurrentCue != null)
@@ -322,6 +373,12 @@ namespace BoardGameTutorial
 
         private void SeekToCurrentTime(float time)
         {
+            var activeCue = CurrentCue;
+            if (activeCue != null && HasAudioPlan(activeCue))
+            {
+                PlayCueAt(activeCue.id, time, isPaused);
+                return;
+            }
             if (audioSource == null || audioSource.clip == null) return;
             float cueDuration = CurrentCue != null
                 ? Mathf.Max(0.001f, CurrentCue.duration)
@@ -399,7 +456,12 @@ namespace BoardGameTutorial
             if (v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
             {
                 float t;
-                if (audioSource != null && audioSource.clip != null)
+                if (audioPlanActive)
+                {
+                    lastPosition = Position;
+                    t = lastPosition;
+                }
+                else if (audioSource != null && audioSource.clip != null)
                 {
                     if (audioSource.isPlaying || isPaused || animationHoldActive)
                         lastPosition = Position;
@@ -414,7 +476,9 @@ namespace BoardGameTutorial
             }
 
             // 音频播放期间每帧刷新字幕；不依赖协程 while 的 isPlaying 时序。
-            if (audioSource != null && audioSource.clip != null && audioSource.isPlaying && !isPaused)
+            if (audioPlanActive)
+                UpdateSubtitle();
+            else if (audioSource != null && audioSource.clip != null && audioSource.isPlaying && !isPaused)
                 UpdateSubtitle();
 
 #if ENABLE_INPUT_SYSTEM
@@ -475,8 +539,10 @@ namespace BoardGameTutorial
         {
             currentSubtitle = "";
             var cue = CurrentCue;
-            if (cue == null || audioSource == null || cue.subtitles == null) return;
-            float time = cue.section_audio ? Position : audioSource.time;
+            if (cue == null || cue.subtitles == null) return;
+            float time = (cue.section_audio || HasAudioPlan(cue))
+                ? Position
+                : (audioSource != null ? audioSource.time : 0f);
             foreach (var subtitle in cue.subtitles)
                 if (time >= subtitle.t && time <= subtitle.end) { currentSubtitle = subtitle.text; return; }
         }

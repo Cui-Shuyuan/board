@@ -8,11 +8,16 @@
 - Unity 播放器：`clients/unity/Assets/Scripts/Tutorial/`
 - 本目录只放跨游戏动画工具，不放 Unity 工程，也不放 per-game 动画数据。
 
-当前 Splendor：full 67 cue / 12 section / 338 anchors；quick 24 cue / 11 section / 106 anchors。两轨引用同一批 `library/` 素材；迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。`check_materials.py` 已接入 `compile_tutorial.py` 构建门禁，失败会恢复旧 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
+当前 Splendor：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。两轨引用同一批 `library/` 素材；迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。`check_materials.py` 已接入 `compile_tutorial.py` 构建门禁，失败会恢复旧 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
 
 ## 原语与检查
 
 - 标注原语 `point` / `shape` / `label` 统一编译为 `FrameState.Annotations`，显式区分 `world` / `screen` 锚定。
+- `label` 可用 `size` 单独指定字号（1080p 参考像素）；Splendor 的章节标题 cue 使用居中 `section_title` overlay + `size: 136`，普通说明仍沿用统一默认字号。
+- `overlay_show` 可用 `dim_alpha` 做全屏压暗：`dim_alpha: 0.8` 时背景保留约 20% 可见度；该模式保留真实场景、隐藏 zone debug 层，适合章节标题卡。
+- 章节标题 cue 的 `pause_after_speech_seconds` 在 runtime 中编译为 `audio_plan: [{type:"clip",...},{type:"silence",duration:...}]`：静音属于标题 cue 自身时间轴，播放器不再在波形边界暂停。普通正文 cue 仍使用 `section_audio + audio_start` 的兼容单段模式。
+
+TTS 音色基线：Splendor 教程成片使用 seed2 音色 `zh_female_vv_uranus_bigtts`（resource `seed-tts-2.0`）。重生成教程 TTS 时必须显式设置 `DOUBAO_TTS_PROVIDER=seed2`、`DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts`、`DOUBAO_RESOURCE_ID=seed-tts-2.0`，避免被 `.env` 里的 standard QA 音色 `BV700_streaming` 覆盖。
 - `shape` 支持 `arrow` / `circle` / `cross` / `forbid` / `box`；`label` 支持 `label_mode` / `label_key`，`point`/`shape` 支持 `marker_key`、`arrow_direction` 与尾部 `text`。
 - `magnifier` 是 screen 空间放大镜原语：把目标实体所在世界区域实时渲染进屏幕 rect；`mask`（items/full）、`rect`、`zoom`、`layer` 由脚本规定。桌面高亮/飞牌会原样出现在放大镜里。
 
