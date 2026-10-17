@@ -13,6 +13,25 @@ python -m unittest discover -s tools/eval -p test_analyze_chat_latency.py
 
 分析器适用于同一天、北京时间的现有日志格式，按问题、游戏和开始时间唯一匹配，匹配不完整会失败。LLM 区间从请求开始到后续首条编排日志，包含网络、排队、输入处理、推理、输出生成和反序列化；响应头到达不代表完整模型响应结束，不能把区间标成纯思考时间。工具区间包含调用及少量日志开销。原始 reasoning 仅写入忽略目录中的请求明细，用于行为分析，不是精确 token 或内部计算测量。
 
+## 协议变体小对照（不调用 judge）
+
+只切换 Thinking/ToolChoice 时，用同一题目文件和同一候选 API 跑各变体，再从原始 `runs.jsonl` 自动汇总：
+
+```bash
+python3 tools/eval/run_protocol_variant.py \
+  --questions tools/qa/program_evidence_repair_dev_questions.jsonl \
+  --api http://localhost:5002 --label C2-thinking-disabled-required \
+  --thinking disabled --tool-choice required --out .tmp/protocol-comparison/C2
+
+python3 tools/eval/analyze_protocol_variants.py \
+  --variant A=.tmp/protocol-comparison/A-thinking-low \
+  --variant B=.tmp/protocol-comparison/B-thinking-disabled \
+  --variant C2=.tmp/protocol-comparison/C2 \
+  --out .tmp/protocol-comparison/summary.json
+```
+
+汇总把 plain final、非法终态校验失败、实际协议修复调用、token、延迟和时间线自耗时分开记录；它不判断答案质量。`runs.jsonl` 没有结构化 continuation handle，因此 continuation 次数仍需人工核对原始日志。
+
 ## 1. 冻结版本
 
 历史检索对比使用 `36e4dbf` → `d8862ac`；程序控制问答编排对比使用：
@@ -91,7 +110,7 @@ python3 tools/eval/merge_question_sets.py \
   --out-ground-truth .tmp/program-eval/question_ground_truth.json
 ```
 
-再从运行结果获取 matched/related 概念的补充描述：
+再从运行结果获取 matched/related 概念的补充描述和结构化费用/目标/条件字段：
 
 ```bash
 python3 tools/eval/fetch_rule_details.py \
@@ -99,6 +118,8 @@ python3 tools/eval/fetch_rule_details.py \
   --api http://172.17.208.1:5002 \
   --out .tmp/program-eval/main/rule_details.json
 ```
+
+`rule_details.json` 现在保留 `structured_evidence`（cost/target/content/score 等嵌套正式字段），盲评提示会把这些字段和 description 一起注入；否则像 `play_bird` 的蛋费来源只存在于嵌套 cost 树里，会被 judge 误判为无依据。
 
 盲评必须在有模型密钥的环境里运行，且不要打印密钥：
 

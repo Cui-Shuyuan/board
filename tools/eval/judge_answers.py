@@ -46,9 +46,13 @@ def build_prompt(run: dict, truth: dict, details: dict[str, dict]) -> str:
     for cid in matched[:10]:
         detail = details.get(f"{run.get('game','')}::{cid}") or details.get(cid) or {}
         desc = (detail.get("description") or "").strip()
+        structured = (detail.get("structured_evidence") or "").strip()
         name = detail.get("name") or ""
-        if desc:
-            confirmed.append(f"- {cid} / {name}: {desc[:700]}")
+        if desc or structured:
+            line = f"- {cid} / {name}: {desc[:700]}"
+            if structured:
+                line += f"\n  结构化正式证据: {structured[:1200]}"
+            confirmed.append(line)
     confirmed_text = "\n".join(confirmed) if confirmed else "- 无额外已确认概念详情。"
 
     return f"""用户问题：

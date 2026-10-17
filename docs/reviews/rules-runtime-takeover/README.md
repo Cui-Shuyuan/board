@@ -9,3 +9,4 @@
 - [07 五项 review 收口](07-review-fixes.md)
 - [08 续读分页与自身耗时收口](08-continuation-pagination-and-self-time.md)
 - [09 31 题小规模真实同轮对照](09-small-real-comparison.md)
+- [10 协议小对照与失败案例人工复核](10-protocol-variants-and-manual-review.md)

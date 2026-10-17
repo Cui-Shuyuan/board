@@ -26,6 +26,13 @@ def post_json(url: str, body: dict):
         return json.loads(response.read().decode("utf-8"))
 
 
+STRUCTURED_FIELD_HINTS = (
+    "target", "cost", "condition", "effect", "result", "content", "option",
+    "score", "slot", "contain", "do_after", "trigger", "action", "quantity",
+    "source", "destination", "timeline", "phase", "step", "reward", "penalty",
+)
+
+
 def extract_text(detail: dict) -> tuple[str, str]:
     name = detail.get("name") or ""
     if isinstance(name, dict):
@@ -34,6 +41,24 @@ def extract_text(detail: dict) -> tuple[str, str]:
     if isinstance(desc, dict):
         desc = desc.get("zh") or desc.get("en") or ""
     return str(name), str(desc)
+
+
+def extract_structured_evidence(detail: dict, max_chars: int = 2400) -> str:
+    """Keep rule-bearing structured fields that description-only views drop.
+
+    Cost/target/effect trees are often the only place where an answer's
+    operative detail appears. This is still source evidence, not a candidate
+    summary: it comes from the same formal concept detail endpoint.
+    """
+    selected = {}
+    for key, value in detail.items():
+        lowered = str(key).lower()
+        if any(hint in lowered for hint in STRUCTURED_FIELD_HINTS):
+            selected[key] = value
+    if not selected:
+        return ""
+    text = json.dumps(selected, ensure_ascii=False, separators=(",", ":"))
+    return text[:max_chars]
 
 
 def extract_first_detail(payload) -> dict:
@@ -90,9 +115,15 @@ def main() -> int:
             except Exception:  # noqa: BLE001
                 pass
         name, desc = extract_text(detail) if detail else ("", "")
-        if not desc:
+        structured = extract_structured_evidence(detail) if detail else ""
+        if not desc and not structured:
             failures.append({"game": game, "id": cid})
-        results[f"{game}::{cid}"] = {"id": cid, "name": name, "description": desc}
+        results[f"{game}::{cid}"] = {
+            "id": cid,
+            "name": name,
+            "description": desc,
+            "structured_evidence": structured,
+        }
         if index % 50 == 0:
             print(f"progress {index}/{len(pairs)}", flush=True)
 
