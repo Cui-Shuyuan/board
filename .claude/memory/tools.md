@@ -94,7 +94,7 @@ cd clients/android
 gradlew.bat testDebugUnitTest --no-daemon --console=plain
 ```
 
-`LLM:OrchestrationMode=program` 是默认问答路径：Understand → 程序取正式证据 → Respond；普通问题 2 次模型调用，need_more 最多补充一次，协议修复与补充共享 4 次总调用上限。查询轨迹在 `/api/chat` 的 `orchestration` 字段，证据读取/引用计数在 `evidence` 中。
+`LLM:OrchestrationMode=program` 是显式实验路径（生产默认仍为 `legacy`）：Understand → 程序取正式证据 → Respond；普通问题 2 次模型调用，need_more 最多补充一次，协议修复与补充共享 4 次总调用上限。查询轨迹在 `/api/chat` 的 `orchestration` 字段，证据读取/引用计数在 `evidence` 中。
 
 程序控制对比可复用 `tools/eval/`：先生成回归证据、合并 `tools/qa/program_orchestration_holdout.jsonl`，再跑 `compare_versions.py`、两个 blind judge、`combine_judges.py` 和 `analyze_compare.py`；legacy 基线模型调用数可用 `analyze_model_calls.py` 从服务日志解析。完整命令见 `tools/eval/README.md`。
 
