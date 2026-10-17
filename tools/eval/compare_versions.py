@@ -171,6 +171,24 @@ def analyze_evidence(question: dict, response: dict) -> dict:
                 pass
         return round(total, 2)
 
+    def span_self_sum(category):
+        total = 0.0
+        observed = False
+        for span in timeline_spans:
+            if not isinstance(span, dict):
+                continue
+            if flexible(span, "category", "Category", default="") != category:
+                continue
+            value = flexible(span, "selfDurationMs", "SelfDurationMs", default=None)
+            if value is None:
+                return None
+            observed = True
+            try:
+                total += float(value or 0)
+            except (TypeError, ValueError):
+                return None
+        return round(total, 2) if observed else 0.0
+
     accounting = orchestration.get("timelineAccounting") or orchestration.get("TimelineAccounting") or {}
     return {
         "tier": evidence.get("tier"),
@@ -215,6 +233,9 @@ def analyze_evidence(question: dict, response: dict) -> dict:
         "delivered_evidence_count": orchestration.get("deliveredEvidenceCount"),
         "candidate_auto_read_count": orchestration.get("candidateAutoReadCount"),
         "protocol_validation_error_count": len(orchestration.get("protocolErrors") or []),
+        "protocol_repair_model_call_count": orchestration.get("protocolRepairModelCallCount"),
+        "protocol_repair_ms": orchestration.get("protocolRepairMs"),
+        "protocol_repair_self_ms": orchestration.get("protocolRepairSelfMs"),
         "timeline_span_count": len(timeline_spans),
         "model_span_ms": span_sum("model"),
         "tool_span_ms": span_sum("tool"),
@@ -224,6 +245,14 @@ def analyze_evidence(question: dict, response: dict) -> dict:
         "assembly_span_ms": span_sum("assembly"),
         "serialization_span_ms": span_sum("serialization"),
         "protocol_span_ms": span_sum("protocol"),
+        "model_self_ms": span_self_sum("model"),
+        "tool_self_ms": span_self_sum("tool"),
+        "search_self_ms": span_self_sum("search"),
+        "read_self_ms": span_self_sum("read"),
+        "navigation_self_ms": span_self_sum("navigation"),
+        "assembly_self_ms": span_self_sum("assembly"),
+        "serialization_self_ms": span_self_sum("serialization"),
+        "protocol_self_ms": span_self_sum("protocol"),
         "timeline_covered_ms": flexible(accounting, "coveredMs", "CoveredMs"),
         "timeline_unaccounted_ms": flexible(accounting, "unaccountedMs", "UnaccountedMs"),
         "timeline_overlap_ms": flexible(accounting, "overlapMs", "OverlapMs"),

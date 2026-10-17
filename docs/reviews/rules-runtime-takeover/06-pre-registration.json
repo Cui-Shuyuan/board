@@ -88,5 +88,21 @@
     "android_runtime_verified": false,
     "eligible_to_claim_full_epic_completion": false,
     "action": "Freeze this candidate commit, independently author and seal the new 36-question set, then run a small development same-round comparison before the full 1014-chat experiment."
+  },
+  "small_development_comparison": {
+    "status": "planned_not_executed",
+    "baseline_commit": "ffac498",
+    "candidate": "current branch after 08 review fixes",
+    "question_set": "existing_development_31",
+    "repeats_per_version": 3,
+    "versions": 2,
+    "planned_chat_calls": 186,
+    "focus": [
+      "answer_quality",
+      "protocol_repair_rate_and_time",
+      "continuation_gets_new_evidence",
+      "self_time_attribution"
+    ],
+    "sealed_36_used": false
   }
 }

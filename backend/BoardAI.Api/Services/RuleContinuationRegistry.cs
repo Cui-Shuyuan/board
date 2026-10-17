@@ -50,6 +50,7 @@ internal sealed class RuleContinuationRegistry
                         Operation = operation,
                         Entity = ReadString(continuation, "entity"),
                         Scope = ReadString(continuation, "scope"),
+                        Intent = ReadString(continuation, "intent"),
                         Offset = ReadInt(continuation, "offset"),
                         Limit = ReadInt(continuation, "limit"),
                         Include = ReadStringArray(continuation, "include"),
@@ -94,6 +95,7 @@ internal sealed class ContinuationRegistration
     public string Operation { get; init; } = "";
     public string? Entity { get; init; }
     public string? Scope { get; init; }
+    public string? Intent { get; init; }
     public int? Offset { get; init; }
     public int? Limit { get; init; }
     public List<string> Include { get; init; } = new();

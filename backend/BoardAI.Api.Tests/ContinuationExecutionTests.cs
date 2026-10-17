@@ -113,6 +113,118 @@ public sealed class ContinuationExecutionTests
     }
 
     [Fact]
+    public async Task RuleLookupContinuation_PreservesEachOriginalIntent_WhenModelOmitsIntent()
+    {
+        using var root = new TempRulesRoot("""
+        {
+          "objects": [ { "id": "gold", "name": { "zh": "金币" } } ],
+          "actions": [
+            { "id": "gain_1", "name": { "zh": "获得规则一" }, "description": { "zh": "如何获得金币。" }, "<ontology::content>": "<gold>" },
+            { "id": "pay_1", "name": { "zh": "支付规则一" }, "description": { "zh": "如何支付金币。" }, "<ontology::cost>": "<gold>" },
+            { "id": "gain_2", "name": { "zh": "获得规则二" }, "description": { "zh": "如何获得金币。" }, "<ontology::content>": "<gold>" },
+            { "id": "pay_2", "name": { "zh": "支付规则二" }, "description": { "zh": "如何支付金币。" }, "<ontology::cost>": "<gold>" },
+            { "id": "gain_3", "name": { "zh": "获得规则三" }, "description": { "zh": "如何获得金币。" }, "<ontology::content>": "<gold>" },
+            { "id": "pay_3", "name": { "zh": "支付规则三" }, "description": { "zh": "如何支付金币。" }, "<ontology::cost>": "<gold>" }
+          ],
+          "triggers": [], "conditions": []
+        }
+        """);
+        List<string>? gainFirst = null;
+        List<string>? payFirst = null;
+        List<string>? gainSecond = null;
+        List<string>? paySecond = null;
+        var llm = new ScriptedLlm(call =>
+        {
+            if (call.Index == 1)
+                return Tool("execute_plan",
+                    """{"plan":{"queries":[{"relation":"rule_lookup","entity":"gold","intent":"如何获得金币"}]}}""");
+            if (call.Index == 2)
+            {
+                gainFirst = AutoReadPaths(call.Messages.Last(message => message.Role == "tool").Content ?? "");
+                return Tool("execute_plan",
+                    """{"plan":{"queries":[{"relation":"rule_lookup","entity":"gold","intent":"如何支付金币"}]}}""");
+            }
+            if (call.Index == 3)
+            {
+                payFirst = AutoReadPaths(call.Messages.Where(message => message.Role == "tool").Last().Content ?? "");
+                var continuation = FindContinuation(call.Messages, "rule_lookup", "如何获得金币")
+                    ?? throw new InvalidOperationException("gain continuation missing");
+                return Tool("execute_plan", JsonSerializer.Serialize(new
+                {
+                    plan = new
+                    {
+                        queries = new object[]
+                        {
+                            new
+                            {
+                                relation = "rule_lookup",
+                                entity = "gold",
+                                continuation_handle = continuation.Handle
+                            }
+                        }
+                    }
+                }));
+            }
+            if (call.Index == 4)
+            {
+                var tools = call.Messages.Where(message => message.Role == "tool")
+                    .Select(message => message.Content ?? "").ToList();
+                gainSecond = AutoReadPaths(tools[^1]);
+                var continuation = FindContinuation(call.Messages, "rule_lookup", "如何支付金币")
+                    ?? throw new InvalidOperationException("pay continuation missing");
+                return Tool("execute_plan", JsonSerializer.Serialize(new
+                {
+                    plan = new
+                    {
+                        queries = new object[]
+                        {
+                            new
+                            {
+                                relation = "rule_lookup",
+                                entity = "gold",
+                                continuation_handle = continuation.Handle
+                            }
+                        }
+                    }
+                }));
+            }
+            if (call.Index == 5)
+            {
+                var tools = call.Messages.Where(message => message.Role == "tool")
+                    .Select(message => message.Content ?? "").ToList();
+                paySecond = AutoReadPaths(tools[^1]);
+                var evidenceId = FindFirstEvidenceId(call.Messages)
+                    ?? throw new InvalidOperationException("evidence id missing");
+                return Tool("submit_answer", JsonSerializer.Serialize(new
+                {
+                    outcome = "answer",
+                    text = "两类续读已分别完成。",
+                    evidence_ids = new[] { evidenceId }
+                }));
+            }
+            return Final("UNEXPECTED");
+        });
+        using var rules = root.CreateService();
+        var sut = CreateService(llm, rules, 60_000, maxToolRounds: 6);
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History());
+
+        Assert.Equal("answer", result.Orchestration!.Outcome);
+        Assert.NotNull(gainFirst);
+        Assert.NotNull(payFirst);
+        Assert.NotNull(gainSecond);
+        Assert.NotNull(paySecond);
+        Assert.Equal(3, gainFirst!.Count);
+        Assert.Equal(3, payFirst!.Count);
+        Assert.All(gainFirst, path => Assert.Contains("gain_", path));
+        Assert.All(payFirst, path => Assert.Contains("pay_", path));
+        Assert.All(gainSecond!, path => Assert.Contains("pay_", path));
+        Assert.All(paySecond!, path => Assert.Contains("gain_", path));
+        Assert.Empty(gainFirst.Intersect(gainSecond, StringComparer.Ordinal));
+        Assert.Empty(payFirst.Intersect(paySecond, StringComparer.Ordinal));
+    }
+
+    [Fact]
     public async Task ReadEvidenceContinuation_ReexecutesRegisteredTarget_AndDeliversUntruncatedEvidence()
     {
         var longA = new string('甲', 700);
@@ -182,14 +294,14 @@ public sealed class ContinuationExecutionTests
     }
 
     private static ChatOrchestratorService CreateService(
-        ILLMService llm, GameRulesService rules, int maxPackChars)
+        ILLMService llm, GameRulesService rules, int maxPackChars, int maxToolRounds = 4)
         => new(
             llm,
             rules,
             Options.Create(new LLMOptions
             {
                 OrchestrationMode = "legacy",
-                MaxToolRounds = 4,
+                MaxToolRounds = maxToolRounds,
                 MaxRequestSeconds = 10,
                 MaxRepeatedFailures = 3,
                 MaxToolCallsPerRound = 4,
@@ -232,9 +344,11 @@ public sealed class ContinuationExecutionTests
         }
     };
 
-    private sealed record ContinuationInfo(string Handle, string Operation, string? Entity);
+    private sealed record ContinuationInfo(
+        string Handle, string Operation, string? Entity, string? Intent);
 
-    private static ContinuationInfo? FindContinuation(List<ChatMessage> messages, string operation)
+    private static ContinuationInfo? FindContinuation(
+        List<ChatMessage> messages, string operation, string? intent = null)
     {
         foreach (var content in ToolContents(messages).Reverse())
         {
@@ -252,6 +366,12 @@ public sealed class ContinuationExecutionTests
                         ? opProp.GetString() ?? ""
                         : "";
                     if (op != operation) continue;
+                    var continuationIntent = continuation.TryGetProperty("intent", out var intentProp)
+                        ? intentProp.GetString()
+                        : null;
+                    if (!string.IsNullOrWhiteSpace(intent)
+                        && !string.Equals(continuationIntent, intent, StringComparison.Ordinal))
+                        continue;
                     var handle = continuation.TryGetProperty("handle", out var handleProp)
                         ? handleProp.GetString() ?? ""
                         : "";
@@ -259,11 +379,30 @@ public sealed class ContinuationExecutionTests
                         ? entityProp.GetString()
                         : null;
                     if (!string.IsNullOrWhiteSpace(handle))
-                        return new ContinuationInfo(handle, op, entity);
+                        return new ContinuationInfo(handle, op, entity, continuationIntent);
                 }
             }
         }
         return null;
+    }
+
+    private static List<string> AutoReadPaths(string toolResult)
+    {
+        using var doc = JsonDocument.Parse(toolResult);
+        if (!doc.RootElement.TryGetProperty("evidence_catalog", out var catalog)
+            || catalog.ValueKind != JsonValueKind.Array)
+            return new List<string>();
+        return catalog.EnumerateArray()
+            .Where(evidence => evidence.TryGetProperty("source", out var source)
+                && source.ValueKind == JsonValueKind.String
+                && source.GetString() == "auto_candidate_read")
+            .Select(evidence => evidence.TryGetProperty("canonical_path", out var path)
+                && path.ValueKind == JsonValueKind.String
+                    ? path.GetString() ?? ""
+                    : "")
+            .Where(path => !string.IsNullOrWhiteSpace(path))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
     }
 
     private static JsonElement? FindEvidenceContent(List<ChatMessage> messages, string type)

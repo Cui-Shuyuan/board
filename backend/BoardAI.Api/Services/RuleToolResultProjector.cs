@@ -100,10 +100,12 @@ internal sealed class RuleToolResultProjector
                         {
                             Handle = MakeContinuationHandle(
                                 "read_evidence", payload.CanonicalPath, payload.Type,
-                                null, null, state.Source.RulesVersion ?? plan.RulesVersion),
+                                state.Source.Intent, null, null,
+                                state.Source.RulesVersion ?? plan.RulesVersion),
                             Operation = "read_evidence",
                             Entity = payload.CanonicalPath,
                             Scope = payload.Type,
+                            Intent = state.Source.Intent,
                             Include = new List<string> { payload.Type }
                         }
                     });
@@ -179,6 +181,10 @@ internal sealed class RuleToolResultProjector
                             "read_evidence",
                             removed.CanonicalPath,
                             removed.Type,
+                            removed.Data != null && removed.Data.TryGetValue("intent", out var intentElement)
+                                && intentElement.ValueKind == JsonValueKind.String
+                                    ? intentElement.GetString()
+                                    : null,
                             null,
                             null,
                             removed.RulesVersion),
@@ -374,12 +380,14 @@ internal sealed class RuleToolResultProjector
                         omission.Continuation.Operation,
                         omission.Continuation.Entity,
                         omission.Continuation.Scope,
+                        omission.Continuation.Intent,
                         omission.Continuation.Offset,
                         omission.Continuation.Limit,
                         rulesVersion),
                 Operation = omission.Continuation.Operation,
                 Entity = omission.Continuation.Entity,
                 Scope = omission.Continuation.Scope,
+                Intent = omission.Continuation.Intent,
                 Offset = omission.Continuation.Offset,
                 Limit = omission.Continuation.Limit,
                 Include = omission.Continuation.Include.ToList()
@@ -390,12 +398,13 @@ internal sealed class RuleToolResultProjector
         string operation,
         string? entity,
         string? scope,
+        string? intent,
         int? offset,
         int? limit,
         string? rulesVersion)
     {
         var raw = string.Join("\u0000",
-            operation ?? "", entity ?? "", scope ?? "",
+            operation ?? "", entity ?? "", scope ?? "", intent ?? "",
             offset?.ToString() ?? "", limit?.ToString() ?? "", rulesVersion ?? "");
         var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)))
             .ToLowerInvariant()[..16];
@@ -531,6 +540,8 @@ internal sealed class ProjectedContinuation
     public string? Entity { get; set; }
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }
+    [JsonPropertyName("intent")]
+    public string? Intent { get; set; }
     [JsonPropertyName("offset")]
     public int? Offset { get; set; }
     [JsonPropertyName("limit")]

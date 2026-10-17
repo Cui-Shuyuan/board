@@ -248,15 +248,22 @@ public class ChatOrchestratorService
                 modelCallStopwatch.Stop();
                 AddModelTimelineSpan(
                     requestTrace, modelCallStartMs, modelCallStopwatch.Elapsed.TotalMilliseconds,
-                    "model_planning", "tool_loop", response.Usage, roundsExecuted);
+                    "model_planning", "tool_loop", response.Usage, roundsExecuted,
+                    isProtocolRepairCall);
                 var assistantMessage = response.Choices?.FirstOrDefault()?.Message
                     ?? throw new InvalidOperationException("LLM returned empty response.");
-                var modelSpanName = assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0
-                    ? "model_unstructured_final"
-                    : assistantMessage.ToolCalls.Any(call => call.Function.Name == "submit_answer")
-                        ? "model_answer_submission"
-                        : isProtocolRepairCall
-                            ? "model_protocol_repair"
+                var isSubmitAnswerCall = assistantMessage.ToolCalls?.Any(
+                    call => call.Function.Name == "submit_answer") == true;
+                var modelSpanName = isProtocolRepairCall
+                    ? isSubmitAnswerCall
+                        ? "model_protocol_repair_answer_submission"
+                        : assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0
+                            ? "model_protocol_repair_unstructured_final"
+                            : "model_protocol_repair_planning"
+                    : assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0
+                        ? "model_unstructured_final"
+                        : isSubmitAnswerCall
+                            ? "model_answer_submission"
                             : "model_rule_planning";
                 RenameLastModelTimelineSpan(requestTrace, modelSpanName);
 
@@ -293,7 +300,8 @@ public class ChatOrchestratorService
                             Category = "protocol",
                             StartMs = correctionStart,
                             DurationMs = 0,
-                            ResultChars = reply.Length
+                            ResultChars = reply.Length,
+                            ProtocolRepair = true
                         });
                         _logger.LogWarning(
                             "[Chat] Game {GameId}, Round {Round} rejected plain final text; requiring submit_answer terminal protocol (repair {Repair}/{Max})",
@@ -563,7 +571,8 @@ public class ChatOrchestratorService
         string name,
         string stage,
         LLMUsage? usage,
-        int sequence)
+        int sequence,
+        bool protocolRepair)
     {
         var span = new ChatTimelineSpan
         {
@@ -571,6 +580,7 @@ public class ChatOrchestratorService
             Category = "model",
             StartMs = startMs,
             DurationMs = durationMs,
+            ProtocolRepair = protocolRepair,
             PromptTokens = usage?.PromptTokens,
             CompletionTokens = usage?.CompletionTokens,
             ReasoningTokens = usage?.CompletionTokenDetails?.ReasoningTokens
@@ -586,7 +596,8 @@ public class ChatOrchestratorService
             ElapsedMs = Math.Round(durationMs, 2),
             PromptTokens = span.PromptTokens,
             CompletionTokens = span.CompletionTokens,
-            ReasoningTokens = span.ReasoningTokens
+            ReasoningTokens = span.ReasoningTokens,
+            ProtocolRepair = protocolRepair
         });
     }
 
@@ -623,6 +634,11 @@ public class ChatOrchestratorService
                 DurationMs = span.DurationMs
             });
         }
+        ChatTimelineAccountingCalculator.ComputeSelfDurations(trace.Timeline);
+        var repairSpans = trace.Timeline.Where(span => span.ProtocolRepair).ToList();
+        trace.ProtocolRepairModelCallCount = repairSpans.Count(span => span.Category == "model");
+        trace.ProtocolRepairMs = Math.Round(repairSpans.Sum(span => span.DurationMs), 2);
+        trace.ProtocolRepairSelfMs = Math.Round(repairSpans.Sum(span => span.SelfDurationMs), 2);
         trace.TimelineAccounting = ChatTimelineAccountingCalculator.Compute(trace.Timeline, elapsed);
         trace.ReusedToolCallCount = ledger.ToolCallsReused;
         trace.ExecutedToolCallCount = ledger.ToolCallsExecuted;
@@ -735,7 +751,7 @@ public class ChatOrchestratorService
             summaryStopwatch.Stop();
             AddModelTimelineSpan(
                 requestTrace, summaryStartMs, summaryStopwatch.Elapsed.TotalMilliseconds,
-                "model_final_answer", "summary", finalResponse.Usage, 1);
+                "model_final_answer", "summary", finalResponse.Usage, 1, false);
             var finalMessage = finalResponse.Choices?.FirstOrDefault()?.Message;
             var finalReply = finalMessage?.Content ?? string.Empty;
             if (string.IsNullOrWhiteSpace(finalReply))
@@ -1790,7 +1806,10 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
                 },
                 ["entity"] = registration.Entity ?? ""
             };
-            if (query["intent"] is JsonNode intent)
+            if (registration.Operation == "rule_lookup"
+                && !string.IsNullOrWhiteSpace(registration.Intent))
+                rewritten["intent"] = registration.Intent;
+            else if (query["intent"] is JsonNode intent)
                 rewritten["intent"] = intent.DeepClone();
             if (registration.Operation == "read_evidence"
                 && registration.Scope == QueryPayloadTypes.FlowSlice)

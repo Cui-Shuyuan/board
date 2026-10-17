@@ -52,6 +52,9 @@ public sealed class RequestTimelineTests
         Assert.Contains(trace.Timeline, span => span.Category == "model" && span.PromptTokens == 11);
         Assert.Contains(trace.Timeline, span => span.Category == "model"
             && span.Name == "model_answer_submission");
+        var planSpan = Assert.Single(trace.Timeline, span => span.Name == "query_plan_execution");
+        Assert.True(planSpan.SelfDurationMs <= planSpan.DurationMs);
+        Assert.All(trace.Timeline, span => Assert.True(span.SelfDurationMs >= 0));
         var accounting = Assert.IsType<ChatTimelineAccounting>(trace.TimelineAccounting);
         Assert.True(accounting.IsReconciled);
         Assert.True(accounting.CoveredMs <= accounting.ElapsedMs + 1);
@@ -72,6 +75,24 @@ public sealed class RequestTimelineTests
         Assert.Equal(90, accounting.OverlapMs);
         Assert.Equal(0, accounting.UnaccountedMs);
         Assert.Contains("search", accounting.ParallelGroups);
+    }
+
+    [Fact]
+    public void SelfDurations_SubtractNestedSpans_InsteadOfDoubleCountingThem()
+    {
+        var spans = new List<ChatTimelineSpan>
+        {
+            new() { Name = "plan", Category = "assembly", StartMs = 0, DurationMs = 100 },
+            new() { Name = "search", Category = "search", StartMs = 10, DurationMs = 40 },
+            new() { Name = "read", Category = "read", StartMs = 60, DurationMs = 20 }
+        };
+
+        ChatTimelineAccountingCalculator.ComputeSelfDurations(spans);
+
+        Assert.Equal(40, spans[0].SelfDurationMs);
+        Assert.Equal(40, spans[1].SelfDurationMs);
+        Assert.Equal(20, spans[2].SelfDurationMs);
+        Assert.Equal(100, spans.Sum(span => span.SelfDurationMs));
     }
 
     private static LLMChatResponse ToolResponse(string arguments) => new()

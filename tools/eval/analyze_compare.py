@@ -98,6 +98,15 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
         assembly_span_ms = [x for x in ((r.get("deterministic") or {}).get("assembly_span_ms") for r in rows) if x is not None]
         serialization_span_ms = [x for x in ((r.get("deterministic") or {}).get("serialization_span_ms") for r in rows) if x is not None]
         protocol_span_ms = [x for x in ((r.get("deterministic") or {}).get("protocol_span_ms") for r in rows) if x is not None]
+        model_self_ms = [x for x in ((r.get("deterministic") or {}).get("model_self_ms") for r in rows) if x is not None]
+        tool_self_ms = [x for x in ((r.get("deterministic") or {}).get("tool_self_ms") for r in rows) if x is not None]
+        search_self_ms = [x for x in ((r.get("deterministic") or {}).get("search_self_ms") for r in rows) if x is not None]
+        read_self_ms = [x for x in ((r.get("deterministic") or {}).get("read_self_ms") for r in rows) if x is not None]
+        assembly_self_ms = [x for x in ((r.get("deterministic") or {}).get("assembly_self_ms") for r in rows) if x is not None]
+        serialization_self_ms = [x for x in ((r.get("deterministic") or {}).get("serialization_self_ms") for r in rows) if x is not None]
+        protocol_self_ms = [x for x in ((r.get("deterministic") or {}).get("protocol_self_ms") for r in rows) if x is not None]
+        protocol_repair_ms = [x for x in ((r.get("deterministic") or {}).get("protocol_repair_ms") for r in rows) if x is not None]
+        protocol_repair_calls = [x for x in ((r.get("deterministic") or {}).get("protocol_repair_model_call_count") for r in rows) if x is not None]
         reconciled = [x for x in ((r.get("deterministic") or {}).get("timeline_reconciled") for r in rows) if x is not None]
         return {
             "n": len(rows),
@@ -152,6 +161,15 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
             "assembly_span_ms_mean": round(statistics.mean(assembly_span_ms), 1) if assembly_span_ms else None,
             "serialization_span_ms_mean": round(statistics.mean(serialization_span_ms), 1) if serialization_span_ms else None,
             "protocol_span_ms_mean": round(statistics.mean(protocol_span_ms), 1) if protocol_span_ms else None,
+            "model_self_ms_mean": round(statistics.mean(model_self_ms), 1) if model_self_ms else None,
+            "tool_self_ms_mean": round(statistics.mean(tool_self_ms), 1) if tool_self_ms else None,
+            "search_self_ms_mean": round(statistics.mean(search_self_ms), 1) if search_self_ms else None,
+            "read_self_ms_mean": round(statistics.mean(read_self_ms), 1) if read_self_ms else None,
+            "assembly_self_ms_mean": round(statistics.mean(assembly_self_ms), 1) if assembly_self_ms else None,
+            "serialization_self_ms_mean": round(statistics.mean(serialization_self_ms), 1) if serialization_self_ms else None,
+            "protocol_self_ms_mean": round(statistics.mean(protocol_self_ms), 1) if protocol_self_ms else None,
+            "protocol_repair_ms_mean": round(statistics.mean(protocol_repair_ms), 1) if protocol_repair_ms else None,
+            "protocol_repair_model_call_rate": bool_mean([(x or 0) > 0 for x in protocol_repair_calls]) if protocol_repair_calls else None,
             "timeline_reconciled_rate": bool_mean(reconciled) if reconciled else None,
             "timeline_observable_runs": len(reconciled),
         }
@@ -266,11 +284,18 @@ def write_markdown(analysis: dict, path: Path):
         f"| 程序实际工具执行均值 | {old_all.get('executed_tool_calls_mean')} | {new_all.get('executed_tool_calls_mean')} | {_delta(old_all.get('executed_tool_calls_mean'), new_all.get('executed_tool_calls_mean'))} |",
         f"| 模型可见证据字符均值 | {old_all.get('delivered_evidence_chars_mean')} | {new_all.get('delivered_evidence_chars_mean')} | {_delta(old_all.get('delivered_evidence_chars_mean'), new_all.get('delivered_evidence_chars_mean'))} |",
         f"| 时间线对账率 | {format_rate(old_all.get('timeline_reconciled_rate'))} | {format_rate(new_all.get('timeline_reconciled_rate'))} | {format_rate_delta(old_all.get('timeline_reconciled_rate'), new_all.get('timeline_reconciled_rate'))} |",
-        f"| 搜索 span 均值 ms | {old_all.get('search_span_ms_mean')} | {new_all.get('search_span_ms_mean')} | {_delta(old_all.get('search_span_ms_mean'), new_all.get('search_span_ms_mean'))} |",
-        f"| 正式读取 span 均值 ms | {old_all.get('read_span_ms_mean')} | {new_all.get('read_span_ms_mean')} | {_delta(old_all.get('read_span_ms_mean'), new_all.get('read_span_ms_mean'))} |",
-        f"| 装配 span 均值 ms | {old_all.get('assembly_span_ms_mean')} | {new_all.get('assembly_span_ms_mean')} | {_delta(old_all.get('assembly_span_ms_mean'), new_all.get('assembly_span_ms_mean'))} |",
-        f"| 序列化 span 均值 ms | {old_all.get('serialization_span_ms_mean')} | {new_all.get('serialization_span_ms_mean')} | {_delta(old_all.get('serialization_span_ms_mean'), new_all.get('serialization_span_ms_mean'))} |",
-        f"| 协议修复 span 均值 ms | {old_all.get('protocol_span_ms_mean')} | {new_all.get('protocol_span_ms_mean')} | {_delta(old_all.get('protocol_span_ms_mean'), new_all.get('protocol_span_ms_mean'))} |",
+        f"| 搜索 span 均值 ms（含子调用） | {old_all.get('search_span_ms_mean')} | {new_all.get('search_span_ms_mean')} | {_delta(old_all.get('search_span_ms_mean'), new_all.get('search_span_ms_mean'))} |",
+        f"| 正式读取 span 均值 ms（含子调用） | {old_all.get('read_span_ms_mean')} | {new_all.get('read_span_ms_mean')} | {_delta(old_all.get('read_span_ms_mean'), new_all.get('read_span_ms_mean'))} |",
+        f"| 装配 span 均值 ms（含子调用） | {old_all.get('assembly_span_ms_mean')} | {new_all.get('assembly_span_ms_mean')} | {_delta(old_all.get('assembly_span_ms_mean'), new_all.get('assembly_span_ms_mean'))} |",
+        f"| 序列化 span 均值 ms（含子调用） | {old_all.get('serialization_span_ms_mean')} | {new_all.get('serialization_span_ms_mean')} | {_delta(old_all.get('serialization_span_ms_mean'), new_all.get('serialization_span_ms_mean'))} |",
+        f"| 协议修复 span 均值 ms（含子调用） | {old_all.get('protocol_span_ms_mean')} | {new_all.get('protocol_span_ms_mean')} | {_delta(old_all.get('protocol_span_ms_mean'), new_all.get('protocol_span_ms_mean'))} |",
+        f"| 搜索自身耗时均值 ms | {old_all.get('search_self_ms_mean')} | {new_all.get('search_self_ms_mean')} | {_delta(old_all.get('search_self_ms_mean'), new_all.get('search_self_ms_mean'))} |",
+        f"| 正式读取自身耗时均值 ms | {old_all.get('read_self_ms_mean')} | {new_all.get('read_self_ms_mean')} | {_delta(old_all.get('read_self_ms_mean'), new_all.get('read_self_ms_mean'))} |",
+        f"| 装配自身耗时均值 ms | {old_all.get('assembly_self_ms_mean')} | {new_all.get('assembly_self_ms_mean')} | {_delta(old_all.get('assembly_self_ms_mean'), new_all.get('assembly_self_ms_mean'))} |",
+        f"| 序列化自身耗时均值 ms | {old_all.get('serialization_self_ms_mean')} | {new_all.get('serialization_self_ms_mean')} | {_delta(old_all.get('serialization_self_ms_mean'), new_all.get('serialization_self_ms_mean'))} |",
+        f"| 协议修复自身耗时均值 ms | {old_all.get('protocol_self_ms_mean')} | {new_all.get('protocol_self_ms_mean')} | {_delta(old_all.get('protocol_self_ms_mean'), new_all.get('protocol_self_ms_mean'))} |",
+        f"| 发生过协议修复模型调用的比例 | {format_rate(old_all.get('protocol_repair_model_call_rate'))} | {format_rate(new_all.get('protocol_repair_model_call_rate'))} | {format_rate_delta(old_all.get('protocol_repair_model_call_rate'), new_all.get('protocol_repair_model_call_rate'))} |",
+        f"| 协议修复调用总耗时均值 ms | {old_all.get('protocol_repair_ms_mean')} | {new_all.get('protocol_repair_ms_mean')} | {_delta(old_all.get('protocol_repair_ms_mean'), new_all.get('protocol_repair_ms_mean'))} |",
         f"| 正例直达或候选前三（旧口径） | {old_all['recoverable_top3_rate_positive']:.1%} | {new_all['recoverable_top3_rate_positive']:.1%} | {(new_all['recoverable_top3_rate_positive']-old_all['recoverable_top3_rate_positive'])*100:+.1f}pp |",
         f"| 逐层：检索候选规范路径命中 | {format_rate(old_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate(new_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate_delta(old_all.get('retrieval_layer_hit_rate_positive'), new_all.get('retrieval_layer_hit_rate_positive'))} |",
         f"| 逐层：正式装包规范路径命中（可观察 n） | {old_all.get('pack_layer_observable_runs', 0)} | {new_all.get('pack_layer_observable_runs', 0)} | - |",

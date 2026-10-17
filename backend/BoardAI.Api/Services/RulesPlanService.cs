@@ -141,11 +141,11 @@ public sealed class RulesPlanService
                 && offsetProp.TryGetInt32(out var parsedOffset)
                     ? Math.Max(0, parsedOffset)
                     : 0;
-            var limit = q.TryGetProperty("limit", out var limitProp)
+            var parsedLimit = 50;
+            var hasExplicitLimit = q.TryGetProperty("limit", out var limitProp)
                 && limitProp.ValueKind == JsonValueKind.Number
-                && limitProp.TryGetInt32(out var parsedLimit)
-                    ? Math.Clamp(parsedLimit, 1, 200)
-                    : 50;
+                && limitProp.TryGetInt32(out parsedLimit);
+            var limit = hasExplicitLimit ? Math.Clamp(parsedLimit, 1, 200) : 50;
             var include = q.TryGetProperty("include", out var includeProp)
                 && includeProp.ValueKind == JsonValueKind.Array
                     ? includeProp.EnumerateArray()
@@ -165,7 +165,8 @@ public sealed class RulesPlanService
                 displayIntent = question.Trim();
 
             var item = await ExecutePlanQueryAsync(
-                game, relation, entity, explicitIntent, question, scope, include, offset, limit, cancellationToken);
+                game, relation, entity, explicitIntent, question, scope, include,
+                offset, limit, hasExplicitLimit, cancellationToken);
             item.QueryIndex = queryIndex;
             item.QueryId = $"{result.RequestId}:{queryIndex}";
             item.RulesVersion = result.RulesVersion;
@@ -213,6 +214,7 @@ public sealed class RulesPlanService
         IReadOnlyList<string> include,
         int offset,
         int limit,
+        bool hasExplicitLimit,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -291,7 +293,9 @@ public sealed class RulesPlanService
 
         // flow/list 不需要实体解析
         if (relation == "rule_lookup")
-            return await ExecuteRuleLookupAsync(game, entity, intent, question, cancellationToken);
+            return await ExecuteRuleLookupAsync(
+                game, entity, intent, question, offset,
+                hasExplicitLimit ? limit : 3, cancellationToken);
 
         if (relation == "compute")
             return await ExecuteComputeAsync(game, entity, intent, question, cancellationToken);
@@ -942,10 +946,14 @@ public sealed class RulesPlanService
         string entity,
         string intent,
         string question,
+        int offset,
+        int limit,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var effectiveIntent = string.IsNullOrWhiteSpace(intent) ? question.Trim() : intent.Trim();
+        var pageOffset = Math.Max(0, offset);
+        var pageSize = Math.Clamp(limit, 1, 12);
         if (string.IsNullOrWhiteSpace(entity) && string.IsNullOrWhiteSpace(effectiveIntent))
         {
             return new PlanItemResult
@@ -1066,7 +1074,12 @@ public sealed class RulesPlanService
             .Take(12)
             .ToList();
 
-        const int readBudget = 3;
+        var pageCandidates = ruleCandidates
+            .Skip(pageOffset)
+            .Take(pageSize)
+            .ToList();
+        var pageEnd = Math.Min(ruleCandidates.Count, pageOffset + pageSize);
+        var readLimited = ruleCandidates.Count > pageEnd;
         var payloads = new List<QueryPayload>();
         var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
             ? snapshot.Version
@@ -1092,7 +1105,7 @@ public sealed class RulesPlanService
         var readPaths = new List<string>();
         var failedReads = new List<string>();
         var edges = new List<object>();
-        foreach (var candidate in ruleCandidates.Take(readBudget))
+        foreach (var candidate in pageCandidates)
         {
             var candidatePath = string.IsNullOrWhiteSpace(candidate.Path) ? candidate.Id : candidate.Path;
             var hits = PreferGameIdentity(
@@ -1116,7 +1129,7 @@ public sealed class RulesPlanService
                     ["role"] = JsonSerializer.SerializeToElement("rule_candidate"),
                     ["target_resolved"] = JsonSerializer.SerializeToElement(false),
                     ["read_status"] = JsonSerializer.SerializeToElement("auto_read"),
-                    ["candidate_index"] = JsonSerializer.SerializeToElement(readPaths.Count),
+                    ["candidate_index"] = JsonSerializer.SerializeToElement(pageOffset + readPaths.Count),
                     ["reference_edges"] = JsonSerializer.SerializeToElement(referenceEdges)
                 };
                 payloads.Add(new QueryPayload
@@ -1137,7 +1150,6 @@ public sealed class RulesPlanService
             candidate.TargetResolved = false;
         }
 
-        var readLimited = ruleCandidates.Count > readBudget;
         var coverage = readLimited || failedReads.Count > 0
             ? QueryCoverageStatuses.Partial
             : QueryCoverageStatuses.Complete;
@@ -1172,7 +1184,9 @@ public sealed class RulesPlanService
             ["identity_resolved"] = JsonSerializer.SerializeToElement(identityHit != null),
             ["candidate_rule_paths"] = JsonSerializer.SerializeToElement(readPaths),
             ["candidate_read_count"] = JsonSerializer.SerializeToElement(readPaths.Count),
-            ["read_budget"] = JsonSerializer.SerializeToElement(readBudget),
+            ["read_budget"] = JsonSerializer.SerializeToElement(pageSize),
+            ["page_offset"] = JsonSerializer.SerializeToElement(pageOffset),
+            ["page_size"] = JsonSerializer.SerializeToElement(pageSize),
             ["read_truncated"] = JsonSerializer.SerializeToElement(readLimited),
             ["reference_edges"] = JsonSerializer.SerializeToElement(edges)
         };
@@ -1197,8 +1211,9 @@ public sealed class RulesPlanService
                 {
                     Operation = "rule_lookup",
                     Entity = string.IsNullOrWhiteSpace(identityPath) ? entity : identityPath,
-                    Offset = readBudget,
-                    Limit = readBudget
+                    Intent = effectiveIntent,
+                    Offset = pageOffset + pageSize,
+                    Limit = pageSize
                 }
             });
         }

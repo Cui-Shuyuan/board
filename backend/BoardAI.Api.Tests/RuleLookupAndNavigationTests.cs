@@ -53,6 +53,62 @@ public sealed class RuleLookupAndNavigationTests
         Assert.Contains(lookup.Omissions, omission => omission.Reason == QueryOmissionReasons.BudgetTruncated);
     }
 
+    [Fact]
+    public async Task RuleLookup_ContinuationOffset_ReadsNextPage_AndStopsAtEnd()
+    {
+        using var fixture = new RulesFixture();
+        var actions = Enumerable.Range(1, 6).Select(index => $$"""
+            { "id": "gold_rule_{{index}}", "name": { "zh": "金币规则{{index}}" },
+              "description": { "zh": "如何获得金币。" },
+              "<ontology::content>": "<gold>" }
+            """);
+        File.WriteAllText(fixture.GameConceptsPath, $$"""
+        {
+          "objects": [ { "id": "gold", "name": { "zh": "金币" } } ],
+          "actions": [ {{string.Join(",", actions)}} ],
+          "triggers": [], "conditions": []
+        }
+        """);
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreatePlan(content);
+        using var firstDoc = JsonDocument.Parse("""{"queries":[{"relation":"rule_lookup","entity":"gold","intent":"如何获得金币"}]}""");
+        var first = Assert.Single((await plan.ExecutePlanAsync("testgame", firstDoc.RootElement)).Results);
+
+        var firstPagePaths = AutoReadPaths(first);
+        Assert.Equal(3, firstPagePaths.Count);
+        var continuation = first.Omissions
+            .Select(omission => omission.Continuation)
+            .Single(continuation => continuation?.Operation == "rule_lookup");
+        Assert.NotNull(continuation);
+        Assert.Equal(3, continuation!.Offset);
+        Assert.Equal(3, continuation.Limit);
+        Assert.Equal("如何获得金币", continuation.Intent);
+
+        using var secondDoc = JsonDocument.Parse(JsonSerializer.Serialize(new
+        {
+            queries = new[]
+            {
+                new
+                {
+                    relation = "rule_lookup",
+                    entity = "gold",
+                    intent = continuation.Intent,
+                    offset = continuation.Offset,
+                    limit = continuation.Limit
+                }
+            }
+        }));
+        var second = Assert.Single((await plan.ExecutePlanAsync("testgame", secondDoc.RootElement)).Results);
+
+        var allCandidatePaths = first.Candidates!.Select(candidate => candidate.Path).ToList();
+        var expectedSecondPage = allCandidatePaths.Skip(3).Take(3).ToList();
+        var secondPagePaths = AutoReadPaths(second);
+        Assert.Equal(expectedSecondPage, secondPagePaths);
+        Assert.Empty(firstPagePaths.Intersect(secondPagePaths, StringComparer.Ordinal));
+        Assert.DoesNotContain(second.Omissions, omission =>
+            omission.Continuation?.Operation == "rule_lookup");
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -257,6 +313,13 @@ public sealed class RuleLookupAndNavigationTests
         """);
         return fixture;
     }
+
+    private static List<string> AutoReadPaths(PlanItemResult item)
+        => item.Payloads
+            .Where(payload => payload.DefinitionSource == "auto_candidate_read")
+            .Select(payload => payload.CanonicalPath)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
 
     private static RulesPlanService CreatePlan(RulesContentStore content)
     {

@@ -267,8 +267,49 @@ public sealed class RequestLedgerAndTerminalProtocolTests
             span => span.Category == "protocol" && span.Name == "terminal_protocol_repair");
         Assert.Contains(result.Orchestration.Timeline,
             span => span.Category == "model" && span.Name == "model_unstructured_final");
+        Assert.True(result.Orchestration.ProtocolRepairModelCallCount >= 1);
         Assert.NotEmpty(llm.AllMessages.Where(message =>
             message.Role == "user" && message.Content?.Contains("终态协议校验失败") == true));
+    }
+
+    [Fact]
+    public async Task ProtocolRepair_ThatSuccessfullySubmitsAnswer_IsStillMarkedAndCounted()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new ScriptedLlm(call =>
+        {
+            if (call.Index == 1)
+                return ToolResponse("call_1", "execute_plan",
+                    """{"plan":{"queries":[{"relation":"explain","entity":"widget"}]}}""");
+            if (call.Index == 2)
+                return FinalResponse("先用普通文本绕过。");
+            if (call.Index == 3)
+            {
+                var evidenceId = LastEvidenceId(call.Messages)
+                    ?? throw new InvalidOperationException("evidence id missing");
+                return ToolResponse("call_3", "submit_answer",
+                    JsonSerializer.Serialize(new
+                    {
+                        outcome = "answer",
+                        text = "纠偏后提交的答案。",
+                        evidence_ids = new[] { evidenceId }
+                    }));
+            }
+            return FinalResponse("UNEXPECTED");
+        });
+        var sut = CreateService(llm, rules);
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History());
+
+        Assert.Equal("纠偏后提交的答案。", result.Reply);
+        Assert.Equal("answer", result.Orchestration!.Outcome);
+        Assert.Equal(1, result.Orchestration.ProtocolRepairModelCallCount);
+        Assert.Contains(result.Orchestration.Timeline, span =>
+            span.Category == "model"
+            && span.ProtocolRepair
+            && span.Name == "model_protocol_repair_answer_submission");
+        Assert.True(result.Orchestration.ProtocolRepairMs >= 0);
     }
 
     [Fact]

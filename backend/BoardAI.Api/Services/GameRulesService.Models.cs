@@ -120,6 +120,8 @@ public sealed class QueryContinuation
     public string Operation { get; set; } = string.Empty;
     public string? Entity { get; set; }
     public string? Scope { get; set; }
+    /// <summary>绑定该续读的原始查询语义；rule_lookup 分页必须按它重新排序。</summary>
+    public string? Intent { get; set; }
     public int? Offset { get; set; }
     public int? Limit { get; set; }
     public List<string> Include { get; set; } = new();

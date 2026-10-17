@@ -25,14 +25,17 @@ class CompareVersionIdentityTests(unittest.TestCase):
                 "reusedToolCallCount": 1,
                 "executedToolCallCount": 2,
                 "deliveredEvidenceChars": 1234,
+                "protocolRepairModelCallCount": 1,
+                "protocolRepairMs": 44,
+                "protocolRepairSelfMs": 40,
                 "timeline": [
-                    {"category": "model", "durationMs": 100},
-                    {"category": "tool", "durationMs": 20},
-                    {"category": "search", "durationMs": 8},
-                    {"category": "read", "durationMs": 5},
-                    {"category": "assembly", "durationMs": 3},
-                    {"category": "serialization", "durationMs": 2},
-                    {"category": "protocol", "durationMs": 1},
+                    {"category": "model", "durationMs": 100, "selfDurationMs": 90},
+                    {"category": "tool", "durationMs": 20, "selfDurationMs": 4},
+                    {"category": "search", "durationMs": 8, "selfDurationMs": 8},
+                    {"category": "read", "durationMs": 5, "selfDurationMs": 5},
+                    {"category": "assembly", "durationMs": 3, "selfDurationMs": 3},
+                    {"category": "serialization", "durationMs": 2, "selfDurationMs": 2},
+                    {"category": "protocol", "durationMs": 1, "selfDurationMs": 1},
                 ],
                 "timelineAccounting": {"isReconciled": True, "coveredMs": 120},
             },
@@ -41,6 +44,8 @@ class CompareVersionIdentityTests(unittest.TestCase):
         self.assertEqual(result["reused_tool_call_count"], 1)
         self.assertEqual(result["executed_tool_call_count"], 2)
         self.assertEqual(result["delivered_evidence_chars"], 1234)
+        self.assertEqual(result["protocol_repair_model_call_count"], 1)
+        self.assertEqual(result["protocol_repair_self_ms"], 40)
         self.assertEqual(result["model_span_ms"], 100)
         self.assertEqual(result["tool_span_ms"], 20)
         self.assertEqual(result["search_span_ms"], 8)
@@ -48,6 +53,9 @@ class CompareVersionIdentityTests(unittest.TestCase):
         self.assertEqual(result["assembly_span_ms"], 3)
         self.assertEqual(result["serialization_span_ms"], 2)
         self.assertEqual(result["protocol_span_ms"], 1)
+        self.assertEqual(result["model_self_ms"], 90)
+        self.assertEqual(result["tool_self_ms"], 4)
+        self.assertEqual(result["assembly_self_ms"], 3)
         self.assertTrue(result["timeline_reconciled"])
 
 

@@ -148,6 +148,9 @@ public class ChatOrchestrationTrace
     public int DeliveredEvidenceCount { get; set; }
     public int DeliveredEvidenceChars { get; set; }
     public int CandidateAutoReadCount { get; set; }
+    public int ProtocolRepairModelCallCount { get; set; }
+    public double ProtocolRepairMs { get; set; }
+    public double ProtocolRepairSelfMs { get; set; }
     public List<ChatModelCallTrace> ModelCalls { get; set; } = new();
     public List<string> ProtocolErrors { get; set; } = new();
     public List<ChatQuestionTrace> Questions { get; set; } = new();
@@ -164,7 +167,11 @@ public class ChatTimelineSpan
     /// <summary>相对请求开始时刻的单调时钟偏移。</summary>
     public double StartMs { get; set; }
     public double DurationMs { get; set; }
+    /// <summary>扣除实际包含在区间内的子 span 后的自身耗时；用于成本归因。</summary>
+    public double SelfDurationMs { get; set; }
     public string? ConcurrencyGroup { get; set; }
+    /// <summary>该 span 是否属于终态协议纠偏（包括最终成功提交 answer 的修复调用）。</summary>
+    public bool ProtocolRepair { get; set; }
     public int? PromptTokens { get; set; }
     public int? CompletionTokens { get; set; }
     public int? ReasoningTokens { get; set; }
@@ -185,6 +192,49 @@ public class ChatTimelineAccounting
 
 internal static class ChatTimelineAccountingCalculator
 {
+    public static void ComputeSelfDurations(IEnumerable<ChatTimelineSpan> spans)
+    {
+        var list = spans.ToList();
+        foreach (var span in list)
+        {
+            var spanEnd = span.StartMs + span.DurationMs;
+            var childIntervals = list
+                .Where(child => !ReferenceEquals(child, span)
+                    && child.DurationMs > 0
+                    && child.DurationMs <= span.DurationMs + 0.001
+                    && child.StartMs >= span.StartMs - 0.001
+                    && child.StartMs + child.DurationMs <= spanEnd + 0.001)
+                .Select(child => (Start: child.StartMs, End: child.StartMs + child.DurationMs))
+                .OrderBy(interval => interval.Start)
+                .ToList();
+            var childUnion = 0d;
+            var currentStart = 0d;
+            var currentEnd = 0d;
+            var hasCurrent = false;
+            foreach (var interval in childIntervals)
+            {
+                if (!hasCurrent)
+                {
+                    currentStart = interval.Start;
+                    currentEnd = interval.End;
+                    hasCurrent = true;
+                }
+                else if (interval.Start <= currentEnd + 0.001)
+                {
+                    currentEnd = Math.Max(currentEnd, interval.End);
+                }
+                else
+                {
+                    childUnion += currentEnd - currentStart;
+                    currentStart = interval.Start;
+                    currentEnd = interval.End;
+                }
+            }
+            if (hasCurrent) childUnion += currentEnd - currentStart;
+            span.SelfDurationMs = Math.Round(Math.Max(0, span.DurationMs - childUnion), 3);
+        }
+    }
+
     public static ChatTimelineAccounting Compute(
         IEnumerable<ChatTimelineSpan> spans,
         double elapsedMs,
@@ -255,6 +305,7 @@ public class ChatModelCallTrace
     public int? PromptTokens { get; set; }
     public int? CompletionTokens { get; set; }
     public int? ReasoningTokens { get; set; }
+    public bool ProtocolRepair { get; set; }
 }
 
 public class ChatQuestionTrace

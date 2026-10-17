@@ -7,3 +7,4 @@
 - [05 请求账本、终态协议和有界调度](05-request-ledger-and-orchestration.md)
 - [06 预注册、能力矩阵与最终状态](06-final-status.md)
 - [07 五项 review 收口](07-review-fixes.md)
+- [08 续读分页与自身耗时收口](08-continuation-pagination-and-self-time.md)
