@@ -1,6 +1,6 @@
 # Cue Timeline Protocol v1
 
-状态：Phase 2 已实现纯 .NET cue 播放控制器、状态机、权威 cue-local 时钟、generation/取消语义和 fake executor 行为测试；尚未接入 Unity/Android 运行时，旧播放器行为未改变。
+状态：Phase 3 已实现 Unity 侧音频/视觉/字幕执行器和 feature-flagged 控制器接线；只对 3 个 allowlist 迁移样例生效，`useCueTimelineV1` 默认关闭。Android `TutorialTimeline` 未切换，旧 `section_audio` / `audio_plan` 路径保留，真机音频输出尚未验证。
 
 本文先固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
 
@@ -433,7 +433,7 @@ cueTime = (dspTime - cueStartDspTime) - accumulatedPauseDsp
 - 覆盖暂停、seek、加载失败、快速切换、取消和完成只发一次；
 - 旧 `TutorialCuePlayer` / `TutorialAnimPlayer` 仍不读取新控制器。
 
-### Phase 3：Unity executor 与 feature flag
+### Phase 3：Unity executor 与 feature flag（已完成代码接线，默认关闭）
 - 实现音频/视觉/字幕执行器；
 - 先只迁移：
   - 一个标题 cue；
@@ -441,6 +441,7 @@ cueTime = (dspTime - cueStartDspTime) - accumulatedPauseDsp
   - 一个合成多段音画 cue；
 - 新旧路径通过 feature flag 共存；
 - 旧 `section_audio`、`audio_plan` 特判不再新增逻辑。
+- 目标设备真实音频输出验证未完成，详见第 13 节。
 
 ### Phase 4：Android 时间轴切换
 - `TutorialTimeline` 读取 compiled cue plan 的课程时长；
@@ -640,3 +641,180 @@ Phase 2 没有进行以下工作，也没有声称 Unity 已使用新控制器�
 - 真实设备上用录音/波形验证音频首尾、静音、hold 和跨 cue 拼接；
 - `tutorial-cue-source/v1` 是否应把字幕也提升为显式 track segment，当前 Phase 1
   编译器只接受 visual/audio track 及其已定义的 segment 类型。
+
+
+## 13. Phase 3 实现范围与边界
+
+状态：**Unity 代码已接线；feature flag 默认关闭；Android 未接入；真机音频边界未验证。**
+
+### 13.1 Feature flag 与迁移样例
+
+`TutorialCuePlayer` 新增：
+
+```csharp
+public bool useCueTimelineV1 = false;
+public List<string> cueTimelineCueIds = new List<string> {
+    "quick_intro/title_1",
+    "quick_intro/001",
+    "quick_take_gems/003",
+};
+public List<string> cueTimelineCompositeCueIds = new List<string> {
+    "quick_take_gems/003",
+};
+public float cueTimelineCompositeHoldSeconds = 0.75f; // 显式 authored hold
+```
+
+选择顺序：
+
+1. `useCueTimelineV1 == false`：完全不进入新路径，所有 cue 继续走原有
+   `section_audio` / `audio_plan` / 单音频路径；
+2. flag 为 true 但 cue id 不在 `cueTimelineCueIds`：继续旧路径；
+3. flag 为 true、allowlist 命中，但 plan 生成或 `CueTimelinePlanValidator`
+   校验失败：记录 `[CueTimelineV1] plan generation failed ... fallback=legacy`，
+   继续旧路径；
+4. allowlist 命中且 plan 合法：进入 `CuePlaybackController`。
+
+进入新路径后，资源加载失败进入 `Failed`，不会自动下一条，也不会回退到旧
+播放器；用户显式切换 cue 或重载内容后才会离开失败状态。
+
+### 13.2 Unity 执行器职责
+
+- `UnityCueAudioExecutor`
+  - 使用独立 `AudioSource`，不复用旧播放器的播放状态；
+  - 加载 compiled plan 的 `audio_clip`/`silence` segments；
+  - 每次异步加载、成功、失败都携带 generation；
+  - `Cancel` 停止协程、`Abort`/`Dispose` in-flight `UnityWebRequest`；
+  - 音频段选择由 controller 的 `CueTime` 经 `SyncToCueTime` 驱动；
+  - 只把音频结束回调作为诊断信号，不完成 cue。
+- `UnityCueVisualExecutor`
+  - 复用 `TutorialAnimPlayer.LoadCue/Seek`；
+  - 把 cue-local time 映射成 animation `source_start + local`；
+  - `hold` 固定到最后一个 animation `source_end`；
+  - 不控制音频、不推进 cue 时钟、不完成 cue。
+- `CueTimelineSubtitleExecutor`
+  - 只按 plan 中的 cue-local subtitle window 返回字幕；
+  - 不控制音频、不裁切音频、不触发完成。
+- `UnityDspCueClock`
+  - 向 controller 提供单调 `AudioSettings.dspTime`；
+  - cue-local 权威时间仍只由 `CuePlaybackController` 维护。
+- `CuePlaybackController.PlayAt(startCueTime, startPaused)`
+  - `PlayCueAt` 的起点和原生暂停态直接传给 controller；
+  - paused start 只对 audio executor 调 `Seek`，不调 `Play`，避免原生拖动时
+    出现一帧出声。
+
+### 13.3 音频边界方案比较与当前选择
+
+| 方案 | 优点 | 风险/限制 | Phase 3 结论 |
+| --- | --- | --- | --- |
+| `AudioSource.time` 定位 | 简单，现有代码已用 | float 秒、解码器/帧边界行为不透明，无法证明首尾字 | 不作为新路径主方案 |
+| `AudioSource.timeSamples` | 整数采样定位，可用 clip.frequency 做确定性换算 | MP3 在 Unity/Android 解码后的 seek 仍需真机波形验证 | **当前实现主方案** |
+| 构建期切独立音频片段 | 片段从 0 播放，最容易做到可复现边界 | 需要新增切片产物、资源清单、版本与体积策略；本阶段不修改生成产物 | 长期推荐候选，本阶段未接入 |
+| 运行期预解码 PCM / `AudioClip.Create` | 采样级完全可控 | 内存、解码耗时、Unity 音频线程和资源生命周期复杂 | 本阶段未采用 |
+
+当前 Unity 音频执行器：
+
+- 依据 controller 的 cue-local 时间选择 audio segment；
+- 对 `audio_clip` 使用 `source_start + (cueTime - segment.cue_start)` 计算素材时间，
+  再按 `AudioSource.timeSamples = round(sourceTime * clip.frequency)` 定位；
+- 不添加固定 pre-roll/post-roll；
+- 不读取字幕最后一个 word 作为音频裁剪边界；
+- 在 prepare 阶段拒绝 `source_end > clip.length + 0.02` 的 clip，避免静默截断；
+- 每次切换 segment 都从 controller 当帧 cue time 重新定位，而不是依赖第二条
+  独立播放时钟。
+
+已做的静态/纯测试证据：
+
+- plan factory 保留 section audio 的 `source_end = audio_start + runtime_duration`；
+- 24 kHz 下采样换算误差上界为 0.5 sample，即约 0.0208 ms；
+- title/body/composite 三种 plan 的 controller 调用序列由
+  `tests/AnimationModelTests/Program.cs` 覆盖；
+- synthetic silence、seek、hold 和音频/视觉不同时结束由 fake clock 覆盖；
+- 音频 executor 的 `OnCompleted` 在 controller 中只增加诊断计数，不会完成 cue。
+
+**未验证：**
+
+- Android 真机上 MP3 decode seek 是否在 `timeSamples` 目标处精确输出；
+- `AudioSource.timeSamples` 在目标 Unity/Android 音频后端上的实际首帧行为；
+- 静音段到下一 clip、pause/seek/resume、跨 cue 边界的真实波形；
+- 扬声器/耳机输出是否出现重复、提前或吞字。
+
+因此不能把“静态编译通过”或 fake clock 测试当作丢字问题最终修复。feature flag
+保持默认关闭。
+
+### 13.4 Android 真机听测/录音步骤
+
+准备：
+
+```bash
+adb logcat -c
+adb logcat -s Unity > cue-timeline-device.log
+```
+
+在 Unity Inspector 中只对测试内容打开：
+
+- `useCueTimelineV1 = true`；
+- allowlist 含 `quick_intro/title_1`、`quick_intro/001`、
+  `quick_take_gems/003`；
+- 其余 cue 保持不在 allowlist。
+
+测试 A：标题 cue 与下一 cue 首字
+
+1. 从 `quick_intro/title_1` 开头播放并录音；
+2. 确认标题语音完整、1 秒 silence 存在；
+3. 确认下一 cue `quick_intro/001` 首字“璀”完整；
+4. 检查日志中 title 的 `[CueTimelineV1][Audio] play`、silence 切换点、
+   `[CueTimelineV1][Complete]` 以及下一 cue 的 `prepare/play` generation。
+
+测试 B：普通正文尾部
+
+1. 单独从 `quick_intro/001` 开头播放并录音；
+2. 重点听最后一句尾部“获胜。”是否完整；
+3. 不应出现旧路径的 `pause_after_speech_seconds` 提前暂停或跳到下一段；
+4. 确认完成后才出现 `[CueTimelineV1][Complete]`，且音频 executor 的
+   `OnCompleted` 日志不能先于 controller completion。
+
+测试 C：合成多段音画 cue
+
+1. 播放 `quick_take_gems/003`；
+2. 检查两段 audio clip + 中间 silence 的拼接；
+3. 检查 visual animation 结束后进入 `hold`，而 audio 已先结束；
+4. 在 clip 边界、silence、hold、cue 末尾分别 pause/resume/seek；
+5. 确认没有重复出声、提前出声或静音段漏出相邻语音。
+
+测试 D：快速切换
+
+1. 在 prepare/加载过程中快速连续 `PlayCueAt` 到不同 allowlist cue；
+2. 日志中旧 generation 的 prepare/success/failure 不得覆盖当前 cue；
+3. 确认 Cancel 后没有旧 `UnityWebRequest` 回调继续播放。
+
+日志关键词：
+
+```text
+[CueTimelineV1] plan ready
+[CueTimelineV1][Audio] play
+[CueTimelineV1][Audio] seek-position
+[CueTimelineV1][Audio] pause
+[CueTimelineV1][Audio] load failed
+[CueTimelineV1][State]
+[CueTimelineV1][Seek]
+[CueTimelineV1][Complete]
+[CueTimelineV1][Failed]
+```
+
+听测必须同时保留实际录音/波形，不以日志正确替代音频正确。
+
+### 13.5 当前 blocker 与未完成项
+
+- **多 visual animation clip blocker**：当前 compiled animation 引用仍以 cue id 为
+  粒度，plan factory 只生成一个 animation segment 加可选的 tail hold。
+  `UnityCueVisualExecutor` 若看到超过一个独立 animation segment 会显式
+  `Failed`，不会假装支持。后续需要 compiler 产出可独立引用的 animation clip
+  或明确的 source-range 子动画 schema。
+- 未接入 Android `TutorialTimeline`；进度条、章节跳转、QA context 仍使用旧
+  runtime cue 时长。新路径 title/body 的 plan duration 可能与旧 runtime
+  duration 不同，因此迁移样例只能在 Unity 播放层验证，不能视为 Android
+  时间轴已对齐。
+- 未全量迁移；非 allowlist cue 仍走旧路径。
+- 未删除旧 `section_audio` / `audio_plan` / `pause_after_speech_seconds` /
+  `hold_after_audio` 路径。
+- 未完成目标 Android 真机真实音频输出验证；因此不能宣称首尾字问题最终修复。

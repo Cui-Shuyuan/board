@@ -223,6 +223,15 @@ namespace BoardGameTutorial.Animation
             binder.EndLensRender();
         }
 
+        public bool TryGetCueDuration(string cueId, out float duration)
+        {
+            duration = 0f;
+            if (!IsLoaded || string.IsNullOrEmpty(cueId)) return false;
+            if (!runtime.TryCue(cueId, out var cue) || cue == null) return false;
+            duration = Mathf.Max(0f, cue.duration);
+            return true;
+        }
+
         public bool LoadCue(string cueId)
         {
             if (!IsLoaded)

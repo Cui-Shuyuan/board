@@ -120,6 +120,23 @@ namespace BoardGameTutorial.Animation
         public string entry;
         public CueTimelineCourse course;
         public List<CueTimelineTrack> tracks = new List<CueTimelineTrack>();
+        // Subtitle timing is presentation data only.  It never controls audio
+        // scheduling or cue completion.
+        public List<CueTimelineSubtitle> subtitles = new List<CueTimelineSubtitle>();
+    }
+
+    [Serializable]
+    public sealed class CueTimelineSubtitle
+    {
+        public string id;
+        public double cue_start;
+        public double duration;
+        public string text;
+
+        public double EndCueTime
+        {
+            get { return cue_start + duration; }
+        }
     }
 
     [Serializable]
@@ -240,6 +257,16 @@ namespace BoardGameTutorial.Animation
         void Seek(long generation, double cueTime);
         void Stop(long generation);
         void Cancel(long generation);
+    }
+
+    /// <summary>
+    /// Optional per-tick synchronization hook.  The controller owns cue time;
+    /// an audio executor may use this hook to start/stop the segment selected
+    /// by the authoritative cue time without introducing a second clock.
+    /// </summary>
+    public interface IAudioCueExecutorTimeline
+    {
+        void SyncToCueTime(long generation, double cueTime);
     }
 
     public interface IVisualCueExecutor

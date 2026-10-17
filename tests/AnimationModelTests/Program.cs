@@ -831,6 +831,333 @@ internal static class Program
         return audio.Calls.Contains("audio.play:" + generation + ":0.000");
     }
 
+
+    private static CueTimelineLegacyCueInput SampleTitleInput()
+    {
+        var input = new CueTimelineLegacyCueInput
+        {
+            cue_id = "quick_intro/title_1",
+            course_start = 0.0,
+            runtime_duration = 2.295,
+            audio_asset = "media/tts/quick/quick.intro.mp3",
+            audio_start = 0.0,
+            compiled_visual_duration = 3.08,
+            sample_rate = 24000,
+        };
+        input.audio_plan.Add(new CueTimelineLegacyAudioPlanSegment
+        {
+            type = "clip", file = input.audio_asset, start = 0.0, end = 1.295,
+        });
+        input.audio_plan.Add(new CueTimelineLegacyAudioPlanSegment
+        {
+            type = "silence", duration = 1.0,
+        });
+        input.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.title", cue_start = 0.0, duration = 2.295, text = "title",
+        });
+        return input;
+    }
+
+    private static CueTimelineLegacyCueInput SampleBodyInput()
+    {
+        var input = new CueTimelineLegacyCueInput
+        {
+            cue_id = "quick_intro/001",
+            course_start = 2.295,
+            runtime_duration = 9.392,
+            audio_asset = "media/tts/quick/quick.intro.mp3",
+            audio_start = 2.08,
+            section_audio = true,
+            compiled_visual_duration = 10.296,
+            sample_rate = 24000,
+        };
+        input.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.body.0", cue_start = 0.0, duration = 3.025, text = "body one",
+        });
+        input.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.body.1", cue_start = 3.38, duration = 6.012, text = "body two",
+        });
+        return input;
+    }
+
+    private static CueTimelineLegacyCueInput SampleCompositeInput()
+    {
+        var input = new CueTimelineLegacyCueInput
+        {
+            cue_id = "quick_take_gems/003",
+            course_start = 75.977,
+            runtime_duration = 9.437,
+            audio_asset = "media/tts/quick/quick.take.mp3",
+            audio_start = 15.835,
+            section_audio = true,
+            compiled_visual_duration = 9.648,
+            sample_rate = 24000,
+            compose_multi_segment_audio = true,
+            visual_hold_seconds = 0.75,
+        };
+        input.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.composite.0", cue_start = 0.0, duration = 4.41, text = "first",
+        });
+        input.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.composite.1", cue_start = 4.825, duration = 4.612, text = "second",
+        });
+        return input;
+    }
+
+    private static void TestFeatureGateAndPlanSelection()
+    {
+        var gate = new CueTimelineFeatureGate();
+        gate.SetAllowlist(new[] { "quick_intro/title_1", "quick_intro/001" });
+        string reason;
+        Check(!gate.ShouldUse("quick_intro/title_1", out reason),
+            "feature flag default off keeps all cues on legacy path");
+        gate.Enabled = true;
+        Check(gate.ShouldUse("quick_intro/title_1", out reason),
+            "flag on and allowlisted selects timeline path");
+        Check(!gate.ShouldUse("quick_take_gems/003", out reason),
+            "flag on but not allowlisted keeps legacy path");
+        Check(!gate.ShouldUse("", out reason),
+            "empty cue id never selects timeline path");
+
+        CueTimelinePlan plan;
+        string error;
+        var invalid = new CueTimelineLegacyCueInput
+        {
+            cue_id = "quick_intro/001",
+            course_start = 0.0,
+            runtime_duration = 0.0,
+            compiled_visual_duration = 1.0,
+        };
+        Check(!CueTimelineLegacyPlanFactory.TryBuild(invalid, out plan, out error)
+              && !string.IsNullOrEmpty(error),
+            "failed plan generation is observable and can fall back to legacy");
+    }
+
+    private static void TestLegacyPlanFactorySamples()
+    {
+        CueTimelinePlan plan;
+        string error;
+
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleTitleInput(), out plan, out error),
+            "title sample plan builds: " + error);
+        CueTimelineTrack titleAudio = CueTimelineTrackResolver.FindTrack(plan, "audio");
+        CueTimelineTrack titleVisual = CueTimelineTrackResolver.FindTrack(plan, "visual");
+        Check(titleAudio != null && titleAudio.segments.Count == 2,
+            "title sample has clip + silence");
+        Check(titleAudio != null && titleAudio.segments[0].type == "audio_clip"
+              && titleAudio.segments[1].type == "silence",
+            "title sample keeps explicit title silence");
+        CheckClose(3.08, plan.course.duration, 1e-9,
+            "title sample uses compiled visual duration as plan duration");
+        Check(titleVisual != null && titleVisual.segments.Count == 1
+              && titleVisual.segments[0].type == "animation",
+            "title sample visual animation wired through TutorialAnimPlayer");
+        CheckClose(2.295, titleAudio.segments[1].EndCueTime, 1e-9,
+            "title audio plus silence ends before visual");
+
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleBodyInput(), out plan, out error),
+            "body sample plan builds: " + error);
+        CueTimelineTrack bodyAudio = CueTimelineTrackResolver.FindTrack(plan, "audio");
+        CueTimelineTrack bodyVisual = CueTimelineTrackResolver.FindTrack(plan, "visual");
+        Check(bodyAudio != null && bodyAudio.segments.Count == 1,
+            "ordinary body sample starts as one audio clip");
+        CheckClose(2.08, bodyAudio.segments[0].source_start, 1e-9,
+            "body audio source start preserved");
+        CheckClose(2.08 + 9.392, bodyAudio.segments[0].source_end, 1e-9,
+            "body audio tail is not trimmed by subtitle word timing");
+        Check(bodyVisual != null && bodyVisual.segments[0].type == "animation",
+            "body visual animation generated");
+        CheckClose(10.296, plan.course.duration, 1e-9,
+            "body sample duration uses max of runtime/audio/compiled");
+        CheckClose(9.392, CueTimelineTrackResolver.FindSegment(bodyAudio, 9.391).EndCueTime,
+            1e-9, "body final clip remains active up to its audio end");
+
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleCompositeInput(), out plan, out error),
+            "composite sample plan builds: " + error);
+        CueTimelineTrack compositeAudio = CueTimelineTrackResolver.FindTrack(plan, "audio");
+        CueTimelineTrack compositeVisual = CueTimelineTrackResolver.FindTrack(plan, "visual");
+        Check(compositeAudio != null && compositeAudio.segments.Count == 3,
+            "composite sample has multi audio + explicit silence");
+        Check(compositeAudio.segments[0].type == "audio_clip"
+              && compositeAudio.segments[1].type == "silence"
+              && compositeAudio.segments[2].type == "audio_clip",
+            "composite audio segment order is clip/silence/clip");
+        Check(compositeVisual != null && compositeVisual.segments.Count == 2
+              && compositeVisual.segments[0].type == "animation"
+              && compositeVisual.segments[1].type == "hold",
+            "composite visual is one animation segment plus hold");
+        CheckClose(10.398, plan.course.duration, 1e-9,
+            "composite plan duration includes explicit visual hold");
+        CheckClose(9.437, compositeAudio.segments[2].EndCueTime, 1e-9,
+            "composite audio ends before visual hold ends");
+        CheckClose(10.398, compositeVisual.segments[1].EndCueTime, 1e-9,
+            "composite visual hold reaches cue end");
+        CheckClose(15.835 + 9.437, compositeAudio.segments[2].source_end, 1e-9,
+            "composite final source_end remains the legacy speech boundary");
+        Check(CueTimelineTrackResolver.FindSegment(compositeAudio, 4.41).type == "silence",
+            "composite silence boundary resolves to silence");
+        Check(CueTimelineTrackResolver.FindSegment(compositeVisual, 9.75).type == "hold",
+            "composite visual hold boundary resolves to hold");
+    }
+
+    private static void TestPlayAtPausedAndAudioSync()
+    {
+        CueTimelinePlan plan;
+        string error;
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleCompositeInput(), out plan, out error),
+            "prepare PlayAt sample: " + error);
+
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        Check(controller.Prepare(plan), "PlayAt sample prepared");
+        Check(controller.State == CuePlaybackState.Ready, "PlayAt sample ready");
+        long prepareGeneration = controller.Generation;
+        Check(controller.PlayAt(5.0, true), "paused PlayAt accepted at target");
+        long playbackGeneration = controller.Generation;
+        Check(controller.State == CuePlaybackState.Paused,
+            "paused PlayAt leaves controller paused");
+        Check(HasCall(audio.Calls, "audio.seek:" + playbackGeneration + ":5.000"),
+            "paused PlayAt positions audio at cue-local target");
+        Check(CountCalls(audio.Calls, "audio.play:" + playbackGeneration + ":") == 0,
+            "paused PlayAt never starts audio");
+        CheckClose(5.0, visual.LastSeekTime, 1e-9,
+            "paused PlayAt updates visual to same cue-local target");
+        Check(playbackGeneration > prepareGeneration,
+            "PlayAt advances playback generation");
+
+        Check(controller.Resume(), "resume after paused PlayAt");
+        clock.Advance(1.0);
+        controller.Tick();
+        Check(audio.LastSyncCueTime == 6.0,
+            "audio sync receives authoritative controller cue time");
+        Check(HasCall(audio.Calls, "audio.sync:" + controller.Generation + ":6.000"),
+            "audio sync call carries playback generation");
+        CheckClose(6.0, controller.CueTime, 1e-9,
+            "controller cue time remains the only advancing clock");
+    }
+
+    private static void TestSampleControllerSequences()
+    {
+        CueTimelinePlan title;
+        CueTimelinePlan body;
+        CueTimelinePlan composite;
+        string error;
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleTitleInput(), out title, out error),
+            "title sequence plan: " + error);
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleBodyInput(), out body, out error),
+            "body sequence plan: " + error);
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleCompositeInput(), out composite, out error),
+            "composite sequence plan: " + error);
+
+        var titleClock = new ManualCueClock();
+        var titleAudio = new FakeAudioExecutor(titleClock);
+        var titleVisual = new FakeVisualExecutor();
+        var titleController = new CuePlaybackController(
+            titleClock, titleAudio, titleVisual, new CueTimelineSubtitleExecutor());
+        Check(titleController.Prepare(title), "title sequence prepare");
+        Check(titleController.State == CuePlaybackState.Ready, "title sequence ready");
+        Check(titleController.Play(), "title sequence play");
+        Check(HasCall(titleAudio.Calls, "audio.prepare:") && HasCall(titleVisual.Calls, "visual.prepare:"),
+            "title sequence prepares audio and visual before play");
+        Check(titleAudio.Calls.Contains("audio.play:" + titleController.Generation + ":0.000"),
+            "title sequence starts audio at cue-local zero");
+        titleClock.Advance(1.5);
+        titleController.Tick();
+        CueTimelineSegment titleAtSilence = CueTimelineTrackResolver.FindSegment(
+            CueTimelineTrackResolver.FindTrack(title, "audio"), titleController.CueTime);
+        Check(titleAtSilence != null && titleAtSilence.type == "silence",
+            "title sequence reaches authored silence before next cue");
+        titleClock.Advance(1.58);
+        titleController.Tick();
+        Check(titleController.State == CuePlaybackState.Completed,
+            "title sequence completes on controller duration");
+
+        // The next allowlisted cue starts from cue-local zero.  Its material
+        // start (2.080s in the shared MP3) is explicit in the plan and is not
+        // derived from the title's subtitle word timing.
+        Check(titleController.Prepare(body), "next body cue after title prepares");
+        Check(titleController.Play(), "next body cue after title plays");
+        CueTimelineSegment nextFirstClip = CueTimelineTrackResolver.FindSegment(
+            CueTimelineTrackResolver.FindTrack(body, "audio"), 0.0);
+        Check(nextFirstClip != null && nextFirstClip.type == "audio_clip",
+            "next cue first-word time is inside its audio clip");
+        CheckClose(2.08, nextFirstClip.source_start, 1e-9,
+            "next cue first word source range is preserved");
+        Check(titleAudio.LastRequestedCueTime == 0.0,
+            "next cue audio is scheduled at its own cue-local zero");
+
+        var bodyClock = new ManualCueClock();
+        var bodyAudio = new FakeAudioExecutor(bodyClock);
+        var bodyVisual = new FakeVisualExecutor();
+        var bodyController = new CuePlaybackController(
+            bodyClock, bodyAudio, bodyVisual, new CueTimelineSubtitleExecutor());
+        Check(bodyController.Prepare(body), "body sequence prepare");
+        Check(bodyController.Play(), "body sequence play");
+        bodyClock.Advance(9.5);
+        bodyController.Tick();
+        Check(bodyController.State == CuePlaybackState.Playing,
+            "body cue still plays through tail after speech");
+        Check(bodyAudio.LastRequestedCueTime == 0.0,
+            "body audio was started at cue-local zero, not a subtitle word end");
+        CheckClose(9.5, bodyAudio.LastSyncCueTime, 1e-9,
+            "body audio segment selection follows authoritative tail cue time");
+        bodyClock.Advance(0.8);
+        bodyController.Tick();
+        Check(bodyController.State == CuePlaybackState.Completed,
+            "body sequence completes only at planned cue duration");
+
+        var compositeClock = new ManualCueClock();
+        var compositeAudio = new FakeAudioExecutor(compositeClock);
+        var compositeVisual = new FakeVisualExecutor();
+        var compositeController = new CuePlaybackController(
+            compositeClock, compositeAudio, compositeVisual, new CueTimelineSubtitleExecutor());
+        Check(compositeController.Prepare(composite), "composite sequence prepare");
+        Check(compositeController.Play(), "composite sequence play");
+        Check(compositeController.SeekTo(4.41), "composite seek into silence");
+        Check(CueTimelineTrackResolver.FindSegment(
+                CueTimelineTrackResolver.FindTrack(composite, "audio"),
+                compositeController.CueTime).type == "silence",
+            "composite controller stays on cue-local silence");
+        Check(compositeController.SeekTo(9.75), "composite seek into visual hold");
+        CueTimelineSegment hold = CueTimelineTrackResolver.FindSegment(
+            CueTimelineTrackResolver.FindTrack(composite, "visual"), compositeController.CueTime);
+        Check(hold != null && hold.type == "hold",
+            "composite controller resolves visual hold from same cue time");
+        Check(compositeController.SeekTo(10.398), "composite seek to cue boundary");
+        Check(compositeController.State == CuePlaybackState.Completed,
+            "composite cue completes only at planned boundary");
+    }
+
+    private static void TestFailureCannotAutoAdvance()
+    {
+        CueTimelinePlan plan;
+        string error;
+        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleBodyInput(), out plan, out error),
+            "failure sample plan: " + error);
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock) { AutoPrepare = false };
+        var visual = new FakeVisualExecutor { AutoPrepare = false };
+        var controller = new CuePlaybackController(clock, audio, visual, new CueTimelineSubtitleExecutor());
+        int advanceSignals = 0;
+        controller.Completed += delegate { advanceSignals++; };
+        Check(controller.Prepare(plan), "failure sample prepare");
+        long generation = controller.Generation;
+        visual.Fail(generation, "visual load failed");
+        Check(controller.State == CuePlaybackState.Failed,
+            "visual load failure enters Failed");
+        clock.Advance(20.0);
+        controller.Tick();
+        Check(controller.CompletionCount == 0 && advanceSignals == 0,
+            "load failure cannot auto-advance as if the cue completed");
+    }
+
     private sealed class SubtitleWindow
     {
         public double Start;
@@ -866,7 +1193,7 @@ internal static class Program
         }
     }
 
-    private sealed class FakeAudioExecutor : IAudioCueExecutor
+    private sealed class FakeAudioExecutor : IAudioCueExecutor, IAudioCueExecutorTimeline
     {
         private readonly ManualCueClock clock;
         private double positionAtBase;
@@ -879,6 +1206,7 @@ internal static class Program
         public bool AutoPrepare = true;
         public bool IsPlaying;
         public double LastRequestedCueTime = -1.0;
+        public double LastSyncCueTime = -1.0;
 
         public FakeAudioExecutor(ManualCueClock clock)
         {
@@ -949,6 +1277,12 @@ internal static class Program
             Calls.Add("audio.cancel:" + generation);
             if (IsPlaying) positionAtBase = CurrentCueTime;
             IsPlaying = false;
+        }
+
+        public void SyncToCueTime(long generation, double cueTime)
+        {
+            LastSyncCueTime = cueTime;
+            Calls.Add("audio.sync:" + generation + ":" + Fmt(cueTime));
         }
 
         public void CompletePreparation(long generation)
@@ -1054,6 +1388,11 @@ internal static class Program
         TestAudioFailureIsExplicitFailure();
         TestVisualFailureIsExplicitFailure();
         TestMultipleCuesNoCumulativeDrift();
+        TestFeatureGateAndPlanSelection();
+        TestLegacyPlanFactorySamples();
+        TestPlayAtPausedAndAudioSync();
+        TestSampleControllerSequences();
+        TestFailureCannotAutoAdvance();
 
         if (failures == 0)
         {

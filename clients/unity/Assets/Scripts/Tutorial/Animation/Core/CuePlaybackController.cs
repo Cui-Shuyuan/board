@@ -164,10 +164,27 @@ namespace BoardGameTutorial.Animation
         /// </summary>
         public bool Play()
         {
+            return PlayAt(0.0, false);
+        }
+
+        /// <summary>
+        /// Start a ready cue at a non-zero cue-local position, optionally
+        /// leaving it paused.  A paused start positions executors with Seek but
+        /// never calls AudioExecutor.Play, so native scrub-to-cue cannot emit a
+        /// one-frame audio burst.
+        /// </summary>
+        public bool PlayAt(double startCueTime, bool startPaused)
+        {
             if (state != CuePlaybackState.Ready) return false;
+            if (double.IsNaN(startCueTime) || double.IsInfinity(startCueTime)) return false;
+
+            double target = startCueTime;
+            if (target < 0.0) target = 0.0;
+            if (target > plan.course.duration) target = plan.course.duration;
 
             generation = NextGeneration();
             completedGeneration = 0L;
+            cueTime = target;
             lastClockSample = clock.NowSeconds;
             TransitionTo(CuePlaybackState.Playing, generation);
 
@@ -175,7 +192,8 @@ namespace BoardGameTutorial.Animation
             {
                 try
                 {
-                    audio.Play(generation, cueTime);
+                    if (startPaused) audio.Seek(generation, cueTime);
+                    else audio.Play(generation, cueTime);
                 }
                 catch (Exception ex)
                 {
@@ -187,6 +205,26 @@ namespace BoardGameTutorial.Animation
             }
             if (!UpdatePresentation(generation)) return false;
             if (state != CuePlaybackState.Playing) return false;
+
+            if (startPaused)
+            {
+                try
+                {
+                    if (audioRequired) audio.Pause(generation);
+                    if (visualRequired) visual.Pause(generation);
+                }
+                catch (Exception ex)
+                {
+                    Fail(generation, audioRequired ? CueExecutorKind.Audio : CueExecutorKind.Visual,
+                        audioRequired ? CuePlaybackFailureKind.AudioExecution
+                            : CuePlaybackFailureKind.VisualExecution,
+                        ex.Message, false);
+                    return false;
+                }
+                TransitionTo(CuePlaybackState.Paused, generation);
+                return state == CuePlaybackState.Paused;
+            }
+
             if (visualRequired)
             {
                 try
@@ -218,6 +256,21 @@ namespace BoardGameTutorial.Animation
                 cueTime = plan.course.duration;
             else
                 cueTime = next;
+
+            if (audio is IAudioCueExecutorTimeline timelineAudio)
+            {
+                try
+                {
+                    timelineAudio.SyncToCueTime(generation, cueTime);
+                }
+                catch (Exception ex)
+                {
+                    Fail(generation, CueExecutorKind.Audio,
+                        CuePlaybackFailureKind.AudioExecution, ex.Message, false);
+                    return;
+                }
+                if (state != CuePlaybackState.Playing) return;
+            }
 
             if (!UpdatePresentation(generation)) return;
             if (cueTime >= plan.course.duration - Epsilon)

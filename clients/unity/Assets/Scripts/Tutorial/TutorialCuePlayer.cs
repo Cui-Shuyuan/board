@@ -127,24 +127,53 @@ namespace BoardGameTutorial
             }
         }
 
-        public string CurrentCueId => CurrentCue != null ? CurrentCue.id : "";
+        public string CurrentCueId
+        {
+            get
+            {
+                if (cueTimelineActive && cueTimelinePlan != null
+                    && !string.IsNullOrEmpty(cueTimelinePlan.cue_id))
+                    return cueTimelinePlan.cue_id;
+                return CurrentCue != null ? CurrentCue.id : "";
+            }
+        }
         public string CurrentCueText => CurrentCue != null ? CurrentCue.text : "";
         public string CurrentCueGroupPath => CurrentCue != null && CurrentCue.group_path != null
             ? string.Join(" > ", CurrentCue.group_path) : "";
-        public bool IsPlaying => audioPlanActive
-            ? !isPaused && !playbackFinished
-            : (audioSource != null && audioSource.isPlaying);
+        public bool IsPlaying
+        {
+            get
+            {
+                if (cueTimelineActive && cueTimelineController != null)
+                    return cueTimelineController.State == CuePlaybackState.Playing;
+                return audioPlanActive
+                    ? !isPaused && !playbackFinished
+                    : (audioSource != null && audioSource.isPlaying);
+            }
+        }
         public TutorialCueDoc Document => doc;
         public TutorialAnimPlayer AnimPlayer => v2AnimPlayer;
-        public bool IsPaused => isPaused;
+        public bool IsPaused
+        {
+            get
+            {
+                if (cueTimelineActive && cueTimelineController != null)
+                    return cueTimelineController.State == CuePlaybackState.Paused;
+                return isPaused;
+            }
+        }
         public int CurrentCueIndex => currentIndex;
         public int TotalCueCount => doc != null && doc.cues != null ? doc.cues.Count : 0;
-        public float Volume => audioSource != null ? audioSource.volume : 1f;
+        public float Volume => cueTimelineAudioExecutor != null && cueTimelineActive
+            ? cueTimelineAudioExecutor.Volume
+            : (audioSource != null ? audioSource.volume : 1f);
 
         public float Position
         {
             get
             {
+                if (cueTimelineActive && cueTimelineController != null)
+                    return Mathf.Max(0f, (float)cueTimelineController.CueTime);
                 if (animationHoldActive) return animationHoldLocal;
                 if (playbackFinished) return lastPosition;
                 var cue = CurrentCue;
@@ -161,6 +190,8 @@ namespace BoardGameTutorial
         {
             get
             {
+                if (cueTimelineActive && cueTimelinePlan != null)
+                    return Mathf.Max(0f, (float)cueTimelinePlan.course.duration);
                 var cue = CurrentCue;
                 if (cue != null && HasAudioPlan(cue))
                 {
@@ -258,6 +289,7 @@ namespace BoardGameTutorial
         /// </summary>
         public void StopAndClear()
         {
+            DisposeCueTimeline();
             if (playbackRoutine != null)
             {
                 StopCoroutine(playbackRoutine);

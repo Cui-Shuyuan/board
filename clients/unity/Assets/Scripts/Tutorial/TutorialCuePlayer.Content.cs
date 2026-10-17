@@ -52,6 +52,8 @@ namespace BoardGameTutorial
             if (spritePreloadRoutine != null) StopCoroutine(spritePreloadRoutine);
             spritePreloadRoutine = StartCoroutine(v2AnimPlayer.PreloadCutoutSpritesRoutine());
             v2AnimPlayer.animationEnabled = enableCueAnimation;
+            EnsureCueTimelineController();
+            RefreshCueTimelineRuntimePaths();
             ApplyDebugOverlay();
             return true;
         }

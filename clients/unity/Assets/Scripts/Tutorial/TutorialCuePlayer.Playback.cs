@@ -78,6 +78,18 @@ namespace BoardGameTutorial
             float localTime,
             bool startPaused)
         {
+            CueTimelinePlan timelinePlan;
+            if (TryBuildCueTimelinePlan(index, out timelinePlan))
+            {
+                yield return PlayCueTimelineRoutine(
+                    timelinePlan, index, Mathf.Max(0f, localTime), startPaused);
+                yield break;
+            }
+
+            // Any non-timeline selection must fully stop a previously active
+            // timeline cue before touching the legacy AudioSource.
+            CancelCueTimelineForSwitch();
+
             if (IsAudioPlanCue(index))
             {
                 yield return PlayAudioPlanCueRoutine(index, Mathf.Max(0f, localTime), startPaused);
@@ -197,6 +209,13 @@ namespace BoardGameTutorial
 
         public void Pause()
         {
+            if (cueTimelineActive)
+            {
+                if (cueTimelineController != null && cueTimelineController.Pause())
+                    isPaused = true;
+                return;
+            }
+
             if (isPaused) return;
 
             if (audioPlanActive)
@@ -219,6 +238,13 @@ namespace BoardGameTutorial
 
         public void Resume()
         {
+            if (cueTimelineActive)
+            {
+                if (cueTimelineController != null && cueTimelineController.Resume())
+                    isPaused = false;
+                return;
+            }
+
             if (!isPaused) return;
 
             if (audioPlanActive)
@@ -267,8 +293,9 @@ namespace BoardGameTutorial
 
         public void SetVolume(float value)
         {
-            if (audioSource == null) return;
-            audioSource.volume = Mathf.Clamp01(value);
+            float clamped = Mathf.Clamp01(value);
+            if (audioSource != null) audioSource.volume = clamped;
+            if (cueTimelineAudioExecutor != null) cueTimelineAudioExecutor.Volume = clamped;
         }
 
         public void AdjustVolume(float delta)
@@ -315,6 +342,31 @@ namespace BoardGameTutorial
 
         public void SeekRelative(float seconds)
         {
+            if (cueTimelineActive)
+            {
+                float timelineDuration = Duration;
+                float timelineTarget = Position + seconds;
+                if (timelineTarget < 0f)
+                {
+                    if (doc != null && doc.cues != null && currentIndex > 0)
+                        PlayCue(currentIndex - 1, true);
+                    else
+                        SeekCueTimeline(0f);
+                    return;
+                }
+                if (timelineDuration > 0f && timelineTarget > timelineDuration)
+                {
+                    if (doc != null && doc.cues != null
+                        && currentIndex + 1 < doc.cues.Count)
+                        PlayCue(currentIndex + 1, true);
+                    else
+                        SeekCueTimeline(Mathf.Max(0f, timelineDuration - 0.05f));
+                    return;
+                }
+                SeekCueTimeline(Mathf.Clamp(timelineTarget, 0f, timelineDuration));
+                return;
+            }
+
             if (audioSource == null || audioSource.clip == null) return;
 
             float duration = Duration;
@@ -325,7 +377,7 @@ namespace BoardGameTutorial
                 // 负方向越过 cue 开头：优先跳上一条；第一条则停在 0。
                 if (doc != null && doc.cues != null && currentIndex > 0)
                     PlayCue(currentIndex - 1, true);
-                else
+                else if (!SeekCueTimeline(0f))
                     SeekToCurrentTime(0f);
                 return;
             }
@@ -335,12 +387,13 @@ namespace BoardGameTutorial
                 // 正方向越过 cue 末尾：优先跳下一条；最后一条则停在末尾附近。
                 if (doc != null && doc.cues != null && currentIndex + 1 < doc.cues.Count)
                     PlayCue(currentIndex + 1, true);
-                else
+                else if (!SeekCueTimeline(Mathf.Max(0f, duration - 0.05f)))
                     SeekToCurrentTime(Mathf.Max(0f, duration - 0.05f));
                 return;
             }
 
-            SeekToCurrentTime(Mathf.Clamp(target, 0f, duration));
+            if (!SeekCueTimeline(Mathf.Clamp(target, 0f, duration)))
+                SeekToCurrentTime(Mathf.Clamp(target, 0f, duration));
         }
 
         /// <summary>
@@ -350,6 +403,11 @@ namespace BoardGameTutorial
         /// </summary>
         public void SeekTo(float localSeconds)
         {
+            if (cueTimelineActive)
+            {
+                SeekCueTimeline(localSeconds);
+                return;
+            }
             if (CurrentCue != null && HasAudioPlan(CurrentCue))
             {
                 PlayCueAt(CurrentCue.id, localSeconds, isPaused);
@@ -453,7 +511,11 @@ namespace BoardGameTutorial
             }
 #endif
 
-            if (v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
+            if (cueTimelineActive)
+            {
+                UpdateCueTimeline();
+            }
+            else if (v2AnimPlayer != null && v2AnimPlayer.IsLoaded)
             {
                 float t;
                 if (audioPlanActive)
@@ -476,10 +538,13 @@ namespace BoardGameTutorial
             }
 
             // 音频播放期间每帧刷新字幕；不依赖协程 while 的 isPlaying 时序。
-            if (audioPlanActive)
-                UpdateSubtitle();
-            else if (audioSource != null && audioSource.clip != null && audioSource.isPlaying && !isPaused)
-                UpdateSubtitle();
+            if (!cueTimelineActive)
+            {
+                if (audioPlanActive)
+                    UpdateSubtitle();
+                else if (audioSource != null && audioSource.clip != null && audioSource.isPlaying && !isPaused)
+                    UpdateSubtitle();
+            }
 
 #if ENABLE_INPUT_SYSTEM
             var kb = Keyboard.current;
@@ -537,6 +602,13 @@ namespace BoardGameTutorial
 
         private void UpdateSubtitle()
         {
+            if (cueTimelineActive && cueTimelineController != null)
+            {
+                CueSubtitleState timelineSubtitle = cueTimelineController.CurrentSubtitle;
+                currentSubtitle = timelineSubtitle != null && timelineSubtitle.Visible
+                    ? timelineSubtitle.Text : "";
+                return;
+            }
             currentSubtitle = "";
             var cue = CurrentCue;
             if (cue == null || cue.subtitles == null) return;

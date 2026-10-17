@@ -429,7 +429,13 @@ namespace UnityEngine
         public Vector3 ScreenToWorldPoint(Vector2 v) => Vector3.zero;
     }
 
-    public class AudioClip : Object { public float length; }
+    public class AudioClip : Object
+    {
+        public float length;
+        public int samples;
+        public int frequency;
+        public int channels;
+    }
     public class AudioSource : Behaviour
     {
         public AudioClip clip;
@@ -440,10 +446,16 @@ namespace UnityEngine
         public float volume;
         public float pitch;
         public float time;
+        public int timeSamples;
         public void Play() { }
         public void Stop() { }
         public void Pause() { }
         public void UnPause() { }
+        public void PlayScheduled(double time) { }
+    }
+    public static class AudioSettings
+    {
+        public static double dspTime => 0.0;
     }
 
     public class TextAsset : Object { public string text; public byte[] bytes; }
@@ -763,6 +775,7 @@ namespace UnityEngine.Networking
         public bool isDone;
         public static UnityWebRequestMultimedia GetAudioClip(string uri, UnityEngine.AudioType audioType) => null;
         public UnityWebRequestAsyncOperation SendWebRequest() => null;
+        public void Abort() { }
         public void Dispose() { }
     }
 
