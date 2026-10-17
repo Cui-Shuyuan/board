@@ -67,6 +67,17 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
         lat = [r["latency_ms"] for r in rows]
         direct = [bool((r.get("deterministic") or {}).get("direct_expected_hit")) for r in rows if r.get("question_type") == "positive"]
         top3 = [bool((r.get("deterministic") or {}).get("candidate_expected_top3") or (r.get("deterministic") or {}).get("direct_expected_hit")) for r in rows if r.get("question_type") == "positive"]
+        retrieval_layer = [v for v in (
+            (r.get("deterministic") or {}).get("retrieval_layer_hit") for r in rows
+            if r.get("question_type") == "positive") if v is not None]
+        pack_layer = [v for v in (
+            (r.get("deterministic") or {}).get("pack_layer_hit") for r in rows
+            if r.get("question_type") == "positive") if v is not None]
+        citation_layer = [v for v in (
+            (r.get("deterministic") or {}).get("citation_layer_hit") for r in rows
+            if r.get("question_type") == "positive") if v is not None]
+        coverage_statuses = Counter(status for r in rows for status in (
+            (r.get("deterministic") or {}).get("coverage_statuses") or []))
         tiers = Counter((r.get("deterministic") or {}).get("tier") for r in rows)
         outcomes = Counter((r.get("deterministic") or {}).get("orchestration_outcome") for r in rows if (r.get("deterministic") or {}).get("orchestration_outcome"))
         model_calls = [x for x in ((r.get("deterministic") or {}).get("model_call_count") for r in rows) if x is not None]
@@ -91,6 +102,13 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
             "player_count_inference_rate": bool_mean([r["judge"].get("player_count_inference") for r in rows]),
             "direct_expected_hit_rate_positive": bool_mean(direct),
             "recoverable_top3_rate_positive": bool_mean(top3),
+            "retrieval_layer_hit_rate_positive": bool_mean(retrieval_layer) if retrieval_layer else None,
+            "pack_layer_hit_rate_positive": bool_mean(pack_layer) if pack_layer else None,
+            "citation_layer_hit_rate_positive": bool_mean(citation_layer) if citation_layer else None,
+            "retrieval_layer_observable_runs": len(retrieval_layer),
+            "pack_layer_observable_runs": len(pack_layer),
+            "citation_layer_observable_runs": len(citation_layer),
+            "coverage_status_counts": dict(coverage_statuses),
             "tier1_rate": round(tiers.get("tier1", 0) / len(rows), 4) if rows else 0,
             "pending_zero_rate": bool_mean([(r.get("deterministic") or {}).get("pending_count") == 0 for r in rows]),
             "mean_query_count": round(statistics.mean([(r.get("deterministic") or {}).get("query_count") or 0 for r in rows]), 3) if rows else 0,
@@ -187,6 +205,16 @@ def summarize_groups(merged: list[dict], key: str) -> list[dict]:
     return rows
 
 
+def format_rate(value) -> str:
+    return "N/A" if value is None else f"{value:.1%}"
+
+
+def format_rate_delta(old, new) -> str:
+    if old is None or new is None:
+        return "N/A"
+    return f"{(new - old) * 100:+.1f}pp"
+
+
 def write_markdown(analysis: dict, path: Path):
     old_all = analysis["versions"]["old"]["all"]
     new_all = analysis["versions"]["new"]["all"]
@@ -204,17 +232,24 @@ def write_markdown(analysis: dict, path: Path):
         f"| 不必要追问率 | {old_all['unnecessary_clarification_rate']:.1%} | {new_all['unnecessary_clarification_rate']:.1%} | {(new_all['unnecessary_clarification_rate']-old_all['unnecessary_clarification_rate'])*100:+.1f}pp |",
         f"| 无关扩展率 | {old_all['irrelevant_expansion_rate']:.1%} | {new_all['irrelevant_expansion_rate']:.1%} | {(new_all['irrelevant_expansion_rate']-old_all['irrelevant_expansion_rate'])*100:+.1f}pp |",
         f"| 人数反推率 | {old_all['player_count_inference_rate']:.1%} | {new_all['player_count_inference_rate']:.1%} | {(new_all['player_count_inference_rate']-old_all['player_count_inference_rate'])*100:+.1f}pp |",
-        f"| 正例直接命中率 | {old_all['direct_expected_hit_rate_positive']:.1%} | {new_all['direct_expected_hit_rate_positive']:.1%} | {(new_all['direct_expected_hit_rate_positive']-old_all['direct_expected_hit_rate_positive'])*100:+.1f}pp |",
-        f"| 正例直达或候选前三 | {old_all['recoverable_top3_rate_positive']:.1%} | {new_all['recoverable_top3_rate_positive']:.1%} | {(new_all['recoverable_top3_rate_positive']-old_all['recoverable_top3_rate_positive'])*100:+.1f}pp |",
+        f"| 旧 direct_expected_hit（语义不完全等价） | {old_all['direct_expected_hit_rate_positive']:.1%} | {new_all['direct_expected_hit_rate_positive']:.1%} | {(new_all['direct_expected_hit_rate_positive']-old_all['direct_expected_hit_rate_positive'])*100:+.1f}pp |",
+        f"| 正例直达或候选前三（旧口径） | {old_all['recoverable_top3_rate_positive']:.1%} | {new_all['recoverable_top3_rate_positive']:.1%} | {(new_all['recoverable_top3_rate_positive']-old_all['recoverable_top3_rate_positive'])*100:+.1f}pp |",
+        f"| 逐层：检索候选规范路径命中 | {format_rate(old_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate(new_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate_delta(old_all.get('retrieval_layer_hit_rate_positive'), new_all.get('retrieval_layer_hit_rate_positive'))} |",
+        f"| 逐层：正式装包规范路径命中（可观察 n） | {old_all.get('pack_layer_observable_runs', 0)} | {new_all.get('pack_layer_observable_runs', 0)} | - |",
+        f"| 逐层：正式装包命中率 | {format_rate(old_all.get('pack_layer_hit_rate_positive'))} | {format_rate(new_all.get('pack_layer_hit_rate_positive'))} | {format_rate_delta(old_all.get('pack_layer_hit_rate_positive'), new_all.get('pack_layer_hit_rate_positive'))} |",
+        f"| 逐层：Respond 引用规范路径命中率 | {format_rate(old_all.get('citation_layer_hit_rate_positive'))} | {format_rate(new_all.get('citation_layer_hit_rate_positive'))} | {format_rate_delta(old_all.get('citation_layer_hit_rate_positive'), new_all.get('citation_layer_hit_rate_positive'))} |",
         f"| tier1 率 | {old_all['tier1_rate']:.1%} | {new_all['tier1_rate']:.1%} | {(new_all['tier1_rate']-old_all['tier1_rate'])*100:+.1f}pp |",
         f"| pending=0 率 | {old_all['pending_zero_rate']:.1%} | {new_all['pending_zero_rate']:.1%} | {(new_all['pending_zero_rate']-old_all['pending_zero_rate'])*100:+.1f}pp |",
         f"| 平均 query 数 | {old_all['mean_query_count']:.2f} | {new_all['mean_query_count']:.2f} | {new_all['mean_query_count']-old_all['mean_query_count']:+.2f} |",
         f"| 延迟中位数 | {old_all['p50_latency_ms']:.0f} ms | {new_all['p50_latency_ms']:.0f} ms | {new_all['p50_latency_ms']-old_all['p50_latency_ms']:+.0f} ms |",
         f"| 延迟 P95 | {old_all['p95_latency_ms']:.0f} ms | {new_all['p95_latency_ms']:.0f} ms | {new_all['p95_latency_ms']-old_all['p95_latency_ms']:+.0f} ms |",
         "",
+        "> 注意：旧 `direct_expected_hit` 在 legacy 中来自 `Matched`，在 program 中来自已装包 target/candidate，二者不等价；逐层指标才是本轮可比较口径。缺少分层字段的历史结果显示 N/A。",
+        "",
         "## 程序控制编排指标（新版专属）",
         "",
         f"- 结果类型分布：{new_all.get('program_outcome_counts') or 'N/A'}",
+        f"- 覆盖状态分布：{new_all.get('coverage_status_counts') or 'N/A'}",
         f"- 平均模型调用数 / 中位数：{new_all.get('model_call_mean') if new_all.get('model_call_mean') is not None else 'N/A'} / {new_all.get('model_call_p50') if new_all.get('model_call_p50') is not None else 'N/A'}",
         f"- 平均补充检索次数：{new_all.get('supplement_mean') if new_all.get('supplement_mean') is not None else 'N/A'}；触发补充比例：{new_all.get('supplement_nonzero_rate') if new_all.get('supplement_nonzero_rate') is not None else 'N/A'}",
         f"- 平均协议修复次数：{new_all.get('repair_mean') if new_all.get('repair_mean') is not None else 'N/A'}；触发修复比例：{new_all.get('repair_nonzero_rate') if new_all.get('repair_nonzero_rate') is not None else 'N/A'}",

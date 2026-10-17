@@ -56,6 +56,16 @@ def collect_ids(items):
     return out
 
 
+def matches_expected(expected: str, values: list[str]) -> bool:
+    for value in values or []:
+        if value == expected:
+            return True
+        local = value.split("::")[-1] if "::" in value else value
+        if local == expected or local.endswith("." + expected):
+            return True
+    return False
+
+
 def analyze_evidence(question: dict, response: dict) -> dict:
     evidence = response.get("evidence") or {}
     orchestration = response.get("orchestration") or {}
@@ -74,6 +84,41 @@ def analyze_evidence(question: dict, response: dict) -> dict:
     direct_hits = expected & set(all_matched)
     top1_hits = expected & set(candidate_top1)
     top3_hits = expected & set(candidate_top3)
+
+    # Newer traces preserve each layer separately. Do not infer pack/citation
+    # from Matched or Tier; old runs leave these as None.
+    trace_questions = orchestration.get("questions") or []
+    retrieval_paths = []
+    packed_paths = []
+    cited_paths = []
+    retrieval_observable = False
+    packed_observable = False
+    cited_observable = False
+    for item in trace_questions:
+        if "retrievalCandidatePaths" in item:
+            retrieval_observable = True
+            retrieval_paths.extend(item.get("retrievalCandidatePaths") or [])
+        if "evidenceCanonicalPaths" in item:
+            packed_observable = True
+            packed_paths.extend(item.get("evidenceCanonicalPaths") or [])
+        if "citedCanonicalPaths" in item:
+            cited_observable = True
+            cited_paths.extend(item.get("citedCanonicalPaths") or [])
+    retrieval_paths = list(dict.fromkeys(retrieval_paths))
+    packed_paths = list(dict.fromkeys(packed_paths))
+    cited_paths = list(dict.fromkeys(cited_paths))
+    retrieval_layer_hit = (
+        any(matches_expected(exp, retrieval_paths) for exp in expected)
+        if expected and retrieval_observable else None
+    )
+    pack_layer_hit = (
+        any(matches_expected(exp, packed_paths) for exp in expected)
+        if expected and packed_observable else None
+    )
+    citation_layer_hit = (
+        any(matches_expected(exp, cited_paths) for exp in expected)
+        if expected and cited_observable else None
+    )
     return {
         "tier": evidence.get("tier"),
         "has_data": evidence.get("hasData"),
@@ -96,6 +141,21 @@ def analyze_evidence(question: dict, response: dict) -> dict:
         "understand_ms": orchestration.get("understandMs"),
         "retrieval_ms": orchestration.get("retrievalMs"),
         "respond_ms": orchestration.get("respondMs"),
+        "retrieval_candidate_paths": retrieval_paths,
+        "packed_canonical_paths": packed_paths if packed_observable else None,
+        "cited_canonical_paths": cited_paths if cited_observable else None,
+        "retrieval_layer_hit": retrieval_layer_hit,
+        "pack_layer_hit": pack_layer_hit,
+        "retrieval_layer_observable": retrieval_observable,
+        "citation_layer_hit": citation_layer_hit,
+        "pack_layer_observable": packed_observable,
+        "citation_layer_observable": cited_observable,
+        "coverage_statuses": [q.get("coverageStatus") for q in trace_questions if q.get("coverageStatus")],
+        "question_outcome_statuses": [q.get("outcomeStatus") for q in trace_questions if q.get("outcomeStatus")],
+        "evidence_read_attempts": orchestration.get("evidenceReadAttempts"),
+        "successful_evidence_reads": orchestration.get("successfulEvidenceReads"),
+        "binding_reuses": orchestration.get("evidenceBindingReuses"),
+        "effective_max_pack_chars": orchestration.get("effectiveMaxEvidencePackChars"),
     }
 
 
