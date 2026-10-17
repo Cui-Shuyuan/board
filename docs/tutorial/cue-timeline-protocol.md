@@ -1,6 +1,6 @@
 # Cue Timeline Protocol v1
 
-状态：设计草案，未进入运行时实现。
+状态：Phase 1 已实现纯 Python 编译器、plan 校验器和旧数据适配层；尚未接入 Unity/Android 运行时，旧播放器行为未改变。
 
 本文先固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
 
@@ -419,12 +419,12 @@ cueTime = (dspTime - cueStartDspTime) - accumulatedPauseDsp
 - 建立调查证据和验收矩阵；
 - 不改播放行为。
 
-### Phase 1：纯编译器与适配层
-- 新增 Cue Timeline 数据类型；
-- 将旧 runtime + compiled 通过适配器转换为统一 plan；
-- 编译器解析锚点、计算时长、校验循环/越界；
-- 增加纯 Python/JSON 测试；
-- 旧播放器继续运行。
+### Phase 1：纯编译器与适配层（已完成）
+- 新增 `animation/cue_timeline.py` 纯 Python 模块；
+- 将旧 runtime + compiled 通过适配器转换为统一 plan set；
+- 编译器解析绝对时间、`cue_start`、`after`、`after_all` 锚点，计算时长并校验循环/越界/重叠；
+- 增加 `animation/test_cue_timeline.py` 纯 Python/JSON 测试；
+- 旧播放器继续运行，尚未读取新 plan。
 
 ### Phase 2：纯播放控制器
 - 实现状态机、generation、权威时钟；
@@ -487,4 +487,67 @@ cueTime = (dspTime - cueStartDspTime) - accumulatedPauseDsp
 - 音频精确执行选择构建期切片还是运行期预解码；
 - 动画 clip 的引用粒度：完整 compiled cue、compiled cue 的子区间，还是独立 animation clip；
 - 源数据中是否强制显式写 audio source range，还是允许编译器从旧 runtime 适配并给出警告；
-- 显式 cue duration 缺失时是否允许自动取最大值，还是要求作者始终显式声明。
+- 显式 cue duration 缺失时是否允许自动取最大值，还是要求作者始终显式声明；
+  Phase 1 编译器当前按协议自动取所有 segment 结束时刻的最大值。
+
+## 10. Phase 1 实现入口与边界
+
+实现文件：
+
+- `animation/cue_timeline.py`
+- `animation/test_cue_timeline.py`
+
+公共 API：
+
+```python
+from animation.cue_timeline import (
+    CueTimelineError,
+    compile_cue_source,       # tutorial-cue-source/v1 -> tutorial-cue-plan/v1
+    validate_cue_plan,        # 单个 tutorial-cue-plan/v1 校验
+    validate_plan_set,        # tutorial-cue-plan-set/v1 校验
+    adapt_legacy_runtime,     # legacy runtime + 可选 compiled -> plan set
+)
+```
+
+`compile_cue_source(source, course_start=..., sample_rate=...)` 只做纯 JSON
+转换，不读写文件。显式 `sample_rate`（或 source 顶层 `sample_rate`）存在时，
+`audio_clip` 会附带 `source_start_sample` / `source_end_sample`；采样位置按最
+近采样点换算。缺少显式时长时，编译时长取所有 segment 结束时刻的最大值。
+
+`adapt_legacy_runtime(runtime, compiled=None)` 返回
+`tutorial-cue-plan-set/v1`：
+
+- `audio_plan` 的 clip/silence 顺序转换为 audio track；
+- `section_audio` 和普通单音频 cue 转为 `[audio_start, audio_start + duration]` 的 audio clip；
+- 有 compiled cue 时生成 visual animation segment，源区间为
+  `[0, compiled cue.duration]`；
+- cue duration 取旧 runtime duration、音频内容时长、compiled animation duration
+  的最大值；
+- 全局 cue start 按 effective duration 重新累加，只保留旧 cue 之间原本存在的显式 gap；
+- 缺失 compiled cue 时输出 `missing_compiled_animation` diagnostic 且不生成 visual track；
+- compiled cue 时长为 0 时输出 `empty_compiled_animation` diagnostic，不伪造零长度动画 segment；
+- 输入 runtime/compiled 不被修改。
+
+Phase 1 不接入任何播放器，也不改变构建产物：
+
+- Unity `TutorialCuePlayer` / `TutorialAnimPlayer` 仍读取旧 runtime/compiled；
+- Android `TutorialTimeline` 仍只读旧 runtime cue duration；
+- 未实现音频切片、真实音频执行、播放器状态机、generation 或权威时钟。
+
+测试命令：
+
+```bash
+python3 -m unittest animation.test_cue_timeline -v
+python3 -m unittest discover -s animation -p 'test_*.py'
+```
+
+## 11. 留给 Phase 2 的问题
+
+- 真实音频执行方式：构建期切片、运行期预解码取采样，或整段解码后采样级调度；
+- `CuePlaybackController` 状态机、generation/cancellation token 与完成事件只发一次；
+- 暂停、seek、快速切 cue 时音频与视觉执行器如何重调度；
+- 哪些类字段进入 Unity C# DTO，以及 plan set 的加载和 feature flag 形态；
+- Android `TutorialTimeline` 何时切换为读取 plan set 的课程时间；
+- 真实设备上用录音/波形验证音频首尾、静音、hold 和跨 cue 拼接；
+- `tutorial-cue-source/v1` 是否应把字幕也提升为显式 track segment，当前 Phase 1
+  编译器只接受 visual/audio track 及其已定义的 segment 类型。
