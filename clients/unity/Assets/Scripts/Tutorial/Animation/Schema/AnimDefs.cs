@@ -223,6 +223,8 @@ namespace BoardGameTutorial.Animation
         public string background;
         public string source_item_id;
         public bool persist_on_source_missing = true;
+        // Optional full-screen dim overlay strength. 0 = normal overlay.
+        public float dim_alpha;
 
         // Shuffle is visual-only: deterministic per-item jitter parameters
         // compiled so the runtime stays a pure function of the compiled asset.
@@ -264,6 +266,9 @@ namespace BoardGameTutorial.Animation
         public string stage;
         public bool demo;
         public bool hold_after_audio;
+        // Pause after the last spoken subtitle word, before the next cue, while
+        // skipping any trailing TTS silence. Used for natural chapter-title gaps.
+        public float pause_after_speech_seconds;
         public float duration;
         public CompiledCameraDef camera_in;
         public List<CompiledCameraOpDef> camera_ops = new List<CompiledCameraOpDef>();

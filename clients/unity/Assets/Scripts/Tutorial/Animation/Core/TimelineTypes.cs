@@ -128,6 +128,9 @@ namespace BoardGameTutorial.Animation
         public string Indicator;
         public string SourceItemId;
         public bool PersistOnSourceMissing = true;
+        // Full-screen dim overlays keep the world visible while hiding debug
+        // zone geometry and drawing the overlay at this alpha.
+        public float DimAlpha;
 
         string IAnimVisualObject.ObjectId { get { return Id; } }
         float IAnimVisualObject.Alpha { get { return Alpha; } set { Alpha = value; } }

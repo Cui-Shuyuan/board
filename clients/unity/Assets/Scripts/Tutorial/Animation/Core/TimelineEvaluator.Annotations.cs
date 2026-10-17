@@ -198,6 +198,7 @@ namespace BoardGameTutorial.Animation
                         PartV = v,
                         NudgeX = clip.nudge_x,
                         NudgeY = clip.nudge_y,
+                        SizePx = clip.annotation_size,
                         LabelW = clip.label_w,
                         LabelH = clip.label_h,
                     });
@@ -215,6 +216,7 @@ namespace BoardGameTutorial.Animation
                         Z = clip.world_z,
                         NudgeX = clip.nudge_x,
                         NudgeY = clip.nudge_y,
+                        SizePx = clip.annotation_size,
                         LabelW = clip.label_w,
                         LabelH = clip.label_h,
                     });
@@ -240,6 +242,7 @@ namespace BoardGameTutorial.Animation
                 PartV = v,
                 NudgeX = clip.nudge_x,
                 NudgeY = clip.nudge_y,
+                SizePx = clip.annotation_size,
                 ScreenX = clip.screen_w > 0f ? clip.screen_x : clip.label_x,
                 ScreenY = clip.screen_w > 0f ? clip.screen_y : clip.label_y,
                 ScreenW = clip.screen_w > 0f ? clip.screen_w : clip.label_w,

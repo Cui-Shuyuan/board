@@ -41,6 +41,8 @@ namespace BoardGameTutorial.Animation
         public bool IsLoaded { get; private set; }
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
         public bool CurrentCueHoldAfterAudio => currentCue != null && currentCue.hold_after_audio;
+        public float CurrentCuePauseAfterSpeechSeconds =>
+            currentCue != null ? currentCue.pause_after_speech_seconds : 0f;
         public CompiledCueDef CurrentCue => currentCue;
         public FrameState CurrentFrame { get; private set; }
         public Camera Camera => cameraDirector.Camera;
@@ -56,6 +58,7 @@ namespace BoardGameTutorial.Animation
         private string gameRoot;
         private ZoneDebugOverlay zoneDebug;
         private bool fullScreenMaskActive;
+        private bool overlayDimActive;
 
         public bool LoadTrack(string gameRootPath, string trackName = null)
         {
@@ -257,6 +260,7 @@ namespace BoardGameTutorial.Animation
         private void ApplyFullScreenMask(FrameState frame)
         {
             VisualOverlayState mask = null;
+            VisualOverlayState dim = null;
             if (frame != null && frame.Overlays != null)
             {
                 foreach (var overlay in frame.Overlays)
@@ -264,18 +268,27 @@ namespace BoardGameTutorial.Animation
                     if (overlay == null) continue;
                     if (overlay.W < 0.999f || overlay.H < 0.999f) continue;
                     if (string.IsNullOrEmpty(overlay.Background)) continue;
+                    if (overlay.DimAlpha > 0f)
+                    {
+                        // Dim overlay: keep the world visible at reduced
+                        // brightness, but hide debug-zone geometry so title
+                        // cards are never polluted by editor diagnostics.
+                        if (dim == null) dim = overlay;
+                        continue;
+                    }
                     mask = overlay;
                     break;
                 }
             }
 
-            bool active = mask != null;
             bool wasActive = fullScreenMaskActive;
-            // Update the flag before RebuildZoneDebug(); otherwise the
-            // active -> inactive transition clears the zone layer and never
-            // repopulates it until the next cue.
-            fullScreenMaskActive = active;
-            if (active)
+            bool wasDim = overlayDimActive;
+            // Update flags before RebuildZoneDebug(); otherwise an
+            // active -> inactive transition can clear the zone layer forever.
+            fullScreenMaskActive = mask != null;
+            overlayDimActive = !fullScreenMaskActive && dim != null;
+
+            if (fullScreenMaskActive)
             {
                 var bg = Color.black;
                 if (Palette.TryResolveRgb(mask.Background, out var parsed)) bg = parsed;
@@ -287,7 +300,16 @@ namespace BoardGameTutorial.Animation
                 if (animRoot != null) animRoot.SetActive(false);
                 if (zoneDebug != null) zoneDebug.gameObject.SetActive(false);
             }
-            else if (wasActive)
+            else if (overlayDimActive)
+            {
+                // Keep the real scene and camera background, only suppress
+                // zone debug drawing. The dim panel itself is rendered by
+                // TutorialCuePlayer.DrawScreenOverlays at overlay.Alpha.
+                if (animRoot != null) animRoot.SetActive(true);
+                if (zoneDebug != null) zoneDebug.gameObject.SetActive(false);
+                cameraDirector.SetBackground(stageRuntime.Stage != null ? stageRuntime.Stage.background : null);
+            }
+            else if (wasActive || wasDim)
             {
                 if (animRoot != null) animRoot.SetActive(true);
                 if (zoneDebug != null) zoneDebug.gameObject.SetActive(true);
@@ -303,9 +325,10 @@ namespace BoardGameTutorial.Animation
             currentCue = null;
             CueId = null;
             CurrentFrame = null;
-            if (fullScreenMaskActive)
+            if (fullScreenMaskActive || overlayDimActive)
             {
                 fullScreenMaskActive = false;
+                overlayDimActive = false;
                 if (animRoot != null) animRoot.SetActive(true);
                 if (zoneDebug != null) zoneDebug.gameObject.SetActive(true);
                 cameraDirector.SetBackground(stageRuntime.Stage != null ? stageRuntime.Stage.background : null);
@@ -317,7 +340,7 @@ namespace BoardGameTutorial.Animation
         public void RebuildZoneDebug()
         {
             if (zoneDebug == null) return;
-            if (!debugZones || fullScreenMaskActive)
+            if (!debugZones || fullScreenMaskActive || overlayDimActive)
             {
                 zoneDebug.Clear();
                 return;

@@ -350,6 +350,8 @@ namespace BoardGameTutorial.Animation
                         float alpha = 1f;
                         if (clip.dur > 0f)
                             alpha = Clamp01((t - start) / clip.dur);
+                        if (clip.dim_alpha > 0f)
+                            alpha = Clamp01(clip.dim_alpha);
                         active[id] = new VisualOverlayState
                         {
                             Id = id,
@@ -367,6 +369,7 @@ namespace BoardGameTutorial.Animation
                             Alpha = alpha,
                             SourceItemId = clip.source_item_id,
                             PersistOnSourceMissing = clip.persist_on_source_missing,
+                            DimAlpha = clip.dim_alpha,
                         };
                         continue;
                     }

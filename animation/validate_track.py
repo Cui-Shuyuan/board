@@ -352,6 +352,17 @@ def _check_event(report: Report, where: str, ev: dict):
                 report.error(f"{where}: overlay_show needs overlay")
             if not (ev.get("template") or ev.get("image") or ev.get("background")):
                 report.error(f"{where}: overlay_show needs template/image/background")
+            dim_alpha = ev.get("dim_alpha")
+            if dim_alpha is not None:
+                try:
+                    dim_value = float(dim_alpha)
+                except (TypeError, ValueError):
+                    report.error(f"{where}: overlay_show dim_alpha must be numeric")
+                else:
+                    if not (0.0 < dim_value <= 1.0):
+                        report.error(
+                            f"{where}: overlay_show dim_alpha must be in (0, 1], got {dim_alpha!r}"
+                        )
             rect = ev.get("rect")
             if rect is not None:
                 if not isinstance(rect, dict):

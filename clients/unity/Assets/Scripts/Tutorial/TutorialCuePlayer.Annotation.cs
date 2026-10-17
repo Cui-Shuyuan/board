@@ -18,6 +18,9 @@ namespace BoardGameTutorial
 {
     public partial class TutorialCuePlayer : MonoBehaviour
     {
+        private readonly Dictionary<int, GUIStyle> sizedOverlayLabelStyles = new Dictionary<int, GUIStyle>();
+        private readonly Dictionary<int, GUIStyle> sizedLabelShadowStyles = new Dictionary<int, GUIStyle>();
+
         private void DrawAnnotations(FrameState frame)
         {
             if (frame == null || frame.Annotations == null || frame.Annotations.Count == 0) return;
@@ -329,10 +332,11 @@ namespace BoardGameTutorial
             labelShadowStyle.normal.textColor = new Color(0f, 0f, 0f, 0.92f);
         }
 
-        private Rect FitLabelRect(Rect rect, string text)
+        private Rect FitLabelRect(Rect rect, string text, GUIStyle style)
         {
             if (string.IsNullOrEmpty(text)) return rect;
-            Vector2 measured = overlayLabelStyle.CalcSize(new GUIContent(text));
+            GUIStyle measureStyle = style ?? overlayLabelStyle;
+            Vector2 measured = measureStyle.CalcSize(new GUIContent(text));
             int lines = 1;
             for (int i = 0; i < text.Length; i++)
             {
@@ -341,7 +345,7 @@ namespace BoardGameTutorial
             float padX = 14f * UiScale();
             float padY = 8f * UiScale();
             float needW = measured.x + padX;
-            float needH = Mathf.Max(measured.y, overlayLabelStyle.fontSize * 1.45f * lines) + padY;
+            float needH = Mathf.Max(measured.y, measureStyle.fontSize * 1.45f * lines) + padY;
             if (rect.width < needW) rect.width = needW;
             if (rect.height < needH) rect.height = needH;
 
@@ -384,6 +388,11 @@ namespace BoardGameTutorial
                 }
             }
             // 统一文字说明格式：深色描边 + 白色正文，不画背景框。
+            // ``size`` / annotation_size 只对该 label 生效，用于章节标题等
+            // 需要比普通说明文字更大的展示；未写时沿用统一默认字号。
+            EnsureOverlayLabelStyles();
+            EnsureSizedLabelStyles(ResolvedLabelFontSize(annotation),
+                out GUIStyle labelStyle, out GUIStyle shadowStyle);
             string align = (annotation.LabelAlign ?? "").Trim().ToLowerInvariant();
             TextAnchor anchor = TextAnchor.MiddleLeft;
             if (align == "center") anchor = TextAnchor.MiddleCenter;
@@ -392,7 +401,7 @@ namespace BoardGameTutorial
             float centerY = rect.y + rect.height * 0.5f;
             // 先按每行最多 LabelMaxCharsPerLine 个字自动换行，再交给 GUI 排版。
             string wrappedText = WrapLabelText(annotation.Text, LabelMaxCharsPerLine);
-            rect = FitLabelRect(rect, wrappedText);
+            rect = FitLabelRect(rect, wrappedText, labelStyle);
             if (anchor == TextAnchor.MiddleCenter)
             {
                 // FitLabelRect grows from the authored top-left.  For centered
@@ -409,14 +418,14 @@ namespace BoardGameTutorial
             }
             Color color = ResolvedAnnotationColor(annotation, Color.white);
             Color savedGuiColor = GUI.color;
-            TextAnchor savedAnchor = overlayLabelStyle.alignment;
-            TextAnchor savedShadowAnchor = labelShadowStyle.alignment;
-            overlayLabelStyle.alignment = anchor;
-            labelShadowStyle.alignment = anchor;
+            TextAnchor savedAnchor = labelStyle.alignment;
+            TextAnchor savedShadowAnchor = shadowStyle.alignment;
+            labelStyle.alignment = anchor;
+            shadowStyle.alignment = anchor;
             try
             {
                 GUI.color = color;
-                float shadowScale = Mathf.Max(1f, overlayLabelStyle.fontSize / 34f);
+                float shadowScale = Mathf.Max(1f, labelStyle.fontSize / 34f);
                 for (int i = 0; i < SubtitleOutlineOffsets.Length; i++)
                 {
                     Vector2 offset = SubtitleOutlineOffsets[i];
@@ -427,15 +436,50 @@ namespace BoardGameTutorial
                             rect.width,
                             rect.height),
                         wrappedText,
-                        labelShadowStyle);
+                        shadowStyle);
                 }
-                GUI.Label(rect, wrappedText, overlayLabelStyle);
+                GUI.Label(rect, wrappedText, labelStyle);
             }
             finally
             {
-                overlayLabelStyle.alignment = savedAnchor;
-                labelShadowStyle.alignment = savedShadowAnchor;
+                labelStyle.alignment = savedAnchor;
+                shadowStyle.alignment = savedShadowAnchor;
                 GUI.color = savedGuiColor;
+            }
+        }
+
+        /// <summary>
+        /// Resolve a per-label font size. ``annotation_size`` is authored in
+        /// 1080p-reference pixels; the default unified label size is used when
+        /// it is absent.  This keeps chapter-title cards large without turning
+        /// every annotation into a title.
+        /// </summary>
+        private int ResolvedLabelFontSize(VisualAnnotationState annotation)
+        {
+            if (annotation != null && annotation.SizePx > 0f)
+                return Mathf.Clamp(Mathf.RoundToInt(annotation.SizePx * UiScale()), 20, 180);
+            return Mathf.Clamp(Mathf.RoundToInt(Screen.height * 0.046f), 28, 72);
+        }
+
+        private void EnsureSizedLabelStyles(int fontSize, out GUIStyle labelStyle, out GUIStyle shadowStyle)
+        {
+            if (overlayLabelStyle != null && fontSize == overlayLabelStyle.fontSize)
+            {
+                labelStyle = overlayLabelStyle;
+                shadowStyle = labelShadowStyle;
+                return;
+            }
+
+            if (!sizedOverlayLabelStyles.TryGetValue(fontSize, out labelStyle))
+            {
+                labelStyle = new GUIStyle(overlayLabelStyle) { fontSize = fontSize };
+                sizedOverlayLabelStyles[fontSize] = labelStyle;
+            }
+            if (!sizedLabelShadowStyles.TryGetValue(fontSize, out shadowStyle))
+            {
+                shadowStyle = new GUIStyle(labelStyle);
+                shadowStyle.normal.textColor = new Color(0f, 0f, 0f, 0.92f);
+                sizedLabelShadowStyles[fontSize] = shadowStyle;
             }
         }
 
