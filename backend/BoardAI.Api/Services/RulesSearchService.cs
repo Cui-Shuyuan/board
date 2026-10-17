@@ -104,25 +104,38 @@ public sealed class RulesSearchService
     }
 
 
-    public ListConceptsResult ListAllConceptIds(string game)
+    public ListConceptsResult ListAllConceptIds(string game, int offset = 0, int limit = 50)
     {
-        var byType = new Dictionary<string, List<ConceptSummary>>();
+        offset = Math.Max(0, offset);
+        limit = limit <= 0 ? 50 : limit;
+        var all = new List<ConceptSummary>();
         foreach (var type in _catalog.GetConceptTypes(game))
         {
             var concepts = _catalog.ListConcepts(game, type);
-            if (concepts.Count > 0)
-                byType[type] = concepts.Select(c => new ConceptSummary
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Type = c.Type
-                }).ToList();
+            all.AddRange(concepts.Select(c => new ConceptSummary
+            {
+                Id = c.Id,
+                Path = string.IsNullOrWhiteSpace(c.Path)
+                    ? (type == "ontology" ? "ontology::" + c.Id : c.Id)
+                    : c.Path,
+                Name = c.Name,
+                Type = c.Type,
+                Description = c.Description
+            }));
         }
 
+        var page = all.Skip(offset).Take(limit).ToList();
+        var byType = page
+            .GroupBy(c => string.IsNullOrWhiteSpace(c.Type) ? "unknown" : c.Type!, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.ToList(), StringComparer.Ordinal);
         return new ListConceptsResult
         {
             ByType = byType,
-            TotalCount = byType.Values.Sum(v => v.Count)
+            TotalCount = all.Count,
+            Offset = offset,
+            Limit = limit,
+            HasMore = offset + page.Count < all.Count,
+            Note = "Catalog page. total_count describes the full catalog; has_more and offset/limit describe this page. A page is not the complete catalog."
         };
     }
 

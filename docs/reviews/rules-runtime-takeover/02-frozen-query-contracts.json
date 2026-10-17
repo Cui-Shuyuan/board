@@ -1,0 +1,454 @@
+{
+  "generated_from_head": "d1ff8e8 + phase-02 working tree",
+  "queries": [
+    {
+      "game": "agricola",
+      "plan": {
+        "queries": [
+          {
+            "relation": "flow",
+            "scope": "local",
+            "entity": "harvest_feeding",
+            "include": [
+              "children",
+              "position",
+              "conditions"
+            ]
+          }
+        ]
+      },
+      "status": "ok",
+      "resolution": "exact",
+      "coverage": "complete",
+      "resolved_targets": [
+        "game/round_loop/harvest/harvest_feeding"
+      ],
+      "omissions": [],
+      "candidates": null,
+      "payloads": [
+        {
+          "type": "flow_slice",
+          "canonical_path": "game/round_loop/harvest/harvest_feeding",
+          "completeness": "complete",
+          "data": {
+            "scope": "local",
+            "target": {
+              "canonical_path": "game/round_loop/harvest/harvest_feeding",
+              "id": "harvest_feeding",
+              "name": "喂养阶段",
+              "kind": "flow_node",
+              "index": 1,
+              "optional": false,
+              "do_after": "harvest_field_phase",
+              "loop": null,
+              "condition": null,
+              "child_paths": []
+            },
+            "ancestors": [
+              {
+                "canonical_path": "game",
+                "id": "game",
+                "name": "游戏",
+                "kind": "round",
+                "loop": null,
+                "condition": null
+              },
+              {
+                "canonical_path": "game/round_loop",
+                "id": "round_loop",
+                "name": "回合循环",
+                "kind": "round",
+                "loop": {
+                  "count": 14,
+                  "counter": "round_number"
+                },
+                "condition": null
+              },
+              {
+                "canonical_path": "game/round_loop/harvest",
+                "id": "harvest",
+                "name": "收获阶段",
+                "kind": "phase",
+                "loop": null,
+                "condition": "<harvest_round>"
+              }
+            ],
+            "parent": {
+              "canonical_path": "game/round_loop/harvest",
+              "id": "harvest",
+              "name": "收获阶段",
+              "kind": "phase",
+              "index": 3,
+              "optional": false,
+              "do_after": "returning_home",
+              "loop": null,
+              "condition": "<harvest_round>",
+              "child_paths": [
+                "game/round_loop/harvest/harvest_field_phase",
+                "game/round_loop/harvest/harvest_feeding",
+                "game/round_loop/harvest/harvest_breeding"
+              ]
+            },
+            "siblings": [
+              {
+                "canonical_path": "game/round_loop/harvest/harvest_field_phase",
+                "id": "harvest_field_phase",
+                "name": "田地阶段",
+                "kind": "flow_node",
+                "index": 0,
+                "optional": false,
+                "do_after": null,
+                "loop": null,
+                "condition": null,
+                "child_paths": []
+              },
+              {
+                "canonical_path": "game/round_loop/harvest/harvest_feeding",
+                "id": "harvest_feeding",
+                "name": "喂养阶段",
+                "kind": "flow_node",
+                "index": 1,
+                "optional": false,
+                "do_after": "harvest_field_phase",
+                "loop": null,
+                "condition": null,
+                "child_paths": []
+              },
+              {
+                "canonical_path": "game/round_loop/harvest/harvest_breeding",
+                "id": "harvest_breeding",
+                "name": "繁殖阶段",
+                "kind": "flow_node",
+                "index": 2,
+                "optional": false,
+                "do_after": "harvest_feeding",
+                "loop": null,
+                "condition": null,
+                "child_paths": []
+              }
+            ],
+            "children": [],
+            "child_count": 0,
+            "can_expand_children": false
+          },
+          "content": {
+            "id": "harvest_feeding",
+            "name": {
+              "zh": "喂养阶段",
+              "en": "Feeding Phase"
+            },
+            "description": {
+              "zh": "结算<harvest_feeding>：每个已上场<family_member>需 2 <food>、本回合新生儿只需 1；可用生吃、烹饪、手工建筑转换或卡牌效果支付；每缺 1 食物拿 1 个<begging_marker>（-3 分）。",
+              "en": "Resolve <harvest_feeding>: every <family_member> in play needs 2 <food>, a newborn only 1; pay via raw eating, cooking, craft conversions, or card effects; take 1 <begging_marker> (-3 points) per food short."
+            },
+            "quantity": {
+              "zh": "2 × 家庭成员（新生儿只算 1）。",
+              "en": "2 × family members (newborns count as 1).",
+              "numeric": [
+                {
+                  "when": {
+                    "zh": "新生儿、婴儿",
+                    "en": "newborn"
+                  },
+                  "value": 1,
+                  "unit": "份"
+                },
+                {
+                  "when": {
+                    "zh": "家庭成员、正式成员",
+                    "en": "family member"
+                  },
+                  "value": 2,
+                  "per": {
+                    "zh": "每人",
+                    "en": "per person"
+                  },
+                  "unit": "份"
+                }
+              ]
+            },
+            "do_after": "harvest_field_phase",
+            "<ontology::per_player>": true,
+            "<harvest_feeding>": {
+              "description": {
+                "zh": "喂养家人，不足部分拿乞讨标记。",
+                "en": "Feed the family; take begging markers for shortfalls."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "game": "wingspan",
+      "plan": {
+        "queries": [
+          {
+            "relation": "members",
+            "entity": "habitat",
+            "offset": 0,
+            "limit": 20
+          }
+        ]
+      },
+      "status": "ok",
+      "resolution": "exact",
+      "coverage": "complete",
+      "resolved_targets": [
+        "habitat"
+      ],
+      "omissions": [],
+      "candidates": null,
+      "payloads": [
+        {
+          "type": "definition",
+          "canonical_path": "habitat",
+          "completeness": "complete",
+          "data": null,
+          "content": null
+        },
+        {
+          "type": "member_set",
+          "canonical_path": "habitat",
+          "completeness": "complete",
+          "data": {
+            "collection_kind": [
+              "schema_type_relation"
+            ],
+            "members": [
+              {
+                "canonical_path": "forest_habitat",
+                "id": "forest_habitat",
+                "name": "森林栖息地",
+                "source": "specifies",
+                "content": {
+                  "id": "forest_habitat",
+                  "name": {
+                    "zh": "森林栖息地",
+                    "en": "Forest Habitat"
+                  },
+                  "abstract": false,
+                  "description": {
+                    "zh": "放置森林鸟的区域，最多 5 只。使用获取食物行动后，从右到左触发该行棕色能力。",
+                    "en": "Forest bird area, max 5 birds. Brown powers here are activated right-to-left after taking the gain food action."
+                  },
+                  "specifies": "<habitat>",
+                  "contains": {
+                    "type": "<bird_card>[]"
+                  },
+                  "capacity": 5
+                }
+              },
+              {
+                "canonical_path": "grassland_habitat",
+                "id": "grassland_habitat",
+                "name": "草原栖息地",
+                "source": "specifies",
+                "content": {
+                  "id": "grassland_habitat",
+                  "name": {
+                    "zh": "草原栖息地",
+                    "en": "Grassland Habitat"
+                  },
+                  "abstract": false,
+                  "description": {
+                    "zh": "放置草原鸟的区域，最多 5 只。使用下蛋行动后，从右到左触发该行棕色能力。",
+                    "en": "Grassland bird area, max 5 birds. Brown powers here are activated right-to-left after taking the lay eggs action."
+                  },
+                  "specifies": "<habitat>",
+                  "contains": {
+                    "type": "<bird_card>[]"
+                  },
+                  "capacity": 5
+                }
+              },
+              {
+                "canonical_path": "wetland_habitat",
+                "id": "wetland_habitat",
+                "name": "湿地栖息地",
+                "source": "specifies",
+                "content": {
+                  "id": "wetland_habitat",
+                  "name": {
+                    "zh": "湿地栖息地",
+                    "en": "Wetland Habitat"
+                  },
+                  "abstract": false,
+                  "description": {
+                    "zh": "放置湿地鸟的区域，最多 5 只。使用抽牌行动后，从右到左触发该行棕色能力。",
+                    "en": "Wetland bird area, max 5 birds. Brown powers here are activated right-to-left after taking the draw cards action."
+                  },
+                  "specifies": "<habitat>",
+                  "contains": {
+                    "type": "<bird_card>[]"
+                  },
+                  "capacity": 5
+                }
+              }
+            ],
+            "total_count": 3,
+            "offset": 0,
+            "limit": 20,
+            "has_more": false,
+            "membership_proven": true
+          },
+          "content": {
+            "collection_kind": [
+              "schema_type_relation"
+            ],
+            "members": [
+              {
+                "canonical_path": "forest_habitat",
+                "id": "forest_habitat",
+                "name": "森林栖息地",
+                "source": "specifies",
+                "content": {
+                  "id": "forest_habitat",
+                  "name": {
+                    "zh": "森林栖息地",
+                    "en": "Forest Habitat"
+                  },
+                  "abstract": false,
+                  "description": {
+                    "zh": "放置森林鸟的区域，最多 5 只。使用获取食物行动后，从右到左触发该行棕色能力。",
+                    "en": "Forest bird area, max 5 birds. Brown powers here are activated right-to-left after taking the gain food action."
+                  },
+                  "specifies": "<habitat>",
+                  "contains": {
+                    "type": "<bird_card>[]"
+                  },
+                  "capacity": 5
+                }
+              },
+              {
+                "canonical_path": "grassland_habitat",
+                "id": "grassland_habitat",
+                "name": "草原栖息地",
+                "source": "specifies",
+                "content": {
+                  "id": "grassland_habitat",
+                  "name": {
+                    "zh": "草原栖息地",
+                    "en": "Grassland Habitat"
+                  },
+                  "abstract": false,
+                  "description": {
+                    "zh": "放置草原鸟的区域，最多 5 只。使用下蛋行动后，从右到左触发该行棕色能力。",
+                    "en": "Grassland bird area, max 5 birds. Brown powers here are activated right-to-left after taking the lay eggs action."
+                  },
+                  "specifies": "<habitat>",
+                  "contains": {
+                    "type": "<bird_card>[]"
+                  },
+                  "capacity": 5
+                }
+              },
+              {
+                "canonical_path": "wetland_habitat",
+                "id": "wetland_habitat",
+                "name": "湿地栖息地",
+                "source": "specifies",
+                "content": {
+                  "id": "wetland_habitat",
+                  "name": {
+                    "zh": "湿地栖息地",
+                    "en": "Wetland Habitat"
+                  },
+                  "abstract": false,
+                  "description": {
+                    "zh": "放置湿地鸟的区域，最多 5 只。使用抽牌行动后，从右到左触发该行棕色能力。",
+                    "en": "Wetland bird area, max 5 birds. Brown powers here are activated right-to-left after taking the draw cards action."
+                  },
+                  "specifies": "<habitat>",
+                  "contains": {
+                    "type": "<bird_card>[]"
+                  },
+                  "capacity": 5
+                }
+              }
+            ],
+            "total_count": 3,
+            "offset": 0,
+            "limit": 20,
+            "has_more": false,
+            "membership_proven": true
+          }
+        }
+      ]
+    },
+    {
+      "game": "wingspan",
+      "plan": {
+        "queries": [
+          {
+            "relation": "list",
+            "offset": 0,
+            "limit": 2
+          }
+        ]
+      },
+      "status": "ok",
+      "resolution": "exact",
+      "coverage": "complete",
+      "resolved_targets": [
+        "catalog"
+      ],
+      "omissions": [],
+      "candidates": null,
+      "payloads": [
+        {
+          "type": "catalog_page",
+          "canonical_path": "catalog",
+          "completeness": "complete",
+          "data": {
+            "total_count": 148,
+            "offset": 0,
+            "limit": 2,
+            "has_more": true
+          },
+          "content": {
+            "ByType": {
+              "concepts": [
+                {
+                  "Id": "object",
+                  "Path": "ontology::object",
+                  "Name": "对象",
+                  "Type": "concepts",
+                  "Score": 0,
+                  "Description": "可被识别、引用或操作的实体或抽象概念。",
+                  "Media": null,
+                  "TermScores": null,
+                  "FullQueryScore": null,
+                  "PhraseScore": null,
+                  "SubqueryBoost": 0,
+                  "NameMatchScore": null,
+                  "MatchReason": null
+                },
+                {
+                  "Id": "player",
+                  "Path": "ontology::player",
+                  "Name": "玩家",
+                  "Type": "concepts",
+                  "Score": 0,
+                  "Description": "直接参与游戏并能够做出决策的实体。<player> 是游戏中的能动主体——它发起 <action>、拥有 <object>、积累 Score、最终参与胜负判定。<player> 继承自 <object>。",
+                  "Media": null,
+                  "TermScores": null,
+                  "FullQueryScore": null,
+                  "PhraseScore": null,
+                  "SubqueryBoost": 0,
+                  "NameMatchScore": null,
+                  "MatchReason": null
+                }
+              ]
+            },
+            "TotalCount": 148,
+            "Offset": 0,
+            "Limit": 2,
+            "HasMore": true,
+            "Note": "Catalog page. total_count describes the full catalog; has_more and offset/limit describe this page. A page is not the complete catalog."
+          }
+        }
+      ]
+    }
+  ]
+}

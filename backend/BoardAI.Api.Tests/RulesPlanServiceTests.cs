@@ -150,7 +150,7 @@ public sealed class RulesPlanServiceTests
             """
             {
               "queries": [
-                { "relation": "flow", "entity": "" }
+                { "relation": "flow", "entity": "", "scope": "game" }
               ]
             }
             """);
@@ -159,8 +159,9 @@ public sealed class RulesPlanServiceTests
 
         var item = Assert.Single(result.Results);
         Assert.Equal("ok", item.Status);
-        Assert.Single(item.Matched);
-        Assert.Equal("game", GetId(item.Matched[0]));
+        Assert.Equal(QueryResolutionStatuses.Exact, item.Resolution);
+        Assert.Equal(new[] { "game" }, item.ResolvedTargets);
+        Assert.Contains(item.Payloads, payload => payload.Type == QueryPayloadTypes.FlowSlice);
     }
 
     [Fact]

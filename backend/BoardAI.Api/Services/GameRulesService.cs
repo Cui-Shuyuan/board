@@ -91,10 +91,10 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     }
 
 
-    public ListConceptsResult ListAllConceptIds(string game)
+    public ListConceptsResult ListAllConceptIds(string game, int offset = 0, int limit = 50)
     {
         using var scope = UseSnapshot(game);
-        return _searchService.ListAllConceptIds(game);
+        return _searchService.ListAllConceptIds(game, offset, limit);
     }
 
 

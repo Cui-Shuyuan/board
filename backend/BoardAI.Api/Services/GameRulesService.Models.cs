@@ -65,6 +65,7 @@ public static class QueryPayloadTypes
     public const string FlowSlice = "flow_slice";
     public const string RelationFacts = "relation_facts";
     public const string ComputedFact = "computed_fact";
+    public const string MemberSet = "member_set";
 }
 
 /// <summary>一次查询的结果覆盖范围，不代表最终自然语言回答一定充分。</summary>
@@ -199,8 +200,12 @@ public class PlanItemResult
 public class ListConceptsResult
 {
     public Dictionary<string, List<ConceptSummary>> ByType { get; set; } = new();
+    /// <summary>目录中的总条目数，不是当前页条数。</summary>
     public int TotalCount { get; set; }
-    public string Note { get; set; } = "Exhaustive listing of ALL concept IDs and names grouped by type. Use this to confirm a concept doesn't exist or to browse the full catalog.";
+    public int Offset { get; set; }
+    public int Limit { get; set; }
+    public bool HasMore { get; set; }
+    public string Note { get; set; } = "Catalog page. total_count describes the full catalog; has_more and offset/limit describe this page. A page is not the complete catalog.";
 }
 
 /// <summary>正式读取结果中的稳定路径+原始 JSON 节点。</summary>

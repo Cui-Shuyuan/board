@@ -130,6 +130,25 @@ public sealed class RulesPlanService
             var entity = q.TryGetProperty("entity", out var ep) ? ep.GetString() ?? "" : "";
             var explicitIntent = q.TryGetProperty("intent", out var ip) ? ip.GetString() ?? "" : "";
             explicitIntent = explicitIntent.Trim();
+            var scope = q.TryGetProperty("scope", out var scopeProp) ? scopeProp.GetString() ?? "" : "";
+            var offset = q.TryGetProperty("offset", out var offsetProp)
+                && offsetProp.ValueKind == JsonValueKind.Number
+                && offsetProp.TryGetInt32(out var parsedOffset)
+                    ? Math.Max(0, parsedOffset)
+                    : 0;
+            var limit = q.TryGetProperty("limit", out var limitProp)
+                && limitProp.ValueKind == JsonValueKind.Number
+                && limitProp.TryGetInt32(out var parsedLimit)
+                    ? Math.Clamp(parsedLimit, 1, 200)
+                    : 50;
+            var include = q.TryGetProperty("include", out var includeProp)
+                && includeProp.ValueKind == JsonValueKind.Array
+                    ? includeProp.EnumerateArray()
+                        .Where(value => value.ValueKind == JsonValueKind.String)
+                        .Select(value => value.GetString() ?? "")
+                        .Where(value => !string.IsNullOrWhiteSpace(value))
+                        .ToList()
+                    : new List<string>();
 
             // 展示/日志用 intent：单一子问题缺失时回填客人原问句，方便观察；
             // 但检索只使用模型显式提供的 intent。缺失项保守回到原有 entity 路径，
@@ -141,7 +160,7 @@ public sealed class RulesPlanService
                 displayIntent = question.Trim();
 
             var item = await ExecutePlanQueryAsync(
-                game, relation, entity, explicitIntent, question, cancellationToken);
+                game, relation, entity, explicitIntent, question, scope, include, offset, limit, cancellationToken);
             item.QueryIndex = queryIndex;
             item.QueryId = $"{result.RequestId}:{queryIndex}";
             item.RulesVersion = result.RulesVersion;
@@ -151,7 +170,7 @@ public sealed class RulesPlanService
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        if (result.Results.Any(r => r.Status is "unresolved" or "unsupported" or "no_match"))
+        if (result.Results.Any(r => r.Status is "unresolved" or "unsupported" or "no_match" or "invalid"))
         {
             var notes = new List<string>();
             if (result.Results.Any(r => r.Status == "unresolved"))
@@ -159,7 +178,9 @@ public sealed class RulesPlanService
             if (result.Results.Any(r => r.Status == "no_match"))
                 notes.Add("no_match 表示规则库未确认到该查询的信息，请明确说明未查到，不要编造规则");
             if (result.Results.Any(r => r.Status == "unsupported"))
-                notes.Add("unsupported 的 relation 请改用 explain/condition/ordering/boundary/flow/list/identify");
+                notes.Add("unsupported 的 relation 请改用 explain/condition/ordering/boundary/flow/list/identify/members");
+            if (result.Results.Any(r => r.Status == "invalid"))
+                notes.Add("invalid 表示查询参数与 scope 组合不合法；请按 tool schema 修正参数");
             result.Note = "部分查询未完成：" + string.Join("；", notes) + "。";
         }
         return result;
@@ -168,7 +189,7 @@ public sealed class RulesPlanService
 
     private static readonly HashSet<string> PlanRelations = new(StringComparer.Ordinal)
     {
-        "explain", "condition", "ordering", "boundary", "flow", "list", "identify"
+        "explain", "condition", "ordering", "boundary", "flow", "list", "identify", "members"
     };
 
 
@@ -182,6 +203,10 @@ public sealed class RulesPlanService
         string entity,
         string intent,
         string question,
+        string scope,
+        IReadOnlyList<string> include,
+        int offset,
+        int limit,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -195,13 +220,16 @@ public sealed class RulesPlanService
                 Status = "unsupported",
                 Resolution = QueryResolutionStatuses.Unsupported,
                 Coverage = QueryCoverageStatuses.Unknown,
-                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list/identify）。",
+                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list/identify/members）。",
                 Omissions =
                 {
                     new QueryOmission { Reason = QueryOmissionReasons.UnsupportedRelation, FieldPath = "relation" }
                 }
             };
         }
+
+        if (relation == "members")
+            return await ExecuteMembersQueryAsync(game, entity, offset, limit, cancellationToken);
 
         // 外观识别保留完整描述。问题里出现通用名，不代表已识别具体组件。
         if (relation == "identify")
@@ -257,55 +285,21 @@ public sealed class RulesPlanService
 
         // flow/list 不需要实体解析
         if (relation == "flow")
-        {
-            var gameConcept = _catalog.GetConceptsWithPaths(game, "game").ToList();
-            if (gameConcept.Count == 0)
-            {
-                return new PlanItemResult
-                {
-                    Relation = relation,
-                    Entity = entity,
-                    Status = "no_match",
-                    Resolution = QueryResolutionStatuses.NotFound,
-                    Coverage = QueryCoverageStatuses.Unknown,
-                    Message = "规则库中没有该游戏的流程定义，无法返回任何流程数据。请向客人说明这部分规则未被规则库覆盖，不要自行补写规则。",
-                    Omissions =
-                    {
-                        new QueryOmission { Reason = QueryOmissionReasons.NoRuleCoverage, FieldPath = "flow" }
-                    }
-                };
-            }
+            return ExecuteFlowQueryAsync(game, entity, scope, include);
 
-            var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
-                ? snapshot.Version
-                : null;
-            return new PlanItemResult
-            {
-                Relation = relation,
-                Entity = entity,
-                Status = "ok",
-                Resolution = QueryResolutionStatuses.Exact,
-                Coverage = QueryCoverageStatuses.Complete,
-                Source = "exact_id",
-                Matched = gameConcept.Select(hit => hit.Element).ToList(),
-                ResolvedTargets = gameConcept.Select(hit => hit.CanonicalPath).ToList(),
-                Payloads = gameConcept.Select(hit => new QueryPayload
-                {
-                    Type = QueryPayloadTypes.Definition,
-                    CanonicalPath = hit.CanonicalPath,
-                    RulesVersion = version,
-                    Completeness = QueryCoverageStatuses.Complete,
-                    Content = hit.Element.Clone()
-                }).ToList(),
-                RetrievalQueries = new List<string>()
-            };
-        }
         if (relation == "list")
         {
-            var catalog = _searchService.ListAllConceptIds(game);
+            var catalog = _searchService.ListAllConceptIds(game, offset, limit);
             var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
                 ? snapshot.Version
                 : null;
+            var data = new Dictionary<string, JsonElement>
+            {
+                ["total_count"] = JsonSerializer.SerializeToElement(catalog.TotalCount),
+                ["offset"] = JsonSerializer.SerializeToElement(catalog.Offset),
+                ["limit"] = JsonSerializer.SerializeToElement(catalog.Limit),
+                ["has_more"] = JsonSerializer.SerializeToElement(catalog.HasMore)
+            };
             return new PlanItemResult
             {
                 Relation = relation,
@@ -323,7 +317,8 @@ public sealed class RulesPlanService
                         CanonicalPath = "catalog",
                         RulesVersion = version,
                         Completeness = QueryCoverageStatuses.Complete,
-                        Content = JsonSerializer.SerializeToElement(catalog)
+                        Content = JsonSerializer.SerializeToElement(catalog),
+                        Data = data
                     }
                 },
                 RetrievalQueries = new List<string>()
@@ -816,6 +811,656 @@ public sealed class RulesPlanService
     }
 
 
+    private PlanItemResult ExecuteFlowQueryAsync(
+        string game, string entity, string scope, IReadOnlyList<string> include)
+    {
+        var normalizedScope = (scope ?? "").Trim().ToLowerInvariant();
+        if (normalizedScope is not ("local" or "game"))
+        {
+            return new PlanItemResult
+            {
+                Relation = "flow",
+                Entity = entity,
+                Status = "invalid",
+                Resolution = QueryResolutionStatuses.Invalid,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "flow 查询必须显式提供 scope=local 或 scope=game；scope=local 需要 entity。",
+                Omissions =
+                {
+                    new QueryOmission
+                    {
+                        Reason = QueryOmissionReasons.InvalidRequest,
+                        FieldPath = "scope",
+                        Continuation = new QueryContinuation
+                        {
+                            Operation = "flow",
+                            Entity = string.IsNullOrWhiteSpace(entity) ? null : entity,
+                            Scope = "local|game"
+                        }
+                    }
+                }
+            };
+        }
+
+        var index = _flowService.GetFlowIndex(game);
+        var version = index.RulesVersion;
+        if (index.Root.ValueKind == JsonValueKind.Undefined)
+        {
+            return new PlanItemResult
+            {
+                Relation = "flow",
+                Entity = entity,
+                Status = "no_match",
+                Resolution = QueryResolutionStatuses.NotFound,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "规则库中没有该游戏的流程定义。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.NoRuleCoverage, FieldPath = "flow" }
+                }
+            };
+        }
+
+        if (normalizedScope == "game")
+        {
+            if (!string.IsNullOrWhiteSpace(entity))
+            {
+                return new PlanItemResult
+                {
+                    Relation = "flow",
+                    Entity = entity,
+                    Status = "invalid",
+                    Resolution = QueryResolutionStatuses.Invalid,
+                    Coverage = QueryCoverageStatuses.Unknown,
+                    Message = "scope=game 返回整局流程，不接受 entity；若要定位局部节点请使用 scope=local。",
+                    Omissions =
+                    {
+                        new QueryOmission { Reason = QueryOmissionReasons.InvalidRequest, FieldPath = "entity" }
+                    }
+                };
+            }
+
+            var nodeSummary = index.AllNodes.Select(node => ToFlowSkeleton(node)).ToList();
+            var data = new Dictionary<string, JsonElement>
+            {
+                ["scope"] = JsonSerializer.SerializeToElement("game"),
+                ["node_count"] = JsonSerializer.SerializeToElement(index.AllNodes.Count),
+                ["nodes"] = JsonSerializer.SerializeToElement(nodeSummary)
+            };
+            return new PlanItemResult
+            {
+                Relation = "flow",
+                Entity = entity,
+                Status = "ok",
+                Resolution = QueryResolutionStatuses.Exact,
+                Coverage = QueryCoverageStatuses.Complete,
+                Source = "scope_game",
+                ResolvedTargets = new List<string> { "game" },
+                Payloads =
+                {
+                    new QueryPayload
+                    {
+                        Type = QueryPayloadTypes.FlowSlice,
+                        CanonicalPath = "game",
+                        RulesVersion = version,
+                        Completeness = QueryCoverageStatuses.Complete,
+                        Content = index.Root.Clone(),
+                        Data = data
+                    }
+                },
+                RetrievalQueries = new List<string>()
+            };
+        }
+
+        if (string.IsNullOrWhiteSpace(entity))
+        {
+            return new PlanItemResult
+            {
+                Relation = "flow",
+                Entity = entity,
+                Status = "invalid",
+                Resolution = QueryResolutionStatuses.Invalid,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "scope=local 必须提供 entity，程序不会把无目标局部查询静默退回整局流程。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.InvalidRequest, FieldPath = "entity" }
+                }
+            };
+        }
+
+        var resolved = index.Resolve(entity);
+        if (resolved.Exact.Count > 1)
+        {
+            return FlowCandidatesResult(entity, resolved.Exact, "局部 id 命中多个规范流程路径，请选择 canonical_path。");
+        }
+        if (resolved.Exact.Count == 0)
+        {
+            if (resolved.Candidates.Count > 0)
+                return FlowCandidatesResult(entity, resolved.Candidates);
+            return new PlanItemResult
+            {
+                Relation = "flow",
+                Entity = entity,
+                Status = "no_match",
+                Resolution = QueryResolutionStatuses.NotFound,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "未在流程结构中找到该目标。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.NoRuleCoverage, FieldPath = "entity" }
+                }
+            };
+        }
+
+        var node = resolved.Exact[0];
+        var childNodes = node.ChildPaths
+            .Select(path => index.ByPath.GetValueOrDefault(path))
+            .Where(child => child != null)
+            .Cast<FlowNodeInfo>()
+            .ToList();
+        var parent = node.ParentPath != null ? index.ByPath.GetValueOrDefault(node.ParentPath) : null;
+        var siblings = parent?.ChildPaths
+            .Select(path => index.ByPath.GetValueOrDefault(path))
+            .Where(sibling => sibling != null)
+            .Cast<FlowNodeInfo>()
+            .ToList() ?? new List<FlowNodeInfo>();
+        var dataLocal = new Dictionary<string, JsonElement>
+        {
+            ["scope"] = JsonSerializer.SerializeToElement("local"),
+            ["target"] = JsonSerializer.SerializeToElement(ToFlowSkeleton(node, includeContent: false)),
+            ["ancestors"] = JsonSerializer.SerializeToElement(node.Ancestors.Select(ToFlowSkeleton).ToList()),
+            ["parent"] = parent == null
+                ? JsonSerializer.SerializeToElement<object?>(null)
+                : JsonSerializer.SerializeToElement(ToFlowSkeleton(parent, includeContent: false)),
+            ["siblings"] = JsonSerializer.SerializeToElement(siblings.Select(item => ToFlowSkeleton(item, includeContent: false)).ToList()),
+            ["children"] = JsonSerializer.SerializeToElement(childNodes.Select(item => ToFlowSkeleton(item, includeContent: true)).ToList()),
+            ["child_count"] = JsonSerializer.SerializeToElement(childNodes.Count),
+            ["can_expand_children"] = JsonSerializer.SerializeToElement(childNodes.Count > 0)
+        };
+        return new PlanItemResult
+        {
+            Relation = "flow",
+            Entity = entity,
+            Status = "ok",
+            Resolution = QueryResolutionStatuses.Exact,
+            Coverage = QueryCoverageStatuses.Complete,
+            Source = "canonical_path",
+            ResolvedTargets = new List<string> { node.CanonicalPath },
+            Payloads =
+            {
+                new QueryPayload
+                {
+                    Type = QueryPayloadTypes.FlowSlice,
+                    CanonicalPath = node.CanonicalPath,
+                    RulesVersion = version,
+                    Completeness = QueryCoverageStatuses.Complete,
+                    Content = node.Element.Clone(),
+                    Data = dataLocal
+                }
+            },
+            RetrievalQueries = new List<string> { entity }
+        };
+    }
+
+    private PlanItemResult FlowCandidatesResult(
+        string entity, IEnumerable<FlowNodeInfo> candidates, string? message = null)
+    {
+        var summaries = candidates
+            .Select(node => new ConceptSummary
+            {
+                Id = node.CanonicalPath,
+                Path = node.CanonicalPath,
+                Name = node.Name,
+                Type = node.Kind,
+                Description = $"局部 id={node.LocalId}"
+            })
+            .ToList();
+        return new PlanItemResult
+        {
+            Relation = "flow",
+            Entity = entity,
+            Status = "unresolved",
+            Resolution = QueryResolutionStatuses.Candidates,
+            Coverage = QueryCoverageStatuses.Unknown,
+            Candidates = summaries,
+            Message = message ?? "多个局部流程节点可能匹配；规范路径才是身份，请用 canonical_path 重新查询。",
+            Omissions =
+            {
+                new QueryOmission { Reason = QueryOmissionReasons.AmbiguousIdentity, FieldPath = "entity" }
+            }
+        };
+    }
+
+    private PlanItemResult FlowCandidatesResult(
+        string entity, IEnumerable<FlowTargetCandidate> candidates, string? message = null)
+        => FlowCandidatesResult(entity, candidates.Select(candidate => new FlowNodeInfo
+        {
+            CanonicalPath = candidate.CanonicalPath,
+            LocalId = candidate.Id,
+            Name = candidate.Name,
+            Kind = candidate.Kind,
+            Element = default
+        }), message);
+
+    private static Dictionary<string, object?> ToFlowSkeleton(FlowNodeInfo node, bool includeContent = false)
+    {
+        var result = new Dictionary<string, object?>
+        {
+            ["canonical_path"] = node.CanonicalPath,
+            ["id"] = node.LocalId,
+            ["name"] = node.Name,
+            ["kind"] = node.Kind,
+            ["index"] = node.Index,
+            ["optional"] = node.Optional,
+            ["do_after"] = node.DoAfter,
+            ["loop"] = node.Loop,
+            ["condition"] = node.Condition,
+            ["child_paths"] = node.ChildPaths
+        };
+        if (includeContent)
+            result["content"] = node.Element.ValueKind == JsonValueKind.Undefined ? null : node.Element.Clone();
+        return result;
+    }
+
+    private static Dictionary<string, object?> ToFlowSkeleton(FlowAncestorInfo ancestor) => new()
+    {
+        ["canonical_path"] = ancestor.CanonicalPath,
+        ["id"] = ancestor.LocalId,
+        ["name"] = ancestor.Name,
+        ["kind"] = ancestor.Kind,
+        ["loop"] = ancestor.Loop,
+        ["condition"] = ancestor.Condition
+    };
+
+    private async Task<PlanItemResult> ExecuteMembersQueryAsync(
+        string game, string entity, int offset, int limit, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (string.IsNullOrWhiteSpace(entity))
+        {
+            return new PlanItemResult
+            {
+                Relation = "members",
+                Entity = entity,
+                Status = "invalid",
+                Resolution = QueryResolutionStatuses.Invalid,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "members 查询必须提供 entity（集合/类型/父范围）。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.InvalidRequest, FieldPath = "entity" }
+                }
+            };
+        }
+
+        var hits = PreferGameIdentity(
+            entity, _catalog.GetConceptsWithPaths(game, entity).ToList());
+        if (hits.Count == 0)
+        {
+            var deterministic = ResolvePlanEntity(game, entity, out var candidates, out _);
+            if (deterministic.Count > 0)
+                hits = deterministic;
+            else if (candidates.Count > 0)
+                return new PlanItemResult
+                {
+                    Relation = "members",
+                    Entity = entity,
+                    Status = "unresolved",
+                    Resolution = QueryResolutionStatuses.Candidates,
+                    Coverage = QueryCoverageStatuses.Unknown,
+                    Candidates = candidates,
+                    Message = "集合/类型身份未确定，请选择候选后重试。",
+                    Omissions =
+                    {
+                        new QueryOmission { Reason = QueryOmissionReasons.AmbiguousIdentity, FieldPath = "entity" }
+                    }
+                };
+        }
+
+        if (hits.Count == 0)
+        {
+            return new PlanItemResult
+            {
+                Relation = "members",
+                Entity = entity,
+                Status = "no_match",
+                Resolution = QueryResolutionStatuses.NotFound,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "规则库中未找到该集合或类型。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.NoRuleCoverage, FieldPath = "entity" }
+                }
+            };
+        }
+        if (hits.Count > 1)
+        {
+            return new PlanItemResult
+            {
+                Relation = "members",
+                Entity = entity,
+                Status = "unresolved",
+                Resolution = QueryResolutionStatuses.Candidates,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Candidates = hits.Select(hit => new ConceptSummary
+                {
+                    Id = hit.CanonicalPath,
+                    Path = hit.CanonicalPath,
+                    Name = ExtractConceptName(hit.Element),
+                    Type = GetConceptTypeMap(game).GetValueOrDefault(RulesTextUtils.GetElementId(hit.Element), "")
+                }).ToList(),
+                Message = "集合/类型身份存在多个候选，请使用 canonical_path 消歧。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.AmbiguousIdentity, FieldPath = "entity" }
+                }
+            };
+        }
+
+        var target = hits[0];
+        var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
+            ? snapshot.Version
+            : null;
+        var memberEntries = new List<MemberEntry>();
+        var membershipKinds = new List<string>();
+
+        foreach (var field in new[] { "members", "items", "options", "slots" })
+        {
+            if (target.Element.ValueKind != JsonValueKind.Object
+                || !target.Element.TryGetProperty(field, out var array)
+                || array.ValueKind != JsonValueKind.Array)
+                continue;
+
+            membershipKinds.Add("explicit:" + field);
+            for (var index = 0; index < array.GetArrayLength(); index++)
+            {
+                var memberElement = array[index];
+                var memberPath = $"{target.CanonicalPath}/{field}[{index}]";
+                var memberId = "";
+                var memberName = "";
+                JsonElement? content = null;
+                if (memberElement.ValueKind == JsonValueKind.Object)
+                {
+                    content = memberElement.Clone();
+                    memberId = RulesTextUtils.GetElementId(memberElement);
+                    if (memberElement.TryGetProperty("name", out var memberNameProp)
+                        && memberNameProp.ValueKind == JsonValueKind.Object
+                        && memberNameProp.TryGetProperty("zh", out var zh))
+                        memberName = zh.GetString() ?? "";
+                    // Inline members may also have an independently resolvable
+                    // canonical definition. Keep the declared membership path as
+                    // its source, but expose the definition path when available.
+                    var resolved = !string.IsNullOrWhiteSpace(memberId)
+                        ? _catalog.GetConceptsWithPaths(game, memberId).ToList()
+                        : new List<ConceptPathHit>();
+                    if (resolved.Count == 1)
+                        memberPath = resolved[0].CanonicalPath;
+                }
+                else if (memberElement.ValueKind == JsonValueKind.String)
+                {
+                    var reference = memberElement.GetString() ?? "";
+                    var local = NormalizeConceptRef(reference);
+                    if (!string.IsNullOrWhiteSpace(local))
+                    {
+                        var resolved = _catalog.GetConceptsWithPaths(game, local).ToList();
+                        if (resolved.Count == 1)
+                        {
+                            memberPath = resolved[0].CanonicalPath;
+                            memberId = RulesTextUtils.GetElementId(resolved[0].Element);
+                            memberName = ExtractConceptName(resolved[0].Element);
+                            content = resolved[0].Element.Clone();
+                        }
+                        else
+                        {
+                            memberId = local;
+                        }
+                    }
+                }
+                memberEntries.Add(new MemberEntry(memberPath, memberId, memberName, field, content));
+            }
+        }
+
+        // Schema type relations are membership only for explicit
+        // specifies/extends/instance_of edges. description text references are not
+        // scanned here.
+        var typeMembers = FindTypeMembers(game, target);
+        if (typeMembers.Count > 0)
+        {
+            membershipKinds.Add("schema_type_relation");
+            memberEntries.AddRange(typeMembers);
+        }
+
+        var distinctMembers = memberEntries
+            .GroupBy(entry => entry.CanonicalPath, StringComparer.Ordinal)
+            .Select(group => group.First())
+            .ToList();
+        var page = distinctMembers.Skip(offset).Take(limit).ToList();
+        var hasMore = offset + page.Count < distinctMembers.Count;
+        var membershipProven = membershipKinds.Count > 0;
+        var coverage = membershipProven
+            ? (hasMore ? QueryCoverageStatuses.Partial : QueryCoverageStatuses.Complete)
+            : QueryCoverageStatuses.Partial;
+
+        var dataDict = new Dictionary<string, JsonElement>
+        {
+            ["collection_kind"] = JsonSerializer.SerializeToElement(membershipKinds),
+            ["members"] = JsonSerializer.SerializeToElement(page.Select(entry => new
+            {
+                canonical_path = entry.CanonicalPath,
+                id = entry.Id,
+                name = entry.Name,
+                source = entry.Source,
+                content = entry.Content
+            }).ToList()),
+            ["total_count"] = JsonSerializer.SerializeToElement(distinctMembers.Count),
+            ["offset"] = JsonSerializer.SerializeToElement(offset),
+            ["limit"] = JsonSerializer.SerializeToElement(limit),
+            ["has_more"] = JsonSerializer.SerializeToElement(hasMore),
+            ["membership_proven"] = JsonSerializer.SerializeToElement(membershipProven)
+        };
+
+        var item = new PlanItemResult
+        {
+            Relation = "members",
+            Entity = entity,
+            Status = "ok",
+            Resolution = QueryResolutionStatuses.Exact,
+            Coverage = coverage,
+            Source = "canonical_path",
+            ResolvedTargets = new List<string> { target.CanonicalPath },
+            Payloads =
+            {
+                new QueryPayload
+                {
+                    Type = QueryPayloadTypes.Definition,
+                    CanonicalPath = target.CanonicalPath,
+                    RulesVersion = version,
+                    Completeness = QueryCoverageStatuses.Complete,
+                    DefinitionSource = "canonical_path",
+                    Content = target.Element.Clone()
+                },
+                new QueryPayload
+                {
+                    Type = QueryPayloadTypes.MemberSet,
+                    CanonicalPath = target.CanonicalPath,
+                    RulesVersion = version,
+                    Completeness = coverage,
+                    Content = JsonSerializer.SerializeToElement(dataDict),
+                    Data = dataDict
+                }
+            },
+            RetrievalQueries = new List<string> { entity }
+        };
+
+        if (!membershipProven)
+        {
+            item.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.NoRuleCoverage,
+                CanonicalPath = target.CanonicalPath,
+                FieldPath = "members",
+                Continuation = new QueryContinuation
+                {
+                    Operation = "members",
+                    Entity = target.CanonicalPath,
+                    Scope = "declared_members",
+                    Offset = offset,
+                    Limit = limit
+                }
+            });
+            item.Message = "未发现可证明完整成员关系的显式集合或 schema 关系；已返回定义依据，不能把空列表称作全集。";
+        }
+        else if (hasMore)
+        {
+            item.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.ContinuationRequired,
+                CanonicalPath = target.CanonicalPath,
+                FieldPath = "members",
+                Continuation = new QueryContinuation
+                {
+                    Operation = "members",
+                    Entity = target.CanonicalPath,
+                    Scope = "declared_members",
+                    Offset = offset + page.Count,
+                    Limit = limit
+                }
+            });
+            item.Message = "成员集合跨页；本页不宣称全集，请按 continuation 续读。";
+        }
+
+        return item;
+    }
+
+    private sealed record MemberEntry(
+        string CanonicalPath,
+        string Id,
+        string Name,
+        string Source,
+        JsonElement? Content);
+
+    private List<MemberEntry> FindTypeMembers(string game, ConceptPathHit target)
+    {
+        var results = new List<MemberEntry>();
+        var targetId = RulesTextUtils.GetElementId(target.Element);
+        var seenCandidatePaths = new HashSet<string>(StringComparer.Ordinal);
+        var flowType = new HashSet<string>(StringComparer.Ordinal) { "flow", "top_level_refs", "slots" };
+
+        foreach (var type in _catalog.GetConceptTypes(game))
+        {
+            if (flowType.Contains(type)) continue;
+            foreach (var summary in _catalog.ListConcepts(game, type))
+            {
+                var candidatePath = string.IsNullOrWhiteSpace(summary.Path) ? summary.Id : summary.Path;
+                if (string.IsNullOrWhiteSpace(candidatePath) || !seenCandidatePaths.Add(candidatePath)) continue;
+                var candidateHits = PreferGameIdentity(
+                    candidatePath, _catalog.GetConceptsWithPaths(game, candidatePath).ToList());
+                foreach (var candidate in candidateHits)
+                {
+                    if (candidate.CanonicalPath == target.CanonicalPath) continue;
+                    if (ConceptRelationLinksTo(
+                            game, candidate, target.CanonicalPath, targetId,
+                            new HashSet<string>(StringComparer.Ordinal) { target.CanonicalPath },
+                            out var source))
+                    {
+                        results.Add(new MemberEntry(
+                            candidate.CanonicalPath,
+                            RulesTextUtils.GetElementId(candidate.Element),
+                            ExtractConceptName(candidate.Element),
+                            source,
+                            candidate.Element.Clone()));
+                    }
+                }
+            }
+        }
+        return results;
+    }
+
+    private bool ConceptRelationLinksTo(
+        string game,
+        ConceptPathHit candidate,
+        string targetPath,
+        string targetId,
+        HashSet<string> visited,
+        out string source)
+    {
+        source = "";
+        if (!visited.Add(candidate.CanonicalPath)) return false;
+        foreach (var relation in new[] { "specifies", "extends", "instance_of" })
+        {
+            if (candidate.Element.ValueKind != JsonValueKind.Object
+                || !candidate.Element.TryGetProperty(relation, out var value))
+                continue;
+            foreach (var reference in ExtractConceptReferences(value))
+            {
+                if (ReferenceMatchesTarget(reference, targetPath, targetId))
+                {
+                    source = relation;
+                    return true;
+                }
+                var resolvedRefs = _catalog.GetConceptsWithPaths(game, NormalizeConceptRef(reference));
+                foreach (var resolved in resolvedRefs)
+                {
+                    if (ConceptRelationLinksTo(
+                            game, resolved, targetPath, targetId, visited, out var nestedSource))
+                    {
+                        source = relation + "->" + nestedSource;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static IEnumerable<string> ExtractConceptReferences(JsonElement value)
+    {
+        if (value.ValueKind == JsonValueKind.String)
+        {
+            var text = value.GetString() ?? "";
+            if (!string.IsNullOrWhiteSpace(text)) yield return text;
+        }
+        else if (value.ValueKind == JsonValueKind.Object)
+        {
+            if (value.TryGetProperty("id", out var id) && id.ValueKind == JsonValueKind.String)
+                yield return id.GetString() ?? "";
+            if (value.TryGetProperty("path", out var path) && path.ValueKind == JsonValueKind.String)
+                yield return path.GetString() ?? "";
+        }
+        else if (value.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in value.EnumerateArray())
+                foreach (var reference in ExtractConceptReferences(item))
+                    yield return reference;
+        }
+    }
+
+    private static bool ReferenceMatchesTarget(string reference, string targetPath, string targetId)
+    {
+        var normalized = NormalizeConceptRef(reference);
+        if (string.IsNullOrWhiteSpace(normalized)) return false;
+        if (string.Equals(normalized, targetPath, StringComparison.Ordinal)) return true;
+        // Ontology targets require a namespace-qualified relation to avoid mixing
+        // a game concept with an ontology concept that happens to share an id.
+        if (targetPath.StartsWith("ontology::", StringComparison.Ordinal)) return false;
+        return string.Equals(normalized, targetId, StringComparison.Ordinal);
+    }
+
+    private static string NormalizeConceptRef(string reference)
+        => (reference ?? "").Trim().TrimStart('<').TrimEnd('>').Trim();
+
+    private static string ExtractConceptName(JsonElement element)
+    {
+        if (element.ValueKind == JsonValueKind.Object
+            && element.TryGetProperty("name", out var name)
+            && name.ValueKind == JsonValueKind.Object
+            && name.TryGetProperty("zh", out var zh)
+            && zh.ValueKind == JsonValueKind.String)
+            return zh.GetString() ?? "";
+        return RulesTextUtils.GetElementId(element);
+    }
+
     private List<ConceptPathHit> ResolvePlanEntity(
         string game, string entity, out List<ConceptSummary> candidates, out string source)
     {
@@ -945,7 +1590,8 @@ public sealed class RulesPlanService
         QueryPayloadTypes.CatalogPage,
         QueryPayloadTypes.FlowSlice,
         QueryPayloadTypes.RelationFacts,
-        QueryPayloadTypes.ComputedFact
+        QueryPayloadTypes.ComputedFact,
+        QueryPayloadTypes.MemberSet
     };
 
     /// <summary>

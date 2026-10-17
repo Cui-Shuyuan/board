@@ -95,7 +95,7 @@ public sealed class PromptIsolationTests
     }
 
     [Fact]
-    public void LegacyPrompt_IsExactA992cfeBaseline()
+    public void LegacyPrompt_DoesNotMasqueradeAsFrozenA992cfeBaseline()
     {
         var path = Path.Combine(BoardPaths.GetBasePath(), "backend", "BoardAI.Api", "appsettings.json");
         using var document = JsonDocument.Parse(File.ReadAllText(path));
@@ -103,8 +103,11 @@ public sealed class PromptIsolationTests
 
         var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(legacy))).ToLowerInvariant();
 
-        // a992cfe:backend/BoardAI.Api/appsettings.json#LLM:SystemPrompt
-        Assert.Equal("859260e5ca6ed8f5154b63dde2fbdad61ad1e1e3bd97261108f7339f7f1343d5", hash);
+        // 冻结基线仍是 a992cfe/ffac498 的 859260e5…f1343d5；
+        // 新候选因 tool schema 增加 flow scope 与 members 而变更，不能复用旧 SHA 做发布声明。
+        Assert.NotEqual("859260e5ca6ed8f5154b63dde2fbdad61ad1e1e3bd97261108f7339f7f1343d5", hash);
+        Assert.Contains("scope=local", legacy);
+        Assert.Contains("members", legacy);
     }
 
     [Fact]
