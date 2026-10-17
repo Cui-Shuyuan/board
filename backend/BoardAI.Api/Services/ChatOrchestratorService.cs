@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -117,6 +118,8 @@ public class ChatOrchestratorService
             var repeatedCallCount = 0;
             var repeatedFailureCount = 0;
             var totalToolCallsExecuted = 0;
+            var protocolCorrections = 0;
+            var answerFocusInjected = false;
             string? lastToolCallSignature = null;
             string? lastFailureSignature = null;
 
@@ -135,14 +138,36 @@ public class ChatOrchestratorService
                         gameId, roundsExecuted, assistantMessage.ReasoningContent);
                 }
 
-                // If LLM returned a final answer (no tool calls)
+                // If LLM returned a final answer (no tool calls), enforce the candidate-confirmation
+                // protocol once when an unresolved candidate is still the only route to a rule fact.
                 if (assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0)
                 {
                     var reply = assistantMessage.Content ?? string.Empty;
+                    if (ShouldRequestCandidateConfirmation(
+                            evidence, protocolCorrections, round, totalToolCallsExecuted))
+                    {
+                        protocolCorrections++;
+                        _logger.LogWarning(
+                            "[Chat] Game {GameId}, Round {Round} blocked premature final answer: unresolved candidate(s) still pending; issuing one targeted confirmation correction",
+                            gameId, roundsExecuted);
+                        if (!string.IsNullOrWhiteSpace(reply))
+                            messages.Add(new ChatMessage { Role = "assistant", Content = reply });
+                        messages.Add(new ChatMessage
+                        {
+                            Role = "user",
+                            Content = BuildCandidateConfirmationCorrection(evidence)
+                        });
+                        continue;
+                    }
+
+                    reply = await ApplyAnswerConstraintCorrectionAsync(
+                        gameId, question, reply, messages, effectiveToken);
                     sw.Stop();
+                    var builtEvidence = evidence.Build();
+                    LogEvidenceSummary(gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted, protocolCorrections, sw.Elapsed.TotalMilliseconds);
                     _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
                         gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
-                    return new ChatProcessResult(reply, evidence.Build());
+                    return new ChatProcessResult(reply, builtEvidence);
                 }
 
                 _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
@@ -185,14 +210,22 @@ public class ChatOrchestratorService
                         lastToolCallSignature = toolCallSignature;
                     }
 
+                    var toolStopwatch = Stopwatch.StartNew();
                     var result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
+                    toolStopwatch.Stop();
                     totalToolCallsExecuted++;
                     effectiveToken.ThrowIfCancellationRequested();
 
+                    _logger.LogInformation(
+                        "[Chat] tool timing: game={GameId}, tool={ToolName}, elapsedMs={Elapsed:F0}",
+                        gameId, toolCall.Function.Name, toolStopwatch.Elapsed.TotalMilliseconds);
                     _logger.LogInformation("[Chat] Game {GameId}, Tool {ToolName} result:\n{Result}",
                         gameId, toolCall.Function.Name, FormatForLog(result));
                     if (toolCall.Function.Name == "execute_plan")
+                    {
                         evidence.AddPlanResult(result);
+                        LogPlanProvenance(gameId, result);
+                    }
 
                     if (TryGetToolError(result, out var errorText))
                     {
@@ -230,6 +263,16 @@ public class ChatOrchestratorService
                     }
                 }
 
+                if (!answerFocusInjected && evidence.Queries.Count > 0)
+                {
+                    messages.Add(new ChatMessage
+                    {
+                        Role = "system",
+                        Content = BuildAnswerFocusReminder(question)
+                    });
+                    answerFocusInjected = true;
+                }
+
                 if (stopReason != null)
                 {
                     _logger.LogInformation(
@@ -243,7 +286,9 @@ public class ChatOrchestratorService
             if (stopReason == null)
                 stopReason = "max_tool_rounds";
 
-            var finalReply = await RequestFinalAnswerAsync(gameId, messages, evidence, stopReason, roundsExecuted, sw, effectiveToken);
+            var finalReply = await RequestFinalAnswerAsync(
+                gameId, question, messages, evidence, stopReason, roundsExecuted,
+                totalToolCallsExecuted, protocolCorrections, sw, effectiveToken);
             return new ChatProcessResult(finalReply, evidence.Build());
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -333,10 +378,13 @@ public class ChatOrchestratorService
 
     private async Task<string> RequestFinalAnswerAsync(
         string gameId,
+        string question,
         List<ChatMessage> messages,
         AnswerEvidenceCollector evidence,
         string stopReason,
         int roundsExecuted,
+        int totalToolCallsExecuted,
+        int protocolCorrections,
         Stopwatch sw,
         CancellationToken cancellationToken)
     {
@@ -344,7 +392,10 @@ public class ChatOrchestratorService
         {
             Role = "user",
             Content = "请基于以上工具查询结果直接给出最终回答，不要再调用工具。"
+                + "先直接回答客人原问题；客人已经说明的数量、对象和当前操作要原样承接，不要重复追问，也不要展开未被问到的其他人数配置、另一种获得方式或后续规则。"
+                + "客人给出的组件数量不是玩家人数证据，不要反推或断言这是几人局。"
                 + "如果可用事实不足以完整回答，请明确说明未能完成查询，并请客人缩小问题范围或换一种问法；不要编造规则事实。"
+                + "\n客人原问题：" + question
         });
 
         try
@@ -358,7 +409,13 @@ public class ChatOrchestratorService
                 finalReply = BuildIncompleteReply(stopReason, evidence);
             }
 
+            finalReply = await ApplyAnswerConstraintCorrectionAsync(
+                gameId, question, finalReply, messages, cancellationToken);
             sw.Stop();
+            var builtEvidence = evidence.Build();
+            LogEvidenceSummary(
+                gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted,
+                protocolCorrections, sw.Elapsed.TotalMilliseconds);
             _logger.LogInformation(
                 "[Chat] Game {GameId}, final reply after stop={StopReason}, rounds={Rounds}, elapsed={Elapsed:F0}ms, {Tier}: {Reply}",
                 gameId, stopReason, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), finalReply);
@@ -382,6 +439,104 @@ public class ChatOrchestratorService
         }
     }
 
+    private async Task<string> ApplyAnswerConstraintCorrectionAsync(
+        string gameId,
+        string question,
+        string reply,
+        List<ChatMessage> messages,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(reply) || !HasNumericComponentQuantity(question))
+            return reply;
+
+        var inferredPlayerCount = AssertsPlayerCount(reply);
+        var omittedComponentQuantity = !RepeatsComponentQuantity(question, reply);
+        if (!inferredPlayerCount && !omittedComponentQuantity)
+            return reply;
+
+        _logger.LogWarning(
+            "[Chat] Game {GameId}, answer constraint correction: inferredPlayerCount={Inferred}, omittedComponentQuantity={Omitted}; question={Question}, reply={Reply}",
+            gameId, inferredPlayerCount, omittedComponentQuantity, question, reply);
+        messages.Add(new ChatMessage { Role = "assistant", Content = reply });
+        messages.Add(new ChatMessage
+        {
+            Role = "system",
+            Content = "回答约束纠偏：客人给出的是当前操作中的组件数量，不是玩家人数。"
+                + "第一句直接承接客人给出的组件数量，再说明规则；不要只回答人数公式。"
+                + "不要说这说明是几人局，也不要用人数公式把回答转成人数判断。"
+                + "请用已确认工具事实直接回答原问题。\n"
+                + "客人原问题：" + question
+        });
+
+        try
+        {
+            var correctedResponse = await _llmService.ChatWithMessagesAsync(messages, null, cancellationToken);
+            var corrected = correctedResponse.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(corrected))
+                return corrected;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "[Chat] Game {GameId}, answer constraint correction failed; keeping original reply", gameId);
+        }
+
+        return reply;
+    }
+
+    private static bool HasNumericComponentQuantity(string question) =>
+        !string.IsNullOrWhiteSpace(question)
+        && Regex.IsMatch(question, @"(?:[0-9]+|[零一二两三四五六七八九十百]+)\s*(?:块|张|枚|颗|片|个)\s*(?!人|玩|位|名)");
+
+    private static bool AssertsPlayerCount(string reply) =>
+        !string.IsNullOrWhiteSpace(reply)
+        && Regex.IsMatch(reply, @"(?:[0-9]+|[零一二两三四五六七八九十百]+)\s*(?:个|位|名)?\s*人");
+
+    private static bool RepeatsComponentQuantity(string question, string reply)
+    {
+        var match = Regex.Match(
+            question,
+            @"([0-9]+|[零一二两三四五六七八九十百]+)\s*(?:块|张|枚|颗|片|个)\s*(?!人|玩|位|名)");
+        if (!match.Success) return true;
+        var token = match.Groups[1].Value;
+        var variants = token switch
+        {
+            "1" => new[] { "1", "一" },
+            "2" => new[] { "2", "二", "两" },
+            "3" => new[] { "3", "三" },
+            "4" => new[] { "4", "四" },
+            "5" => new[] { "5", "五" },
+            "6" => new[] { "6", "六" },
+            "7" => new[] { "7", "七" },
+            "8" => new[] { "8", "八" },
+            "9" => new[] { "9", "九" },
+            "10" => new[] { "10", "十" },
+            "一" => new[] { "一", "1" },
+            "二" => new[] { "二", "两", "2" },
+            "两" => new[] { "两", "二", "2" },
+            "三" => new[] { "三", "3" },
+            "四" => new[] { "四", "4" },
+            "五" => new[] { "五", "5" },
+            "六" => new[] { "六", "6" },
+            "七" => new[] { "七", "7" },
+            "八" => new[] { "八", "8" },
+            "九" => new[] { "九", "9" },
+            "十" => new[] { "十", "10" },
+            _ => new[] { token }
+        };
+        return variants.Any(variant => reply.Contains(variant, StringComparison.Ordinal));
+    }
+
+    private static string BuildAnswerFocusReminder(string question) =>
+        "回答聚焦（这是表达约束，不是新的规则事实）：\n"
+        + "客人原问题：" + question + "\n"
+        + "请先直接回答这个问题本身；如果问题里已经给出数量或对象，直接承接，不要反问客人已经说明的信息。"
+        + "客人给出的组件数量不是玩家人数证据，不要反推或断言这是几人局。"
+        + "只回答当前问题，只使用已确认工具事实；不展开未被问到的其他人数配置、另一种获得方式、扩展规则或后续计分；无关查询结果不要写进回答。";
+
     private static string BuildIncompleteReply(string stopReason, AnswerEvidenceCollector evidence)
     {
         var reasonText = stopReason switch
@@ -401,6 +556,168 @@ public class ChatOrchestratorService
             : "我还没有拿到足够的规则事实。";
 
         return "抱歉，" + reasonText + "，" + evidenceText + "请缩小问题范围，或者换一种更具体的问法。";
+    }
+
+    private bool ShouldRequestCandidateConfirmation(
+        AnswerEvidenceCollector evidence,
+        int protocolCorrections,
+        int currentRound,
+        int totalToolCallsExecuted)
+    {
+        if (protocolCorrections >= 1) return false;
+        if (currentRound + 1 >= _maxToolRounds) return false;
+        if (totalToolCallsExecuted >= _maxTotalToolCalls) return false;
+
+        var built = evidence.Build();
+        return built.Queries.Any(query =>
+            query.Status == "unresolved"
+            && query.ResolvedByQueryIndex == null
+            && query.Candidates.Count > 0);
+    }
+
+    private static string BuildCandidateConfirmationCorrection(AnswerEvidenceCollector evidence)
+    {
+        var pending = evidence.Build().Queries
+            .Where(query => query.Status == "unresolved"
+                && query.ResolvedByQueryIndex == null
+                && query.Candidates.Count > 0)
+            .ToList();
+        var lines = new List<string>
+        {
+            "先不要直接回答。上一轮返回的是尚未确认的候选，候选描述只能用于选择目标，不能当作正式规则事实。",
+            "如果这些候选确实属于客人当前问题，请调用 execute_plan，保持原 relation 和 intent，把 entity 改成最相关候选的准确 id 或准确中文名，用本轮返回的正式事实再回答。",
+            "如果某个 pending query 只是多余查询、不属于客人需要解决的问题，不必为了清空内部状态而查询或编造；但不要从未确认候选的描述里下结论。",
+            "这是唯一一次协议纠偏。"
+        };
+        foreach (var query in pending)
+        {
+            var candidateText = string.Join("、", query.Candidates.Take(8)
+                .Select(candidate => string.IsNullOrWhiteSpace(candidate.Name)
+                    ? candidate.Id
+                    : $"{candidate.Id}({candidate.Name})"));
+            lines.Add($"未确认 query {query.QueryIndex}：relation={query.Relation}；entity={query.Entity}；intent={query.Intent}；候选={candidateText}");
+        }
+        return string.Join("\n", lines);
+    }
+
+    private void LogPlanProvenance(string gameId, string toolResult)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(toolResult);
+            var root = doc.RootElement;
+            if (root.ValueKind != JsonValueKind.Object) return;
+            if (!TryGetProperty(root, "Results", out var results) || results.ValueKind != JsonValueKind.Array)
+                return;
+
+            foreach (var item in results.EnumerateArray())
+            {
+                var relation = GetString(item, "Relation");
+                var entity = GetString(item, "Entity");
+                var intent = GetString(item, "Intent");
+                var status = GetString(item, "Status");
+                var source = GetString(item, "Source");
+                var queryIndex = TryGetProperty(item, "QueryIndex", out var qi) && qi.ValueKind == JsonValueKind.Number
+                    ? qi.GetInt32()
+                    : 0;
+                var retrieval = ReadStringArray(item, "RetrievalQueries");
+                var matched = ReadConceptIds(item, "Matched");
+                var candidates = ReadCandidateRanking(item, "Candidates");
+                _logger.LogInformation(
+                    "[Chat] plan provenance: game={GameId}, query={QueryIndex}, relation={Relation}, entity={Entity}, intent={Intent}, status={Status}, source={Source}, retrieval=[{Retrieval}], matched=[{Matched}], candidates=[{Candidates}]",
+                    gameId, queryIndex, relation, entity, intent, status, source,
+                    string.Join(" | ", retrieval),
+                    string.Join(", ", matched),
+                    string.Join(" | ", candidates));
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "[Chat] could not parse plan provenance for logging");
+        }
+    }
+
+    private void LogEvidenceSummary(
+        string gameId,
+        AnswerEvidence evidence,
+        int roundsExecuted,
+        int totalToolCalls,
+        int protocolCorrections,
+        double elapsedMs)
+    {
+        foreach (var query in evidence.Queries)
+        {
+            _logger.LogInformation(
+                "[Chat] evidence query: game={GameId}, query={QueryIndex}, relation={Relation}, entity={Entity}, intent={Intent}, status={Status}, source={Source}, hasData={HasData}, resolvedBy={ResolvedBy}, confirmedCandidate={ConfirmedCandidate}, confirmedByRelation={ConfirmedRelation}",
+                gameId, query.QueryIndex, query.Relation, query.Entity, query.Intent, query.Status,
+                query.Source, query.HasData, query.ResolvedByQueryIndex, query.ConfirmedCandidateId,
+                query.ConfirmedByRelation);
+        }
+        _logger.LogInformation(
+            "[Chat] evidence summary: game={GameId}, tier={Tier}, complete={Complete}, queryCount={QueryCount}, pending={Pending}, rounds={Rounds}, toolCalls={ToolCalls}, protocolCorrections={Corrections}, elapsedMs={Elapsed:F0}",
+            gameId, evidence.Tier, evidence.IsComplete, evidence.QueryCount, evidence.PendingCount,
+            roundsExecuted, totalToolCalls, protocolCorrections, elapsedMs);
+    }
+
+    private static bool TryGetProperty(JsonElement element, string name, out JsonElement value)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            if (element.TryGetProperty(name, out value)) return true;
+            var camel = char.ToLowerInvariant(name[0]) + name[1..];
+            if (element.TryGetProperty(camel, out value)) return true;
+        }
+        value = default;
+        return false;
+    }
+
+    private static string GetString(JsonElement element, string name) =>
+        TryGetProperty(element, name, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString() ?? ""
+            : "";
+
+    private static List<string> ReadStringArray(JsonElement element, string name)
+    {
+        if (!TryGetProperty(element, name, out var array) || array.ValueKind != JsonValueKind.Array)
+            return new List<string>();
+        return array.EnumerateArray()
+            .Where(item => item.ValueKind == JsonValueKind.String)
+            .Select(item => item.GetString() ?? "")
+            .Where(item => !string.IsNullOrWhiteSpace(item))
+            .ToList();
+    }
+
+    private static List<string> ReadConceptIds(JsonElement element, string name)
+    {
+        if (!TryGetProperty(element, name, out var array) || array.ValueKind != JsonValueKind.Array)
+            return new List<string>();
+        var ids = new List<string>();
+        foreach (var item in array.EnumerateArray())
+        {
+            var id = GetString(item, "Id");
+            if (string.IsNullOrWhiteSpace(id)) id = GetString(item, "id");
+            if (!string.IsNullOrWhiteSpace(id)) ids.Add(id);
+        }
+        return ids;
+    }
+
+    private static List<string> ReadCandidateRanking(JsonElement element, string name)
+    {
+        if (!TryGetProperty(element, name, out var array) || array.ValueKind != JsonValueKind.Array)
+            return new List<string>();
+        var ranking = new List<string>();
+        foreach (var item in array.EnumerateArray())
+        {
+            var id = GetString(item, "Id");
+            if (string.IsNullOrWhiteSpace(id)) id = GetString(item, "id");
+            if (string.IsNullOrWhiteSpace(id)) continue;
+            var score = TryGetProperty(item, "Score", out var scoreProp) && scoreProp.ValueKind == JsonValueKind.Number
+                ? scoreProp.GetSingle().ToString("0.####", CultureInfo.InvariantCulture)
+                : "?";
+            var reason = GetString(item, "MatchReason");
+            ranking.Add($"{id}:{score}:{reason}");
+        }
+        return ranking;
     }
 
     private string? BuildContextMessage(ChatContext? context)
@@ -608,28 +925,119 @@ public class ChatOrchestratorService
 
         private void ResolveCandidateQueries()
         {
+            foreach (var query in Queries)
+            {
+                query.ResolvedByQueryIndex = null;
+                query.ConfirmedCandidateId = null;
+                query.ConfirmedByRelation = null;
+            }
+
             for (var i = 0; i < Queries.Count; i++)
             {
                 var query = Queries[i];
-                query.ResolvedByQueryIndex = null;
                 if (query.Status != "unresolved" || string.IsNullOrEmpty(query.RulesVersion)) continue;
-                var candidates = query.Candidates.Select(c => c.Id).Where(id => !string.IsNullOrEmpty(id))
-                    .Distinct(StringComparer.Ordinal).ToArray();
-                // 多候选可能表示一组问题；查到其中一个不能证明其余需求已覆盖。
-                if (candidates.Length != 1) continue;
+                var candidateIds = query.Candidates
+                    .Select(c => c.Id)
+                    .Where(id => !string.IsNullOrEmpty(id))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToArray();
+                if (candidateIds.Length == 0) continue;
+
                 for (var j = i + 1; j < Queries.Count; j++)
                 {
                     var later = Queries[j];
-                    var sameRelation = later.Relation == query.Relation
-                        || (query.Relation == "identify" && later.Relation == "explain");
-                    if (!sameRelation || later.RulesVersion != query.RulesVersion || !later.HasData
-                        || later.Status != "ok" || later.Source is not ("exact_id" or "exact_name_zh")) continue;
-                    if (!later.Matched.Any(c => c.Id == candidates[0])) continue;
+                    if (!CanConfirmRelation(query.Relation, later.Relation)
+                        || later.RulesVersion != query.RulesVersion
+                        || !later.HasData
+                        || later.Status != "ok"
+                        || later.Source is not ("exact_id" or "exact_name_zh"))
+                        continue;
+
+                    // 只接受唯一对象命中；名称命中多个对象或一次 ok 返回多个 matched 时不能替用户选。
+                    if (later.Matched.Count != 1) continue;
+                    var selectedId = later.Matched[0].Id;
+                    if (string.IsNullOrEmpty(selectedId) || !candidateIds.Contains(selectedId, StringComparer.Ordinal))
+                        continue;
+                    // 同一候选出现在多个未解决 query 中时，单凭 id 无法证明这次 ok 对齐的是哪一问。
+                    if (IsAmbiguousCandidateConfirmation(i, later, selectedId)) continue;
+
                     query.ResolvedByQueryIndex = j;
+                    query.ConfirmedCandidateId = selectedId;
+                    query.ConfirmedByRelation = later.Relation;
                     break;
                 }
             }
         }
+
+        private bool IsAmbiguousCandidateConfirmation(int priorIndex, QueryEvidence later, string candidateId)
+        {
+            var competing = new List<int>();
+            for (var k = 0; k < Queries.Count; k++)
+            {
+                var other = Queries[k];
+                if (other.Status != "unresolved"
+                    || !string.Equals(other.RulesVersion, later.RulesVersion, StringComparison.Ordinal)
+                    || !CanConfirmRelation(other.Relation, later.Relation))
+                    continue;
+                if (other.Candidates.Any(c => string.Equals(c.Id, candidateId, StringComparison.Ordinal)))
+                    competing.Add(k);
+            }
+
+            if (competing.Count <= 1) return false;
+
+            // 同一候选可能出现在多个宽泛 query 中。后续查询的 intent 与某一项逐字一致时，
+            // 这是可审查的关联证据，只解决那一项；其余同候选 query 保持 pending。
+            var laterIntent = later.Intent.Trim();
+            if (!string.IsNullOrEmpty(laterIntent))
+            {
+                var sameIntent = competing
+                    .Where(index => string.Equals(
+                        Queries[index].Intent.Trim(), laterIntent, StringComparison.Ordinal))
+                    .ToList();
+                if (sameIntent.Count == 1)
+                    return sameIntent[0] != priorIndex;
+                if (sameIntent.Count > 1)
+                    return true;
+
+                // 复述 intent 常有同义词/错字（如“放几张”对“发几张”）。只有最高相似度
+                // 明显领先第二项时才允许关联，避免两个相近子问题被一次 ok 一起清空。
+                var ranked = competing
+                    .Select(index => (Index: index, Score: IntentSimilarity(Queries[index].Intent, laterIntent)))
+                    .OrderByDescending(item => item.Score)
+                    .ThenBy(item => item.Index)
+                    .ToList();
+                var secondScore = ranked.Count > 1 ? ranked[1].Score : 0f;
+                if (ranked[0].Score >= 0.70f && ranked[0].Score - secondScore >= 0.15f)
+                    return ranked[0].Index != priorIndex;
+            }
+
+            // 没有足够区分证据时保持保守：不能因为 id 相同就把这次 ok 关联到任意一问。
+            return true;
+        }
+
+        private static float IntentSimilarity(string left, string right)
+        {
+            var a = (left ?? "").Trim();
+            var b = (right ?? "").Trim();
+            if (a.Length == 0 || b.Length == 0) return 0f;
+            if (string.Equals(a, b, StringComparison.Ordinal)) return 1f;
+            if (a.Length < 2 || b.Length < 2) return 0f;
+
+            static HashSet<string> Bigrams(string value) =>
+                Enumerable.Range(0, value.Length - 1)
+                    .Select(index => value.Substring(index, 2))
+                    .ToHashSet(StringComparer.Ordinal);
+
+            var leftBigrams = Bigrams(a);
+            var rightBigrams = Bigrams(b);
+            var intersection = leftBigrams.Count(rightBigrams.Contains);
+            var union = leftBigrams.Count + rightBigrams.Count - intersection;
+            return union == 0 ? 0f : (float)intersection / union;
+        }
+
+        private static bool CanConfirmRelation(string originalRelation, string laterRelation) =>
+            string.Equals(originalRelation, laterRelation, StringComparison.Ordinal)
+            || (originalRelation == "identify" && laterRelation == "explain");
 
         public string GetTier()
         {
@@ -639,7 +1047,7 @@ public class ChatOrchestratorService
                 "tier1" => "tier1-数据回答",
                 "tier2" => "tier2-候选兜底",
                 "partial" => "partial-部分有据",
-                _ => "tier3-无数据自行发挥"
+                _ => "tier3-无数据"
             };
         }
     }
@@ -649,8 +1057,12 @@ public class ChatOrchestratorService
         var status = item.TryGetProperty("Status", out var sp) ? sp.GetString() ?? "" : "";
         var query = new QueryEvidence
         {
+            QueryIndex = item.TryGetProperty("QueryIndex", out var qi) && qi.ValueKind == JsonValueKind.Number
+                ? qi.GetInt32()
+                : 0,
             Relation = item.TryGetProperty("Relation", out var rp) ? rp.GetString() ?? "" : "",
             Entity = item.TryGetProperty("Entity", out var ep) ? ep.GetString() ?? "" : "",
+            Intent = item.TryGetProperty("Intent", out var ip) ? ip.GetString() ?? "" : "",
             Status = status,
             Source = item.TryGetProperty("Source", out var src) ? src.GetString() ?? "" : "",
             RulesVersion = rulesVersion,
@@ -712,7 +1124,8 @@ public class ChatOrchestratorService
                 Id = id,
                 Name = element.TryGetProperty("Name", out var nameProp) ? nameProp.GetString() ?? "" : "",
                 Type = element.TryGetProperty("Type", out var typeProp) ? typeProp.GetString() : null,
-                Description = element.TryGetProperty("Description", out var descProp) ? descProp.GetString() : null
+                Description = element.TryGetProperty("Description", out var descProp) ? descProp.GetString() : null,
+                MatchReason = element.TryGetProperty("MatchReason", out var reasonProp) ? reasonProp.GetString() : null
             };
             if (element.TryGetProperty("Score", out var scoreProp) && scoreProp.ValueKind == JsonValueKind.Number)
                 candidate.Score = scoreProp.GetSingle();
@@ -746,15 +1159,21 @@ public class ChatOrchestratorService
                 Function = new FunctionDefinition
                 {
                     Name = "execute_plan",
-                    Description = @"唯一工具：查询计划执行器。把客人的规则问题编译成结构化查询计划，程序执行后把所有事实摆在返回结果里（概念定义、一层引用、流程位置、顺序/条件/边界等）。relation 选择：
-- explain：X 是什么 / 怎么结算 / 怎么做 / 有什么效果 / 有几个（数量参数就在概念定义里）
-- condition：能不能 X / X 有什么前提 / 什么限制（返回条件谓词、费用、目标约束）
-- ordering：X 之后是什么 / 先后顺序 / 什么时候结束 / 每轮怎么轮转（返回同级选项顺序、位置、循环结构）
-- boundary：X 不会发生什么 / 满了怎么办 / 上限多少（返回溢出补偿、容量等边界字段；未声明溢出补偿的轨道默认无事发生）
+                    Description = @"唯一工具：查询计划执行器。把客人的规则问题编译成结构化查询计划，程序会执行实体定位、完整意图检索与规则导航。relation 选择：
+- explain：X 是什么 / 怎么结算 / 怎么做 / 有什么效果 / 有几个
+- condition：能不能 X / X 有什么前提 / 什么限制
+- ordering：X 之后是什么 / 先后顺序 / 什么时候结束 / 每轮怎么轮转
+- boundary：X 不会发生什么 / 满了怎么办 / 上限多少
 - flow：整体游戏流程（几个阶段、怎么进行、怎么结束）
 - list：浏览全部概念目录（实体解析失败需要找概念时用）
-- identify：客人用外观/位置描述某物（如""黄色的六边形标记""）但你不确定是哪个概念时，把描述原文作为 entity 传入——返回带定义的候选概念，挑最吻合的再 explain
-entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述文本）。一个问题涉及多个概念时，一个 plan 里放多个 queries 一次拿全。实体解析分三层：精确命中直接返回规则事实；未精确命中时程序会先做语义检索补候选（Status=unresolved + Candidates，含相似度分），请从候选中挑确切的概念重新发起计划，没有合适的候选再用 identify（按描述找）或 list 浏览；若程序返回 Status=no_match，说明规则库查不到任何相近概念——请先用 list 浏览确认概念是否真的不存在、或用 identify 再找一次；确认规则库没有之后，该部分只能基于你自己的知识回答，请向客人说明这是规则库之外的信息，或直接反问客人确认。",
+- identify：客人用外观/位置描述某物但你不确定是哪个概念时，把描述原文作为 entity，程序返回候选
+query 字段语义：
+- entity：查谁/什么，填概念 id、准确中文名或对象描述；知道准确 id 时直接用 id，不要求凭空猜 id。
+- intent：针对 entity 你要知道什么，保留用户问题里的动作、场景和疑点。必须来自用户问题及有效上下文，不能写成你已经猜出的答案，也不能包含尚未证实的规则。
+- relation：需要解释、条件、顺序、边界等哪类规则信息。
+单一疑点默认只发一个 query；只有确实需要不同事实时才拆多个 query，每个 query 写自己的 intent。不要把每个名词机械拆成 explain + condition。
+实体解析分三层：精确命中直接返回规则事实；未精确命中时程序会结合完整 intent 返回 Status=unresolved + Candidates。候选描述只用于选择目标，不能当作已确认事实；请从候选中挑真正回答 intent 的概念，用准确 id 或准确中文名、保持原 relation 和 intent 重新发起计划。没有合适的候选再用 identify 或 list。若返回 Status=no_match，说明规则库未确认到该事实——请向客人说明未查到或请其换个问法，不要基于记忆补写规则。若结果被标记为 unresolved，不要直接下结论；确认后的正式事实才可用于回答。客人已经说明的数量、对象和当前操作要原样承接，不得在回答里重新追问已说明的信息，也不得用数量公式反问玩家人数。客人给出的组件数量不是玩家人数证据，不要反推或断言这是几人局；只回答当前问题，不自动补充下一阶段或另一种获得方式。",
+
                     Parameters = JsonDocument.Parse("""
                     {
                       "type": "object",
@@ -773,7 +1192,11 @@ entity 填概念 id 或准确中文名（flow/list/identify 的 entity 是描述
                                   },
                                   "entity": {
                                     "type": "string",
-                                    "description": "概念 id 或准确中文名（flow/list 可省略）"
+                                    "description": "概念 id、准确中文名或对象描述（flow/list 可省略）"
+                                  },
+                                  "intent": {
+                                    "type": "string",
+                                    "description": "针对 entity 要知道的动作、场景或疑点，来自用户问题及有效上下文；不要写猜测的答案或未证实的规则。单 query 缺省时程序可用原问句回填，多 query 时请逐项填写。"
                                   }
                                 },
                                 "required": ["relation"]

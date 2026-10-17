@@ -23,6 +23,8 @@ public class ConceptSummary
     public float SubqueryBoost { get; set; }
     /// <summary>仅名称补充候选的原始分。计划里的 Score 以 0.55 为上限，PhraseScore 留空，不参与自动解析。</summary>
     public float? NameMatchScore { get; set; }
+    /// <summary>候选来自哪条检索证据：exact_identity / intent / entity / intent+entity。仅用于日志与回归解释。</summary>
+    public string? MatchReason { get; set; }
 }
 
 /// <summary>单个查询（切分词或整句）在向量/关键词两通道上的匹配分。</summary>
@@ -60,8 +62,14 @@ public class PlanExecutionResult
 
 public class PlanItemResult
 {
+    /// <summary>本 query 在当次 execute_plan 中的零基下标。</summary>
+    public int QueryIndex { get; set; }
     public string Relation { get; set; } = "";
     public string Entity { get; set; } = "";
+    /// <summary>当前子问题要知道什么（用户意图）；单 query 缺省时可由服务端回填客人原问句。</summary>
+    public string Intent { get; set; } = "";
+    /// <summary>本次查询实际送入检索的名字/意图文本，用于排查实体定位与场景定位的差异。</summary>
+    public List<string> RetrievalQueries { get; set; } = new();
     /// <summary>ok | unresolved（实体未命中，看 Candidates）| unsupported（relation 未支持，走兜底工具）</summary>
     public string Status { get; set; } = "ok";
     /// <summary>拍板来源：exact_id / exact_name_zh / exact_name_en / exact_alias / contain_unique / auto_semantic；空 = 程序未拍板（unresolved/no_match 由 LLM 决定）。</summary>

@@ -127,6 +127,29 @@ curl -s "http://localhost:5000/api/rules/games/splendor/actions/take_gems_same/c
 curl -s "http://localhost:5000/api/rules/games/splendor/search?q=%E8%B4%B5%E6%97%8F"
 ```
 
+执行查询计划：
+
+```bash
+curl -X POST "http://localhost:5000/api/rules/games/splendor/execute-plan" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "呃这个盒里面有好多贵族，然后我选哪3个贵族出来呀？",
+    "plan": {"queries": [{
+      "relation": "explain",
+      "entity": "贵族板块",
+      "intent": "设置时从游戏盒中取出三块贵族板块，应当如何选择"
+    }]}
+  }'
+```
+
+query 字段：
+
+- `relation`：`explain / condition / ordering / boundary / flow / list / identify`
+- `entity`：概念 id、准确中文名或对象描述
+- `intent`：该实体要知道的动作/场景/疑点。显式 intent 用于完整句子检索；单 query 缺失时结果会回填原问句作日志，但检索保守走 entity 路径。
+
+未精确命中时返回 `unresolved + candidates`。候选描述只用于选择目标，不是正式事实；确认候选时保持原 relation/intent，并把 entity 改成候选准确 id 或中文名。Chat 返回的 `evidence.queries[]` 会记录 intent、候选、`resolvedByQueryIndex`、`confirmedCandidateId` 与 `confirmedByRelation`；`tier1` 只表示查询数据覆盖，不证明最终每句话真实。
+
 ## 内容接口缓存
 
 内容接口：

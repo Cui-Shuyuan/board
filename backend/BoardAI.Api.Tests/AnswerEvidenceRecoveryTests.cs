@@ -52,13 +52,95 @@ public sealed class AnswerEvidenceRecoveryTests
     }
 
     [Fact]
-    public void MultipleCandidates_ConfirmingOneDoesNotClaimTheWholeRequirementWasCovered()
+    public void MultipleCandidates_ExplicitlyConfirmingOneCandidateResolvesThatQueryWithTrace()
     {
         var collector = Collector("identify", "explain");
         collector.Queries[0].Candidates.Add(new EvidenceConcept { Id = "other" });
         var evidence = collector.Build();
-        Assert.False(evidence.IsComplete);
+        Assert.True(evidence.IsComplete);
+        Assert.Equal(0, evidence.PendingCount);
+        Assert.Equal("widget", evidence.Queries[0].ConfirmedCandidateId);
+        Assert.Equal("explain", evidence.Queries[0].ConfirmedByRelation);
+        Assert.Equal(1, evidence.Queries[0].ResolvedByQueryIndex);
+    }
+
+    [Fact]
+    public void SameCandidateAcrossTwoPendingQueries_OneExactQueryDoesNotDisambiguateEither()
+    {
+        var collector = Collector("identify", "explain");
+        collector.Queries[0].Candidates.Add(new EvidenceConcept { Id = "other" });
+        collector.Queries.Insert(1, new QueryEvidence
+        {
+            Relation = "identify", Entity = "另一个白色组件", Status = "unresolved", RulesVersion = "v1",
+            Candidates = new() { new EvidenceConcept { Id = "widget" } }
+        });
+        var evidence = collector.Build();
+        Assert.Equal(2, evidence.PendingCount);
+        Assert.All(evidence.Queries.Take(2), query =>
+        {
+            Assert.Null(query.ResolvedByQueryIndex);
+            Assert.Null(query.ConfirmedCandidateId);
+        });
+    }
+
+    [Fact]
+    public void SameCandidateWithMatchingIntent_ResolvesOnlyTheMatchingPendingQuery()
+    {
+        var collector = new ChatOrchestratorService.AnswerEvidenceCollector();
+        collector.Queries.Add(new QueryEvidence
+        {
+            Relation = "explain", Entity = "贵族", Intent = "设置时如何选择",
+            Status = "unresolved", RulesVersion = "v1",
+            Candidates = new() { new EvidenceConcept { Id = "deal_nobles" } }
+        });
+        collector.Queries.Add(new QueryEvidence
+        {
+            Relation = "explain", Entity = "游戏设置", Intent = "开局怎么摆放",
+            Status = "unresolved", RulesVersion = "v1",
+            Candidates = new() { new EvidenceConcept { Id = "deal_nobles" } }
+        });
+        collector.Queries.Add(new QueryEvidence
+        {
+            Relation = "explain", Entity = "deal_nobles", Intent = "设置时如何选择",
+            Status = "ok", Source = "exact_id", RulesVersion = "v1", HasData = true,
+            Matched = new() { new EvidenceConcept { Id = "deal_nobles" } }
+        });
+
+        var evidence = collector.Build();
+
         Assert.Equal(1, evidence.PendingCount);
+        Assert.Equal(2, evidence.Queries[0].ResolvedByQueryIndex);
+        Assert.Null(evidence.Queries[1].ResolvedByQueryIndex);
+    }
+
+    [Fact]
+    public void NearIdenticalIntentWithClearMargin_AssociatesExactConfirmation()
+    {
+        var collector = new ChatOrchestratorService.AnswerEvidenceCollector();
+        collector.Queries.Add(new QueryEvidence
+        {
+            Relation = "explain", Entity = "贵族", Intent = "开局设置时贵族怎么选、放几张",
+            Status = "unresolved", RulesVersion = "v1",
+            Candidates = new() { new EvidenceConcept { Id = "deal_nobles" } }
+        });
+        collector.Queries.Add(new QueryEvidence
+        {
+            Relation = "explain", Entity = "贵族", Intent = "游戏开始后怎么获得贵族",
+            Status = "unresolved", RulesVersion = "v1",
+            Candidates = new() { new EvidenceConcept { Id = "deal_nobles" } }
+        });
+        collector.Queries.Add(new QueryEvidence
+        {
+            Relation = "explain", Entity = "deal_nobles", Intent = "开局设置时贵族怎么选、发几张",
+            Status = "ok", Source = "exact_id", RulesVersion = "v1", HasData = true,
+            Matched = new() { new EvidenceConcept { Id = "deal_nobles" } }
+        });
+
+        var evidence = collector.Build();
+
+        Assert.Equal(1, evidence.PendingCount);
+        Assert.Equal(2, evidence.Queries[0].ResolvedByQueryIndex);
+        Assert.Null(evidence.Queries[1].ResolvedByQueryIndex);
     }
 
     [Fact]

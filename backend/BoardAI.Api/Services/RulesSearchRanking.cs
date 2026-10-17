@@ -103,4 +103,145 @@ internal static class RulesSearchRanking
         return phrase is { Vector: >= 0.72f, Keyword: >= 0.3f }
             && first.Score >= 0.80f && gap >= 0.10f;
     }
+
+    /// <summary>
+    /// 合并“实体定位”和“完整 intent 场景召回”的候选。intent 是用户真正要解决的问题，
+    /// 因此有 intent 证据时占主导；entity 分数只做召回补充与边界打平，不能靠多个泛词累加翻盘。
+    /// 同一稳定身份只保留一项，并在 MatchReason 中保留分数来源。
+    /// </summary>
+    internal static List<ConceptSummary> MergeEntityAndIntentCandidates(
+        IReadOnlyList<ConceptSummary> entityCandidates,
+        IReadOnlyList<ConceptSummary> intentCandidates,
+        IReadOnlyList<ConceptSummary> exactCandidates,
+        IReadOnlyCollection<string> exactIdentityKeys,
+        bool deprioritizeExactIdentity = false,
+        int limit = 15)
+    {
+        var entries = new Dictionary<string, CandidateEntry>(StringComparer.Ordinal);
+
+        CandidateEntry GetEntry(ConceptSummary candidate)
+        {
+            var key = CandidateKey(candidate);
+            if (!entries.TryGetValue(key, out var entry))
+            {
+                entry = new CandidateEntry { Key = key, Summary = Clone(candidate) };
+                entries.Add(key, entry);
+            }
+            return entry;
+        }
+
+        foreach (var candidate in exactCandidates)
+        {
+            var entry = GetEntry(candidate);
+            entry.Summary = Clone(candidate);
+            entry.ExactIdentity = true;
+        }
+
+        foreach (var candidate in entityCandidates)
+        {
+            var entry = GetEntry(candidate);
+            entry.EntityScore = Math.Max(entry.EntityScore, candidate.Score);
+            if (entry.IntentSummary == null)
+                entry.Summary = Clone(candidate);
+        }
+
+        foreach (var candidate in intentCandidates)
+        {
+            var entry = GetEntry(candidate);
+            if (!entry.HasIntentScore || candidate.Score > entry.IntentScore)
+            {
+                entry.IntentScore = candidate.Score;
+                entry.HasIntentScore = true;
+            }
+            // 完整 intent 的 PhraseScore 是 auto-resolve 唯一可审查的整句证据。
+            entry.IntentSummary = candidate;
+            entry.Summary = Clone(candidate);
+        }
+
+        foreach (var exactKey in exactIdentityKeys)
+            if (entries.TryGetValue(exactKey, out var exactEntry))
+                exactEntry.ExactIdentity = true;
+
+        var results = new List<ConceptSummary>(entries.Count);
+        foreach (var entry in entries.Values)
+        {
+            var summary = entry.Summary;
+            float score;
+            string reason;
+            if (entry.HasIntentScore && entry.EntityScore > 0)
+            {
+                score = 0.8f * entry.IntentScore + 0.2f * entry.EntityScore;
+                reason = "intent+entity";
+            }
+            else if (entry.HasIntentScore)
+            {
+                score = entry.IntentScore;
+                reason = "intent";
+            }
+            else if (entry.EntityScore > 0)
+            {
+                // 没有 intent 证据时保留旧路径；只有 entity 的候选不能压过 intent 候选。
+                score = 0.5f * entry.EntityScore;
+                reason = "entity";
+            }
+            else
+            {
+                score = 0f;
+                reason = "exact_identity";
+            }
+
+            if (deprioritizeExactIdentity && entry.ExactIdentity)
+            {
+                // 名字精确命中只证明对象身份；用户有额外场景/动作 intent 时，
+                // 目的规则节点应排在对象本身前面，避免定义压过用户真正问的规则。
+                score = 0f;
+                reason = "exact_identity";
+            }
+
+            summary.Score = MathF.Round(score, 4);
+            summary.MatchReason = entry.ExactIdentity && reason != "intent+entity"
+                ? "exact_identity"
+                : reason;
+            results.Add(summary);
+        }
+
+        return results
+            .OrderByDescending(candidate => candidate.Score)
+            .ThenBy(candidate => CandidateKey(candidate), StringComparer.Ordinal)
+            .Take(limit)
+            .ToList();
+    }
+
+    /// <summary>候选的稳定概念身份：局部槽位用 Path，普通概念用 Id。</summary>
+    internal static string CandidateKey(ConceptSummary candidate) =>
+        string.IsNullOrEmpty(candidate.Path) ? candidate.Id : candidate.Path;
+
+    private sealed class CandidateEntry
+    {
+        public required string Key { get; init; }
+        public required ConceptSummary Summary { get; set; }
+        public float EntityScore { get; set; }
+        public float IntentScore { get; set; }
+        public bool HasIntentScore { get; set; }
+        public ConceptSummary? IntentSummary { get; set; }
+        public bool ExactIdentity { get; set; }
+    }
+
+    private static ConceptSummary Clone(ConceptSummary source) => new()
+    {
+        Id = source.Id,
+        Path = source.Path,
+        Name = source.Name,
+        Type = source.Type,
+        Score = source.Score,
+        Description = source.Description,
+        Media = source.Media,
+        TermScores = source.TermScores,
+        FullQueryScore = source.FullQueryScore,
+        PhraseScore = source.PhraseScore,
+        SubqueryBoost = source.SubqueryBoost,
+        NameMatchScore = source.NameMatchScore,
+        MatchReason = source.MatchReason
+    };
+
 }

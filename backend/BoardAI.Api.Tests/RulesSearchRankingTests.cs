@@ -122,4 +122,44 @@ public sealed class RulesSearchRankingTests
         Assert.False(RulesSearchRanking.CanAutoResolve(result));
     }
 
+
+    [Fact]
+    public void IntentSceneEvidenceLeadsEntityNameRecall_ForSetupSelectionQuestion()
+    {
+        var deal = Concept("deal_nobles"); deal.Score = .7026f;
+        deal.PhraseScore = new ChannelScores { Vector = .7026f, Keyword = 0f };
+        var attract = Concept("attract_noble"); attract.Score = .5587f;
+        var dealEntity = Concept("deal_nobles"); dealEntity.Score = .9599f;
+        var attractEntity = Concept("attract_noble"); attractEntity.Score = 1.0796f;
+        var exact = Concept("noble");
+
+        var ranked = RulesSearchRanking.MergeEntityAndIntentCandidates(
+            new[] { attractEntity, dealEntity },
+            new[] { deal, attract },
+            new[] { exact },
+            new[] { "noble" });
+
+        Assert.Equal("deal_nobles", ranked[0].Id);
+        Assert.Equal("intent+entity", ranked[0].MatchReason);
+        Assert.Contains(ranked, candidate => candidate.Id == "noble" && candidate.MatchReason == "exact_identity");
+    }
+
+    [Fact]
+    public void IntentCandidateWeightsEntityRecallWithoutLettingGenericNameAccumulationWin()
+    {
+        var dealIntent = Concept("deal_nobles"); dealIntent.Score = .6004f;
+        var attractIntent = Concept("attract_noble"); attractIntent.Score = .5925f;
+        var dealEntity = Concept("deal_nobles"); dealEntity.Score = .9599f;
+        var attractEntity = Concept("attract_noble"); attractEntity.Score = 1.0796f;
+
+        var ranked = RulesSearchRanking.MergeEntityAndIntentCandidates(
+            new[] { attractEntity, dealEntity },
+            new[] { dealIntent, attractIntent },
+            Array.Empty<ConceptSummary>(),
+            Array.Empty<string>());
+
+        Assert.Equal("attract_noble", ranked[0].Id);
+        Assert.Equal(.6899f, ranked[0].Score, 3);
+    }
+
 }

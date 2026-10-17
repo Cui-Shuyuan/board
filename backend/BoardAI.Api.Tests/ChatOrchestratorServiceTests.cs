@@ -218,6 +218,106 @@ public sealed class ChatOrchestratorServiceTests
     }
 
     [Fact]
+    public async Task ProcessAsync_UnconfirmedCandidateFinalAnswer_GetsOneTargetedConfirmationCorrection()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var correctionSeen = false;
+        var llm = new FakeLLMService(call =>
+        {
+            correctionSeen |= call.Messages.Any(message =>
+                message.Role == "user" && message.Content?.Contains("先不要直接回答") == true);
+
+            if (call.HasTools)
+            {
+                if (call.Index == 1)
+                    return Task.FromResult(ToolCallResponse(
+                        """{"plan":{"queries":[{"relation":"identify","entity":"小装置","intent":"确认用户问的是哪个组件"}]}}""",
+                        call.Index));
+                if (call.Index == 2)
+                    return Task.FromResult(FinalResponse("未确认就下结论"));
+                return Task.FromResult(ToolCallResponse(
+                    """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"确认用户问的是哪个组件"}]}}""",
+                    call.Index));
+            }
+
+            return Task.FromResult(FinalResponse("FINAL"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History());
+
+        Assert.Equal("FINAL", result.Reply);
+        Assert.True(correctionSeen);
+        Assert.Equal(3, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+        Assert.Equal("tier1", result.Evidence.Tier);
+        Assert.Equal("widget", result.Evidence.Queries[0].ConfirmedCandidateId);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_ComponentQuantityReplyThatInfersPlayerCount_GetsOneAnswerConstraintCorrection()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new FakeLLMService(call =>
+        {
+            if (call.HasTools)
+            {
+                if (call.Index == 1)
+                    return Task.FromResult(ToolCallResponse(
+                        """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"如何使用三个小装置"}]}}""",
+                        call.Index));
+                return Task.FromResult(FinalResponse("不用挑，这说明是两人局。"));
+            }
+
+            return Task.FromResult(FinalResponse("不用挑，直接按三个处理。"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
+        var history = new List<ChatMessage>
+        {
+            new() { Role = "user", Content = "我选哪3个小装置出来呀？" }
+        };
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", history);
+
+        Assert.Equal("不用挑，直接按三个处理。", result.Reply);
+        Assert.Equal(2, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_ComponentQuantityOmittedFromReply_GetsOneAnswerConstraintCorrection()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new FakeLLMService(call =>
+        {
+            if (call.HasTools)
+            {
+                if (call.Index == 1)
+                    return Task.FromResult(ToolCallResponse(
+                        """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"如何使用三个小装置"}]}}""",
+                        call.Index));
+                return Task.FromResult(FinalResponse("不用挑，按人数规则处理即可。"));
+            }
+
+            return Task.FromResult(FinalResponse("不用挑，直接按三个处理。"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
+        var history = new List<ChatMessage>
+        {
+            new() { Role = "user", Content = "我选哪3个小装置出来呀？" }
+        };
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", history);
+
+        Assert.Equal("不用挑，直接按三个处理。", result.Reply);
+        Assert.Equal(2, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+    }
+
+    [Fact]
     public async Task ChatController_Post_PropagatesRequestAbortedToOrchestrator()
     {
         using var fixture = new RulesFixture();

@@ -35,8 +35,11 @@ public class AnswerEvidence
 
 public class QueryEvidence
 {
+    public int QueryIndex { get; set; }
     public string Relation { get; set; } = string.Empty;
     public string Entity { get; set; } = string.Empty;
+    /// <summary>当前子问题要知道什么；缺失时仅单 query 回填原问句。</summary>
+    public string Intent { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public string Source { get; set; } = string.Empty;
     public string? RulesVersion { get; set; }
@@ -46,6 +49,14 @@ public class QueryEvidence
     /// <summary>候选被后续精确查询确认时，指向 Queries 中该查询的零基索引；不覆盖原 Status。</summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? ResolvedByQueryIndex { get; set; }
+
+    /// <summary>被后续查询明确选中的候选 id；仅当后续精确命中唯一对象且确在原候选中时写入。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? ConfirmedCandidateId { get; set; }
+
+    /// <summary>完成确认的后续查询 relation；用于区分同一候选在不同关系下的误关联。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? ConfirmedByRelation { get; set; }
 
     /// <summary>已命中概念（explain/condition/ordering/boundary/flow 的 Matched）。</summary>
     public List<EvidenceConcept> Matched { get; set; } = new();
@@ -66,6 +77,8 @@ public class EvidenceConcept
     public string? Type { get; set; }
     public string? Description { get; set; }
     public float? Score { get; set; }
+    /// <summary>候选分数来源：intent / entity / intent+entity / exact_identity / question_hint。</summary>
+    public string? MatchReason { get; set; }
 }
 
 

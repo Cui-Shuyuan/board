@@ -35,6 +35,7 @@ public sealed class Rev08AnswerEvidenceTests
         var query = Assert.Single(evidence.Queries);
         Assert.Equal("explain", query.Relation);
         Assert.Equal("widget", query.Entity);
+        Assert.Equal("测试问题", query.Intent);
         Assert.Equal("ok", query.Status);
         Assert.Equal("exact_id", query.Source);
         Assert.Equal(evidence.RulesVersion, query.RulesVersion);

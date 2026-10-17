@@ -243,4 +243,60 @@ public sealed class RulesPlanServiceTests
         => element.TryGetProperty("id", out var idProp) && idProp.ValueKind == JsonValueKind.String
             ? idProp.GetString() ?? ""
             : "";
+
+    [Theory]
+    [InlineData("{\"relation\":\"explain\",\"entity\":\"widget\"}", "客人原问句", "客人原问句")]
+    [InlineData("{\"relation\":\"explain\",\"entity\":\"小装置\",\"intent\":\"设置时如何使用小装置\"}", "客人原问句", "设置时如何使用小装置")]
+    public async Task ExecutePlanAsync_SingleQueryIntentIsPreservedOrFallsBackToQuestion(
+        string query, string question, string expectedIntent)
+    {
+        using var fixture = new RulesFixture();
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var document = JsonDocument.Parse("{\"queries\":[" + query + "]}");
+
+        var result = await plan.ExecutePlanAsync("testgame", document.RootElement, question);
+
+        var item = Assert.Single(result.Results);
+        Assert.Equal(expectedIntent, item.Intent);
+        Assert.Equal(0, item.QueryIndex);
+        if (!string.IsNullOrEmpty(query) && query.Contains("\"intent\""))
+            Assert.Equal(new[] { "小装置", "设置时如何使用小装置" }, item.RetrievalQueries);
+        else
+            Assert.Equal(new[] { "widget" }, item.RetrievalQueries);
+    }
+
+    [Fact]
+    public async Task ExecutePlanAsync_ExplicitIdIdentityIsNotReplacedByScenarioIntent()
+    {
+        using var fixture = new RulesFixture();
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var document = JsonDocument.Parse(
+            """{"queries":[{"relation":"explain","entity":"widget","intent":"设置时如何摆放小装置"}]}""");
+
+        var result = await plan.ExecutePlanAsync("testgame", document.RootElement);
+
+        var item = Assert.Single(result.Results);
+        Assert.Equal("ok", item.Status);
+        Assert.Equal("exact_id", item.Source);
+        Assert.Equal("widget", GetId(Assert.Single(item.Matched)));
+    }
+
+    [Fact]
+    public async Task ExecutePlanAsync_MultipleQueriesWithoutIntent_DoNotReuseWholeQuestionForEachQuery()
+    {
+        using var fixture = new RulesFixture();
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var document = JsonDocument.Parse(
+            """{"queries":[{"relation":"explain","entity":"widget"},{"relation":"list","entity":""}]}""");
+
+        var result = await plan.ExecutePlanAsync("testgame", document.RootElement, "整段多子问题原问句");
+
+        Assert.Equal(2, result.Results.Count);
+        Assert.All(result.Results, item => Assert.Equal("", item.Intent));
+        Assert.Equal(new[] { 0, 1 }, result.Results.Select(item => item.QueryIndex));
+    }
+
 }

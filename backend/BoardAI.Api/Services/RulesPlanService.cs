@@ -116,13 +116,33 @@ public sealed class RulesPlanService
             return result;
         }
 
-        foreach (var q in queries.EnumerateArray())
+        var queryItems = queries.EnumerateArray()
+            .Where(item => item.ValueKind == JsonValueKind.Object)
+            .ToList();
+
+        for (var queryIndex = 0; queryIndex < queryItems.Count; queryIndex++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (q.ValueKind != JsonValueKind.Object) continue;
+            var q = queryItems[queryIndex];
             var relation = q.TryGetProperty("relation", out var rp) ? rp.GetString() ?? "" : "";
             var entity = q.TryGetProperty("entity", out var ep) ? ep.GetString() ?? "" : "";
-            result.Results.Add(await ExecutePlanQueryAsync(game, relation, entity, question, cancellationToken));
+            var explicitIntent = q.TryGetProperty("intent", out var ip) ? ip.GetString() ?? "" : "";
+            explicitIntent = explicitIntent.Trim();
+
+            // 展示/日志用 intent：单一子问题缺失时回填客人原问句，方便观察；
+            // 但检索只使用模型显式提供的 intent。缺失项保守回到原有 entity 路径，
+            // 多子问题更不能把整段问题不加区分地套到每个实体上。
+            var displayIntent = explicitIntent;
+            if (string.IsNullOrWhiteSpace(displayIntent)
+                && queryItems.Count == 1
+                && !string.IsNullOrWhiteSpace(question))
+                displayIntent = question.Trim();
+
+            var item = await ExecutePlanQueryAsync(
+                game, relation, entity, explicitIntent, question, cancellationToken);
+            item.QueryIndex = queryIndex;
+            item.Intent = displayIntent;
+            result.Results.Add(item);
             cancellationToken.ThrowIfCancellationRequested();
         }
 
@@ -130,11 +150,11 @@ public sealed class RulesPlanService
         {
             var notes = new List<string>();
             if (result.Results.Any(r => r.Status == "unresolved"))
-                notes.Add("unresolved 的查询请用候选中的确切 id 或名字重试");
+                notes.Add("unresolved 的候选描述只用于选择目标，不是已确认事实；请用候选中的确切 id 或中文名、保持原 relation 和 intent 重新查询");
             if (result.Results.Any(r => r.Status == "no_match"))
-                notes.Add("no_match 的查询表示规则库无相近概念，该部分只能自行发挥（详见查询 Message）");
+                notes.Add("no_match 表示规则库未确认到该查询的信息，请明确说明未查到，不要编造规则");
             if (result.Results.Any(r => r.Status == "unsupported"))
-                notes.Add("unsupported 的 relation 请改用 identify 或 list");
+                notes.Add("unsupported 的 relation 请改用 explain/condition/ordering/boundary/flow/list/identify");
             result.Note = "部分查询未完成：" + string.Join("；", notes) + "。";
         }
         return result;
@@ -155,6 +175,7 @@ public sealed class RulesPlanService
         string game,
         string relation,
         string entity,
+        string intent,
         string question,
         CancellationToken cancellationToken)
     {
@@ -176,7 +197,11 @@ public sealed class RulesPlanService
         {
             var exact = ResolvePlanEntity(game, entity, out _, out var exactSource);
             if (exact.Count > 0 && exactSource == "exact_id")
-                return BuildOkResult(game, relation, entity, exact, exactSource, question, cancellationToken);
+            {
+                return BuildOkResult(
+                    game, relation, entity, exact, exactSource, question, cancellationToken,
+                    retrievalQueries: new[] { entity });
+            }
 
             var search = await _searchService.SearchConceptsAsync(
                 game, entity, cancellationToken: cancellationToken);
@@ -198,6 +223,7 @@ public sealed class RulesPlanService
             {
                 Relation = relation, Entity = entity,
                 Status = search.Results.Count > 0 ? "unresolved" : "no_match",
+                RetrievalQueries = new List<string> { entity },
                 Candidates = search.Results,
                 Message = "按完整描述检索的候选概念（含定义与匹配分数）。请核对颜色、形状和位置，再用确切 id 发起 explain；通用概念命中不能证明已识别客人描述的组件。"
             };
@@ -208,134 +234,318 @@ public sealed class RulesPlanService
         {
             var gameConcept = _catalog.GetConcepts(game, "game");
             return gameConcept.Count > 0
-                ? new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Matched = gameConcept.ToList() }
+                ? new PlanItemResult
+                {
+                    Relation = relation, Entity = entity, Status = "ok", Matched = gameConcept.ToList(),
+                    RetrievalQueries = new List<string>()
+                }
                 : new PlanItemResult
                 {
                     Relation = relation,
                     Entity = entity,
                     Status = "no_match",
-                    Message = "规则库中没有该游戏的流程定义，无法返回任何流程数据。此问题只能由你基于自己的知识自行发挥——请谨慎回答，并建议向客人说明这是规则库之外的信息。"
+                    Message = "规则库中没有该游戏的流程定义，无法返回任何流程数据。请向客人说明这部分规则未被规则库覆盖，不要自行补写规则。"
                 };
         }
         if (relation == "list")
         {
-            return new PlanItemResult { Relation = relation, Entity = entity, Status = "ok", Catalog = _searchService.ListAllConceptIds(game) };
+            return new PlanItemResult
+            {
+                Relation = relation, Entity = entity, Status = "ok",
+                Catalog = _searchService.ListAllConceptIds(game),
+                RetrievalQueries = new List<string>()
+            };
         }
 
         // 实体解析：精确 id → 精确名/别名/基名（直呼工具）→ 名称包含候选
         cancellationToken.ThrowIfCancellationRequested();
-        var matched = ResolvePlanEntity(game, entity, out var candidates, out var source);
+        var matched = ResolvePlanEntity(game, entity, out var deterministicCandidates, out var source);
         cancellationToken.ThrowIfCancellationRequested();
+
+        // 用户显式指定准确 id 时，保留其身份，不因 intent 检索把它替换成另一个对象。
+        // 后续若需要该位置的设置/流程事实，由确认后的同一身份查询自然返回。
+        if (matched.Count > 0 && source == "exact_id")
+        {
+            return BuildOkResult(
+                game, relation, entity, matched, source, question, cancellationToken,
+                retrievalQueries: new[] { entity });
+        }
+
+        var hasIntent = !string.IsNullOrWhiteSpace(intent);
+        var hasScenarioIntent = HasScenarioIntent(entity, intent);
+        var exactIsProcessNode = matched.Any(item =>
+        {
+            var id = RulesTextUtils.GetElementId(item);
+            var type = GetConceptTypeMap(game).GetValueOrDefault(id, "");
+            return type is "actions" or "triggers" or "conditions" or "flow";
+        });
+        // 对象名精确命中时仍要补动作/流程；流程/动作/触发器名精确命中时，
+        // 它本身就是用户要的规则节点，不应被宽泛 intent 再次打散。
+        var shouldSupplementExactIdentity = hasScenarioIntent && !exactIsProcessNode;
+        var exactKeys = matched
+            .Select(RulesTextUtils.GetElementId)
+            .Where(id => !string.IsNullOrEmpty(id))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+        var exactCandidates = matched
+            .Select(item => ToConceptSummary(game, item))
+            .Where(item => !string.IsNullOrEmpty(item.Id))
+            .ToList();
+        var retrievalQueries = new List<string>();
+        if (!string.IsNullOrWhiteSpace(entity)) retrievalQueries.Add(entity);
+        if (hasIntent && !string.Equals(entity.Trim(), intent.Trim(), StringComparison.Ordinal))
+            retrievalQueries.Add(intent);
+
+        List<ConceptSummary> entityCandidates = new();
         if (matched.Count == 0)
         {
-            // Tier 2：程序自己跑语义检索补候选（相似度匹配交给向量库，不交给 LLM）。
-            // 名称包含的确定性候选无条件保留；语义候选须过分数阈值。
-            // 注意：语义要优先于“问题级直呼”。否则问题原文里偶然出现的区域名
-            // （如「宝石供应堆」）会把 action 实体（如「拿取宝石」）错误拍板成 zone。
-            var merged = new List<ConceptSummary>(candidates);
-            var indexById = new Dictionary<string, int>(StringComparer.Ordinal);
-            for (var i = 0; i < merged.Count; i++) indexById[merged[i].Id] = i;
-            if (_vectorSearch != null)
+            entityCandidates = await RetrieveEntityCandidatesAsync(
+                game, relation, entity, deterministicCandidates, cancellationToken);
+        }
+
+        List<ConceptSummary> intentCandidates = new();
+        if (hasIntent)
+        {
+            intentCandidates = await RetrieveIntentCandidatesAsync(
+                game, relation, intent, cancellationToken);
+        }
+
+        List<ConceptSummary> merged;
+        if (hasIntent)
+        {
+            // intent 是“用户要知道什么”的完整场景证据；entity 仅用于身份召回与打平。
+            merged = RulesSearchRanking.MergeEntityAndIntentCandidates(
+                entityCandidates,
+                intentCandidates,
+                exactCandidates,
+                exactKeys,
+                deprioritizeExactIdentity: shouldSupplementExactIdentity);
+        }
+        else if (matched.Count == 0)
+        {
+            // 无 intent 时保持既有实体检索路径，避免改变已有 gold 行为。
+            merged = entityCandidates;
+        }
+        else
+        {
+            merged = new List<ConceptSummary>();
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // 问题中的名称只能补充上下文候选，不能证明查询实体已被识别。
+        // 例如未知能力的问句提到“模组”，不能把未知能力确认成某个模组。
+        if (matched.Count == 0 && (merged.Count == 0 || merged[0].Score < 0.55f))
+        {
+            var qhits = ResolveFromQuestion(game, question, out _)
+                .Where(el => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(el)))
+                .ToList();
+            var mergedKeys = merged
+                .Select(RulesSearchRanking.CandidateKey)
+                .ToHashSet(StringComparer.Ordinal);
+            foreach (var hint in qhits)
             {
-                // 自然语言解释联合召回全文与名称；全文主导，名称只补漏。
-                // 不能看到任意一个全文候选就丢掉名称索引的正确目标。
-                SearchConceptsResult semantic;
-                if (relation == "explain")
-                {
-                    var fullTask = _searchService.SearchConceptsAsync(game, entity, cancellationToken: cancellationToken);
-                    var nameTask = _searchService.SearchConceptsAsync(game, entity, searchMode: "name", cancellationToken: cancellationToken);
-                    await Task.WhenAll(fullTask, nameTask);
-                    semantic = await fullTask;
-                    semantic.Results = RulesSearchRanking.SupplementNames(
-                        semantic.Results, (await nameTask).Results, _vectorSearch.RecallThreshold);
-                }
-                else
-                    semantic = await _searchService.SearchConceptsAsync(
-                        game, entity, searchMode: "name", cancellationToken: cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-                var semItems = semantic.Results
-                    .Where(r => r.Score >= SemanticCandidateThreshold)
-                    .OrderByDescending(r => r.Score)
-                    .ToList();
-                // relation 级类型优先：condition 问句不要被 zone/对象抢走实体。
-                // 只有在存在符合类型的候选时才收窄，避免把原本可用的泛候选误杀。
-                var expected = semItems.Where(c => IsExpectedPlanType(game, relation, c.Id)).ToList();
-                if (expected.Count > 0) semItems = expected;
-                foreach (var c in semItems)
-                {
-                    if (indexById.TryGetValue(c.Id, out var i))
-                    {
-                        // 同一 id 的确定性候选（名称包含，分 0）与语义结果并存时取高分——
-                        // 先到先得会把语义高分丢成 0，正确概念垫底、噪声概念霸榜（2026-08-16 实测）
-                        if (c.Score > merged[i].Score) merged[i] = c;
-                    }
-                    else
-                    {
-                        indexById[c.Id] = merged.Count;
-                        merged.Add(c);
-                        if (merged.Count >= 15) break;
-                    }
-                }
+                var candidate = ToConceptSummary(game, hint);
+                if (string.IsNullOrEmpty(candidate.Id) || !mergedKeys.Add(RulesSearchRanking.CandidateKey(candidate)))
+                    continue;
+                candidate.MatchReason = "question_hint";
+                merged.Add(candidate);
             }
-            // 更新/合并后重新排序，保证候选列表按分数降序呈现给 LLM
-            merged = merged.OrderByDescending(c => c.Score).ToList();
+            merged = merged.OrderByDescending(c => c.Score).Take(15).ToList();
+        }
 
-            // 问题中的名称只能补充上下文候选，不能证明查询实体已被识别。
-            // 例如未知能力的问句提到“模组”，不能把未知能力确认成某个模组。
-            if (merged.Count == 0 || merged[0].Score < 0.55f)
+        if (matched.Count > 0)
+        {
+            var hasScenarioCandidate = shouldSupplementExactIdentity && merged.Any(candidate =>
+                !exactKeys.Contains(RulesSearchRanking.CandidateKey(candidate), StringComparer.Ordinal)
+                && candidate.Score >= SemanticCandidateThreshold);
+            if (hasScenarioCandidate)
             {
-                var qhits = ResolveFromQuestion(game, question, out _)
-                    .Where(el => IsExpectedPlanType(game, relation, RulesTextUtils.GetElementId(el)))
-                    .ToList();
-                foreach (var hint in qhits)
-                {
-                    var id = RulesTextUtils.GetElementId(hint);
-                    if (merged.Any(c => c.Id == id)) continue;
-                    merged.Add(new ConceptSummary
-                    {
-                        Id = id,
-                        Name = hint.TryGetProperty("name", out var name) && name.TryGetProperty("zh", out var zh)
-                            ? zh.GetString() ?? id : id,
-                        Description = RulesTextUtils.ExtractDescriptionZh(hint)
-                    });
-                }
-                merged = merged.OrderByDescending(c => c.Score).Take(15).ToList();
-            }
-
-            if (merged.Count > 0)
-            {
-                // 自动解析必须同时有整句语义和名称/ID 文字证据。
-                var autoTop = merged[0];
-                if (RulesSearchRanking.CanAutoResolve(merged))
-                {
-                    var autoMatched = _catalog.GetConcepts(game, autoTop.Id).ToList();
-                    if (autoMatched.Count > 0)
-                        return BuildOkResult(game, relation, entity, autoMatched, "auto_semantic", question, cancellationToken);
-                }
-
+                // 名字精确命中对象，不等于该对象定义足以回答用户的设置/动作/获得问题。
+                // 返回候选并让模型用准确 id 再确认一次，候选描述不能当正式事实使用。
                 return new PlanItemResult
                 {
                     Relation = relation,
                     Entity = entity,
                     Status = "unresolved",
+                    RetrievalQueries = retrievalQueries,
                     Candidates = merged,
-                    Message = "实体未精确命中——程序已检索出以下候选概念（含相似度分）。请从中挑选确切的概念，用它的 id 或中文名重新发起查询；若候选都不合适，再用 list 浏览全部概念。"
+                    Message = "实体名称已有命中，但完整 intent 保留了对象之外的动作/场景疑点，且检索指向了其他规则节点。候选描述只用于选择目标：若其中某项直接回答 intent，请用它的准确 id、保持原 relation 和 intent 再查询一次以获取正式事实。"
                 };
             }
 
-            // Tier 3：确定性匹配与语义检索都没有可信结果——显式告知 LLM 规则库无此信息，
-            // 让「自行发挥」成为一个被程序声明、可观测的状态，而不是 LLM 的隐式选择。
-            // 消息先给恢复路径（list/identify），再允许记忆兜底——避免 LLM 放弃得太早。
+            return BuildOkResult(
+                game, relation, entity, matched, source, question, cancellationToken,
+                retrievalQueries);
+        }
+
+        if (merged.Count > 0)
+        {
+            // 自动解析必须同时有整句语义和名称/ID 文字证据，阈值不因 intent 放宽。
+            var autoTop = merged[0];
+            if (RulesSearchRanking.CanAutoResolve(merged))
+            {
+                var autoMatched = _catalog.GetConcepts(game, autoTop.Id).ToList();
+                if (autoMatched.Count > 0)
+                {
+                    return BuildOkResult(
+                        game, relation, entity, autoMatched, "auto_semantic", question,
+                        cancellationToken, retrievalQueries);
+                }
+            }
+
             return new PlanItemResult
             {
                 Relation = relation,
                 Entity = entity,
-                Status = "no_match",
-                Message = $"程序未能在规则库中找到与「{entity}」足够相近的概念，本查询无法获得任何规则数据。请先尝试：一、用 list 浏览概念目录确认是否真的没有相近概念（也许名字不同）；二、用 identify 按外观或位置描述再找一次。若确认规则库中没有此概念，此问题只能由你基于自己的知识自行发挥——请谨慎回答，并向客人说明这是规则库之外的信息。"
+                Status = "unresolved",
+                RetrievalQueries = retrievalQueries,
+                Candidates = merged,
+                Message = "实体未精确命中——程序结合名称定位与完整 intent 检索出以下候选（含分数与来源）。候选描述只用于选择目标；请从中挑选真正回答 intent 的概念，用它的 id 或中文名、保持原 relation 和 intent 重新发起查询。"
             };
         }
 
-        return BuildOkResult(game, relation, entity, matched, source, question, cancellationToken);
+        return new PlanItemResult
+        {
+            Relation = relation,
+            Entity = entity,
+            Status = "no_match",
+            RetrievalQueries = retrievalQueries,
+            Message = $"程序未能在规则库中找到与「{entity}」足够相近的概念，本查询无法获得任何规则数据。请先尝试：一、用 list 浏览概念目录确认是否真的没有相近概念（也许名字不同）；二、用 identify 按外观或位置描述再找一次。若确认规则库中没有此规则事实，请向客人说明未查到，不要基于记忆补写规则。"
+        };
+    }
+
+
+    /// <summary>
+    /// 判断 intent 是否只是对 entity 的身份/定义追问。去掉实体表面词后仍有实质文本时，
+    /// 说明用户在问该对象的动作、场景或结果，不能把对象定义当作唯一答案。
+    /// 这是通用的“意图是否超出对象名”检查，不绑定具体游戏或概念。
+    /// </summary>
+    private static bool HasScenarioIntent(string entity, string intent)
+    {
+        if (string.IsNullOrWhiteSpace(intent)) return false;
+        var normalized = intent.Trim();
+        var entityText = entity.Trim();
+        if (!string.IsNullOrEmpty(entityText))
+            normalized = normalized.Replace(entityText, "", StringComparison.OrdinalIgnoreCase);
+        var substantiveChars = normalized
+            .Where(ch => !char.IsWhiteSpace(ch) && !char.IsPunctuation(ch) && !char.IsSymbol(ch))
+            .Count();
+        return substantiveChars >= 4;
+    }
+
+
+    /// <summary>
+    /// 实体名字/身份定位通道。保留原有 explain 全文+名称补漏和其他 relation 名称检索的差异。
+    /// </summary>
+    private async Task<List<ConceptSummary>> RetrieveEntityCandidatesAsync(
+        string game,
+        string relation,
+        string entity,
+        List<ConceptSummary> deterministicCandidates,
+        CancellationToken cancellationToken)
+    {
+        var merged = new List<ConceptSummary>(deterministicCandidates);
+        if (_vectorSearch == null) return merged;
+
+        var indexById = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (var i = 0; i < merged.Count; i++) indexById[RulesSearchRanking.CandidateKey(merged[i])] = i;
+
+        SearchConceptsResult semantic;
+        if (relation == "explain")
+        {
+            var fullTask = _searchService.SearchConceptsAsync(game, entity, cancellationToken: cancellationToken);
+            var nameTask = _searchService.SearchConceptsAsync(game, entity, searchMode: "name", cancellationToken: cancellationToken);
+            await Task.WhenAll(fullTask, nameTask);
+            semantic = await fullTask;
+            semantic.Results = RulesSearchRanking.SupplementNames(
+                semantic.Results, (await nameTask).Results, _vectorSearch.RecallThreshold);
+        }
+        else
+        {
+            semantic = await _searchService.SearchConceptsAsync(
+                game, entity, searchMode: "name", cancellationToken: cancellationToken);
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var semItems = semantic.Results
+            .Where(r => r.Score >= SemanticCandidateThreshold)
+            .OrderByDescending(r => r.Score)
+            .ToList();
+        semItems = ApplyRelationTypePreference(game, relation, semItems);
+
+        foreach (var c in semItems)
+        {
+            var key = RulesSearchRanking.CandidateKey(c);
+            if (indexById.TryGetValue(key, out var i))
+            {
+                if (c.Score > merged[i].Score) merged[i] = c;
+            }
+            else
+            {
+                indexById[key] = merged.Count;
+                merged.Add(c);
+                if (merged.Count >= 15) break;
+            }
+        }
+        return merged.OrderByDescending(c => c.Score).ToList();
+    }
+
+
+    /// <summary>
+    /// 完整 intent 场景/动作召回。始终走全文/整句检索，不使用短名称补漏通道，
+    /// 避免设置、获得、外观等不同问题都被对象名压成同一条路径。
+    /// </summary>
+    private async Task<List<ConceptSummary>> RetrieveIntentCandidatesAsync(
+        string game,
+        string relation,
+        string intent,
+        CancellationToken cancellationToken)
+    {
+        var semantic = await _searchService.SearchConceptsAsync(
+            game, intent, searchMode: "full", cancellationToken: cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var candidates = semantic.Results
+            .Where(r => r.Score >= SemanticCandidateThreshold)
+            .OrderByDescending(r => r.Score)
+            .ToList();
+        candidates = ApplyRelationTypePreference(game, relation, candidates);
+        foreach (var candidate in candidates)
+            candidate.MatchReason = "intent";
+        return candidates.Take(15).ToList();
+    }
+
+
+    private List<ConceptSummary> ApplyRelationTypePreference(
+        string game,
+        string relation,
+        List<ConceptSummary> candidates)
+    {
+        if (candidates.Count == 0) return candidates;
+        var expected = candidates.Where(c => IsExpectedPlanType(game, relation, c.Id)).ToList();
+        // 没有符合类型的候选时保留原候选，避免把可用召回误杀。
+        return expected.Count > 0 ? expected : candidates;
+    }
+
+
+    private ConceptSummary ToConceptSummary(string game, JsonElement element)
+    {
+        var id = RulesTextUtils.GetElementId(element);
+        var name = "";
+        if (element.ValueKind == JsonValueKind.Object
+            && element.TryGetProperty("name", out var nameProp)
+            && nameProp.ValueKind == JsonValueKind.Object
+            && nameProp.TryGetProperty("zh", out var zh))
+            name = zh.GetString() ?? "";
+        var type = GetConceptTypeMap(game).TryGetValue(id, out var foundType) ? foundType : "";
+        return new ConceptSummary
+        {
+            Id = id,
+            Path = id,
+            Name = string.IsNullOrEmpty(name) ? id : name,
+            Type = type,
+            Description = RulesTextUtils.ExtractDescriptionZh(element)
+        };
     }
 
 
@@ -352,7 +562,8 @@ public sealed class RulesPlanService
         List<JsonElement> matched,
         string source,
         string question,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        IReadOnlyList<string>? retrievalQueries = null)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var resolvedId = RulesTextUtils.GetElementId(matched[0]);
@@ -364,7 +575,8 @@ public sealed class RulesPlanService
             Status = "ok",
             Source = source,
             Matched = matched,
-            Related = _referenceService.ExpandRelated(game, matched, light: source == "question_hit")
+            Related = _referenceService.ExpandRelated(game, matched, light: source == "question_hit"),
+            RetrievalQueries = retrievalQueries?.ToList() ?? new List<string>()
         };
 
         cancellationToken.ThrowIfCancellationRequested();

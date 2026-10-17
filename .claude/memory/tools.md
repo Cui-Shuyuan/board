@@ -43,7 +43,7 @@ python3 -m unittest discover -s animation -p 'test_*.py'   # 当前 227/227（�
 后端：
 
 ```bash
-dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo   # 当前 161/161
+dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj --nologo   # 当前 173/173
 ```
 
 Android JVM：测试源码 12 个文件 / 93 个 `@Test`（ContentStatus、ContentStoreCleanup、ContentUpdater、HomeContentCoordinator、PlayerSessionController、PlayerTimelineBar、UnityLoadQueue、QaEvidenceParsing、QaPanelMode、QaRepository、QaSessionHolder、QaVoiceController）。最近一次记录 91/91；WSL 侧因 Android SDK/AAPT 在 Windows 侧，未直接重跑，重跑用 Windows `gradlew.bat testDebugUnitTest`。
@@ -74,11 +74,12 @@ python3 tools/indexing/rebuild_index.py --all --pooling cls --no-switch
 ```bash
 python3 tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_gold.jsonl --api http://localhost:5000
 python3 tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_regressions.jsonl --api http://localhost:5000
+python3 tools/indexing/eval_query_intent.py --api http://localhost:5000 --out .tmp/query-intent-after
 python3 tools/indexing/eval_natural_retrieval.py --api http://localhost:5000 --out .tmp/live-natural
 python3 tools/indexing/retrieval_lab.py --out .tmp/retrieval-lab --reranker backend/BoardAI.Api/ml_models/bge-reranker-base
 ```
 
-- Gold：`retrieval_gold.jsonl` 85 条、`retrieval_regressions.jsonl` 7 条、`retrieval_questions.jsonl` 53 条自然问句；事实答案要求见 `rule_fact_regressions.jsonl`。
+- Gold：`retrieval_gold.jsonl` 85 条、`retrieval_regressions.jsonl` 7 条、`retrieval_questions.jsonl` 53 条自然问句、`query_intent_regressions.jsonl` 13 行 / 14 个子查询；事实答案要求见 `rule_fact_regressions.jsonl`。
 - 当前指标：85 条中 77 直接命中、8 条候选前三、0 wrong/no_match；7 条回归全部前三。自然问句正例首位/前三和 reranker 结论只见 `docs/reviews/retrieval-*-2026-10-09.md`。
 - `retrieval_lab.py` 只读，不自动下载模型，reranker/片段/RRF 未接正式查询。
 
