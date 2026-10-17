@@ -138,6 +138,9 @@ public sealed class PromptIsolationTests
 
         Assert.Contains("你有两个工具", legacy);
         Assert.Contains("submit_answer", legacy);
+        Assert.Contains("outcome=conversation", legacy);
+        Assert.Contains("每次模型响应都必须包含工具调用", legacy);
+        Assert.DoesNotContain("直接回答，不调用工具", legacy);
         Assert.Contains("查询计划编写", legacy);
         Assert.DoesNotContain("你只有一个工具 execute_plan", program);
         Assert.DoesNotContain("execute_plan", program);

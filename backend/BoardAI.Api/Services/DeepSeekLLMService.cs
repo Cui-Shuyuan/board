@@ -47,6 +47,8 @@ public class DeepSeekLLMService : ILLMService
             ["messages"] = messages,
             ["tools"] = tools?.Count > 0 ? tools : null
         };
+        if (tools is { Count: > 0 } && !string.IsNullOrWhiteSpace(_options.ToolChoice))
+            request["tool_choice"] = _options.ToolChoice;
         if (thinking != null)
             request["thinking"] = thinking;
         if (_options.Thinking == "low")

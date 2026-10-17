@@ -61,7 +61,7 @@ public class ChatOrchestratorService
             throw new InvalidOperationException(
                 $"LLM:OrchestrationMode must be 'legacy' or 'program', got '{llmOptions.OrchestrationMode}'.");
         _configFingerprint = HashFingerprint(
-            $"{llmOptions.Provider}|{llmOptions.BaseUrl}|{llmOptions.Model}|{llmOptions.Thinking}|"
+            $"{llmOptions.Provider}|{llmOptions.BaseUrl}|{llmOptions.Model}|{llmOptions.Thinking}|{llmOptions.ToolChoice}|"
             + $"{_orchestrationMode}|{llmOptions.MaxToolRounds}|{llmOptions.MaxToolCallsPerRound}|"
             + $"{llmOptions.MaxTotalToolCalls}|{llmOptions.MaxCandidatesPerQuestion}|"
             + $"{llmOptions.MaxEvidencePerQuestion}|{llmOptions.MaxEvidenceTotal}|"

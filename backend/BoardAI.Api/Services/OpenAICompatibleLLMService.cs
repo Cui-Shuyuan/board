@@ -39,6 +39,8 @@ public class OpenAICompatibleLLMService : ILLMService
             ["messages"] = messages,
             ["tools"] = tools?.Count > 0 ? tools : null
         };
+        if (tools is { Count: > 0 } && !string.IsNullOrWhiteSpace(_options.ToolChoice))
+            request["tool_choice"] = _options.ToolChoice;
 
         var response = await _httpClient.PostAsJsonAsync(
             "chat/completions",

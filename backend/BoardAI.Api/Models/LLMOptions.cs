@@ -16,6 +16,12 @@ public class LLMOptions
     /// </summary>
     public string Thinking { get; set; } = "default";
 
+    /// <summary>
+    /// 可选 tool_choice。空 = auto；required = 必须调用一个工具。
+    /// 思考模式是否支持 required 由 provider 决定，需先做接口冒烟。
+    /// </summary>
+    public string ToolChoice { get; set; } = "";
+
     /// <summary>program = 程序控制的理解→取证→回答状态机；legacy = 仅用于本轮对照的旧自由工具循环。</summary>
     public string OrchestrationMode { get; set; } = "legacy";
 
