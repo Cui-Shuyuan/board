@@ -372,6 +372,20 @@ board-content/
 
 ### 配置服务端地址与 adb reverse
 
+本机 adb 使用 Unity 自带 Android SDK，Windows 路径：
+
+```text
+D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\platform-tools\adb.exe
+```
+
+WSL 路径：
+
+```text
+/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb.exe
+```
+
+下文 `%ADB%` 均指该可执行文件。
+
 `local.properties`：
 
 ```properties

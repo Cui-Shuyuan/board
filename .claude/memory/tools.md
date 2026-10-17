@@ -136,7 +136,9 @@ python3 tools/content/build_content_manifest.py --game splendor
 
 builder 只收集 runtime/compiled 及实际引用媒体，排除 QA/文档/脚本/pyc/lrc/动画源；发布通过 `{version}.tmp` 校验后原子 rename，versioned URL 只读 release。
 
-## 8. 工作区同步与 Unity
+## 8. 工作区同步、Unity 与 ADB
+
+工作区同步：
 
 ```bash
 ./tools/ops/sync_workspaces.sh from-linux
@@ -145,6 +147,26 @@ builder 只收集 runtime/compiled 及实际引用媒体，排除 QA/文档/脚�
 ```
 
 Unity 批处理采样使用 Windows 编辑器路径；运行时快捷键 `G` 开动画、`B` 轮换关键帧、空格暂停、`←/→` 逐步、`A` 自动播。
+
+### 测试机 ADB
+
+本机没有独立加入 PATH 的 `adb`，使用 Unity 自带 Android SDK 里的 Windows `adb.exe`；WSL 可直接调用：
+
+```bash
+ADB=/mnt/d/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb.exe
+"$ADB" devices -l
+"$ADB" reverse tcp:5000 tcp:5000
+```
+
+Windows 路径为：
+
+```text
+D:\Unity\Hub\Editor\6000.5.8f1\Editor\Data\PlaybackEngines\AndroidPlayer\SDK\platform-tools\adb.exe
+```
+
+- WSL 中的 `.exe` 调用的是 Windows adb server；不要直接运行裸 `adb`（WSL 内通常不存在）。
+- 测试机通过 USB 连接，机型为 Redmi K30 Pro；设备序列号以 `"$ADB" devices -l` 为准。
+- 常用验证：`"$ADB" shell pidof com.boardai.tutorial.uaal`、`"$ADB" shell run-as com.boardai.tutorial.uaal cat /data/user/0/com.boardai.tutorial.uaal/files/board-content/active.json`。
 
 ## 9. 常用入口
 
