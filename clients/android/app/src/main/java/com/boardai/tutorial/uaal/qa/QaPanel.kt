@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -78,9 +79,43 @@ private val QaAccentYellow = Color(0xFFFFC107)
 private val QaPanelColor = Color(0x801B1B20)
 private val QaPanelOpaqueColor = Color(0xFF1B1B20)
 
+internal const val QA_SWIPE_UP_CLOSE_DP = 56f
+
 /** Standalone QA is opened from the home screen, so closing returns there. */
 internal fun closeLabelForQaMode(isStandalone: Boolean): String =
     if (isStandalone) "返回" else "继续播放"
+
+internal fun qaSwipeUpHint(isStandalone: Boolean): String =
+    if (isStandalone) "向上滑动返回首页" else "向上滑动返回播放"
+
+internal fun shouldCloseQaOnUpSwipe(totalDyPx: Float, thresholdPx: Float): Boolean =
+    thresholdPx > 0f && totalDyPx <= -thresholdPx
+
+/**
+ * Swipe-up dismiss for the non-scrollable QA chrome.  The chat list keeps
+ * normal vertical scrolling; this modifier is attached to the header and the
+ * empty state so an upward gesture cannot steal a conversation scroll.
+ */
+private fun Modifier.qaSwipeUpToClose(onSwipeUp: () -> Unit): Modifier =
+    pointerInput(onSwipeUp) {
+        var totalDyPx = 0f
+        var triggered = false
+        val thresholdPx = QA_SWIPE_UP_CLOSE_DP.dp.toPx()
+        detectVerticalDragGestures(
+            onDragStart = {
+                totalDyPx = 0f
+                triggered = false
+            },
+            onVerticalDrag = { change, dragAmount ->
+                totalDyPx += dragAmount
+                if (!triggered && shouldCloseQaOnUpSwipe(totalDyPx, thresholdPx)) {
+                    triggered = true
+                    change.consume()
+                    onSwipeUp()
+                }
+            }
+        )
+    }
 
 /**
  * Full-height text QA panel with the composer pinned to the bottom.
@@ -270,6 +305,11 @@ fun QaPanel(
 
     val panelColor = if (isStandalone) QaPanelOpaqueColor else QaPanelColor
 
+    fun closePanel() {
+        voiceController.stopPlayback()
+        onClose()
+    }
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -283,16 +323,27 @@ fun QaPanel(
                 gameName = currentContext.gameName.ifBlank {
                     game?.nameZh.orEmpty()
                 },
-                onClose = {
-                    voiceController.stopPlayback()
-                    onClose()
-                },
+                onClose = { closePanel() },
                 onNewSession = { startNewSession() },
-                isStandalone = isStandalone
+                isStandalone = isStandalone,
+                onSwipeUpToClose = { closePanel() }
             )
 
             if (messages.isEmpty() && !sending) {
-                Spacer(Modifier.weight(1f))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .qaSwipeUpToClose { closePanel() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = qaSwipeUpHint(isStandalone),
+                        color = Color.White.copy(alpha = 0.38f),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier
@@ -349,12 +400,14 @@ private fun QaTopBar(
     gameName: String,
     onClose: () -> Unit,
     onNewSession: () -> Unit,
-    isStandalone: Boolean
+    isStandalone: Boolean,
+    onSwipeUpToClose: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(54.dp)
+            .qaSwipeUpToClose(onSwipeUpToClose)
     ) {
         TextButton(
             onClick = onClose,
