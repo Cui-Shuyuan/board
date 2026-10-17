@@ -24,6 +24,11 @@ internal static class Program
         Check(Math.Abs(expected - actual) <= eps, message + " (expected " + expected + ", got " + actual + ")");
     }
 
+    private static void CheckClose(double expected, double actual, double eps, string message)
+    {
+        Check(Math.Abs(expected - actual) <= eps, message + " (expected " + expected + ", got " + actual + ")");
+    }
+
     private static ComponentState Comp(string id, float x = 0f, float z = 0f, FaceState face = FaceState.Up)
     {
         return new ComponentState
@@ -228,6 +233,805 @@ internal static class Program
             "same-time overlay order keeps compiled index");
     }
 
+
+    private static string Fmt(double value)
+    {
+        return value.ToString("0.000", System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    private static bool HasCall(List<string> calls, string prefix)
+    {
+        for (int i = 0; i < calls.Count; i++)
+            if (calls[i].StartsWith(prefix, StringComparison.Ordinal)) return true;
+        return false;
+    }
+
+    private static int CountCalls(List<string> calls, string prefix)
+    {
+        int count = 0;
+        for (int i = 0; i < calls.Count; i++)
+            if (calls[i].StartsWith(prefix, StringComparison.Ordinal)) count++;
+        return count;
+    }
+
+    private static CueTimelineSegment SegmentAt(CueTimelinePlan plan, string kind, double cueTime)
+    {
+        foreach (var track in plan.tracks)
+        {
+            if (track.kind != kind) continue;
+            foreach (var segment in track.segments)
+            {
+                if (cueTime + 1e-9 < segment.cue_start) continue;
+                if (cueTime >= segment.EndCueTime - 1e-9) continue;
+                return segment;
+            }
+        }
+        return null;
+    }
+
+    private static double AudioSourcePositionAt(CueTimelinePlan plan, double cueTime)
+    {
+        var segment = SegmentAt(plan, "audio", cueTime);
+        if (segment == null) return -1.0;
+        if (segment.type == "audio_clip")
+            return segment.source_start + (cueTime - segment.cue_start);
+        return 0.0;
+    }
+
+    private static CueTimelinePlan CuePlaybackPlan(string cueId)
+    {
+        var plan = new CueTimelinePlan
+        {
+            schema = "tutorial-cue-plan/v1",
+            cue_id = cueId,
+            entry = "fixture/previous",
+            course = new CueTimelineCourse { start = 100.0, duration = 10.0 },
+            tracks = new List<CueTimelineTrack>(),
+        };
+        plan.tracks.Add(new CueTimelineTrack
+        {
+            id = "audio.main",
+            kind = "audio",
+            tail_policy = "silence",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "a.voice1", type = "audio_clip", cue_start = 0.0,
+                    asset = "fixture.mp3", source_start = 10.0, source_end = 12.0,
+                },
+                new CueTimelineSegment
+                {
+                    id = "a.silence1", type = "silence", cue_start = 2.0, duration = 2.0,
+                },
+                new CueTimelineSegment
+                {
+                    id = "a.voice2", type = "audio_clip", cue_start = 4.0,
+                    asset = "fixture.mp3", source_start = 20.0, source_end = 23.0,
+                },
+                new CueTimelineSegment
+                {
+                    id = "a.silence2", type = "silence", cue_start = 7.0, duration = 3.0,
+                },
+            },
+        });
+        plan.tracks.Add(new CueTimelineTrack
+        {
+            id = "visual.main",
+            kind = "visual",
+            tail_policy = "hold_last_frame",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "v.anim1", type = "animation", cue_start = 0.0,
+                    animation = "fixture#opening", source_start = 0.0, source_end = 2.0,
+                    after_end = "hold_last_frame",
+                },
+                new CueTimelineSegment
+                {
+                    id = "v.hold1", type = "hold", cue_start = 2.0, duration = 2.0,
+                    pose = "last_frame",
+                },
+                new CueTimelineSegment
+                {
+                    id = "v.anim2", type = "animation", cue_start = 4.0,
+                    animation = "fixture#speech", source_start = 100.0, source_end = 103.0,
+                    after_end = "hold_last_frame",
+                },
+                new CueTimelineSegment
+                {
+                    id = "v.hold2", type = "hold", cue_start = 7.0, duration = 3.0,
+                    pose = "last_frame",
+                },
+            },
+        });
+        return plan;
+    }
+
+    private static FakeSubtitleExecutor MakeSubtitles()
+    {
+        var subtitles = new FakeSubtitleExecutor();
+        subtitles.Windows.Add(new SubtitleWindow { Start = 0.0, End = 1.5, Text = "voice one" });
+        subtitles.Windows.Add(new SubtitleWindow { Start = 4.0, End = 6.0, Text = "voice two" });
+        return subtitles;
+    }
+
+    private static void TestCueStateMachineAndReadyGating()
+    {
+        Check(CuePlaybackStateMachine.CanTransition(CuePlaybackState.Idle, CuePlaybackState.Preparing),
+            "state machine Idle -> Preparing");
+        Check(CuePlaybackStateMachine.CanTransition(CuePlaybackState.Preparing, CuePlaybackState.Ready),
+            "state machine Preparing -> Ready");
+        Check(CuePlaybackStateMachine.CanTransition(CuePlaybackState.Playing, CuePlaybackState.Paused),
+            "state machine Playing -> Paused");
+        Check(CuePlaybackStateMachine.CanTransition(CuePlaybackState.Paused, CuePlaybackState.Seeking),
+            "state machine Paused -> Seeking");
+        Check(!CuePlaybackStateMachine.CanTransition(CuePlaybackState.Idle, CuePlaybackState.Playing),
+            "state machine rejects Idle -> Playing");
+        Check(!CuePlaybackStateMachine.CanTransition(CuePlaybackState.Ready, CuePlaybackState.Completed),
+            "state machine rejects Ready -> Completed");
+
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock) { AutoPrepare = false };
+        var visual = new FakeVisualExecutor { AutoPrepare = false };
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        var plan = CuePlaybackPlan("fixture/ready_gate");
+
+        Check(controller.Prepare(plan), "prepare request accepted");
+        Check(controller.State == CuePlaybackState.Preparing, "controller enters Preparing");
+        Check(!controller.Play(), "cannot play before resources are ready");
+        Check(controller.State == CuePlaybackState.Preparing, "failed play request leaves state preparing");
+        Check(HasCall(audio.Calls, "audio.prepare:"), "audio prepare called");
+        Check(HasCall(visual.Calls, "visual.prepare:"), "visual prepare called");
+        Check(CountCalls(audio.Calls, "audio.play:") == 0, "no audio play while preparing");
+
+        long prepareGeneration = controller.Generation;
+        audio.CompletePreparation(prepareGeneration);
+        Check(controller.State == CuePlaybackState.Preparing,
+            "only one executor ready is not enough");
+        visual.CompletePreparation(prepareGeneration);
+        Check(controller.State == CuePlaybackState.Ready,
+            "both executors prepared -> Ready");
+        Check(controller.Play(), "play from Ready accepted");
+        Check(controller.State == CuePlaybackState.Playing, "controller enters Playing");
+        Check(controller.Generation > prepareGeneration, "play advances playback generation");
+    }
+
+    private static void TestPreparationFailureIsNotCompletion()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock) { AutoPrepare = false };
+        var visual = new FakeVisualExecutor { AutoPrepare = false };
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        int completionEvents = 0;
+        controller.Completed += delegate { completionEvents++; };
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/load_failure")), "prepare load-failure cue");
+        long generation = controller.Generation;
+        audio.FailPreparation(generation, "fixture missing");
+
+        Check(controller.State == CuePlaybackState.Failed, "prepare failure -> Failed");
+        Check(controller.LastFailure != null
+              && controller.LastFailure.Kind == CuePlaybackFailureKind.Preparation,
+            "prepare failure records preparation kind");
+        Check(controller.CompletionCount == 0 && completionEvents == 0,
+            "load failure is not natural completion");
+        Check(HasCall(audio.Calls, "audio.stop:"), "prepare failure stops audio executor");
+        Check(HasCall(visual.Calls, "visual.stop:"), "prepare failure stops visual executor");
+    }
+
+    private static void TestCueClockAdvancesAndPauses()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/clock")), "prepare clock cue");
+        Check(controller.State == CuePlaybackState.Ready, "synchronous preparation -> Ready");
+        Check(controller.Play(), "play clock cue");
+
+        clock.Advance(2.25);
+        controller.Tick();
+        CheckClose(2.25, controller.CueTime, 1e-9, "Playing advances cue-local clock");
+
+        Check(controller.Pause(), "pause playing cue");
+        Check(controller.State == CuePlaybackState.Paused, "pause -> Paused");
+        clock.Advance(5.0);
+        controller.Tick();
+        CheckClose(2.25, controller.CueTime, 1e-9, "Paused freezes cue-local clock");
+        Check(HasCall(audio.Calls, "audio.pause:"), "audio pause called");
+        Check(HasCall(visual.Calls, "visual.pause:"), "visual pause called");
+
+        Check(controller.Resume(), "resume paused cue");
+        clock.Advance(1.5);
+        controller.Tick();
+        CheckClose(3.75, controller.CueTime, 1e-9, "Resume continues from frozen cue time");
+        Check(HasCall(audio.Calls, "audio.resume:"), "audio resume called");
+    }
+
+    private static void TestDurationCompletesOnce()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        int completionEvents = 0;
+        CuePlaybackCompletion seen = null;
+        controller.Completed += delegate(CuePlaybackCompletion completion)
+        {
+            completionEvents++;
+            seen = completion;
+        };
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/completion")), "prepare completion cue");
+        Check(controller.Play(), "play completion cue");
+        long playbackGeneration = controller.Generation;
+        clock.Advance(14.0);
+        controller.Tick();
+
+        Check(controller.State == CuePlaybackState.Completed, "duration reached -> Completed");
+        CheckClose(10.0, controller.CueTime, 1e-9, "completion clamps cue time to duration");
+        Check(completionEvents == 1 && controller.CompletionCount == 1,
+            "completion notification emitted exactly once");
+        Check(seen != null && seen.Generation == playbackGeneration,
+            "completion carries playback generation");
+        Check(HasCall(audio.Calls, "audio.stop:"), "completion stops audio");
+
+        controller.Tick();
+        controller.Tick();
+        Check(completionEvents == 1 && controller.CompletionCount == 1,
+            "repeated ticks do not repeat completion");
+    }
+
+    private static void TestAudioCompletionSignalDoesNotCompleteCue()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        int completionEvents = 0;
+        controller.Completed += delegate { completionEvents++; };
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/audio_signal")), "prepare audio-signal cue");
+        Check(controller.Play(), "play audio-signal cue");
+        long generation = controller.Generation;
+
+        clock.Advance(1.0);
+        controller.Tick();
+        audio.Complete(generation);
+
+        Check(controller.State == CuePlaybackState.Playing,
+            "audio completion callback does not complete cue");
+        Check(controller.CompletionCount == 0 && completionEvents == 0,
+            "audio completion callback does not emit cue completion");
+        Check(controller.AudioCompletionSignalCount == 1,
+            "audio completion signal recorded as diagnostic");
+        CheckClose(1.0, controller.CueTime, 1e-9, "cue clock remains authoritative");
+
+        clock.Advance(9.0);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed,
+            "cue completes only when cue clock reaches duration");
+        Check(completionEvents == 1, "natural completion still emits once");
+    }
+
+    private static void TestSeekCategoriesAndReplayCalls()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var subtitle = MakeSubtitles();
+        var controller = new CuePlaybackController(clock, audio, visual, subtitle);
+        var plan = CuePlaybackPlan("fixture/seek_categories");
+
+        Check(controller.Prepare(plan), "prepare seek-category cue");
+        Check(controller.Play(), "play seek-category cue");
+
+        Check(controller.SeekTo(0.5), "seek to voice segment");
+        Check(controller.State == CuePlaybackState.Playing, "playing seek keeps playing intent");
+        CheckClose(0.5, controller.CueTime, 1e-9, "voice seek cue time");
+        CheckClose(0.5, visual.LastSeekTime, 1e-9, "voice seek visual time");
+        Check(controller.CurrentSubtitle.Visible && controller.CurrentSubtitle.Text == "voice one",
+            "voice seek subtitle state");
+        Check(SegmentAt(plan, "audio", controller.CueTime).type == "audio_clip",
+            "voice seek resolves an audio clip");
+
+        long oldGeneration = controller.Generation;
+        Check(controller.SeekTo(3.0), "seek to silence segment");
+        long silenceGeneration = controller.Generation;
+        Check(controller.State == CuePlaybackState.Playing, "silence seek keeps playing");
+        CheckClose(3.0, controller.CueTime, 1e-9, "silence seek cue time");
+        Check(SegmentAt(plan, "audio", controller.CueTime).type == "silence",
+            "silence seek resolves audio silence");
+        Check(!controller.CurrentSubtitle.Visible, "silence seek has no subtitle");
+        Check(HasCall(audio.Calls, "audio.cancel:" + oldGeneration),
+            "seek cancels previous audio scheduling");
+        Check(HasCall(audio.Calls, "audio.seek:" + silenceGeneration + ":3.000"),
+            "seek schedules audio at cue-local target");
+        Check(HasCall(audio.Calls, "audio.play:" + silenceGeneration + ":3.000"),
+            "playing seek resumes audio at target");
+        Check(HasCall(visual.Calls, "visual.seek:" + silenceGeneration + ":3.000"),
+            "visual executor seeks to same cue time");
+
+        Check(controller.SeekTo(7.0), "seek to hold segment");
+        CheckClose(7.0, controller.CueTime, 1e-9, "hold seek cue time");
+        Check(visual.LastSeekTime == 7.0, "hold seek visual time");
+        Check(SegmentAt(plan, "visual", controller.CueTime).type == "hold",
+            "hold seek resolves visual hold segment");
+        Check(SegmentAt(plan, "audio", controller.CueTime).type == "silence",
+            "hold seek resolves audio silence");
+
+        int completions = 0;
+        controller.Completed += delegate { completions++; };
+        Check(controller.SeekTo(10.0), "seek to cue boundary");
+        Check(controller.State == CuePlaybackState.Completed, "boundary seek completes cue");
+        CheckClose(10.0, controller.CueTime, 1e-9, "boundary seek exact cue time");
+        Check(completions == 1 && controller.CompletionCount == 1,
+            "boundary seek emits one completion");
+    }
+
+    private static void TestPausedSeekResumeCallSequence()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/paused_seek")), "prepare paused-seek cue");
+        Check(controller.Play(), "play paused-seek cue");
+        clock.Advance(1.0);
+        controller.Tick();
+        Check(controller.Pause(), "pause before seek");
+
+        int playCallsBeforeSeek = CountCalls(audio.Calls, "audio.play:");
+        Check(controller.SeekTo(5.0), "seek while paused");
+        Check(controller.State == CuePlaybackState.Paused, "paused seek keeps paused intent");
+        CheckClose(5.0, controller.CueTime, 1e-9, "paused seek updates cue time");
+        Check(HasCall(audio.Calls, "audio.seek:"), "paused seek repositions audio");
+        Check(CountCalls(audio.Calls, "audio.play:") == playCallsBeforeSeek,
+            "paused seek does not start audio playback early");
+
+        clock.Advance(3.0);
+        controller.Tick();
+        CheckClose(5.0, controller.CueTime, 1e-9, "paused seek stays frozen");
+        int resumeCallsBefore = CountCalls(audio.Calls, "audio.resume:");
+        Check(controller.Resume(), "resume after paused seek");
+        Check(CountCalls(audio.Calls, "audio.resume:") == resumeCallsBefore + 1,
+            "resume after paused seek uses resume, not a duplicate play");
+        Check(CountCalls(audio.Calls, "audio.play:") == playCallsBeforeSeek,
+            "resume after paused seek does not duplicate play scheduling");
+        clock.Advance(1.0);
+        controller.Tick();
+        CheckClose(6.0, controller.CueTime, 1e-9, "resumed cue clock continues");
+    }
+
+    private static void TestSequentialPlaybackMatchesDirectSeek()
+    {
+        var plan = CuePlaybackPlan("fixture/equivalence");
+
+        var sequentialClock = new ManualCueClock();
+        var sequentialAudio = new FakeAudioExecutor(sequentialClock);
+        var sequentialVisual = new FakeVisualExecutor();
+        var sequentialSubtitles = MakeSubtitles();
+        var sequential = new CuePlaybackController(
+            sequentialClock, sequentialAudio, sequentialVisual, sequentialSubtitles);
+        Check(sequential.Prepare(plan), "prepare sequential-equivalence cue");
+        Check(sequential.Play(), "play sequential-equivalence cue");
+        sequentialClock.Advance(3.0);
+        sequential.Tick();
+
+        var seekClock = new ManualCueClock();
+        var seekAudio = new FakeAudioExecutor(seekClock);
+        var seekVisual = new FakeVisualExecutor();
+        var seekSubtitles = MakeSubtitles();
+        var direct = new CuePlaybackController(seekClock, seekAudio, seekVisual, seekSubtitles);
+        Check(direct.Prepare(plan), "prepare direct-seek-equivalence cue");
+        Check(direct.Play(), "play direct-seek-equivalence cue");
+        Check(direct.SeekTo(3.0), "seek directly to same cue time");
+
+        Check(sequential.State == direct.State, "sequential and direct seek same state");
+        CheckClose(sequential.CueTime, direct.CueTime, 1e-9,
+            "sequential and direct seek same cue time");
+        CheckClose(sequentialVisual.LastSeekTime, seekVisual.LastSeekTime, 1e-9,
+            "sequential and direct seek same visual time");
+        Check(sequential.CurrentSubtitle.Visible == direct.CurrentSubtitle.Visible
+              && sequential.CurrentSubtitle.Text == direct.CurrentSubtitle.Text,
+            "sequential and direct seek same subtitle state");
+        CheckClose(sequentialAudio.CurrentCueTime, seekAudio.CurrentCueTime, 1e-9,
+            "sequential and direct seek same audio cue position");
+        CheckClose(AudioSourcePositionAt(plan, sequential.CueTime),
+            AudioSourcePositionAt(plan, direct.CueTime), 1e-9,
+            "sequential and direct seek same audio material position");
+    }
+
+    private static void TestRapidCueSwitchDropsStaleCallbacks()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock) { AutoPrepare = false };
+        var visual = new FakeVisualExecutor { AutoPrepare = false };
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/stale_a")), "prepare stale cue A");
+        long generationA = controller.Generation;
+        ICueExecutorCallback oldAudioCallback = audio.StoredCallback;
+        ICueExecutorCallback oldVisualCallback = visual.StoredCallback;
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/stale_b")), "switch to cue B while A prepares");
+        long generationB = controller.Generation;
+        Check(generationB > generationA, "cue switch advances playback generation");
+        Check(controller.State == CuePlaybackState.Preparing, "cue B is preparing");
+        Check(controller.Plan.cue_id == "fixture/stale_b", "controller consumes cue B plan");
+
+        oldAudioCallback.OnPrepared(generationA);
+        oldVisualCallback.OnPrepared(generationA);
+        oldAudioCallback.OnFailed(generationA, "stale load failure");
+        oldAudioCallback.OnCompleted(generationA);
+        Check(controller.State == CuePlaybackState.Preparing,
+            "stale preparation callbacks cannot make cue B ready or failed");
+        Check(controller.Plan.cue_id == "fixture/stale_b", "stale callbacks cannot switch plan");
+
+        audio.CompletePreparation(generationB);
+        visual.CompletePreparation(generationB);
+        Check(controller.State == CuePlaybackState.Ready, "cue B becomes ready");
+        Check(controller.Play(), "play cue B");
+        long playbackB = controller.Generation;
+
+        oldAudioCallback.OnFailed(generationA, "stale runtime error");
+        oldAudioCallback.OnCompleted(generationA);
+        Check(controller.State == CuePlaybackState.Playing,
+            "stale runtime callbacks cannot alter cue B state");
+        Check(controller.CompletionCount == 0, "stale callback cannot complete cue B");
+        CheckClose(0.0, controller.CueTime, 1e-9, "stale callback cannot move cue B clock");
+
+        clock.Advance(10.0);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed, "cue B completes on its own clock");
+        Check(controller.LastCompletion != null
+              && controller.LastCompletion.Generation == playbackB,
+            "cue B completion uses cue B playback generation");
+    }
+
+    private static void TestCancelInvalidatesOldCallbacks()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/cancel_a")), "prepare cancel cue A");
+        Check(controller.Play(), "play cancel cue A");
+        long generationA = controller.Generation;
+        ICueExecutorCallback oldAudioCallback = audio.StoredCallback;
+        ICueExecutorCallback oldVisualCallback = visual.StoredCallback;
+
+        Check(controller.Cancel(), "cancel cue A");
+        Check(controller.State == CuePlaybackState.Cancelled, "cancel -> Cancelled");
+        Check(controller.Generation > generationA, "cancel invalidates playback generation");
+        Check(HasCall(audio.Calls, "audio.stop:" + generationA), "cancel stops audio");
+        Check(HasCall(audio.Calls, "audio.cancel:" + generationA), "cancel clears audio scheduling");
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/cancel_b")), "prepare cue B after cancellation");
+        Check(controller.State == CuePlaybackState.Ready, "cue B ready after cancellation");
+        Check(controller.Play(), "play cue B after cancellation");
+        oldAudioCallback.OnFailed(generationA, "old audio error after cancel");
+        oldVisualCallback.OnFailed(generationA, "old visual error after cancel");
+        oldAudioCallback.OnCompleted(generationA);
+        Check(controller.State == CuePlaybackState.Playing,
+            "old generation callbacks cannot modify new cue");
+        Check(controller.CompletionCount == 0, "old generation completion ignored");
+
+        clock.Advance(10.0);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed, "new cue still completes once");
+        Check(controller.LastCompletion.CueId == "fixture/cancel_b",
+            "completion belongs to new cue");
+    }
+
+    private static void TestAudioFailureIsExplicitFailure()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        int completionEvents = 0;
+        int failureEvents = 0;
+        controller.Completed += delegate { completionEvents++; };
+        controller.Failed += delegate { failureEvents++; };
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/audio_failure")), "prepare audio-failure cue");
+        Check(controller.Play(), "play audio-failure cue");
+        long generation = controller.Generation;
+        audio.Fail(generation, "decode failed");
+
+        Check(controller.State == CuePlaybackState.Failed, "audio executor failure -> Failed");
+        Check(controller.LastFailure != null
+              && controller.LastFailure.Kind == CuePlaybackFailureKind.AudioExecution
+              && controller.LastFailure.Generation == generation,
+            "audio failure records generation and kind");
+        Check(completionEvents == 0 && controller.CompletionCount == 0,
+            "audio executor failure is not natural completion");
+        Check(failureEvents == 1, "audio failure emits one failure notification");
+        Check(HasCall(audio.Calls, "audio.stop:" + generation),
+            "audio failure stops audio execution");
+    }
+
+    private static void TestVisualFailureIsExplicitFailure()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        int completionEvents = 0;
+        controller.Completed += delegate { completionEvents++; };
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/visual_failure")), "prepare visual-failure cue");
+        Check(controller.Play(), "play visual-failure cue");
+        long generation = controller.Generation;
+        visual.Fail(generation, "clip decode failed");
+
+        Check(controller.State == CuePlaybackState.Failed, "visual executor failure -> Failed");
+        Check(controller.LastFailure != null
+              && controller.LastFailure.Kind == CuePlaybackFailureKind.VisualExecution,
+            "visual failure has explicit failure kind");
+        Check(completionEvents == 0 && controller.CompletionCount == 0,
+            "visual failure is not natural completion");
+        Check(HasCall(audio.Calls, "audio.stop:" + generation),
+            "visual failure stops audio rather than silently continuing");
+    }
+
+    private static void TestMultipleCuesNoCumulativeDrift()
+    {
+        var clock = new ManualCueClock();
+        var audio = new FakeAudioExecutor(clock);
+        var visual = new FakeVisualExecutor();
+        var controller = new CuePlaybackController(clock, audio, visual, MakeSubtitles());
+        var completions = new List<CuePlaybackCompletion>();
+        controller.Completed += delegate(CuePlaybackCompletion completion)
+        {
+            completions.Add(completion);
+        };
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/series_a")), "prepare first cue");
+        Check(controller.Play(), "play first cue");
+        long generationA = controller.Generation;
+        clock.Advance(10.0);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed, "first cue completes");
+        CheckClose(0.0, controller.CueTime - 10.0, 1e-9, "first cue exact duration");
+
+        Check(controller.Prepare(CuePlaybackPlan("fixture/series_b")), "prepare second cue");
+        Check(controller.State == CuePlaybackState.Ready, "second cue ready");
+        CheckClose(0.0, controller.CueTime, 1e-9, "second cue starts at local zero");
+        Check(controller.Play(), "play second cue");
+        long generationB = controller.Generation;
+        clock.Advance(10.0);
+        controller.Tick();
+
+        Check(controller.State == CuePlaybackState.Completed, "second cue completes");
+        Check(completions.Count == 2 && controller.CompletionCount == 2,
+            "two cues produce exactly two completions");
+        Check(completions[0].Generation == generationA
+              && completions[1].Generation == generationB
+              && generationA != generationB,
+            "each cue completion has its own playback generation");
+        Check(completions[0].CueId == "fixture/series_a"
+              && completions[1].CueId == "fixture/series_b",
+            "completion cue ids are correct");
+        CheckClose(10.0, completions[0].CueTime, 1e-9, "no drift in first cue completion");
+        CheckClose(10.0, completions[1].CueTime, 1e-9, "no drift in second cue completion");
+        Check(audioAudioPlayCallsAtZero(audio, generationA)
+              && audioAudioPlayCallsAtZero(audio, generationB),
+            "each cue starts audio at cue-local zero");
+    }
+
+    private static bool audioAudioPlayCallsAtZero(FakeAudioExecutor audio, long generation)
+    {
+        return audio.Calls.Contains("audio.play:" + generation + ":0.000");
+    }
+
+    private sealed class SubtitleWindow
+    {
+        public double Start;
+        public double End;
+        public string Text;
+    }
+
+    private sealed class FakeSubtitleExecutor : ICueSubtitleExecutor
+    {
+        public readonly List<SubtitleWindow> Windows = new List<SubtitleWindow>();
+        public double LastCueTime = -1.0;
+        public CueSubtitleState LastState;
+
+        public CueSubtitleState GetState(CueTimelinePlan plan, double cueTime)
+        {
+            LastCueTime = cueTime;
+            for (int i = 0; i < Windows.Count; i++)
+            {
+                var window = Windows[i];
+                if (cueTime + 1e-9 >= window.Start && cueTime < window.End - 1e-9)
+                {
+                    LastState = new CueSubtitleState
+                    {
+                        Visible = true,
+                        Text = window.Text,
+                        SegmentId = "subtitle." + i,
+                    };
+                    return LastState;
+                }
+            }
+            LastState = CueSubtitleState.Hidden();
+            return LastState;
+        }
+    }
+
+    private sealed class FakeAudioExecutor : IAudioCueExecutor
+    {
+        private readonly ManualCueClock clock;
+        private double positionAtBase;
+        private double clockAtBase;
+
+        public readonly List<string> Calls = new List<string>();
+        public ICueExecutorCallback StoredCallback;
+        public long StoredGeneration;
+        public CueTimelinePlan Plan;
+        public bool AutoPrepare = true;
+        public bool IsPlaying;
+        public double LastRequestedCueTime = -1.0;
+
+        public FakeAudioExecutor(ManualCueClock clock)
+        {
+            this.clock = clock;
+        }
+
+        public double CurrentCueTime
+        {
+            get
+            {
+                if (!IsPlaying) return positionAtBase;
+                return positionAtBase + (clock.NowSeconds - clockAtBase);
+            }
+        }
+
+        public void Prepare(CueTimelinePlan plan, long generation, ICueExecutorCallback callback)
+        {
+            Plan = plan;
+            StoredCallback = callback;
+            StoredGeneration = generation;
+            Calls.Add("audio.prepare:" + generation);
+            if (AutoPrepare) callback.OnPrepared(generation);
+        }
+
+        public void Play(long generation, double cueTime)
+        {
+            Calls.Add("audio.play:" + generation + ":" + Fmt(cueTime));
+            LastRequestedCueTime = cueTime;
+            positionAtBase = cueTime;
+            clockAtBase = clock.NowSeconds;
+            IsPlaying = true;
+        }
+
+        public void Pause(long generation)
+        {
+            if (IsPlaying) positionAtBase = CurrentCueTime;
+            IsPlaying = false;
+            Calls.Add("audio.pause:" + generation);
+        }
+
+        public void Resume(long generation, double cueTime)
+        {
+            Calls.Add("audio.resume:" + generation + ":" + Fmt(cueTime));
+            LastRequestedCueTime = cueTime;
+            positionAtBase = cueTime;
+            clockAtBase = clock.NowSeconds;
+            IsPlaying = true;
+        }
+
+        public void Seek(long generation, double cueTime)
+        {
+            Calls.Add("audio.seek:" + generation + ":" + Fmt(cueTime));
+            LastRequestedCueTime = cueTime;
+            positionAtBase = cueTime;
+            clockAtBase = clock.NowSeconds;
+            IsPlaying = false;
+        }
+
+        public void Stop(long generation)
+        {
+            Calls.Add("audio.stop:" + generation);
+            if (IsPlaying) positionAtBase = CurrentCueTime;
+            IsPlaying = false;
+        }
+
+        public void Cancel(long generation)
+        {
+            Calls.Add("audio.cancel:" + generation);
+            if (IsPlaying) positionAtBase = CurrentCueTime;
+            IsPlaying = false;
+        }
+
+        public void CompletePreparation(long generation)
+        {
+            if (StoredCallback != null) StoredCallback.OnPrepared(generation);
+        }
+
+        public void FailPreparation(long generation, string message)
+        {
+            if (StoredCallback != null) StoredCallback.OnFailed(generation, message);
+        }
+
+        public void Complete(long generation)
+        {
+            Calls.Add("audio.callback.completed:" + generation);
+            IsPlaying = false;
+            if (StoredCallback != null) StoredCallback.OnCompleted(generation);
+        }
+
+        public void Fail(long generation, string message)
+        {
+            Calls.Add("audio.callback.failed:" + generation);
+            IsPlaying = false;
+            if (StoredCallback != null) StoredCallback.OnFailed(generation, message);
+        }
+    }
+
+    private sealed class FakeVisualExecutor : IVisualCueExecutor
+    {
+        public readonly List<string> Calls = new List<string>();
+        public ICueExecutorCallback StoredCallback;
+        public long StoredGeneration;
+        public CueTimelinePlan Plan;
+        public bool AutoPrepare = true;
+        public double LastSeekTime = -1.0;
+
+        public void Prepare(CueTimelinePlan plan, long generation, ICueExecutorCallback callback)
+        {
+            Plan = plan;
+            StoredCallback = callback;
+            StoredGeneration = generation;
+            Calls.Add("visual.prepare:" + generation);
+            if (AutoPrepare) callback.OnPrepared(generation);
+        }
+
+        public void Seek(long generation, double cueTime)
+        {
+            Calls.Add("visual.seek:" + generation + ":" + Fmt(cueTime));
+            LastSeekTime = cueTime;
+        }
+
+        public void Pause(long generation)
+        {
+            Calls.Add("visual.pause:" + generation);
+        }
+
+        public void Resume(long generation)
+        {
+            Calls.Add("visual.resume:" + generation);
+        }
+
+        public void Stop(long generation)
+        {
+            Calls.Add("visual.stop:" + generation);
+        }
+
+        public void Cancel(long generation)
+        {
+            Calls.Add("visual.cancel:" + generation);
+        }
+
+        public void CompletePreparation(long generation)
+        {
+            if (StoredCallback != null) StoredCallback.OnPrepared(generation);
+        }
+
+        public void Fail(long generation, string message)
+        {
+            Calls.Add("visual.callback.failed:" + generation);
+            if (StoredCallback != null) StoredCallback.OnFailed(generation, message);
+        }
+    }
+
     public static int Main()
     {
         TestLogicalStateAndCamera();
@@ -236,6 +1040,20 @@ internal static class Program
         TestOverlayShowHideAndModifier();
         TestAnnotationsAndMagnifier();
         TestSameTimeCompiledOrderIsStable();
+
+        TestCueStateMachineAndReadyGating();
+        TestPreparationFailureIsNotCompletion();
+        TestCueClockAdvancesAndPauses();
+        TestDurationCompletesOnce();
+        TestAudioCompletionSignalDoesNotCompleteCue();
+        TestSeekCategoriesAndReplayCalls();
+        TestPausedSeekResumeCallSequence();
+        TestSequentialPlaybackMatchesDirectSeek();
+        TestRapidCueSwitchDropsStaleCallbacks();
+        TestCancelInvalidatesOldCallbacks();
+        TestAudioFailureIsExplicitFailure();
+        TestVisualFailureIsExplicitFailure();
+        TestMultipleCuesNoCumulativeDrift();
 
         if (failures == 0)
         {

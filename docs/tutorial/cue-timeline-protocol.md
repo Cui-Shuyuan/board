@@ -1,6 +1,6 @@
 # Cue Timeline Protocol v1
 
-状态：Phase 1 已实现纯 Python 编译器、plan 校验器和旧数据适配层；尚未接入 Unity/Android 运行时，旧播放器行为未改变。
+状态：Phase 2 已实现纯 .NET cue 播放控制器、状态机、权威 cue-local 时钟、generation/取消语义和 fake executor 行为测试；尚未接入 Unity/Android 运行时，旧播放器行为未改变。
 
 本文先固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
 
@@ -426,11 +426,12 @@ cueTime = (dspTime - cueStartDspTime) - accumulatedPauseDsp
 - 增加 `animation/test_cue_timeline.py` 纯 Python/JSON 测试；
 - 旧播放器继续运行，尚未读取新 plan。
 
-### Phase 2：纯播放控制器
-- 实现状态机、generation、权威时钟；
-- 用 fake audio/visual executor 和可控时钟测试；
+### Phase 2：纯播放控制器（已完成）
+- 在 Unity-independent Core 中实现状态机、generation、权威 cue-local 时钟；
+- 定义音频、视觉、字幕执行器接口与 fake executor 测试；
 - 不接 Unity；
-- 覆盖暂停、seek、加载失败、快速切换和完成只发一次。
+- 覆盖暂停、seek、加载失败、快速切换、取消和完成只发一次；
+- 旧 `TutorialCuePlayer` / `TutorialAnimPlayer` 仍不读取新控制器。
 
 ### Phase 3：Unity executor 与 feature flag
 - 实现音频/视觉/字幕执行器；
@@ -541,11 +542,99 @@ python3 -m unittest animation.test_cue_timeline -v
 python3 -m unittest discover -s animation -p 'test_*.py'
 ```
 
-## 11. 留给 Phase 2 的问题
+## 11. Phase 2 实现入口与边界
+
+状态：**Phase 2 纯控制器已完成；Unity/Android 尚未使用它。**
+
+实现文件：
+
+- `clients/unity/Assets/Scripts/Tutorial/Animation/Core/CueTimelineTypes.cs`
+- `clients/unity/Assets/Scripts/Tutorial/Animation/Core/CuePlaybackController.cs`
+- `tests/AnimationModelTests/Program.cs`（fake executor、可控时钟与行为测试）
+
+这两个 Core 文件不 `using UnityEngine`，也不引用 `AudioSource`、`MonoBehaviour`、
+`Coroutine` 或 DSP API。
+
+### 11.1 纯 Core API
+
+- `CuePlaybackController`：唯一 cue-local 时钟、播放状态机、generation 和取消；
+- `CuePlaybackStateMachine.CanTransition(from, to)`：显式合法转换表；
+- `CueTimelinePlan` / `CueTimelineCourse` / `CueTimelineTrack` /
+  `CueTimelineSegment`：与 `tutorial-cue-plan/v1` 的绝对时间字段对应的纯 DTO；
+- `CueTimelinePlanValidator`：纯控制器消费前的结构校验（不解析创作锚点）；
+- `ICueClock` / `ManualCueClock`：可注入的权威时间源，测试可控；
+- `IAudioCueExecutor`：`Prepare` / `Play` / `Pause` / `Resume` / `Seek` /
+  `Stop` / `Cancel`；
+- `IVisualCueExecutor`：`Prepare` / `Seek` / `Pause` / `Resume` / `Stop` /
+  `Cancel`，不控制音频；
+- `ICueSubtitleExecutor.GetState(plan, cueTime)`：只按 cue-local t 返回字幕状态；
+- `ICueExecutorCallback`：`OnPrepared` / `OnCompleted` / `OnFailed`，全部携带
+  generation。
+
+控制器公开的关键观测点：
+
+- `State`、`Generation`、`Plan`、`CueTime`；
+- `CurrentSubtitle`；
+- `LastCompletion`、`CompletionCount`；
+- `LastFailure`、`AudioCompletionSignalCount`；
+- `StateChanged`、`Completed`、`Failed` 事件。
+
+### 11.2 状态与完成语义
+
+合法转换以 `CuePlaybackStateMachine` 为准：`Idle -> Preparing -> Ready ->
+Playing <-> Paused`，`Playing/Paused -> Seeking -> Playing/Paused`，
+`Playing/Seeking -> Completed`，任意非终态可取消，执行错误进入 `Failed`。
+`Completed` 后可以显式 seek，或准备下一条 cue；新 cue 从 `Preparing` 重新开始。
+
+- 只有两个必需 executor 都 `OnPrepared` 后才进入 `Ready`；未就绪时 `Play()`
+  返回 false，不改变状态。
+- 每次 `Prepare`、`Play`、`Resume`、`SeekTo` 或 cue switch 都推进
+  playback generation；旧 generation 的 prepare/completion/error 回调直接丢弃。
+- `CueTime` 只在 `Playing` 时由注入时钟推进；`Paused` 冻结，seek 直接设置
+  cue-local 目标时间。
+- 字幕、视觉 seek 和时间推进全部使用同一个 `CueTime`。
+- cue 完成只由 `plan.course.duration` 与权威时钟决定。音频 executor 的
+  `OnCompleted` 或 `isPlaying == false` 只作为诊断，不会提前完成 cue。
+- 完成事件每个 playback generation 只发送一次并带 generation；executor
+  加载失败、用户暂停、取消、音频失败或视觉失败都不会被当作自然完成。
+- seek 先取消旧 generation 的音频调度，再按新 generation seek；播放中的
+  seek 会重新播放，暂停中的 seek 保持暂停，恢复时不会重复 `Play`。
+- 音频或视觉 executor 报告错误时控制器进入 `Failed` 并停止执行器；视觉失败
+  同样明确失败，不允许静默继续音频或切 cue。
+
+### 11.3 测试入口
+
+```bash
+dotnet run --project tests/AnimationModelTests
+```
+
+测试全部使用合成 plan、fake audio/visual executor 和可控 `ManualCueClock`，
+不针对任何具体内容 cue。覆盖：
+
+- 未就绪不能播放、加载失败、暂停冻结、seek/恢复调用序列；
+- 语音、静音、hold、cue 边界 seek；
+- 顺序播放和直接 seek 到同一 cue-local t 的状态一致性；
+- `isPlaying=false`/音频完成回调不导致提前完成；
+- cue duration 完成只发一次且携带 generation；
+- 快速切 cue 和取消后旧回调全部丢弃；
+- 音频失败与视觉失败的显式失败行为；
+- 多 cue 连续播放无重复完成或累计时钟漂移。
+
+### 11.4 Phase 3 仍需完成
+
+Phase 2 没有进行以下工作，也没有声称 Unity 已使用新控制器：
+
+- Unity 侧真实 `AudioSource` / `AudioClip` executor，包括加载、分段调度、
+  暂停、恢复、seek 和 stop；
+- 基于 `AudioSettings.dspTime` 或等价 DSP 时钟的 `ICueClock` 实现；
+- 真实资源准备、预加载和底层取消（UnityWebRequest / 音频解码 / 动画 clip）；
+- 目标设备上的真实音频输出验证（首尾字、静音、hold、跨 cue 拼接）；
+- Android `TutorialTimeline` / 播放器接入 compiled plan 的课程时间；
+- feature flag、新旧播放路径共存以及最终迁移清理。
+
+## 12. 仍待确认的协议问题
 
 - 真实音频执行方式：构建期切片、运行期预解码取采样，或整段解码后采样级调度；
-- `CuePlaybackController` 状态机、generation/cancellation token 与完成事件只发一次；
-- 暂停、seek、快速切 cue 时音频与视觉执行器如何重调度；
 - 哪些类字段进入 Unity C# DTO，以及 plan set 的加载和 feature flag 形态；
 - Android `TutorialTimeline` 何时切换为读取 plan set 的课程时间；
 - 真实设备上用录音/波形验证音频首尾、静音、hold 和跨 cue 拼接；
