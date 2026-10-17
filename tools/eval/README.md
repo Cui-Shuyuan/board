@@ -2,6 +2,17 @@
 
 本目录用于比较同一规则数据、同一模型配置下的旧/新 Board API 端到端表现。
 
+## 历史耗时归因
+
+已有 `runs.jsonl` 和带请求 ID 的两版 API 日志时，可以离线对齐，无需重发模型请求：
+
+```powershell
+python tools/eval/analyze_chat_latency.py --runs .tmp/comprehensive-eval/main/runs.jsonl --old-log .tmp/eval-old-api.log --new-log .tmp/eval-new-api.log --out .tmp/comprehensive-eval/latency-audit
+python -m unittest discover -s tools/eval -p test_analyze_chat_latency.py
+```
+
+分析器适用于同一天、北京时间的现有日志格式，按问题、游戏和开始时间唯一匹配，匹配不完整会失败。LLM 区间从请求开始到后续首条编排日志，包含网络、排队、输入处理、推理、输出生成和反序列化；响应头到达不代表完整模型响应结束，不能把区间标成纯思考时间。工具区间包含调用及少量日志开销。原始 reasoning 仅写入忽略目录中的请求明细，用于行为分析，不是精确 token 或内部计算测量。
+
 ## 1. 冻结版本
 
 当前对比使用：

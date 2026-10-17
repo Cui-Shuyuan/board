@@ -150,6 +150,8 @@ query 字段：
 
 未精确命中时返回 `unresolved + candidates`。候选描述只用于选择目标，不是正式事实；确认候选时保持原 relation/intent，并把 entity 改成候选准确 id 或中文名。Chat 返回的 `evidence.queries[]` 会记录 intent、候选、`resolvedByQueryIndex`、`confirmedCandidateId` 与 `confirmedByRelation`；`tier1` 只表示查询数据覆盖，不证明最终每句话真实。
 
+对象名称精确命中时仍可补充 intent 检索，但保留对象本身的语义分数。其他目标的 intent 得分达到召回阈值且不低于该对象时，返回候选确认；不按问句长度判断是否换目标。答案不因未重复问题数字或提到人数而强制重答。用户给出的状态是回答语境，不是已通过规则校验的事实。
+
 ## 内容接口缓存
 
 内容接口：

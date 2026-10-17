@@ -272,7 +272,6 @@ public sealed class RulesPlanService
         }
 
         var hasIntent = !string.IsNullOrWhiteSpace(intent);
-        var hasScenarioIntent = HasScenarioIntent(entity, intent);
         var exactIsProcessNode = matched.Any(item =>
         {
             var id = RulesTextUtils.GetElementId(item);
@@ -281,7 +280,7 @@ public sealed class RulesPlanService
         });
         // 对象名精确命中时仍要补动作/流程；流程/动作/触发器名精确命中时，
         // 它本身就是用户要的规则节点，不应被宽泛 intent 再次打散。
-        var shouldSupplementExactIdentity = hasScenarioIntent && !exactIsProcessNode;
+        var shouldSupplementExactIdentity = hasIntent && !exactIsProcessNode;
         var exactKeys = matched
             .Select(RulesTextUtils.GetElementId)
             .Where(id => !string.IsNullOrEmpty(id))
@@ -318,8 +317,7 @@ public sealed class RulesPlanService
                 entityCandidates,
                 intentCandidates,
                 exactCandidates,
-                exactKeys,
-                deprioritizeExactIdentity: shouldSupplementExactIdentity);
+                exactKeys);
         }
         else if (matched.Count == 0)
         {
@@ -355,9 +353,10 @@ public sealed class RulesPlanService
 
         if (matched.Count > 0)
         {
-            var hasScenarioCandidate = shouldSupplementExactIdentity && merged.Any(candidate =>
-                !exactKeys.Contains(RulesSearchRanking.CandidateKey(candidate), StringComparer.Ordinal)
-                && candidate.Score >= SemanticCandidateThreshold);
+            // 依据完整意图的检索结果判断是否仍有目标歧义；不从句长推断语义，
+            // 也不因名字精确命中而抹去该对象的语义相关分数。
+            var hasScenarioCandidate = shouldSupplementExactIdentity
+                && NeedsIntentTargetConfirmation(intentCandidates, exactKeys);
             if (hasScenarioCandidate)
             {
                 // 名字精确命中对象，不等于该对象定义足以回答用户的设置/动作/获得问题。
@@ -415,24 +414,19 @@ public sealed class RulesPlanService
     }
 
 
-    /// <summary>
-    /// 判断 intent 是否只是对 entity 的身份/定义追问。去掉实体表面词后仍有实质文本时，
-    /// 说明用户在问该对象的动作、场景或结果，不能把对象定义当作唯一答案。
-    /// 这是通用的“意图是否超出对象名”检查，不绑定具体游戏或概念。
-    /// </summary>
-    private static bool HasScenarioIntent(string entity, string intent)
+    internal static bool NeedsIntentTargetConfirmation(
+        IReadOnlyList<ConceptSummary> intentCandidates, IReadOnlyCollection<string> exactKeys)
     {
-        if (string.IsNullOrWhiteSpace(intent)) return false;
-        var normalized = intent.Trim();
-        var entityText = entity.Trim();
-        if (!string.IsNullOrEmpty(entityText))
-            normalized = normalized.Replace(entityText, "", StringComparison.OrdinalIgnoreCase);
-        var substantiveChars = normalized
-            .Where(ch => !char.IsWhiteSpace(ch) && !char.IsPunctuation(ch) && !char.IsSymbol(ch))
-            .Count();
-        return substantiveChars >= 4;
+        var bestExactIntentScore = intentCandidates
+            .Where(candidate => exactKeys.Contains(RulesSearchRanking.CandidateKey(candidate), StringComparer.Ordinal))
+            .Select(candidate => candidate.Score)
+            .DefaultIfEmpty(0f)
+            .Max();
+        return intentCandidates.Any(candidate =>
+            !exactKeys.Contains(RulesSearchRanking.CandidateKey(candidate), StringComparer.Ordinal)
+            && candidate.Score >= SemanticCandidateThreshold
+            && candidate.Score >= bestExactIntentScore);
     }
-
 
     /// <summary>
     /// 实体名字/身份定位通道。保留原有 explain 全文+名称补漏和其他 relation 名称检索的差异。

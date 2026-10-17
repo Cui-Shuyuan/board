@@ -15,6 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 最近进展
 
+- **去除问答过拟合并完成耗时归因（2026-10-17）**：删除组件数量/人数正则重答及相关强制提示，删除按字符数判断场景和将精确对象 intent 分数清零的处理，保留意图检索和候选确认。后端 181/181 测试通过。702 次历史聊天逐条对齐日志：新增平均 1357ms 中模型请求约 1158ms、工具约 199ms；模型调用次数 2.33→3.35，不能归因于纯思考变慢。报告 `docs/reviews/qa-generalization-latency-2026-10-17.md`。本次代码尚未重新跑 702 次真实模型质量评测，历史分数不能直接视为修订版结果。
 - **新旧版本全面对比已完成（2026-10-17）**：使用 117 条覆盖九款游戏的问题集，每问两版各重复 3 次，共 702 次真实聊天；两 judge 保守共识严格回答成功率旧版 60.4% → 新版 75.5%（+15.1pp，95% CI +8.0~+22.2pp，McNemar p=0.0002），规则直接命中率 61.3% → 80.3%。新版质量胜出，但端到端中位延迟 2732ms → 3572ms。报告见 `docs/reviews/version-comparison-2026-10-17.md`，题集与评测工具在 `tools/qa/comprehensive_eval_questions.jsonl`、`tools/eval/`。
 - **查询意图保留与回答收敛已落地（2026-10-17）**：`execute_plan` query 增加 `intent`；RulesPlanService 将 entities 身份定位与完整 intent 场景召回合并，对象名精确命中仍可被设置/获得/结算动作候选补充。ChatOrchestrator 增加未确认候选的定向协议纠偏、证据确认关联（含多候选/相近 intent）、组件数量与玩家人数反推守卫，并记录 plan provenance / tool timing。新增 13 行 / 14 子查询意图回归与真实 LLM 回归报告 `docs/reviews/rules-query-intent-answer-2026-10-17.md`；后端 xUnit 173/173，gold 77 direct + 8 top3，7 条旧回归目标全在前三。
 - **素材化重构与 R1–R8 复核修复已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；编译链按调用边界检查 action/example 契约、递归保留嵌套 usage、强制类别约束与 namespace 隔离、QA HEAD 基线包含 library。Splendor 抽出 10 actions / 3 examples / 1 presentation，full 31、quick 20 处 usage（含嵌套）；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 detailed/compact/same 走同一编译链。

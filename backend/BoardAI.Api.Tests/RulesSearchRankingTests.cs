@@ -4,6 +4,18 @@ namespace BoardAI.Api.Tests;
 
 public sealed class RulesSearchRankingTests
 {
+    [Fact]
+    public void ExactObjectKeepsItsIntentScoreWhenDefinitionIsRelevant()
+    {
+        var definition = Concept("widget"); definition.Score = .85f;
+        var action = Concept("use_widget"); action.Score = .65f;
+        var ranked = RulesSearchRanking.MergeEntityAndIntentCandidates(
+            Array.Empty<ConceptSummary>(), new[] { definition, action },
+            new[] { Concept("widget") }, new[] { "widget" });
+        Assert.Equal("widget", ranked[0].Id);
+        Assert.Equal(.85f, ranked[0].Score);
+    }
+
     private static ConceptSummary Concept(string id, string? path = null) => new() { Id = id, Path = path ?? id, Name = id };
     private static RulesSearchRanking.Batch Batch(string q, bool vector, params (ConceptSummary, float)[] items) => new(q, vector, items.ToList());
 

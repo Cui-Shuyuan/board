@@ -127,12 +127,12 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 - 重建：`tools/indexing/rebuild_index.py`，先构建临时 collection 并精确校验 count，再原子切换 alias；Python CLI 与 C# API 的版本 hash 已对九款真实规则数据回归对齐。
 - 搜索排序：整句向量 + 整句关键词 + 0.02 × 子查询平均分；同一身份路径/查询/通道取最大值，整句关键词必须全部分词在同一概念中匹配。PhraseScore / SubqueryBoost / TermScores 记录来源，混合分不是概率。
 - 向量子查询路由：≤2 字走名称索引，其余走全文；explain 同时查全文与名称，全文召回底线 CLS=0.50 / mean=0.55，名称补漏封顶为该底线并保留 NameMatchScore，弱全文重复不能阻挡名称补漏。identify 外观描述走全文候选；所有关系的 question 名称线索只补候选，不自动确认未知实体；精确 ID 可直达。
-- intent 检索：显式 intent 走完整句子全文召回，entity 用于身份定位；合并时 intent 分数占主导（intent+entity = 0.8×intent + 0.2×entity），同稳定身份去重。对象名精确命中且 intent 有额外场景/动作时，程序仍返回相关规则节点候选，不把对象定义当完整答案；action/trigger/flow 的精确命中保留其身份。候选用 `MatchReason` 记录 exact_identity / intent / entity / intent+entity / question_hint。
+- intent 检索：显式 intent 走完整句子全文召回，entity 用于身份定位；合并时 intent 分数占主导（intent+entity = 0.8×intent + 0.2×entity），同稳定身份去重。对象名精确命中时保留其 intent 相关分数；其他候选达到召回阈值且 intent 分数不低于该对象时，返回候选供确认。不再按句子字数判断场景或将精确对象分数强制清零。action/trigger/flow 的精确命中保留其身份。候选用 `MatchReason` 记录 exact_identity / intent / entity / intent+entity / question_hint。
 - execute-plan 最多保留 15 个候选；boundary 可查询对象、本体、局部槽位等实体。自动语义确认要求整句 vector≥0.72、keyword≥0.30、总分≥0.80、领先第二名≥0.10；名称补漏不能自动确认。
 - namespace：`ontology::concept_id` 限定本体概念；局部槽位在无歧义时也可用 `owner.slot` 路径精确解析，避免与同名全局概念混用。
 - 检索回归：`tools/qa/retrieval_gold.jsonl`（85 条）+ `tools/qa/retrieval_regressions.jsonl`（7 条）+ `tools/indexing/eval_retrieval.py`；自然问句 `retrieval_questions.jsonl`（53 条）由 `eval_natural_retrieval.py` 重放。`retrieval_lab.py` 只读比较片段/池化/RRF/本地 reranker，未将后者接正式查询。两轮实测见 `docs/reviews/retrieval-ranking-2026-10-09.md`、`retrieval-followup-2026-10-09.md`。
 - Evidence：保留历史 status/count，新增 pendingCount / resolvedByQueryIndex / confirmedCandidateId / confirmedByRelation。未解决 query 只有在同规则版本、后续精确 ID/中文名唯一命中、relation 兼容（同 relation 或 identify→explain）且选中对象确在原候选中时才恢复；同一候选出现在多个 pending query 时，要求后续 intent 逐字一致或高相似且明显领先，否则保持 pending。tier1 只表示数据覆盖，不保证回答忠实。
-- Chat 编排在模型试图用未确认候选直接结束时做一次有界协议纠偏；纠偏后仍允许回答，pending 不会被静默清空。回答出口另有一个窄口径数量约束守卫：客人给的是组件数量时，不得反推/断言玩家人数，也不得省略该数量；必要时最多做一次重答。
+- Chat 编排在存在未确认候选而模型结束回答时做一次有界协议纠偏；纠偏后仍允许回答，pending 不会被静默清空。数量/人数正则重答守卫已删除：答案无需重复问题数字，不能仅凭出现人数判定无根据推断。仍需改进协议纠偏对澄清回复、多余 query 和局部槽位证据的区分，见 `docs/reviews/qa-generalization-latency-2026-10-17.md`。
 
 ## 5. 交互模型
 
@@ -140,7 +140,7 @@ LLM 只输出查询计划，search/get_concept 由程序执行：
 - 对依赖实物信息的问题，优先解释判断方法，让玩家对照检查；核验具体局面时再询问必要信息，不默认收集完整棋盘状态。
 - LLM 负责：理解语言、生成查询计划、组织答案。
 - 程序负责：实体解析、规则查询、条件/顺序/边界判断。
-- 回答风格：一到两句、汉字数字、无 markdown、TTS 友好。先回答用户问的方法/判断；承接用户已给数量，不从组件数量反推人数，不展开未问到的其他人数配置。
+- 回答风格：一到两句、汉字数字、无 markdown、TTS 友好。直接回答所问，不重复询问已知信息，不添加没有依据的现场状态；用户描述不等于合法性已确认，必要规则前提可简短说明。
 - Android 问答面板已有 PTT → 后端 ASR → `/api/chat` → 回答 TTS 的代码路径；ASR 默认在 API 进程内直连火山，`Voice:AsrMode=python` 可回退旧 Python 桥；完整真机端到端验收仍待复测。
 
 ## 6. 讲规动画

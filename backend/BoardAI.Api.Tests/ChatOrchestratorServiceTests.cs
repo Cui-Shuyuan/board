@@ -255,8 +255,11 @@ public sealed class ChatOrchestratorServiceTests
         Assert.Equal("widget", result.Evidence.Queries[0].ConfirmedCandidateId);
     }
 
-    [Fact]
-    public async Task ProcessAsync_ComponentQuantityReplyThatInfersPlayerCount_GetsOneAnswerConstraintCorrection()
+    [Theory]
+    [InlineData("我们三个人玩，每人发五张牌，对吗？", "三个人玩时，每人发五张牌。")]
+    [InlineData("这三张牌要洗吗？", "要，洗匀后背面朝下放好。")]
+    [InlineData("我有两枚标记，还能拿一枚吗？", "可以。")]
+    public async Task ProcessAsync_AnswerWordingDoesNotTriggerAdditionalModelCall(string question, string answer)
     {
         using var fixture = new RulesFixture();
         using var rules = fixture.CreateService();
@@ -268,53 +271,22 @@ public sealed class ChatOrchestratorServiceTests
                     return Task.FromResult(ToolCallResponse(
                         """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"如何使用三个小装置"}]}}""",
                         call.Index));
-                return Task.FromResult(FinalResponse("不用挑，这说明是两人局。"));
+                return Task.FromResult(FinalResponse(answer));
             }
 
-            return Task.FromResult(FinalResponse("不用挑，直接按三个处理。"));
+            throw new InvalidOperationException("A complete answer must not be rewritten just for numeric wording.");
         });
         var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
         var history = new List<ChatMessage>
         {
-            new() { Role = "user", Content = "我选哪3个小装置出来呀？" }
+            new() { Role = "user", Content = question }
         };
 
         var result = await sut.ProcessWithEvidenceAsync("testgame", history);
 
-        Assert.Equal("不用挑，直接按三个处理。", result.Reply);
+        Assert.Equal(answer, result.Reply);
         Assert.Equal(2, llm.ToolCallCount);
-        Assert.Equal(1, llm.SummaryCount);
-    }
-
-    [Fact]
-    public async Task ProcessAsync_ComponentQuantityOmittedFromReply_GetsOneAnswerConstraintCorrection()
-    {
-        using var fixture = new RulesFixture();
-        using var rules = fixture.CreateService();
-        var llm = new FakeLLMService(call =>
-        {
-            if (call.HasTools)
-            {
-                if (call.Index == 1)
-                    return Task.FromResult(ToolCallResponse(
-                        """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"如何使用三个小装置"}]}}""",
-                        call.Index));
-                return Task.FromResult(FinalResponse("不用挑，按人数规则处理即可。"));
-            }
-
-            return Task.FromResult(FinalResponse("不用挑，直接按三个处理。"));
-        });
-        var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
-        var history = new List<ChatMessage>
-        {
-            new() { Role = "user", Content = "我选哪3个小装置出来呀？" }
-        };
-
-        var result = await sut.ProcessWithEvidenceAsync("testgame", history);
-
-        Assert.Equal("不用挑，直接按三个处理。", result.Reply);
-        Assert.Equal(2, llm.ToolCallCount);
-        Assert.Equal(1, llm.SummaryCount);
+        Assert.Equal(0, llm.SummaryCount);
     }
 
     [Fact]

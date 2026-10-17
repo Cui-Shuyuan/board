@@ -114,7 +114,6 @@ internal static class RulesSearchRanking
         IReadOnlyList<ConceptSummary> intentCandidates,
         IReadOnlyList<ConceptSummary> exactCandidates,
         IReadOnlyCollection<string> exactIdentityKeys,
-        bool deprioritizeExactIdentity = false,
         int limit = 15)
     {
         var entries = new Dictionary<string, CandidateEntry>(StringComparer.Ordinal);
@@ -186,14 +185,6 @@ internal static class RulesSearchRanking
             }
             else
             {
-                score = 0f;
-                reason = "exact_identity";
-            }
-
-            if (deprioritizeExactIdentity && entry.ExactIdentity)
-            {
-                // 名字精确命中只证明对象身份；用户有额外场景/动作 intent 时，
-                // 目的规则节点应排在对象本身前面，避免定义压过用户真正问的规则。
                 score = 0f;
                 reason = "exact_identity";
             }

@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -160,8 +159,6 @@ public class ChatOrchestratorService
                         continue;
                     }
 
-                    reply = await ApplyAnswerConstraintCorrectionAsync(
-                        gameId, question, reply, messages, effectiveToken);
                     sw.Stop();
                     var builtEvidence = evidence.Build();
                     LogEvidenceSummary(gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted, protocolCorrections, sw.Elapsed.TotalMilliseconds);
@@ -392,8 +389,7 @@ public class ChatOrchestratorService
         {
             Role = "user",
             Content = "请基于以上工具查询结果直接给出最终回答，不要再调用工具。"
-                + "先直接回答客人原问题；客人已经说明的数量、对象和当前操作要原样承接，不要重复追问，也不要展开未被问到的其他人数配置、另一种获得方式或后续规则。"
-                + "客人给出的组件数量不是玩家人数证据，不要反推或断言这是几人局。"
+                + "直接回答客人所问，不重复询问已知信息，不添加没有依据的现场状态；必要的规则前提可以简短说明。"
                 + "如果可用事实不足以完整回答，请明确说明未能完成查询，并请客人缩小问题范围或换一种问法；不要编造规则事实。"
                 + "\n客人原问题：" + question
         });
@@ -409,8 +405,6 @@ public class ChatOrchestratorService
                 finalReply = BuildIncompleteReply(stopReason, evidence);
             }
 
-            finalReply = await ApplyAnswerConstraintCorrectionAsync(
-                gameId, question, finalReply, messages, cancellationToken);
             sw.Stop();
             var builtEvidence = evidence.Build();
             LogEvidenceSummary(
@@ -439,103 +433,11 @@ public class ChatOrchestratorService
         }
     }
 
-    private async Task<string> ApplyAnswerConstraintCorrectionAsync(
-        string gameId,
-        string question,
-        string reply,
-        List<ChatMessage> messages,
-        CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(reply) || !HasNumericComponentQuantity(question))
-            return reply;
-
-        var inferredPlayerCount = AssertsPlayerCount(reply);
-        var omittedComponentQuantity = !RepeatsComponentQuantity(question, reply);
-        if (!inferredPlayerCount && !omittedComponentQuantity)
-            return reply;
-
-        _logger.LogWarning(
-            "[Chat] Game {GameId}, answer constraint correction: inferredPlayerCount={Inferred}, omittedComponentQuantity={Omitted}; question={Question}, reply={Reply}",
-            gameId, inferredPlayerCount, omittedComponentQuantity, question, reply);
-        messages.Add(new ChatMessage { Role = "assistant", Content = reply });
-        messages.Add(new ChatMessage
-        {
-            Role = "system",
-            Content = "回答约束纠偏：客人给出的是当前操作中的组件数量，不是玩家人数。"
-                + "第一句直接承接客人给出的组件数量，再说明规则；不要只回答人数公式。"
-                + "不要说这说明是几人局，也不要用人数公式把回答转成人数判断。"
-                + "请用已确认工具事实直接回答原问题。\n"
-                + "客人原问题：" + question
-        });
-
-        try
-        {
-            var correctedResponse = await _llmService.ChatWithMessagesAsync(messages, null, cancellationToken);
-            var corrected = correctedResponse.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
-            if (!string.IsNullOrWhiteSpace(corrected))
-                return corrected;
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "[Chat] Game {GameId}, answer constraint correction failed; keeping original reply", gameId);
-        }
-
-        return reply;
-    }
-
-    private static bool HasNumericComponentQuantity(string question) =>
-        !string.IsNullOrWhiteSpace(question)
-        && Regex.IsMatch(question, @"(?:[0-9]+|[零一二两三四五六七八九十百]+)\s*(?:块|张|枚|颗|片|个)\s*(?!人|玩|位|名)");
-
-    private static bool AssertsPlayerCount(string reply) =>
-        !string.IsNullOrWhiteSpace(reply)
-        && Regex.IsMatch(reply, @"(?:[0-9]+|[零一二两三四五六七八九十百]+)\s*(?:个|位|名)?\s*人");
-
-    private static bool RepeatsComponentQuantity(string question, string reply)
-    {
-        var match = Regex.Match(
-            question,
-            @"([0-9]+|[零一二两三四五六七八九十百]+)\s*(?:块|张|枚|颗|片|个)\s*(?!人|玩|位|名)");
-        if (!match.Success) return true;
-        var token = match.Groups[1].Value;
-        var variants = token switch
-        {
-            "1" => new[] { "1", "一" },
-            "2" => new[] { "2", "二", "两" },
-            "3" => new[] { "3", "三" },
-            "4" => new[] { "4", "四" },
-            "5" => new[] { "5", "五" },
-            "6" => new[] { "6", "六" },
-            "7" => new[] { "7", "七" },
-            "8" => new[] { "8", "八" },
-            "9" => new[] { "9", "九" },
-            "10" => new[] { "10", "十" },
-            "一" => new[] { "一", "1" },
-            "二" => new[] { "二", "两", "2" },
-            "两" => new[] { "两", "二", "2" },
-            "三" => new[] { "三", "3" },
-            "四" => new[] { "四", "4" },
-            "五" => new[] { "五", "5" },
-            "六" => new[] { "六", "6" },
-            "七" => new[] { "七", "7" },
-            "八" => new[] { "八", "8" },
-            "九" => new[] { "九", "9" },
-            "十" => new[] { "十", "10" },
-            _ => new[] { token }
-        };
-        return variants.Any(variant => reply.Contains(variant, StringComparison.Ordinal));
-    }
-
     private static string BuildAnswerFocusReminder(string question) =>
         "回答聚焦（这是表达约束，不是新的规则事实）：\n"
         + "客人原问题：" + question + "\n"
-        + "请先直接回答这个问题本身；如果问题里已经给出数量或对象，直接承接，不要反问客人已经说明的信息。"
-        + "客人给出的组件数量不是玩家人数证据，不要反推或断言这是几人局。"
-        + "只回答当前问题，只使用已确认工具事实；不展开未被问到的其他人数配置、另一种获得方式、扩展规则或后续计分；无关查询结果不要写进回答。";
+        + "直接回答所问，只使用已确认的规则事实，不添加没有依据的现场状态，不重复询问已知信息。"
+        + "用户提供的状态不等于已经通过规则校验；如与规则冲突应说明，必要前提可简短交代，无关查询结果不要写进回答。";
 
     private static string BuildIncompleteReply(string stopReason, AnswerEvidenceCollector evidence)
     {
@@ -1172,7 +1074,7 @@ query 字段语义：
 - intent：针对 entity 你要知道什么，保留用户问题里的动作、场景和疑点。必须来自用户问题及有效上下文，不能写成你已经猜出的答案，也不能包含尚未证实的规则。
 - relation：需要解释、条件、顺序、边界等哪类规则信息。
 单一疑点默认只发一个 query；只有确实需要不同事实时才拆多个 query，每个 query 写自己的 intent。不要把每个名词机械拆成 explain + condition。
-实体解析分三层：精确命中直接返回规则事实；未精确命中时程序会结合完整 intent 返回 Status=unresolved + Candidates。候选描述只用于选择目标，不能当作已确认事实；请从候选中挑真正回答 intent 的概念，用准确 id 或准确中文名、保持原 relation 和 intent 重新发起计划。没有合适的候选再用 identify 或 list。若返回 Status=no_match，说明规则库未确认到该事实——请向客人说明未查到或请其换个问法，不要基于记忆补写规则。若结果被标记为 unresolved，不要直接下结论；确认后的正式事实才可用于回答。客人已经说明的数量、对象和当前操作要原样承接，不得在回答里重新追问已说明的信息，也不得用数量公式反问玩家人数。客人给出的组件数量不是玩家人数证据，不要反推或断言这是几人局；只回答当前问题，不自动补充下一阶段或另一种获得方式。",
+实体解析分三层：精确命中直接返回规则事实；未精确命中时程序会结合完整 intent 返回 Status=unresolved + Candidates。候选描述只用于选择目标，不能当作已确认事实；请从候选中挑真正回答 intent 的概念，用准确 id 或准确中文名、保持原 relation 和 intent 重新发起计划。没有合适的候选再用 identify 或 list。若返回 Status=no_match，说明规则库未确认到该事实——请向客人说明未查到或请其换个问法，不要基于记忆补写规则。若结果被标记为 unresolved，不要直接下结论；确认后的正式事实才可用于回答。直接回答用户所问，不重复询问已知信息，不添加没有依据的现场状态；必要规则前提可简短说明。",
 
                     Parameters = JsonDocument.Parse("""
                     {

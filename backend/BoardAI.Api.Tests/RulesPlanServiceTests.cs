@@ -5,6 +5,38 @@ namespace BoardAI.Api.Tests;
 
 public sealed class RulesPlanServiceTests
 {
+    [Theory]
+    [InlineData(.85f, .65f, false)]
+    [InlineData(.60f, .85f, true)]
+    [InlineData(.70f, .70f, true)]
+    [InlineData(0f, .40f, false)]
+    public void IntentConfirmationUsesCompetingEvidence(float objectScore, float actionScore, bool expected)
+    {
+        var candidates = new[]
+        {
+            new ConceptSummary { Id = "widget", Score = objectScore },
+            new ConceptSummary { Id = "use_widget", Score = actionScore }
+        };
+        Assert.Equal(expected, RulesPlanService.NeedsIntentTargetConfirmation(candidates, new[] { "widget" }));
+    }
+
+    [Theory]
+    [InlineData("小装置是什么")]
+    [InlineData("小装置到底是什么")]
+    public async Task DefinitionWordingPreservesExactIdentity(string intent)
+    {
+        using var fixture = new RulesFixture();
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreateService(content);
+        using var document = JsonDocument.Parse(JsonSerializer.Serialize(new
+        {
+            queries = new[] { new { relation = "explain", entity = "小装置", intent } }
+        }));
+        var item = Assert.Single((await plan.ExecutePlanAsync("testgame", document.RootElement)).Results);
+        Assert.Equal("ok", item.Status);
+        Assert.Equal("widget", GetId(Assert.Single(item.Matched)));
+    }
+
     [Fact]
     public async Task ExecutePlanAsync_ExplainExactId_ReturnsWidget()
     {
