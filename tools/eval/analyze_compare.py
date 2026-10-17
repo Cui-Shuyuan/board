@@ -68,6 +68,15 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
         direct = [bool((r.get("deterministic") or {}).get("direct_expected_hit")) for r in rows if r.get("question_type") == "positive"]
         top3 = [bool((r.get("deterministic") or {}).get("candidate_expected_top3") or (r.get("deterministic") or {}).get("direct_expected_hit")) for r in rows if r.get("question_type") == "positive"]
         tiers = Counter((r.get("deterministic") or {}).get("tier") for r in rows)
+        outcomes = Counter((r.get("deterministic") or {}).get("orchestration_outcome") for r in rows if (r.get("deterministic") or {}).get("orchestration_outcome"))
+        model_calls = [x for x in ((r.get("deterministic") or {}).get("model_call_count") for r in rows) if x is not None]
+        supplements = [x for x in ((r.get("deterministic") or {}).get("supplement_count") for r in rows) if x is not None]
+        repairs = [x for x in ((r.get("deterministic") or {}).get("repair_count") for r in rows) if x is not None]
+        read_counts = [x for x in ((r.get("deterministic") or {}).get("evidence_read_count") for r in rows) if x is not None]
+        understand_ms = [x for x in ((r.get("deterministic") or {}).get("understand_ms") for r in rows) if x is not None]
+        retrieval_ms = [x for x in ((r.get("deterministic") or {}).get("retrieval_ms") for r in rows) if x is not None]
+        respond_ms = [x for x in ((r.get("deterministic") or {}).get("respond_ms") for r in rows) if x is not None]
+        pack_chars = [x for x in (((r.get("orchestration") or {}).get("evidencePackChars")) for r in rows) if x is not None]
         return {
             "n": len(rows),
             "pass_rate": bool_mean(pass_flags),
@@ -87,6 +96,23 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
             "mean_query_count": round(statistics.mean([(r.get("deterministic") or {}).get("query_count") or 0 for r in rows]), 3) if rows else 0,
             "p50_latency_ms": round(percentile(lat, .5), 1),
             "p95_latency_ms": round(percentile(lat, .95), 1),
+            "model_call_mean": round(statistics.mean(model_calls), 3) if model_calls else None,
+            "model_call_p50": round(statistics.median(model_calls), 3) if model_calls else None,
+            "supplement_mean": round(statistics.mean(supplements), 3) if supplements else None,
+            "repair_mean": round(statistics.mean(repairs), 3) if repairs else None,
+            "evidence_read_mean": round(statistics.mean(read_counts), 3) if read_counts else None,
+            "understand_ms_mean": round(statistics.mean(understand_ms), 1) if understand_ms else None,
+            "retrieval_ms_mean": round(statistics.mean(retrieval_ms), 1) if retrieval_ms else None,
+            "respond_ms_mean": round(statistics.mean(respond_ms), 1) if respond_ms else None,
+            "program_outcome_counts": dict(outcomes),
+            "answer_rate": round(outcomes.get("answer", 0) / len(rows), 4) if rows else 0,
+            "clarify_rate": round(outcomes.get("clarify", 0) / len(rows), 4) if rows else 0,
+            "unavailable_rate": round(outcomes.get("unavailable", 0) / len(rows), 4) if rows else 0,
+            "conversation_rate": round(outcomes.get("conversation", 0) / len(rows), 4) if rows else 0,
+            "supplement_nonzero_rate": bool_mean([(x or 0) > 0 for x in supplements]) if supplements else None,
+            "repair_nonzero_rate": bool_mean([(x or 0) > 0 for x in repairs]) if repairs else None,
+            "evidence_pack_chars_mean": round(statistics.mean(pack_chars), 1) if pack_chars else None,
+            "evidence_pack_chars_p95": round(percentile(pack_chars, .95), 1) if pack_chars else None,
         }
 
     return {"all": summary(merged), "positive": summary(pos), "negative": summary(neg), "merged": merged}
@@ -186,6 +212,15 @@ def write_markdown(analysis: dict, path: Path):
         f"| 延迟中位数 | {old_all['p50_latency_ms']:.0f} ms | {new_all['p50_latency_ms']:.0f} ms | {new_all['p50_latency_ms']-old_all['p50_latency_ms']:+.0f} ms |",
         f"| 延迟 P95 | {old_all['p95_latency_ms']:.0f} ms | {new_all['p95_latency_ms']:.0f} ms | {new_all['p95_latency_ms']-old_all['p95_latency_ms']:+.0f} ms |",
         "",
+        "## 程序控制编排指标（新版专属）",
+        "",
+        f"- 结果类型分布：{new_all.get('program_outcome_counts') or 'N/A'}",
+        f"- 平均模型调用数 / 中位数：{new_all.get('model_call_mean') if new_all.get('model_call_mean') is not None else 'N/A'} / {new_all.get('model_call_p50') if new_all.get('model_call_p50') is not None else 'N/A'}",
+        f"- 平均补充检索次数：{new_all.get('supplement_mean') if new_all.get('supplement_mean') is not None else 'N/A'}；触发补充比例：{new_all.get('supplement_nonzero_rate') if new_all.get('supplement_nonzero_rate') is not None else 'N/A'}",
+        f"- 平均协议修复次数：{new_all.get('repair_mean') if new_all.get('repair_mean') is not None else 'N/A'}；触发修复比例：{new_all.get('repair_nonzero_rate') if new_all.get('repair_nonzero_rate') is not None else 'N/A'}",
+        f"- 平均事实包字符数 / P95：{new_all.get('evidence_pack_chars_mean') if new_all.get('evidence_pack_chars_mean') is not None else 'N/A'} / {new_all.get('evidence_pack_chars_p95') if new_all.get('evidence_pack_chars_p95') is not None else 'N/A'}",
+        f"- 平均 understand / retrieval / respond 阶段耗时：{new_all.get('understand_ms_mean') if new_all.get('understand_ms_mean') is not None else 'N/A'} ms / {new_all.get('retrieval_ms_mean') if new_all.get('retrieval_ms_mean') is not None else 'N/A'} ms / {new_all.get('respond_ms_mean') if new_all.get('respond_ms_mean') is not None else 'N/A'} ms",
+        "",
         "## 配对分析",
         "",
         f"- 可配对问题数：{pair['n_questions']}",
@@ -216,6 +251,17 @@ def write_markdown(analysis: dict, path: Path):
         lines.append(
             f"| {row['name']} | {row.get('old_pass_rate',0):.1%} | {row.get('new_pass_rate',0):.1%} | {row.get('delta_pass_rate',0)*100:+.1f}pp |"
         )
+    lines += [
+        "",
+        "## 分数据切片",
+        "",
+        "| 切片 | 旧版通过率 | 新版通过率 | 差值 |",
+        "|---|---:|---:|---:|",
+    ]
+    for row in analysis.get("by_split", []):
+        lines.append(
+            f"| {row['name']} | {row.get('old_pass_rate',0):.1%} | {row.get('new_pass_rate',0):.1%} | {row.get('delta_pass_rate',0)*100:+.1f}pp |"
+        )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -241,6 +287,7 @@ def main() -> int:
         "paired": paired_analysis(merged),
         "by_game": summarize_groups(merged, "game"),
         "by_category": summarize_groups(merged, "category"),
+        "by_split": summarize_groups(merged, "split"),
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "analysis.json").write_text(json.dumps(analysis, ensure_ascii=False, indent=2), encoding="utf-8")

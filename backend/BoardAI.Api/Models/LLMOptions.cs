@@ -13,6 +13,30 @@ public class LLMOptions
     /// </summary>
     public string Thinking { get; set; } = "default";
 
+    /// <summary>program = 程序控制的理解→取证→回答状态机；legacy = 仅用于本轮对照的旧自由工具循环。</summary>
+    public string OrchestrationMode { get; set; } = "legacy";
+
+    /// <summary>程序控制编排包含理解、回答、补充与协议修复在内的硬模型调用上限（建议 2–4）。</summary>
+    public int MaxModelCallsPerRequest { get; set; } = 4;
+
+    /// <summary>每个子问题最多主动读取的候选数。</summary>
+    public int MaxCandidatesPerQuestion { get; set; } = 3;
+
+    /// <summary>每个子问题最多装入事实包的正式证据条数。</summary>
+    public int MaxEvidencePerQuestion { get; set; } = 8;
+
+    /// <summary>整个请求最多装入事实包的正式证据条数。</summary>
+    public int MaxEvidenceTotal { get; set; } = 24;
+
+    /// <summary>单条证据序列化后的软上限；超出时改取必要字段投影，并记录 projection。</summary>
+    public int MaxEvidenceJsonChars { get; set; } = 4000;
+
+    /// <summary>事实包序列化后的总大小上限；超出时优先省略低优先级 related/candidate 证据。</summary>
+    public int MaxEvidencePackChars { get; set; } = 60000;
+
+    /// <summary>一次请求最多允许的补充检索次数。</summary>
+    public int MaxSupplementQueries { get; set; } = 1;
+
     /// <summary>单次 /api/chat 请求内，最多允许的带工具 LLM 轮数；达到后只允许一次无工具总结。</summary>
     public int MaxToolRounds { get; set; } = 6;
 

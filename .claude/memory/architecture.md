@@ -71,6 +71,28 @@ L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 - `RulesFactService`：数量/容量/计分结构化事实，负责 score_table 等缓存。
 - `RulesPlanService`：`execute_plan` 的实体解析、relation 导航与结果构造，只缓存 relation 类型映射。
 
+### 程序控制问答编排（2026-10-17）
+
+程序控制路径已实现为显式实验能力；默认生产路径仍为 `LLM:OrchestrationMode=legacy`，因为本轮 a992cfe → program 对比未达到质量门槛。实验路径使用程序状态机：
+
+```text
+Understand（一次结构化理解）
+  → Retrieve（程序执行计划并主动读取正式规则事实包）
+  → Respond（一次结构化回答）
+  → answer / clarify / unavailable / need_more（need_more 最多补充一次）
+```
+
+- Understand/Respond 都只允许调用一个阶段专属 function tool；模型不能自由追加工具轮次。
+- 普通规则问题两次模型调用；补充检索最多一次；协议修复与补充共享总请求预算，默认硬上限四次模型调用。
+- `ProgramControlledChatOrchestrator`：状态机、调用预算、need_more/澄清/不可用出口、引用和结构校验。
+- `RuleEvidencePackBuilder`：由程序按子问题执行查询；对 unresolved 候选主动读取前若干正式内容；生成带 `evidence_id`、`canonical_path`、`source_ref`、角色、关系和字段投影的事实包。
+- 候选摘要与正式证据分离；候选摘要没有 `evidence_id`，不能当回答依据。局部 slot 使用 `owner.slot` 作为规范路径，即使 JSON 节点无顶层 id 也可成为正式证据。
+- 事实包有候选数、每问证据数、总证据数、单条 JSON 字符数和整包字符数预算；超预算时先省略低优先 related/candidate 并记录 omitted。
+- 回答结果校验 `question_results` 覆盖、evidence_id 属于当前包、answered 必须有引用、not_needed 必须说明原因；非法引用不会被静默删除后接受。
+- `AnswerEvidence` 新增 `OrchestrationOutcome`、模型/补充/修复次数、证据读取/引用数、包 ID 与字符数；旧 tier 字段仅作客户端兼容，不再同时表达 retrieval/source/model-selection/outcome。
+- `ChatResponse.Orchestration` 返回 request id、阶段耗时、每次模型调用耗时/token、事实包大小、结果类型、逐问 retrieval/evidence/outcome。日志不记录提示词全文、密钥或鉴权头。
+- 旧自由循环保留在 `LLM:OrchestrationMode=legacy`；当前生产默认 `legacy`。program 路径需显式开启，后续只有在质量、澄清和延迟门槛通过后才可切换。
+
 ### 规则与周边接口
 
 - `GET /api/rules/games`
@@ -89,9 +111,9 @@ L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 - `POST /api/asr/once`（一次性 WAV 转文字）
 - `POST /api/tts`（一次性文本转 MP3）
 
-### 单工具 `execute_plan`
+### 查询计划 `execute_plan`（program 模式下由程序调用）
 
-LLM 只输出查询计划，search/get_concept 由程序执行：
+在默认 program 模式下，模型只输出结构化问题计划；`execute_plan` 由 `RuleEvidencePackBuilder` 调用并读取正式结果。legacy 对照路径仍保留旧工具循环。
 
 - `relation`：`explain / condition / ordering / boundary / flow / list / identify`
 - `entity`：概念 id、准确中文名或自然语言描述

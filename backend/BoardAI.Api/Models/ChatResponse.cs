@@ -11,13 +11,28 @@ public class ChatResponse
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public AnswerEvidence? Evidence { get; set; }
+
+    /// <summary>程序控制编排的阶段、预算、事实包和模型调用轨迹；不含密钥或完整提示词。</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ChatOrchestrationTrace? Orchestration { get; set; }
 }
 
 /// <summary>一次回答的证据汇总：按 query 记录，而不是见到任意一条 ok 就把整条回答判为完全有据。</summary>
 public class AnswerEvidence
 {
-    /// <summary>tier1 = 查询已命中或经后续精确查询恢复；partial = 仍有未解决查询；tier2 = 只有候选；tier3 = 无数据。不是答案真实性判定。</summary>
+    /// <summary>旧客户端兼容字段；program 模式下 tier 只表示证据状态，真实控制使用 OrchestrationOutcome 等字段。</summary>
     public string Tier { get; set; } = "tier3";
+
+    /// <summary>program 模式的最终出口：answer / clarify / unavailable / partial / protocol_error。</summary>
+    public string? OrchestrationOutcome { get; set; }
+    public int ModelCallCount { get; set; }
+    public int SupplementCount { get; set; }
+    public int RepairCount { get; set; }
+    public int EvidenceReadCount { get; set; }
+    public int CitedEvidenceCount { get; set; }
+    public int OmittedEvidenceCount { get; set; }
+    public int EvidencePackChars { get; set; }
+    public string? EvidencePackId { get; set; }
 
     public bool HasData { get; set; }
     public bool HasCandidates { get; set; }
@@ -68,6 +83,12 @@ public class QueryEvidence
     public List<EvidenceConcept> References { get; set; } = new();
 
     public List<string> FlowContext { get; set; } = new();
+
+    /// <summary>program 模式中该子问题装入的正式证据 id。</summary>
+    public List<string> EvidenceIds { get; set; } = new();
+
+    /// <summary>program 模式中该子问题的最终处理状态：answered / clarify / unavailable / not_needed。</summary>
+    public string? OutcomeStatus { get; set; }
 }
 
 public class EvidenceConcept
@@ -83,4 +104,57 @@ public class EvidenceConcept
 
 
 /// <summary>聊天服务的内部返回值：回复与证据一起交给 Controller；旧 ProcessAsync 仍只取 Reply。</summary>
-public sealed record ChatProcessResult(string Reply, AnswerEvidence Evidence);
+public sealed record ChatProcessResult(
+    string Reply,
+    AnswerEvidence Evidence,
+    ChatOrchestrationTrace? Orchestration = null);
+
+
+/// <summary>程序控制编排的结构化轨迹，用于日志、评测和客户端分层展示。</summary>
+public class ChatOrchestrationTrace
+{
+    public string RequestId { get; set; } = string.Empty;
+    public string Mode { get; set; } = "program";
+    public string Outcome { get; set; } = string.Empty;
+    public string? RulesVersion { get; set; }
+    public string? PackId { get; set; }
+    public int ModelCallCount { get; set; }
+    public int SupplementCount { get; set; }
+    public int RepairCount { get; set; }
+    public int EvidenceCount { get; set; }
+    public int OmittedEvidenceCount { get; set; }
+    public int CandidateReadFailureCount { get; set; }
+    public int EvidencePackChars { get; set; }
+    public double UnderstandMs { get; set; }
+    public double RetrievalMs { get; set; }
+    public double RespondMs { get; set; }
+    public double ValidationMs { get; set; }
+    public List<ChatModelCallTrace> ModelCalls { get; set; } = new();
+    public List<string> ProtocolErrors { get; set; } = new();
+    public List<ChatQuestionTrace> Questions { get; set; } = new();
+}
+
+public class ChatModelCallTrace
+{
+    public int Sequence { get; set; }
+    public string Stage { get; set; } = string.Empty;
+    public string Reason { get; set; } = string.Empty;
+    public bool Succeeded { get; set; }
+    public double ElapsedMs { get; set; }
+    public int? PromptTokens { get; set; }
+    public int? CompletionTokens { get; set; }
+    public int? ReasoningTokens { get; set; }
+}
+
+public class ChatQuestionTrace
+{
+    public string QuestionId { get; set; } = string.Empty;
+    public string Entity { get; set; } = string.Empty;
+    public string Relation { get; set; } = string.Empty;
+    public string Intent { get; set; } = string.Empty;
+    public string RetrievalStatus { get; set; } = string.Empty;
+    public int CandidateCount { get; set; }
+    public int EvidenceCount { get; set; }
+    public string? OutcomeStatus { get; set; }
+    public List<string> EvidenceIds { get; set; } = new();
+}

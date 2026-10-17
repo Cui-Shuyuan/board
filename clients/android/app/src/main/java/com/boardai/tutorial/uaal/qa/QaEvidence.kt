@@ -25,6 +25,12 @@ data class QaAnswerEvidence(
     val noMatchCount: Int = 0,
     val unsupportedCount: Int = 0,
     val pendingCount: Int = 0,
+    /** Program-controlled orchestration outcome. Evidence read is not answer correctness. */
+    val orchestrationOutcome: String? = null,
+    val evidenceReadCount: Int = 0,
+    val citedEvidenceCount: Int = 0,
+    val modelCallCount: Int = 0,
+    val omittedEvidenceCount: Int = 0,
     val queries: List<QaEvidenceQuery> = emptyList()
 ) {
     val missingQueries: List<QaEvidenceQuery>
@@ -75,6 +81,13 @@ data class QaEvidenceConcept(
 internal fun qaEvidenceNotice(evidence: QaAnswerEvidence?): String? {
     if (evidence == null) return null
 
+    // A clarify/conversation is already a complete user-facing outcome; showing the
+    // old "missing query" notice would confuse "not enough information to answer"
+    // with a protocol failure. Evidence read also does not prove answer correctness.
+    if (evidence.orchestrationOutcome?.lowercase() in setOf("clarify", "conversation")) {
+        return null
+    }
+
     val missing = evidence.missingQueries
     if (missing.isNotEmpty()) {
         return "本次回答未覆盖：" + missing.joinToString("、") { it.displayLabel }
@@ -124,6 +137,11 @@ private fun parseAnswerEvidence(json: JSONObject): QaAnswerEvidence {
         noMatchCount = json.intValue("noMatchCount", "NoMatchCount"),
         unsupportedCount = json.intValue("unsupportedCount", "UnsupportedCount"),
         pendingCount = json.intValue("pendingCount", "PendingCount"),
+        orchestrationOutcome = json.stringValue("orchestrationOutcome", "OrchestrationOutcome"),
+        evidenceReadCount = json.intValue("evidenceReadCount", "EvidenceReadCount"),
+        citedEvidenceCount = json.intValue("citedEvidenceCount", "CitedEvidenceCount"),
+        modelCallCount = json.intValue("modelCallCount", "ModelCallCount"),
+        omittedEvidenceCount = json.intValue("omittedEvidenceCount", "OmittedEvidenceCount"),
         queries = queries.mapIndexed { index, query ->
             val later = query.resolvedByQueryIndex?.let { queries.getOrNull(it) }
             val validRecovery = query.resolvedByQueryIndex?.let { it > index } == true

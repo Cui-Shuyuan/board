@@ -15,10 +15,11 @@ python -m unittest discover -s tools/eval -p test_analyze_chat_latency.py
 
 ## 1. 冻结版本
 
-当前对比使用：
+历史检索对比使用 `36e4dbf` → `d8862ac`；程序控制问答编排对比使用：
 
-- 旧版：`36e4dbf`
-- 新版：`d8862ac`
+- 基线：`a992cfe`
+- 新路径：包含程序控制编排的当前提交
+
 
 建议用 git worktree 分开构建：
 
@@ -35,21 +36,40 @@ set Rules__BasePath=D:\workspace\board
 set Embedding__ModelDir=D:\workspace\board\backend\BoardAI.Api\ml_models\bge-base-zh-v1.5-fp32
 ```
 
-旧版和新版分别运行在 `5001` / `5002`，启动后先做健康检查。
+旧版和新版分别运行在 `5001` / `5002`，启动后先做健康检查。基线 `a992cfe` 使用旧自由工具循环；当前实现默认仍为 `LLM:OrchestrationMode=legacy`，做 program 对照时必须显式把新实例设为 `program`。
 
 ## 2. 主实验
 
+先为固定回归题集生成正式规则片段，再合并新增留出集：
+
+```bash
+python3 tools/eval/build_question_ground_truth.py \
+  --questions tools/qa/comprehensive_eval_questions.jsonl \
+  --api http://172.17.208.1:5002 \
+  --out .tmp/program-eval/regression_ground_truth.json
+python3 tools/eval/merge_question_sets.py \
+  --main-questions tools/qa/comprehensive_eval_questions.jsonl \
+  --main-ground-truth .tmp/program-eval/regression_ground_truth.json \
+  --holdout-questions tools/qa/program_orchestration_holdout.jsonl \
+  --out-questions .tmp/program-eval/questions_all.jsonl \
+  --out-ground-truth .tmp/program-eval/question_ground_truth.json
+```
+
+然后运行：
+
 ```bash
 python3 tools/eval/compare_versions.py \
-  --questions tools/qa/comprehensive_eval_questions.jsonl \
+  --questions .tmp/program-eval/questions_all.jsonl \
   --old-api http://172.17.208.1:5001 \
   --new-api http://172.17.208.1:5002 \
-  --out .tmp/comprehensive-eval/main \
-  --repeats 3
+  --out .tmp/program-eval/main \
+  --repeats 3 \
+  --pair-workers 2
 ```
 
 - 每条问题两版各重复 3 次。
 - 运行器将两版请求成对发出，并随机化提交顺序。
+- `--pair-workers 2` 表示同时有两对 old/new 请求在跑；两版承受相同并发负载。
 - 原始响应、evidence、延迟、确定性命中写入 `.tmp/.../runs.jsonl`。
 - 网络错误最多重试一次，重试次数会留档；不会因回答不好而重试。
 - 如果任务中断，给同一命令加 `--resume`，已完成的 `run_id` 会跳过。
@@ -59,26 +79,35 @@ python3 tools/eval/compare_versions.py \
 先从冻结后的运行库生成每题可接受的规则证据片段：
 
 ```bash
-python3 tools/eval/build_question_ground_truth.py   --questions tools/qa/comprehensive_eval_questions.jsonl   --api http://172.17.208.1:5002   --out .tmp/comprehensive-eval/question_ground_truth.json
+python3 tools/eval/build_question_ground_truth.py \
+  --questions tools/qa/comprehensive_eval_questions.jsonl \
+  --api http://172.17.208.1:5002 \
+  --out .tmp/program-eval/regression_ground_truth.json
+python3 tools/eval/merge_question_sets.py \
+  --main-questions tools/qa/comprehensive_eval_questions.jsonl \
+  --main-ground-truth .tmp/program-eval/regression_ground_truth.json \
+  --holdout-questions tools/qa/program_orchestration_holdout.jsonl \
+  --out-questions .tmp/program-eval/questions_all.jsonl \
+  --out-ground-truth .tmp/program-eval/question_ground_truth.json
 ```
 
 再从运行结果获取 matched/related 概念的补充描述：
 
 ```bash
 python3 tools/eval/fetch_rule_details.py \
-  --runs .tmp/comprehensive-eval/main/runs.jsonl \
+  --runs .tmp/program-eval/main/runs.jsonl \
   --api http://172.17.208.1:5002 \
-  --out .tmp/comprehensive-eval/main/rule_details.json
+  --out .tmp/program-eval/main/rule_details.json
 ```
 
 盲评必须在有模型密钥的环境里运行，且不要打印密钥：
 
 ```bat
 D:\Python\Python312\python.exe tools\eval\judge_answers.py ^
-  --runs .tmp\comprehensive-eval\main\runs.jsonl ^
-  --ground-truth .tmp\comprehensive-eval\question_ground_truth.json ^
-  --rule-details .tmp\comprehensive-eval\main\rule_details.json ^
-  --out .tmp\comprehensive-eval\main\judge.jsonl ^
+  --runs .tmp\program-eval\main\runs.jsonl ^
+  --ground-truth .tmp\program-eval\question_ground_truth.json ^
+  --rule-details .tmp\program-eval\main\rule_details.json ^
+  --out .tmp\program-eval\main\judge.jsonl ^
   --model deepseek-v4-flash
 ```
 
@@ -86,10 +115,10 @@ D:\Python\Python312\python.exe tools\eval\judge_answers.py ^
 
 ```bat
 D:\Python\Python312\python.exe tools\eval\judge_answers.py ^
-  --runs .tmp\comprehensive-eval\main\runs.jsonl ^
-  --ground-truth .tmp\comprehensive-eval\question_ground_truth.json ^
-  --rule-details .tmp\comprehensive-eval\main\rule_details.json ^
-  --out .tmp\comprehensive-eval\main\judge-deepseek-chat.jsonl ^
+  --runs .tmp\program-eval\main\runs.jsonl ^
+  --ground-truth .tmp\program-eval\question_ground_truth.json ^
+  --rule-details .tmp\program-eval\main\rule_details.json ^
+  --out .tmp\program-eval\main\judge-deepseek-chat.jsonl ^
   --model deepseek-chat
 ```
 
@@ -97,19 +126,27 @@ D:\Python\Python312\python.exe tools\eval\judge_answers.py ^
 
 ```bash
 python3 tools/eval/combine_judges.py \
-  --judge .tmp/comprehensive-eval/main/judge.jsonl \
-  --judge .tmp/comprehensive-eval/main/judge-deepseek-chat.jsonl \
-  --out .tmp/comprehensive-eval/main/judge-consensus.jsonl \
-  --summary .tmp/comprehensive-eval/main/judge-consensus-summary.json
+  --judge .tmp/program-eval/main/judge.jsonl \
+  --judge .tmp/program-eval/main/judge-deepseek-chat.jsonl \
+  --out .tmp/program-eval/main/judge-consensus.jsonl \
+  --summary .tmp/program-eval/main/judge-consensus-summary.json
 ```
 
 ## 4. 分析
 
 ```bash
 python3 tools/eval/analyze_compare.py \
-  --runs .tmp/comprehensive-eval/main/runs.jsonl \
-  --judge .tmp/comprehensive-eval/main/judge-consensus.jsonl \
-  --out-dir .tmp/comprehensive-eval/main/analysis-consensus
+  --runs .tmp/program-eval/main/runs.jsonl \
+  --judge .tmp/program-eval/main/judge-consensus.jsonl \
+  --out-dir .tmp/program-eval/main/analysis-consensus
+
+# 从服务日志统计 legacy 基线的真实模型调用数（新版也可交叉核对）
+python3 tools/eval/analyze_model_calls.py \
+  --baseline-log .tmp/program-eval/baseline-api.log \
+  --new-log .tmp/program-eval/new-api.log \
+  --baseline-start-utc <manifest-baseline-start> \
+  --new-start-utc <manifest-new-start> \
+  --out .tmp/program-eval/main/model-calls.json
 ```
 
 输出：
@@ -120,7 +157,8 @@ python3 tools/eval/analyze_compare.py \
 
 ## 5. 数据
 
-- 题集：`tools/qa/comprehensive_eval_questions.jsonl`
-- 题集由 85 条既有 execute-plan gold、13 条 intent 回归、7 条检索回归和 12 条负例/歧义题组成。
+- 固定回归题集：`tools/qa/comprehensive_eval_questions.jsonl`（85 条既有 execute-plan gold、13 条 intent 回归、7 条检索回归和 12 条负例/歧义题）。
+- 新增留出集：`tools/qa/program_orchestration_holdout.jsonl`（16 条，含 slot、未知对象、必要澄清、多问题、同对象不同动作）。
+- 主实验合并后 133 题，两版各 3 次，共 798 次聊天。
 - 题集不存放生成答案；规则事实由运行库快照、规则 id 和盲评 rubric 分别验证。
 - 原始 runs、judge 输出均为 QA 留档，默认放 `.tmp/`，不提交 Git。

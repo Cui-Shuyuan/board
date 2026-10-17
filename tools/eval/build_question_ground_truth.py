@@ -21,19 +21,49 @@ def post_json(url: str, body: dict):
         return json.loads(response.read().decode("utf-8"))
 
 
-def extract_matched(payload: dict) -> list[dict]:
+def find_localized_text(node, keys: set[str]) -> str:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key in keys:
+                if isinstance(value, str) and value.strip():
+                    return value.strip()
+                if isinstance(value, dict):
+                    text = value.get("zh") or value.get("en")
+                    if isinstance(text, str) and text.strip():
+                        return text.strip()
+            found = find_localized_text(value, keys)
+            if found:
+                return found
+    elif isinstance(node, list):
+        for value in node:
+            found = find_localized_text(value, keys)
+            if found:
+                return found
+    return ""
+
+
+def extract_matched(payload: dict, fallback_rule_id: str) -> list[dict]:
     item = (payload.get("results") or [{}])[0]
     if item.get("status") != "ok":
         return []
     out = []
     for matched in item.get("matched") or []:
-        desc = matched.get("description") or ""
+        desc = matched.get("description")
         if isinstance(desc, dict):
             desc = desc.get("zh") or desc.get("en") or ""
+        if not desc:
+            desc = find_localized_text(matched, {"description"})
+        name = matched.get("name")
+        if isinstance(name, dict):
+            name = name.get("zh") or name.get("en") or ""
+        if not name:
+            name = find_localized_text(matched, {"name"})
         out.append({
-            "rule_id": matched.get("id"),
-            "name": matched.get("name") or "",
-            "description": str(desc),
+            # Local slots may not have a top-level id; the requested canonical
+            # path is still the stable identity for evidence.
+            "rule_id": matched.get("id") or fallback_rule_id,
+            "name": name or "",
+            "description": str(desc or ""),
         })
     return out
 
@@ -59,7 +89,7 @@ def main() -> int:
                         f"{args.api}/api/rules/games/{question['game']}/execute-plan",
                         {"question": "", "plan": {"queries": [{"relation": candidate_relation, "entity": rule_id}]}},
                     )
-                    matched = extract_matched(payload)
+                    matched = extract_matched(payload, rule_id)
                 except Exception:  # noqa: BLE001
                     matched = []
                 if matched:

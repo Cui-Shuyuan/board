@@ -163,6 +163,7 @@ public sealed class Rev08AnswerEvidenceTests
             rules,
             Options.Create(new LLMOptions
             {
+                OrchestrationMode = "legacy",
                 MaxToolRounds = 3,
                 MaxRequestSeconds = 10,
                 MaxRepeatedFailures = 3,

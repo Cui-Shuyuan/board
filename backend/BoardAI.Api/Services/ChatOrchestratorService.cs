@@ -14,6 +14,8 @@ public class ChatOrchestratorService
     private readonly GameRulesService _rulesService;
     private readonly string _systemPromptTemplate;
     private readonly ILogger<ChatOrchestratorService> _logger;
+    private readonly LLMOptions _llmOptions;
+    private readonly string _orchestrationMode;
     private readonly int _maxToolRounds;
     private readonly int _maxToolCallsPerRound;
     private readonly int _maxTotalToolCalls;
@@ -45,7 +47,9 @@ public class ChatOrchestratorService
         _logger = logger;
 
         var llmOptions = options.Value;
+        _llmOptions = llmOptions;
         _systemPromptTemplate = llmOptions.SystemPrompt;
+        _orchestrationMode = llmOptions.OrchestrationMode;
         _maxToolRounds = Math.Max(1, llmOptions.MaxToolRounds);
         _maxToolCallsPerRound = Math.Max(1, llmOptions.MaxToolCallsPerRound);
         _maxTotalToolCalls = Math.Max(1, llmOptions.MaxTotalToolCalls);
@@ -66,6 +70,78 @@ public class ChatOrchestratorService
         List<ChatMessage> history,
         ChatContext? context = null,
         CancellationToken cancellationToken = default)
+    {
+        if (string.Equals(_orchestrationMode, "legacy", StringComparison.OrdinalIgnoreCase))
+            return await ProcessLegacyWithEvidenceAsync(gameId, history, context, cancellationToken);
+        return await ProcessProgramControlledAsync(gameId, history, context, cancellationToken);
+    }
+
+    private async Task<ChatProcessResult> ProcessProgramControlledAsync(
+        string gameId,
+        List<ChatMessage> history,
+        ChatContext? context,
+        CancellationToken cancellationToken)
+    {
+        using var rulesScope = _rulesService.BeginRequestScope(gameId);
+
+        var systemPrompt = _systemPromptTemplate.Replace("{game_name}", gameId, StringComparison.OrdinalIgnoreCase);
+        var messages = new List<ChatMessage>();
+        if (!string.IsNullOrWhiteSpace(systemPrompt))
+            messages.Add(new ChatMessage { Role = "system", Content = systemPrompt });
+        var contextMessage = BuildContextMessage(context);
+        if (!string.IsNullOrWhiteSpace(contextMessage))
+            messages.Add(new ChatMessage { Role = "system", Content = contextMessage });
+        messages.AddRange(TrimHistory(history, _maxConversationMessages));
+
+        var latestUser = history.LastOrDefault(m => m.Role == "user");
+        var question = latestUser?.Content ?? "";
+        _logger.LogInformation("[Chat] program path: game={GameId}, question={Question}, count={Count}",
+            gameId, question == "" ? "(empty)" : question, history.Count);
+
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        linkedCts.CancelAfter(_maxRequestTimeout);
+        try
+        {
+            var orchestrator = new ProgramControlledChatOrchestrator(
+                _llmService, _rulesService, _llmOptions, _logger);
+            var result = await orchestrator.ProcessAsync(gameId, question, messages, linkedCts.Token);
+            _logger.LogInformation(
+                "[Chat] program final reply: game={GameId}, outcome={Outcome}, modelCalls={ModelCalls}, evidence={Evidence}, reply={Reply}",
+                gameId, result.Trace.Outcome, result.Trace.ModelCallCount, result.Evidence.EvidenceReadCount, result.Reply);
+            return new ChatProcessResult(result.Reply, result.Evidence, result.Trace);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            _logger.LogInformation("[Chat] program path canceled by client: game={GameId}", gameId);
+            throw;
+        }
+        catch (OperationCanceledException) when (linkedCts.IsCancellationRequested)
+        {
+            _logger.LogInformation("[Chat] program path request timeout: game={GameId}", gameId);
+            var trace = new ChatOrchestrationTrace
+            {
+                RequestId = "chat_" + Guid.NewGuid().ToString("N")[..12],
+                Mode = "program",
+                Outcome = "request_timeout"
+            };
+            var evidence = new AnswerEvidence
+            {
+                Tier = "tier3",
+                OrchestrationOutcome = "request_timeout",
+                IsComplete = false,
+                PendingCount = 0
+            };
+            return new ChatProcessResult(
+                "抱歉，本次规则查询已达到时间上限，请缩小问题范围或换一种更具体的问法。",
+                evidence, trace);
+        }
+    }
+
+    private async Task<ChatProcessResult> ProcessLegacyWithEvidenceAsync(
+        string gameId,
+        List<ChatMessage> history,
+        ChatContext? context,
+        CancellationToken cancellationToken)
     {
         var sw = Stopwatch.StartNew();
 

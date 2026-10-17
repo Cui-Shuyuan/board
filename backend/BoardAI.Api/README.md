@@ -150,6 +150,41 @@ query 字段：
 
 未精确命中时返回 `unresolved + candidates`。候选描述只用于选择目标，不是正式事实；确认候选时保持原 relation/intent，并把 entity 改成候选准确 id 或中文名。Chat 返回的 `evidence.queries[]` 会记录 intent、候选、`resolvedByQueryIndex`、`confirmedCandidateId` 与 `confirmedByRelation`；`tier1` 只表示查询数据覆盖，不证明最终每句话真实。
 
+### 程序控制问答编排
+
+`LLM:OrchestrationMode=program`（实验路径，默认关闭；当前生产配置为 `legacy`）时，`/api/chat` 不再让模型自由循环调用工具：
+
+1. **Understand**：模型只能调用 `submit_understanding`，输出 `request_kind` 与子问题 `entity/relation/intent/user_context`。
+2. **Retrieve**：程序为每个子问题执行查询，主动读取高相关候选的正式规则，构建有界 `RuleEvidencePack`。候选摘要没有 `evidence_id`，不能当引用。
+3. **Respond**：模型只能调用 `submit_answer`，返回 `answer / clarify / unavailable / need_more` 及每项 `question_results`。回答中的 evidence id 必须属于当前事实包。
+4. **补充/修复**：`need_more` 最多触发一次受限补充检索；协议修复最多一次。补充、修复和正常回答共享 `MaxModelCallsPerRequest`（默认四次）与请求超时。
+5. **出口**：`clarify` 是正常结果，不再由候选 pending 强制拦截；`unavailable` 说明未查到、读取失败或预算不足，不把检索未命中写成实体绝对不存在。
+
+返回新增：
+
+```json
+{
+  "orchestration": {
+    "requestId": "chat_...",
+    "mode": "program",
+    "outcome": "answer",
+    "modelCallCount": 2,
+    "supplementCount": 0,
+    "repairCount": 0,
+    "evidenceCount": 4,
+    "evidencePackChars": 8123,
+    "understandMs": 1100,
+    "retrievalMs": 250,
+    "respondMs": 1800,
+    "modelCalls": []
+  }
+}
+```
+
+`evidence` 中的 `orchestrationOutcome`、`evidenceReadCount`、`citedEvidenceCount`、`modelCallCount` 用于区分“已读取/已引用证据”和“答案正确性”。旧客户端忽略未知字段即可继续工作；Android 解析器已同步这些可选字段。
+
+本轮 a992cfe → program 路径的 133 题 × 3 次配对实验中，程序控制路径的严格回答通过率低于基线，因此 `LLM:OrchestrationMode` 默认仍为 `legacy`。program 路径保留为显式实验能力，报告见 `docs/reviews/program-controlled-qa-orchestration-2026-10-17.md`。
+
 对象名称精确命中时仍可补充 intent 检索，但保留对象本身的语义分数。其他目标的 intent 得分达到召回阈值且不低于该对象时，返回候选确认；不按问句长度判断是否换目标。答案不因未重复问题数字或提到人数而强制重答。用户给出的状态是回答语境，不是已通过规则校验的事实。
 
 ## 内容接口缓存

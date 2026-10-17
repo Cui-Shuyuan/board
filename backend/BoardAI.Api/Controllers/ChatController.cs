@@ -28,7 +28,8 @@ public class ChatController : ControllerBase
             return Ok(new ChatResponse
             {
                 Reply = result.Reply,
-                Evidence = result.Evidence
+                Evidence = result.Evidence,
+                Orchestration = result.Orchestration
             });
         }
         catch (OperationCanceledException)

@@ -341,6 +341,7 @@ public sealed class ChatOrchestratorServiceTests
         int maxTotalToolCalls = 12)
         => new()
         {
+            OrchestrationMode = "legacy",
             MaxToolRounds = maxToolRounds,
             MaxRequestSeconds = maxRequestSeconds,
             MaxRepeatedFailures = maxRepeatedFailures,

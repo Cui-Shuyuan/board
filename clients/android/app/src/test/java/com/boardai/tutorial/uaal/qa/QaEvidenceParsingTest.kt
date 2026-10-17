@@ -84,6 +84,22 @@ class QaEvidenceParsingTest {
     }
 
     @Test
+    fun parsesProgramOutcomeWithoutTreatingReadEvidenceAsCorrectness() {
+        val body = """{"reply":"你指的是哪个标记？","evidence":{
+            "tier":"orchestrated","orchestrationOutcome":"clarify","isComplete":true,
+            "evidenceReadCount":2,"citedEvidenceCount":0,"modelCallCount":2,"omittedEvidenceCount":1,
+            "queryCount":1,"pendingCount":0,"queries":[]
+        }}"""
+        val evidence = parseQaChatResponse(body).evidence!!
+        assertEquals("clarify", evidence.orchestrationOutcome)
+        assertEquals(2, evidence.evidenceReadCount)
+        assertEquals(0, evidence.citedEvidenceCount)
+        assertEquals(2, evidence.modelCallCount)
+        assertEquals(1, evidence.omittedEvidenceCount)
+        assertNull(qaEvidenceNotice(evidence))
+    }
+
+    @Test
     fun evidenceNoticeListsMissingQueriesAndHandlesTier2Tier3() {
         val partial = parseQaChatResponse(PARTIAL_EVIDENCE_BODY).evidence
         assertEquals("本次回答未覆盖：火星规则（no_match）", qaEvidenceNotice(partial))

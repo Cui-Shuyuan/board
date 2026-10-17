@@ -11,13 +11,14 @@ metadata:
 
 ## 一句话
 
-Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，xUnit 173/173；Splendor full / quick 已迁移到 section-first + reusable materials 源模型，共享局面/动作/表现从 `tutorial/library/` 引用；full 67 cue、quick 24 cue 静态检查全绿，素材库单测与两轨迁移对账已完成。当前正在做 quick / full 真人视觉重审、Android 真机端到端验收，最后进入 Flow Guide。
+Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成服务化拆分，xUnit 198/198；Splendor full / quick 已迁移到 section-first + reusable materials 源模型，共享局面/动作/表现从 `tutorial/library/` 引用；full 67 cue、quick 24 cue 静态检查全绿，素材库单测与两轨迁移对账已完成。当前正在做 quick / full 真人视觉重审、Android 真机端到端验收，最后进入 Flow Guide。
 
 ## 最近进展
 
 - **去除问答过拟合并完成耗时归因（2026-10-17）**：删除组件数量/人数正则重答及相关强制提示，删除按字符数判断场景和将精确对象 intent 分数清零的处理，保留意图检索和候选确认。后端 181/181 测试通过。702 次历史聊天逐条对齐日志：新增平均 1357ms 中模型请求约 1158ms、工具约 199ms；模型调用次数 2.33→3.35，不能归因于纯思考变慢。报告 `docs/reviews/qa-generalization-latency-2026-10-17.md`。本次代码尚未重新跑 702 次真实模型质量评测，历史分数不能直接视为修订版结果。
 - **新旧版本全面对比已完成（2026-10-17）**：使用 117 条覆盖九款游戏的问题集，每问两版各重复 3 次，共 702 次真实聊天；两 judge 保守共识严格回答成功率旧版 60.4% → 新版 75.5%（+15.1pp，95% CI +8.0~+22.2pp，McNemar p=0.0002），规则直接命中率 61.3% → 80.3%。新版质量胜出，但端到端中位延迟 2732ms → 3572ms。报告见 `docs/reviews/version-comparison-2026-10-17.md`，题集与评测工具在 `tools/qa/comprehensive_eval_questions.jsonl`、`tools/eval/`。
-- **查询意图保留与回答收敛已落地（2026-10-17）**：`execute_plan` query 增加 `intent`；RulesPlanService 将 entities 身份定位与完整 intent 场景召回合并，对象名精确命中仍可被设置/获得/结算动作候选补充。ChatOrchestrator 增加未确认候选的定向协议纠偏、证据确认关联（含多候选/相近 intent）、组件数量与玩家人数反推守卫，并记录 plan provenance / tool timing。新增 13 行 / 14 子查询意图回归与真实 LLM 回归报告 `docs/reviews/rules-query-intent-answer-2026-10-17.md`；后端 xUnit 173/173，gold 77 direct + 8 top3，7 条旧回归目标全在前三。
+- **程序控制问答编排已实现但质量未过门槛（2026-10-17）**：新增 Understand → 程序读取正式证据包 → 结构化 Respond 状态机、四类出口、有界补充/修复、引用校验、事实包预算和阶段指标；旧自由循环保留为 legacy 对照。133 题 × 3 次配对实验（两 judge 共识）中，严格回答通过率旧版 68.7% vs 新版 56.9%，新版下降 11.8pp，95% CI [-19.1, -4.8]pp；模型调用均值 3.16 → 2.21，但 P50 延迟 3684ms → 4653ms。因此生产默认仍为 `OrchestrationMode=legacy`，program 仅作为显式实验路径保留。报告：`docs/reviews/program-controlled-qa-orchestration-2026-10-17.md`。后端 xUnit 198/198，Android 104/104。
+- **查询意图保留与回答收敛（2026-10-17，已被 a992cfe 收敛修订）**：intent、候选确认与证据关联保留；a992cfe 删除了基于数量/人数的过拟合重答守卫。历史报告见 `docs/reviews/rules-query-intent-answer-2026-10-17.md`。
 - **素材化重构与 R1–R8 复核修复已完成（2026-10-17）**：新增 `tutorial-material/v1`、`material_library.py`、`material_cli.py`、`check_materials.py`；编译链按调用边界检查 action/example 契约、递归保留嵌套 usage、强制类别约束与 namespace 隔离、QA HEAD 基线包含 library。Splendor 抽出 10 actions / 3 examples / 1 presentation，full 31、quick 20 处 usage（含嵌套）；迁移后两轨 compiled 与迁移前除 `source_sha256` 外逐字段一致；非卡牌夹具 detailed/compact/same 走同一编译链。
 - **Board API QA 已补跑（2026-10-17）**：quick 10/10 通过；full 43 问中 3 问的回答需结合上下文（`take_gems/limit.001.2` 白宝石=钻石；另 2 条为 LLM 缺前提未追问，回答可接受）。合法性由 Board API 调 `/api/chat` 判断并留档；QA 留档按约定不入 Git，暂不修改问答 prompt。
 - **section-first 动画源已完成**：track 只排序 section，源真值为 `tutorial/{tracks,sections,shared}/`；旧单文件 `script.{track}.json` / `anim/v2/{track}.anim.json` / `anim/v2/_stage/` 已删除，`build/` 是忽略的装配中间产物。
@@ -33,8 +34,8 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 - full：67 cue / 12 section / 338 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 53 cues / 0 errors；`check_card_identity_v2` 553 states / 0 error。
 - quick：24 cue / 11 section / 106 time anchors；`check_anim_v2` 与 `validate_anim_rules_v2` 均 0 warnings；`audit_anim_v2` 17 cues / 0 errors；`check_card_identity_v2` 333 states / 0 error。
 - `compile_animation_v2 --check` 对两轨均为 “up to date”；`section_source.py --check` 解析通过。
-- Python animation/索引回归 227/227；后端 xUnit 173/173；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
-- Android JVM 当前 12 个测试文件 / 93 个 `@Test` 全绿；真机端到端仍未验收。
+- Python animation/索引回归 227/227；后端 xUnit 198/198；`validate_rules.py --errors-only` 为 0 errors / 72 warnings。
+- Android JVM 当前 13 个测试文件 / 104 个测试全绿；真机端到端仍未验收。
 
 ## 当前已具备的能力
 
