@@ -310,6 +310,59 @@ def _decode_error_payload(payload: bytes, compression: int) -> tuple[int, str]:
     return code, message.decode("utf-8", "replace")
 
 
+def _utf8_len(value: str) -> int:
+    return len(value.encode("utf-8"))
+
+
+def _split_text_chunks(text: str, max_bytes: int = 900) -> list[str]:
+    """Split text at sentence/punctuation boundaries under the v1 byte limit.
+
+    The standard TTS service accepts at most 1024 UTF-8 bytes per request.
+    Long sections are split here and their MP3 chunks are byte-concatenated by
+    :func:`synthesize_text`; this keeps the existing section-based pipeline
+    without forcing every long section into a new source unit.
+    """
+    text = (text or "").strip()
+    if not text:
+        return []
+    if _utf8_len(text) <= max_bytes:
+        return [text]
+
+    chunks: list[str] = []
+    buffer = ""
+    boundary_chars = set("。！？；.!?;\n")
+    for ch in text:
+        if _utf8_len(buffer + ch) <= max_bytes:
+            buffer += ch
+            continue
+
+        cut = -1
+        for index in range(len(buffer) - 1, -1, -1):
+            if buffer[index] in boundary_chars:
+                cut = index + 1
+                break
+        if cut <= 0:
+            cut = len(buffer)
+        head = buffer[:cut].strip()
+        tail = buffer[cut:].strip()
+        if head:
+            chunks.append(head)
+        buffer = tail + ch
+
+        # A single unusually long run without punctuation still has to fit.
+        while _utf8_len(buffer) > max_bytes:
+            hard_cut = max_bytes
+            while hard_cut > 1 and _utf8_len(buffer[:hard_cut]) > max_bytes:
+                hard_cut -= 1
+            head = buffer[:hard_cut].strip()
+            if head:
+                chunks.append(head)
+            buffer = buffer[hard_cut:].strip()
+    if buffer.strip():
+        chunks.append(buffer.strip())
+    return chunks
+
+
 async def synthesize_text(
     text: str,
     out_file: Path,
@@ -321,14 +374,48 @@ async def synthesize_text(
     text = (text or "").strip()
     if not text:
         raise RuntimeError("TTS text is empty")
-    encoded = text.encode("utf-8")
-    if len(encoded) > 1024:
-        raise RuntimeError(f"标准语音合成单次文本超过 1024 UTF-8 字节：{len(encoded)}")
 
     resolved_voice = resolve_voice(voice or getattr(args, "voice", None))
     endpoint = resolve_endpoint(getattr(args, "endpoint", None))
     encoding = resolve_encoding(getattr(args, "format", None))
     sample_rate = resolve_sample_rate(getattr(args, "sample_rate", None))
+    encoded = text.encode("utf-8")
+    if len(encoded) > 1024:
+        if encoding not in ("mp3", "pcm"):
+            raise RuntimeError(
+                f"标准语音合成长文本仅支持 mp3/pcm 分块拼接，当前格式为 {encoding!r}"
+            )
+        chunks = _split_text_chunks(text)
+        if not chunks or any(_utf8_len(chunk) > 1024 for chunk in chunks):
+            raise RuntimeError("标准语音合成长文本分块失败")
+        resolved_out = out_file.resolve()
+        resolved_out.parent.mkdir(parents=True, exist_ok=True)
+        combined = bytearray()
+        partials: list[Path] = []
+        try:
+            for index, chunk in enumerate(chunks):
+                partial = resolved_out.with_name(
+                    f"{resolved_out.name}.chunk{index}{resolved_out.suffix}"
+                )
+                partials.append(partial)
+                print(
+                    f"[tts:standard] long text split {index + 1}/{len(chunks)} "
+                    f"({_utf8_len(chunk)} bytes)",
+                    file=sys.stderr,
+                )
+                await synthesize_text(chunk, partial, resolved_voice, args)
+                combined.extend(partial.read_bytes())
+        finally:
+            for partial in partials:
+                try:
+                    partial.unlink()
+                except OSError:
+                    pass
+        tmp_combined = resolved_out.with_name(resolved_out.name + ".part")
+        tmp_combined.write_bytes(bytes(combined))
+        tmp_combined.replace(resolved_out)
+        return _audio_duration(resolved_out, encoding, sample_rate)
+
 
     frame, auth_mode = build_request(text, resolved_voice, args)
     cluster = resolve_cluster(getattr(args, "cluster", None))

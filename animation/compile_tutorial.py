@@ -619,10 +619,22 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
     for dm in delta_manifest.get("cues") or []:
         cid = dm["id"]
         asset = assets.get(cid) or section_source.cue_id_to_slug(cid)
+        subtitle_src = media / f"{asset}.subtitle.json"
+        has_subtitle = subtitle_src.exists()
         for ext in (".mp3", ".subtitle.json"):
             src = media / f"{asset}{ext}"
             if src.exists():
                 shutil.copy2(src, full_media / src.name)
+        # Changing TTS provider (or regenerating an asset without subtitle
+        # events) must not leave an old subtitle file behind.  Otherwise the
+        # runtime builder would align new audio against stale word timings and
+        # could truncate cue/beat text.
+        if not has_subtitle:
+            stale_subtitle = full_media / f"{asset}.subtitle.json"
+            try:
+                stale_subtitle.unlink()
+            except FileNotFoundError:
+                pass
         by_id[cid] = {
             "id": cid,
             "asset": asset,
@@ -633,7 +645,10 @@ def run_tts_delta(game_dir: Path, game: str, track: str, script: dict, manifest:
             "start": 0.0,
             "duration": round(float(dm.get("duration", 0.0) or 0.0), 3),
             "file": tts_asset_rel(game, track, asset, ".mp3"),
-            "subtitle_file": tts_asset_rel(game, track, asset, ".subtitle.json"),
+            "subtitle_file": (
+                tts_asset_rel(game, track, asset, ".subtitle.json")
+                if has_subtitle else None
+            ),
             "refs": dm.get("refs") or [],
         }
     manifest["cues"] = [by_id[c["id"]] for c in script.get("cues") or [] if c["id"] in by_id]
