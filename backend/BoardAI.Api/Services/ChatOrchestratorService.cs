@@ -1347,12 +1347,16 @@ public class ChatOrchestratorService
                     Name = "execute_plan",
                     Description = @"唯一工具：查询计划执行器。把客人的规则问题编译成结构化查询计划，程序会执行实体定位、完整意图检索、正式读取和结构导航。relation 选择：
 - explain：X 是什么 / 怎么结算 / 怎么做 / 有什么效果 / 有几个
-- condition：能不能 X / X 有什么前提 / 什么限制
+- condition：能不能 X / X 有什么前提 / 什么限制（读取 condition+cost+target 及声明引用）
+- cost：X 要支付什么 / 费用及适用范围
+- target：X 作用于谁 / 目标约束
 - ordering：X 之后是什么 / 先后顺序 / 什么时候结束 / 每轮怎么轮转
 - boundary：X 不会发生什么 / 满了怎么办 / 上限多少
 - flow：流程查询。scope=game 返回整局结构；scope=local 必须给 entity，返回目标、直接子步骤和必要父级顺序/循环/条件
 - list：分页浏览概念目录（实体解析失败需要找概念时用）
 - members：枚举某个类型或显式集合的可声明成员；complete/partial 必须区分，不能把 partial 当全集
+- rule_lookup：保留明确对象身份，同时用完整 intent 检索相关规则节点，程序自动正式读取有界候选；读取候选不等于已确认对象/相关性
+- compute：只调用现有确定性公式/查表能力；缺参数或公式不支持时明确 partial/unsupported
 - identify：客人用外观/位置描述某物但你不确定是哪个概念时，把描述原文作为 entity，程序返回候选
 query 字段语义：
 - entity：查谁/什么，填概念 id、准确中文名、canonical_path 或对象描述；知道准确身份时直接用，不要求凭空猜 id。
@@ -1378,7 +1382,7 @@ query 字段语义：
                                 "properties": {
                                   "relation": {
                                     "type": "string",
-                                    "enum": ["explain", "condition", "ordering", "boundary", "flow", "list", "members", "identify"]
+                                    "enum": ["explain", "condition", "cost", "target", "ordering", "boundary", "flow", "list", "members", "rule_lookup", "compute", "identify"]
                                   },
                                   "entity": {
                                     "type": "string",

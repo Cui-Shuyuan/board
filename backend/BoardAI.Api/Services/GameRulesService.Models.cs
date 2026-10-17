@@ -23,8 +23,12 @@ public class ConceptSummary
     public float SubqueryBoost { get; set; }
     /// <summary>仅名称补充候选的原始分。计划里的 Score 以 0.55 为上限，PhraseScore 留空，不参与自动解析。</summary>
     public float? NameMatchScore { get; set; }
-    /// <summary>候选来自哪条检索证据：exact_identity / intent / entity / intent+entity。仅用于日志与回归解释。</summary>
+    /// <summary>候选来自哪条检索证据：exact_identity / intent / entity / intent+entity / reference。仅用于日志与回归解释。</summary>
     public string? MatchReason { get; set; }
+    /// <summary>not_read | auto_read；正式读取不推导目标身份已确认。</summary>
+    public string? ReadStatus { get; set; }
+    /// <summary>仅描述候选内容是否已正式读到，与 target_resolved 分开。</summary>
+    public bool? TargetResolved { get; set; }
 }
 
 /// <summary>单个查询（切分词或整句）在向量/关键词两通道上的匹配分。</summary>

@@ -43,6 +43,10 @@ public sealed class RulesPlanService
     private static readonly Dictionary<string, string[]> PlanRelationExpectedTypes = new()
     {
         ["condition"] = new[] { "actions", "triggers", "conditions", "flow" },
+        ["cost"] = new[] { "actions", "triggers", "flow", "objects" },
+        ["target"] = new[] { "actions", "triggers", "flow" },
+        ["rule_lookup"] = new[] { "actions", "triggers", "conditions", "flow", "objects" },
+        ["compute"] = new[] { "actions", "triggers", "objects", "flow", "concepts" },
         ["ordering"] = new[] { "flow", "triggers", "actions" },
         ["boundary"] = new[] { "objects", "ontology", "concepts", "slot", "top_level_refs", "triggers", "conditions", "flow" },
     };
@@ -178,7 +182,7 @@ public sealed class RulesPlanService
             if (result.Results.Any(r => r.Status == "no_match"))
                 notes.Add("no_match 表示规则库未确认到该查询的信息，请明确说明未查到，不要编造规则");
             if (result.Results.Any(r => r.Status == "unsupported"))
-                notes.Add("unsupported 的 relation 请改用 explain/condition/ordering/boundary/flow/list/identify/members");
+                notes.Add("unsupported 的 relation 请改用 explain/condition/cost/target/ordering/boundary/flow/list/identify/members/rule_lookup/compute");
             if (result.Results.Any(r => r.Status == "invalid"))
                 notes.Add("invalid 表示查询参数与 scope 组合不合法；请按 tool schema 修正参数");
             result.Note = "部分查询未完成：" + string.Join("；", notes) + "。";
@@ -189,7 +193,8 @@ public sealed class RulesPlanService
 
     private static readonly HashSet<string> PlanRelations = new(StringComparer.Ordinal)
     {
-        "explain", "condition", "ordering", "boundary", "flow", "list", "identify", "members"
+        "explain", "condition", "cost", "target", "ordering", "boundary",
+        "flow", "list", "identify", "members", "rule_lookup", "compute"
     };
 
 
@@ -220,7 +225,7 @@ public sealed class RulesPlanService
                 Status = "unsupported",
                 Resolution = QueryResolutionStatuses.Unsupported,
                 Coverage = QueryCoverageStatuses.Unknown,
-                Message = "该 relation 不在支持列表（explain/condition/ordering/boundary/flow/list/identify/members）。",
+                Message = "该 relation 不在支持列表（explain/condition/cost/target/ordering/boundary/flow/list/identify/members/rule_lookup/compute）。",
                 Omissions =
                 {
                     new QueryOmission { Reason = QueryOmissionReasons.UnsupportedRelation, FieldPath = "relation" }
@@ -284,6 +289,12 @@ public sealed class RulesPlanService
         }
 
         // flow/list 不需要实体解析
+        if (relation == "rule_lookup")
+            return await ExecuteRuleLookupAsync(game, entity, intent, question, cancellationToken);
+
+        if (relation == "compute")
+            return await ExecuteComputeAsync(game, entity, intent, question, cancellationToken);
+
         if (relation == "flow")
             return ExecuteFlowQueryAsync(game, entity, scope, include);
 
@@ -693,23 +704,106 @@ public sealed class RulesPlanService
         if (pos != null)
             item.FlowContext = pos.Ancestors;
 
-        // condition 关系：额外提取「能不能」答案所需的三要素——条件谓词、费用、目标约束
-        if (relation == "condition" && matched.Count > 0)
+        // condition/cost/target 关系：读取所属节点的对应字段，并只按显式
+        // 概念引用展开一层正式定义；文本提到不自动升级为效果/收益关系。
+        if (relation is "condition" or "cost" or "target" && matched.Count > 0)
         {
             var el = matched[0].Element;
-            item.Condition = ExtractTopField(el, "<ontology::condition>");
-            item.Cost = ExtractTopField(el, "<ontology::cost>");
-            item.Target = ExtractTopField(el, "target");
+            var includeCondition = relation == "condition";
+            var includeCost = relation is "condition" or "cost";
+            var includeTarget = relation is "condition" or "target";
+            item.Condition = includeCondition ? ExtractTopField(el, "<ontology::condition>") : null;
+            item.Cost = includeCost ? ExtractTopField(el, "<ontology::cost>") : null;
+            item.Target = includeTarget ? ExtractTopField(el, "target") : null;
+
             var fields = new Dictionary<string, JsonElement>();
             if (item.Condition.HasValue) fields["condition"] = item.Condition.Value;
             if (item.Cost.HasValue) fields["cost"] = item.Cost.Value;
             if (item.Target.HasValue) fields["target"] = item.Target.Value;
+
+            var edges = new List<object>();
+            var dependencyPaths = new HashSet<string>(StringComparer.Ordinal);
+            var unresolvedReferences = new List<string>();
+            var dependencyBudgetExceeded = false;
+            const int maxDependencyReads = 8;
+            foreach (var (field, value) in fields)
+            {
+                var raw = JsonSerializer.Serialize(value, RulesJsonUtils.RelaxedJsonOptions);
+                foreach (System.Text.RegularExpressions.Match match in RulesJsonUtils.ConceptRefRegex.Matches(raw))
+                {
+                    var reference = NormalizeConceptRef(match.Groups[1].Value);
+                    if (string.IsNullOrWhiteSpace(reference)) continue;
+                    var hits = PreferGameIdentity(
+                        reference, _catalog.GetConceptsWithPaths(game, reference).ToList());
+                    if (hits.Count == 0)
+                    {
+                        if (!unresolvedReferences.Contains(reference, StringComparer.Ordinal))
+                            unresolvedReferences.Add(reference);
+                        edges.Add(new
+                        {
+                            field,
+                            edge_type = field,
+                            reference,
+                            canonical_path = (string?)null,
+                            target_resolved = false,
+                            binding = (string?)null
+                        });
+                        continue;
+                    }
+
+                    foreach (var hit in hits)
+                    {
+                        edges.Add(new
+                        {
+                            field,
+                            edge_type = field,
+                            reference,
+                            canonical_path = hit.CanonicalPath,
+                            target_resolved = true,
+                            binding = matched[0].CanonicalPath + ":" + field
+                        });
+                        if (dependencyPaths.Count >= maxDependencyReads)
+                        {
+                            dependencyBudgetExceeded = true;
+                            break;
+                        }
+                        if (!dependencyPaths.Add(hit.CanonicalPath)) continue;
+                        item.Payloads.Add(new QueryPayload
+                        {
+                            Type = QueryPayloadTypes.Definition,
+                            CanonicalPath = hit.CanonicalPath,
+                            RulesVersion = rulesVersion,
+                            Completeness = QueryCoverageStatuses.Complete,
+                            DefinitionSource = "declared_dependency",
+                            Content = hit.Element.Clone(),
+                            Data = new Dictionary<string, JsonElement>
+                            {
+                                ["role"] = JsonSerializer.SerializeToElement("dependency"),
+                                ["edge_type"] = JsonSerializer.SerializeToElement(field),
+                                ["parent_path"] = JsonSerializer.SerializeToElement(matched[0].CanonicalPath),
+                                ["target_resolved"] = JsonSerializer.SerializeToElement(true),
+                                ["binding"] = JsonSerializer.SerializeToElement(matched[0].CanonicalPath + ":" + field)
+                            }
+                        });
+                    }
+                    if (dependencyBudgetExceeded) break;
+                }
+                if (dependencyBudgetExceeded) break;
+            }
+
+            if (edges.Count > 0)
+                fields["reference_edges"] = JsonSerializer.SerializeToElement(edges);
+            var relationCoverage = fields.Count == 0
+                || unresolvedReferences.Count > 0
+                || dependencyBudgetExceeded
+                    ? QueryCoverageStatuses.Partial
+                    : QueryCoverageStatuses.Complete;
             item.Payloads.Add(new QueryPayload
             {
                 Type = QueryPayloadTypes.RelationFacts,
                 CanonicalPath = matched[0].CanonicalPath,
                 RulesVersion = rulesVersion,
-                Completeness = fields.Count > 0 ? QueryCoverageStatuses.Complete : QueryCoverageStatuses.Partial,
+                Completeness = relationCoverage,
                 Data = fields.Count > 0 ? fields : null
             });
             if (fields.Count == 0)
@@ -719,7 +813,37 @@ public sealed class RulesPlanService
                 {
                     Reason = QueryOmissionReasons.FieldMissing,
                     CanonicalPath = matched[0].CanonicalPath,
-                    FieldPath = "condition|cost|target"
+                    FieldPath = relation
+                });
+            }
+            if (unresolvedReferences.Count > 0)
+            {
+                item.Coverage = QueryCoverageStatuses.Partial;
+                foreach (var reference in unresolvedReferences)
+                {
+                    item.Omissions.Add(new QueryOmission
+                    {
+                        Reason = QueryOmissionReasons.NoRuleCoverage,
+                        CanonicalPath = matched[0].CanonicalPath,
+                        FieldPath = relation + ":" + reference
+                    });
+                }
+            }
+            if (dependencyBudgetExceeded)
+            {
+                item.Coverage = QueryCoverageStatuses.Partial;
+                item.Omissions.Add(new QueryOmission
+                {
+                    Reason = QueryOmissionReasons.BudgetTruncated,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    FieldPath = relation + ".dependencies",
+                    Continuation = new QueryContinuation
+                    {
+                        Operation = "explain",
+                        Entity = matched[0].CanonicalPath,
+                        Offset = maxDependencyReads,
+                        Limit = maxDependencyReads
+                    }
                 });
             }
         }
@@ -810,6 +934,511 @@ public sealed class RulesPlanService
         return item;
     }
 
+
+    private async Task<PlanItemResult> ExecuteRuleLookupAsync(
+        string game,
+        string entity,
+        string intent,
+        string question,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var effectiveIntent = string.IsNullOrWhiteSpace(intent) ? question.Trim() : intent.Trim();
+        if (string.IsNullOrWhiteSpace(entity) && string.IsNullOrWhiteSpace(effectiveIntent))
+        {
+            return new PlanItemResult
+            {
+                Relation = "rule_lookup",
+                Entity = entity,
+                Status = "invalid",
+                Resolution = QueryResolutionStatuses.Invalid,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "rule_lookup 需要 entity 或完整 intent 至少一项。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.InvalidRequest, FieldPath = "entity|intent" }
+                }
+            };
+        }
+
+        var identityHits = string.IsNullOrWhiteSpace(entity)
+            ? new List<ConceptPathHit>()
+            : ResolvePlanEntity(game, entity, out var identityCandidates, out var identitySource);
+        var identitySourceValue = string.IsNullOrWhiteSpace(entity)
+            ? ""
+            : (identityHits.Count == 1 ? "exact" : identityHits.Count > 1 ? "candidates" : "not_found");
+
+        if (identityHits.Count > 1)
+        {
+            // Keep identity ambiguity explicit before any rule candidate is treated
+            // as the object the user meant.
+            return new PlanItemResult
+            {
+                Relation = "rule_lookup",
+                Entity = entity,
+                Status = "unresolved",
+                Resolution = QueryResolutionStatuses.Candidates,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Candidates = identityHits.Select(hit => new ConceptSummary
+                {
+                    Id = RulesTextUtils.GetElementId(hit.Element),
+                    Path = hit.CanonicalPath,
+                    Name = ExtractConceptName(hit.Element),
+                    Type = GetConceptTypeMap(game).GetValueOrDefault(RulesTextUtils.GetElementId(hit.Element), ""),
+                    ReadStatus = "not_read",
+                    TargetResolved = false,
+                    MatchReason = "identity"
+                }).ToList(),
+                Message = "对象身份有多个候选；规则查找不能替用户选择对象。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.AmbiguousIdentity, FieldPath = "entity" }
+                }
+            };
+        }
+
+        var identityHit = identityHits.SingleOrDefault();
+        var identityId = identityHit == null ? "" : RulesTextUtils.GetElementId(identityHit.Element);
+        var identityPath = identityHit?.CanonicalPath ?? "";
+
+        var ruleCandidates = new List<ConceptSummary>();
+        var candidateKeys = new HashSet<string>(StringComparer.Ordinal);
+        if (!string.IsNullOrWhiteSpace(identityId) || !string.IsNullOrWhiteSpace(identityPath))
+        {
+            foreach (var candidate in FindRuleReferenceCandidates(game, identityId, identityPath))
+                if (candidateKeys.Add(RulesSearchRanking.CandidateKey(candidate)))
+                    ruleCandidates.Add(candidate);
+        }
+        if (!string.IsNullOrWhiteSpace(effectiveIntent))
+        {
+            var intentCandidates = await RetrieveRuleLookupIntentCandidatesAsync(
+                game, effectiveIntent, cancellationToken);
+            foreach (var candidate in intentCandidates)
+            {
+                candidate.MatchReason ??= "intent";
+                if (candidateKeys.Add(RulesSearchRanking.CandidateKey(candidate)))
+                    ruleCandidates.Add(candidate);
+            }
+        }
+
+        // The exact object itself is an identity target, not a candidate rule.
+        ruleCandidates = ruleCandidates
+            .Where(candidate => string.IsNullOrWhiteSpace(identityPath)
+                || (!string.Equals(candidate.Path, identityPath, StringComparison.Ordinal)
+                    && !string.Equals(candidate.Id, identityId, StringComparison.Ordinal)))
+            .Take(12)
+            .ToList();
+
+        const int readBudget = 3;
+        var payloads = new List<QueryPayload>();
+        var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
+            ? snapshot.Version
+            : null;
+        if (identityHit != null)
+        {
+            payloads.Add(new QueryPayload
+            {
+                Type = QueryPayloadTypes.Definition,
+                CanonicalPath = identityHit.CanonicalPath,
+                RulesVersion = version,
+                Completeness = QueryCoverageStatuses.Complete,
+                DefinitionSource = "exact_identity",
+                Content = identityHit.Element.Clone(),
+                Data = new Dictionary<string, JsonElement>
+                {
+                    ["role"] = JsonSerializer.SerializeToElement("identity"),
+                    ["target_resolved"] = JsonSerializer.SerializeToElement(true)
+                }
+            });
+        }
+
+        var readPaths = new List<string>();
+        var failedReads = new List<string>();
+        var edges = new List<object>();
+        foreach (var candidate in ruleCandidates.Take(readBudget))
+        {
+            var candidatePath = string.IsNullOrWhiteSpace(candidate.Path) ? candidate.Id : candidate.Path;
+            var hits = PreferGameIdentity(
+                candidatePath, _catalog.GetConceptsWithPaths(game, candidatePath).ToList());
+            if (hits.Count == 0 && !string.IsNullOrWhiteSpace(candidate.Id))
+                hits = PreferGameIdentity(
+                    candidate.Id, _catalog.GetConceptsWithPaths(game, candidate.Id).ToList());
+            if (hits.Count == 0)
+            {
+                candidate.ReadStatus = "read_failed";
+                candidate.TargetResolved = false;
+                failedReads.Add(candidatePath);
+                continue;
+            }
+
+            foreach (var hit in hits)
+            {
+                var referenceEdges = CollectReferenceEdges(hit.Element);
+                var data = new Dictionary<string, JsonElement>
+                {
+                    ["role"] = JsonSerializer.SerializeToElement("rule_candidate"),
+                    ["target_resolved"] = JsonSerializer.SerializeToElement(false),
+                    ["read_status"] = JsonSerializer.SerializeToElement("auto_read"),
+                    ["candidate_index"] = JsonSerializer.SerializeToElement(readPaths.Count),
+                    ["reference_edges"] = JsonSerializer.SerializeToElement(referenceEdges)
+                };
+                payloads.Add(new QueryPayload
+                {
+                    Type = QueryPayloadTypes.Definition,
+                    CanonicalPath = hit.CanonicalPath,
+                    RulesVersion = version,
+                    Completeness = QueryCoverageStatuses.Complete,
+                    DefinitionSource = "auto_candidate_read",
+                    Content = hit.Element.Clone(),
+                    Data = data
+                });
+                if (!readPaths.Contains(hit.CanonicalPath, StringComparer.Ordinal))
+                    readPaths.Add(hit.CanonicalPath);
+                edges.AddRange(referenceEdges);
+            }
+            candidate.ReadStatus = "auto_read";
+            candidate.TargetResolved = false;
+        }
+
+        var readLimited = ruleCandidates.Count > readBudget;
+        var coverage = readLimited || failedReads.Count > 0
+            ? QueryCoverageStatuses.Partial
+            : QueryCoverageStatuses.Complete;
+        var result = new PlanItemResult
+        {
+            Relation = "rule_lookup",
+            Entity = entity,
+            Status = identityHit != null ? "ok" : ruleCandidates.Count > 0 ? "unresolved" : "no_match",
+            Resolution = identityHit != null
+                ? QueryResolutionStatuses.Exact
+                : ruleCandidates.Count > 0
+                    ? QueryResolutionStatuses.Candidates
+                    : QueryResolutionStatuses.NotFound,
+            Coverage = identityHit != null ? coverage : QueryCoverageStatuses.Unknown,
+            Source = identityHit != null ? identitySourceValue : "",
+            ResolvedTargets = identityHit == null ? new List<string>() : new List<string> { identityHit.CanonicalPath },
+            Candidates = ruleCandidates.Count == 0 ? null : ruleCandidates,
+            RetrievalQueries = new[] { entity, effectiveIntent }
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .Distinct(StringComparer.Ordinal)
+                .ToList(),
+            Message = identityHit == null
+                ? "规则候选已由程序正式读取，但对象身份仍未确定；候选正文只用于模型判断相关性，不能当作已确认目标。"
+                : ruleCandidates.Count == 0
+                    ? "已读取对象定义，但未找到与完整 intent 相关的规则候选。"
+                    : "已保留对象身份并自动正式读取候选规则；候选规则的内容已可验证，但哪条回答 intent 仍需模型相关性判断。"
+        };
+        result.Payloads.AddRange(payloads);
+
+        var summaryData = new Dictionary<string, JsonElement>
+        {
+            ["identity_resolved"] = JsonSerializer.SerializeToElement(identityHit != null),
+            ["candidate_rule_paths"] = JsonSerializer.SerializeToElement(readPaths),
+            ["candidate_read_count"] = JsonSerializer.SerializeToElement(readPaths.Count),
+            ["read_budget"] = JsonSerializer.SerializeToElement(readBudget),
+            ["read_truncated"] = JsonSerializer.SerializeToElement(readLimited),
+            ["reference_edges"] = JsonSerializer.SerializeToElement(edges)
+        };
+        result.Payloads.Add(new QueryPayload
+        {
+            Type = QueryPayloadTypes.RelationFacts,
+            CanonicalPath = identityPath,
+            RulesVersion = version,
+            Completeness = coverage,
+            Data = summaryData,
+            Content = JsonSerializer.SerializeToElement(summaryData)
+        });
+
+        if (readLimited)
+        {
+            result.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.BudgetTruncated,
+                CanonicalPath = identityPath,
+                FieldPath = "rule_candidates",
+                Continuation = new QueryContinuation
+                {
+                    Operation = "rule_lookup",
+                    Entity = string.IsNullOrWhiteSpace(identityPath) ? entity : identityPath,
+                    Offset = readBudget,
+                    Limit = readBudget
+                }
+            });
+        }
+        foreach (var failed in failedReads)
+        {
+            result.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.NoRuleCoverage,
+                CanonicalPath = failed,
+                FieldPath = "candidate_definition"
+            });
+        }
+        if (identityHit == null && ruleCandidates.Count > 0)
+        {
+            result.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.AmbiguousIdentity,
+                FieldPath = "entity"
+            });
+        }
+        if (identityHit != null && ruleCandidates.Count == 0)
+        {
+            result.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.NoRuleCoverage,
+                CanonicalPath = identityPath,
+                FieldPath = "rule_lookup"
+            });
+        }
+
+        return result;
+    }
+
+    private async Task<List<ConceptSummary>> RetrieveRuleLookupIntentCandidatesAsync(
+        string game, string intent, CancellationToken cancellationToken)
+    {
+        var semantic = await _searchService.SearchConceptsAsync(
+            game, intent, searchMode: "full", cancellationToken: cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        return semantic.Results
+            .Where(candidate => candidate.Score > 0)
+            .OrderByDescending(candidate => candidate.Score)
+            .Take(15)
+            .ToList();
+    }
+
+    private List<ConceptSummary> FindRuleReferenceCandidates(string game, string identityId, string identityPath)
+    {
+        var results = new List<ConceptSummary>();
+        if (string.IsNullOrWhiteSpace(identityId) && string.IsNullOrWhiteSpace(identityPath))
+            return results;
+
+        foreach (var type in new[] { "actions", "triggers", "conditions" })
+        {
+            foreach (var summary in _catalog.ListConcepts(game, type))
+            {
+                var lookup = string.IsNullOrWhiteSpace(summary.Path) ? summary.Id : summary.Path;
+                var hits = PreferGameIdentity(
+                    lookup, _catalog.GetConceptsWithPaths(game, lookup).ToList());
+                foreach (var hit in hits)
+                {
+                    if (hit.CanonicalPath == identityPath) continue;
+                    if (!ElementReferencesIdentity(hit.Element, identityId, identityPath)) continue;
+                    AddReferenceCandidate(
+                        results, RulesTextUtils.GetElementId(hit.Element), hit.CanonicalPath,
+                        ExtractConceptName(hit.Element), type);
+                }
+            }
+        }
+
+        // Process rules can live in flow.json (e.g. Wingspan action triggers).
+        // The flow index supplies canonical paths, so local trigger ids remain
+        // disambiguated by parent structure.
+        var flowIndex = _flowService.GetFlowIndex(game);
+        foreach (var node in flowIndex.AllNodes)
+        {
+            if (node.CanonicalPath == identityPath) continue;
+            // Structural container procedures/phases are not rules themselves;
+            // their descendants carry the actionable text. Restrict to declared
+            // action/trigger nodes to avoid every ancestor matching nested refs.
+            if (node.Kind is not ("action" or "trigger")) continue;
+            if (!ElementReferencesIdentity(node.Element, identityId, identityPath)) continue;
+            AddReferenceCandidate(results, node.LocalId, node.CanonicalPath, node.Name, node.Kind);
+        }
+        return results;
+    }
+
+    private static void AddReferenceCandidate(
+        List<ConceptSummary> results, string id, string canonicalPath, string name, string type)
+    {
+        if (results.Any(existing => existing.Path == canonicalPath)) return;
+        results.Add(new ConceptSummary
+        {
+            Id = id,
+            Path = canonicalPath,
+            Name = name,
+            Type = type,
+            Score = 1f,
+            MatchReason = "reference",
+            ReadStatus = "not_read",
+            TargetResolved = false
+        });
+    }
+
+    private static bool ElementReferencesIdentity(
+        JsonElement element, string identityId, string identityPath)
+    {
+        var raw = JsonSerializer.Serialize(element, RulesJsonUtils.RelaxedJsonOptions);
+        foreach (System.Text.RegularExpressions.Match match in RulesJsonUtils.ConceptRefRegex.Matches(raw))
+        {
+            var reference = NormalizeConceptRef(match.Groups[1].Value);
+            if (string.Equals(reference, identityPath, StringComparison.Ordinal)) return true;
+            if (!identityPath.StartsWith("ontology::", StringComparison.Ordinal)
+                && !string.IsNullOrWhiteSpace(identityId)
+                && string.Equals(reference, identityId, StringComparison.Ordinal)) return true;
+        }
+        return false;
+    }
+
+    private static List<object> CollectReferenceEdges(JsonElement element)
+    {
+        var edges = new List<object>();
+        if (element.ValueKind != JsonValueKind.Object) return edges;
+        foreach (var property in element.EnumerateObject())
+        {
+            var refs = RulesJsonUtils.ConceptRefRegex.Matches(
+                    JsonSerializer.Serialize(property.Value, RulesJsonUtils.RelaxedJsonOptions))
+                .Select(match => NormalizeConceptRef(match.Groups[1].Value))
+                .Where(reference => !string.IsNullOrWhiteSpace(reference))
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+            if (refs.Count == 0) continue;
+            edges.Add(new
+            {
+                field = property.Name,
+                edge_type = ClassifyReferenceEdge(property.Name),
+                references = refs
+            });
+        }
+        return edges;
+    }
+
+    private static string ClassifyReferenceEdge(string field)
+    {
+        if (field.Contains("condition", StringComparison.OrdinalIgnoreCase)) return "condition";
+        if (field.Contains("cost", StringComparison.OrdinalIgnoreCase)) return "cost";
+        if (field.Equals("target", StringComparison.OrdinalIgnoreCase)) return "target";
+        if (field.Contains("content", StringComparison.OrdinalIgnoreCase)
+            || field.Contains("effect", StringComparison.OrdinalIgnoreCase)) return "effect";
+        if (field.Equals("description", StringComparison.OrdinalIgnoreCase)) return "mention";
+        return "other_reference";
+    }
+
+    private async Task<PlanItemResult> ExecuteComputeAsync(
+        string game,
+        string entity,
+        string intent,
+        string question,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (string.IsNullOrWhiteSpace(entity))
+        {
+            return new PlanItemResult
+            {
+                Relation = "compute",
+                Entity = entity,
+                Status = "invalid",
+                Resolution = QueryResolutionStatuses.Invalid,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Message = "compute 需要已确定的对象或公式载体。",
+                Omissions =
+                {
+                    new QueryOmission { Reason = QueryOmissionReasons.InvalidRequest, FieldPath = "entity" }
+                }
+            };
+        }
+
+        var matched = ResolvePlanEntity(game, entity, out var candidates, out var source);
+        if (matched.Count == 0)
+        {
+            return new PlanItemResult
+            {
+                Relation = "compute",
+                Entity = entity,
+                Status = candidates.Count > 0 ? "unresolved" : "no_match",
+                Resolution = candidates.Count > 0
+                    ? QueryResolutionStatuses.Candidates
+                    : QueryResolutionStatuses.NotFound,
+                Coverage = QueryCoverageStatuses.Unknown,
+                Candidates = candidates.Count > 0 ? candidates : null,
+                Message = candidates.Count > 0
+                    ? "计算对象未确定，请先消歧。"
+                    : "规则库中没有可计算的对象。",
+                Omissions =
+                {
+                    new QueryOmission
+                    {
+                        Reason = candidates.Count > 0
+                            ? QueryOmissionReasons.AmbiguousIdentity
+                            : QueryOmissionReasons.NoRuleCoverage,
+                        FieldPath = "entity"
+                    }
+                }
+            };
+        }
+
+        var version = RulesSnapshotScope.Current is { } snapshot && snapshot.Game == game
+            ? snapshot.Version
+            : null;
+        var computationQuestion = string.Join(" ", new[] { intent, question }
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.Ordinal));
+        var facts = _factService.ExtractFacts(
+            game, matched.Select(hit => hit.Element).ToList(), computationQuestion);
+        var result = new PlanItemResult
+        {
+            Relation = "compute",
+            Entity = entity,
+            Status = facts is { Count: > 0 } ? "ok" : "unsupported",
+            Resolution = QueryResolutionStatuses.Exact,
+            Coverage = facts is { Count: > 0 } ? QueryCoverageStatuses.Complete : QueryCoverageStatuses.Partial,
+            Source = source,
+            ResolvedTargets = matched.Select(hit => hit.CanonicalPath).Distinct(StringComparer.Ordinal).ToList(),
+            Matched = matched.Select(hit => hit.Element).ToList(),
+            RetrievalQueries = new List<string> { entity },
+            Message = facts is { Count: > 0 }
+                ? "使用现有确定性事实服务计算；输出仅覆盖受支持公式和已知参数。"
+                : "该对象没有可用的受支持公式，或问题缺少计算所需参数；未猜默认人数/回合/数量。"
+        };
+        result.Payloads.AddRange(matched.Select(hit => new QueryPayload
+        {
+            Type = QueryPayloadTypes.Definition,
+            CanonicalPath = hit.CanonicalPath,
+            RulesVersion = version,
+            Completeness = QueryCoverageStatuses.Complete,
+            DefinitionSource = source,
+            Content = hit.Element.Clone()
+        }));
+
+        if (facts is { Count: > 0 })
+        {
+            var hasComputed = facts.Any(fact =>
+                (fact.TryGetProperty("computed", out _) || fact.TryGetProperty("total", out _)));
+            if (!hasComputed)
+            {
+                result.Coverage = QueryCoverageStatuses.Partial;
+                result.Omissions.Add(new QueryOmission
+                {
+                    Reason = QueryOmissionReasons.FieldMissing,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    FieldPath = "compute.parameters"
+                });
+            }
+            foreach (var fact in facts)
+            {
+                result.Payloads.Add(new QueryPayload
+                {
+                    Type = QueryPayloadTypes.ComputedFact,
+                    CanonicalPath = matched[0].CanonicalPath,
+                    RulesVersion = version,
+                    Completeness = hasComputed ? QueryCoverageStatuses.Complete : QueryCoverageStatuses.Partial,
+                    Content = fact.Clone()
+                });
+            }
+        }
+        else
+        {
+            result.Omissions.Add(new QueryOmission
+            {
+                Reason = QueryOmissionReasons.UnsupportedRelation,
+                CanonicalPath = matched[0].CanonicalPath,
+                FieldPath = "compute.supported_formula"
+            });
+        }
+        return result;
+    }
 
     private PlanItemResult ExecuteFlowQueryAsync(
         string game, string entity, string scope, IReadOnlyList<string> include)
@@ -1638,7 +2267,10 @@ public sealed class RulesPlanService
 
         if (item.Resolution == QueryResolutionStatuses.Exact)
         {
-            item.Candidates = null;
+            // rule_lookup deliberately keeps read-but-unconfirmed rule candidates
+            // even when the queried object identity itself is exact.
+            if (item.Relation != "rule_lookup")
+                item.Candidates = null;
             if (item.Payloads.Count == 0 && item.Status == "ok")
             {
                 item.Resolution = QueryResolutionStatuses.Invalid;
@@ -1652,17 +2284,13 @@ public sealed class RulesPlanService
             }
         }
 
-        if (item.Payloads.Count > 0)
+        if (item.Payloads.Count > 0 && item.Resolution == QueryResolutionStatuses.Exact)
         {
-            var payloadPaths = item.Payloads
-                .Select(payload => payload.CanonicalPath)
-                .Where(path => !string.IsNullOrWhiteSpace(path))
-                .Distinct(StringComparer.Ordinal)
-                .ToList();
-            foreach (var path in payloadPaths)
-                if (!item.ResolvedTargets.Contains(path, StringComparer.Ordinal))
-                    item.ResolvedTargets.Add(path);
-
+            // Payload paths are read locations (dependencies/candidate rules too),
+            // not resolved query targets. Each primary result branch sets
+            // ResolvedTargets explicitly; never infer identity from payload presence.
+            // Non-exact resolutions keep unknown coverage even if some candidates
+            // happened to be formally read.
             if (item.Coverage != QueryCoverageStatuses.Partial)
             {
                 item.Coverage = item.Payloads.All(payload =>

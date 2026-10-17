@@ -1,0 +1,652 @@
+{
+  "generated_from_head": "3b71d97 + phase-03 working tree",
+  "queries": [
+    {
+      "game": "agricola",
+      "plan": {
+        "queries": [
+          {
+            "relation": "cost",
+            "entity": "build_rooms"
+          }
+        ]
+      },
+      "status": "ok",
+      "resolution": "exact",
+      "coverage": "complete",
+      "resolved_targets": [
+        "build_rooms"
+      ],
+      "candidates": [],
+      "payloads": [
+        {
+          "Type": "definition",
+          "CanonicalPath": "build_rooms",
+          "Completeness": "complete",
+          "DefinitionSource": "exact_id",
+          "data": null,
+          "content_chars": 2419
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "ontology::instant_cost",
+          "Completeness": "complete",
+          "DefinitionSource": "declared_dependency",
+          "data": {
+            "role": "dependency",
+            "edge_type": "cost",
+            "parent_path": "build_rooms",
+            "target_resolved": true,
+            "binding": "build_rooms:cost"
+          },
+          "content_chars": 480
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "ontology::transfer",
+          "Completeness": "complete",
+          "DefinitionSource": "declared_dependency",
+          "data": {
+            "role": "dependency",
+            "edge_type": "cost",
+            "parent_path": "build_rooms",
+            "target_resolved": true,
+            "binding": "build_rooms:cost"
+          },
+          "content_chars": 3030
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "personal_supply",
+          "Completeness": "complete",
+          "DefinitionSource": "declared_dependency",
+          "data": {
+            "role": "dependency",
+            "edge_type": "cost",
+            "parent_path": "build_rooms",
+            "target_resolved": true,
+            "binding": "build_rooms:cost"
+          },
+          "content_chars": 858
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "general_supply",
+          "Completeness": "complete",
+          "DefinitionSource": "declared_dependency",
+          "data": {
+            "role": "dependency",
+            "edge_type": "cost",
+            "parent_path": "build_rooms",
+            "target_resolved": true,
+            "binding": "build_rooms:cost"
+          },
+          "content_chars": 1037
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "ontology::object",
+          "Completeness": "complete",
+          "DefinitionSource": "declared_dependency",
+          "data": {
+            "role": "dependency",
+            "edge_type": "cost",
+            "parent_path": "build_rooms",
+            "target_resolved": true,
+            "binding": "build_rooms:cost"
+          },
+          "content_chars": 1179
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "building_resource",
+          "Completeness": "complete",
+          "DefinitionSource": "declared_dependency",
+          "data": {
+            "role": "dependency",
+            "edge_type": "cost",
+            "parent_path": "build_rooms",
+            "target_resolved": true,
+            "binding": "build_rooms:cost"
+          },
+          "content_chars": 1571
+        },
+        {
+          "Type": "relation_facts",
+          "CanonicalPath": "build_rooms",
+          "Completeness": "complete",
+          "DefinitionSource": null,
+          "data": {
+            "cost": {
+              "<ontology::instant_cost>": {
+                "<ontology::transfer>": {
+                  "source": "<personal_supply>",
+                  "destination": "<general_supply>",
+                  "<ontology::object>": "<building_resource>",
+                  "quantity": {
+                    "zh": "每间房间：5 份当前材质建材 + 2 根芦苇（木 5+2 芦苇 / 泥 5+2 芦苇 / 石 5+2 芦苇）。",
+                    "en": "Per room: 5 of the current material + 2 reed (wood 5+2 reed / clay 5+2 reed / stone 5+2 reed)."
+                  },
+                  "description": {
+                    "zh": "从<personal_supply>支付每间房间的建材到<general_supply>。",
+                    "en": "Pay the building resources per room from your <personal_supply> to the <general_supply>."
+                  }
+                }
+              }
+            },
+            "reference_edges": [
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "ontology::instant_cost",
+                "canonical_path": "ontology::instant_cost",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "ontology::transfer",
+                "canonical_path": "ontology::transfer",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "personal_supply",
+                "canonical_path": "personal_supply",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "general_supply",
+                "canonical_path": "general_supply",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "ontology::object",
+                "canonical_path": "ontology::object",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "building_resource",
+                "canonical_path": "building_resource",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "personal_supply",
+                "canonical_path": "personal_supply",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "general_supply",
+                "canonical_path": "general_supply",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "personal_supply",
+                "canonical_path": "personal_supply",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              },
+              {
+                "field": "cost",
+                "edge_type": "cost",
+                "reference": "general_supply",
+                "canonical_path": "general_supply",
+                "target_resolved": true,
+                "binding": "build_rooms:cost"
+              }
+            ]
+          },
+          "content_chars": 0
+        }
+      ],
+      "omissions": [],
+      "message": ""
+    },
+    {
+      "game": "wingspan",
+      "plan": {
+        "queries": [
+          {
+            "relation": "rule_lookup",
+            "entity": "bird_card",
+            "intent": "鸟牌怎么获得"
+          }
+        ]
+      },
+      "status": "ok",
+      "resolution": "exact",
+      "coverage": "partial",
+      "resolved_targets": [
+        "bird_card"
+      ],
+      "candidates": [
+        {
+          "Id": "play_bird",
+          "Path": "play_bird",
+          "Name": "打出一张鸟牌",
+          "ReadStatus": "auto_read",
+          "TargetResolved": false,
+          "MatchReason": "reference"
+        },
+        {
+          "Id": "draw_cards_action",
+          "Path": "draw_cards_action",
+          "Name": "抽鸟牌",
+          "ReadStatus": "auto_read",
+          "TargetResolved": false,
+          "MatchReason": "reference"
+        },
+        {
+          "Id": "refill_bird_tray",
+          "Path": "refill_bird_tray",
+          "Name": "补满鸟盘",
+          "ReadStatus": "auto_read",
+          "TargetResolved": false,
+          "MatchReason": "reference"
+        },
+        {
+          "Id": "score_birds",
+          "Path": "score_birds",
+          "Name": "鸟牌分值",
+          "ReadStatus": "not_read",
+          "TargetResolved": false,
+          "MatchReason": "reference"
+        }
+      ],
+      "payloads": [
+        {
+          "Type": "definition",
+          "CanonicalPath": "bird_card",
+          "Completeness": "complete",
+          "DefinitionSource": "exact_identity",
+          "data": {
+            "role": "identity",
+            "target_resolved": true
+          },
+          "content_chars": 952
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "play_bird",
+          "Completeness": "complete",
+          "DefinitionSource": "auto_candidate_read",
+          "data": {
+            "role": "rule_candidate",
+            "target_resolved": false,
+            "read_status": "auto_read",
+            "candidate_index": 0,
+            "reference_edges": [
+              {
+                "field": "specifies",
+                "edge_type": "other_reference",
+                "references": [
+                  "ontology::action"
+                ]
+              },
+              {
+                "field": "description",
+                "edge_type": "mention",
+                "references": [
+                  "bird_card",
+                  "forest_habitat",
+                  "grassland_habitat",
+                  "wetland_habitat",
+                  "player_food_supply",
+                  "food",
+                  "wild_food",
+                  "when_played_power"
+                ]
+              },
+              {
+                "field": "target",
+                "edge_type": "target",
+                "references": [
+                  "bird_card",
+                  "forest_habitat",
+                  "grassland_habitat",
+                  "wetland_habitat"
+                ]
+              },
+              {
+                "field": "<ontology::cost>",
+                "edge_type": "cost",
+                "references": [
+                  "ontology::instant_cost",
+                  "ontology::transfer",
+                  "egg",
+                  "ontology::supply",
+                  "ontology::object",
+                  "player_food_supply",
+                  "food",
+                  "wild_food"
+                ]
+              },
+              {
+                "field": "<ontology::content>",
+                "edge_type": "effect",
+                "references": [
+                  "ontology::instant_content",
+                  "ontology::transfer",
+                  "hand",
+                  "ontology::object",
+                  "bird_card",
+                  "when_played_power"
+                ]
+              }
+            ]
+          },
+          "content_chars": 4295
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "draw_cards_action",
+          "Completeness": "complete",
+          "DefinitionSource": "auto_candidate_read",
+          "data": {
+            "role": "rule_candidate",
+            "target_resolved": false,
+            "read_status": "auto_read",
+            "candidate_index": 1,
+            "reference_edges": [
+              {
+                "field": "specifies",
+                "edge_type": "other_reference",
+                "references": [
+                  "ontology::action"
+                ]
+              },
+              {
+                "field": "description",
+                "edge_type": "mention",
+                "references": [
+                  "action_cube",
+                  "bird_card",
+                  "bird_tray",
+                  "bird_deck",
+                  "egg",
+                  "wetland_habitat",
+                  "when_activated_power"
+                ]
+              },
+              {
+                "field": "<ontology::content>",
+                "edge_type": "effect",
+                "references": [
+                  "ontology::instant_content",
+                  "action_cube",
+                  "bird_tray",
+                  "bird_deck",
+                  "egg",
+                  "wetland_habitat",
+                  "when_activated_power"
+                ]
+              }
+            ]
+          },
+          "content_chars": 3563
+        },
+        {
+          "Type": "definition",
+          "CanonicalPath": "refill_bird_tray",
+          "Completeness": "complete",
+          "DefinitionSource": "auto_candidate_read",
+          "data": {
+            "role": "rule_candidate",
+            "target_resolved": false,
+            "read_status": "auto_read",
+            "candidate_index": 2,
+            "reference_edges": [
+              {
+                "field": "specifies",
+                "edge_type": "other_reference",
+                "references": [
+                  "ontology::trigger"
+                ]
+              },
+              {
+                "field": "description",
+                "edge_type": "mention",
+                "references": [
+                  "bird_tray",
+                  "bird_card",
+                  "bird_discard_pile",
+                  "bird_deck"
+                ]
+              },
+              {
+                "field": "<ontology::content>",
+                "edge_type": "effect",
+                "references": [
+                  "ontology::instant_content",
+                  "ontology::transfer",
+                  "bird_tray",
+                  "bird_discard_pile",
+                  "ontology::object",
+                  "bird_card",
+                  "bird_deck"
+                ]
+              }
+            ]
+          },
+          "content_chars": 1689
+        },
+        {
+          "Type": "relation_facts",
+          "CanonicalPath": "bird_card",
+          "Completeness": "partial",
+          "DefinitionSource": null,
+          "data": {
+            "identity_resolved": true,
+            "candidate_rule_paths": [
+              "play_bird",
+              "draw_cards_action",
+              "refill_bird_tray"
+            ],
+            "candidate_read_count": 3,
+            "read_budget": 3,
+            "read_truncated": true,
+            "reference_edges": [
+              {
+                "field": "specifies",
+                "edge_type": "other_reference",
+                "references": [
+                  "ontology::action"
+                ]
+              },
+              {
+                "field": "description",
+                "edge_type": "mention",
+                "references": [
+                  "bird_card",
+                  "forest_habitat",
+                  "grassland_habitat",
+                  "wetland_habitat",
+                  "player_food_supply",
+                  "food",
+                  "wild_food",
+                  "when_played_power"
+                ]
+              },
+              {
+                "field": "target",
+                "edge_type": "target",
+                "references": [
+                  "bird_card",
+                  "forest_habitat",
+                  "grassland_habitat",
+                  "wetland_habitat"
+                ]
+              },
+              {
+                "field": "<ontology::cost>",
+                "edge_type": "cost",
+                "references": [
+                  "ontology::instant_cost",
+                  "ontology::transfer",
+                  "egg",
+                  "ontology::supply",
+                  "ontology::object",
+                  "player_food_supply",
+                  "food",
+                  "wild_food"
+                ]
+              },
+              {
+                "field": "<ontology::content>",
+                "edge_type": "effect",
+                "references": [
+                  "ontology::instant_content",
+                  "ontology::transfer",
+                  "hand",
+                  "ontology::object",
+                  "bird_card",
+                  "when_played_power"
+                ]
+              },
+              {
+                "field": "specifies",
+                "edge_type": "other_reference",
+                "references": [
+                  "ontology::action"
+                ]
+              },
+              {
+                "field": "description",
+                "edge_type": "mention",
+                "references": [
+                  "action_cube",
+                  "bird_card",
+                  "bird_tray",
+                  "bird_deck",
+                  "egg",
+                  "wetland_habitat",
+                  "when_activated_power"
+                ]
+              },
+              {
+                "field": "<ontology::content>",
+                "edge_type": "effect",
+                "references": [
+                  "ontology::instant_content",
+                  "action_cube",
+                  "bird_tray",
+                  "bird_deck",
+                  "egg",
+                  "wetland_habitat",
+                  "when_activated_power"
+                ]
+              },
+              {
+                "field": "specifies",
+                "edge_type": "other_reference",
+                "references": [
+                  "ontology::trigger"
+                ]
+              },
+              {
+                "field": "description",
+                "edge_type": "mention",
+                "references": [
+                  "bird_tray",
+                  "bird_card",
+                  "bird_discard_pile",
+                  "bird_deck"
+                ]
+              },
+              {
+                "field": "<ontology::content>",
+                "edge_type": "effect",
+                "references": [
+                  "ontology::instant_content",
+                  "ontology::transfer",
+                  "bird_tray",
+                  "bird_discard_pile",
+                  "ontology::object",
+                  "bird_card",
+                  "bird_deck"
+                ]
+              }
+            ]
+          },
+          "content_chars": 1810
+        }
+      ],
+      "omissions": [
+        {
+          "Reason": "budget_truncated",
+          "CanonicalPath": "bird_card",
+          "FieldPath": "rule_candidates",
+          "Continuation": {
+            "Operation": "rule_lookup",
+            "Entity": "bird_card",
+            "Scope": null,
+            "Offset": 3,
+            "Limit": 3,
+            "Include": []
+          }
+        }
+      ],
+      "message": "已保留对象身份并自动正式读取候选规则；候选规则的内容已可验证，但哪条回答 intent 仍需模型相关性判断。"
+    },
+    {
+      "game": "agricola",
+      "plan": {
+        "queries": [
+          {
+            "relation": "compute",
+            "entity": "pasture",
+            "intent": "容量是多少"
+          }
+        ]
+      },
+      "status": "ok",
+      "resolution": "exact",
+      "coverage": "complete",
+      "resolved_targets": [
+        "pasture"
+      ],
+      "candidates": [],
+      "payloads": [
+        {
+          "Type": "definition",
+          "CanonicalPath": "pasture",
+          "Completeness": "complete",
+          "DefinitionSource": "exact_id",
+          "data": null,
+          "content_chars": 1721
+        },
+        {
+          "Type": "computed_fact",
+          "CanonicalPath": "pasture",
+          "Completeness": "complete",
+          "DefinitionSource": null,
+          "data": null,
+          "content_chars": 244
+        }
+      ],
+      "omissions": [],
+      "message": "使用现有确定性事实服务计算；输出仅覆盖受支持公式和已知参数。"
+    }
+  ]
+}
