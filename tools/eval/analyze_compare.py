@@ -93,6 +93,11 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
         delivered_chars = [x for x in ((r.get("deterministic") or {}).get("delivered_evidence_chars") for r in rows) if x is not None]
         model_span_ms = [x for x in ((r.get("deterministic") or {}).get("model_span_ms") for r in rows) if x is not None]
         tool_span_ms = [x for x in ((r.get("deterministic") or {}).get("tool_span_ms") for r in rows) if x is not None]
+        search_span_ms = [x for x in ((r.get("deterministic") or {}).get("search_span_ms") for r in rows) if x is not None]
+        read_span_ms = [x for x in ((r.get("deterministic") or {}).get("read_span_ms") for r in rows) if x is not None]
+        assembly_span_ms = [x for x in ((r.get("deterministic") or {}).get("assembly_span_ms") for r in rows) if x is not None]
+        serialization_span_ms = [x for x in ((r.get("deterministic") or {}).get("serialization_span_ms") for r in rows) if x is not None]
+        protocol_span_ms = [x for x in ((r.get("deterministic") or {}).get("protocol_span_ms") for r in rows) if x is not None]
         reconciled = [x for x in ((r.get("deterministic") or {}).get("timeline_reconciled") for r in rows) if x is not None]
         return {
             "n": len(rows),
@@ -142,6 +147,11 @@ def summarize_runs(runs: list[dict], judged: dict[str, dict]) -> dict:
             "delivered_evidence_chars_mean": round(statistics.mean(delivered_chars), 1) if delivered_chars else None,
             "model_span_ms_mean": round(statistics.mean(model_span_ms), 1) if model_span_ms else None,
             "tool_span_ms_mean": round(statistics.mean(tool_span_ms), 1) if tool_span_ms else None,
+            "search_span_ms_mean": round(statistics.mean(search_span_ms), 1) if search_span_ms else None,
+            "read_span_ms_mean": round(statistics.mean(read_span_ms), 1) if read_span_ms else None,
+            "assembly_span_ms_mean": round(statistics.mean(assembly_span_ms), 1) if assembly_span_ms else None,
+            "serialization_span_ms_mean": round(statistics.mean(serialization_span_ms), 1) if serialization_span_ms else None,
+            "protocol_span_ms_mean": round(statistics.mean(protocol_span_ms), 1) if protocol_span_ms else None,
             "timeline_reconciled_rate": bool_mean(reconciled) if reconciled else None,
             "timeline_observable_runs": len(reconciled),
         }
@@ -256,6 +266,11 @@ def write_markdown(analysis: dict, path: Path):
         f"| 程序实际工具执行均值 | {old_all.get('executed_tool_calls_mean')} | {new_all.get('executed_tool_calls_mean')} | {_delta(old_all.get('executed_tool_calls_mean'), new_all.get('executed_tool_calls_mean'))} |",
         f"| 模型可见证据字符均值 | {old_all.get('delivered_evidence_chars_mean')} | {new_all.get('delivered_evidence_chars_mean')} | {_delta(old_all.get('delivered_evidence_chars_mean'), new_all.get('delivered_evidence_chars_mean'))} |",
         f"| 时间线对账率 | {format_rate(old_all.get('timeline_reconciled_rate'))} | {format_rate(new_all.get('timeline_reconciled_rate'))} | {format_rate_delta(old_all.get('timeline_reconciled_rate'), new_all.get('timeline_reconciled_rate'))} |",
+        f"| 搜索 span 均值 ms | {old_all.get('search_span_ms_mean')} | {new_all.get('search_span_ms_mean')} | {_delta(old_all.get('search_span_ms_mean'), new_all.get('search_span_ms_mean'))} |",
+        f"| 正式读取 span 均值 ms | {old_all.get('read_span_ms_mean')} | {new_all.get('read_span_ms_mean')} | {_delta(old_all.get('read_span_ms_mean'), new_all.get('read_span_ms_mean'))} |",
+        f"| 装配 span 均值 ms | {old_all.get('assembly_span_ms_mean')} | {new_all.get('assembly_span_ms_mean')} | {_delta(old_all.get('assembly_span_ms_mean'), new_all.get('assembly_span_ms_mean'))} |",
+        f"| 序列化 span 均值 ms | {old_all.get('serialization_span_ms_mean')} | {new_all.get('serialization_span_ms_mean')} | {_delta(old_all.get('serialization_span_ms_mean'), new_all.get('serialization_span_ms_mean'))} |",
+        f"| 协议修复 span 均值 ms | {old_all.get('protocol_span_ms_mean')} | {new_all.get('protocol_span_ms_mean')} | {_delta(old_all.get('protocol_span_ms_mean'), new_all.get('protocol_span_ms_mean'))} |",
         f"| 正例直达或候选前三（旧口径） | {old_all['recoverable_top3_rate_positive']:.1%} | {new_all['recoverable_top3_rate_positive']:.1%} | {(new_all['recoverable_top3_rate_positive']-old_all['recoverable_top3_rate_positive'])*100:+.1f}pp |",
         f"| 逐层：检索候选规范路径命中 | {format_rate(old_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate(new_all.get('retrieval_layer_hit_rate_positive'))} | {format_rate_delta(old_all.get('retrieval_layer_hit_rate_positive'), new_all.get('retrieval_layer_hit_rate_positive'))} |",
         f"| 逐层：正式装包规范路径命中（可观察 n） | {old_all.get('pack_layer_observable_runs', 0)} | {new_all.get('pack_layer_observable_runs', 0)} | - |",

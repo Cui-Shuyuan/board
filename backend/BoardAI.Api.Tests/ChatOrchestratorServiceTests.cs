@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using BoardAI.Api.Controllers;
 using BoardAI.Api.Models;
 using BoardAI.Api.Services;
@@ -206,7 +207,7 @@ public sealed class ChatOrchestratorServiceTests
             if (call.Index == 1)
                 return Task.FromResult(ToolCallResponse(ValidPlanArguments, call.Index));
 
-            return Task.FromResult(FinalResponse("FINAL"));
+            return Task.FromResult(SubmitAnswerResponse(call.Messages, "FINAL"));
         });
         var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3, maxRepeatedFailures: 3));
 
@@ -235,7 +236,8 @@ public sealed class ChatOrchestratorServiceTests
                     call.Index));
             }
 
-            return Task.FromResult(FinalResponse("请确认你指的是哪一个组件。"));
+            return Task.FromResult(SubmitAnswerResponse(
+                call.Messages, "请确认你指的是哪一个组件。", "clarify"));
         });
         var sut = CreateService(llm, rules, CreateOptions(maxToolRounds: 3));
 
@@ -265,7 +267,7 @@ public sealed class ChatOrchestratorServiceTests
                     return Task.FromResult(ToolCallResponse(
                         """{"plan":{"queries":[{"relation":"explain","entity":"widget","intent":"如何使用三个小装置"}]}}""",
                         call.Index));
-                return Task.FromResult(FinalResponse(answer));
+                return Task.FromResult(SubmitAnswerResponse(call.Messages, answer));
             }
 
             throw new InvalidOperationException("A complete answer must not be rewritten just for numeric wording.");
@@ -399,6 +401,62 @@ public sealed class ChatOrchestratorServiceTests
                 }
             }
         };
+
+    private static LLMChatResponse SubmitAnswerResponse(
+        List<ChatMessage> messages, string text, string outcome = "answer")
+    {
+        var evidenceId = messages
+            .Where(message => message.Role == "tool" && !string.IsNullOrWhiteSpace(message.Content))
+            .SelectMany(message =>
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(message.Content!);
+                    if (!doc.RootElement.TryGetProperty("evidence_catalog", out var catalog)
+                        || catalog.ValueKind != JsonValueKind.Array)
+                        return Array.Empty<string>();
+                    return catalog.EnumerateArray()
+                        .Select(evidence => evidence.TryGetProperty("evidence_id", out var id)
+                            && id.ValueKind == JsonValueKind.String
+                                ? id.GetString() ?? ""
+                                : "")
+                        .Where(id => !string.IsNullOrWhiteSpace(id))
+                        .ToArray();
+                }
+                catch (JsonException)
+                {
+                    return Array.Empty<string>();
+                }
+            })
+            .FirstOrDefault();
+        var arguments = JsonSerializer.Serialize(new
+        {
+            outcome,
+            text,
+            evidence_ids = outcome == "answer" && evidenceId != null ? new[] { evidenceId } : Array.Empty<string>()
+        });
+        return new LLMChatResponse
+        {
+            Choices = new List<LLMChoice>
+            {
+                new()
+                {
+                    Message = new ChatMessage
+                    {
+                        Role = "assistant",
+                        ToolCalls = new List<ToolCall>
+                        {
+                            new()
+                            {
+                                Id = "submit_" + Guid.NewGuid().ToString("N")[..6],
+                                Function = new FunctionCall { Name = "submit_answer", Arguments = arguments }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
 
     private static LLMChatResponse FinalResponse(string content)
         => new()

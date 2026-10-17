@@ -15,6 +15,7 @@ Runtime / 搜索 / 规则数据已跑通；后端 `GameRulesService` 已完成�
 
 ## 最近进展
 
+- **规则问答 runtime review 五项收口（2026-10-17，分支 `feat/rules-runtime-takeover`）**：rule_lookup 改为 intent 优先排序（目录顺序不影响读取预算）；普通文本终态被程序拒绝，submit_answer 增加 conversation 出口并有界纠偏；请求内 continuation handle 打通 members offset 和 read_evidence 实际续读；最终 tool message 在引用注解后再次严格断言预算；trace 拆分 search/read/navigation/assembly/serialization/protocol 与模型规划/终态/修复调用。后端 266/266、Python eval 10/10、规则 0 errors。真实模型小规模同轮对照仍未运行（无凭据/API），留出集改为“冻结候选后独立设计再封存”的流程；详见 `docs/reviews/rules-runtime-takeover/07-review-fixes.md`。
 - **规则问答程序接管史诗（2026-10-17，分支 `feat/rules-runtime-takeover`）**：完成 01–05 确定性实现与独立提交（`d1ff8e8`→`abb58ae`）：typed query payload、canonical flow scope/成员枚举、rule_lookup 自动正式读取、薄证据交付/预算、request ledger + submit_answer 终态。后端 256/256、Python eval 10/10、规则校验 0 errors。06 预注册与 9 游戏能力矩阵已生成；但新封存 36 题未在实现前建立、真实 1014 次同轮聊天执行 0 次、Android 因缺 SDK 未跑，故不宣称质量/延迟收益或史诗完成；默认 `OrchestrationMode=legacy` 未改，分支为候选实现，详见 `docs/reviews/rules-runtime-takeover/06-final-status.md`。
 - **Program 问答证据修复与基线隔离（2026-10-17）**：legacy/program prompt 分字段隔离，legacy 原文从 `a992cfe` 恢复并通过 SHA-256 断言；R1–R5 的证据身份、关联边、读取/绑定/装包计数、公平轮询、最终序列化预算、语义投影与分层 trace 已落地。后端 xUnit 220/220。31 题开发诊断集 ×3 双评共识中 legacy 68.8% vs 修复 program 37.6%，program 调用均值 2.29、P50 5,110ms，仍未过质量门槛，默认保持 legacy。报告 `docs/reviews/program-qa-evidence-repair-and-diagnosis-2026-10-17.md`。未跑 798 全量，未切换 Thinking。
 

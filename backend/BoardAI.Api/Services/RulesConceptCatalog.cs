@@ -190,6 +190,7 @@ public sealed class RulesConceptCatalog : IRulesConceptCatalog
     /// </summary>
     public IReadOnlyList<ConceptPathHit> GetConceptsWithPaths(string game, string id)
     {
+        using var readSpan = RuleRuntimeTelemetry.Measure("read", "concept_read");
         var results = new List<ConceptPathHit>();
         if (string.IsNullOrWhiteSpace(id)) return results;
 

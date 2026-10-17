@@ -106,6 +106,7 @@ public sealed class RulesPlanService
         string question = "",
         CancellationToken cancellationToken = default)
     {
+        using var planSpan = RuleRuntimeTelemetry.Measure("assembly", "query_plan_execution");
         cancellationToken.ThrowIfCancellationRequested();
 
         var result = new PlanExecutionResult
@@ -657,6 +658,7 @@ public sealed class RulesPlanService
         CancellationToken cancellationToken,
         IReadOnlyList<string>? retrievalQueries = null)
     {
+        using var buildSpan = RuleRuntimeTelemetry.Measure("assembly", "build_ok_result");
         cancellationToken.ThrowIfCancellationRequested();
         var matchedElements = matched.Select(hit => hit.Element).ToList();
         var resolvedId = RulesTextUtils.GetElementId(matchedElements[0]);
@@ -1001,31 +1003,66 @@ public sealed class RulesPlanService
         var identityId = identityHit == null ? "" : RulesTextUtils.GetElementId(identityHit.Element);
         var identityPath = identityHit?.CanonicalPath ?? "";
 
-        var ruleCandidates = new List<ConceptSummary>();
-        var candidateKeys = new HashSet<string>(StringComparer.Ordinal);
+        using var selectionSpan = RuleRuntimeTelemetry.Measure("assembly", "rule_candidate_selection");
+        // Candidate selection is intent-first. Reference edges are only a
+        // tie-breaker/recall source; directory order must not decide which rules
+        // get the limited formal-read budget.
+        var intentCandidates = string.IsNullOrWhiteSpace(effectiveIntent)
+            ? new List<ConceptSummary>()
+            : await RetrieveRuleLookupIntentCandidatesAsync(
+                game, effectiveIntent, cancellationToken);
+        var candidateByKey = new Dictionary<string, ConceptSummary>(StringComparer.Ordinal);
+        var candidateOrder = new Dictionary<string, int>(StringComparer.Ordinal);
+        var nextOrder = 0;
+
+        void RememberCandidate(ConceptSummary candidate)
+        {
+            var key = RulesSearchRanking.CandidateKey(candidate);
+            if (!candidateByKey.ContainsKey(key))
+            {
+                candidateByKey[key] = candidate;
+                candidateOrder[key] = nextOrder++;
+            }
+        }
+
         if (!string.IsNullOrWhiteSpace(identityId) || !string.IsNullOrWhiteSpace(identityPath))
         {
             foreach (var candidate in FindRuleReferenceCandidates(game, identityId, identityPath))
-                if (candidateKeys.Add(RulesSearchRanking.CandidateKey(candidate)))
-                    ruleCandidates.Add(candidate);
-        }
-        if (!string.IsNullOrWhiteSpace(effectiveIntent))
-        {
-            var intentCandidates = await RetrieveRuleLookupIntentCandidatesAsync(
-                game, effectiveIntent, cancellationToken);
-            foreach (var candidate in intentCandidates)
             {
-                candidate.MatchReason ??= "intent";
-                if (candidateKeys.Add(RulesSearchRanking.CandidateKey(candidate)))
-                    ruleCandidates.Add(candidate);
+                candidate.Score = 0f;
+                candidate.MatchReason = "reference";
+                RememberCandidate(candidate);
+            }
+        }
+
+        foreach (var candidate in intentCandidates)
+        {
+            var key = RulesSearchRanking.CandidateKey(candidate);
+            if (candidateByKey.TryGetValue(key, out var existing))
+            {
+                existing.Score = candidate.Score;
+                existing.MatchReason = existing.MatchReason == "reference"
+                    ? "intent+reference"
+                    : "intent";
+                if (string.IsNullOrWhiteSpace(existing.Name)) existing.Name = candidate.Name;
+                if (string.IsNullOrWhiteSpace(existing.Type)) existing.Type = candidate.Type;
+            }
+            else
+            {
+                candidate.MatchReason = "intent";
+                RememberCandidate(candidate);
             }
         }
 
         // The exact object itself is an identity target, not a candidate rule.
-        ruleCandidates = ruleCandidates
-            .Where(candidate => string.IsNullOrWhiteSpace(identityPath)
-                || (!string.Equals(candidate.Path, identityPath, StringComparison.Ordinal)
-                    && !string.Equals(candidate.Id, identityId, StringComparison.Ordinal)))
+        var ruleCandidates = candidateByKey
+            .Where(pair => string.IsNullOrWhiteSpace(identityPath)
+                || (!string.Equals(pair.Value.Path, identityPath, StringComparison.Ordinal)
+                    && !string.Equals(pair.Value.Id, identityId, StringComparison.Ordinal)))
+            .OrderByDescending(pair => pair.Value.Score)
+            .ThenByDescending(pair => pair.Value.MatchReason?.Contains("reference", StringComparison.Ordinal) == true)
+            .ThenBy(pair => candidateOrder[pair.Key])
+            .Select(pair => pair.Value)
             .Take(12)
             .ToList();
 

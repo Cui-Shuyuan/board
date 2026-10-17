@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -167,6 +168,7 @@ public class ChatOrchestratorService
         CancellationToken cancellationToken)
     {
         var sw = Stopwatch.StartNew();
+        using var telemetryScope = RuleRuntimeTelemetry.Begin(out var telemetryCollector);
         var requestTrace = new ChatOrchestrationTrace
         {
             RequestId = "chat_" + Guid.NewGuid().ToString("N")[..12],
@@ -213,6 +215,7 @@ public class ChatOrchestratorService
         var tools = BuildTools(gameId);
         var evidence = new AnswerEvidenceCollector();
         var ledger = new RuleRequestLedger();
+        var continuationRegistry = new RuleContinuationRegistry();
         var roundsExecuted = 0;
         string? stopReason = null;
 
@@ -227,6 +230,7 @@ public class ChatOrchestratorService
             var repeatedFailureCount = 0;
             var totalToolCallsExecuted = 0;
             var protocolCorrections = 0;
+            var protocolRepairPending = false;
             var answerFocusInjected = false;
             string? lastToolCallSignature = null;
             string? lastFailureSignature = null;
@@ -236,6 +240,8 @@ public class ChatOrchestratorService
                 effectiveToken.ThrowIfCancellationRequested();
                 roundsExecuted = round + 1;
 
+                var isProtocolRepairCall = protocolRepairPending;
+                protocolRepairPending = false;
                 var modelCallStartMs = sw.Elapsed.TotalMilliseconds;
                 var modelCallStopwatch = Stopwatch.StartNew();
                 var response = await _llmService.ChatWithMessagesAsync(messages, tools, effectiveToken);
@@ -245,6 +251,14 @@ public class ChatOrchestratorService
                     "model_planning", "tool_loop", response.Usage, roundsExecuted);
                 var assistantMessage = response.Choices?.FirstOrDefault()?.Message
                     ?? throw new InvalidOperationException("LLM returned empty response.");
+                var modelSpanName = assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0
+                    ? "model_unstructured_final"
+                    : assistantMessage.ToolCalls.Any(call => call.Function.Name == "submit_answer")
+                        ? "model_answer_submission"
+                        : isProtocolRepairCall
+                            ? "model_protocol_repair"
+                            : "model_rule_planning";
+                RenameLastModelTimelineSpan(requestTrace, modelSpanName);
 
                 if (!string.IsNullOrWhiteSpace(assistantMessage.ReasoningContent))
                 {
@@ -252,22 +266,54 @@ public class ChatOrchestratorService
                         gameId, roundsExecuted, assistantMessage.ReasoningContent);
                 }
 
-                // A plain final message remains a compatibility fallback for clients/tests,
-                // but a bare unresolved candidate no longer forces a mechanical extra round.
-                // The model can answer, clarify, or choose submit_answer for structured
-                // evidence validation in this same model call.
+                // Plain assistant text is not a terminal protocol. It must be submitted
+                // through submit_answer so rule answers can carry evidence IDs and
+                // clarify/unavailable cannot be statistically counted as answers.
+                // Bounded repair is program-enforced, not prompt-enforced.
                 if (assistantMessage.ToolCalls == null || assistantMessage.ToolCalls.Count == 0)
                 {
                     var reply = assistantMessage.Content ?? string.Empty;
+                    if (protocolCorrections < _maxRepeatedFailures
+                        && totalToolCallsExecuted < _maxTotalToolCalls)
+                    {
+                        protocolCorrections++;
+                        requestTrace.ProtocolErrors.Add("plain_final_submission");
+                        var correctionStart = sw.Elapsed.TotalMilliseconds;
+                        if (!string.IsNullOrWhiteSpace(reply))
+                            messages.Add(new ChatMessage { Role = "assistant", Content = reply });
+                        messages.Add(new ChatMessage
+                        {
+                            Role = "user",
+                            Content = BuildTerminalProtocolCorrection()
+                        });
+                        protocolRepairPending = true;
+                        AddTimelineSpan(requestTrace, new ChatTimelineSpan
+                        {
+                            Name = "terminal_protocol_repair",
+                            Category = "protocol",
+                            StartMs = correctionStart,
+                            DurationMs = 0,
+                            ResultChars = reply.Length
+                        });
+                        _logger.LogWarning(
+                            "[Chat] Game {GameId}, Round {Round} rejected plain final text; requiring submit_answer terminal protocol (repair {Repair}/{Max})",
+                            gameId, roundsExecuted, protocolCorrections, _maxRepeatedFailures);
+                        continue;
+                    }
+
                     sw.Stop();
                     var builtEvidence = evidence.Build();
-                    builtEvidence.OrchestrationOutcome ??= "answer";
-                    requestTrace.Outcome = "answer";
-                    LogEvidenceSummary(gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted, protocolCorrections, sw.Elapsed.TotalMilliseconds);
-                    _logger.LogInformation("[Chat] Game {GameId}, Round {Round} final reply ({Elapsed:F0}ms, {Tier}): {Reply}",
-                        gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds, evidence.GetTier(), reply);
+                    builtEvidence.OrchestrationOutcome = "protocol_error";
+                    requestTrace.Outcome = "protocol_error";
+                    requestTrace.ProtocolErrors.Add("terminal_protocol_failed");
+                    const string protocolFailure =
+                        "抱歉，本次回答未能按规则问答终态协议提交，无法确认规则依据。请重试或换一种更具体的问法。";
+                    LogEvidenceSummary(
+                        gameId, builtEvidence, roundsExecuted, totalToolCallsExecuted,
+                        protocolCorrections, sw.Elapsed.TotalMilliseconds);
                     return new ChatProcessResult(
-                        reply, builtEvidence, FinalizeLegacyTrace(requestTrace, sw, ledger));
+                        protocolFailure, builtEvidence,
+                        FinalizeLegacyTrace(requestTrace, sw, ledger, telemetryCollector));
                 }
 
                 _logger.LogInformation("[Chat] Game {GameId}, Round {Round} tool calls:\n{ToolCalls}",
@@ -329,7 +375,7 @@ public class ChatOrchestratorService
                                 gameId, terminal.Outcome, terminal.EvidenceCount, terminal.Text);
                             return new ChatProcessResult(
                                 terminal.Text, terminalEvidence,
-                                FinalizeLegacyTrace(requestTrace, sw, ledger));
+                                FinalizeLegacyTrace(requestTrace, sw, ledger, telemetryCollector));
                         }
 
                         ledger.RecordProtocolValidationError();
@@ -371,7 +417,8 @@ public class ChatOrchestratorService
                     {
                         var toolStartMs = sw.Elapsed.TotalMilliseconds;
                         var toolStopwatch = Stopwatch.StartNew();
-                        result = await ExecuteToolAsync(toolCall, gameId, question, effectiveToken);
+                        result = await ExecuteToolAsync(
+                            toolCall, gameId, question, continuationRegistry, effectiveToken);
                         toolStopwatch.Stop();
                         AddTimelineSpan(requestTrace, new ChatTimelineSpan
                         {
@@ -400,6 +447,7 @@ public class ChatOrchestratorService
                         {
                             evidence.AddPlanResult(result);
                             ledger.ObserveToolResult(result);
+                            continuationRegistry.ObserveToolResult(result);
                             LogPlanProvenance(gameId, result);
                         }
                     }
@@ -467,10 +515,10 @@ public class ChatOrchestratorService
                 gameId, question, messages, evidence, stopReason, roundsExecuted,
                 totalToolCallsExecuted, protocolCorrections, sw, requestTrace, effectiveToken);
             var finalEvidence = evidence.Build();
-            finalEvidence.OrchestrationOutcome ??= "answer";
-            requestTrace.Outcome ??= "answer";
+            finalEvidence.OrchestrationOutcome = "unavailable";
+            requestTrace.Outcome = "unavailable";
             return new ChatProcessResult(
-                finalReply, finalEvidence, FinalizeLegacyTrace(requestTrace, sw, ledger));
+                finalReply, finalEvidence, FinalizeLegacyTrace(requestTrace, sw, ledger, telemetryCollector));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -487,16 +535,26 @@ public class ChatOrchestratorService
                 "[Chat] Game {GameId}, request timeout: rounds={Rounds}, elapsed={Elapsed:F0}ms",
                 gameId, roundsExecuted, sw.Elapsed.TotalMilliseconds);
             requestTrace.Outcome = "request_timeout";
+            var timeoutEvidence = evidence.Build();
+            timeoutEvidence.OrchestrationOutcome = "unavailable";
             return new ChatProcessResult(
                 BuildIncompleteReply("request_timeout", evidence),
-                evidence.Build(),
-                FinalizeLegacyTrace(requestTrace, sw, ledger));
+                timeoutEvidence,
+                FinalizeLegacyTrace(requestTrace, sw, ledger, telemetryCollector));
         }
         finally
         {
             sw.Stop();
         }
     }
+
+    private static string BuildTerminalProtocolCorrection() =>
+        "终态协议校验失败：普通文本不会被视为合法终态。请在下一次模型调用中调用 submit_answer，且只选择以下之一：\n"
+        + "- outcome=answer：规则答案，evidence_ids 必须引用本请求 evidence_catalog 中已交付的 evidence_id；\n"
+        + "- outcome=clarify：真正影响答案的指代/状态歧义，可无引用，并给 clarification.missing_kind 与 requested_information；\n"
+        + "- outcome=unavailable：规则库未覆盖、身份无法解决或预算耗尽，给 unavailable_reason；\n"
+        + "- outcome=conversation：仅用于闲聊或非规则回复，可无引用。\n"
+        + "不要用 plain final 文本绕过校验。";
 
     private static void AddModelTimelineSpan(
         ChatOrchestrationTrace trace,
@@ -537,10 +595,34 @@ public class ChatOrchestratorService
         trace.Timeline.Add(span);
     }
 
+    private static void RenameLastModelTimelineSpan(
+        ChatOrchestrationTrace trace, string name)
+    {
+        for (var index = trace.Timeline.Count - 1; index >= 0; index--)
+        {
+            if (trace.Timeline[index].Category != "model") continue;
+            trace.Timeline[index].Name = name;
+            return;
+        }
+    }
+
     private static ChatOrchestrationTrace FinalizeLegacyTrace(
-        ChatOrchestrationTrace trace, Stopwatch requestStopwatch, RuleRequestLedger ledger)
+        ChatOrchestrationTrace trace,
+        Stopwatch requestStopwatch,
+        RuleRequestLedger ledger,
+        RuleRuntimeTelemetry.Collector telemetryCollector)
     {
         var elapsed = requestStopwatch.Elapsed.TotalMilliseconds;
+        foreach (var span in telemetryCollector.Snapshot())
+        {
+            trace.Timeline.Add(new ChatTimelineSpan
+            {
+                Name = span.Name,
+                Category = span.Category,
+                StartMs = span.StartMs,
+                DurationMs = span.DurationMs
+            });
+        }
         trace.TimelineAccounting = ChatTimelineAccountingCalculator.Compute(trace.Timeline, elapsed);
         trace.ReusedToolCallCount = ledger.ToolCallsReused;
         trace.ExecutedToolCallCount = ledger.ToolCallsExecuted;
@@ -1591,6 +1673,10 @@ query 字段语义：
                                     "type": "array",
                                     "items": { "type": "string" },
                                     "description": "flow scope=local 时要包含的局部上下文，例如 children、position、conditions。"
+                                  },
+                                  "continuation_handle": {
+                                    "type": "string",
+                                    "description": "可选。只能回传工具结果 omissions[].continuation.handle 中已登记的续读句柄；程序会绑定原 snapshot、目标和范围展开，不要自行构造 entity/offset。"
                                   }
                                 },
                                 "required": ["relation"]
@@ -1611,7 +1697,7 @@ query 字段语义：
                 {
                     Name = "submit_answer",
                     Description = @"终态提交工具。回答已生成时用这一次模型调用同时提交最终文本，不额外增加检查轮次。
-outcome 只能是 answer | clarify | unavailable。
+outcome 只能是 answer | clarify | unavailable | conversation。
 - answer：必须给出本请求中实际交付过的 evidence_ids；程序会校验 evidence id 存在且当前请求已交付。引用只证明出处存在，不证明全文蕴含。
 - clarify：可以无引用；请在 clarification.missing_kind 与 clarification.requested_information 说明唯一会改变答案的必要信息。不要为了清空 pending 反复追问。
 - unavailable：必须给出 unavailable_reason=no_rule_coverage | unresolved_identity | budget_exhausted。
@@ -1622,7 +1708,7 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
                       "properties": {
                         "outcome": {
                           "type": "string",
-                          "enum": ["answer", "clarify", "unavailable"]
+                          "enum": ["answer", "clarify", "unavailable", "conversation"]
                         },
                         "text": { "type": "string" },
                         "evidence_ids": {
@@ -1651,6 +1737,83 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
         };
     }
 
+    private static (string Json, string? Error) ExpandContinuationQueries(
+        JsonElement args,
+        RuleContinuationRegistry registry,
+        string? currentRulesVersion)
+    {
+        var raw = args.GetRawText();
+        if (!raw.Contains("continuation_handle", StringComparison.Ordinal))
+            return (raw, null);
+
+        JsonNode? node;
+        try
+        {
+            node = JsonNode.Parse(raw);
+        }
+        catch (JsonException)
+        {
+            return (raw, "续读参数不是合法 JSON。");
+        }
+        if (node is not JsonObject root
+            || root["plan"] is not JsonObject plan
+            || plan["queries"] is not JsonArray queries)
+            return (raw, "续读必须放在 plan.queries[] 中。");
+
+        for (var index = 0; index < queries.Count; index++)
+        {
+            if (queries[index] is not JsonObject query) continue;
+            if (query["continuation_handle"] is not JsonValue handleValue
+                || !handleValue.TryGetValue<string>(out var handle)
+                || string.IsNullOrWhiteSpace(handle))
+                continue;
+            if (!registry.TryGet(handle, out var registration))
+                return (raw, "continuation_handle 未登记或不属于本请求；请使用工具返回的 handle。");
+            if (!string.Equals(registration.RulesVersion, currentRulesVersion, StringComparison.Ordinal))
+                return (raw, "continuation_handle 已因规则版本变化失效；请重新发起原查询。");
+
+            var rewritten = new JsonObject
+            {
+                ["relation"] = registration.Operation switch
+                {
+                    "members" => "members",
+                    "flow" => "flow",
+                    "rule_lookup" => "rule_lookup",
+                    "read_evidence" => registration.Scope switch
+                    {
+                        QueryPayloadTypes.CatalogPage => "list",
+                        QueryPayloadTypes.MemberSet => "members",
+                        QueryPayloadTypes.FlowSlice => "flow",
+                        _ => "explain"
+                    },
+                    _ => "explain"
+                },
+                ["entity"] = registration.Entity ?? ""
+            };
+            if (query["intent"] is JsonNode intent)
+                rewritten["intent"] = intent.DeepClone();
+            if (registration.Operation == "read_evidence"
+                && registration.Scope == QueryPayloadTypes.FlowSlice)
+                rewritten["scope"] = registration.Scope == QueryPayloadTypes.FlowSlice ? "local" : null;
+            else if (registration.Operation == "flow")
+                rewritten["scope"] = string.IsNullOrWhiteSpace(registration.Scope)
+                    ? "local"
+                    : registration.Scope;
+            else if (query["scope"] is JsonNode scope)
+                rewritten["scope"] = scope.DeepClone();
+            if (registration.Offset.HasValue || registration.Limit.HasValue)
+            {
+                if (registration.Offset.HasValue) rewritten["offset"] = registration.Offset.Value;
+                if (registration.Limit.HasValue) rewritten["limit"] = registration.Limit.Value;
+            }
+            if (registration.Include.Count > 0)
+                rewritten["include"] = new JsonArray(registration.Include
+                    .Select(item => JsonValue.Create(item)).ToArray());
+            queries[index] = rewritten;
+        }
+        return (root.ToJsonString(), null);
+    }
+
     private static TerminalSubmission HandleTerminalSubmission(
         ToolCall toolCall,
         AnswerEvidenceCollector evidence,
@@ -1665,8 +1828,8 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
 
             var outcome = ReadFlexibleString(root, "outcome", "Outcome").Trim().ToLowerInvariant();
             var text = ReadFlexibleString(root, "text", "Text").Trim();
-            if (outcome is not ("answer" or "clarify" or "unavailable"))
-                return TerminalSubmission.Invalid("outcome 必须是 answer、clarify 或 unavailable。");
+            if (outcome is not ("answer" or "clarify" or "unavailable" or "conversation"))
+                return TerminalSubmission.Invalid("outcome 必须是 answer、clarify、unavailable 或 conversation。");
             if (string.IsNullOrWhiteSpace(text))
                 return TerminalSubmission.Invalid("text 不能为空。");
 
@@ -1698,13 +1861,14 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
                             "clarify 的 clarification.missing_kind 与 requested_information 都不能为空。");
                 }
             }
-            else
+            else if (outcome == "unavailable")
             {
                 var reason = ReadFlexibleString(root, "unavailable_reason", "UnavailableReason");
                 if (reason is not ("no_rule_coverage" or "unresolved_identity" or "budget_exhausted"))
                     return TerminalSubmission.Invalid(
                         "unavailable 必须给出 unavailable_reason=no_rule_coverage、unresolved_identity 或 budget_exhausted。");
             }
+            // conversation intentionally needs neither evidence nor clarification.
 
             return TerminalSubmission.Valid(outcome, text, evidenceIds.Count);
         }
@@ -1730,6 +1894,7 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
         ToolCall toolCall,
         string gameId,
         string question,
+        RuleContinuationRegistry continuationRegistry,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -1796,13 +1961,55 @@ text 必须与 outcome 一致，简洁、TTS 友好。",
 
                 case "execute_plan":
                     {
-                        if (!args.TryGetProperty("plan", out var plan))
+                        if (!args.TryGetProperty("plan", out _))
                             return Finish("{\"error\":\"plan is required，arguments 顶层必须有 plan 键。\"}");
+                        var currentRulesVersion = RulesSnapshotScope.Current is { Game: var scopeGame } scope
+                            && scopeGame == gameId
+                                ? scope.Version
+                                : null;
+                        var (expandedJson, continuationError) = ExpandContinuationQueries(
+                            args, continuationRegistry, currentRulesVersion);
+                        if (continuationError != null)
+                            return Finish(JsonSerializer.Serialize(new { error = continuationError }));
+
+                        using var expandedDoc = JsonDocument.Parse(expandedJson);
+                        if (!expandedDoc.RootElement.TryGetProperty("plan", out var expandedPlan))
+                            return Finish("{\"error\":\"续读展开后缺少 plan。\"}");
                         var planResult = await _rulesService.ExecutePlanAsync(
-                            gameId, plan, question, cancellationToken);
-                        var projected = _toolResultProjector.Project(gameId, planResult);
-                        return Finish(_rulesService.AnnotateReferences(
-                            JsonSerializer.Serialize(projected, ToolResultOptions), gameId));
+                            gameId, expandedPlan, question, cancellationToken);
+                        var maxPackChars = Math.Max(1000, _llmOptions.MaxEvidencePackChars);
+                        var budget = maxPackChars;
+                        for (var attempt = 0; attempt < 4; attempt++)
+                        {
+                            ProjectedRuleQueryResult projected;
+                            using (RuleRuntimeTelemetry.Measure("assembly", "evidence_projection"))
+                                projected = _toolResultProjector.Project(gameId, planResult, budget);
+                            string serialized;
+                            using (RuleRuntimeTelemetry.Measure("serialization", "tool_result_serialization"))
+                                serialized = _rulesService.AnnotateReferences(
+                                    JsonSerializer.Serialize(projected, ToolResultOptions), gameId);
+                            if (serialized.Length <= maxPackChars)
+                                return Finish(serialized);
+                            var overflow = serialized.Length - maxPackChars;
+                            budget = Math.Max(1000, budget - overflow - 128);
+                            _logger.LogWarning(
+                                "[Chat] projected tool result exceeded budget after annotation: game={GameId}, attempt={Attempt}, chars={Chars}, max={Max}; retrying with budget={Budget}",
+                                gameId, attempt + 1, serialized.Length, maxPackChars, budget);
+                        }
+
+                        var fallback = JsonSerializer.Serialize(new
+                        {
+                            request_id = planResult.RequestId,
+                            game = gameId,
+                            rules_version = planResult.RulesVersion,
+                            evidence_catalog = Array.Empty<object>(),
+                            queries = Array.Empty<object>(),
+                            note = "evidence_budget_exceeded",
+                            omitted_evidence_count = planResult.Results.Sum(result => result.Payloads.Count)
+                        }, ToolResultOptions);
+                        if (fallback.Length > maxPackChars)
+                            fallback = "{\"note\":\"budget_exceeded\"}";
+                        return Finish(fallback);
                     }
 
                 case "get_game_flow":

@@ -28,6 +28,11 @@ class CompareVersionIdentityTests(unittest.TestCase):
                 "timeline": [
                     {"category": "model", "durationMs": 100},
                     {"category": "tool", "durationMs": 20},
+                    {"category": "search", "durationMs": 8},
+                    {"category": "read", "durationMs": 5},
+                    {"category": "assembly", "durationMs": 3},
+                    {"category": "serialization", "durationMs": 2},
+                    {"category": "protocol", "durationMs": 1},
                 ],
                 "timelineAccounting": {"isReconciled": True, "coveredMs": 120},
             },
@@ -38,6 +43,11 @@ class CompareVersionIdentityTests(unittest.TestCase):
         self.assertEqual(result["delivered_evidence_chars"], 1234)
         self.assertEqual(result["model_span_ms"], 100)
         self.assertEqual(result["tool_span_ms"], 20)
+        self.assertEqual(result["search_span_ms"], 8)
+        self.assertEqual(result["read_span_ms"], 5)
+        self.assertEqual(result["assembly_span_ms"], 3)
+        self.assertEqual(result["serialization_span_ms"], 2)
+        self.assertEqual(result["protocol_span_ms"], 1)
         self.assertTrue(result["timeline_reconciled"])
 
 

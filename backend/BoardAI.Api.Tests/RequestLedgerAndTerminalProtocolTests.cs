@@ -230,6 +230,71 @@ public sealed class RequestLedgerAndTerminalProtocolTests
     }
 
     [Fact]
+    public async Task PlainFinalText_IsNotAcceptedAsAnswer_AndFailsBoundedly()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new ScriptedLlm(call =>
+        {
+            if (call.Index == 1)
+                return ToolResponse("call_1", "execute_plan",
+                    """{"plan":{"queries":[{"relation":"explain","entity":"widget"}]}}""");
+            return FinalResponse("绕过证据校验的普通文本");
+        });
+        var sut = new ChatOrchestratorService(
+            llm,
+            rules,
+            Options.Create(new LLMOptions
+            {
+                OrchestrationMode = "legacy",
+                MaxToolRounds = 5,
+                MaxRequestSeconds = 10,
+                MaxRepeatedFailures = 2,
+                MaxToolCallsPerRound = 4,
+                MaxTotalToolCalls = 12,
+                MaxConversationMessages = 24
+            }),
+            NullLogger<ChatOrchestratorService>.Instance);
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History());
+
+        Assert.DoesNotContain("绕过证据校验的普通文本", result.Reply);
+        Assert.True(llm.CallCount <= 4, $"calls={llm.CallCount}");
+        Assert.Equal("protocol_error", result.Orchestration!.Outcome);
+        Assert.Contains("plain_final_submission", result.Orchestration.ProtocolErrors);
+        Assert.Contains("terminal_protocol_failed", result.Orchestration.ProtocolErrors);
+        Assert.Contains(result.Orchestration.Timeline,
+            span => span.Category == "protocol" && span.Name == "terminal_protocol_repair");
+        Assert.Contains(result.Orchestration.Timeline,
+            span => span.Category == "model" && span.Name == "model_unstructured_final");
+        Assert.NotEmpty(llm.AllMessages.Where(message =>
+            message.Role == "user" && message.Content?.Contains("终态协议校验失败") == true));
+    }
+
+    [Fact]
+    public async Task Conversation_CanExitThroughStructuredTerminalWithoutEvidence()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        var llm = new ScriptedLlm(call =>
+        {
+            if (call.Index == 1)
+                return ToolResponse("call_1", "submit_answer",
+                    """{"outcome":"conversation","text":"你好，想了解哪款桌游的规则？"}""");
+            return FinalResponse("UNEXPECTED");
+        });
+        var sut = CreateService(llm, rules);
+
+        var result = await sut.ProcessWithEvidenceAsync("testgame", History());
+
+        Assert.Equal("你好，想了解哪款桌游的规则？", result.Reply);
+        Assert.Equal(1, llm.CallCount);
+        Assert.Equal("conversation", result.Orchestration!.Outcome);
+        Assert.Empty(result.Orchestration.ProtocolErrors);
+        Assert.Empty(result.Evidence.Queries);
+    }
+
+    [Fact]
     public async Task RepeatedInvalidTerminalSubmissions_StopAtHardLimit_WithoutInfiniteLoop()
     {
         using var fixture = new RulesFixture();

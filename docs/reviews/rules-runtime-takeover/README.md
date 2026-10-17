@@ -6,3 +6,4 @@
 - [04 面向问题的正式证据交付](04-evidence-delivery.md)
 - [05 请求账本、终态协议和有界调度](05-request-ledger-and-orchestration.md)
 - [06 预注册、能力矩阵与最终状态](06-final-status.md)
+- [07 五项 review 收口](07-review-fixes.md)

@@ -115,6 +115,8 @@ public sealed class QueryOmission
 /// <summary>程序生成的续读描述；模型不得自行拼接任意路径。</summary>
 public sealed class QueryContinuation
 {
+    /// <summary>程序生成、请求内可登记的续读句柄；模型不自行构造路径。</summary>
+    public string? Handle { get; set; }
     public string Operation { get; set; } = string.Empty;
     public string? Entity { get; set; }
     public string? Scope { get; set; }

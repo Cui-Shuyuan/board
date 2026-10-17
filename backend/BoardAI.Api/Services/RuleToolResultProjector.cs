@@ -26,14 +26,16 @@ internal sealed class RuleToolResultProjector
         _maxPackChars = Math.Max(1000, maxPackChars);
     }
 
-    public ProjectedRuleQueryResult Project(string game, PlanExecutionResult plan)
+    public ProjectedRuleQueryResult Project(
+        string game, PlanExecutionResult plan, int? maxPackCharsOverride = null)
     {
+        var budget = Math.Max(1000, maxPackCharsOverride ?? _maxPackChars);
         var result = new ProjectedRuleQueryResult
         {
             RequestId = plan.RequestId,
             Game = game,
             RulesVersion = plan.RulesVersion,
-            MaxPackChars = _maxPackChars
+            MaxPackChars = budget
         };
         var queryStates = plan.Results
             .Select(item => new QueryProjectionState
@@ -52,7 +54,8 @@ internal sealed class RuleToolResultProjector
                     Coverage = item.Coverage,
                     ResolvedTargets = item.ResolvedTargets.ToList(),
                     Message = string.IsNullOrWhiteSpace(item.Message) ? null : item.Message,
-                    Omissions = item.Omissions.Select(ToOmission).ToList()
+                    Omissions = item.Omissions.Select(omission =>
+                        ToOmission(omission, plan.RulesVersion)).ToList()
                 }
             })
             .ToList();
@@ -61,6 +64,7 @@ internal sealed class RuleToolResultProjector
         var byContent = new Dictionary<string, ProjectedEvidence>(StringComparer.Ordinal);
         var candidateEvidenceByPath = new Dictionary<string, string>(StringComparer.Ordinal);
         var omittedCount = 0;
+        RefreshCandidateMetadata(queryStates, candidateEvidenceByPath);
 
         foreach (var state in queryStates)
         {
@@ -80,11 +84,11 @@ internal sealed class RuleToolResultProjector
                 catalog.Add(evidence);
                 var candidateResult = BuildResult(result, queryStates);
                 var candidateLength = JsonSerializer.Serialize(candidateResult, JsonOptions).Length;
-                if (candidateLength > _maxPackChars)
+                if (candidateLength > budget)
                 {
                     catalog.Remove(evidence);
                     omittedCount++;
-                    var reason = evidenceJson.Length > _maxPackChars
+                    var reason = evidenceJson.Length > budget
                         ? QueryOmissionReasons.Oversized
                         : QueryOmissionReasons.BudgetTruncated;
                     query.Omissions.Add(new ProjectedOmission
@@ -94,6 +98,9 @@ internal sealed class RuleToolResultProjector
                         FieldPath = payload.Type,
                         Continuation = new ProjectedContinuation
                         {
+                            Handle = MakeContinuationHandle(
+                                "read_evidence", payload.CanonicalPath, payload.Type,
+                                null, null, state.Source.RulesVersion ?? plan.RulesVersion),
                             Operation = "read_evidence",
                             Entity = payload.CanonicalPath,
                             Scope = payload.Type,
@@ -113,6 +120,17 @@ internal sealed class RuleToolResultProjector
 
         // Candidate metadata is intentionally thin; formal candidate content lives
         // in evidence_catalog and is linked by evidence_id when it was delivered.
+        RefreshCandidateMetadata(queryStates, candidateEvidenceByPath);
+
+        var final = BuildResult(result, queryStates);
+        final.DeliveredEvidenceCount = catalog.Count;
+        return EnforceFinalBudget(final, queryStates, budget);
+    }
+
+    private static void RefreshCandidateMetadata(
+        List<QueryProjectionState> queryStates,
+        Dictionary<string, string> candidateEvidenceByPath)
+    {
         foreach (var state in queryStates)
         {
             state.Projected.Candidates = (state.Source.Candidates ?? new List<ConceptSummary>())
@@ -135,15 +153,143 @@ internal sealed class RuleToolResultProjector
                 })
                 .ToList();
         }
-
-        result.OmittedEvidenceCount = omittedCount;
-        result.DeliveredEvidenceCount = catalog.Count;
-        var final = BuildResult(result, queryStates);
-        final.OmittedEvidenceCount += omittedCount;
-        final.DeliveredEvidenceCount = catalog.Count;
-        final.SerializedChars = JsonSerializer.Serialize(final, JsonOptions).Length;
-        return final;
     }
+
+    private static ProjectedRuleQueryResult EnforceFinalBudget(
+        ProjectedRuleQueryResult result,
+        List<QueryProjectionState> queryStates,
+        int budget)
+    {
+        var final = CloneForBudget(result, queryStates);
+        while (SerializedLength(final) > budget && final.EvidenceCatalog.Count > 0)
+        {
+            var removed = final.EvidenceCatalog[^1];
+            final.EvidenceCatalog.RemoveAt(final.EvidenceCatalog.Count - 1);
+            foreach (var state in queryStates)
+            {
+                if (!state.Projected.EvidenceIds.Remove(removed.EvidenceId)) continue;
+                state.Projected.Omissions.Add(new ProjectedOmission
+                {
+                    Reason = QueryOmissionReasons.BudgetTruncated,
+                    CanonicalPath = removed.CanonicalPath,
+                    FieldPath = removed.Type,
+                    Continuation = new ProjectedContinuation
+                    {
+                        Handle = MakeContinuationHandle(
+                            "read_evidence",
+                            removed.CanonicalPath,
+                            removed.Type,
+                            null,
+                            null,
+                            removed.RulesVersion),
+                        Operation = "read_evidence",
+                        Entity = removed.CanonicalPath,
+                        Scope = removed.Type,
+                        Include = new List<string> { removed.Type }
+                    }
+                });
+                if (state.Projected.Coverage == QueryCoverageStatuses.Complete)
+                    state.Projected.Coverage = QueryCoverageStatuses.Partial;
+            }
+            var candidateEvidenceByPath = final.EvidenceCatalog
+                .Where(evidence => evidence.Data != null)
+                .Select(evidence => (evidence.CanonicalPath, evidence.EvidenceId))
+                .DistinctBy(item => item.CanonicalPath, StringComparer.Ordinal)
+                .ToDictionary(item => item.CanonicalPath, item => item.EvidenceId, StringComparer.Ordinal);
+            RefreshCandidateMetadata(queryStates, candidateEvidenceByPath);
+            final = CloneForBudget(final, queryStates);
+        }
+
+        if (SerializedLength(final) > budget)
+            return CompactFallback(final, budget);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var length = SerializedLength(final);
+            final.SerializedChars = length;
+            if (SerializedLength(final) <= budget)
+                return final;
+            if (final.EvidenceCatalog.Count == 0)
+                return CompactFallback(final, budget);
+            var removed = final.EvidenceCatalog[^1];
+            final.EvidenceCatalog.RemoveAt(final.EvidenceCatalog.Count - 1);
+            foreach (var state in queryStates)
+                state.Projected.EvidenceIds.Remove(removed.EvidenceId);
+            final = CloneForBudget(final, queryStates);
+        }
+        return CompactFallback(final, budget);
+    }
+
+    private static ProjectedRuleQueryResult CloneForBudget(
+        ProjectedRuleQueryResult source,
+        List<QueryProjectionState> queryStates)
+    {
+        return new ProjectedRuleQueryResult
+        {
+            RequestId = source.RequestId,
+            Game = source.Game,
+            RulesVersion = source.RulesVersion,
+            MaxPackChars = source.MaxPackChars,
+            DeliveredEvidenceCount = source.EvidenceCatalog.Count,
+            OmittedEvidenceCount = queryStates.Sum(state => state.Projected.Omissions.Count(
+                omission => omission.Reason is QueryOmissionReasons.Oversized
+                    or QueryOmissionReasons.BudgetTruncated)),
+            Queries = queryStates.Select(state => state.Projected).ToList(),
+            EvidenceCatalog = source.EvidenceCatalog.ToList(),
+            SerializedChars = 0,
+            Note = "证据正文只在 evidence_catalog 出现一次；partial/unknown 或 omission 不能当作全集或答案充分证明。"
+        };
+    }
+
+    private static ProjectedRuleQueryResult CompactFallback(
+        ProjectedRuleQueryResult source, int budget)
+    {
+        var minimal = new ProjectedRuleQueryResult
+        {
+            RequestId = source.RequestId,
+            Game = source.Game,
+            RulesVersion = source.RulesVersion,
+            MaxPackChars = budget,
+            DeliveredEvidenceCount = 0,
+            OmittedEvidenceCount = Math.Max(1, source.OmittedEvidenceCount),
+            SerializedChars = 0,
+            Note = "最终序列化预算不足：evidence 与 query 元信息已压缩，未交付任何被截断的规则正文。",
+            EvidenceCatalog = new List<ProjectedEvidence>(),
+            Queries = source.Queries.Select(query => new ProjectedQuery
+            {
+                QueryId = query.QueryId,
+                QueryIndex = query.QueryIndex,
+                Relation = query.Relation,
+                Status = "unsupported",
+                Source = query.Source,
+                Resolution = QueryResolutionStatuses.Unsupported,
+                Coverage = QueryCoverageStatuses.Partial,
+                ResolvedTargets = query.ResolvedTargets.ToList(),
+                EvidenceIds = new List<string>(),
+                Candidates = new List<ProjectedCandidate>(),
+                Message = null,
+                Omissions = new List<ProjectedOmission>
+                {
+                    new()
+                    {
+                        Reason = QueryOmissionReasons.BudgetTruncated,
+                        FieldPath = "serialized_metadata"
+                    }
+                }
+            }).ToList()
+        };
+        if (SerializedLength(minimal) > budget)
+        {
+            minimal.Queries = new List<ProjectedQuery>();
+            minimal.Note = "最终序列化预算不足：所有 query 元信息也已省略。";
+        }
+        minimal.SerializedChars = 0;
+        minimal.SerializedChars = SerializedLength(minimal);
+        return minimal;
+    }
+
+    private static int SerializedLength(ProjectedRuleQueryResult result)
+        => JsonSerializer.Serialize(result, JsonOptions).Length;
 
     private static ProjectedRuleQueryResult BuildResult(
         ProjectedRuleQueryResult template,
@@ -213,7 +359,7 @@ internal sealed class RuleToolResultProjector
             map[payload.CanonicalPath] = evidenceId;
     }
 
-    private static ProjectedOmission ToOmission(QueryOmission omission) => new()
+    private static ProjectedOmission ToOmission(QueryOmission omission, string? rulesVersion) => new()
     {
         Reason = omission.Reason,
         CanonicalPath = omission.CanonicalPath,
@@ -222,6 +368,15 @@ internal sealed class RuleToolResultProjector
             ? null
             : new ProjectedContinuation
             {
+                Handle = !string.IsNullOrWhiteSpace(omission.Continuation.Handle)
+                    ? omission.Continuation.Handle
+                    : MakeContinuationHandle(
+                        omission.Continuation.Operation,
+                        omission.Continuation.Entity,
+                        omission.Continuation.Scope,
+                        omission.Continuation.Offset,
+                        omission.Continuation.Limit,
+                        rulesVersion),
                 Operation = omission.Continuation.Operation,
                 Entity = omission.Continuation.Entity,
                 Scope = omission.Continuation.Scope,
@@ -230,6 +385,22 @@ internal sealed class RuleToolResultProjector
                 Include = omission.Continuation.Include.ToList()
             }
     };
+
+    private static string MakeContinuationHandle(
+        string operation,
+        string? entity,
+        string? scope,
+        int? offset,
+        int? limit,
+        string? rulesVersion)
+    {
+        var raw = string.Join("\u0000",
+            operation ?? "", entity ?? "", scope ?? "",
+            offset?.ToString() ?? "", limit?.ToString() ?? "", rulesVersion ?? "");
+        var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)))
+            .ToLowerInvariant()[..16];
+        return "cont_" + hash;
+    }
 
     private sealed class QueryProjectionState
     {
@@ -352,6 +523,8 @@ internal sealed class ProjectedOmission
 
 internal sealed class ProjectedContinuation
 {
+    [JsonPropertyName("handle")]
+    public string? Handle { get; set; }
     [JsonPropertyName("operation")]
     public string Operation { get; set; } = "";
     [JsonPropertyName("entity")]

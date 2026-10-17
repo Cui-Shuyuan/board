@@ -22,6 +22,7 @@ public sealed class RulesSearchService
         string searchMode = "full",
         CancellationToken cancellationToken = default)
     {
+        using var searchSpan = RuleRuntimeTelemetry.Measure("search", "retrieval");
         cancellationToken.ThrowIfCancellationRequested();
 
         if (string.IsNullOrWhiteSpace(query))

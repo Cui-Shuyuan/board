@@ -53,6 +53,45 @@ public sealed class RuleLookupAndNavigationTests
         Assert.Contains(lookup.Omissions, omission => omission.Reason == QueryOmissionReasons.BudgetTruncated);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RuleLookup_IntentRanking_IsIndependentOfUnrelatedDirectoryOrder(bool relevantFirst)
+    {
+        using var fixture = new RulesFixture();
+        var unrelated = new[]
+        {
+            """{ "id": "pay_gold_1", "name": { "zh": "支付金币一" }, "description": { "zh": "支付金币。" }, "<ontology::cost>": "<gold>" }""",
+            """{ "id": "pay_gold_2", "name": { "zh": "支付金币二" }, "description": { "zh": "支付金币。" }, "<ontology::cost>": "<gold>" }""",
+            """{ "id": "pay_gold_3", "name": { "zh": "支付金币三" }, "description": { "zh": "支付金币。" }, "<ontology::cost>": "<gold>" }"""
+        };
+        var relevant = """{ "id": "gain_gold", "name": { "zh": "获得金币" }, "description": { "zh": "如何获得金币。" }, "<ontology::content>": "<gold>" }""";
+        var actions = relevantFirst
+            ? new[] { relevant }.Concat(unrelated)
+            : unrelated.Concat(new[] { relevant });
+        File.WriteAllText(fixture.GameConceptsPath, $$"""
+        {
+          "objects": [ { "id": "gold", "name": { "zh": "金币" } } ],
+          "actions": [ {{string.Join(",", actions)}} ],
+          "triggers": [],
+          "conditions": []
+        }
+        """);
+        using var content = new RulesContentStore(fixture.Root);
+        var plan = CreatePlan(content);
+        using var doc = JsonDocument.Parse("""{"queries":[{"relation":"rule_lookup","entity":"gold","intent":"如何获得金币"}]}""");
+
+        var item = Assert.Single((await plan.ExecutePlanAsync("testgame", doc.RootElement)).Results);
+
+        Assert.Equal("ok", item.Status);
+        Assert.Equal("gain_gold", item.Candidates![0].Id);
+        var autoReadPaths = item.Payloads
+            .Where(payload => payload.DefinitionSource == "auto_candidate_read")
+            .Select(payload => payload.CanonicalPath)
+            .ToList();
+        Assert.Contains(autoReadPaths, path => path.Contains("gain_gold", StringComparison.Ordinal));
+    }
+
     [Fact]
     public async Task RuleLookup_WithoutExactIdentity_KeepsCandidatesUnresolvedAfterFormalRead()
     {

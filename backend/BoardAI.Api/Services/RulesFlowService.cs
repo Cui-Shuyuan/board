@@ -77,6 +77,7 @@ public sealed class RulesFlowService
 
     private FlowStructureIndex BuildFlowIndex(string game, string? rulesVersion)
     {
+        using var navigationSpan = RuleRuntimeTelemetry.Measure("navigation", "flow_index_build");
         var flow = _content.LoadGameFlow(game);
         if (flow == null)
         {

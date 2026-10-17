@@ -1,7 +1,7 @@
 {
   "plan": "rules-runtime-takeover/06",
   "registered_at": "2026-10-17",
-  "status": "partially_blocked_missing_new_sealed_set_and_real_model_run",
+  "status": "candidate_frozen_pending_independent_sealed_set_and_real_model_run",
   "baseline_commit": "ffac498890ccf9fdd10bb180b0dc37e9b88ed585",
   "question_sets": {
     "development_31": {
@@ -18,10 +18,10 @@
     },
     "sealed_36": {
       "role": "new_holdout_9_games_x4",
-      "status": "not_created_before_implementation",
+      "status": "not_created_yet",
       "created_before_tuning": false,
-      "usable_as_unbiased_final_holdout": false,
-      "note": "Implementation and prompt tuning were already complete. Creating questions now cannot restore a pre-tuning holdout; it must be reported as post-hoc."
+      "usable_as_final_holdout": true,
+      "requirements": "Freeze candidate commit first, then independently author from rules and real usage scenarios without using candidate outputs; seal before running. If any tuning uses results, the set becomes development data."
     }
   },
   "planned_final_chats": {
@@ -66,7 +66,13 @@
       "repeated_bottom_query_execution": "exact duplicate contract test executes once"
     },
     "evidence": {
-      "layers": ["retrieval_candidate", "formal_read", "delivered_to_model", "cited", "answer_review"],
+      "layers": [
+        "retrieval_candidate",
+        "formal_read",
+        "delivered_to_model",
+        "cited",
+        "answer_review"
+      ],
       "legitimate_alternatives_allowed": true,
       "evidence_hit_is_not_answer_correctness_proof": true
     }
@@ -81,6 +87,6 @@
     "performance_verified": false,
     "android_runtime_verified": false,
     "eligible_to_claim_full_epic_completion": false,
-    "action": "Keep as candidate implementation; do not claim production default upgrade or epic complete."
+    "action": "Freeze this candidate commit, independently author and seal the new 36-question set, then run a small development same-round comparison before the full 1014-chat experiment."
   }
 }

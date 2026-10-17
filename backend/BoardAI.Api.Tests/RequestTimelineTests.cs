@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BoardAI.Api.Models;
 using BoardAI.Api.Services;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -18,8 +19,8 @@ public sealed class RequestTimelineTests
             {
                 await Task.Delay(call.Index == 1 ? 25 : 15, call.Token);
                 return call.Index == 1
-                    ? ToolResponse("""{"plan":{"queries":[{"relation":"list"}]}}""")
-                    : FinalResponse("已完成");
+                    ? ToolResponse("""{"plan":{"queries":[{"relation":"rule_lookup","entity":"widget","intent":"如何使用小装置"}]}}""")
+                    : SubmitResponse(call.Messages, "已完成");
             }
 
             await Task.Delay(10, call.Token);
@@ -44,7 +45,13 @@ public sealed class RequestTimelineTests
         Assert.Equal("legacy", trace.Mode);
         Assert.Equal(2, trace.ModelCallCount);
         Assert.Contains(trace.Timeline, span => span.Category == "tool" && span.Name == "execute_plan");
+        Assert.Contains(trace.Timeline, span => span.Category == "search" && span.Name == "retrieval");
+        Assert.Contains(trace.Timeline, span => span.Category == "read" && span.Name == "concept_read");
+        Assert.Contains(trace.Timeline, span => span.Category == "assembly");
+        Assert.Contains(trace.Timeline, span => span.Category == "serialization");
         Assert.Contains(trace.Timeline, span => span.Category == "model" && span.PromptTokens == 11);
+        Assert.Contains(trace.Timeline, span => span.Category == "model"
+            && span.Name == "model_answer_submission");
         var accounting = Assert.IsType<ChatTimelineAccounting>(trace.TimelineAccounting);
         Assert.True(accounting.IsReconciled);
         Assert.True(accounting.CoveredMs <= accounting.ElapsedMs + 1);
@@ -90,6 +97,59 @@ public sealed class RequestTimelineTests
         }
     };
 
+    private static LLMChatResponse SubmitResponse(List<ChatMessage> messages, string text)
+    {
+        var evidenceId = messages
+            .Where(message => message.Role == "tool" && !string.IsNullOrWhiteSpace(message.Content))
+            .SelectMany(message =>
+            {
+                using var doc = JsonDocument.Parse(message.Content!);
+                if (!doc.RootElement.TryGetProperty("evidence_catalog", out var catalog))
+                    return Array.Empty<string>();
+                return catalog.EnumerateArray()
+                    .Select(evidence => evidence.TryGetProperty("evidence_id", out var id)
+                        && id.ValueKind == JsonValueKind.String
+                            ? id.GetString() ?? ""
+                            : "")
+                    .Where(id => !string.IsNullOrWhiteSpace(id))
+                    .ToArray();
+            })
+            .FirstOrDefault();
+        return new LLMChatResponse
+        {
+            Usage = new LLMUsage { PromptTokens = 11, CompletionTokens = 5 },
+            Choices = new List<LLMChoice>
+            {
+                new()
+                {
+                    Message = new ChatMessage
+                    {
+                        Role = "assistant",
+                        ToolCalls = new List<ToolCall>
+                        {
+                            new()
+                            {
+                                Id = "submit_1",
+                                Function = new FunctionCall
+                                {
+                                    Name = "submit_answer",
+                                    Arguments = JsonSerializer.Serialize(new
+                                    {
+                                        outcome = "answer",
+                                        text,
+                                        evidence_ids = evidenceId == null
+                                            ? Array.Empty<string>()
+                                            : new[] { evidenceId }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     private static LLMChatResponse FinalResponse(string content) => new()
     {
         Usage = new LLMUsage { PromptTokens = 11, CompletionTokens = 5 },
@@ -113,9 +173,9 @@ public sealed class RequestTimelineTests
         {
             var hasTools = tools is { Count: > 0 };
             var index = hasTools ? Interlocked.Increment(ref _toolCalls) : 1;
-            return _handler(new TimedCall(hasTools, index, cancellationToken));
+            return _handler(new TimedCall(hasTools, index, messages, cancellationToken));
         }
     }
 
-    private sealed record TimedCall(bool HasTools, int Index, CancellationToken Token);
+    private sealed record TimedCall(bool HasTools, int Index, List<ChatMessage> Messages, CancellationToken Token);
 }

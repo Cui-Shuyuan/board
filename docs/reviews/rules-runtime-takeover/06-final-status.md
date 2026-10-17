@@ -52,7 +52,7 @@
 
 | 命令 | 结果 |
 |---|---|
-| `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj` | `256/256` 通过 |
+| `dotnet test backend/BoardAI.Api.Tests/BoardAI.Api.Tests.csproj` | `256/256` 通过；五项 review 收口后为 `266/266` |
 | `python3 -m unittest discover -s tools/eval -p 'test_*.py'` | `10/10` 通过 |
 | `python3 tools/content/validate_rules.py --errors-only` | `0 errors / 72 warnings` |
 | `git diff --check` | 通过 |
@@ -87,7 +87,7 @@
 
 ## 06 未通过/未执行项
 
-1. **新封存 36 题缺失**：实现前未建立，现在创建也无法恢复盲测资格。需要另起真正封存流程。
+1. **新封存 36 题尚未建立**：实现前未建立不等于永远不能建立。应先冻结候选提交，再独立依据规则和真实使用场景设计 36 题；封存后运行。若据结果调参，该批题即转为开发集。详见 07 review 收口报告。
 2. **真实同轮聊天 0 次**：1014 次预算完全未消耗；质量、错误规则、P95 延迟、token 成本均未知。
 3. **双盲 judge 未运行**：只有确定性测试和模拟轨迹。
 4. **Android/TTS 冒烟未运行**：环境缺 Android SDK；本阶段没有新增 Android 协议字段，但仍需真实端到端。
@@ -99,7 +99,7 @@
 
 - 模型可能继续用 plain final，而不调用 submit_answer；需要真实运行确认。
 - evidence ID 校验只证明出处存在与已交付，不证明答案文本被规则蕴含。
-- 工具 span 仍不能细分搜索/正式读取/装配；只到 tool 总时长，进一步细化依赖 04 交付器统计继续扩展。
+- 工具 span 已在 07 轮细分为 search/read/navigation/assembly/serialization/protocol；真实端到端占比仍需模型运行验证。
 - 预算按 JSON 字符计，不等于 provider token；真实输入 token/价格未知。
 - 成员“可证明完整”只相对当前录入数据与 schema 成立，不证明规则书未录入成员存在。
 - 规则库中陈旧/缺失引用需要内容治理，不能靠 runtime 关键词或游戏专用代码修补。
