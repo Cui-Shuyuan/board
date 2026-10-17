@@ -1,0 +1,76 @@
+{
+  "schema": "tutorial-cue-plan/v1",
+  "cue_id": "fixture/multi_segment",
+  "entry": "fixture/previous",
+  "course": {
+    "start": 12.0,
+    "duration": 9.0
+  },
+  "tracks": [
+    {
+      "id": "visual.main",
+      "kind": "visual",
+      "tail_policy": "hold_last_frame",
+      "segments": [
+        {
+          "id": "v1",
+          "type": "animation",
+          "animation": "fixture/multi_segment#opening",
+          "cue_start": 0.0,
+          "source_start": 0.0,
+          "source_end": 2.5,
+          "after_end": "hold_last_frame"
+        },
+        {
+          "id": "v2",
+          "type": "hold",
+          "cue_start": 3.0,
+          "duration": 1.0,
+          "pose": "last_frame"
+        },
+        {
+          "id": "v3",
+          "type": "animation",
+          "animation": "fixture/multi_segment#closing",
+          "cue_start": 4.5,
+          "source_start": 0.0,
+          "source_end": 3.0,
+          "after_end": "hold_last_frame"
+        }
+      ]
+    },
+    {
+      "id": "audio.main",
+      "kind": "audio",
+      "tail_policy": "silence",
+      "segments": [
+        {
+          "id": "a1",
+          "type": "audio_clip",
+          "asset": "media/tts/fixture/multi.mp3",
+          "cue_start": 0.0,
+          "source_start": 1.0,
+          "source_end": 3.0,
+          "source_start_sample": 24000,
+          "source_end_sample": 72000
+        },
+        {
+          "id": "a2",
+          "type": "silence",
+          "cue_start": 3.0,
+          "duration": 1.5
+        },
+        {
+          "id": "a3",
+          "type": "audio_clip",
+          "asset": "media/tts/fixture/multi.mp3",
+          "cue_start": 4.5,
+          "source_start": 4.0,
+          "source_end": 7.5,
+          "source_start_sample": 96000,
+          "source_end_sample": 180000
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "schema": "tutorial-cue-source/v1",
+  "cue_id": "fixture/multi_segment",
+  "entry": "fixture/previous",
+  "duration": 9.0,
+  "tracks": [
+    {
+      "id": "visual.main",
+      "kind": "visual",
+      "tail_policy": "hold_last_frame",
+      "segments": [
+        {
+          "id": "v1",
+          "type": "animation",
+          "animation": "fixture/multi_segment#opening",
+          "at": {
+            "anchor": {
+              "type": "cue_start",
+              "offset": 0.0
+            }
+          },
+          "source": {
+            "start": 0.0,
+            "end": 2.5
+          },
+          "after_end": "hold_last_frame"
+        },
+        {
+          "id": "v2",
+          "type": "hold",
+          "at": {
+            "anchor": {
+              "type": "after",
+              "segment": "v1",
+              "delay": 0.5
+            }
+          },
+          "duration": 1.0,
+          "pose": "last_frame"
+        },
+        {
+          "id": "v3",
+          "type": "animation",
+          "animation": "fixture/multi_segment#closing",
+          "at": {
+            "anchor": {
+              "type": "after_all",
+              "segments": ["v2", "a2"],
+              "delay": 0.0
+            }
+          },
+          "source": {
+            "start": 0.0,
+            "end": 3.0
+          },
+          "after_end": "hold_last_frame"
+        }
+      ]
+    },
+    {
+      "id": "audio.main",
+      "kind": "audio",
+      "tail_policy": "silence",
+      "segments": [
+        {
+          "id": "a1",
+          "type": "audio_clip",
+          "asset": "media/tts/fixture/multi.mp3",
+          "at": {
+            "anchor": {
+              "type": "cue_start",
+              "offset": 0.0
+            }
+          },
+          "source": {
+            "start": 1.0,
+            "end": 3.0
+          }
+        },
+        {
+          "id": "a2",
+          "type": "silence",
+          "at": {
+            "anchor": {
+              "type": "after",
+              "segment": "a1",
+              "delay": 1.0
+            }
+          },
+          "duration": 1.5
+        },
+        {
+          "id": "a3",
+          "type": "audio_clip",
+          "asset": "media/tts/fixture/multi.mp3",
+          "at": {
+            "anchor": {
+              "type": "after_all",
+              "segments": ["v2", "a2"],
+              "delay": 0.0
+            }
+          },
+          "source": {
+            "start": 4.0,
+            "end": 7.5
+          }
+        }
+      ]
+    }
+  ]
+}
