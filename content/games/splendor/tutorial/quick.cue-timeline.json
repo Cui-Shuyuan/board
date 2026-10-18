@@ -5,7 +5,7 @@
   "track": "quick",
   "course": {
     "start": 0.0,
-    "duration": 199.578
+    "duration": 197.008
   },
   "cues": [
     {
@@ -14,7 +14,7 @@
       "entry": null,
       "course": {
         "start": 0.0,
-        "duration": 2.656
+        "duration": 2.245
       },
       "tracks": [
         {
@@ -28,7 +28,7 @@
               "animation": "quick_intro/title_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.656,
+              "source_end": 2.245,
               "after_end": "hold_last_frame"
             }
           ]
@@ -45,14 +45,14 @@
               "asset": "media/tts/quick.cues/quick_intro__title_1.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.656,
+              "source_end": 1.245,
               "source_start_sample": 0,
-              "source_end_sample": 39744
+              "source_end_sample": 29880
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.656,
+              "cue_start": 1.245,
               "duration": 1.0
             }
           ]
@@ -91,7 +91,7 @@
       "cue_id": "quick_intro/001",
       "entry": null,
       "course": {
-        "start": 2.656,
+        "start": 2.245,
         "duration": 10.296
       },
       "tracks": [
@@ -176,8 +176,8 @@
       "cue_id": "quick_setup_cards/title_2",
       "entry": null,
       "course": {
-        "start": 12.952,
-        "duration": 2.872
+        "start": 12.541,
+        "duration": 2.445
       },
       "tracks": [
         {
@@ -191,7 +191,7 @@
               "animation": "quick_setup_cards/title_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.872,
+              "source_end": 2.445,
               "after_end": "hold_last_frame"
             }
           ]
@@ -208,14 +208,14 @@
               "asset": "media/tts/quick.cues/quick_setup_cards__title_2.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.872,
+              "source_end": 1.445,
               "source_start_sample": 0,
-              "source_end_sample": 44928
+              "source_end_sample": 34680
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.872,
+              "cue_start": 1.445,
               "duration": 1.0
             }
           ]
@@ -254,7 +254,7 @@
       "cue_id": "quick_setup_cards/001.1",
       "entry": null,
       "course": {
-        "start": 15.824,
+        "start": 14.986,
         "duration": 6.264
       },
       "tracks": [
@@ -326,7 +326,7 @@
       "cue_id": "quick_setup_cards/001.2",
       "entry": null,
       "course": {
-        "start": 22.088,
+        "start": 21.25,
         "duration": 5.064
       },
       "tracks": [
@@ -398,7 +398,7 @@
       "cue_id": "quick_setup_gems/002",
       "entry": null,
       "course": {
-        "start": 27.152,
+        "start": 26.314,
         "duration": 10.032
       },
       "tracks": [
@@ -483,7 +483,7 @@
       "cue_id": "quick_setup_players/001",
       "entry": null,
       "course": {
-        "start": 37.184,
+        "start": 36.346,
         "duration": 4.848
       },
       "tracks": [
@@ -539,7 +539,7 @@
       "cue_id": "quick_setup_players/002",
       "entry": null,
       "course": {
-        "start": 42.032,
+        "start": 41.194,
         "duration": 2.28
       },
       "tracks": [
@@ -611,7 +611,7 @@
       "cue_id": "quick_setup_players/003",
       "entry": null,
       "course": {
-        "start": 44.312,
+        "start": 43.474,
         "duration": 2.448
       },
       "tracks": [
@@ -683,8 +683,8 @@
       "cue_id": "quick_turn/title_3",
       "entry": null,
       "course": {
-        "start": 46.76,
-        "duration": 3.448
+        "start": 45.922,
+        "duration": 3.085
       },
       "tracks": [
         {
@@ -698,7 +698,7 @@
               "animation": "quick_turn/title_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.448,
+              "source_end": 3.085,
               "after_end": "hold_last_frame"
             }
           ]
@@ -715,14 +715,14 @@
               "asset": "media/tts/quick.cues/quick_turn__title_3.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.448,
+              "source_end": 2.085,
               "source_start_sample": 0,
-              "source_end_sample": 58752
+              "source_end_sample": 50040
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.448,
+              "cue_start": 2.085,
               "duration": 1.0
             }
           ]
@@ -761,7 +761,7 @@
       "cue_id": "quick_turn/001",
       "entry": null,
       "course": {
-        "start": 50.208,
+        "start": 49.007,
         "duration": 5.472
       },
       "tracks": [
@@ -833,7 +833,7 @@
       "cue_id": "quick_turn/002",
       "entry": null,
       "course": {
-        "start": 55.68,
+        "start": 54.479,
         "duration": 10.032
       },
       "tracks": [
@@ -931,8 +931,8 @@
       "cue_id": "quick_take_gems/title_3_1",
       "entry": null,
       "course": {
-        "start": 65.712,
-        "duration": 3.256
+        "start": 64.511,
+        "duration": 2.905
       },
       "tracks": [
         {
@@ -946,7 +946,7 @@
               "animation": "quick_take_gems/title_3_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.256,
+              "source_end": 2.905,
               "after_end": "hold_last_frame"
             }
           ]
@@ -963,14 +963,14 @@
               "asset": "media/tts/quick.cues/quick_take_gems__title_3_1.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.256,
+              "source_end": 1.905,
               "source_start_sample": 0,
-              "source_end_sample": 54144
+              "source_end_sample": 45720
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.256,
+              "cue_start": 1.905,
               "duration": 1.0
             }
           ]
@@ -1010,7 +1010,7 @@
       "cue_id": "quick_take_gems/different.001",
       "entry": null,
       "course": {
-        "start": 68.968,
+        "start": 67.416,
         "duration": 4.824
       },
       "tracks": [
@@ -1083,7 +1083,7 @@
       "cue_id": "quick_take_gems/same.001",
       "entry": null,
       "course": {
-        "start": 73.792,
+        "start": 72.24,
         "duration": 3.24
       },
       "tracks": [
@@ -1156,7 +1156,7 @@
       "cue_id": "quick_take_gems/002",
       "entry": null,
       "course": {
-        "start": 77.032,
+        "start": 75.48,
         "duration": 7.248
       },
       "tracks": [
@@ -1242,7 +1242,7 @@
       "cue_id": "quick_take_gems/003",
       "entry": null,
       "course": {
-        "start": 84.28,
+        "start": 82.728,
         "duration": 10.272
       },
       "tracks": [
@@ -1328,8 +1328,8 @@
       "cue_id": "quick_cards/title_3_2",
       "entry": null,
       "course": {
-        "start": 94.552,
-        "duration": 3.856
+        "start": 93.0,
+        "duration": 3.495
       },
       "tracks": [
         {
@@ -1343,7 +1343,7 @@
               "animation": "quick_cards/title_3_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.6,
+              "source_end": 3.495,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1360,14 +1360,14 @@
               "asset": "media/tts/quick.cues/quick_cards__title_3_2.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.856,
+              "source_end": 2.495,
               "source_start_sample": 0,
-              "source_end_sample": 68544
+              "source_end_sample": 59880
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.856,
+              "cue_start": 2.495,
               "duration": 1.0
             }
           ]
@@ -1407,7 +1407,7 @@
       "cue_id": "quick_cards/001",
       "entry": null,
       "course": {
-        "start": 98.408,
+        "start": 96.495,
         "duration": 9.264
       },
       "tracks": [
@@ -1493,7 +1493,7 @@
       "cue_id": "quick_cards/002",
       "entry": null,
       "course": {
-        "start": 107.672,
+        "start": 105.759,
         "duration": 13.68
       },
       "tracks": [
@@ -1592,7 +1592,7 @@
       "cue_id": "quick_cards/003",
       "entry": null,
       "course": {
-        "start": 121.352,
+        "start": 119.439,
         "duration": 8.832
       },
       "tracks": [
@@ -1678,8 +1678,8 @@
       "cue_id": "quick_reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 130.184,
-        "duration": 3.448
+        "start": 128.271,
+        "duration": 3.255
       },
       "tracks": [
         {
@@ -1693,7 +1693,7 @@
               "animation": "quick_reserve/title_3_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.448,
+              "source_end": 3.255,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1710,14 +1710,14 @@
               "asset": "media/tts/quick.cues/quick_reserve__title_3_3.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.448,
+              "source_end": 2.255,
               "source_start_sample": 0,
-              "source_end_sample": 58752
+              "source_end_sample": 54120
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.448,
+              "cue_start": 2.255,
               "duration": 1.0
             }
           ]
@@ -1757,7 +1757,7 @@
       "cue_id": "quick_reserve/001",
       "entry": null,
       "course": {
-        "start": 133.632,
+        "start": 131.526,
         "duration": 9.48
       },
       "tracks": [
@@ -1856,7 +1856,7 @@
       "cue_id": "quick_reserve/002",
       "entry": null,
       "course": {
-        "start": 143.112,
+        "start": 141.006,
         "duration": 9.24
       },
       "tracks": [
@@ -1955,7 +1955,7 @@
       "cue_id": "quick_reserve/003",
       "entry": null,
       "course": {
-        "start": 152.352,
+        "start": 150.246,
         "duration": 3.888
       },
       "tracks": [
@@ -2028,7 +2028,7 @@
       "cue_id": "quick_gold/001",
       "entry": null,
       "course": {
-        "start": 156.24,
+        "start": 154.134,
         "duration": 7.656
       },
       "tracks": [
@@ -2114,8 +2114,8 @@
       "cue_id": "quick_nobles/title_3_4",
       "entry": null,
       "course": {
-        "start": 163.896,
-        "duration": 3.256
+        "start": 161.79,
+        "duration": 2.995
       },
       "tracks": [
         {
@@ -2129,7 +2129,7 @@
               "animation": "quick_nobles/title_3_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.256,
+              "source_end": 2.995,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2146,14 +2146,14 @@
               "asset": "media/tts/quick.cues/quick_nobles__title_3_4.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.256,
+              "source_end": 1.995,
               "source_start_sample": 0,
-              "source_end_sample": 54144
+              "source_end_sample": 47880
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.256,
+              "cue_start": 1.995,
               "duration": 1.0
             }
           ]
@@ -2193,7 +2193,7 @@
       "cue_id": "quick_nobles/001",
       "entry": null,
       "course": {
-        "start": 167.152,
+        "start": 164.785,
         "duration": 6.69
       },
       "tracks": [
@@ -2279,7 +2279,7 @@
       "cue_id": "quick_nobles/002",
       "entry": null,
       "course": {
-        "start": 173.842,
+        "start": 171.475,
         "duration": 6.2
       },
       "tracks": [
@@ -2352,7 +2352,7 @@
       "cue_id": "quick_nobles/003",
       "entry": null,
       "course": {
-        "start": 180.042,
+        "start": 177.675,
         "duration": 8.0
       },
       "tracks": [
@@ -2425,8 +2425,8 @@
       "cue_id": "quick_end/title_4",
       "entry": null,
       "course": {
-        "start": 188.042,
-        "duration": 2.848
+        "start": 185.675,
+        "duration": 2.645
       },
       "tracks": [
         {
@@ -2440,7 +2440,7 @@
               "animation": "quick_end/title_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.848,
+              "source_end": 2.645,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2457,14 +2457,14 @@
               "asset": "media/tts/quick.cues/quick_end__title_4.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.848,
+              "source_end": 1.645,
               "source_start_sample": 0,
-              "source_end_sample": 44352
+              "source_end_sample": 39480
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.848,
+              "cue_start": 1.645,
               "duration": 1.0
             }
           ]
@@ -2503,7 +2503,7 @@
       "cue_id": "quick_end/001",
       "entry": null,
       "course": {
-        "start": 190.89,
+        "start": 188.32,
         "duration": 8.688
       },
       "tracks": [
@@ -2609,9 +2609,9 @@
       "cue_id": "quick_intro/title_1",
       "mode": "audio",
       "original_duration": 3.08,
-      "audio_end": 2.656,
+      "audio_end": 2.245,
       "visual_end": 3.08,
-      "duration": 2.656
+      "duration": 2.245
     },
     {
       "code": "cue_timing_policy",
@@ -2629,9 +2629,9 @@
       "cue_id": "quick_setup_cards/title_2",
       "mode": "audio",
       "original_duration": 2.99,
-      "audio_end": 2.872,
+      "audio_end": 2.445,
       "visual_end": 2.99,
-      "duration": 2.872
+      "duration": 2.445
     },
     {
       "code": "cue_timing_policy",
@@ -2699,9 +2699,9 @@
       "cue_id": "quick_turn/title_3",
       "mode": "audio",
       "original_duration": 3.57,
-      "audio_end": 3.448,
+      "audio_end": 3.085,
       "visual_end": 3.57,
-      "duration": 3.448
+      "duration": 3.085
     },
     {
       "code": "cue_timing_policy",
@@ -2729,9 +2729,9 @@
       "cue_id": "quick_take_gems/title_3_1",
       "mode": "audio",
       "original_duration": 3.31,
-      "audio_end": 3.256,
+      "audio_end": 2.905,
       "visual_end": 3.31,
-      "duration": 3.256
+      "duration": 2.905
     },
     {
       "code": "cue_timing_policy",
@@ -2778,10 +2778,10 @@
       "severity": "info",
       "cue_id": "quick_cards/title_3_2",
       "mode": "audio",
-      "original_duration": 3.856,
-      "audio_end": 3.856,
+      "original_duration": 3.6,
+      "audio_end": 3.495,
       "visual_end": 3.6,
-      "duration": 3.856
+      "duration": 3.495
     },
     {
       "code": "cue_timing_policy",
@@ -2819,9 +2819,9 @@
       "cue_id": "quick_reserve/title_3_3",
       "mode": "audio",
       "original_duration": 3.55,
-      "audio_end": 3.448,
+      "audio_end": 3.255,
       "visual_end": 3.55,
-      "duration": 3.448
+      "duration": 3.255
     },
     {
       "code": "cue_timing_policy",
@@ -2869,9 +2869,9 @@
       "cue_id": "quick_nobles/title_3_4",
       "mode": "audio",
       "original_duration": 3.44,
-      "audio_end": 3.256,
+      "audio_end": 2.995,
       "visual_end": 3.44,
-      "duration": 3.256
+      "duration": 2.995
     },
     {
       "code": "cue_timing_policy",
@@ -2909,9 +2909,9 @@
       "cue_id": "quick_end/title_4",
       "mode": "audio",
       "original_duration": 3.26,
-      "audio_end": 2.848,
+      "audio_end": 2.645,
       "visual_end": 3.26,
-      "duration": 2.848
+      "duration": 2.645
     },
     {
       "code": "cue_timing_policy",

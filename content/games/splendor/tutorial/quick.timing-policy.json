@@ -10,35 +10,43 @@
   "cues": {
     "quick_intro/title_1": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_setup_cards/title_2": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_turn/title_3": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_take_gems/title_3_1": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_cards/title_3_2": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_reserve/title_3_3": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_nobles/title_3_4": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     },
     "quick_end/title_4": {
       "mode": "audio",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
     }
   },
   "audio_groups": {

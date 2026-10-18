@@ -141,8 +141,19 @@ python animation/tts_doubao.py \
 
 标题 cue 使用两段逻辑：
 
-1. `end_ref` 指向 `speech_end`，逻辑截掉 TTS 文件自带的尾部静音；
-2. timing policy 追加完整 `trailing_silence_seconds: 1.0`。
+1. timing policy 设置 `trim_to_speech_end: true`，构建器把逻辑播放终点
+   clamp 到 `speech_end_ref`，从而截掉 TTS 文件自带的尾部静音；
+2. timing policy 再追加完整 `trailing_silence_seconds: 1.0`。
+
+`trim_to_speech_end` 是布尔策略，不需要在脚本中写秒数。标题 cue 配置示例：
+
+```json
+{
+  "mode": "audio",
+  "trim_to_speech_end": true,
+  "trailing_silence_seconds": 1.0
+}
+```
 
 例如：
 
@@ -167,6 +178,7 @@ cue duration       = 2.245s
   "cues": {
     "quick_intro/title_1": {
       "mode": "audio",
+      "trim_to_speech_end": true,
       "trailing_silence_seconds": 1.0
     }
   }

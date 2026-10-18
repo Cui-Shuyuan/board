@@ -195,8 +195,8 @@ cue 与逻辑切片的对应关系也集中在这个文件的 `cues` 映射里�
 
 标题 cue 的停顿不再通过“扣除 TTS 尾部静音”来计算。正确流程是：
 
-1. slice manifest 把标题音频的 `end` 直接设为 `speech_end`；
-2. plan 使用该逻辑范围，TTS 自带的尾部静音被逻辑截断；
+1. timing policy 对标题 cue 设置 `trim_to_speech_end: true`；
+2. 构建器把音频逻辑播放终点 clamp 到 slice manifest 的 `speech_end_ref`；
 3. timing policy 再追加完整的 `trailing_silence_seconds: 1.0`。
 
 例如 `quick_intro/title_1`：

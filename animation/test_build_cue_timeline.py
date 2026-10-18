@@ -179,6 +179,7 @@ class BuildCueTimelineTests(unittest.TestCase):
             "cues": {
                 "quick/one": {
                     "mode": "audio",
+                    "trim_to_speech_end": True,
                     "trailing_silence_seconds": 1.0,
                 },
             },
@@ -223,7 +224,7 @@ class BuildCueTimelineTests(unittest.TestCase):
             "sample_rate": 24000,
             "timing_points": {
                 "logical/one.audio.start": {"time": 0.0},
-                "logical/one.audio.end": {"time": 0.8},
+                "logical/one.audio.end": {"time": 1.0},
                 "logical/one.audio.speech_end": {"time": 0.8},
             },
             "cues": {
@@ -248,6 +249,7 @@ class BuildCueTimelineTests(unittest.TestCase):
             "cues": {
                 "quick/one": {
                     "mode": "audio",
+                    "trim_to_speech_end": True,
                     "trailing_silence_seconds": 1.0,
                 },
             },

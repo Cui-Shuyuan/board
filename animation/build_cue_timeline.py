@@ -188,6 +188,17 @@ def _cue_post_speech_silence_seconds(policy_document: dict, cue_id: str) -> floa
     return seconds
 
 
+def _cue_trim_to_speech_end(policy_document: dict, cue_id: str) -> bool:
+    option = (policy_document.get("cues") or {}).get(cue_id)
+    if not isinstance(option, dict):
+        return False
+    value = option.get("trim_to_speech_end", False)
+    if not isinstance(value, bool):
+        raise BuildError(
+            f"timing policy cue {cue_id!r} trim_to_speech_end must be boolean")
+    return value
+
+
 def _apply_timing_policy(
     document: dict,
     policy_document: dict,
@@ -1031,6 +1042,8 @@ def _build_cue_plan_set_from_audio_slices(
             if not math.isfinite(speech_end):
                 raise BuildError(
                     f"audio slice {cue_id!r}[{slice_index}] has invalid speech_end")
+            if _cue_trim_to_speech_end(policy_document, cue_id):
+                end = min(end, max(start, speech_end))
             duration = end - start
             audio_segments.append({
                 "id": f"audio.slice.{slice_index}",
