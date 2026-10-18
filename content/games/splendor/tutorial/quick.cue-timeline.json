@@ -5,7 +5,7 @@
   "track": "quick",
   "course": {
     "start": 0.0,
-    "duration": 200.778
+    "duration": 198.208
   },
   "cues": [
     {
@@ -14,7 +14,7 @@
       "entry": null,
       "course": {
         "start": 0.0,
-        "duration": 2.656
+        "duration": 2.245
       },
       "tracks": [
         {
@@ -28,7 +28,7 @@
               "animation": "quick_intro/title_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.656,
+              "source_end": 2.245,
               "after_end": "hold_last_frame"
             }
           ]
@@ -52,7 +52,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 1.656,
-              "duration": 1.0
+              "duration": 0.589
             }
           ]
         }
@@ -61,7 +61,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.285,
-          "duration": 2.371,
+          "duration": 1.96,
           "text": "一，背景。"
         }
       ],
@@ -76,7 +76,7 @@
       "cue_id": "quick_intro/001",
       "entry": null,
       "course": {
-        "start": 2.656,
+        "start": 2.245,
         "duration": 10.296
       },
       "tracks": [
@@ -139,8 +139,8 @@
       "cue_id": "quick_setup_cards/title_2",
       "entry": null,
       "course": {
-        "start": 12.952,
-        "duration": 2.872
+        "start": 12.541,
+        "duration": 2.445
       },
       "tracks": [
         {
@@ -154,7 +154,7 @@
               "animation": "quick_setup_cards/title_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.872,
+              "source_end": 2.445,
               "after_end": "hold_last_frame"
             }
           ]
@@ -178,7 +178,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 1.872,
-              "duration": 1.0
+              "duration": 0.573
             }
           ]
         }
@@ -187,7 +187,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.565,
-          "duration": 2.307,
+          "duration": 1.88,
           "text": "2，设置。"
         }
       ],
@@ -202,7 +202,7 @@
       "cue_id": "quick_setup_cards/001.1",
       "entry": null,
       "course": {
-        "start": 15.824,
+        "start": 14.986,
         "duration": 6.096
       },
       "tracks": [
@@ -275,7 +275,7 @@
       "cue_id": "quick_setup_cards/001.2",
       "entry": null,
       "course": {
-        "start": 21.92,
+        "start": 21.082,
         "duration": 6.432
       },
       "tracks": [
@@ -380,7 +380,7 @@
       "cue_id": "quick_setup_gems/002",
       "entry": null,
       "course": {
-        "start": 28.352,
+        "start": 27.514,
         "duration": 10.032
       },
       "tracks": [
@@ -443,7 +443,7 @@
       "cue_id": "quick_setup_players/001",
       "entry": null,
       "course": {
-        "start": 38.384,
+        "start": 37.546,
         "duration": 4.848
       },
       "tracks": [
@@ -484,7 +484,7 @@
       "cue_id": "quick_setup_players/002",
       "entry": null,
       "course": {
-        "start": 43.232,
+        "start": 42.394,
         "duration": 2.28
       },
       "tracks": [
@@ -541,7 +541,7 @@
       "cue_id": "quick_setup_players/003",
       "entry": null,
       "course": {
-        "start": 45.512,
+        "start": 44.674,
         "duration": 2.448
       },
       "tracks": [
@@ -598,8 +598,8 @@
       "cue_id": "quick_turn/title_3",
       "entry": null,
       "course": {
-        "start": 47.96,
-        "duration": 3.448
+        "start": 47.122,
+        "duration": 3.085
       },
       "tracks": [
         {
@@ -613,7 +613,7 @@
               "animation": "quick_turn/title_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.448,
+              "source_end": 3.085,
               "after_end": "hold_last_frame"
             }
           ]
@@ -637,7 +637,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 2.448,
-              "duration": 1.0
+              "duration": 0.637
             }
           ]
         }
@@ -646,7 +646,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.475,
-          "duration": 2.973,
+          "duration": 2.61,
           "text": "3，回合与行动。"
         }
       ],
@@ -661,7 +661,7 @@
       "cue_id": "quick_turn/001",
       "entry": null,
       "course": {
-        "start": 51.408,
+        "start": 50.207,
         "duration": 5.472
       },
       "tracks": [
@@ -718,7 +718,7 @@
       "cue_id": "quick_turn/002",
       "entry": null,
       "course": {
-        "start": 56.88,
+        "start": 55.679,
         "duration": 10.032
       },
       "tracks": [
@@ -787,8 +787,8 @@
       "cue_id": "quick_take_gems/title_3_1",
       "entry": null,
       "course": {
-        "start": 66.912,
-        "duration": 3.256
+        "start": 65.711,
+        "duration": 2.905
       },
       "tracks": [
         {
@@ -802,7 +802,7 @@
               "animation": "quick_take_gems/title_3_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.256,
+              "source_end": 2.905,
               "after_end": "hold_last_frame"
             }
           ]
@@ -826,7 +826,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 2.256,
-              "duration": 1.0
+              "duration": 0.649
             }
           ]
         }
@@ -835,7 +835,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.925,
-          "duration": 2.331,
+          "duration": 1.98,
           "text": "3.1，拿宝石。"
         }
       ],
@@ -851,7 +851,7 @@
       "cue_id": "quick_take_gems/different.001",
       "entry": null,
       "course": {
-        "start": 70.168,
+        "start": 68.616,
         "duration": 4.824
       },
       "tracks": [
@@ -909,7 +909,7 @@
       "cue_id": "quick_take_gems/same.001",
       "entry": null,
       "course": {
-        "start": 74.992,
+        "start": 73.44,
         "duration": 3.24
       },
       "tracks": [
@@ -967,7 +967,7 @@
       "cue_id": "quick_take_gems/002",
       "entry": null,
       "course": {
-        "start": 78.232,
+        "start": 76.68,
         "duration": 7.248
       },
       "tracks": [
@@ -1031,7 +1031,7 @@
       "cue_id": "quick_take_gems/003",
       "entry": null,
       "course": {
-        "start": 85.48,
+        "start": 83.928,
         "duration": 10.272
       },
       "tracks": [
@@ -1095,8 +1095,8 @@
       "cue_id": "quick_cards/title_3_2",
       "entry": null,
       "course": {
-        "start": 95.752,
-        "duration": 3.856
+        "start": 94.2,
+        "duration": 3.495
       },
       "tracks": [
         {
@@ -1110,7 +1110,7 @@
               "animation": "quick_cards/title_3_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.6,
+              "source_end": 3.495,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1134,7 +1134,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 2.856,
-              "duration": 1.0
+              "duration": 0.639
             }
           ]
         }
@@ -1143,7 +1143,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.856,
+          "duration": 3.495,
           "text": "3.2，购买发展卡。"
         }
       ],
@@ -1159,7 +1159,7 @@
       "cue_id": "quick_cards/001",
       "entry": null,
       "course": {
-        "start": 99.608,
+        "start": 97.695,
         "duration": 9.264
       },
       "tracks": [
@@ -1223,7 +1223,7 @@
       "cue_id": "quick_cards/002",
       "entry": null,
       "course": {
-        "start": 108.872,
+        "start": 106.959,
         "duration": 13.68
       },
       "tracks": [
@@ -1293,7 +1293,7 @@
       "cue_id": "quick_cards/003",
       "entry": null,
       "course": {
-        "start": 122.552,
+        "start": 120.639,
         "duration": 8.832
       },
       "tracks": [
@@ -1357,8 +1357,8 @@
       "cue_id": "quick_reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 131.384,
-        "duration": 3.448
+        "start": 129.471,
+        "duration": 3.255
       },
       "tracks": [
         {
@@ -1372,7 +1372,7 @@
               "animation": "quick_reserve/title_3_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.448,
+              "source_end": 3.255,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1396,7 +1396,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 2.448,
-              "duration": 1.0
+              "duration": 0.807
             }
           ]
         }
@@ -1405,7 +1405,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.935,
-          "duration": 2.513,
+          "duration": 2.32,
           "text": "3.3，保留发展卡。"
         }
       ],
@@ -1421,7 +1421,7 @@
       "cue_id": "quick_reserve/001",
       "entry": null,
       "course": {
-        "start": 134.832,
+        "start": 132.726,
         "duration": 9.48
       },
       "tracks": [
@@ -1491,7 +1491,7 @@
       "cue_id": "quick_reserve/002",
       "entry": null,
       "course": {
-        "start": 144.312,
+        "start": 142.206,
         "duration": 9.24
       },
       "tracks": [
@@ -1561,7 +1561,7 @@
       "cue_id": "quick_reserve/003",
       "entry": null,
       "course": {
-        "start": 153.552,
+        "start": 151.446,
         "duration": 3.888
       },
       "tracks": [
@@ -1619,7 +1619,7 @@
       "cue_id": "quick_gold/001",
       "entry": null,
       "course": {
-        "start": 157.44,
+        "start": 155.334,
         "duration": 7.656
       },
       "tracks": [
@@ -1683,8 +1683,8 @@
       "cue_id": "quick_nobles/title_3_4",
       "entry": null,
       "course": {
-        "start": 165.096,
-        "duration": 3.256
+        "start": 162.99,
+        "duration": 2.995
       },
       "tracks": [
         {
@@ -1698,7 +1698,7 @@
               "animation": "quick_nobles/title_3_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.256,
+              "source_end": 2.995,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1722,7 +1722,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 2.256,
-              "duration": 1.0
+              "duration": 0.739
             }
           ]
         }
@@ -1731,7 +1731,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.985,
-          "duration": 2.271,
+          "duration": 2.01,
           "text": "3.4，贵族。"
         }
       ],
@@ -1747,7 +1747,7 @@
       "cue_id": "quick_nobles/001",
       "entry": null,
       "course": {
-        "start": 168.352,
+        "start": 165.985,
         "duration": 6.69
       },
       "tracks": [
@@ -1805,7 +1805,7 @@
       "cue_id": "quick_nobles/002",
       "entry": null,
       "course": {
-        "start": 175.042,
+        "start": 172.675,
         "duration": 6.2
       },
       "tracks": [
@@ -1863,7 +1863,7 @@
       "cue_id": "quick_nobles/003",
       "entry": null,
       "course": {
-        "start": 181.242,
+        "start": 178.875,
         "duration": 8.0
       },
       "tracks": [
@@ -1921,8 +1921,8 @@
       "cue_id": "quick_end/title_4",
       "entry": null,
       "course": {
-        "start": 189.242,
-        "duration": 2.848
+        "start": 186.875,
+        "duration": 2.645
       },
       "tracks": [
         {
@@ -1936,7 +1936,7 @@
               "animation": "quick_end/title_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.848,
+              "source_end": 2.645,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1960,7 +1960,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 1.848,
-              "duration": 1.0
+              "duration": 0.797
             }
           ]
         }
@@ -1969,7 +1969,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.355,
-          "duration": 2.493,
+          "duration": 2.29,
           "text": "4，游戏结束。"
         }
       ],
@@ -1984,7 +1984,7 @@
       "cue_id": "quick_end/001",
       "entry": null,
       "course": {
-        "start": 192.09,
+        "start": 189.52,
         "duration": 8.688
       },
       "tracks": [
@@ -2061,9 +2061,9 @@
       "cue_id": "quick_intro/title_1",
       "mode": "audio",
       "original_duration": 3.08,
-      "audio_end": 2.656,
+      "audio_end": 2.245,
       "visual_end": 3.08,
-      "duration": 2.656
+      "duration": 2.245
     },
     {
       "code": "cue_timing_policy",
@@ -2081,9 +2081,9 @@
       "cue_id": "quick_setup_cards/title_2",
       "mode": "audio",
       "original_duration": 2.99,
-      "audio_end": 2.872,
+      "audio_end": 2.445,
       "visual_end": 2.99,
-      "duration": 2.872
+      "duration": 2.445
     },
     {
       "code": "cue_timing_policy",
@@ -2151,9 +2151,9 @@
       "cue_id": "quick_turn/title_3",
       "mode": "audio",
       "original_duration": 3.57,
-      "audio_end": 3.448,
+      "audio_end": 3.085,
       "visual_end": 3.57,
-      "duration": 3.448
+      "duration": 3.085
     },
     {
       "code": "cue_timing_policy",
@@ -2181,9 +2181,9 @@
       "cue_id": "quick_take_gems/title_3_1",
       "mode": "audio",
       "original_duration": 3.31,
-      "audio_end": 3.256,
+      "audio_end": 2.905,
       "visual_end": 3.31,
-      "duration": 3.256
+      "duration": 2.905
     },
     {
       "code": "cue_timing_policy",
@@ -2230,10 +2230,10 @@
       "severity": "info",
       "cue_id": "quick_cards/title_3_2",
       "mode": "audio",
-      "original_duration": 3.856,
-      "audio_end": 3.856,
+      "original_duration": 3.6,
+      "audio_end": 3.495,
       "visual_end": 3.6,
-      "duration": 3.856
+      "duration": 3.495
     },
     {
       "code": "cue_timing_policy",
@@ -2271,9 +2271,9 @@
       "cue_id": "quick_reserve/title_3_3",
       "mode": "audio",
       "original_duration": 3.55,
-      "audio_end": 3.448,
+      "audio_end": 3.255,
       "visual_end": 3.55,
-      "duration": 3.448
+      "duration": 3.255
     },
     {
       "code": "cue_timing_policy",
@@ -2321,9 +2321,9 @@
       "cue_id": "quick_nobles/title_3_4",
       "mode": "audio",
       "original_duration": 3.44,
-      "audio_end": 3.256,
+      "audio_end": 2.995,
       "visual_end": 3.44,
-      "duration": 3.256
+      "duration": 2.995
     },
     {
       "code": "cue_timing_policy",
@@ -2361,9 +2361,9 @@
       "cue_id": "quick_end/title_4",
       "mode": "audio",
       "original_duration": 3.26,
-      "audio_end": 2.848,
+      "audio_end": 2.645,
       "visual_end": 3.26,
-      "duration": 2.848
+      "duration": 2.645
     },
     {
       "code": "cue_timing_policy",
