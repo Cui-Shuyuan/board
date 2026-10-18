@@ -117,6 +117,89 @@ class BuildCueTimelineTests(unittest.TestCase):
         with self.assertRaisesRegex(builder.BuildError, "unknown cue ids"):
             builder.build_plan_set(self.root, self.game, self.track)
 
+    def test_cue_tts_manifest_builds_whole_file_audio_tracks(self) -> None:
+        game_dir = self.root / "content" / "games" / self.game
+        media = game_dir / "media" / "tts" / "test"
+        media.mkdir(parents=True)
+        for name in ("a.mp3", "b.mp3"):
+            (media / name).write_bytes(b"fake-mp3")
+        subtitle = media / "a.subtitle.json"
+        subtitle.write_text(json.dumps([
+            {
+                "text": "first beat",
+                "words": [
+                    {"word": "first", "startTime": 0.1, "endTime": 0.4},
+                    {"word": "beat", "startTime": 0.4, "endTime": 0.8},
+                ],
+            },
+        ]), encoding="utf-8")
+
+        script_path = game_dir / "tutorial" / "build" / "quick.script.json"
+        script_path.parent.mkdir(parents=True)
+        script_path.write_text(json.dumps({
+            "cues": [{
+                "id": "quick/one",
+                "group_path": ["chapter"],
+                "refs": ["concept"],
+                "beats": [
+                    {"id": "quick/one.b1", "text": "first beat"},
+                    {"id": "quick/one.b2", "text": "second beat"},
+                ],
+            }],
+        }), encoding="utf-8")
+
+        tts_manifest = media / "tts_manifest.json"
+        tts_manifest.write_text(json.dumps({
+            "sample_rate": 24000,
+            "cues": [
+                {
+                    "id": "quick/one.b1",
+                    "duration": 1.0,
+                    "file": "media/tts/test/a.mp3",
+                    "subtitle_file": "media/tts/test/a.subtitle.json",
+                },
+                {
+                    "id": "quick/one.b2",
+                    "duration": 1.5,
+                    "file": "media/tts/test/b.mp3",
+                },
+            ],
+        }), encoding="utf-8")
+
+        policy = game_dir / "tutorial" / "quick.timing-policy.json"
+        policy.write_text(json.dumps({
+            "schema": builder.TIMING_POLICY_SCHEMA,
+            "schema_version": builder.TIMING_POLICY_VERSION,
+            "game_id": self.game,
+            "track": self.track,
+            "audio_source": "cue_tts_manifest",
+            "tts_manifest": "media/tts/test/tts_manifest.json",
+            "script_source": "tutorial/build/quick.script.json",
+            "default_mode": "max",
+            "cues": {
+                "quick/one": {
+                    "mode": "audio",
+                    "trailing_silence_seconds": 1.0,
+                },
+            },
+        }), encoding="utf-8")
+
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        plan = document["cues"][0]
+        audio_track = next(
+            track for track in plan["tracks"] if track["kind"] == "audio")
+        segments = audio_track["segments"]
+        self.assertEqual([segment["type"] for segment in segments],
+                         ["audio_clip", "audio_clip", "silence"])
+        self.assertEqual(segments[0]["source_start"], 0.0)
+        self.assertEqual(segments[1]["source_start"], 0.0)
+        self.assertEqual(segments[1]["cue_start"], 1.0)
+        self.assertEqual(segments[2]["cue_start"], 2.5)
+        self.assertEqual(segments[2]["duration"], 1.0)
+        self.assertEqual(plan["course"]["duration"], 3.5)
+        self.assertEqual(plan["subtitles"][0]["cue_start"], 0.1)
+        self.assertEqual(plan["subtitles"][0]["duration"], 0.7)
+
     def test_content_audio_boundary_override_is_applied_and_validated(self) -> None:
         boundaries = self.root / "content" / "games" / self.game / "tutorial" / "quick.audio-boundaries.json"
         boundaries.write_text(json.dumps({

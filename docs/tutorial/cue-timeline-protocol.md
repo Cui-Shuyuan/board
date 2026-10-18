@@ -35,18 +35,46 @@ python3 animation/build_cue_timeline.py --game splendor --track quick
 content/games/splendor/tutorial/quick.cue-timeline.json
 ```
 
-生成器读取：
+生成器在 quick 上使用 cue-level TTS 音频源，而不是 legacy section MP3：
 
 ```text
-content/games/splendor/tutorial/quick.runtime.json
+content/games/splendor/tutorial/quick.cue.tts.lrc
+content/games/splendor/media/tts/quick.cues/tts_manifest.json
+content/games/splendor/tutorial/build/quick.script.json
 content/games/splendor/tutorial/anim/v2/quick.compiled.json
-content/games/splendor/tutorial/quick.audio-boundaries.json   # 可选
+content/games/splendor/tutorial/quick.timing-policy.json
 ```
 
-`*.audio-boundaries.json` 是对 legacy 字幕对齐得到的 `audio_start` 落点晚于
-真实首音素时的显式、内容级修正。它记录具体 cue/segment 的波形起点，不是
-固定 pre-roll 常量；修正后重新计算 cue duration、后续 course.start 和 track
-总时长。生成器不会修改任何已有 runtime/compiled 文件。生成结果使用：
+先生成逐 cue/逐 beat 的 TTS：
+
+```bash
+python animation/tts_doubao.py \
+  --provider seed2 \
+  --voice zh_female_vv_uranus_bigtts \
+  --resource-id seed-tts-2.0 \
+  --input content/games/splendor/tutorial/quick.cue.tts.lrc \
+  --out-dir content/games/splendor/media/tts/quick.cues \
+  --track quick
+```
+
+再生成共享 plan：
+
+```bash
+python3 animation/build_cue_timeline.py --game splendor --track quick
+```
+
+输出：
+
+```text
+content/games/splendor/tutorial/quick.cue-timeline.json
+```
+
+这里不再对共享 section 音频做任意秒数 seek，也不根据波形决定从第几秒开始。
+每个 beat 是一个完整的 MP3；一个 cue 可以包含一个或多个顺序排列的
+`audio_clip`，每个 clip 的 `source_start=0`，`source_end` 等于该文件时长。
+标题 cue 的显式 1 秒空白由 timing policy 追加为 `silence` segment。
+
+生成结果使用：
 
 - plan set schema：`tutorial-cue-plan-set/v1`
 - plan set `schema_version`：`1`
@@ -59,38 +87,48 @@ content/games/splendor/tutorial/quick.audio-boundaries.json   # 可选
 - `tracks`（audio/visual 执行数据；字幕窗口在 `subtitles`）；
 - `entry`。
 
-`subtitles` 由 adapter 从 legacy runtime 的 `t` / `end` 转成 plan schema 的
-`id` / `cue_start` / `duration` / `text`。字幕窗口只作展示，不参与音频裁切或
-调度；word/confidence 数据不写入 plan。
+字幕来自每个 beat 的 TTS subtitle JSON，转换为 plan 的
+`id` / `cue_start` / `duration` / `text`。字幕只作展示，不参与音频裁切或调度。
 
-Phase 1 adapter 仍保留通用语义：
+### 4.2.1 per-cue timing policy
 
-```text
-max(旧 runtime duration, audio track 内容结束, compiled animation duration)
-```
-
-但 Phase 4 的 quick 生成入口在 adapter 输出之上应用可配置的 per-cue timing policy：
+配置文件：
 
 ```text
 content/games/splendor/tutorial/quick.timing-policy.json
 ```
 
-schema 为 `tutorial-cue-timing-policy/v1`，`schema_version=1`。支持：
+关键字段：
 
-- `default_mode: "max"`：默认保持 Phase 1 语义，音频结束但动画更长时不会被截断；
-- 单 cue 覆盖 `"audio"`：cue duration 使用完整 audio track（含显式 silence），visual 超出部分裁到 cue duration，并由 `hold_last_frame` 保持最后画面；
-- 可选 `"visual"`：visual 为准，但若会截断音频则生成失败，要求改用 `max`；
-- 可选 `"runtime"`：以 legacy runtime duration 为基准，并确保不会截断音频。
+```json
+{
+  "audio_source": "cue_tts_manifest",
+  "tts_manifest": "media/tts/quick.cues/tts_manifest.json",
+  "script_source": "tutorial/build/quick.script.json",
+  "default_mode": "max",
+  "cues": {
+    "quick_intro/title_1": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    }
+  }
+}
+```
 
-当前 quick 的配置是：
+支持模式：
 
-- 默认 `max`，因此 section 10/11 等动画长于音频的 cue 仍会完整播放动画；
-- 所有标题 cue 单独设为 `audio`。标题 cue 的时长因此严格等于
-  “MP3 clip + authored 1 秒 silence”，不会因为 compiled 动画尾部多出额外停顿。
+- `max`：cue 在所有 track 都播完后结束。音频先结束则动画继续；动画先结束则
+  保持最后画面等待音频。这是正文 cue 的默认模式，因此 section 10/11 等动画
+  更长的 cue 不会被截断；
+- `audio`：cue duration 使用完整 audio track（含 `trailing_silence_seconds`），
+  visual 超出部分裁到 cue duration 并保持最后画面。标题 cue 使用该模式，
+  因此严格等于“MP3 + 1 秒 silence”；
+- `visual`：visual 为准，但若会截断音频则生成失败；
+- `runtime`：以 legacy runtime duration 为基准，并保证不截断音频。
 
-cue 起点按最终 duration 和 legacy runtime 中显式 gap 重新累加。只有 legacy runtime
-存在的 gap 会被保留，compiled 动画尾部不会伪装成 gap。输出同时携带 `text`、
-`group_path`、`refs` 等非时间元数据，供 Android 章节树/预览使用，但这些字段不参与播放时钟。
+cue 起点按最终 duration 顺序累加；每个 cue 全部轨道完成后自动进入下一条。
+输出同时携带 `text`、`group_path`、`refs` 等非时间元数据，供 Android
+章节树/预览使用，但这些字段不参与播放时钟。
 
 生成器会再次执行 `validate_plan_set`，并且重复运行必须产生逐字节相同的文件。内容发布脚本 `tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json` 加入 release 文件集合、manifest entry、大小与 SHA-256 完整性校验。
 
@@ -134,10 +172,9 @@ Unity 新增 plan set loader，读取与 Android 完全相同的 `{track}.cue-ti
 - `PlayCue` / `PlayCueAt` / `SeekTo` / `SeekRelative` / autoAdvance / cancel 全部由 plan 驱动的同一个 `CuePlaybackController` 执行；
 - 控制器 `position` / `duration` / `cueIndex` 和状态上报中的 cue 全局位置、track 总时长与 Android plan 同源；
 - generation 取消语义不变，旧回调不能改变新 cue/timeline；
-- 音频执行器在首次加载时解码原音频为 PCM，并按每个 `audio_clip` 的
-  `source_start/source_end` 创建从 sample 0 开始的内存片段。这样 cue 从共享
-  section 音频中间开始时不会触发 MP3 decoder seek，也不会吞掉首字；字幕时间
-  仍只来自 plan，不用于决定音频边界。
+- 音频执行器仍支持 PCM 片段解析；quick 的 `audio_clip` 都是完整文件且
+  `source_start=0`，所以正常顺序播放不会依赖 MP3 中途 seek。字幕时间仍只来自
+  plan，不用于决定音频边界。
 
 Phase 3 的 `useCueTimelineV1` + allowlist 代码仅作兼容保留；track 模式开启时该 allowlist 分支完全不执行。plan 校验失败时整个 track 回退 legacy，不会回退到 Phase 3 单 cue 混合模式。
 

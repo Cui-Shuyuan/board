@@ -3,15 +3,42 @@
   "schema_version": 1,
   "game_id": "splendor",
   "track": "quick",
+  "audio_source": "cue_tts_manifest",
+  "tts_manifest": "media/tts/quick.cues/tts_manifest.json",
+  "script_source": "tutorial/build/quick.script.json",
   "default_mode": "max",
   "cues": {
-    "quick_intro/title_1": "audio",
-    "quick_setup_cards/title_2": "audio",
-    "quick_turn/title_3": "audio",
-    "quick_take_gems/title_3_1": "audio",
-    "quick_cards/title_3_2": "audio",
-    "quick_reserve/title_3_3": "audio",
-    "quick_nobles/title_3_4": "audio",
-    "quick_end/title_4": "audio"
+    "quick_intro/title_1": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_setup_cards/title_2": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_turn/title_3": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_take_gems/title_3_1": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_cards/title_3_2": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_reserve/title_3_3": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_nobles/title_3_4": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    },
+    "quick_end/title_4": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0
+    }
   }
 }
