@@ -806,7 +806,7 @@ namespace UnityEngine.Networking
 
 namespace UnityEngine
 {
-    public enum AudioType { MPEG, WAV, OGG }
+    public enum AudioType { UNKNOWN, ACC, AIFF, MPEG, OGGVORBIS, WAV }
 }
 
 namespace UnityEngine.UI

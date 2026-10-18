@@ -571,7 +571,13 @@ def _shared_group_ranges(
                     boundary = duration * ratio
                 else:
                     word_index = char_word[char_index]
-                    boundary = words[word_index]["start"]
+                    next_start = words[word_index]["start"]
+                    previous_end = words[word_index - 1]["end"] if word_index > 0 else 0.0
+                    # Cut in the middle of the inter-word silence when there is
+                    # one.  This keeps the whole pause and the next onset on
+                    # both sides of the cue boundary without waveform search.
+                    boundary = ((previous_end + next_start) / 2.0
+                                if next_start > previous_end else next_start)
                     search_from = char_index + len(needle)
             boundary = min(duration, max(boundaries[-1], boundary))
             boundaries.append(round(boundary, 9))
@@ -691,6 +697,28 @@ def _build_cue_plan_set_from_tts(
             raw_events,
         )
 
+    slice_manifest_rel = str(policy_document.get("slice_manifest") or "").strip()
+    slices_by_cue: dict[str, dict] = {}
+    if slice_manifest_rel:
+        slice_manifest_path = game_dir / slice_manifest_rel
+        slice_manifest = _load_json(slice_manifest_path)
+        for entry in slice_manifest.get("cues") or []:
+            if not isinstance(entry, dict):
+                continue
+            cue_id = str(entry.get("cue_id") or "").strip()
+            if not cue_id:
+                continue
+            asset = _normalize_game_relative_path(
+                str(entry.get("file") or ""), game_dir, game)
+            duration = float(entry.get("duration", 0.0))
+            if duration <= 0.0:
+                raise BuildError(
+                    f"invalid sliced audio duration for cue {cue_id!r}")
+            slices_by_cue[cue_id] = {
+                "asset": asset,
+                "duration": duration,
+            }
+
     plans: list[dict] = []
     diagnostics: list[dict] = [{
         "code": "cue_audio_source",
@@ -712,26 +740,38 @@ def _build_cue_plan_set_from_tts(
         group_id = cue_to_audio_group.get(cue_id)
         if group_id is not None:
             spec = group_specs[group_id]
-            entry = tts_by_beat[spec["beat_id"]]
-            group_duration = float(entry.get("duration", 0.0))
-            start, end = group_ranges[group_id][cue_id]
-            segment_duration = end - start
-            if segment_duration <= 0.0:
-                raise BuildError(
-                    f"audio group {group_id!r} produced empty cue range for {cue_id!r}")
-            asset = _normalize_game_relative_path(
-                str(entry.get("file") or ""), game_dir, game)
-            audio_segments.append({
-                "id": "audio.shared",
+            sliced = slices_by_cue.get(cue_id)
+            if sliced is not None:
+                segment_duration = float(sliced["duration"])
+                asset = str(sliced["asset"])
+                source_start = 0.0
+                source_end = segment_duration
+                playback_group = None
+            else:
+                entry = tts_by_beat[spec["beat_id"]]
+                start, end = group_ranges[group_id][cue_id]
+                segment_duration = end - start
+                if segment_duration <= 0.0:
+                    raise BuildError(
+                        f"audio group {group_id!r} produced empty cue range for {cue_id!r}")
+                asset = _normalize_game_relative_path(
+                    str(entry.get("file") or ""), game_dir, game)
+                source_start = start
+                source_end = end
+                playback_group = group_id
+            segment = {
+                "id": "audio.cue",
                 "type": "audio_clip",
                 "asset": asset,
                 "cue_start": 0.0,
-                "source_start": round(start, 9),
-                "source_end": round(end, 9),
-                "source_start_sample": int(round(start * sample_rate)),
-                "source_end_sample": int(round(end * sample_rate)),
-                "playback_group": group_id,
-            })
+                "source_start": round(source_start, 9),
+                "source_end": round(source_end, 9),
+                "source_start_sample": int(round(source_start * sample_rate)),
+                "source_end_sample": int(round(source_end * sample_rate)),
+            }
+            if playback_group is not None:
+                segment["playback_group"] = playback_group
+            audio_segments.append(segment)
             subtitles.append({
                 "id": "subtitle.0",
                 "cue_start": 0.0,

@@ -285,10 +285,44 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(first_audio["playback_group"], "shared")
         self.assertEqual(second_audio["playback_group"], "shared")
         self.assertEqual(first_audio["source_start"], 0.0)
-        self.assertEqual(first_audio["source_end"], 1.0)
-        self.assertEqual(second_audio["source_start"], 1.0)
+        self.assertEqual(first_audio["source_end"], 0.9)
+        self.assertEqual(second_audio["source_start"], 0.9)
         self.assertEqual(second_audio["source_end"], 2.0)
         self.assertEqual(second["course"]["start"], 1.0)
+
+        split_dir = media / "split"
+        split_dir.mkdir()
+        for name in ("one.wav", "two.wav"):
+            (split_dir / name).write_bytes(b"fake-wav")
+        (split_dir / "slices_manifest.json").write_text(json.dumps({
+            "schema": "tutorial-cue-audio-slices/v1",
+            "schema_version": 1,
+            "cues": [
+                {"cue_id": "quick/one", "file": "media/tts/test/split/one.wav",
+                 "duration": 0.9},
+                {"cue_id": "quick/two", "file": "media/tts/test/split/two.wav",
+                 "duration": 1.1},
+            ],
+        }), encoding="utf-8")
+        policy_doc = json.loads(
+            (game_dir / "tutorial" / "quick.timing-policy.json").read_text(encoding="utf-8"))
+        policy_doc["slice_manifest"] = "media/tts/test/split/slices_manifest.json"
+        (game_dir / "tutorial" / "quick.timing-policy.json").write_text(
+            json.dumps(policy_doc), encoding="utf-8")
+
+        sliced = builder.build_plan_set(self.root, self.game, self.track)
+        sliced_first = next(
+            track for track in sliced["cues"][0]["tracks"]
+            if track["kind"] == "audio")["segments"][0]
+        sliced_second = next(
+            track for track in sliced["cues"][1]["tracks"]
+            if track["kind"] == "audio")["segments"][0]
+        self.assertIn("/split/one.wav", sliced_first["asset"])
+        self.assertIn("/split/two.wav", sliced_second["asset"])
+        self.assertEqual(sliced_first["source_start"], 0.0)
+        self.assertEqual(sliced_second["source_start"], 0.0)
+        self.assertNotIn("playback_group", sliced_first)
+        self.assertNotIn("playback_group", sliced_second)
 
     def test_content_audio_boundary_override_is_applied_and_validated(self) -> None:
         boundaries = self.root / "content" / "games" / self.game / "tutorial" / "quick.audio-boundaries.json"

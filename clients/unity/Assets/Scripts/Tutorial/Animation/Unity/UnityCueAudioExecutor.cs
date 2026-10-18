@@ -123,7 +123,8 @@ namespace BoardGameTutorial.Animation
                     FailGeneration(generation, "audio asset path is empty: " + asset);
                     yield break;
                 }
-                UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(FilePathToUri(path), AudioType.MPEG);
+                UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(
+                    FilePathToUri(path), AudioTypeForPath(path));
                 request.timeout = 60;
                 activeRequest = request;
                 yield return request.SendWebRequest();
@@ -445,6 +446,15 @@ namespace BoardGameTutorial.Animation
             if (string.IsNullOrEmpty(asset)) return "";
             if (asset.Contains("://")) return asset;
             return Path.Combine(gameRoot, asset);
+        }
+
+        private static AudioType AudioTypeForPath(string path)
+        {
+            string extension = Path.GetExtension(path ?? "").ToLowerInvariant();
+            if (extension == ".wav") return AudioType.WAV;
+            if (extension == ".ogg") return AudioType.OGGVORBIS;
+            if (extension == ".aiff" || extension == ".aif") return AudioType.AIFF;
+            return AudioType.MPEG;
         }
 
         private static string FilePathToUri(string path)

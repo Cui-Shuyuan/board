@@ -1773,15 +1773,14 @@
           "tail_policy": "silence",
           "segments": [
             {
-              "id": "audio.shared",
+              "id": "audio.cue",
               "type": "audio_clip",
-              "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+              "asset": "media/tts/quick.cues/split/quick_nobles__001.wav",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 6.6000834,
+              "source_end": 6.447583333,
               "source_start_sample": 0,
-              "source_end_sample": 158402,
-              "playback_group": "quick_nobles_001_002"
+              "source_end_sample": 154742
             }
           ]
         }
@@ -1832,15 +1831,14 @@
           "tail_policy": "silence",
           "segments": [
             {
-              "id": "audio.shared",
+              "id": "audio.cue",
               "type": "audio_clip",
-              "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+              "asset": "media/tts/quick.cues/split/quick_nobles__002.wav",
               "cue_start": 0.0,
-              "source_start": 6.6000834,
-              "source_end": 8.064,
-              "source_start_sample": 158402,
-              "source_end_sample": 193536,
-              "playback_group": "quick_nobles_001_002"
+              "source_start": 0.0,
+              "source_end": 1.616416667,
+              "source_start_sample": 0,
+              "source_end_sample": 38794
             }
           ]
         }
@@ -2333,7 +2331,7 @@
       "cue_id": "quick_nobles/001",
       "mode": "max",
       "original_duration": 6.69,
-      "audio_end": 6.6000834,
+      "audio_end": 6.447583333,
       "visual_end": 6.69,
       "duration": 6.69
     },
@@ -2343,7 +2341,7 @@
       "cue_id": "quick_nobles/002",
       "mode": "max",
       "original_duration": 6.2,
-      "audio_end": 1.4639166,
+      "audio_end": 1.616416667,
       "visual_end": 6.2,
       "duration": 6.2
     },
