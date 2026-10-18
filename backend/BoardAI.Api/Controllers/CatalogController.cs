@@ -138,6 +138,16 @@ public class CatalogController : ControllerBase
         game.TutorialTrack = game.TutorialReady == true
             ? tracks.FirstOrDefault()
             : null;
+
+        // Phase 4 track-level cue timeline switch.  It is optional and must
+        // only reference playable tutorial tracks.  Unknown/duplicate entries
+        // and switches on rules-only games are dropped rather than exposed to
+        // clients as an unusable mode.
+        game.CueTimelineTracks = (game.CueTimelineTracks ?? new List<string>())
+            .Select(track => track.Trim())
+            .Where(track => tracks.Contains(track, StringComparer.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
     }
 
     private bool HasRulePackage(string gameId)
@@ -317,6 +327,14 @@ public class CatalogController : ControllerBase
 
         [JsonPropertyName("tutorial_track")]
         public string? TutorialTrack { get; set; }
+
+        /// <summary>
+        /// Tracks whose complete timing has moved to the shared compiled plan.
+        /// Android forwards the resulting mode to Unity; omitting this field
+        /// keeps the legacy runtime path.
+        /// </summary>
+        [JsonPropertyName("cue_timeline_tracks")]
+        public List<string>? CueTimelineTracks { get; set; }
 
         [JsonPropertyName("content_version")]
         public string? ContentVersion { get; set; }

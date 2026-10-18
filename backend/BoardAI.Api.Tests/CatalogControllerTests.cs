@@ -84,6 +84,64 @@ public sealed class CatalogControllerTests : IDisposable
     }
 
     [Fact]
+    public void GetGames_ExposesOnlyPlayableCueTimelineTracks()
+    {
+        WriteCatalog("timeline", """
+        {
+          "id": "timeline",
+          "released": true,
+          "name_zh": "时间轴",
+          "name_en": "Timeline",
+          "aliases": [],
+          "search_keys": [],
+          "min_players": 2,
+          "max_players": 4,
+          "rules_ready": true,
+          "tutorial_ready": true,
+          "tutorial_tracks": ["quick", "full"],
+          "tutorial_track": "quick",
+          "cue_timeline_tracks": ["quick", "unknown", "quick"]
+        }
+        """);
+        WriteManifest("timeline", "deadbeef", fileCount: 1, fileSize: 4096);
+        var controller = CreateController();
+
+        var game = ReadSingleGame(controller);
+
+        var tracks = game.GetProperty("cue_timeline_tracks")
+            .EnumerateArray()
+            .Select(item => item.GetString())
+            .ToArray();
+        Assert.Equal(new[] { "quick" }, tracks);
+    }
+
+    [Fact]
+    public void GetGames_RulesOnlyEntryNeverExposesCueTimelineTracks()
+    {
+        WriteCatalog("rulesonlytimeline", """
+        {
+          "id": "rulesonlytimeline",
+          "released": true,
+          "name_zh": "规则时间轴",
+          "name_en": "Rules Only Timeline",
+          "aliases": [],
+          "search_keys": [],
+          "min_players": 2,
+          "max_players": 4,
+          "rules_ready": true,
+          "tutorial_ready": false,
+          "tutorial_tracks": [],
+          "cue_timeline_tracks": ["quick"]
+        }
+        """);
+        var controller = CreateController();
+
+        var game = ReadSingleGame(controller);
+
+        Assert.Empty(game.GetProperty("cue_timeline_tracks").EnumerateArray());
+    }
+
+    [Fact]
     public void GetGames_OmittedRulesReadyWithoutConceptsFile_DefaultsToFalse()
     {
         WriteCatalog("notready", """

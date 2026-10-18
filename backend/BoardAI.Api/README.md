@@ -205,6 +205,7 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 
 - `rules_ready` / `tutorial_ready`：规则问答与教程是否可用；
 - `tutorial_tracks`：可播放 track 列表（Splendor 目前为 `["quick","full"]`，默认 `tutorial_track=quick`）；
+- `cue_timeline_tracks`：已整体迁移到共享 `{track}.cue-timeline.json` 的 track 列表（目前 Splendor 为 `["quick"]`）；Android 以此为唯一 track 级开关，并把实际模式传给 Unity；缺省为空，表示走旧 runtime；
 - 旧字段 `tutorial_track` 仅作兼容；只有 `rules_ready=true` 且 `tutorial_ready=false` 的规则-only 游戏不会暴露教程下载元数据。
 
 ## 项目结构
