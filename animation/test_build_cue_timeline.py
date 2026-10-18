@@ -226,7 +226,7 @@ class BuildCueTimelineTests(unittest.TestCase):
                     "id": "logical/one.audio",
                     "asset": "media/tts/test/one.mp3",
                     "start": 0.0,
-                    "end": 1.0,
+                    "end": 0.8,
                     "speech_end": 0.8,
                 }],
             },
@@ -243,7 +243,7 @@ class BuildCueTimelineTests(unittest.TestCase):
             "cues": {
                 "quick/one": {
                     "mode": "audio",
-                    "post_speech_silence_seconds": 1.0,
+                    "trailing_silence_seconds": 1.0,
                 },
             },
         }), encoding="utf-8")
@@ -254,9 +254,9 @@ class BuildCueTimelineTests(unittest.TestCase):
             track for track in plan["tracks"] if track["kind"] == "audio")["segments"]
         self.assertEqual(audio[0]["audio_slice_id"], "logical/one.audio")
         self.assertEqual(audio[0]["source_start"], 0.0)
-        self.assertEqual(audio[0]["source_end"], 1.0)
+        self.assertEqual(audio[0]["source_end"], 0.8)
         self.assertEqual(audio[1]["type"], "silence")
-        self.assertAlmostEqual(audio[1]["duration"], 0.8, places=6)
+        self.assertAlmostEqual(audio[1]["duration"], 1.0, places=6)
         self.assertAlmostEqual(plan["course"]["duration"], 1.8, places=6)
 
     def test_shared_audio_group_assigns_contiguous_ranges_to_serial_cues(self) -> None:

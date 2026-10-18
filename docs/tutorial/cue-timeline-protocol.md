@@ -156,7 +156,8 @@ schema 为 `tutorial-audio-slices/v1`。每个切片有稳定的逻辑 id，并�
 - `id`：脚本/plan 中引用的逻辑音频名；
 - `asset`：原始音频文件，保持完整；
 - `start/end`：该逻辑切片在原始音频中的采样范围；
-- `speech_end`：该段最后一个 TTS word 的结束时间，供停顿策略使用。
+- `speech_end`：该段最后一个 TTS word 的结束时间。标题 cue 的逻辑切片
+  `end` 会设为 `speech_end`，从而逻辑截掉 TTS 文件自带的尾部静音。
 
 cue 与逻辑切片的对应关系也集中在这个文件的 `cues` 映射里。生成 plan 时：
 
@@ -166,9 +167,23 @@ cue 与逻辑切片的对应关系也集中在这个文件的 `cues` 映射里�
 - 不产生新的音频文件，不修改原始 MP3；
 - 时间点不在构建脚本里散落，全部集中在 slice manifest。
 
-`post_speech_silence_seconds` 现在也读取这里的 `speech_end`。例如标题 TTS
-文件自带 0.411s 尾部静音、配置目标为 1.0s 时，只追加 0.589s silence，使
-口播最后一个 word 到下一 cue 的总停顿为 1.0s。
+标题 cue 的停顿不再通过“扣除 TTS 尾部静音”来计算。正确流程是：
+
+1. slice manifest 把标题音频的 `end` 直接设为 `speech_end`；
+2. plan 使用该逻辑范围，TTS 自带的尾部静音被逻辑截断；
+3. timing policy 再追加完整的 `trailing_silence_seconds: 1.0`。
+
+例如 `quick_intro/title_1`：
+
+```text
+TTS 文件总长      = 1.656s
+最后一个 word 结束 = 1.245s
+逻辑 slice end    = 1.245s
+追加 silence      = 1.000s
+cue duration      = 2.245s
+```
+
+因此口播结束后是**完整 1 秒**静音，而不是在原 TTS 尾部静音后再补 1 秒。
 
 ### 4.3 共享 track 级开关
 

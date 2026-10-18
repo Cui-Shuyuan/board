@@ -45,15 +45,15 @@
               "asset": "media/tts/quick.cues/quick_intro__title_1.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.656,
+              "source_end": 1.245,
               "source_start_sample": 0,
-              "source_end_sample": 39744
+              "source_end_sample": 29880
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.656,
-              "duration": 0.589
+              "cue_start": 1.245,
+              "duration": 1.0
             }
           ]
         }
@@ -167,15 +167,15 @@
               "asset": "media/tts/quick.cues/quick_setup_cards__title_2.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.872,
+              "source_end": 1.445,
               "source_start_sample": 0,
-              "source_end_sample": 44928
+              "source_end_sample": 34680
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.872,
-              "duration": 0.573
+              "cue_start": 1.445,
+              "duration": 1.0
             }
           ]
         }
@@ -607,15 +607,15 @@
               "asset": "media/tts/quick.cues/quick_turn__title_3.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.448,
+              "source_end": 2.085,
               "source_start_sample": 0,
-              "source_end_sample": 58752
+              "source_end_sample": 50040
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.448,
-              "duration": 0.637
+              "cue_start": 2.085,
+              "duration": 1.0
             }
           ]
         }
@@ -787,15 +787,15 @@
               "asset": "media/tts/quick.cues/quick_take_gems__title_3_1.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.256,
+              "source_end": 1.905,
               "source_start_sample": 0,
-              "source_end_sample": 54144
+              "source_end_sample": 45720
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.256,
-              "duration": 0.649
+              "cue_start": 1.905,
+              "duration": 1.0
             }
           ]
         }
@@ -1088,15 +1088,15 @@
               "asset": "media/tts/quick.cues/quick_cards__title_3_2.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.856,
+              "source_end": 2.495,
               "source_start_sample": 0,
-              "source_end_sample": 68544
+              "source_end_sample": 59880
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.856,
-              "duration": 0.639
+              "cue_start": 2.495,
+              "duration": 1.0
             }
           ]
         }
@@ -1330,15 +1330,15 @@
               "asset": "media/tts/quick.cues/quick_reserve__title_3_3.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.448,
+              "source_end": 2.255,
               "source_start_sample": 0,
-              "source_end_sample": 58752
+              "source_end_sample": 54120
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.448,
-              "duration": 0.807
+              "cue_start": 2.255,
+              "duration": 1.0
             }
           ]
         }
@@ -1631,15 +1631,15 @@
               "asset": "media/tts/quick.cues/quick_nobles__title_3_4.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.256,
+              "source_end": 1.995,
               "source_start_sample": 0,
-              "source_end_sample": 54144
+              "source_end_sample": 47880
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.256,
-              "duration": 0.739
+              "cue_start": 1.995,
+              "duration": 1.0
             }
           ]
         }
@@ -1873,15 +1873,15 @@
               "asset": "media/tts/quick.cues/quick_end__title_4.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.848,
+              "source_end": 1.645,
               "source_start_sample": 0,
-              "source_end_sample": 44352
+              "source_end_sample": 39480
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.848,
-              "duration": 0.797
+              "cue_start": 1.645,
+              "duration": 1.0
             }
           ]
         }

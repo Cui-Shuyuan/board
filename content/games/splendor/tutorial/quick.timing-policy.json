@@ -10,35 +10,35 @@
   "cues": {
     "quick_intro/title_1": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_setup_cards/title_2": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_turn/title_3": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_take_gems/title_3_1": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_cards/title_3_2": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_reserve/title_3_3": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_nobles/title_3_4": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     },
     "quick_end/title_4": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     }
   },
   "audio_groups": {
