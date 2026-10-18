@@ -8,7 +8,19 @@
       "cue_id": "quick_intro/001",
       "segment_id": "audio.section_audio",
       "source_start": 1.9,
-      "reason": "Legacy subtitle-derived audio_start=2.08 lands after the first phoneme; waveform speech onset is 1.90s. The corrected boundary is content-derived, not a fixed pre-roll."
+      "reason": "Legacy subtitle-derived audio_start=2.08 lands after the first phoneme; waveform speech onset is 1.90s. Content-derived boundary, not a fixed pre-roll."
+    },
+    {
+      "cue_id": "quick_setup_cards/001.1",
+      "segment_id": "audio.section_audio",
+      "source_start": 2.05,
+      "reason": "Legacy audio_start=2.13 skips the initial consonant of '发'; waveform speech onset begins at 2.05-2.06s."
+    },
+    {
+      "cue_id": "quick_turn/001",
+      "segment_id": "audio.section_audio",
+      "source_start": 2.83,
+      "reason": "Legacy audio_start=2.87 lands after the first phoneme; waveform speech onset is 2.83s."
     }
   ]
 }

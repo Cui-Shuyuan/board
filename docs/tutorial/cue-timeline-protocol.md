@@ -63,13 +63,20 @@ content/games/splendor/tutorial/quick.audio-boundaries.json   # 可选
 `id` / `cue_start` / `duration` / `text`。字幕窗口只作展示，不参与音频裁切或
 调度；word/confidence 数据不写入 plan。
 
-有效 duration 由 Phase 1 legacy adapter 计算：
+Phase 1 adapter 仍保留通用语义：
 
 ```text
 max(旧 runtime duration, audio track 内容结束, compiled animation duration)
 ```
 
-后续 cue 的 `course.start` 由这个有效 duration 重新累加；仅保留 legacy runtime 中显式存在的 gap。输出同时携带 `text`、`group_path`、`refs` 等非时间元数据，供 Android 章节树/预览使用，但这些字段不参与播放时钟。
+但 Phase 4 的 quick 生成入口在 adapter 输出之上应用音轨优先策略：
+
+- cue duration 等于该 cue 的完整 audio track 结束时间（包括显式 silence）；
+- 标题 cue 因此严格等于“MP3 clip + authored 1 秒 silence”；
+- compiled visual 若比音频更长，会裁到 cue duration，结束后由 `tail_policy=hold_last_frame` 保持最后画面，不再把 cue 拉长成额外停顿；
+- cue 起点按修正后的 duration 和 legacy runtime 中显式 gap 重新累加。
+
+只有 legacy runtime 存在的 gap 会被保留，compiled 动画尾部不会伪装成 gap。输出同时携带 `text`、`group_path`、`refs` 等非时间元数据，供 Android 章节树/预览使用，但这些字段不参与播放时钟。
 
 生成器会再次执行 `validate_plan_set`，并且重复运行必须产生逐字节相同的文件。内容发布脚本 `tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json` 加入 release 文件集合、manifest entry、大小与 SHA-256 完整性校验。
 

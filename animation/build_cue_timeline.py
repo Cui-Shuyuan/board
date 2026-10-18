@@ -48,7 +48,10 @@ def _load_json(path: Path) -> dict:
     return value
 
 
-def _recompute_course_timeline(document: dict) -> None:
+def _recompute_course_timeline(
+    document: dict,
+    explicit_gaps: list[float] | None = None,
+) -> None:
     """Recompute cue starts after audio source ranges change.
 
     Explicit gaps between legacy cues are preserved; cue-local segment layout
@@ -62,7 +65,9 @@ def _recompute_course_timeline(document: dict) -> None:
             raise BuildError(f"cue {index}: missing course")
         old_start = float(course.get("start", 0.0))
         old_duration = float(course.get("duration", 0.0))
-        if previous_old_end is None:
+        if explicit_gaps is not None:
+            gap = explicit_gaps[index]
+        elif previous_old_end is None:
             gap = 0.0
         else:
             gap = max(0.0, old_start - previous_old_end)
@@ -89,6 +94,128 @@ def _recompute_course_timeline(document: dict) -> None:
 
     document.setdefault("course", {})["start"] = 0.0
     document["course"]["duration"] = round(cursor, 9)
+
+
+def _apply_audio_authoritative_timing(document: dict) -> None:
+    """Use the audio track (including explicit silence) as the cue clock.
+
+    Legacy compiled animation often extends past the authored audio+silence by
+    a few hundred milliseconds.  Letting that tail define cue duration creates
+    audible pauses longer than the explicit silence.  For Phase 4 quick, the
+    authored audio track is authoritative; visual segments are clipped to the
+    cue duration and the last frame is held by the visual executor.
+    """
+    diagnostics = document.setdefault("diagnostics", [])
+    for plan in document.get("cues") or []:
+        audio_end = 0.0
+        for track in plan.get("tracks") or []:
+            if not isinstance(track, dict) or track.get("kind") != "audio":
+                continue
+            for segment in track.get("segments") or []:
+                if not isinstance(segment, dict):
+                    continue
+                cue_start = float(segment.get("cue_start", 0.0))
+                if segment.get("type") == "silence":
+                    content_end = cue_start + float(segment["duration"])
+                elif segment.get("type") == "audio_clip":
+                    content_end = (
+                        cue_start
+                        + float(segment["source_end"])
+                        - float(segment["source_start"])
+                    )
+                else:
+                    continue
+                audio_end = max(audio_end, content_end)
+        if audio_end <= 0.0:
+            continue
+
+        old_duration = float(plan["course"]["duration"])
+        new_duration = audio_end
+        if abs(new_duration - old_duration) <= 1e-9:
+            continue
+
+        # Audio-driven duration wins.  Trim visual content to the new cue end;
+        # tail_policy=hold_last_frame keeps the final visual pose until the cue
+        # boundary without extending the cue itself.
+        for track in plan.get("tracks") or []:
+            if not isinstance(track, dict) or track.get("kind") != "visual":
+                continue
+            kept_segments = []
+            for segment in track.get("segments") or []:
+                if not isinstance(segment, dict):
+                    continue
+                cue_start = float(segment.get("cue_start", 0.0))
+                remain = new_duration - cue_start
+                if remain <= 1e-9:
+                    continue
+                if segment.get("type") == "animation":
+                    source_start = float(segment["source_start"])
+                    source_end = float(segment["source_end"])
+                    available = source_end - source_start
+                    if available > remain:
+                        segment["source_end"] = round(source_start + remain, 9)
+                elif segment.get("type") == "hold":
+                    if float(segment["duration"]) > remain:
+                        segment["duration"] = round(remain, 9)
+                kept_segments.append(segment)
+            track["segments"] = kept_segments
+
+        plan["course"]["duration"] = round(new_duration, 9)
+        diagnostics.append({
+            "code": "audio_authoritative_duration",
+            "severity": "info",
+            "cue_id": plan.get("cue_id"),
+            "original_duration": round(old_duration, 9),
+            "audio_duration": round(new_duration, 9),
+        })
+
+    _recompute_course_timeline(document)
+
+
+def _extend_last_subtitle_to_cue_end(document: dict) -> None:
+    """Keep the final subtitle visible for the complete audio-driven cue.
+
+    Audio-boundary corrections can lengthen a cue by a small lead or tail.  The
+    legacy subtitle file does not know about that change; without this clamp the
+    last line can disappear before the cue audio ends.
+    """
+    for plan in document.get("cues") or []:
+        duration = float(plan["course"]["duration"])
+        subtitles = plan.get("subtitles") or []
+        if not subtitles:
+            continue
+        last = None
+        for subtitle in subtitles:
+            if not isinstance(subtitle, dict):
+                continue
+            start = float(subtitle.get("cue_start", 0.0))
+            end = start + float(subtitle.get("duration", 0.0))
+            end = min(duration, max(start, end))
+            subtitle["duration"] = round(max(0.0, end - start), 9)
+            if last is None or start + float(last.get("duration", 0.0)) < end:
+                last = subtitle
+        if last is not None:
+            start = float(last.get("cue_start", 0.0))
+            if duration > start:
+                last["duration"] = round(duration - start, 9)
+
+
+def _legacy_explicit_gaps(runtime: dict) -> list[float]:
+    """Return gaps between legacy runtime cues, excluding duration tails."""
+
+    gaps: list[float] = []
+    previous_end: float | None = None
+    for index, cue in enumerate(runtime.get("cues") or []):
+        if not isinstance(cue, dict):
+            raise BuildError(f"runtime cue {index}: expected object")
+        start = float(cue.get("start", 0.0))
+        duration = float(cue.get("duration", 0.0))
+        if previous_end is None:
+            gaps.append(0.0)
+        else:
+            gaps.append(max(0.0, start - previous_end))
+        previous_end = start + duration
+    return gaps
 
 
 def _load_audio_boundaries(repo_root: Path, game: str, track: str) -> dict:
@@ -199,8 +326,6 @@ def _apply_audio_boundaries(
             "reason": str(boundary.get("reason") or ""),
         })
 
-    _recompute_course_timeline(document)
-
 
 def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
     """Build and validate one complete plan set without writing it."""
@@ -225,6 +350,10 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
         document = cue_timeline.adapt_legacy_runtime(runtime, compiled)
         boundaries = _load_audio_boundaries(repo_root, game, track)
         _apply_audio_boundaries(document, game, track, boundaries)
+        _apply_audio_authoritative_timing(document)
+        _recompute_course_timeline(
+            document, _legacy_explicit_gaps(runtime))
+        _extend_last_subtitle_to_cue_end(document)
         cue_timeline.validate_plan_set(document)
     except cue_timeline.CueTimelineError as exc:
         raise BuildError(f"plan validation failed: {exc}") from exc

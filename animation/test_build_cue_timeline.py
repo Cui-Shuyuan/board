@@ -77,13 +77,18 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(parsed["schema"], timeline.PLAN_SET_SCHEMA)
         self.assertEqual(parsed["schema_version"], timeline.PLAN_SET_VERSION)
         self.assertEqual(parsed["track"], self.track)
-        self.assertEqual(parsed["cues"][0]["course"]["duration"], 3.5)
+        self.assertEqual(parsed["cues"][0]["course"]["duration"], 2.0)
+        visual_track = next(
+            track for track in parsed["cues"][0]["tracks"]
+            if track["kind"] == "visual"
+        )
+        self.assertEqual(visual_track["segments"][0]["source_end"], 2.0)
         self.assertEqual(parsed["cues"][0]["group_path"], ["chapter"])
         self.assertEqual(parsed["cues"][0]["text"], "hello")
         self.assertEqual(parsed["cues"][0]["subtitles"], [{
             "id": "subtitle.0",
             "cue_start": 0.0,
-            "duration": 1.25,
+            "duration": 2.0,
             "text": "hello subtitle",
         }])
         self.assertIs(timeline.validate_plan_set(parsed), parsed)
