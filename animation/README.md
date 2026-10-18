@@ -17,7 +17,8 @@
 - `label` 可用 `size` 单独指定字号（1080p 参考像素）；Splendor 的章节标题 cue 使用居中 `section_title` overlay + `size: 136`，普通说明仍沿用统一默认字号。
 - `overlay_show` 可用 `dim_alpha` 做全屏压暗：`dim_alpha: 0.8` 时背景保留约 20% 可见度；该模式保留真实场景、隐藏 zone debug 层，适合章节标题卡。
 - full 的章节标题 cue 仍使用 legacy `audio_plan` + `pause_after_speech_seconds`。
-- quick 已迁移到 cue-level TTS：`quick.audio-slices.json` 集中保存逻辑音频和字幕的命名时间点，
+- quick 已迁移到 cue-level TTS：默认一个 cue 一个 MP3，连续分句不拆成 beat 音频；
+  `quick.audio-slices.json` 集中保存逻辑音频和字幕的命名时间点，
   `quick.timing-policy.json` 控制 per-cue duration；构建入口为
   `python3 animation/build_cue_timeline.py --game splendor --track quick`。
 - 快速查看完整管线：`docs/tutorial/audio-timeline-pipeline.md`。

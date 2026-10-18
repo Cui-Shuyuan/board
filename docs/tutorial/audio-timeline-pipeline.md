@@ -72,7 +72,9 @@ python animation/tts_doubao.py \
 
 规则：
 
-- 一个 beat 默认生成一个 MP3；一个 cue 可以有多个 beat / 多个 MP3。
+- 一个 cue 默认生成一个 MP3；同一 cue 内的连续句子/分句应合并成同一行 TTS，
+  避免逐 beat 生成后在片段边界听到额外停顿。
+- 一个 cue 仍可以包含多个 MP3，但只用于确有独立停顿/独立素材的编排。
 - 同一句话或需要保持连续语气的多个串行 cue，可以在 timing policy 的
   `audio_groups` 中合并成一次 TTS 合成。
 - 不为保持语气而把多个 cue 物理复制成多份音频；共享关系通过逻辑切片表达。
@@ -287,11 +289,14 @@ gradlew.bat testDebugUnitTest
 ### 改文案
 
 1. 改 `quick.script.json`。
-2. 同步 `quick.cue.tts.lrc`。
+2. 同步 `quick.cue.tts.lrc`。同一个 cue 内的连续分句合并成一行；不要默认拆成多个 beat 音频。
 3. 重新生成对应 TTS。
 4. 更新 `quick.audio-slices.json` 的 timing points 与字幕窗口。
 5. 构建 plan、发布内容、跑自动测试。
 6. 真机听测与字幕验收。
+
+如果发现某个 cue 内部句与句之间有非预期停顿，先检查它是否被拆成了多个 TTS beat 文件，
+而不是先去调播放器或加 silence。
 
 ### 调整 cue 时长
 
