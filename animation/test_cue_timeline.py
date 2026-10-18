@@ -585,6 +585,12 @@ class LegacyAdapterTests(unittest.TestCase):
         with self.assertRaisesRegex(timeline.CueTimelineError, "schema_version"):
             timeline.validate_plan_set(bad_version)
 
+        bad_total = copy.deepcopy(document)
+        bad_total["course"]["duration"] += 0.25
+        with self.assertRaisesRegex(
+                timeline.CueTimelineError, r"last cue start \+ duration"):
+            timeline.validate_plan_set(bad_total)
+
 
 if __name__ == "__main__":
     unittest.main()

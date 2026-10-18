@@ -11,6 +11,9 @@ recursively copying the game directory.  Unity reads:
   * tutorial/{track}.runtime.json
   * tutorial/anim/v2/{track}.compiled.json
   * tutorial/{track}.cue-timeline.json when the track has a Phase 4 plan
+  * tutorial/{track}.audio-slices.json and tutorial/{track}.timing-policy.json
+    for a packaged Phase 4 plan, so the release retains the exact fixed timing
+    inputs used to generate that plan
   * media paths referenced by those JSON documents (TTS mp3, card scans,
     marker scans, etc.)
 
@@ -199,7 +202,8 @@ def _walk_references(
 
     is_file_key = _is_file_reference_key(key)
     suffix = Path(raw).suffix.lower()
-    if suffix in RUNTIME_MEDIA_SUFFIXES:
+    is_runtime_media = suffix in RUNTIME_MEDIA_SUFFIXES
+    if is_runtime_media:
         pass
     elif is_file_key and _looks_like_runtime_path(raw):
         # Explicit file-reference keys may point at non-media runtime files
@@ -227,7 +231,7 @@ def _walk_references(
     candidate = game_dir / relative
     if candidate.is_file():
         found.add(relative)
-    elif is_file_key:
+    elif is_file_key or is_runtime_media:
         raise FileNotFoundError(
             f"{source}: referenced runtime file not found: {relative}"
         )
@@ -277,6 +281,19 @@ def collect_runtime_files(game_dir: Path) -> list[Path]:
         if plan_path.is_file():
             package[plan_relative] = plan_path
             source_paths.append(plan_path)
+
+            # Keep the fixed timing inputs next to the generated plan in the
+            # immutable release.  They are not read by the runtime player, but
+            # they make the shipped plan auditable against the exact refs,
+            # source ranges and per-cue policy that produced it.
+            for timing_name in (
+                f"{track}.audio-slices.json",
+                f"{track}.timing-policy.json",
+            ):
+                timing_relative = f"tutorial/{timing_name}"
+                timing_path = game_dir / timing_relative
+                if timing_path.is_file():
+                    package[timing_relative] = timing_path
 
         for source_path in source_paths:
             try:

@@ -113,7 +113,7 @@ internal object CueTimelinePlanLoader {
             }
             previousEnd = start + duration
 
-            validateTracks(cue.optJSONArray("tracks"), duration, path)
+            validateTracks(cue.optJSONArray("tracks"), duration, path, gameRoot)
 
             cues += CuePlanEntry(
                 id = id,
@@ -134,7 +134,12 @@ internal object CueTimelinePlanLoader {
         return CuePlanSet(cues = cues, totalDuration = totalDuration)
     }
 
-    private fun validateTracks(tracks: JSONArray?, cueDuration: Float, path: String) {
+    private fun validateTracks(
+        tracks: JSONArray?,
+        cueDuration: Float,
+        path: String,
+        gameRoot: File
+    ) {
         require(tracks != null && tracks.length() > 0) { "$path.tracks must not be empty" }
         val trackIds = HashSet<String>()
         val segmentIds = HashSet<String>()
@@ -216,8 +221,15 @@ internal object CueTimelinePlanLoader {
                     }
 
                     kind == "audio" && type == "audio_clip" -> {
-                        require(segment.optString("asset", "").isNotBlank()) {
+                        val asset = segment.optString("asset", "").trim()
+                        require(asset.isNotBlank()) {
                             "$segmentPath.asset must be non-empty"
+                        }
+                        require(!File(asset).isAbsolute) {
+                            "$segmentPath.asset must be game-relative"
+                        }
+                        require(File(gameRoot, asset).isFile) {
+                            "$segmentPath.asset references missing audio file: $asset"
                         }
                         val sourceStart = finiteNonNegative(
                             segment,

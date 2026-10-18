@@ -160,6 +160,7 @@ namespace BoardGameTutorial
                 if (!CueTimelinePlanSetValidator.TryValidate(
                     parsed, gameId, track, expectedCueIds, out error))
                     throw new ArgumentException(error);
+                ValidateCueTimelinePlanAudioFiles(parsed);
 
                 cueTimelineTrackPlanSet = parsed;
                 cueTimelineTrackReady = true;
@@ -174,6 +175,38 @@ namespace BoardGameTutorial
                 cueTimelineTrackLoadError = ex.Message;
                 LogCueTimelineTrackFallback();
                 return false;
+            }
+        }
+
+        private void ValidateCueTimelinePlanAudioFiles(CueTimelinePlanSet planSet)
+        {
+            if (planSet == null || planSet.cues == null) return;
+            for (int cueIndex = 0; cueIndex < planSet.cues.Count; cueIndex++)
+            {
+                CueTimelinePlan plan = planSet.cues[cueIndex];
+                if (plan == null || plan.tracks == null) continue;
+                for (int trackIndex = 0; trackIndex < plan.tracks.Count; trackIndex++)
+                {
+                    CueTimelineTrack track = plan.tracks[trackIndex];
+                    if (track == null || track.kind != "audio"
+                        || track.segments == null) continue;
+                    for (int segmentIndex = 0; segmentIndex < track.segments.Count;
+                        segmentIndex++)
+                    {
+                        CueTimelineSegment segment = track.segments[segmentIndex];
+                        if (segment == null || segment.type != "audio_clip") continue;
+                        string asset = (segment.asset ?? "").Trim();
+                        if (asset.Length == 0 || Path.IsPathRooted(asset))
+                            throw new ArgumentException(
+                                "audio segment asset must be game-relative: '"
+                                + asset + "'");
+                        string localPath = Path.Combine(
+                            gameRoot, asset.Replace('/', Path.DirectorySeparatorChar));
+                        if (!File.Exists(localPath))
+                            throw new FileNotFoundException(
+                                "plan references missing audio file", localPath);
+                    }
+                }
             }
         }
 

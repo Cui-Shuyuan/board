@@ -24,16 +24,18 @@ tutorial/{track}.runtime.json                      音频 / 字幕 / 时长（fu
 tutorial/anim/v2/{track}.compiled.json             Unity 只读 compiled
         │
         ├─ quick Phase 4:
-        │   tutorial/quick.cue.tts.lrc
-        │   tutorial/quick.audio-slices.json        命名 timing points / 逻辑切片 / 字幕窗口
-        │   tutorial/quick.timing-policy.json       cue duration policy
+        │   tutorial/quick.cue.tts.lrc              TTS 合成输入
+        │   tutorial/quick.audio-slices.json        唯一固定时间轴（timing points / refs / cue policy / audio groups）
+        │   tutorial/quick.timing-policy.json       仅全局流水线配置
         │   tutorial/quick.cue-timeline.json        Android/Unity 共用 plan
         │
         ▼  Unity TutorialCuePlayer / TutorialAnimPlayer
 ```
 
-> quick 已迁移到 cue-level TTS + 逻辑音频切片。完整制作流程见
-> `docs/tutorial/audio-timeline-pipeline.md`。
+> quick 已迁移到 cue-level TTS + 逻辑音频切片。所有时间戳、source range、
+> 字幕 refs 和 per-cue timing policy 都只在 `quick.audio-slices.json`；
+> `quick.timing-policy.json` 仅保留全局配置。Phase 4 只覆盖 quick，full 仍走
+> legacy。完整制作流程见 `docs/tutorial/audio-timeline-pipeline.md`。
 
 ## 生产顺序
 
@@ -68,6 +70,6 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 python3 tools/ops/check_unity_scripts.py
 ```
 
-当前基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。`check_anim_v2` / `validate_anim_rules_v2` 两轨均 0 warnings；full `audit_anim_v2` 61 cues 0 errors、quick 23 cues 0 errors。素材迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。
+当前编译基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。`check_anim_v2` / `validate_anim_rules_v2` 两轨均 0 warnings；full `audit_anim_v2` 61 cues 0 errors、quick 23 cues 0 errors。素材迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。Phase 4 的 quick plan 只覆盖 quick，full 的时间轴迁移留待 Phase 5。
 
 共享素材工作流与影响范围：见 `docs/tutorial/animation-materials-authoring-guide.md`。

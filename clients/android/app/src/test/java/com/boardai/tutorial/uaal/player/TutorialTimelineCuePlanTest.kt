@@ -150,6 +150,28 @@ class TutorialTimelineCuePlanTest {
     }
 
     @Test
+    fun missingPlanAudioFallsBackEntireTrackAndLogs() {
+        val root = runtimeTree()
+        writePlan(root)
+        File(root, "media/fixture.mp3").delete()
+        val logs = mutableListOf<String>()
+
+        val timeline = TutorialTimeline.load(
+            gameRoot = root,
+            track = TRACK,
+            planEnabled = true,
+            logger = { logs += it }
+        )
+
+        assertEquals(TimelineSource.RUNTIME, timeline.source)
+        assertEquals(4f, timeline.totalDuration, 1e-5f)
+        assertEquals("runtime A", timeline.cueAt(0)!!.text)
+        assertTrue(timeline.fallbackReason!!.contains("missing audio file"))
+        assertTrue(logs.single().contains("falling back to legacy runtime"))
+        assertTrue(logs.single().contains("missing audio file"))
+    }
+
+    @Test
     fun trackSwitchOffIgnoresPlanAndKeepsLegacyBehavior() {
         val root = runtimeTree()
         writePlan(root)
@@ -184,6 +206,8 @@ class TutorialTimelineCuePlanTest {
     private fun runtimeTree(): File {
         val root = temp.newFolder("game-root")
         val tutorial = File(root, "tutorial").apply { mkdirs() }
+        File(root, "media").mkdirs()
+        File(root, "media/fixture.mp3").writeBytes(byteArrayOf(1, 2, 3))
         File(tutorial, "$TRACK.runtime.json").writeText(
             """
             {

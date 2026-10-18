@@ -20,17 +20,20 @@ content/games/splendor/tutorial/library/presentations/*.presentation.json 可复
 content/games/splendor/tutorial/{full,quick}.runtime.json                编译产物：legacy section 音频与字幕时间轴
 content/games/splendor/tutorial/anim/v2/{full,quick}.compiled.json       编译产物：Unity 只读
 content/games/splendor/tutorial/quick.cue.tts.lrc                        quick cue-level TTS 合成源
-content/games/splendor/tutorial/quick.audio-slices.json                  quick 逻辑音频/字幕 timing points
-content/games/splendor/tutorial/quick.timing-policy.json                 quick per-cue duration policy
+content/games/splendor/tutorial/quick.audio-slices.json                  quick 唯一固定时间轴（timing points / slices / refs / per-cue policy / audio groups）
+content/games/splendor/tutorial/quick.timing-policy.json                 仅全局流水线配置，不承载 per-cue 时间
 content/games/splendor/tutorial/quick.cue-timeline.json                  Phase 4 编译 plan（Android/Unity 共用）
 ```
 
 - `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，不是源真值。
 - 旧单文件 `script.{track}.json`、`anim/v2/{track}.anim.json`、`anim/v2/_stage/` 已删除；不要再去改这些路径。
 - `full` 仍以 section 为单位连续生成 TTS，并用 legacy `audio_start`。
-- `quick` 已迁移到 cue-level TTS + `quick.audio-slices.json` 逻辑切片；一个 cue 可包含多个
-  MP3，一次 TTS 也可通过逻辑切片服务多个串行 cue。具体见 `docs/tutorial/audio-timeline-pipeline.md`。
-- 当前 full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。
+- `quick` 已迁移到 cue-level TTS + `quick.audio-slices.json` 固定逻辑切片；一个 cue 可包含多个
+  MP3，一次 TTS 也可通过逻辑切片服务多个串行 cue。所有秒数、source range、
+  字幕 refs 和 per-cue timing policy 都只在该固定文件中。具体见
+  `docs/tutorial/audio-timeline-pipeline.md`。
+- Phase 4 只覆盖 quick；full 仍走 legacy，留待 Phase 5。
+- 当前编译基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
 

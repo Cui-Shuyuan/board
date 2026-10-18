@@ -657,6 +657,17 @@ def validate_plan_set(document: dict) -> dict:
             raise CueTimelineError(
                 f"document.cues[{index}].course.start: cue overlaps previous cue")
         previous_end = end
+    course = _mapping(document.get("course"), "document.course")
+    course_start = _number(course.get("start"), "document.course.start",
+                           minimum=0.0)
+    course_duration = _number(course.get("duration"),
+                              "document.course.duration", positive=True)
+    expected_end = previous_end if previous_end is not None else 0.0
+    if (abs(course_start) > _EPSILON
+            or abs(course_duration - expected_end) > _EPSILON):
+        raise CueTimelineError(
+            "document.course.duration must equal the last cue start + duration: "
+            f"declared={course_duration:g}, expected={expected_end:g}")
     return document
 
 

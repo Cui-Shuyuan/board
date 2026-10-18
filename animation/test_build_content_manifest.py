@@ -167,6 +167,66 @@ class BuildContentManifestTest(unittest.TestCase):
         )
         self.assertEqual(released.read_bytes(), plan.read_bytes())
 
+    def test_phase4_plan_audio_and_fixed_timing_files_are_packaged(self) -> None:
+        audio = self.game_dir / "media" / "tts" / "full" / "one.mp3"
+        slices = self.game_dir / "tutorial" / "full.audio-slices.json"
+        policy = self.game_dir / "tutorial" / "full.timing-policy.json"
+        slices.write_text('{"schema":"tutorial-audio-slices/v1"}', encoding="utf-8")
+        policy.write_text('{"schema":"tutorial-cue-timing-policy/v1"}', encoding="utf-8")
+        plan = self.game_dir / "tutorial" / "full.cue-timeline.json"
+        plan.write_text(json.dumps({
+            "schema": "tutorial-cue-plan-set/v1",
+            "schema_version": 1,
+            "game_id": self.game,
+            "track": "full",
+            "course": {"start": 0.0, "duration": 1.0},
+            "cues": [{
+                "cue_id": "cue.001",
+                "tracks": [{
+                    "kind": "audio",
+                    "segments": [{
+                        "type": "audio_clip",
+                        "asset": "media/tts/full/one.mp3",
+                        "source_start": 0.0,
+                        "source_end": 1.0,
+                    }],
+                }],
+            }],
+        }), encoding="utf-8")
+
+        manifest = self.publish()
+        paths = [entry["path"] for entry in manifest["files"]]
+        self.assertIn("tutorial/full.cue-timeline.json", paths)
+        self.assertIn("media/tts/full/one.mp3", paths)
+        self.assertIn("tutorial/full.audio-slices.json", paths)
+        self.assertIn("tutorial/full.timing-policy.json", paths)
+        self.assertTrue(audio.is_file())
+
+    def test_missing_audio_referenced_only_by_plan_fails_loudly(self) -> None:
+        plan = self.game_dir / "tutorial" / "full.cue-timeline.json"
+        plan.write_text(json.dumps({
+            "schema": "tutorial-cue-plan-set/v1",
+            "schema_version": 1,
+            "game_id": self.game,
+            "track": "full",
+            "course": {"start": 0.0, "duration": 1.0},
+            "cues": [{
+                "cue_id": "cue.001",
+                "tracks": [{
+                    "kind": "audio",
+                    "segments": [{
+                        "type": "audio_clip",
+                        "asset": "media/tts/full/missing.mp3",
+                        "source_start": 0.0,
+                        "source_end": 1.0,
+                    }],
+                }],
+            }],
+        }), encoding="utf-8")
+
+        with self.assertRaises(FileNotFoundError):
+            self.publish()
+
     def test_editing_runtime_bytes_changes_version(self) -> None:
         first = self.publish()
         (self.game_dir / "media" / "tts" / "full" / "one.mp3").write_bytes(b"mp3-v2")

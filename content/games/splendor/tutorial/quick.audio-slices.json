@@ -1,9 +1,63 @@
 {
   "schema": "tutorial-audio-slices/v1",
-  "schema_version": 2,
+  "schema_version": 3,
   "game_id": "splendor",
   "track": "quick",
   "sample_rate": 24000,
+  "cue_timing": {
+    "quick_intro/title_1": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_setup_cards/title_2": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_turn/title_3": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_take_gems/title_3_1": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_cards/title_3_2": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_reserve/title_3_3": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_nobles/title_3_4": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    },
+    "quick_end/title_4": {
+      "mode": "audio",
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true
+    }
+  },
+  "audio_groups": {
+    "quick_nobles_001_002": {
+      "cue_ids": [
+        "quick_nobles/001",
+        "quick_nobles/002"
+      ],
+      "slice_ids": [
+        "quick_nobles__001",
+        "quick_nobles__002"
+      ]
+    }
+  },
   "timing_points": {
     "quick_intro__title_1.start": {
       "time": 0.0,
