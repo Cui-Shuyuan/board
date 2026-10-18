@@ -19,6 +19,12 @@ namespace BoardGameTutorial.Animation
         private string gameRoot;
         private readonly Dictionary<string, AudioClip> clipCache =
             new Dictionary<string, AudioClip>(StringComparer.Ordinal);
+        // Decoded PCM and segment clips start at sample 0 so compressed-audio
+        // decoder seek/priming frames can never eat the first phoneme of a cue.
+        private readonly Dictionary<string, float[]> pcmCache =
+            new Dictionary<string, float[]>(StringComparer.Ordinal);
+        private readonly Dictionary<string, AudioClip> segmentClipCache =
+            new Dictionary<string, AudioClip>(StringComparer.Ordinal);
 
         private CueTimelinePlan plan;
         private ICueExecutorCallback callback;
@@ -285,9 +291,18 @@ namespace BoardGameTutorial.Animation
             }
 
             double sourceTime = CueTimelineTrackResolver.AudioSourceTime(segment, cueTime);
+            AudioClip playbackClip = GetOrCreateSegmentClip(
+                segment, clip, generation);
+            if (playbackClip == null) return;
+
+            double segmentLocal = cueTime - segment.cue_start;
+            if (segmentLocal < 0.0) segmentLocal = 0.0;
+            int segmentOffsetSamples = TimeToFrame(
+                playbackClip, segmentLocal, allowEnd: true);
+
             source.Stop();
-            source.clip = clip;
-            source.timeSamples = SourceSample(clip, sourceTime);
+            source.clip = playbackClip;
+            source.timeSamples = segmentOffsetSamples;
             currentSegmentId = segment.id;
             if (shouldPlay)
             {
@@ -297,6 +312,7 @@ namespace BoardGameTutorial.Animation
                     + " cue_time=" + FormatTime(cueTime)
                     + " source_time=" + FormatTime(sourceTime)
                     + " source_sample=" + source.timeSamples
+                    + " source_clip_mode=pcm_slice"
                     + " planned_start_sample=" + segment.source_start_sample);
             }
             else
@@ -305,20 +321,100 @@ namespace BoardGameTutorial.Animation
                     + " segment=" + segment.id
                     + " cue_time=" + FormatTime(cueTime)
                     + " source_time=" + FormatTime(sourceTime)
-                    + " source_sample=" + source.timeSamples);
+                    + " source_sample=" + source.timeSamples
+                    + " source_clip_mode=pcm_slice");
             }
         }
 
-        private static int SourceSample(AudioClip clip, double sourceTime)
+        /// <summary>
+        /// Creates a PCM clip containing exactly [source_start, source_end).
+        /// Starting every segment at sample 0 avoids MP3 decoder seek/priming
+        /// imprecision, which previously dropped the first syllable when a cue
+        /// began part-way through a shared section-audio file.
+        /// </summary>
+        private AudioClip GetOrCreateSegmentClip(
+            CueTimelineSegment segment, AudioClip sourceClip, long generation)
+        {
+            int startFrame = TimeToFrame(sourceClip, segment.source_start, allowEnd: true);
+            int endFrame = TimeToFrame(sourceClip, segment.source_end, allowEnd: true);
+            if (endFrame <= startFrame) endFrame = Math.Min(sourceClip.samples, startFrame + 1);
+            if (startFrame < 0) startFrame = 0;
+            if (endFrame <= startFrame)
+            {
+                FailGeneration(generation,
+                    "audio segment has no samples: " + segment.id);
+                return null;
+            }
+
+            string key = (segment.asset ?? "") + "|" + startFrame.ToString()
+                + "|" + endFrame.ToString();
+            AudioClip cached;
+            if (segmentClipCache.TryGetValue(key, out cached) && cached != null)
+                return cached;
+
+            float[] pcm;
+            if (!pcmCache.TryGetValue(segment.asset ?? "", out pcm) || pcm == null)
+            {
+                int expected = sourceClip.samples * sourceClip.channels;
+                pcm = new float[expected];
+                if (!sourceClip.GetData(pcm, 0))
+                {
+                    FailGeneration(generation,
+                        "audio PCM decode unavailable: " + segment.asset);
+                    return null;
+                }
+                pcmCache[segment.asset ?? ""] = pcm;
+            }
+
+            int channels = sourceClip.channels;
+            if (channels <= 0)
+            {
+                FailGeneration(generation,
+                    "audio clip has invalid channel count: " + segment.asset);
+                return null;
+            }
+            int frameCount = endFrame - startFrame;
+            int sampleOffset = startFrame * channels;
+            int sampleCount = frameCount * channels;
+            if (sampleOffset < 0 || sampleCount <= 0
+                || sampleOffset + sampleCount > pcm.Length)
+            {
+                FailGeneration(generation,
+                    "audio PCM slice out of range: " + segment.id);
+                return null;
+            }
+
+            var slice = new float[sampleCount];
+            Array.Copy(pcm, sampleOffset, slice, 0, sampleCount);
+            AudioClip segmentClip = AudioClip.Create(
+                "cue-segment-" + segment.id,
+                frameCount,
+                channels,
+                sourceClip.frequency,
+                false);
+            if (segmentClip == null || !segmentClip.SetData(slice, 0))
+            {
+                FailGeneration(generation,
+                    "audio PCM clip creation failed: " + segment.id);
+                return null;
+            }
+            segmentClipCache[key] = segmentClip;
+            return segmentClip;
+        }
+
+        private static int TimeToFrame(
+            AudioClip clip, double seconds, bool allowEnd)
         {
             if (clip == null) return 0;
             int samples = clip.samples;
             int frequency = clip.frequency;
             if (samples <= 0 || frequency <= 0) return 0;
-            double sample = Math.Round(sourceTime * frequency);
-            if (sample < 0.0) sample = 0.0;
-            if (sample > samples - 1) sample = samples - 1;
-            return (int)sample;
+            double frame = Math.Round(seconds * frequency);
+            if (frame < 0.0) frame = 0.0;
+            int maximum = allowEnd ? samples : samples - 1;
+            if (maximum < 0) maximum = 0;
+            if (frame > maximum) frame = maximum;
+            return (int)frame;
         }
 
         private bool AcceptGeneration(long generation)
@@ -383,7 +479,13 @@ namespace BoardGameTutorial.Animation
             {
                 if (clip != null) UnityEngine.Object.Destroy(clip);
             }
+            foreach (AudioClip clip in segmentClipCache.Values)
+            {
+                if (clip != null) UnityEngine.Object.Destroy(clip);
+            }
             clipCache.Clear();
+            segmentClipCache.Clear();
+            pcmCache.Clear();
         }
     }
 }

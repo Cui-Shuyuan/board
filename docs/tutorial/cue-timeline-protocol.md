@@ -52,8 +52,12 @@ content/games/splendor/tutorial/anim/v2/quick.compiled.json
 
 - `cue_id`；
 - `course.start` / `course.duration`；
-- `tracks`（audio/visual/subtitle 执行数据；字幕窗口在 `subtitles`）；
+- `tracks`（audio/visual 执行数据；字幕窗口在 `subtitles`）；
 - `entry`。
+
+`subtitles` 由 adapter 从 legacy runtime 的 `t` / `end` 转成 plan schema 的
+`id` / `cue_start` / `duration` / `text`。字幕窗口只作展示，不参与音频裁切或
+调度；word/confidence 数据不写入 plan。
 
 有效 duration 由 Phase 1 legacy adapter 计算：
 
@@ -104,7 +108,11 @@ Unity 新增 plan set loader，读取与 Android 完全相同的 `{track}.cue-ti
 - quick 的每个 cue 都从同一 plan set 取 `CueTimelinePlan`，不再按 cue 临时合成时间轴；
 - `PlayCue` / `PlayCueAt` / `SeekTo` / `SeekRelative` / autoAdvance / cancel 全部由 plan 驱动的同一个 `CuePlaybackController` 执行；
 - 控制器 `position` / `duration` / `cueIndex` 和状态上报中的 cue 全局位置、track 总时长与 Android plan 同源；
-- generation 取消语义不变，旧回调不能改变新 cue/timeline。
+- generation 取消语义不变，旧回调不能改变新 cue/timeline；
+- 音频执行器在首次加载时解码原音频为 PCM，并按每个 `audio_clip` 的
+  `source_start/source_end` 创建从 sample 0 开始的内存片段。这样 cue 从共享
+  section 音频中间开始时不会触发 MP3 decoder seek，也不会吞掉首字；字幕时间
+  仍只来自 plan，不用于决定音频边界。
 
 Phase 3 的 `useCueTimelineV1` + allowlist 代码仅作兼容保留；track 模式开启时该 allowlist 分支完全不执行。plan 校验失败时整个 track 回退 legacy，不会回退到 Phase 3 单 cue 混合模式。
 
@@ -814,16 +822,17 @@ public float cueTimelineCompositeHoldSeconds = 0.75f; // 显式 authored hold
 | 方案 | 优点 | 风险/限制 | Phase 3 结论 |
 | --- | --- | --- | --- |
 | `AudioSource.time` 定位 | 简单，现有代码已用 | float 秒、解码器/帧边界行为不透明，无法证明首尾字 | 不作为新路径主方案 |
-| `AudioSource.timeSamples` | 整数采样定位，可用 clip.frequency 做确定性换算 | MP3 在 Unity/Android 解码后的 seek 仍需真机波形验证 | **当前实现主方案** |
-| 构建期切独立音频片段 | 片段从 0 播放，最容易做到可复现边界 | 需要新增切片产物、资源清单、版本与体积策略；本阶段不修改生成产物 | 长期推荐候选，本阶段未接入 |
-| 运行期预解码 PCM / `AudioClip.Create` | 采样级完全可控 | 内存、解码耗时、Unity 音频线程和资源生命周期复杂 | 本阶段未采用 |
+| `AudioSource.timeSamples` | 整数采样定位，可用 clip.frequency 做确定性换算 | MP3 在 Unity/Android 解码后的 seek 仍会受 decoder priming/帧边界影响，可能吞首字 | 弃用为 segment 起点方案 |
+| 构建期切独立音频片段 | 片段从 0 播放，最容易做到可复现边界 | 需要新增切片产物、资源清单、版本与体积策略 | 长期推荐候选 |
+| 运行期预解码 PCM / `AudioClip.Create` | 采样级完全可控，segment 从 sample 0 播放，不使用运行时 compressed seek | 内存、解码耗时、资源生命周期需要约束 | **当前实现主方案** |
 
 当前 Unity 音频执行器：
 
 - 依据 controller 的 cue-local 时间选择 audio segment；
-- 对 `audio_clip` 使用 `source_start + (cueTime - segment.cue_start)` 计算素材时间，
-  再按 `AudioSource.timeSamples = round(sourceTime * clip.frequency)` 定位；
-- 不添加固定 pre-roll/post-roll；
+- 首次使用某个 asset 时用 `AudioClip.GetData` 预解码 PCM，并按 segment
+  `source_start/source_end` 切出独立内存 clip；播放时每个 segment 从 sample 0
+  开始，避免 MP3 decoder seek 吞首字；
+- 仅在同一 PCM segment 内做样本级 seek，不添加固定 pre-roll/post-roll；
 - 不读取字幕最后一个 word 作为音频裁剪边界；
 - 在 prepare 阶段拒绝 `source_end > clip.length + 0.02` 的 clip，避免静默截断；
 - 每次切换 segment 都从 controller 当帧 cue time 重新定位，而不是依赖第二条

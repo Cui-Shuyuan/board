@@ -653,6 +653,36 @@ def validate_plan_document(document: dict) -> dict:
 # ── legacy runtime adapter ─────────────────────────────────────────────────
 
 
+def _adapt_legacy_subtitles(cue: dict, path: str) -> list[dict]:
+    """Convert runtime subtitle windows into the compiled plan presentation schema.
+
+    Runtime subtitles use ``t``/``end`` and may carry word/confidence data.  The
+    plan schema exposes only flat cue-local windows; word timing is presentation
+    metadata and must never drive audio scheduling or trimming.
+    """
+    raw_subtitles = cue.get("subtitles") or []
+    subtitles = _list(raw_subtitles, f"{path}.subtitles")
+    result: list[dict] = []
+    for index, raw_subtitle in enumerate(subtitles):
+        subtitle_path = f"{path}.subtitles[{index}]"
+        subtitle = _mapping(raw_subtitle, subtitle_path)
+        start = _number(subtitle.get("t"), f"{subtitle_path}.t", minimum=0.0)
+        end = _number(subtitle.get("end"), f"{subtitle_path}.end", minimum=0.0)
+        if end < start - _EPSILON:
+            raise CueTimelineError(
+                f"{subtitle_path}.end: must be >= subtitle start")
+        text = subtitle.get("text", "")
+        if not isinstance(text, str):
+            raise CueTimelineError(f"{subtitle_path}.text: expected a string")
+        result.append({
+            "id": f"subtitle.{index}",
+            "cue_start": _round_time(start),
+            "duration": _round_time(max(0.0, end - start)),
+            "text": text,
+        })
+    return result
+
+
 def _legacy_audio_start(cue: dict, path: str) -> float:
     # Older single-audio cues did not always need audio_start.  Treat an
     # absent field as the documented default zero, but reject malformed values.
@@ -917,7 +947,7 @@ def adapt_legacy_runtime(runtime: dict,
                 "duration": _round_time(effective_duration),
             },
             "tracks": tracks,
-            "subtitles": copy.deepcopy(cue.get("subtitles") or []),
+            "subtitles": _adapt_legacy_subtitles(cue, path),
         }
         # Navigation/presentation metadata is not timing data.  Keeping it in
         # the plan makes the generated plan self-contained for Android chapter

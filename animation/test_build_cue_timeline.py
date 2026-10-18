@@ -43,7 +43,12 @@ class BuildCueTimelineTests(unittest.TestCase):
                 "group_path": ["chapter"],
                 "refs": ["concept"],
                 "entry": None,
-                "subtitles": [],
+                "subtitles": [{
+                    "t": 0.0,
+                    "end": 1.25,
+                    "text": "hello subtitle",
+                    "words": [{"word": "hello", "start": 0.0, "end": 0.5}],
+                }],
             }],
         }, ensure_ascii=False), encoding="utf-8")
         self.compiled_path.write_text(json.dumps({
@@ -75,6 +80,12 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(parsed["cues"][0]["course"]["duration"], 3.5)
         self.assertEqual(parsed["cues"][0]["group_path"], ["chapter"])
         self.assertEqual(parsed["cues"][0]["text"], "hello")
+        self.assertEqual(parsed["cues"][0]["subtitles"], [{
+            "id": "subtitle.0",
+            "cue_start": 0.0,
+            "duration": 1.25,
+            "text": "hello subtitle",
+        }])
         self.assertIs(timeline.validate_plan_set(parsed), parsed)
 
     def test_missing_plan_input_is_an_explicit_build_error(self) -> None:

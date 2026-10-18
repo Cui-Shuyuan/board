@@ -450,7 +450,12 @@ class LegacyAdapterTests(unittest.TestCase):
         self.assertEqual(audio_c["source_end"], 5.5)
         self.assertEqual([p["course"]["start"] for p in document["cues"]],
                          [0.0, 3.0, 5.0])
-        self.assertEqual(plan_a["subtitles"], runtime["cues"][0]["subtitles"])
+        self.assertEqual(plan_a["subtitles"], [{
+            "id": "subtitle.0",
+            "cue_start": 0.0,
+            "duration": 3.0,
+            "text": "text c/audio_plan",
+        }])
         self.assertEqual(plan_a["entry"], "fixture/previous")
 
     def test_compiled_animation_extends_duration_and_shifts_later_cue(self):

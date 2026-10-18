@@ -435,6 +435,9 @@ namespace UnityEngine
         public int samples;
         public int frequency;
         public int channels;
+        public bool GetData(float[] data, int offsetSamples) => true;
+        public bool SetData(float[] data, int offsetSamples) => true;
+        public static AudioClip Create(string name, int lengthSamples, int channels, int frequency, bool stream) => null;
     }
     public class AudioSource : Behaviour
     {

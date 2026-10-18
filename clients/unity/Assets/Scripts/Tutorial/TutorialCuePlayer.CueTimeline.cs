@@ -45,6 +45,7 @@ namespace BoardGameTutorial
         private bool cueTimelineTrackFallbackLogged;
         private string cueTimelineTrackLoadError = "";
         private CueTimelinePlanSet cueTimelineTrackPlanSet;
+        private string cueTimelineLoggedSubtitle = "";
 
         private CueTimelineFeatureGate cueTimelineGate;
         private CuePlaybackController cueTimelineController;
@@ -427,6 +428,11 @@ namespace BoardGameTutorial
 
             CueSubtitleState subtitle = cueTimelineController.CurrentSubtitle;
             currentSubtitle = subtitle != null && subtitle.Visible ? subtitle.Text : "";
+            if (currentSubtitle != cueTimelineLoggedSubtitle)
+            {
+                cueTimelineLoggedSubtitle = currentSubtitle;
+                Debug.Log("[CueTimelineV1][Subtitle] text=" + currentSubtitle);
+            }
 
             CuePlaybackState state = cueTimelineController.State;
             if (state == CuePlaybackState.Completed || state == CuePlaybackState.Failed
