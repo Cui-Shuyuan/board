@@ -132,6 +132,38 @@ cue 起点按最终 duration 顺序累加；每个 cue 全部轨道完成后自�
 
 生成器会再次执行 `validate_plan_set`，并且重复运行必须产生逐字节相同的文件。内容发布脚本 `tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json` 加入 release 文件集合、manifest entry、大小与 SHA-256 完整性校验。
 
+### 4.2.2 跨 cue 共享一个音频文件
+
+timing policy 还支持 `audio_groups`。它把多条串行 cue 的一次 TTS 输出绑定到
+同一个完整 MP3 上：
+
+```json
+{
+  "audio_groups": {
+    "quick_nobles_001_002": {
+      "cue_ids": ["quick_nobles/001", "quick_nobles/002"],
+      "beat_id": "quick_nobles/001_002.b1"
+    }
+  }
+}
+```
+
+生成方式：
+
+- `quick.cue.tts.lrc` 只写一行合并文本，合成一个 MP3；
+- 生成器按 TTS 返回的 word timing 求 cue 分界，不使用波形搜索；
+- 两条 cue 的 audio track 都引用同一个 `asset`，并标记相同
+  `playback_group`；
+- 第一条 cue 的 `source_end` 等于第二条 cue 的 `source_start`，因此它们仍是
+  同一段自然语气；
+- 每条 cue 仍可独立拥有 visual、字幕、duration mode 和导航位置。
+
+这样同时支持：
+
+- 一个 cue 含多个 MP3；
+- 一个 MP3 被多个串行 cue 共用；
+- cue 内音频和动画播放长度不同，全部结束后自动进入下一 cue。
+
 ### 4.3 共享 track 级开关
 
 开关唯一来源是内容 catalog：

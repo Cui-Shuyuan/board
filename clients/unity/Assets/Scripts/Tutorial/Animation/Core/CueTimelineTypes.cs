@@ -167,6 +167,10 @@ namespace BoardGameTutorial.Animation
         public long source_start_sample;
         public long source_end_sample;
         public string asset;
+        // Consecutive cues may reference contiguous ranges of one shared TTS
+        // file.  The group id lets an executor preserve decoder continuity
+        // without inferring that relationship from asset names.
+        public string playback_group;
         public string animation;
         public string pose;
         public string after_end;

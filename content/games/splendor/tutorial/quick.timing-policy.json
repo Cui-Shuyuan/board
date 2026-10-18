@@ -40,5 +40,14 @@
       "mode": "audio",
       "trailing_silence_seconds": 1.0
     }
+  },
+  "audio_groups": {
+    "quick_nobles_001_002": {
+      "cue_ids": [
+        "quick_nobles/001",
+        "quick_nobles/002"
+      ],
+      "beat_id": "quick_nobles/001_002.b1"
+    }
   }
 }

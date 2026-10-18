@@ -5,7 +5,7 @@
   "track": "quick",
   "course": {
     "start": 0.0,
-    "duration": 200.952
+    "duration": 200.778
   },
   "cues": [
     {
@@ -1748,7 +1748,7 @@
       "entry": null,
       "course": {
         "start": 168.352,
-        "duration": 6.864
+        "duration": 6.69
       },
       "tracks": [
         {
@@ -1773,40 +1773,25 @@
           "tail_policy": "silence",
           "segments": [
             {
-              "id": "audio.beat.0",
+              "id": "audio.shared",
               "type": "audio_clip",
-              "asset": "media/tts/quick.cues/quick_nobles__001.b1.mp3",
+              "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.04,
+              "source_end": 6.6000834,
               "source_start_sample": 0,
-              "source_end_sample": 48960
-            },
-            {
-              "id": "audio.beat.1",
-              "type": "audio_clip",
-              "asset": "media/tts/quick.cues/quick_nobles__001.b2.mp3",
-              "cue_start": 2.04,
-              "source_start": 0.0,
-              "source_end": 4.824,
-              "source_start_sample": 0,
-              "source_end_sample": 115776
+              "source_end_sample": 158402,
+              "playback_group": "quick_nobles_001_002"
             }
           ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0.0",
-          "cue_start": 0.295,
-          "duration": 1.45,
-          "text": "贵族是额外得分。"
-        },
-        {
-          "id": "subtitle.1.0",
-          "cue_start": 2.325,
-          "duration": 4.539,
-          "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
+          "id": "subtitle.0",
+          "cue_start": 0.0,
+          "duration": 6.69,
+          "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，"
         }
       ],
       "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，",
@@ -1821,7 +1806,7 @@
       "cue_id": "quick_nobles/002",
       "entry": null,
       "course": {
-        "start": 175.216,
+        "start": 175.042,
         "duration": 6.2
       },
       "tracks": [
@@ -1847,23 +1832,24 @@
           "tail_policy": "silence",
           "segments": [
             {
-              "id": "audio.beat.0",
+              "id": "audio.shared",
               "type": "audio_clip",
-              "asset": "media/tts/quick.cues/quick_nobles__002.b1.mp3",
+              "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
-              "source_end": 1.872,
-              "source_start_sample": 0,
-              "source_end_sample": 44928
+              "source_start": 6.6000834,
+              "source_end": 8.064,
+              "source_start_sample": 158402,
+              "source_end_sample": 193536,
+              "playback_group": "quick_nobles_001_002"
             }
           ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0.0",
-          "cue_start": 0.295,
-          "duration": 5.905,
+          "id": "subtitle.0",
+          "cue_start": 0.0,
+          "duration": 6.2,
           "text": "就拿取这位贵族；"
         }
       ],
@@ -1879,7 +1865,7 @@
       "cue_id": "quick_nobles/003",
       "entry": null,
       "course": {
-        "start": 181.416,
+        "start": 181.242,
         "duration": 8.0
       },
       "tracks": [
@@ -1937,7 +1923,7 @@
       "cue_id": "quick_end/title_4",
       "entry": null,
       "course": {
-        "start": 189.416,
+        "start": 189.242,
         "duration": 2.848
       },
       "tracks": [
@@ -2000,7 +1986,7 @@
       "cue_id": "quick_end/001",
       "entry": null,
       "course": {
-        "start": 192.264,
+        "start": 192.09,
         "duration": 8.688
       },
       "tracks": [
@@ -2346,10 +2332,10 @@
       "severity": "info",
       "cue_id": "quick_nobles/001",
       "mode": "max",
-      "original_duration": 6.864,
-      "audio_end": 6.864,
+      "original_duration": 6.69,
+      "audio_end": 6.6000834,
       "visual_end": 6.69,
-      "duration": 6.864
+      "duration": 6.69
     },
     {
       "code": "cue_timing_policy",
@@ -2357,7 +2343,7 @@
       "cue_id": "quick_nobles/002",
       "mode": "max",
       "original_duration": 6.2,
-      "audio_end": 1.872,
+      "audio_end": 1.4639166,
       "visual_end": 6.2,
       "duration": 6.2
     },

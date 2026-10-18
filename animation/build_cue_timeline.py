@@ -502,6 +502,94 @@ def _load_tts_subtitle_events(
     return result
 
 
+def _key_text(text: str) -> str:
+    return "".join(ch for ch in str(text or "") if ch.isalnum())
+
+
+def _word_stream(subtitle_events: list) -> list[dict]:
+    words: list[dict] = []
+    for event in subtitle_events:
+        if not isinstance(event, dict):
+            continue
+        for word in event.get("words") or []:
+            if not isinstance(word, dict):
+                continue
+            try:
+                start = float(word.get("startTime", 0.0))
+                end = float(word.get("endTime", start))
+            except (TypeError, ValueError):
+                continue
+            words.append({
+                "word": str(word.get("word") or ""),
+                "start": start,
+                "end": end,
+            })
+    words.sort(key=lambda item: (item["start"], item["end"]))
+    return words
+
+
+def _shared_group_ranges(
+    cue_ids: list[str],
+    cue_texts: dict[str, str],
+    duration: float,
+    subtitle_events: list,
+) -> dict[str, tuple[float, float]]:
+    """Resolve cue boundaries inside one shared TTS file from TTS word timing."""
+    missing = [cue_id for cue_id in cue_ids if cue_id not in cue_texts]
+    if missing:
+        raise BuildError(
+            "shared audio group references unknown cues: " + ", ".join(missing))
+    if len(cue_ids) == 1:
+        return {cue_ids[0]: (0.0, duration)}
+
+    words = _word_stream(subtitle_events)
+    boundaries = [0.0]
+    if words:
+        flat_parts: list[str] = []
+        char_word: list[int] = []
+        for word_index, word in enumerate(words):
+            piece = _key_text(word["word"])
+            flat_parts.append(piece)
+            char_word.extend([word_index] * len(piece))
+        flat = "".join(flat_parts)
+        search_from = 0
+        for cue_index in range(1, len(cue_ids)):
+            needle = _key_text(cue_texts[cue_ids[cue_index]])
+            if not needle:
+                boundary = boundaries[-1]
+            else:
+                char_index = flat.find(needle, search_from)
+                if char_index < 0:
+                    # Deterministic text-length fallback when TTS word text and
+                    # source text do not share exact character runs.
+                    previous_chars = sum(
+                        len(_key_text(cue_texts[cue_ids[i]]))
+                        for i in range(cue_index)
+                    )
+                    total_chars = sum(len(_key_text(cue_texts[cid])) for cid in cue_ids)
+                    ratio = previous_chars / max(1, total_chars)
+                    boundary = duration * ratio
+                else:
+                    word_index = char_word[char_index]
+                    boundary = words[word_index]["start"]
+                    search_from = char_index + len(needle)
+            boundary = min(duration, max(boundaries[-1], boundary))
+            boundaries.append(round(boundary, 9))
+    else:
+        total_chars = sum(len(_key_text(cue_texts[cid])) for cid in cue_ids)
+        cursor_chars = 0
+        for cue_index in range(1, len(cue_ids)):
+            cursor_chars += len(_key_text(cue_texts[cue_ids[cue_index - 1]]))
+            ratio = cursor_chars / max(1, total_chars)
+            boundaries.append(round(duration * ratio, 9))
+
+    boundaries.append(round(duration, 9))
+    return {
+        cue_id: (boundaries[index], boundaries[index + 1])
+        for index, cue_id in enumerate(cue_ids)
+    }
+
+
 def _build_cue_plan_set_from_tts(
     repo_root: Path,
     game: str,
@@ -537,6 +625,28 @@ def _build_cue_plan_set_from_tts(
             continue
         tts_by_beat[beat_id] = entry
 
+    cue_to_audio_group: dict[str, str] = {}
+    group_specs: dict[str, dict] = {}
+    for group_id, raw_group in (policy_document.get("audio_groups") or {}).items():
+        if not isinstance(group_id, str) or not group_id:
+            raise BuildError("audio group id must be a non-empty string")
+        if not isinstance(raw_group, dict):
+            raise BuildError(f"audio group {group_id!r} must be an object")
+        cue_ids = raw_group.get("cue_ids") or []
+        beat_id = str(raw_group.get("beat_id") or "").strip()
+        if not isinstance(cue_ids, list) or not cue_ids or not beat_id:
+            raise BuildError(
+                f"audio group {group_id!r} requires cue_ids and beat_id")
+        for cue_id in cue_ids:
+            cue_id = str(cue_id)
+            if cue_id in cue_to_audio_group:
+                raise BuildError(f"cue {cue_id!r} belongs to multiple audio groups")
+            cue_to_audio_group[cue_id] = group_id
+        group_specs[group_id] = {
+            "cue_ids": [str(cue_id) for cue_id in cue_ids],
+            "beat_id": beat_id,
+        }
+
     compiled_by_id = {
         str(cue.get("id")): cue
         for cue in compiled.get("cues") or []
@@ -548,6 +658,39 @@ def _build_cue_plan_set_from_tts(
         if isinstance(cue, dict) and cue.get("id") is not None
     }
     sample_rate = int(tts_manifest.get("sample_rate") or runtime.get("sample_rate") or 24000)
+    cue_texts = {
+        str(cue.get("id")): "".join(
+            str(beat.get("text") or "")
+            for beat in (cue.get("beats") or []) if isinstance(beat, dict)
+        )
+        for cue in script.get("cues") or [] if isinstance(cue, dict)
+    }
+    group_ranges: dict[str, dict[str, tuple[float, float]]] = {}
+    for group_id, spec in group_specs.items():
+        entry = tts_by_beat.get(spec["beat_id"])
+        if entry is None:
+            raise BuildError(
+                f"missing TTS manifest entry for audio group {group_id!r}")
+        group_duration = float(entry.get("duration", 0.0))
+        if not math.isfinite(group_duration) or group_duration <= 0.0:
+            raise BuildError(f"invalid TTS duration for audio group {group_id!r}")
+        group_events = _load_tts_subtitle_events(
+            entry.get("subtitle_file"), game_dir, game, "", group_duration)
+        # Raw events are needed for word timing; _load_tts_subtitle_events
+        # returns plan windows, so reload raw JSON for split resolution.
+        raw_events = []
+        subtitle_file = entry.get("subtitle_file")
+        if subtitle_file:
+            subtitle_rel = _normalize_game_relative_path(
+                str(subtitle_file), game_dir, game)
+            raw_events = json.loads((game_dir / subtitle_rel).read_text(encoding="utf-8"))
+        group_ranges[group_id] = _shared_group_ranges(
+            spec["cue_ids"],
+            cue_texts,
+            group_duration,
+            raw_events,
+        )
+
     plans: list[dict] = []
     diagnostics: list[dict] = [{
         "code": "cue_audio_source",
@@ -565,42 +708,70 @@ def _build_cue_plan_set_from_tts(
         subtitles: list[dict] = []
         cursor = 0.0
         beats = script_cue.get("beats") or []
-        cue_text = "".join(
-            str(beat.get("text") or "")
-            for beat in beats if isinstance(beat, dict)
-        )
-        for beat_index, beat in enumerate(beats):
-            if not isinstance(beat, dict):
-                continue
-            beat_id = str(beat.get("id") or "").strip()
-            beat_text = str(beat.get("text") or "")
-            entry = tts_by_beat.get(beat_id)
-            if entry is None:
-                raise BuildError(f"missing TTS manifest entry for beat {beat_id!r}")
-            duration = float(entry.get("duration", 0.0))
-            if not math.isfinite(duration) or duration <= 0.0:
-                raise BuildError(f"invalid TTS duration for beat {beat_id!r}")
+        cue_text = cue_texts.get(cue_id, "")
+        group_id = cue_to_audio_group.get(cue_id)
+        if group_id is not None:
+            spec = group_specs[group_id]
+            entry = tts_by_beat[spec["beat_id"]]
+            group_duration = float(entry.get("duration", 0.0))
+            start, end = group_ranges[group_id][cue_id]
+            segment_duration = end - start
+            if segment_duration <= 0.0:
+                raise BuildError(
+                    f"audio group {group_id!r} produced empty cue range for {cue_id!r}")
             asset = _normalize_game_relative_path(
                 str(entry.get("file") or ""), game_dir, game)
             audio_segments.append({
-                "id": f"audio.beat.{beat_index}",
+                "id": "audio.shared",
                 "type": "audio_clip",
                 "asset": asset,
-                "cue_start": round(cursor, 9),
-                "source_start": 0.0,
-                "source_end": round(duration, 9),
-                "source_start_sample": 0,
-                "source_end_sample": int(round(duration * sample_rate)),
+                "cue_start": 0.0,
+                "source_start": round(start, 9),
+                "source_end": round(end, 9),
+                "source_start_sample": int(round(start * sample_rate)),
+                "source_end_sample": int(round(end * sample_rate)),
+                "playback_group": group_id,
             })
-            for event_index, event in enumerate(_load_tts_subtitle_events(
-                entry.get("subtitle_file"), game_dir, game, beat_text, duration)):
-                subtitles.append({
-                    "id": f"subtitle.{beat_index}.{event_index}",
-                    "cue_start": round(cursor + float(event["cue_start"]), 9),
-                    "duration": round(float(event["duration"]), 9),
-                    "text": str(event.get("text") or beat_text),
+            subtitles.append({
+                "id": "subtitle.0",
+                "cue_start": 0.0,
+                "duration": round(segment_duration, 9),
+                "text": cue_text,
+            })
+            cursor = segment_duration
+        else:
+            for beat_index, beat in enumerate(beats):
+                if not isinstance(beat, dict):
+                    continue
+                beat_id = str(beat.get("id") or "").strip()
+                beat_text = str(beat.get("text") or "")
+                entry = tts_by_beat.get(beat_id)
+                if entry is None:
+                    raise BuildError(f"missing TTS manifest entry for beat {beat_id!r}")
+                duration = float(entry.get("duration", 0.0))
+                if not math.isfinite(duration) or duration <= 0.0:
+                    raise BuildError(f"invalid TTS duration for beat {beat_id!r}")
+                asset = _normalize_game_relative_path(
+                    str(entry.get("file") or ""), game_dir, game)
+                audio_segments.append({
+                    "id": f"audio.beat.{beat_index}",
+                    "type": "audio_clip",
+                    "asset": asset,
+                    "cue_start": round(cursor, 9),
+                    "source_start": 0.0,
+                    "source_end": round(duration, 9),
+                    "source_start_sample": 0,
+                    "source_end_sample": int(round(duration * sample_rate)),
                 })
-            cursor += duration
+                for event_index, event in enumerate(_load_tts_subtitle_events(
+                    entry.get("subtitle_file"), game_dir, game, beat_text, duration)):
+                    subtitles.append({
+                        "id": f"subtitle.{beat_index}.{event_index}",
+                        "cue_start": round(cursor + float(event["cue_start"]), 9),
+                        "duration": round(float(event["duration"]), 9),
+                        "text": str(event.get("text") or beat_text),
+                    })
+                cursor += duration
 
         trailing = _cue_trailing_silence_seconds(policy_document, cue_id)
         if trailing > 0.0:
@@ -657,6 +828,13 @@ def _build_cue_plan_set_from_tts(
             "refs": list(refs),
         }
         plans.append(plan)
+
+    planned_ids = {str(plan.get("cue_id")) for plan in plans}
+    unknown_group_cues = sorted(set(cue_to_audio_group) - planned_ids)
+    if unknown_group_cues:
+        raise BuildError(
+            "audio groups reference unknown cue ids: "
+            + ", ".join(unknown_group_cues))
 
     document = {
         "schema": cue_timeline.PLAN_SET_SCHEMA,

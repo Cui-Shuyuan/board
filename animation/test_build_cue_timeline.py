@@ -200,6 +200,96 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(plan["subtitles"][0]["cue_start"], 0.1)
         self.assertEqual(plan["subtitles"][0]["duration"], 0.7)
 
+    def test_shared_audio_group_assigns_contiguous_ranges_to_serial_cues(self) -> None:
+        game_dir = self.root / "content" / "games" / self.game
+        media = game_dir / "media" / "tts" / "test"
+        media.mkdir(parents=True)
+        (media / "shared.mp3").write_bytes(b"fake-mp3")
+        (media / "shared.subtitle.json").write_text(json.dumps([
+            {
+                "text": "第一句，第二句。",
+                "words": [
+                    {"word": "第一句，", "startTime": 0.1, "endTime": 0.8},
+                    {"word": "第二句。", "startTime": 1.0, "endTime": 1.8},
+                ],
+            },
+        ]), encoding="utf-8")
+
+        self.runtime_path.write_text(json.dumps({
+            "schema_version": 3,
+            "game_id": self.game,
+            "track": self.track,
+            "sample_rate": 24000,
+            "cues": [
+                {"id": "quick/one", "start": 0.0, "duration": 2.0,
+                 "audio": "media/tts/test/shared.mp3", "audio_start": 0.0,
+                 "text": "第一句，", "entry": None},
+                {"id": "quick/two", "start": 2.0, "duration": 2.0,
+                 "audio": "media/tts/test/shared.mp3", "audio_start": 0.0,
+                 "text": "第二句。", "entry": None},
+            ],
+        }), encoding="utf-8")
+        self.compiled_path.write_text(json.dumps({
+            "game": self.game,
+            "track": self.track,
+            "cues": [
+                {"id": "quick/one", "duration": 1.0},
+                {"id": "quick/two", "duration": 1.0},
+            ],
+        }), encoding="utf-8")
+
+        script_path = game_dir / "tutorial" / "build" / "quick.script.json"
+        script_path.parent.mkdir(parents=True)
+        script_path.write_text(json.dumps({
+            "cues": [
+                {"id": "quick/one", "group_path": ["chapter"],
+                 "beats": [{"id": "quick/one.b1", "text": "第一句，"}]},
+                {"id": "quick/two", "group_path": ["chapter"],
+                 "beats": [{"id": "quick/two.b1", "text": "第二句。"}]},
+            ],
+        }), encoding="utf-8")
+        (media / "tts_manifest.json").write_text(json.dumps({
+            "sample_rate": 24000,
+            "cues": [{
+                "id": "quick/one_two.b1",
+                "duration": 2.0,
+                "file": "media/tts/test/shared.mp3",
+                "subtitle_file": "media/tts/test/shared.subtitle.json",
+            }],
+        }), encoding="utf-8")
+        (game_dir / "tutorial" / "quick.timing-policy.json").write_text(json.dumps({
+            "schema": builder.TIMING_POLICY_SCHEMA,
+            "schema_version": builder.TIMING_POLICY_VERSION,
+            "game_id": self.game,
+            "track": self.track,
+            "audio_source": "cue_tts_manifest",
+            "tts_manifest": "media/tts/test/tts_manifest.json",
+            "script_source": "tutorial/build/quick.script.json",
+            "default_mode": "max",
+            "audio_groups": {
+                "shared": {
+                    "cue_ids": ["quick/one", "quick/two"],
+                    "beat_id": "quick/one_two.b1",
+                },
+            },
+            "cues": {},
+        }), encoding="utf-8")
+
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        first, second = document["cues"]
+        first_audio = next(
+            track for track in first["tracks"] if track["kind"] == "audio")["segments"][0]
+        second_audio = next(
+            track for track in second["tracks"] if track["kind"] == "audio")["segments"][0]
+        self.assertEqual(first_audio["asset"], second_audio["asset"])
+        self.assertEqual(first_audio["playback_group"], "shared")
+        self.assertEqual(second_audio["playback_group"], "shared")
+        self.assertEqual(first_audio["source_start"], 0.0)
+        self.assertEqual(first_audio["source_end"], 1.0)
+        self.assertEqual(second_audio["source_start"], 1.0)
+        self.assertEqual(second_audio["source_end"], 2.0)
+        self.assertEqual(second["course"]["start"], 1.0)
+
     def test_content_audio_boundary_override_is_applied_and_validated(self) -> None:
         boundaries = self.root / "content" / "games" / self.game / "tutorial" / "quick.audio-boundaries.json"
         boundaries.write_text(json.dumps({
