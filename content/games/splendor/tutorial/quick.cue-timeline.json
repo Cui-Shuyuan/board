@@ -56,13 +56,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 0.96,
+              "text": "一，背景。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.245,
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 0.96,
           "text": "一，背景。"
         }
       ],
@@ -114,14 +128,41 @@
               "source_end_sample": 241344
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.305,
+              "duration": 3.17,
+              "text": "璀璨宝石的目标，是成为最负盛名的商人。"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 3.8900416,
+              "duration": 5.7849994,
+              "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 10.296,
-          "text": "璀璨宝石的目标，是成为最负盛名的商人。所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.305,
+          "duration": 3.17,
+          "text": "璀璨宝石的目标，是成为最负盛名的商人。"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 3.8900416,
+          "duration": 5.7849994,
+          "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
         }
       ],
       "text": "璀璨宝石的目标，是成为最负盛名的商人。所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。",
@@ -178,13 +219,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.565,
+              "duration": 0.88,
+              "text": "2，设置。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.445,
+          "id": "subtitle.0.0",
+          "cue_start": 0.565,
+          "duration": 0.88,
           "text": "2，设置。"
         }
       ],
@@ -247,14 +302,41 @@
               "source_end_sample": 97344
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.275,
+              "duration": 1.41,
+              "text": "发展卡共90张，"
+            },
+            {
+              "id": "subtitle.1.0",
+              "type": "subtitle",
+              "cue_start": 2.395,
+              "duration": 3.46,
+              "text": "按背面分成三级：一级、二级、三级。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 6.096,
-          "text": "发展卡共90张，按背面分成三级：一级、二级、三级。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.275,
+          "duration": 1.41,
+          "text": "发展卡共90张，"
+        },
+        {
+          "id": "subtitle.1.0",
+          "cue_start": 2.395,
+          "duration": 3.46,
+          "text": "按背面分成三级：一级、二级、三级。"
         }
       ],
       "text": "发展卡共90张，按背面分成三级：一级、二级、三级。",
@@ -338,14 +420,67 @@
               "source_end_sample": 35136
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 1.13,
+              "text": "每级洗混后，"
+            },
+            {
+              "id": "subtitle.1.0",
+              "type": "subtitle",
+              "cue_start": 1.957,
+              "duration": 1.1,
+              "text": "翻开四张，"
+            },
+            {
+              "id": "subtitle.2.0",
+              "type": "subtitle",
+              "cue_start": 3.779,
+              "duration": 0.81,
+              "text": "摆成三行，"
+            },
+            {
+              "id": "subtitle.3.0",
+              "type": "subtitle",
+              "cue_start": 5.253,
+              "duration": 0.87,
+              "text": "组成市场。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 6.432,
-          "text": "每级洗混后，翻开四张，摆成三行，组成市场。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 1.13,
+          "text": "每级洗混后，"
+        },
+        {
+          "id": "subtitle.1.0",
+          "cue_start": 1.957,
+          "duration": 1.1,
+          "text": "翻开四张，"
+        },
+        {
+          "id": "subtitle.2.0",
+          "cue_start": 3.779,
+          "duration": 0.81,
+          "text": "摆成三行，"
+        },
+        {
+          "id": "subtitle.3.0",
+          "cue_start": 5.253,
+          "duration": 0.87,
+          "text": "组成市场。"
         }
       ],
       "text": "每级洗混后，翻开四张，摆成三行，组成市场。",
@@ -396,14 +531,41 @@
               "source_end_sample": 237888
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 6.3,
+              "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 6.950042,
+              "duration": 2.675,
+              "text": "黄金的数量和人数无关，放置五枚。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 10.032,
-          "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；黄金的数量和人数无关，放置五枚。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 6.3,
+          "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 6.950042,
+          "duration": 2.675,
+          "text": "黄金的数量和人数无关，放置五枚。"
         }
       ],
       "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；黄金的数量和人数无关，放置五枚。",
@@ -438,13 +600,27 @@
               "source_end_sample": 116352
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.275,
+              "duration": 4.26,
+              "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 4.848,
+          "id": "subtitle.0.0",
+          "cue_start": 0.275,
+          "duration": 4.26,
           "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；"
         }
       ],
@@ -496,13 +672,27 @@
               "source_end_sample": 54720
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.295,
+              "duration": 1.59,
+              "text": "再选出一位起始玩家，"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.28,
+          "id": "subtitle.0.0",
+          "cue_start": 0.295,
+          "duration": 1.59,
           "text": "再选出一位起始玩家，"
         }
       ],
@@ -554,13 +744,27 @@
               "source_end_sample": 58752
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.275,
+              "duration": 1.94,
+              "text": "并拿取起始玩家标记。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.448,
+          "id": "subtitle.0.0",
+          "cue_start": 0.275,
+          "duration": 1.94,
           "text": "并拿取起始玩家标记。"
         }
       ],
@@ -618,13 +822,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.475,
+              "duration": 1.61,
+              "text": "3，回合与行动。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 3.085,
+          "id": "subtitle.0.0",
+          "cue_start": 0.475,
+          "duration": 1.61,
           "text": "3，回合与行动。"
         }
       ],
@@ -676,13 +894,27 @@
               "source_end_sample": 130752
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.305,
+              "duration": 4.9,
+              "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 5.472,
+          "id": "subtitle.0.0",
+          "cue_start": 0.305,
+          "duration": 4.9,
           "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。"
         }
       ],
@@ -734,14 +966,54 @@
               "source_end_sample": 231552
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.295,
+              "duration": 4.66,
+              "text": "自己的回合，需要从三种行动中选一种：拿宝石、"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 5.3200417,
+              "duration": 1.815,
+              "text": "买发展卡、保留发展卡；"
+            },
+            {
+              "id": "subtitle.0.2",
+              "type": "subtitle",
+              "cue_start": 7.5400834,
+              "duration": 1.3749996,
+              "text": "执行后轮到下一位玩家。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 10.032,
-          "text": "自己的回合，需要从三种行动中选一种：拿宝石、买发展卡、保留发展卡；执行后轮到下一位玩家。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.295,
+          "duration": 4.66,
+          "text": "自己的回合，需要从三种行动中选一种：拿宝石、"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 5.3200417,
+          "duration": 1.815,
+          "text": "买发展卡、保留发展卡；"
+        },
+        {
+          "id": "subtitle.0.2",
+          "cue_start": 7.5400834,
+          "duration": 1.3749996,
+          "text": "执行后轮到下一位玩家。"
         }
       ],
       "text": "自己的回合，需要从三种行动中选一种：拿宝石、买发展卡、保留发展卡；执行后轮到下一位玩家。",
@@ -798,13 +1070,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.925,
+              "duration": 0.98,
+              "text": "3.1，拿宝石。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.905,
+          "id": "subtitle.0.0",
+          "cue_start": 0.925,
+          "duration": 0.98,
           "text": "3.1，拿宝石。"
         }
       ],
@@ -857,13 +1143,27 @@
               "source_end_sample": 106560
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.265,
+              "duration": 3.87,
+              "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 4.824,
+          "id": "subtitle.0.0",
+          "cue_start": 0.265,
+          "duration": 3.87,
           "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。"
         }
       ],
@@ -916,13 +1216,27 @@
               "source_end_sample": 67968
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.305,
+              "duration": 2.23,
+              "text": "二是拿两枚相同颜色的宝石。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 3.24,
+          "id": "subtitle.0.0",
+          "cue_start": 0.305,
+          "duration": 2.23,
           "text": "二是拿两枚相同颜色的宝石。"
         }
       ],
@@ -975,14 +1289,41 @@
               "source_end_sample": 173952
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.295,
+              "duration": 4.57,
+              "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 5.2400417,
+              "duration": 1.6350003,
+              "text": "拿完还要至少剩两枚。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 7.248,
-          "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.295,
+          "duration": 4.57,
+          "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 5.2400417,
+          "duration": 1.6350003,
+          "text": "拿完还要至少剩两枚。"
         }
       ],
       "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，拿完还要至少剩两枚。",
@@ -1034,14 +1375,41 @@
               "source_end_sample": 246528
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 4.82,
+              "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 5.5450416,
+              "duration": 3.8899994,
+              "text": "自己持有的宝石和已买的卡都放在面前，属于公开信息。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 10.272,
-          "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 4.82,
+          "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 5.5450416,
+          "duration": 3.8899994,
+          "text": "自己持有的宝石和已买的卡都放在面前，属于公开信息。"
         }
       ],
       "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；自己持有的宝石和已买的卡都放在面前，属于公开信息。",
@@ -1099,13 +1467,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.0,
+              "duration": 2.495,
+              "text": "3.2，购买发展卡。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
+          "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.495,
+          "duration": 2.495,
           "text": "3.2，购买发展卡。"
         }
       ],
@@ -1158,14 +1540,41 @@
               "source_end_sample": 198720
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.295,
+              "duration": 4.47,
+              "text": "看发展卡：左下角是价格，买它要支付对应宝石；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 5.1300416,
+              "duration": 2.335,
+              "text": "左上角是分数，右上角是永久折扣。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 9.264,
-          "text": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.295,
+          "duration": 4.47,
+          "text": "看发展卡：左下角是价格，买它要支付对应宝石；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 5.1300416,
+          "duration": 2.335,
+          "text": "左上角是分数，右上角是永久折扣。"
         }
       ],
       "text": "看发展卡：左下角是价格，买它要支付对应宝石；左上角是分数，右上角是永久折扣。",
@@ -1217,14 +1626,54 @@
               "source_end_sample": 328320
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.265,
+              "duration": 4.89,
+              "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 5.6100416,
+              "duration": 3.7849994,
+              "text": "市场空出的位置，要从对应等级牌堆补一张。"
+            },
+            {
+              "id": "subtitle.0.2",
+              "type": "subtitle",
+              "cue_start": 9.790083,
+              "duration": 3.434999,
+              "text": "每回合最多买一张，但整局购买数量不限。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 13.68,
-          "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；市场空出的位置，要从对应等级牌堆补一张。每回合最多买一张，但整局购买数量不限。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.265,
+          "duration": 4.89,
+          "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 5.6100416,
+          "duration": 3.7849994,
+          "text": "市场空出的位置，要从对应等级牌堆补一张。"
+        },
+        {
+          "id": "subtitle.0.2",
+          "cue_start": 9.790083,
+          "duration": 3.434999,
+          "text": "每回合最多买一张，但整局购买数量不限。"
         }
       ],
       "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；市场空出的位置，要从对应等级牌堆补一张。每回合最多买一张，但整局购买数量不限。",
@@ -1276,14 +1725,41 @@
               "source_end_sample": 208512
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 3.86,
+              "text": "已购发展卡提供永久折扣：每有一张同色卡，"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 4.430042,
+              "duration": 3.595,
+              "text": "买卡时就少付一颗对应宝石，折扣最多让卡免费。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 8.832,
-          "text": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 3.86,
+          "text": "已购发展卡提供永久折扣：每有一张同色卡，"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 4.430042,
+          "duration": 3.595,
+          "text": "买卡时就少付一颗对应宝石，折扣最多让卡免费。"
         }
       ],
       "text": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。",
@@ -1341,13 +1817,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.935,
+              "duration": 1.32,
+              "text": "3.3，保留发展卡。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 3.255,
+          "id": "subtitle.0.0",
+          "cue_start": 0.935,
+          "duration": 1.32,
           "text": "3.3，保留发展卡。"
         }
       ],
@@ -1400,14 +1890,54 @@
               "source_end_sample": 227520
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.305,
+              "duration": 4.01,
+              "text": "保留行动：从市场或牌堆顶拿一张发展卡，"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 4.7200418,
+              "duration": 1.7550002,
+              "text": "背面朝上放在自己面前，"
+            },
+            {
+              "id": "subtitle.0.2",
+              "type": "subtitle",
+              "cue_start": 6.7450833,
+              "duration": 2.2599997,
+              "text": "再从黄金供应堆拿一枚黄金。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 9.48,
-          "text": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.305,
+          "duration": 4.01,
+          "text": "保留行动：从市场或牌堆顶拿一张发展卡，"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 4.7200418,
+          "duration": 1.7550002,
+          "text": "背面朝上放在自己面前，"
+        },
+        {
+          "id": "subtitle.0.2",
+          "cue_start": 6.7450833,
+          "duration": 2.2599997,
+          "text": "再从黄金供应堆拿一枚黄金。"
         }
       ],
       "text": "保留行动：从市场或牌堆顶拿一张发展卡，背面朝上放在自己面前，再从黄金供应堆拿一枚黄金。",
@@ -1459,14 +1989,54 @@
               "source_end_sample": 221760
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 1.54,
+              "text": "最多同时保留三张；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 2.3600416,
+              "duration": 2.2249999,
+              "text": "从牌堆顶保留前不能看牌；"
+            },
+            {
+              "id": "subtitle.0.2",
+              "type": "subtitle",
+              "cue_start": 4.9000835,
+              "duration": 3.5950005,
+              "text": "保留的牌不提供折扣和声望，也不能给其他玩家看。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 9.24,
-          "text": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 1.54,
+          "text": "最多同时保留三张；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 2.3600416,
+          "duration": 2.2249999,
+          "text": "从牌堆顶保留前不能看牌；"
+        },
+        {
+          "id": "subtitle.0.2",
+          "cue_start": 4.9000835,
+          "duration": 3.5950005,
+          "text": "保留的牌不提供折扣和声望，也不能给其他玩家看。"
         }
       ],
       "text": "最多同时保留三张；从牌堆顶保留前不能看牌；保留的牌不提供折扣和声望，也不能给其他玩家看。",
@@ -1518,13 +2088,27 @@
               "source_end_sample": 93312
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.275,
+              "duration": 3.2,
+              "text": "保留的牌，之后可以在自己回合花钱买下。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 3.888,
+          "id": "subtitle.0.0",
+          "cue_start": 0.275,
+          "duration": 3.2,
           "text": "保留的牌，之后可以在自己回合花钱买下。"
         }
       ],
@@ -1577,14 +2161,41 @@
               "source_end_sample": 183744
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.265,
+              "duration": 4.65,
+              "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 5.2850413,
+              "duration": 1.5800004,
+              "text": "但玩家不能直接拿取黄金。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 7.656,
-          "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.265,
+          "duration": 4.65,
+          "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 5.2850413,
+          "duration": 1.5800004,
+          "text": "但玩家不能直接拿取黄金。"
         }
       ],
       "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；但玩家不能直接拿取黄金。",
@@ -1642,13 +2253,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.985,
+              "duration": 1.01,
+              "text": "3.4，贵族。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.995,
+          "id": "subtitle.0.0",
+          "cue_start": 0.985,
+          "duration": 1.01,
           "text": "3.4，贵族。"
         }
       ],
@@ -1701,14 +2326,41 @@
               "source_end_sample": 154742
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.265,
+              "duration": 1.43,
+              "text": "贵族是额外得分。"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 2.2400417,
+              "duration": 4.0549999,
+              "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 6.69,
-          "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，"
+          "id": "subtitle.0.0",
+          "cue_start": 0.265,
+          "duration": 1.43,
+          "text": "贵族是额外得分。"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 2.2400417,
+          "duration": 4.0549999,
+          "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
         }
       ],
       "text": "贵族是额外得分。回合结束后，如果你的发展卡满足某位贵族下方的条件，",
@@ -1760,13 +2412,27 @@
               "source_end_sample": 193536
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.1525209,
+              "duration": 1.1549996,
+              "text": "就拿取这位贵族；"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 6.2,
+          "id": "subtitle.0.0",
+          "cue_start": 0.1525209,
+          "duration": 1.1549996,
           "text": "就拿取这位贵族；"
         }
       ],
@@ -1819,13 +2485,27 @@
               "source_end_sample": 77760
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.285,
+              "duration": 2.68,
+              "text": "同时满足多位时，选一位拿取。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 8.0,
+          "id": "subtitle.0.0",
+          "cue_start": 0.285,
+          "duration": 2.68,
           "text": "同时满足多位时，选一位拿取。"
         }
       ],
@@ -1884,13 +2564,27 @@
               "duration": 1.0
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.355,
+              "duration": 1.29,
+              "text": "4，游戏结束。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 2.645,
+          "id": "subtitle.0.0",
+          "cue_start": 0.355,
+          "duration": 1.29,
           "text": "4，游戏结束。"
         }
       ],
@@ -1942,14 +2636,54 @@
               "source_end_sample": 202752
             }
           ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 0.315,
+              "duration": 3.1,
+              "text": "当有人获得十五分，游戏进入最后一轮；"
+            },
+            {
+              "id": "subtitle.0.1",
+              "type": "subtitle",
+              "cue_start": 3.8000417,
+              "duration": 3.145,
+              "text": "确保所有玩家回合数相同后，游戏结束；"
+            },
+            {
+              "id": "subtitle.0.2",
+              "type": "subtitle",
+              "cue_start": 7.155083,
+              "duration": 0.920001,
+              "text": "分多者获胜。"
+            }
+          ]
         }
       ],
       "subtitles": [
         {
-          "id": "subtitle.0",
-          "cue_start": 0.0,
-          "duration": 8.688,
-          "text": "当有人获得十五分，游戏进入最后一轮；确保所有玩家回合数相同后，游戏结束；分多者获胜。"
+          "id": "subtitle.0.0",
+          "cue_start": 0.315,
+          "duration": 3.1,
+          "text": "当有人获得十五分，游戏进入最后一轮；"
+        },
+        {
+          "id": "subtitle.0.1",
+          "cue_start": 3.8000417,
+          "duration": 3.145,
+          "text": "确保所有玩家回合数相同后，游戏结束；"
+        },
+        {
+          "id": "subtitle.0.2",
+          "cue_start": 7.155083,
+          "duration": 0.920001,
+          "text": "分多者获胜。"
         }
       ],
       "text": "当有人获得十五分，游戏进入最后一轮；确保所有玩家回合数相同后，游戏结束；分多者获胜。",

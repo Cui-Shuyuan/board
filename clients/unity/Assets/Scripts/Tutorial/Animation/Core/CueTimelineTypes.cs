@@ -174,12 +174,14 @@ namespace BoardGameTutorial.Animation
         public string animation;
         public string pose;
         public string after_end;
+        public string text;
 
         public double CueDuration
         {
             get
             {
-                if (type == "hold" || type == "silence") return duration;
+                if (type == "hold" || type == "silence" || type == "subtitle")
+                    return duration;
                 return source_end - source_start;
             }
         }
@@ -358,9 +360,10 @@ namespace BoardGameTutorial.Animation
                     error = "duplicate track id '" + track.id + "'";
                     return false;
                 }
-                if (track.kind != "audio" && track.kind != "visual")
+                if (track.kind != "audio" && track.kind != "visual"
+                    && track.kind != "subtitle")
                 {
-                    error = "tracks[" + ti + "].kind must be audio or visual";
+                    error = "tracks[" + ti + "].kind must be audio, visual or subtitle";
                     return false;
                 }
                 if (track.segments == null)
@@ -400,7 +403,8 @@ namespace BoardGameTutorial.Animation
                         error = path + ".type is invalid for track kind " + track.kind;
                         return false;
                     }
-                    if ((segment.type == "hold" || segment.type == "silence")
+                    if ((segment.type == "hold" || segment.type == "silence"
+                         || segment.type == "subtitle")
                         && !IsFinitePositive(segment.duration))
                     {
                         error = path + ".duration must be finite and positive";
@@ -422,6 +426,11 @@ namespace BoardGameTutorial.Animation
                     if (segment.type == "animation" && string.IsNullOrEmpty(segment.animation))
                     {
                         error = path + ".animation must be non-empty";
+                        return false;
+                    }
+                    if (segment.type == "subtitle" && segment.text == null)
+                    {
+                        error = path + ".text must not be null";
                         return false;
                     }
                     if (segment.EndCueTime > plan.course.duration + Epsilon)
@@ -455,6 +464,7 @@ namespace BoardGameTutorial.Animation
         {
             if (type == "audio_clip" || type == "silence") return "audio";
             if (type == "animation" || type == "hold") return "visual";
+            if (type == "subtitle") return "subtitle";
             return null;
         }
 

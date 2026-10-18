@@ -317,6 +317,26 @@ class PlanValidatorTests(unittest.TestCase):
     def test_valid_plan_is_accepted(self):
         self.assertIs(timeline.validate_cue_plan(self.plan), self.plan)
 
+    def test_subtitle_track_is_validated_as_first_class_track(self):
+        plan = copy.deepcopy(self.plan)
+        plan["tracks"].append({
+            "id": "subtitle.main",
+            "kind": "subtitle",
+            "tail_policy": "clear",
+            "segments": [{
+                "id": "subtitle.0",
+                "type": "subtitle",
+                "cue_start": 0.5,
+                "duration": 1.5,
+                "text": "caption",
+            }],
+        })
+        self.assertIs(timeline.validate_cue_plan(plan), plan)
+        invalid = copy.deepcopy(plan)
+        invalid["tracks"][-1]["segments"][0]["type"] = "audio_clip"
+        with self.assertRaisesRegex(timeline.CueTimelineError, "unknown subtitle segment"):
+            timeline.validate_cue_plan(invalid)
+
     def test_duplicate_track_and_segment_ids_are_rejected(self):
         duplicate_track = copy.deepcopy(self.plan)
         duplicate_track["tracks"][1]["id"] = "visual.main"

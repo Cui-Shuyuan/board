@@ -11,7 +11,14 @@
         "asset": "media/tts/quick.cues/quick_intro__title_1.b1.mp3",
         "start": 0.0,
         "end": 1.245,
-        "speech_end": 1.245
+        "speech_end": 1.245,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 1.245,
+            "text": "一，背景。"
+          }
+        ]
       }
     ],
     "quick_intro/001": [
@@ -20,7 +27,19 @@
         "asset": "media/tts/quick.cues/quick_intro__001.b1.mp3",
         "start": 0.0,
         "end": 10.056,
-        "speech_end": 9.675041
+        "speech_end": 9.675041,
+        "subtitles": [
+          {
+            "start": 0.305,
+            "end": 3.475,
+            "text": "璀璨宝石的目标，是成为最负盛名的商人。"
+          },
+          {
+            "start": 3.8900416,
+            "end": 9.675041,
+            "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
+          }
+        ]
       }
     ],
     "quick_setup_cards/title_2": [
@@ -29,7 +48,14 @@
         "asset": "media/tts/quick.cues/quick_setup_cards__title_2.b1.mp3",
         "start": 0.0,
         "end": 1.445,
-        "speech_end": 1.445
+        "speech_end": 1.445,
+        "subtitles": [
+          {
+            "start": 0.565,
+            "end": 1.445,
+            "text": "2，设置。"
+          }
+        ]
       }
     ],
     "quick_setup_cards/001.1": [
@@ -38,14 +64,28 @@
         "asset": "media/tts/quick.cues/quick_setup_cards__001.1.b1.mp3",
         "start": 0.0,
         "end": 2.04,
-        "speech_end": 1.685
+        "speech_end": 1.685,
+        "subtitles": [
+          {
+            "start": 0.275,
+            "end": 1.685,
+            "text": "发展卡共90张，\n"
+          }
+        ]
       },
       {
         "id": "quick_setup_cards__001.1.b2",
         "asset": "media/tts/quick.cues/quick_setup_cards__001.1.b2.mp3",
         "start": 0.0,
         "end": 4.056,
-        "speech_end": 3.815
+        "speech_end": 3.815,
+        "subtitles": [
+          {
+            "start": 0.355,
+            "end": 3.815,
+            "text": "按背面分成三级：一级、二级、三级。"
+          }
+        ]
       }
     ],
     "quick_setup_cards/001.2": [
@@ -54,28 +94,56 @@
         "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b1.mp3",
         "start": 0.0,
         "end": 1.632,
-        "speech_end": 1.415
+        "speech_end": 1.415,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 1.415,
+            "text": "每级洗混后，\n"
+          }
+        ]
       },
       {
         "id": "quick_setup_cards__001.2.b2",
         "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b2.mp3",
         "start": 0.0,
         "end": 1.872,
-        "speech_end": 1.425
+        "speech_end": 1.425,
+        "subtitles": [
+          {
+            "start": 0.325,
+            "end": 1.425,
+            "text": "翻开四张，\n"
+          }
+        ]
       },
       {
         "id": "quick_setup_cards__001.2.b3",
         "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b3.mp3",
         "start": 0.0,
         "end": 1.464,
-        "speech_end": 1.085
+        "speech_end": 1.085,
+        "subtitles": [
+          {
+            "start": 0.275,
+            "end": 1.085,
+            "text": "摆成三行，\n"
+          }
+        ]
       },
       {
         "id": "quick_setup_cards__001.2.b4",
         "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b4.mp3",
         "start": 0.0,
         "end": 1.464,
-        "speech_end": 1.155
+        "speech_end": 1.155,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 1.155,
+            "text": "组成市场。"
+          }
+        ]
       }
     ],
     "quick_setup_gems/002": [
@@ -84,7 +152,19 @@
         "asset": "media/tts/quick.cues/quick_setup_gems__002.b1.mp3",
         "start": 0.0,
         "end": 9.912,
-        "speech_end": 9.625042
+        "speech_end": 9.625042,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 6.585,
+            "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；"
+          },
+          {
+            "start": 6.950042,
+            "end": 9.625042,
+            "text": "黄金的数量和人数无关，放置五枚。"
+          }
+        ]
       }
     ],
     "quick_setup_players/001": [
@@ -93,7 +173,14 @@
         "asset": "media/tts/quick.cues/quick_setup_players__001.b1.mp3",
         "start": 0.0,
         "end": 4.848,
-        "speech_end": 4.535
+        "speech_end": 4.535,
+        "subtitles": [
+          {
+            "start": 0.275,
+            "end": 4.535,
+            "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；"
+          }
+        ]
       }
     ],
     "quick_setup_players/002": [
@@ -102,7 +189,14 @@
         "asset": "media/tts/quick.cues/quick_setup_players__002.b1.mp3",
         "start": 0.0,
         "end": 2.28,
-        "speech_end": 1.885
+        "speech_end": 1.885,
+        "subtitles": [
+          {
+            "start": 0.295,
+            "end": 1.885,
+            "text": "再选出一位起始玩家，\n"
+          }
+        ]
       }
     ],
     "quick_setup_players/003": [
@@ -111,7 +205,14 @@
         "asset": "media/tts/quick.cues/quick_setup_players__003.b1.mp3",
         "start": 0.0,
         "end": 2.448,
-        "speech_end": 2.215
+        "speech_end": 2.215,
+        "subtitles": [
+          {
+            "start": 0.275,
+            "end": 2.215,
+            "text": "并拿取起始玩家标记。"
+          }
+        ]
       }
     ],
     "quick_turn/title_3": [
@@ -120,7 +221,14 @@
         "asset": "media/tts/quick.cues/quick_turn__title_3.b1.mp3",
         "start": 0.0,
         "end": 2.085,
-        "speech_end": 2.085
+        "speech_end": 2.085,
+        "subtitles": [
+          {
+            "start": 0.475,
+            "end": 2.085,
+            "text": "3，回合与行动。"
+          }
+        ]
       }
     ],
     "quick_turn/001": [
@@ -129,7 +237,14 @@
         "asset": "media/tts/quick.cues/quick_turn__001.b1.mp3",
         "start": 0.0,
         "end": 5.448,
-        "speech_end": 5.205
+        "speech_end": 5.205,
+        "subtitles": [
+          {
+            "start": 0.305,
+            "end": 5.205,
+            "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。"
+          }
+        ]
       }
     ],
     "quick_turn/002": [
@@ -138,7 +253,24 @@
         "asset": "media/tts/quick.cues/quick_turn__002.b1.mp3",
         "start": 0.0,
         "end": 9.648,
-        "speech_end": 8.915083
+        "speech_end": 8.915083,
+        "subtitles": [
+          {
+            "start": 0.295,
+            "end": 4.955,
+            "text": "自己的回合，需要从三种行动中选一种：拿宝石、"
+          },
+          {
+            "start": 5.3200417,
+            "end": 7.1350417,
+            "text": "买发展卡、保留发展卡；"
+          },
+          {
+            "start": 7.5400834,
+            "end": 8.915083,
+            "text": "执行后轮到下一位玩家。"
+          }
+        ]
       }
     ],
     "quick_take_gems/title_3_1": [
@@ -147,7 +279,14 @@
         "asset": "media/tts/quick.cues/quick_take_gems__title_3_1.b1.mp3",
         "start": 0.0,
         "end": 1.905,
-        "speech_end": 1.905
+        "speech_end": 1.905,
+        "subtitles": [
+          {
+            "start": 0.925,
+            "end": 1.905,
+            "text": "3.1，拿宝石。"
+          }
+        ]
       }
     ],
     "quick_take_gems/different.001": [
@@ -156,7 +295,14 @@
         "asset": "media/tts/quick.cues/quick_take_gems__different.001.b1.mp3",
         "start": 0.0,
         "end": 4.44,
-        "speech_end": 4.135
+        "speech_end": 4.135,
+        "subtitles": [
+          {
+            "start": 0.265,
+            "end": 4.135,
+            "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。"
+          }
+        ]
       }
     ],
     "quick_take_gems/same.001": [
@@ -165,7 +311,14 @@
         "asset": "media/tts/quick.cues/quick_take_gems__same.001.b1.mp3",
         "start": 0.0,
         "end": 2.832,
-        "speech_end": 2.535
+        "speech_end": 2.535,
+        "subtitles": [
+          {
+            "start": 0.305,
+            "end": 2.535,
+            "text": "二是拿两枚相同颜色的宝石。"
+          }
+        ]
       }
     ],
     "quick_take_gems/002": [
@@ -174,7 +327,19 @@
         "asset": "media/tts/quick.cues/quick_take_gems__002.b1.mp3",
         "start": 0.0,
         "end": 7.248,
-        "speech_end": 6.875042
+        "speech_end": 6.875042,
+        "subtitles": [
+          {
+            "start": 0.295,
+            "end": 4.865,
+            "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，"
+          },
+          {
+            "start": 5.2400417,
+            "end": 6.875042,
+            "text": "拿完还要至少剩两枚。"
+          }
+        ]
       }
     ],
     "quick_take_gems/003": [
@@ -183,7 +348,19 @@
         "asset": "media/tts/quick.cues/quick_take_gems__003.b1.mp3",
         "start": 0.0,
         "end": 10.272,
-        "speech_end": 9.435041
+        "speech_end": 9.435041,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 5.105,
+            "text": "宝石和黄金总数最多十枚，超过要立刻归还到十枚；"
+          },
+          {
+            "start": 5.5450416,
+            "end": 9.435041,
+            "text": "自己持有的宝石和已买的卡都放在面前，属于公开信息。"
+          }
+        ]
       }
     ],
     "quick_cards/title_3_2": [
@@ -192,7 +369,14 @@
         "asset": "media/tts/quick.cues/quick_cards__title_3_2.b1.mp3",
         "start": 0.0,
         "end": 2.495,
-        "speech_end": 2.495
+        "speech_end": 2.495,
+        "subtitles": [
+          {
+            "start": 0.0,
+            "end": 2.495,
+            "text": "3.2，购买发展卡。"
+          }
+        ]
       }
     ],
     "quick_cards/001": [
@@ -201,7 +385,19 @@
         "asset": "media/tts/quick.cues/quick_cards__001.b1.mp3",
         "start": 0.0,
         "end": 8.28,
-        "speech_end": 7.4650416
+        "speech_end": 7.4650416,
+        "subtitles": [
+          {
+            "start": 0.295,
+            "end": 4.765,
+            "text": "看发展卡：左下角是价格，买它要支付对应宝石；"
+          },
+          {
+            "start": 5.1300416,
+            "end": 7.4650416,
+            "text": "左上角是分数，右上角是永久折扣。"
+          }
+        ]
       }
     ],
     "quick_cards/002": [
@@ -210,7 +406,24 @@
         "asset": "media/tts/quick.cues/quick_cards__002.b1.mp3",
         "start": 0.0,
         "end": 13.68,
-        "speech_end": 13.225082
+        "speech_end": 13.225082,
+        "subtitles": [
+          {
+            "start": 0.265,
+            "end": 5.155,
+            "text": "购买时支付价格，把卡放到自己面前并获得卡上的分数；"
+          },
+          {
+            "start": 5.6100416,
+            "end": 9.395041,
+            "text": "市场空出的位置，要从对应等级牌堆补一张。"
+          },
+          {
+            "start": 9.790083,
+            "end": 13.225082,
+            "text": "每回合最多买一张，但整局购买数量不限。"
+          }
+        ]
       }
     ],
     "quick_cards/003": [
@@ -219,7 +432,19 @@
         "asset": "media/tts/quick.cues/quick_cards__003.b1.mp3",
         "start": 0.0,
         "end": 8.688,
-        "speech_end": 8.025042
+        "speech_end": 8.025042,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 4.145,
+            "text": "已购发展卡提供永久折扣：每有一张同色卡，"
+          },
+          {
+            "start": 4.430042,
+            "end": 8.025042,
+            "text": "买卡时就少付一颗对应宝石，折扣最多让卡免费。"
+          }
+        ]
       }
     ],
     "quick_reserve/title_3_3": [
@@ -228,7 +453,14 @@
         "asset": "media/tts/quick.cues/quick_reserve__title_3_3.b1.mp3",
         "start": 0.0,
         "end": 2.255,
-        "speech_end": 2.255
+        "speech_end": 2.255,
+        "subtitles": [
+          {
+            "start": 0.935,
+            "end": 2.255,
+            "text": "3.3，保留发展卡。"
+          }
+        ]
       }
     ],
     "quick_reserve/001": [
@@ -237,7 +469,24 @@
         "asset": "media/tts/quick.cues/quick_reserve__001.b1.mp3",
         "start": 0.0,
         "end": 9.48,
-        "speech_end": 9.005083
+        "speech_end": 9.005083,
+        "subtitles": [
+          {
+            "start": 0.305,
+            "end": 4.315,
+            "text": "保留行动：从市场或牌堆顶拿一张发展卡，"
+          },
+          {
+            "start": 4.7200418,
+            "end": 6.475042,
+            "text": "背面朝上放在自己面前，"
+          },
+          {
+            "start": 6.7450833,
+            "end": 9.005083,
+            "text": "再从黄金供应堆拿一枚黄金。"
+          }
+        ]
       }
     ],
     "quick_reserve/002": [
@@ -246,7 +495,24 @@
         "asset": "media/tts/quick.cues/quick_reserve__002.b1.mp3",
         "start": 0.0,
         "end": 9.24,
-        "speech_end": 8.495084
+        "speech_end": 8.495084,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 1.825,
+            "text": "最多同时保留三张；"
+          },
+          {
+            "start": 2.3600416,
+            "end": 4.5850415,
+            "text": "从牌堆顶保留前不能看牌；"
+          },
+          {
+            "start": 4.9000835,
+            "end": 8.495084,
+            "text": "保留的牌不提供折扣和声望，也不能给其他玩家看。"
+          }
+        ]
       }
     ],
     "quick_reserve/003": [
@@ -255,7 +521,14 @@
         "asset": "media/tts/quick.cues/quick_reserve__003.b1.mp3",
         "start": 0.0,
         "end": 3.888,
-        "speech_end": 3.475
+        "speech_end": 3.475,
+        "subtitles": [
+          {
+            "start": 0.275,
+            "end": 3.475,
+            "text": "保留的牌，之后可以在自己回合花钱买下。"
+          }
+        ]
       }
     ],
     "quick_gold/001": [
@@ -264,7 +537,19 @@
         "asset": "media/tts/quick.cues/quick_gold__001.b1.mp3",
         "start": 0.0,
         "end": 7.656,
-        "speech_end": 6.8650417
+        "speech_end": 6.8650417,
+        "subtitles": [
+          {
+            "start": 0.265,
+            "end": 4.915,
+            "text": "黄金是万能宝石，买卡时可以代替任意一种颜色的宝石；"
+          },
+          {
+            "start": 5.2850413,
+            "end": 6.8650417,
+            "text": "但玩家不能直接拿取黄金。"
+          }
+        ]
       }
     ],
     "quick_nobles/title_3_4": [
@@ -273,7 +558,14 @@
         "asset": "media/tts/quick.cues/quick_nobles__title_3_4.b1.mp3",
         "start": 0.0,
         "end": 1.995,
-        "speech_end": 1.995
+        "speech_end": 1.995,
+        "subtitles": [
+          {
+            "start": 0.985,
+            "end": 1.995,
+            "text": "3.4，贵族。"
+          }
+        ]
       }
     ],
     "quick_nobles/001": [
@@ -282,7 +574,19 @@
         "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
         "start": 0.0,
         "end": 6.4475625,
-        "speech_end": 6.2950416
+        "speech_end": 6.2950416,
+        "subtitles": [
+          {
+            "start": 0.265,
+            "end": 1.695,
+            "text": "贵族是额外得分。"
+          },
+          {
+            "start": 2.2400417,
+            "end": 6.2950416,
+            "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
+          }
+        ]
       }
     ],
     "quick_nobles/002": [
@@ -291,7 +595,14 @@
         "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
         "start": 6.4475625,
         "end": 8.064,
-        "speech_end": 7.755083
+        "speech_end": 7.755083,
+        "subtitles": [
+          {
+            "start": 6.6000834,
+            "end": 7.755083,
+            "text": "就拿取这位贵族；"
+          }
+        ]
       }
     ],
     "quick_nobles/003": [
@@ -300,7 +611,14 @@
         "asset": "media/tts/quick.cues/quick_nobles__003.b1.mp3",
         "start": 0.0,
         "end": 3.24,
-        "speech_end": 2.965
+        "speech_end": 2.965,
+        "subtitles": [
+          {
+            "start": 0.285,
+            "end": 2.965,
+            "text": "同时满足多位时，选一位拿取。"
+          }
+        ]
       }
     ],
     "quick_end/title_4": [
@@ -309,7 +627,14 @@
         "asset": "media/tts/quick.cues/quick_end__title_4.b1.mp3",
         "start": 0.0,
         "end": 1.645,
-        "speech_end": 1.645
+        "speech_end": 1.645,
+        "subtitles": [
+          {
+            "start": 0.355,
+            "end": 1.645,
+            "text": "4，游戏结束。"
+          }
+        ]
       }
     ],
     "quick_end/001": [
@@ -318,7 +643,24 @@
         "asset": "media/tts/quick.cues/quick_end__001.b1.mp3",
         "start": 0.0,
         "end": 8.448,
-        "speech_end": 8.075084
+        "speech_end": 8.075084,
+        "subtitles": [
+          {
+            "start": 0.315,
+            "end": 3.415,
+            "text": "当有人获得十五分，游戏进入最后一轮；"
+          },
+          {
+            "start": 3.8000417,
+            "end": 6.9450417,
+            "text": "确保所有玩家回合数相同后，游戏结束；"
+          },
+          {
+            "start": 7.155083,
+            "end": 8.075084,
+            "text": "分多者获胜。"
+          }
+        ]
       }
     ]
   }

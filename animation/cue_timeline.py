@@ -24,14 +24,16 @@ PLAN_SCHEMA = "tutorial-cue-plan/v1"
 PLAN_SET_SCHEMA = "tutorial-cue-plan-set/v1"
 PLAN_SET_VERSION = 1
 
-TRACK_KINDS = frozenset({"visual", "audio"})
+TRACK_KINDS = frozenset({"visual", "audio", "subtitle"})
 TRACK_TAIL_POLICIES = {
     "visual": frozenset({"hold_last_frame", "clear"}),
     "audio": frozenset({"silence", "stop"}),
+    "subtitle": frozenset({"clear"}),
 }
 SEGMENT_TYPES = {
     "visual": frozenset({"animation", "hold"}),
     "audio": frozenset({"audio_clip", "silence"}),
+    "subtitle": frozenset({"subtitle"}),
 }
 AFTER_END_POLICIES = frozenset({"hold_last_frame", "clear"})
 
@@ -142,6 +144,12 @@ def _source_segment_duration(track_kind: str, segment: dict,
         return end - start
 
     if segment_type == "silence":
+        return _number(segment.get("duration"), f"{path}.duration",
+                       positive=True)
+
+    if segment_type == "subtitle":
+        if not isinstance(segment.get("text"), str):
+            raise CueTimelineError(f"{path}.text: expected a string")
         return _number(segment.get("duration"), f"{path}.duration",
                        positive=True)
 
@@ -427,6 +435,14 @@ def compile_cue_source(source: dict, *, course_start: float = 0.0,
                 out_segment["duration"] = _round_time(
                     _number(segment.get("duration"),
                             f"{info['path']}.duration", positive=True))
+            elif segment_type == "subtitle":
+                if not isinstance(segment.get("text"), str):
+                    raise CueTimelineError(
+                        f"{info['path']}.text: expected a string")
+                out_segment["duration"] = _round_time(
+                    _number(segment.get("duration"),
+                            f"{info['path']}.duration", positive=True))
+                out_segment["text"] = segment.get("text")
             else:  # guarded above; keep failure closed
                 raise CueTimelineError(
                     f"{info['path']}.type: unknown segment type {segment_type!r}")
@@ -522,6 +538,11 @@ def _validate_plan_segment(track_kind: str, segment: dict, path: str,
                     f"{path}.source_end_sample: must be >= source_start_sample")
         end = cue_start + (source_end - source_start)
     elif segment_type == "silence":
+        end = cue_start + _number(segment.get("duration"),
+                                  f"{path}.duration", positive=True)
+    elif segment_type == "subtitle":
+        if not isinstance(segment.get("text"), str):
+            raise CueTimelineError(f"{path}.text: expected a string")
         end = cue_start + _number(segment.get("duration"),
                                   f"{path}.duration", positive=True)
     else:  # guarded above

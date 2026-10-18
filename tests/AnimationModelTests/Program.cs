@@ -435,6 +435,28 @@ internal static class Program
         Check(!CueTimelinePlanSetValidator.TryValidate(
             wrongTotal, "fixture", "quick", expectedIds, out error),
             "plan set rejects incorrect track duration");
+
+        var subtitlePlan = PlanAt("q/subtitle", 0.0, 1.0);
+        subtitlePlan.tracks.Add(new CueTimelineTrack
+        {
+            id = "subtitle.main",
+            kind = "subtitle",
+            tail_policy = "clear",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "subtitle.0", type = "subtitle",
+                    cue_start = 0.0, duration = 1.0, text = "hello",
+                },
+            },
+        });
+        Check(CueTimelinePlanValidator.TryValidate(subtitlePlan, out error),
+            "plan validator accepts subtitle track: " + error);
+        var subtitleState = new CueTimelineSubtitleExecutor()
+            .GetState(subtitlePlan, 0.5);
+        Check(subtitleState.Visible && subtitleState.Text == "hello",
+            "subtitle executor reads subtitle track");
     }
 
     private static void TestCueStateMachineAndReadyGating()

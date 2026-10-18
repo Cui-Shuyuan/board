@@ -267,6 +267,18 @@ class TutorialTimelineCuePlanTest {
                         .put("cue_start", 0.0)
                         .put("source_start", 0.0)
                         .put("source_end", duration)
+                ))),
+            JSONObject()
+                .put("id", "subtitle.main")
+                .put("kind", "subtitle")
+                .put("tail_policy", "clear")
+                .put("segments", JSONArray(listOf(
+                    JSONObject()
+                        .put("id", "subtitle.0")
+                        .put("type", "subtitle")
+                        .put("cue_start", 0.0)
+                        .put("duration", duration)
+                        .put("text", text)
                 )))
         )))
 

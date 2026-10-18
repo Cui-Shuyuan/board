@@ -185,6 +185,35 @@ cue duration      = 2.245s
 
 因此口播结束后是**完整 1 秒**静音，而不是在原 TTS 尾部静音后再补 1 秒。
 
+### 4.2.3 字幕是独立轨道
+
+字幕在 plan 中是正式的 track：
+
+```json
+{
+  "id": "subtitle.main",
+  "kind": "subtitle",
+  "tail_policy": "clear",
+  "segments": [
+    {
+      "id": "subtitle.0.1",
+      "type": "subtitle",
+      "cue_start": 3.8900416,
+      "duration": 5.7849994,
+      "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
+    }
+  ]
+}
+```
+
+字幕窗口来自 `quick.audio-slices.json` 每个逻辑音频的 `subtitles` 字段，
+其中保存 TTS event 的 `start/end/text`。生成器把源时间换算成 cue-local
+`cue_start/duration`，不再把整条 cue 文本塞成一个超长字幕。
+
+为了兼容旧客户端，plan 仍同步保留扁平 `subtitles` 列表；Unity 字幕执行器
+优先读取 `kind=subtitle` 的 track，缺失时才回退旧列表。Android loader 也校验
+subtitle track 的结构和时间范围。
+
 ### 4.3 共享 track 级开关
 
 开关唯一来源是内容 catalog：

@@ -148,14 +148,14 @@ internal object CueTimelinePlanLoader {
             require(trackIds.add(trackId)) { "$trackPath.id duplicates '$trackId'" }
 
             val kind = track.optString("kind", "").trim()
-            require(kind == "audio" || kind == "visual") {
-                "$trackPath.kind must be audio or visual"
+            require(kind == "audio" || kind == "visual" || kind == "subtitle") {
+                "$trackPath.kind must be audio, visual or subtitle"
             }
             val tailPolicy = track.optString("tail_policy", "").trim()
-            val allowedTails = if (kind == "audio") {
-                setOf("silence", "stop")
-            } else {
-                setOf("hold_last_frame", "clear")
+            val allowedTails = when (kind) {
+                "audio" -> setOf("silence", "stop")
+                "visual" -> setOf("hold_last_frame", "clear")
+                else -> setOf("clear")
             }
             require(tailPolicy in allowedTails) {
                 "$trackPath.tail_policy is invalid for kind '$kind'"
@@ -249,6 +249,17 @@ internal object CueTimelinePlanLoader {
                     }
 
                     kind == "audio" && type == "silence" -> {
+                        cueStart + finitePositive(
+                            segment,
+                            "duration",
+                            "$segmentPath.duration"
+                        )
+                    }
+
+                    kind == "subtitle" && type == "subtitle" -> {
+                        require(segment.has("text")) {
+                            "$segmentPath.text is required"
+                        }
                         cueStart + finitePositive(
                             segment,
                             "duration",

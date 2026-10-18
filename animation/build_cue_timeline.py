@@ -979,6 +979,7 @@ def _build_cue_plan_set_from_audio_slices(
             raise BuildError(f"audio slice manifest has no slices for cue {cue_id!r}")
 
         audio_segments: list[dict] = []
+        subtitle_segments: list[dict] = []
         cursor = 0.0
         last_speech_end = 0.0
         for slice_index, raw_slice in enumerate(raw_slices):
@@ -1009,6 +1010,24 @@ def _build_cue_plan_set_from_audio_slices(
                 "source_start_sample": int(round(start * sample_rate)),
                 "source_end_sample": int(round(end * sample_rate)),
             })
+            for subtitle_index, raw_subtitle in enumerate(
+                    raw_slice.get("subtitles") or []):
+                if not isinstance(raw_subtitle, dict):
+                    continue
+                sub_start = float(raw_subtitle.get("start", start))
+                sub_end = float(raw_subtitle.get("end", end))
+                sub_start = max(start, min(end, sub_start))
+                sub_end = max(sub_start, min(end, sub_end))
+                if sub_end <= sub_start:
+                    continue
+                subtitle_segments.append({
+                    "id": f"subtitle.{slice_index}.{subtitle_index}",
+                    "type": "subtitle",
+                    "cue_start": round(
+                        cursor + (sub_start - start), 9),
+                    "duration": round(sub_end - sub_start, 9),
+                    "text": str(raw_subtitle.get("text") or "").strip(),
+                })
             last_speech_end = cursor + min(
                 duration, max(0.0, speech_end - start))
             cursor += duration
@@ -1056,6 +1075,27 @@ def _build_cue_plan_set_from_audio_slices(
                 "tail_policy": "silence",
                 "segments": audio_segments,
             })
+        if not subtitle_segments:
+            subtitle_segments.append({
+                "id": "subtitle.fallback",
+                "type": "subtitle",
+                "cue_start": 0.0,
+                "duration": round(max(0.001, cursor), 9),
+                "text": cue_text,
+            })
+        tracks.append({
+            "id": "subtitle.main",
+            "kind": "subtitle",
+            "tail_policy": "clear",
+            "segments": subtitle_segments,
+        })
+        # Keep the legacy flat subtitle list in sync for older clients.
+        flat_subtitles = [{
+            "id": segment["id"],
+            "cue_start": segment["cue_start"],
+            "duration": segment["duration"],
+            "text": segment["text"],
+        } for segment in subtitle_segments]
         group_path = script_cue.get("group_path") or runtime_cue.get("group_path") or []
         refs = script_cue.get("refs") or runtime_cue.get("refs") or []
         plans.append({
@@ -1067,12 +1107,7 @@ def _build_cue_plan_set_from_audio_slices(
                 "duration": round(max(cursor, visual_duration), 9),
             },
             "tracks": tracks,
-            "subtitles": [{
-                "id": "subtitle.0",
-                "cue_start": 0.0,
-                "duration": round(cursor, 9),
-                "text": cue_text,
-            }],
+            "subtitles": flat_subtitles,
             "text": runtime_cue.get("text") or cue_text,
             "group_path": list(group_path),
             "refs": list(refs),
@@ -1135,7 +1170,8 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
         }
         _apply_timing_policy(document, timing_policy, legacy_runtime_durations)
         _recompute_course_timeline(document, explicit_gaps)
-        _extend_last_subtitle_to_cue_end(document)
+        if audio_source != "audio_slice_manifest":
+            _extend_last_subtitle_to_cue_end(document)
         cue_timeline.validate_plan_set(document)
     except cue_timeline.CueTimelineError as exc:
         raise BuildError(f"plan validation failed: {exc}") from exc
