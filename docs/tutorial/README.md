@@ -17,22 +17,24 @@ content/games/splendor/tutorial/shared/stage/*.stage.json                跨 sec
 content/games/splendor/tutorial/library/actions/*.action.json            可复用状态动作 tutorial-material/v1
 content/games/splendor/tutorial/library/examples/*.example.json          确定性教学示例/事实/变体
 content/games/splendor/tutorial/library/presentations/*.presentation.json 可复用纯表现素材
-content/games/splendor/tutorial/{full,quick}.runtime.json                编译产物：legacy section 音频与字幕时间轴
-content/games/splendor/tutorial/anim/v2/{full,quick}.compiled.json       编译产物：Unity 只读
+content/games/splendor/tutorial/{full,quick}.runtime.json                编译产物：cue 顺序/导航元数据与整轨兼容回退输入
+content/games/splendor/tutorial/anim/v2/{full,quick}.compiled.json       编译产物：Unity 动画只读
 content/games/splendor/tutorial/quick.cue.tts.lrc                        quick cue-level TTS 合成源
-content/games/splendor/tutorial/quick.audio-slices.json                  quick 唯一固定时间轴（timing points / slices / refs / per-cue policy / audio groups）
-content/games/splendor/tutorial/quick.timing-policy.json                 仅全局流水线配置，不承载 per-cue 时间
-content/games/splendor/tutorial/quick.cue-timeline.json                  Phase 4 编译 plan（Android/Unity 共用）
+content/games/splendor/tutorial/{full,quick}.audio-slices.json           唯一固定时间轴（timing points / slices / refs / per-cue policy / audio groups / visual segments）
+content/games/splendor/tutorial/{full,quick}.timing-policy.json          仅全局流水线配置，不承载 per-cue 时间
+content/games/splendor/tutorial/{full,quick}.cue-timeline.json           Phase 5 编译 plan（Android/Unity 共用）
 ```
 
 - `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，不是源真值。
 - 旧单文件 `script.{track}.json`、`anim/v2/{track}.anim.json`、`anim/v2/_stage/` 已删除；不要再去改这些路径。
-- `full` 仍以 section 为单位连续生成 TTS，并用 legacy `audio_start`。
-- `quick` 已迁移到 cue-level TTS + `quick.audio-slices.json` 固定逻辑切片；一个 cue 可包含多个
-  MP3，一次 TTS 也可通过逻辑切片服务多个串行 cue。所有秒数、source range、
-  字幕 refs 和 per-cue timing policy 都只在该固定文件中。具体见
+- `quick` 与 `full` 都已迁移到固定时间轴 + 共享 plan。`full` 当前复用已有
+  section TTS 媒体，没有重新生成 TTS；`quick` 使用 cue-level TTS。
+- 一个 cue 可包含多个逻辑 MP3 slice，也可通过固定文件中的 visual segment
+  引用多个 compiled animation segment。所有秒数、source range、字幕 refs、
+  per-cue timing policy 和 visual mapping 都只在该固定文件中。
+- 正常运行只使用 `{track}.cue-timeline.json`；整条 plan 缺失/非法时两端
+  才切换到清晰的整轨 runtime 兼容回退。具体见
   `docs/tutorial/audio-timeline-pipeline.md`。
-- Phase 4 只覆盖 quick；full 仍走 legacy，留待 Phase 5。
 - 当前编译基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
@@ -53,9 +55,10 @@ python3 animation/material_cli.py expand-cue --game splendor --track quick --cue
 python3 animation/compile_tutorial.py --game splendor --track quick --validate-qa
 python3 animation/qa_anim_ask.py --game splendor --track quick --only quick_nobles/001
 
-# Phase 4 quick：cue-level TTS / 逻辑切片 / plan
+# Phase 5 quick/full：固定时间轴 / 共享 plan / 内容发布
 python animation/tts_doubao.py --provider seed2 --voice zh_female_vv_uranus_bigtts --resource-id seed-tts-2.0 --input content/games/splendor/tutorial/quick.cue.tts.lrc --out-dir content/games/splendor/media/tts/quick.cues --track quick --prune
 python3 animation/build_cue_timeline.py --game splendor --track quick
+python3 animation/build_cue_timeline.py --game splendor --track full
 python3 tools/content/build_content_manifest.py --game splendor
 
 # 独立编译 / 检查

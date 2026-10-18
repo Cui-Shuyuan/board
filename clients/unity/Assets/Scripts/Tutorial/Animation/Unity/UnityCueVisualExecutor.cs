@@ -13,8 +13,8 @@ namespace BoardGameTutorial.Animation
         private ICueExecutorCallback callback;
         private long activeGeneration;
         private bool visualPrepared;
+        private bool sceneCleared;
         private string loadedAnimationId = "";
-        private double lastAnimationSourceEnd;
 
         public UnityCueVisualExecutor(TutorialAnimPlayer animPlayer, string gameRoot)
         {
@@ -30,47 +30,42 @@ namespace BoardGameTutorial.Animation
             activeGeneration = generation;
             visualPrepared = false;
             loadedAnimationId = "";
-            lastAnimationSourceEnd = 0.0;
+            sceneCleared = false;
 
             CueTimelineTrack visualTrack = CueTimelineTrackResolver.FindTrack(plan, "visual");
-            if (visualTrack == null || visualTrack.segments == null)
+            if (visualTrack == null || visualTrack.segments == null
+                || visualTrack.segments.Count == 0)
             {
                 visualPrepared = true;
                 callback.OnPrepared(generation);
                 return;
             }
 
-            int animationCount = 0;
-            string firstAnimation = "";
+            // Validate every compiled animation reference before declaring the
+            // cue ready.  This is loader validation, not a second clock.
+            var seen = new System.Collections.Generic.HashSet<string>(
+                StringComparer.Ordinal);
             for (int i = 0; i < visualTrack.segments.Count; i++)
             {
                 CueTimelineSegment segment = visualTrack.segments[i];
                 if (segment == null || segment.type != "animation") continue;
-                animationCount++;
-                if (string.IsNullOrEmpty(firstAnimation)) firstAnimation = segment.animation;
-                lastAnimationSourceEnd = Math.Max(lastAnimationSourceEnd, segment.source_end);
-            }
-
-            if (animationCount > 1)
-            {
-                // The current compiled track keys visual material by cue id and
-                // this phase only wires one independent visual reference plus
-                // holds.  Fail explicitly instead of pretending multi-clip
-                // visual support exists.
-                CallbackFail(generation,
-                    "multiple independent visual animation segments are not supported yet; compiler blocker documented");
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(firstAnimation))
-            {
-                if (!animPlayer.LoadCue(firstAnimation))
+                if (string.IsNullOrEmpty(segment.animation))
                 {
-                    CallbackFail(generation, "visual cue load failed: " + firstAnimation);
+                    CallbackFail(generation, "visual segment has no animation id");
                     return;
                 }
-                loadedAnimationId = firstAnimation;
+                if (!seen.Add(segment.animation)) continue;
+                float ignored;
+                if (!animPlayer.TryGetCueDuration(segment.animation, out ignored))
+                {
+                    CallbackFail(generation,
+                        "visual cue load failed: " + segment.animation);
+                    return;
+                }
             }
+
+            CueVisualFrame initial = CueVisualTimelineResolver.Resolve(visualTrack, 0.0);
+            if (!ApplyFrame(initial, generation)) return;
             visualPrepared = true;
             callback.OnPrepared(generation);
         }
@@ -79,34 +74,8 @@ namespace BoardGameTutorial.Animation
         {
             if (!AcceptGeneration(generation)) return;
             CueTimelineTrack track = CueTimelineTrackResolver.FindTrack(plan, "visual");
-            CueTimelineSegment segment = CueTimelineTrackResolver.FindSegment(track, cueTime);
-            if (segment == null)
-            {
-                if (lastAnimationSourceEnd > 0.0)
-                    animPlayer.Seek((float)lastAnimationSourceEnd);
-                return;
-            }
-
-            if (segment.type == "animation")
-            {
-                if (loadedAnimationId != segment.animation)
-                {
-                    if (!animPlayer.LoadCue(segment.animation))
-                    {
-                        CallbackFail(generation, "visual cue load failed: " + segment.animation);
-                        return;
-                    }
-                    loadedAnimationId = segment.animation;
-                }
-                lastAnimationSourceEnd = Math.Max(lastAnimationSourceEnd, segment.source_end);
-                double sourceTime = CueTimelineTrackResolver.AnimationSourceTime(
-                    segment, cueTime, lastAnimationSourceEnd);
-                animPlayer.Seek((float)sourceTime);
-            }
-            else if (segment.type == "hold")
-            {
-                animPlayer.Seek((float)lastAnimationSourceEnd);
-            }
+            CueVisualFrame frame = CueVisualTimelineResolver.Resolve(track, cueTime);
+            ApplyFrame(frame, generation);
         }
 
         public void Pause(long generation)
@@ -140,9 +109,40 @@ namespace BoardGameTutorial.Animation
         {
             activeGeneration = 0L;
             visualPrepared = false;
+            sceneCleared = false;
+            loadedAnimationId = "";
             plan = null;
             callback = null;
             if (animPlayer != null) animPlayer.ClearScene();
+        }
+
+        private bool ApplyFrame(CueVisualFrame frame, long generation)
+        {
+            if (frame == null || frame.Kind == CueVisualFrameKind.None
+                || frame.Kind == CueVisualFrameKind.Clear)
+            {
+                if (!sceneCleared)
+                {
+                    animPlayer.ClearScene();
+                    sceneCleared = true;
+                    loadedAnimationId = "";
+                }
+                return true;
+            }
+
+            sceneCleared = false;
+            if (loadedAnimationId != frame.AnimationId)
+            {
+                if (!animPlayer.LoadCue(frame.AnimationId))
+                {
+                    CallbackFail(generation,
+                        "visual cue load failed: " + frame.AnimationId);
+                    return false;
+                }
+                loadedAnimationId = frame.AnimationId;
+            }
+            animPlayer.Seek((float)frame.SourceTime);
+            return true;
         }
 
         private bool AcceptGeneration(long generation)

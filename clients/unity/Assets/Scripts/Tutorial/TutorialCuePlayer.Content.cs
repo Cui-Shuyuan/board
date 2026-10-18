@@ -3,7 +3,7 @@ using System;
 // 音频/字幕/导航外壳（v2-only）。
 //
 // 动画本身由 BoardGameTutorial.Animation.TutorialAnimPlayer 提供：
-// 运行时只读 {track}.compiled.json，按 audioSource.time 调 Seek(t)。
+// 所有 cue 的本地时间只来自 CuePlaybackController；编译动画按该时间 Seek。
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -43,14 +43,18 @@ namespace BoardGameTutorial
                 return false;
             }
             NormalizeDoc();
-            // The flag comes from the bridge/content switch, never from a
-            // second Inspector default.  Missing/invalid plans disable the
-            // entire track so no per-cue mixed timeline can be produced.
-            LoadCueTimelineTrackPlan();
-
             if (!v2AnimPlayer.LoadTrack(gameRoot, track))
             {
                 Debug.LogError($"[TutorialCuePlayer] missing compiled animation for track={track}");
+                return false;
+            }
+            // The shared plan file is authoritative.  If it is unavailable,
+            // the loader builds one whole-track compatibility plan from the
+            // runtime document; there is never a per-cue mixed mode.
+            if (!LoadCueTimelineTrackPlan())
+            {
+                Debug.LogError("[TutorialCuePlayer] no playable whole-track plan for track="
+                    + track + " reason=" + cueTimelineTrackLoadError);
                 return false;
             }
             if (spritePreloadRoutine != null) StopCoroutine(spritePreloadRoutine);
@@ -125,7 +129,6 @@ namespace BoardGameTutorial
                 var cue = doc.cues[i];
                 if (cue.group_path == null) cue.group_path = new List<string>();
                 if (cue.refs == null) cue.refs = new List<string>();
-                if (cue.audio_plan == null) cue.audio_plan = new List<TutorialAudioPlanSegment>();
                 if (cue.subtitles == null) cue.subtitles = new List<TutorialCueSubtitle>();
                 foreach (var subtitle in cue.subtitles)
                     if (subtitle.words == null) subtitle.words = new List<TutorialCueWord>();

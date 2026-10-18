@@ -125,8 +125,9 @@ class BuildCueTimelineTests(unittest.TestCase):
 
     def write_slices(self, *, timing_points: dict, cues: dict,
                      cue_timing: dict | None = None,
-                     audio_groups: dict | None = None) -> None:
-        self.slices_path.write_text(json.dumps({
+                     audio_groups: dict | None = None,
+                     cue_visuals: dict | None = None) -> None:
+        document = {
             "schema": builder.AUDIO_SLICES_SCHEMA,
             "schema_version": builder.AUDIO_SLICES_VERSION,
             "game_id": self.game,
@@ -136,7 +137,12 @@ class BuildCueTimelineTests(unittest.TestCase):
             "audio_groups": audio_groups or {},
             "timing_points": timing_points,
             "cues": cues,
-        }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        }
+        if cue_visuals is not None:
+            document["cue_visuals"] = cue_visuals
+        self.slices_path.write_text(
+            json.dumps(document, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
 
     def default_slice(self, *, start_ref: str = "fixture__one.start",
                       end_ref: str = "fixture__one.end",
@@ -434,8 +440,8 @@ class BuildCueTimelineTests(unittest.TestCase):
         document = builder.build_plan_set(self.root, self.game, self.track)
         first = self.audio_segments(document["cues"][0])[0]
         second = self.audio_segments(document["cues"][1])[0]
-        self.assertEqual(first["playback_group"], "fixture_shared_group")
-        self.assertEqual(second["playback_group"], "fixture_shared_group")
+        self.assertNotIn("playback_group", first)
+        self.assertNotIn("playback_group", second)
         self.assertEqual(first["source_start"], 0.0)
         self.assertEqual(first["source_end"], 0.5)
         self.assertEqual(second["source_start"], 0.5)
@@ -567,57 +573,179 @@ class BuildCueTimelineTests(unittest.TestCase):
 
     def test_production_builder_contains_no_concrete_splendor_timeline_ids(self) -> None:
         source = Path(builder.__file__).read_text(encoding="utf-8")
-        actual_slices = json.loads(
-            (ROOT / "content" / "games" / "splendor" / "tutorial"
-             / "quick.audio-slices.json").read_text(encoding="utf-8")
-        )
-        concrete_ids = set(actual_slices["cues"])
-        concrete_ids.update(actual_slices["timing_points"])
-        for slices in actual_slices["cues"].values():
-            for raw_slice in slices:
-                concrete_ids.add(str(raw_slice["id"]))
-        concrete_ids.update(actual_slices.get("cue_timing", {}))
-        concrete_ids.update(actual_slices.get("audio_groups", {}))
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        concrete_ids: set[str] = set()
+        for track in ("quick", "full"):
+            actual_slices = json.loads(
+                (tutorial / f"{track}.audio-slices.json").read_text(
+                    encoding="utf-8")
+            )
+            concrete_ids.update(actual_slices["cues"])
+            concrete_ids.update(actual_slices["timing_points"])
+            for slices in actual_slices["cues"].values():
+                for raw_slice in slices:
+                    concrete_ids.add(str(raw_slice["id"]))
+            concrete_ids.update(actual_slices.get("cue_timing", {}))
+            for visuals in actual_slices.get("cue_visuals", {}).values():
+                for visual in visuals:
+                    concrete_ids.add(str(visual["id"]))
+        # Group ids such as "end" are generic section names, not concrete cue
+        # or timing-point identifiers.  The assertion targets authoring IDs
+        # that uniquely identify a cue/slice/timing point.
+        concrete_ids = {
+            value for value in concrete_ids
+            if len(value) >= 6 and ("/" in value or "__" in value or "." in value)
+        }
         for concrete_id in sorted(concrete_ids):
             self.assertNotIn(concrete_id, source)
 
-    def test_splendor_catalog_only_enables_quick_plan_track(self) -> None:
+    def test_splendor_catalog_enables_both_plan_tracks(self) -> None:
         catalog = json.loads(
             (ROOT / "content" / "catalog" / "splendor.json").read_text(
                 encoding="utf-8")
         )
-        self.assertEqual(catalog["cue_timeline_tracks"], ["quick"])
-        self.assertNotIn("full", catalog["cue_timeline_tracks"])
-        self.assertIn("quick", catalog["tutorial_tracks"])
-        self.assertIn("full", catalog["tutorial_tracks"])
+        self.assertEqual(catalog["cue_timeline_tracks"], ["quick", "full"])
+        self.assertEqual(
+            set(catalog["cue_timeline_tracks"]),
+            set(catalog["tutorial_tracks"]),
+        )
 
-    # ── legacy path remains available for unmigrated tracks ─────────────
-
-    def test_legacy_runtime_path_still_builds_and_validates(self) -> None:
-        self.policy_path.unlink()
+    def test_fixed_timeline_can_declare_multiple_visual_animation_segments(self) -> None:
+        self.write_compiled([
+            {"id": "fixture/opening", "duration": 2.0},
+            {"id": "fixture/closing", "duration": 12.0},
+        ])
         self.write_runtime([{
-            "id": "fixture/legacy",
+            "id": "fixture/one",
             "start": 0.0,
-            "duration": 2.0,
-            "audio": "media/fixture-audio.mp3",
-            "audio_start": 0.5,
-            "text": "legacy",
+            "duration": 1.0,
+            "text": "runtime text",
             "entry": None,
-            "subtitles": [{
-                "t": 0.0,
-                "end": 1.25,
-                "text": "legacy subtitle",
-            }],
         }])
-        self.write_compiled([{"id": "fixture/legacy", "duration": 1.5}])
         self.write_script([{
-            "id": "fixture/legacy",
-            "beats": [{"text": "legacy"}],
+            "id": "fixture/one",
+            "beats": [{"text": "script text"}],
         }])
+        self.write_slices(
+            timing_points={
+                "fixture__one.start": {"time": 0.0},
+                "fixture__one.end": {"time": 1.25},
+                "fixture__one.visual.first.start": {"time": 0.0},
+                "fixture__one.visual.first.source_start": {"time": 0.0},
+                "fixture__one.visual.first.source_end": {"time": 2.0},
+                "fixture__one.visual.second.start": {"time": 2.5},
+                "fixture__one.visual.second.source_start": {"time": 10.0},
+                "fixture__one.visual.second.source_end": {"time": 12.0},
+                "fixture__one.speech_end": {"time": 1.0},
+                "fixture__one.subtitle.0.start": {"time": 0.1},
+                "fixture__one.subtitle.0.end": {"time": 0.8},
+            },
+            cues={"fixture/one": [self.default_slice()]},
+            cue_visuals={"fixture/one": [
+                {
+                    "id": "v.first",
+                    "animation": "fixture/opening",
+                    "cue_start_ref": "fixture__one.visual.first.start",
+                    "source_start_ref": "fixture__one.visual.first.source_start",
+                    "source_end_ref": "fixture__one.visual.first.source_end",
+                    "after_end": "hold_last_frame",
+                },
+                {
+                    "id": "v.second",
+                    "animation": "fixture/closing",
+                    "cue_start_ref": "fixture__one.visual.second.start",
+                    "source_start_ref": "fixture__one.visual.second.source_start",
+                    "source_end_ref": "fixture__one.visual.second.source_end",
+                    "after_end": "clear",
+                },
+            ]},
+        )
         document = builder.build_plan_set(self.root, self.game, self.track)
-        self.assertEqual(document["cues"][0]["cue_id"], "fixture/legacy")
-        self.assertEqual(document["cues"][0]["course"]["duration"], 2.0)
+        visual = next(
+            track for track in document["cues"][0]["tracks"]
+            if track["kind"] == "visual")
+        self.assertEqual([segment["id"] for segment in visual["segments"]],
+                         ["v.first", "v.second"])
+        self.assertEqual([segment["animation"] for segment in visual["segments"]],
+                         ["fixture/opening", "fixture/closing"])
+        self.assertEqual(document["cues"][0]["course"]["duration"], 4.5)
         self.assertIs(timeline.validate_plan_set(document), document)
+
+    def test_duplicate_visual_segment_or_unknown_animation_fails(self) -> None:
+        self.write_slices(
+            timing_points={
+                "fixture__one.start": {"time": 0.0},
+                "fixture__one.end": {"time": 1.25},
+                "fixture__one.visual.start": {"time": 0.0},
+                "fixture__one.visual.source_start": {"time": 0.0},
+                "fixture__one.visual.source_end": {"time": 2.0},
+                "fixture__one.speech_end": {"time": 1.0},
+                "fixture__one.subtitle.0.start": {"time": 0.1},
+                "fixture__one.subtitle.0.end": {"time": 0.8},
+            },
+            cues={"fixture/one": [self.default_slice()]},
+            cue_visuals={"fixture/one": [{
+                "id": "v.duplicate",
+                "animation": "fixture/one",
+                "cue_start_ref": "fixture__one.visual.start",
+                "source_start_ref": "fixture__one.visual.source_start",
+                "source_end_ref": "fixture__one.visual.source_end",
+                "after_end": "hold_last_frame",
+            }]},
+        )
+        slices = json.loads(self.slices_path.read_text(encoding="utf-8"))
+        slices["cues"]["fixture/one"][0]["id"] = "fixture__one"
+        slices["cue_visuals"]["fixture/one"].append(
+            dict(slices["cue_visuals"]["fixture/one"][0]))
+        self.slices_path.write_text(json.dumps(slices), encoding="utf-8")
+        with self.assertRaisesRegex(builder.BuildError,
+                                    "duplicate visual segment id"):
+            builder.build_plan_set(self.root, self.game, self.track)
+
+        slices = json.loads(self.slices_path.read_text(encoding="utf-8"))
+        slices["cue_visuals"]["fixture/one"][1]["id"] = "v.second"
+        slices["cue_visuals"]["fixture/one"][1]["animation"] = "fixture/missing"
+        self.slices_path.write_text(json.dumps(slices), encoding="utf-8")
+        with self.assertRaisesRegex(builder.BuildError,
+                                    "unknown compiled animation"):
+            builder.build_plan_set(self.root, self.game, self.track)
+
+    def test_full_track_plan_has_81_cues_and_is_deterministic(self) -> None:
+        tutorial = ROOT / "content" / "games" / "splendor" / "tutorial"
+        first = builder.build_plan_set(ROOT, "splendor", "full")
+        second = builder.build_plan_set(ROOT, "splendor", "full")
+        self.assertEqual(first, second)
+        self.assertEqual(len(first["cues"]), 81)
+        self.assertEqual(first["track"], "full")
+        last = first["cues"][-1]
+        self.assertAlmostEqual(
+            first["course"]["duration"],
+            last["course"]["start"] + last["course"]["duration"],
+            places=9,
+        )
+        self.assertIs(timeline.validate_plan_set(first), first)
+        self.assertTrue((tutorial / "full.audio-slices.json").is_file())
+        self.assertTrue((tutorial / "full.timing-policy.json").is_file())
+        self.assertTrue((tutorial / "full.cue-timeline.json").is_file())
+
+    def test_full_timing_policy_is_global_only(self) -> None:
+        policy_path = (
+            ROOT / "content" / "games" / "splendor" / "tutorial"
+            / "full.timing-policy.json"
+        )
+        policy = json.loads(policy_path.read_text(encoding="utf-8"))
+        self.assertTrue(set(policy).issubset(builder.TIMING_POLICY_GLOBAL_KEYS))
+        self.assertNotIn("cues", policy)
+        self.assertNotIn("cue_timing", policy)
+        self.assertNotIn("timing_points", policy)
+
+    # ── legacy runtime is an input document, never a runtime cue clock ───
+
+    def test_missing_plan_policy_is_rejected_instead_of_legacy_fallback(self) -> None:
+        self.policy_path.unlink()
+        with self.assertRaisesRegex(builder.BuildError, "missing timing policy"):
+            builder.build_plan_set(self.root, self.game, self.track)
 
 
 if __name__ == "__main__":

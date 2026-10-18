@@ -88,6 +88,7 @@ internal object CueTimelinePlanLoader {
                 "plan=${cueArray.length()}"
         }
 
+        val animationDurations = loadCompiledAnimationDurations(gameRoot, track)
         val cues = ArrayList<CuePlanEntry>(cueArray.length())
         var previousEnd: Float? = null
         for (index in 0 until cueArray.length()) {
@@ -113,7 +114,10 @@ internal object CueTimelinePlanLoader {
             }
             previousEnd = start + duration
 
-            validateTracks(cue.optJSONArray("tracks"), duration, path, gameRoot)
+            validateTracks(
+                cue.optJSONArray("tracks"), duration, path, gameRoot,
+                animationDurations
+            )
 
             cues += CuePlanEntry(
                 id = id,
@@ -138,7 +142,8 @@ internal object CueTimelinePlanLoader {
         tracks: JSONArray?,
         cueDuration: Float,
         path: String,
-        gameRoot: File
+        gameRoot: File,
+        animationDurations: Map<String, Float>
     ) {
         require(tracks != null && tracks.length() > 0) { "$path.tracks must not be empty" }
         val trackIds = HashSet<String>()
@@ -189,8 +194,14 @@ internal object CueTimelinePlanLoader {
                 )
                 val cueEnd = when {
                     kind == "visual" && type == "animation" -> {
-                        require(segment.optString("animation", "").isNotBlank()) {
+                        val animation = segment.optString("animation", "").trim()
+                        require(animation.isNotBlank()) {
                             "$segmentPath.animation must be non-empty"
+                        }
+                        val compiledDuration = animationDurations[animation]
+                        require(compiledDuration != null) {
+                            "$segmentPath.animation references unknown compiled animation: " +
+                                animation
                         }
                         require(segment.optString("after_end", "") in
                             setOf("hold_last_frame", "clear")) {
@@ -208,6 +219,9 @@ internal object CueTimelinePlanLoader {
                         )
                         require(sourceEnd > sourceStart) {
                             "$segmentPath.source_end must be greater than source_start"
+                        }
+                        require(sourceEnd <= compiledDuration + EPSILON) {
+                            "$segmentPath.source_end exceeds compiled animation duration"
                         }
                         cueStart + (sourceEnd - sourceStart)
                     }
@@ -297,6 +311,36 @@ internal object CueTimelinePlanLoader {
                 }
             }
         }
+    }
+
+    private fun loadCompiledAnimationDurations(
+        gameRoot: File,
+        track: String
+    ): Map<String, Float> {
+        val path = File(gameRoot, "tutorial/anim/v2/$track.compiled.json")
+        if (!path.isFile) return emptyMap()
+        val root = try {
+            JSONObject(path.readText(Charsets.UTF_8))
+        } catch (error: Exception) {
+            throw IllegalArgumentException(
+                "invalid compiled animation JSON at ${path.absolutePath}: " +
+                    error.message,
+                error
+            )
+        }
+        val cues = root.optJSONArray("cues") ?: return emptyMap()
+        val result = LinkedHashMap<String, Float>()
+        for (i in 0 until cues.length()) {
+            val cue = cues.optJSONObject(i) ?: continue
+            val id = cue.optString("id", "").trim()
+            if (id.isBlank()) continue
+            val duration = cue.optDouble("duration", Double.NaN)
+            require(duration.isFinite() && duration >= 0.0) {
+                "compiled animation '$id' has invalid duration"
+            }
+            result[id] = duration.toFloat()
+        }
+        return result
     }
 
     private fun finiteNonNegative(obj: JSONObject, key: String, path: String): Float {

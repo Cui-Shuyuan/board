@@ -315,20 +315,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/bg.intro.mp3",
-          "start": 0.0,
-          "end": 1.225
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "intro/001",
@@ -781,8 +768,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_cards/title_2_1",
@@ -841,20 +827,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/setup.cards.mp3",
-          "start": 0.0,
-          "end": 2.065
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "setup_cards/001.1",
@@ -940,8 +913,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_cards/001.2",
@@ -1318,8 +1290,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_cards/002.1",
@@ -1696,8 +1667,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_gems/title_2_2",
@@ -1762,20 +1732,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/setup.gems.mp3",
-          "start": 0.0,
-          "end": 2.205
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "setup_gems/001.1",
@@ -2133,8 +2090,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_gems/002",
@@ -2335,8 +2291,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_gems/003.1",
@@ -2905,8 +2860,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_gems/005.2",
@@ -3115,8 +3069,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_players/title_2_3",
@@ -3175,20 +3128,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/setup.players.mp3",
-          "start": 0.0,
-          "end": 2.015
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "setup_players/nobles.001.1",
@@ -3263,8 +3203,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_players/nobles.001.2",
@@ -3556,8 +3495,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_players/nobles.002",
@@ -3786,8 +3724,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_players/title_2_4",
@@ -3846,20 +3783,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/setup.players.mp3",
-          "start": 20.205,
-          "end": 21.305
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "setup_players/starting.001.1",
@@ -4199,8 +4123,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_players/starting.001.3",
@@ -4348,8 +4271,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "setup_players/title_2_5",
@@ -4408,20 +4330,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/setup.players.mp3",
-          "start": 35.844,
-          "end": 37.349
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "setup_players/end.001.1",
@@ -4616,8 +4525,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "turn/title_3",
@@ -4663,20 +4571,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.turn.mp3",
-          "start": 0.0,
-          "end": 1.495
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "turn/001",
@@ -4925,8 +4820,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "turn/002",
@@ -5112,8 +5006,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/title_3_1",
@@ -5208,20 +5101,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.take.mp3",
-          "start": 0.0,
-          "end": 3.515
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "take_gems/different.001",
@@ -5391,8 +5271,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/same.001",
@@ -5623,8 +5502,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/same.002",
@@ -5855,8 +5733,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/draw_rule.001.1",
@@ -6080,8 +5957,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/draw_rule.001.2",
@@ -6209,8 +6085,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/limit.001.1",
@@ -6436,8 +6311,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/limit.001.2",
@@ -6644,8 +6518,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/public.001.1",
@@ -6850,8 +6723,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "take_gems/public.001.2",
@@ -6954,8 +6826,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/title_3_2_1",
@@ -7027,20 +6898,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.cards.mp3",
-          "start": 0.0,
-          "end": 3.185
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "cards/intro.001",
@@ -7132,8 +6990,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/cost.001.1",
@@ -7276,8 +7133,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/cost.001.2",
@@ -7612,8 +7468,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/market.001.1",
@@ -8079,8 +7934,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/market.001.2",
@@ -8317,8 +8171,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/prestige.001.1",
@@ -8538,8 +8391,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/prestige.001.2",
@@ -8747,8 +8599,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/discount.001",
@@ -8996,8 +8847,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/discount.002.1",
@@ -9359,8 +9209,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/discount.003.1",
@@ -9620,8 +9469,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/discount.003.2",
@@ -9887,8 +9735,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/public.001.1",
@@ -10268,8 +10115,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "cards/limit.001.1",
@@ -10554,8 +10400,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/title_3_2_2",
@@ -10615,20 +10460,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.nobles.mp3",
-          "start": 0.0,
-          "end": 2.665
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "nobles/intro.001",
@@ -10982,8 +10814,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/trigger.001.1",
@@ -11370,8 +11201,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/forced.001.1",
@@ -11734,8 +11564,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/source.001",
@@ -11912,8 +11741,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/choice.001.1",
@@ -12204,8 +12032,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/repeat.001.1",
@@ -12598,8 +12425,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/repeat.001.3",
@@ -12818,8 +12644,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/summary.001.1",
@@ -12986,8 +12811,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/summary.001.2",
@@ -13142,8 +12966,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "nobles/summary.001.3",
@@ -13364,8 +13187,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/title_3_3",
@@ -13448,20 +13270,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.reserve.mp3",
-          "start": 0.0,
-          "end": 2.935
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "reserve/intro.001.1",
@@ -13802,8 +13611,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/gold.001",
@@ -14040,8 +13848,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/deck.001",
@@ -14297,8 +14104,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/notes_intro.001",
@@ -14566,8 +14372,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/limit_gold.001.2",
@@ -14756,8 +14561,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/limit_hand.001.1",
@@ -15018,8 +14822,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/private.001.1",
@@ -15387,8 +15190,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/private.002",
@@ -15594,8 +15396,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "reserve/not_purchase.001",
@@ -15814,8 +15615,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "purchase_reserved/title_3_4",
@@ -15904,20 +15704,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.purchase_reserved.mp3",
-          "start": 0.0,
-          "end": 3.445
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "purchase_reserved/001",
@@ -16536,8 +16323,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "summary/title_3_5",
@@ -16614,20 +16400,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/action.summary.mp3",
-          "start": 0.0,
-          "end": 2.775
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "summary/001",
@@ -16866,8 +16639,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "summary/002.1",
@@ -17166,8 +16938,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "summary/002.2",
@@ -17290,8 +17061,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "end/title_4",
@@ -17349,20 +17119,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/full/endgame.mp3",
-          "start": 0.0,
-          "end": 1.715
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "end/trigger.001",
@@ -17525,8 +17282,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "end/final_rounds.001.1",
@@ -17866,8 +17622,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "end/example.001.1",
@@ -18391,8 +18146,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "end/winner.001",
@@ -18634,8 +18388,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "end/winner.002",
@@ -18991,8 +18744,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "end/winner.003",
@@ -19306,8 +19058,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     }
   ]
 }

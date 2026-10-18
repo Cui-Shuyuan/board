@@ -40,9 +40,6 @@ namespace BoardGameTutorial.Animation
         public string CueId { get; private set; }
         public bool IsLoaded { get; private set; }
         public float TotalDuration => currentCue != null ? currentCue.duration : 0f;
-        public bool CurrentCueHoldAfterAudio => currentCue != null && currentCue.hold_after_audio;
-        public float CurrentCuePauseAfterSpeechSeconds =>
-            currentCue != null ? currentCue.pause_after_speech_seconds : 0f;
         public CompiledCueDef CurrentCue => currentCue;
         public FrameState CurrentFrame { get; private set; }
         public Camera Camera => cameraDirector.Camera;

@@ -383,7 +383,7 @@ def _check_timing(usage: ml.MaterialUsage, asset: ml.MaterialAsset,
 
 
 def _runtime_windows(game: str, track: str) -> dict[str, float]:
-    """Return cue -> section-audio window in seconds for section-first runtime."""
+    """Return runtime cue durations for authoring-time material diagnostics."""
     path = section_source.tutorial_dir(game) / f"{track}.runtime.json"
     if not path.is_file():
         return {}
@@ -391,28 +391,11 @@ def _runtime_windows(game: str, track: str) -> dict[str, float]:
         doc = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError, UnicodeDecodeError):
         return {}
-    groups: dict[str, list[dict]] = {}
+    windows: dict[str, float] = {}
     for cue in doc.get("cues") or []:
         if isinstance(cue, dict) and cue.get("id"):
-            groups.setdefault(str(cue.get("audio") or ""), []).append(cue)
-    windows: dict[str, float] = {}
-    for cues in groups.values():
-        cues.sort(key=lambda c: float(c.get("audio_start", 0.0) or 0.0))
-        for i, cue in enumerate(cues):
-            cue_id = str(cue.get("id"))
-            if isinstance(cue.get("audio_plan"), list) and cue.get("audio_plan"):
-                # A plan cue owns its total duration, including internal gaps
-                # and silence; audio_start no longer implies the cue boundary.
-                windows[cue_id] = max(0.0, float(cue.get("duration", 0.0) or 0.0))
-                continue
-            start = float(cue.get("audio_start", 0.0) or 0.0)
-            if i + 1 < len(cues):
-                nxt = float(cues[i + 1].get("audio_start", 0.0) or 0.0)
-                windows[cue_id] = max(0.0, nxt - start)
-            else:
-                windows[cue_id] = max(
-                    0.0, float(cue.get("duration", 0.0) or 0.0)
-                )
+            windows[str(cue["id"])] = max(
+                0.0, float(cue.get("duration", 0.0) or 0.0))
     return windows
 
 
@@ -517,12 +500,12 @@ def check_track(game: str, track: str, *, quiet: bool = False,
                         f"{where}: material ends at {end:.3f}s, beyond audio "
                         f"window {window:.3f}s"
                     )
-                    if cue.get("hold_after_audio"):
-                        warnings.append(msg + " (hold_after_audio extends playback)")
-                    elif strict_timing:
-                        report.append(msg + "; add an explicit hold_after_audio or tighten timing")
+                    if strict_timing:
+                        report.append(
+                            msg + "; adjust the fixed cue timeline or animation")
                     else:
-                        warnings.append(msg + "; no hold_after_audio")
+                        warnings.append(
+                            msg + "; cue timeline owns the final duration")
 
         if asset.kind == "action" and usage.contract:
             checks += 1

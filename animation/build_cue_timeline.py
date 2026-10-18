@@ -14,10 +14,10 @@ pipeline is:
         -> compiled cue plan set
 
 The fixed timeline file is the sole source of timing-point seconds, audio
-source ranges, cue-to-slice assignments and per-cue timing policy.  The runtime
-and compiled animation documents contribute cue order, navigation metadata and
-compiled visual durations; they do not define audio timing.  Legacy tracks
-without an audio-slice manifest continue through the legacy adapter.
+source ranges, cue-to-slice assignments, per-cue timing policy and optional
+visual source ranges.  The runtime and compiled animation documents contribute
+cue order, navigation metadata and the animation ids referenced by the fixed
+timeline; they do not define audio timing.
 
 The output is one deterministic ``tutorial/{track}.cue-timeline.json`` plan set
 consumed by both Android and Unity.  The input files are never modified.
@@ -36,12 +36,10 @@ import cue_timeline
 
 
 ROOT = Path(__file__).resolve().parent.parent
-AUDIO_BOUNDARIES_SCHEMA = "tutorial-audio-boundaries/v1"
-AUDIO_BOUNDARIES_VERSION = 1
 TIMING_POLICY_SCHEMA = "tutorial-cue-timing-policy/v1"
 TIMING_POLICY_VERSION = 1
 AUDIO_SLICES_SCHEMA = "tutorial-audio-slices/v1"
-AUDIO_SLICES_VERSION = 3
+AUDIO_SLICES_VERSION = 4
 
 
 class BuildError(RuntimeError):
@@ -82,10 +80,10 @@ def _recompute_course_timeline(
     document: dict,
     explicit_gaps: list[float] | None = None,
 ) -> None:
-    """Recompute cue starts after audio source ranges change.
+    """Recompute cue starts after all track durations are final.
 
-    Explicit gaps between legacy cues are preserved; cue-local segment layout
-    is untouched.  This keeps the whole track on one recursive timeline.
+    Cue-local segment layout is untouched; the whole track stays on one
+    contiguous cue-local timeline.
     """
     previous_old_end: float | None = None
     cursor = 0.0
@@ -174,7 +172,7 @@ def _trim_visual_to_duration(plan: dict, duration: float) -> None:
         track["segments"] = kept_segments
 
 
-VALID_TIMING_MODES = frozenset({"max", "audio", "visual", "runtime"})
+VALID_TIMING_MODES = frozenset({"max", "audio", "visual"})
 TIMING_OPTION_KEYS = frozenset({
     "mode",
     "trim_to_speech_end",
@@ -191,6 +189,15 @@ TIMING_POLICY_GLOBAL_KEYS = frozenset({
     "script_source",
     "default_mode",
 })
+VISUAL_SEGMENT_KEYS = frozenset({
+    "id",
+    "animation",
+    "cue_start_ref",
+    "source_start_ref",
+    "source_end_ref",
+    "after_end",
+})
+VISUAL_AFTER_END_POLICIES = frozenset({"hold_last_frame", "clear"})
 
 
 def _validate_timing_policy_scope(policy_document: dict, path: Path) -> None:
@@ -296,7 +303,6 @@ def _apply_timing_policy(
     document: dict,
     cue_timing_options: dict[str, dict],
     default_mode: str,
-    legacy_runtime_durations: dict[str, float],
 ) -> None:
     """Apply per-cue duration policy supplied by the fixed timeline file.
 
@@ -342,12 +348,6 @@ def _apply_timing_policy(
                 raise BuildError(
                     f"cue {cue_id!r} mode=visual requires a non-empty visual track")
             new_duration = visual_end
-        else:  # runtime
-            new_duration = max(
-                legacy_runtime_durations.get(cue_id, old_duration),
-                audio_end,
-            )
-
         if new_duration <= 0.0:
             raise BuildError(
                 f"timing policy cue {cue_id!r} produced a non-positive duration")
@@ -380,80 +380,13 @@ def _apply_timing_policy(
             + ", ".join(unknown))
 
 
-def _extend_last_subtitle_to_cue_end(document: dict) -> None:
-    """Keep the final subtitle visible for the complete cue duration."""
-    for plan in document.get("cues") or []:
-        duration = float(plan["course"]["duration"])
-        subtitles = plan.get("subtitles") or []
-        if not subtitles:
-            continue
-        last = None
-        for subtitle in subtitles:
-            if not isinstance(subtitle, dict):
-                continue
-            start = float(subtitle.get("cue_start", 0.0))
-            end = start + float(subtitle.get("duration", 0.0))
-            end = min(duration, max(start, end))
-            subtitle["duration"] = round(max(0.0, end - start), 9)
-            if last is None or start + float(last.get("duration", 0.0)) < end:
-                last = subtitle
-        if last is not None:
-            start = float(last.get("cue_start", 0.0))
-            if duration > start:
-                last["duration"] = round(duration - start, 9)
-
-
-def _legacy_explicit_gaps(runtime: dict) -> list[float]:
-    """Return gaps between legacy runtime cues, excluding duration tails."""
-
-    gaps: list[float] = []
-    previous_end: float | None = None
-    for index, cue in enumerate(runtime.get("cues") or []):
-        if not isinstance(cue, dict):
-            raise BuildError(f"runtime cue {index}: expected object")
-        start = float(cue.get("start", 0.0))
-        duration = float(cue.get("duration", 0.0))
-        if previous_end is None:
-            gaps.append(0.0)
-        else:
-            gaps.append(max(0.0, start - previous_end))
-        previous_end = start + duration
-    return gaps
-
-
-def _load_audio_boundaries(repo_root: Path, game: str, track: str) -> dict:
-    path = (
-        repo_root / "content" / "games" / game / "tutorial"
-        / f"{track}.audio-boundaries.json"
-    )
-    if not path.is_file():
-        return {}
-    document = _load_json(path)
-    if document.get("schema") != AUDIO_BOUNDARIES_SCHEMA:
-        raise BuildError(
-            f"{path}: expected schema {AUDIO_BOUNDARIES_SCHEMA!r}"
-        )
-    if document.get("schema_version") != AUDIO_BOUNDARIES_VERSION:
-        raise BuildError(
-            f"{path}: expected schema_version {AUDIO_BOUNDARIES_VERSION}"
-        )
-    if document.get("game_id") not in (None, game):
-        raise BuildError(f"{path}: game_id mismatch")
-    if document.get("track") not in (None, track):
-        raise BuildError(f"{path}: track mismatch")
-    boundaries = document.get("boundaries") or []
-    if not isinstance(boundaries, list):
-        raise BuildError(f"{path}: boundaries must be an array")
-    return document
-
-
 def _load_timing_policy(repo_root: Path, game: str, track: str) -> dict:
     path = (
         repo_root / "content" / "games" / game / "tutorial"
         / f"{track}.timing-policy.json"
     )
     if not path.is_file():
-        return {"default_mode": "max", "cues": {}}
+        raise BuildError(f"missing timing policy: {path}")
     document = _load_json(path)
     if document.get("schema") != TIMING_POLICY_SCHEMA:
         raise BuildError(
@@ -467,89 +400,6 @@ def _load_timing_policy(repo_root: Path, game: str, track: str) -> dict:
         raise BuildError(f"{path}: track mismatch")
     _validate_timing_policy_scope(document, path)
     return document
-
-
-def _apply_audio_boundaries(
-    document: dict,
-    game: str,
-    track: str,
-    boundaries_document: dict,
-) -> None:
-    """Apply explicit, content-derived source_start corrections.
-
-    These overrides exist for cases where legacy cue starts were derived from
-    subtitle alignment and landed after the first phoneme.  They are checked
-    against the audio segment and never guessed with a fixed pre-roll constant.
-    """
-    boundaries = boundaries_document.get("boundaries") or []
-    if not boundaries:
-        return
-
-    plans_by_id = {
-        str(plan.get("cue_id")): plan
-        for plan in document.get("cues") or []
-        if isinstance(plan, dict)
-    }
-    diagnostics = document.setdefault("diagnostics", [])
-    for index, boundary in enumerate(boundaries):
-        if not isinstance(boundary, dict):
-            raise BuildError(f"audio boundary {index}: expected object")
-        cue_id = str(boundary.get("cue_id") or "").strip()
-        segment_id = str(boundary.get("segment_id") or "").strip()
-        source_start = boundary.get("source_start")
-        if not cue_id or not segment_id:
-            raise BuildError(
-                f"audio boundary {index}: cue_id and segment_id are required")
-        if isinstance(source_start, bool) or not isinstance(
-                source_start, (int, float)):
-            raise BuildError(
-                f"audio boundary {index}: source_start must be numeric")
-        if not math.isfinite(float(source_start)) or float(source_start) < 0.0:
-            raise BuildError(
-                f"audio boundary {index}: source_start must be finite and >= 0")
-
-        plan = plans_by_id.get(cue_id)
-        if plan is None:
-            raise BuildError(
-                f"audio boundary {index}: unknown cue_id {cue_id!r}")
-        target = None
-        for track_plan in plan.get("tracks") or []:
-            if not isinstance(track_plan, dict) or track_plan.get("kind") != "audio":
-                continue
-            for segment in track_plan.get("segments") or []:
-                if isinstance(segment, dict) and segment.get("id") == segment_id:
-                    target = segment
-                    break
-            if target is not None:
-                break
-        if target is None or target.get("type") != "audio_clip":
-            raise BuildError(
-                f"audio boundary {index}: unknown audio clip "
-                f"{cue_id}/{segment_id}"
-            )
-
-        previous = float(target["source_start"])
-        corrected = round(float(source_start), 9)
-        if corrected >= previous:
-            raise BuildError(
-                f"audio boundary {index}: corrected source_start "
-                f"{corrected:g} must be earlier than {previous:g}"
-            )
-        if corrected >= float(target["source_end"]):
-            raise BuildError(
-                f"audio boundary {index}: corrected source_start must be "
-                "earlier than source_end"
-            )
-        target["source_start"] = corrected
-        diagnostics.append({
-            "code": "audio_start_onset_guard",
-            "severity": "info",
-            "cue_id": cue_id,
-            "segment_id": segment_id,
-            "original_source_start": round(previous, 9),
-            "corrected_source_start": corrected,
-            "reason": str(boundary.get("reason") or ""),
-        })
 
 
 def _normalize_game_relative_path(raw: str, game_dir: Path, game: str) -> str:
@@ -704,6 +554,71 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
             f"{path}: cue_timing references unknown cue ids: "
             + ", ".join(unknown_timing_cues))
 
+    # Optional per-cue visual animation mapping.  When present this is the
+    # sole source for animation reference IDs, cue-local starts, source ranges
+    # and after_end policies.  A cue may reference multiple animation segments;
+    # the runtime executor resolves them by cue-local time without owning an
+    # independent clock.  Omitting the map uses the single compiled-cue
+    # default for tracks that have not authored multi-segment visuals yet.
+    cue_visuals = document.get("cue_visuals", {})
+    if not isinstance(cue_visuals, dict):
+        raise BuildError(f"{path}: cue_visuals must be an object")
+    unknown_visual_cues = sorted(set(cue_visuals) - set(cues))
+    if unknown_visual_cues:
+        raise BuildError(
+            f"{path}: cue_visuals references unknown cue ids: "
+            + ", ".join(unknown_visual_cues))
+    visual_segment_ids: set[str] = set()
+    for cue_id, raw_visuals in cue_visuals.items():
+        if not isinstance(raw_visuals, list) or not raw_visuals:
+            raise BuildError(
+                f"{path}: cue_visuals {cue_id!r} must be a non-empty array")
+        previous_cue_start = -1.0
+        for visual_index, raw_visual in enumerate(raw_visuals):
+            visual_path = f"{path}: cue_visuals {cue_id!r}[{visual_index}]"
+            if not isinstance(raw_visual, dict):
+                raise BuildError(f"{visual_path} must be an object")
+            unknown_visual = sorted(set(raw_visual) - VISUAL_SEGMENT_KEYS)
+            if unknown_visual:
+                raise BuildError(
+                    f"{visual_path} has unknown fields: "
+                    + ", ".join(unknown_visual))
+            segment_id = str(raw_visual.get("id") or "").strip()
+            if not segment_id:
+                raise BuildError(f"{visual_path}.id is required")
+            if segment_id in visual_segment_ids:
+                raise BuildError(
+                    f"{path}: duplicate visual segment id {segment_id!r}")
+            visual_segment_ids.add(segment_id)
+            animation = raw_visual.get("animation")
+            if not isinstance(animation, str) or not animation.strip():
+                raise BuildError(f"{visual_path}.animation is required")
+            after_end = raw_visual.get("after_end")
+            if after_end not in VISUAL_AFTER_END_POLICIES:
+                raise BuildError(
+                    f"{visual_path}.after_end must be one of "
+                    + ", ".join(sorted(VISUAL_AFTER_END_POLICIES)))
+            cue_start = _resolve_timing_ref(
+                timing_points,
+                _required_visual_ref(raw_visual, "cue_start", visual_path),
+                segment_id, "cue_start_ref")
+            source_start = _resolve_timing_ref(
+                timing_points,
+                _required_visual_ref(raw_visual, "source_start", visual_path),
+                segment_id, "source_start_ref")
+            source_end = _resolve_timing_ref(
+                timing_points,
+                _required_visual_ref(raw_visual, "source_end", visual_path),
+                segment_id, "source_end_ref")
+            if source_end <= source_start:
+                raise BuildError(
+                    f"{visual_path}: source range must be positive")
+            if cue_start < previous_cue_start:
+                raise BuildError(
+                    f"{visual_path}.cue_start_ref: visual segments must be "
+                    "ordered by cue-local start")
+            previous_cue_start = cue_start
+
     audio_groups = document.get("audio_groups", {})
     if not isinstance(audio_groups, dict):
         raise BuildError(f"{path}: audio_groups must be an object")
@@ -793,6 +708,14 @@ def _required_slice_ref(raw_slice: dict, field: str, owner: str) -> str:
     return ref.strip()
 
 
+def _required_visual_ref(raw_visual: dict, field: str, owner: str) -> str:
+    key = field + "_ref"
+    ref = raw_visual.get(key)
+    if not isinstance(ref, str) or not ref.strip():
+        raise BuildError(f"visual segment {owner!r} requires {key}")
+    return ref.strip()
+
+
 def _build_cue_plan_set_from_audio_slices(
     repo_root: Path,
     game: str,
@@ -821,6 +744,7 @@ def _build_cue_plan_set_from_audio_slices(
     sample_rate = int(slice_doc.get("sample_rate") or runtime.get("sample_rate") or 24000)
     default_mode = str(policy_document.get("default_mode") or "max").strip()
     cue_timing_options = _normalize_cue_timing_options(slice_doc, default_mode)
+    cue_visuals = slice_doc.get("cue_visuals", {})
 
     compiled_by_id = {
         str(cue.get("id")): cue
@@ -868,11 +792,6 @@ def _build_cue_plan_set_from_audio_slices(
         raise BuildError(
             "script/runtime cue coverage mismatch: "
             f"missing={missing!r} extra={extra!r}")
-
-    group_by_slice: dict[str, str] = {}
-    for group_id, raw_group in (slice_doc.get("audio_groups") or {}).items():
-        for slice_id in raw_group.get("slice_ids") or []:
-            group_by_slice[str(slice_id)] = str(group_id)
 
     plans: list[dict] = []
     diagnostics: list[dict] = [{
@@ -955,9 +874,6 @@ def _build_cue_plan_set_from_audio_slices(
                 "source_start_sample": int(round(start * sample_rate)),
                 "source_end_sample": int(round(effective_end * sample_rate)),
             }
-            playback_group = group_by_slice.get(owner)
-            if playback_group is not None:
-                segment["playback_group"] = playback_group
             audio_segments.append(segment)
 
             for subtitle_index, raw_subtitle in enumerate(
@@ -1008,17 +924,55 @@ def _build_cue_plan_set_from_audio_slices(
             })
             cursor += trailing
 
-        visual_duration = 0.0
-        compiled_cue = compiled_by_id.get(cue_id)
-        if compiled_cue is not None:
-            visual_duration = float(compiled_cue.get("duration", 0.0) or 0.0)
-        tracks: list[dict] = []
-        if visual_duration > 0.0:
-            tracks.append({
-                "id": "visual.main",
-                "kind": "visual",
-                "tail_policy": "hold_last_frame",
-                "segments": [{
+        visual_segments: list[dict] = []
+        raw_visuals = cue_visuals.get(cue_id)
+        if raw_visuals is not None:
+            for visual_index, raw_visual in enumerate(raw_visuals):
+                segment_id = str(raw_visual.get("id") or "").strip()
+                animation = str(raw_visual.get("animation") or "").strip()
+                compiled_cue = compiled_by_id.get(animation)
+                if compiled_cue is None:
+                    raise BuildError(
+                        f"cue {cue_id!r} visual segment {segment_id!r} "
+                        f"references unknown compiled animation {animation!r}")
+                cue_start = _resolve_timing_ref(
+                    timing_points,
+                    _required_visual_ref(
+                        raw_visual, "cue_start", segment_id),
+                    segment_id, "cue_start_ref")
+                source_start = _resolve_timing_ref(
+                    timing_points,
+                    _required_visual_ref(
+                        raw_visual, "source_start", segment_id),
+                    segment_id, "source_start_ref")
+                source_end = _resolve_timing_ref(
+                    timing_points,
+                    _required_visual_ref(
+                        raw_visual, "source_end", segment_id),
+                    segment_id, "source_end_ref")
+                compiled_duration = float(
+                    compiled_cue.get("duration", 0.0) or 0.0)
+                if source_end > compiled_duration + 1e-6:
+                    raise BuildError(
+                        f"cue {cue_id!r} visual segment {segment_id!r} "
+                        f"source_end={source_end:g} exceeds compiled animation "
+                        f"duration {compiled_duration:g}")
+                visual_segments.append({
+                    "id": segment_id,
+                    "type": "animation",
+                    "animation": animation,
+                    "cue_start": round(cue_start, 9),
+                    "source_start": round(source_start, 9),
+                    "source_end": round(source_end, 9),
+                    "after_end": str(raw_visual.get("after_end")),
+                })
+        else:
+            visual_duration = 0.0
+            compiled_cue = compiled_by_id.get(cue_id)
+            if compiled_cue is not None:
+                visual_duration = float(compiled_cue.get("duration", 0.0) or 0.0)
+            if visual_duration > 0.0:
+                visual_segments.append({
                     "id": "visual.compiled",
                     "type": "animation",
                     "animation": cue_id,
@@ -1026,7 +980,22 @@ def _build_cue_plan_set_from_audio_slices(
                     "source_start": 0.0,
                     "source_end": round(visual_duration, 9),
                     "after_end": "hold_last_frame",
-                }],
+                })
+
+        visual_duration = 0.0
+        for segment in visual_segments:
+            visual_duration = max(
+                visual_duration,
+                float(segment["cue_start"])
+                + float(segment["source_end"])
+                - float(segment["source_start"]))
+        tracks: list[dict] = []
+        if visual_segments:
+            tracks.append({
+                "id": "visual.main",
+                "kind": "visual",
+                "tail_policy": "hold_last_frame",
+                "segments": visual_segments,
             })
         if audio_segments:
             tracks.append({
@@ -1100,37 +1069,23 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
 
     try:
         timing_policy = _load_timing_policy(repo_root, game, track)
-        audio_source = str(timing_policy.get("audio_source") or "legacy_runtime")
-        default_mode = str(timing_policy.get("default_mode") or "max").strip()
-        cue_timing_options: dict[str, dict] = {}
-        if audio_source == "audio_slice_manifest":
-            document = _build_cue_plan_set_from_audio_slices(
-                repo_root, game, track, runtime, compiled, timing_policy)
-            explicit_gaps = [0.0] * len(document.get("cues") or [])
-            slice_rel = str(
-                timing_policy.get("audio_slice_manifest") or "").strip()
-            slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)
-            cue_timing_options = _normalize_cue_timing_options(
-                slice_doc, default_mode)
-        elif audio_source == "legacy_runtime":
-            document = cue_timeline.adapt_legacy_runtime(runtime, compiled)
-            boundaries = _load_audio_boundaries(repo_root, game, track)
-            _apply_audio_boundaries(document, game, track, boundaries)
-            explicit_gaps = _legacy_explicit_gaps(runtime)
-        else:
-            raise BuildError(
-                f"unsupported timing policy audio_source {audio_source!r}")
-
-        legacy_runtime_durations = {
-            str(cue.get("id")): float(cue.get("duration", 0.0))
-            for cue in runtime.get("cues") or []
-            if isinstance(cue, dict) and cue.get("id") is not None
-        }
-        _apply_timing_policy(
-            document, cue_timing_options, default_mode, legacy_runtime_durations)
-        _recompute_course_timeline(document, explicit_gaps)
+        audio_source = str(timing_policy.get("audio_source") or "").strip()
         if audio_source != "audio_slice_manifest":
-            _extend_last_subtitle_to_cue_end(document)
+            raise BuildError(
+                "all cue-timeline tracks require audio_source="
+                "audio_slice_manifest; legacy runtime timing is not a "
+                f"runtime cue-time source (got {audio_source!r})")
+        default_mode = str(timing_policy.get("default_mode") or "max").strip()
+        document = _build_cue_plan_set_from_audio_slices(
+            repo_root, game, track, runtime, compiled, timing_policy)
+        slice_rel = str(
+            timing_policy.get("audio_slice_manifest") or "").strip()
+        slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)
+        cue_timing_options = _normalize_cue_timing_options(
+            slice_doc, default_mode)
+        _apply_timing_policy(document, cue_timing_options, default_mode)
+        _recompute_course_timeline(
+            document, [0.0] * len(document.get("cues") or []))
         cue_timeline.validate_plan_set(document)
     except cue_timeline.CueTimelineError as exc:
         raise BuildError(f"plan validation failed: {exc}") from exc

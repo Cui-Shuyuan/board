@@ -1,0 +1,10 @@
+{
+  "schema": "tutorial-cue-timing-policy/v1",
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "audio_source": "audio_slice_manifest",
+  "audio_slice_manifest": "tutorial/full.audio-slices.json",
+  "script_source": "tutorial/build/full.script.json",
+  "default_mode": "max"
+}

@@ -117,7 +117,7 @@ content/games/<game>/tutorial/
 - 区分可伸缩的停顿/高亮与需要最小时长的移动/翻转/切镜头/阅读时间。
 - quick 不是 full 的全局倍速：宁可减少可选展示或显式改表现，也不要暗中改音频速度或自动截断动作。
 - 时间不足时默认报错并说明缺少多少、来自哪个素材调用；作者显式选择紧凑表现或延长停留。
-- `hold_after_audio` 等已有播放器时长必须纳入同一个实际播放时长模型，不能另起一套时钟。
+- 所有 cue 最终时长必须由 `{track}.audio-slices.json` 的固定时间轴和 plan duration 决定；不能另起一套动画时钟。
 - 连续播放、跳 cue、回退、重播、问答打断恢复必须得到同一逻辑状态和画面；素材不能依赖“必须先播放过一次”。
 
 ### 5.1 Phase 4：cue-level TTS、逻辑音频切片与字幕轨道
@@ -171,7 +171,7 @@ python3 animation/validate_anim_rules_v2.py --game <game> --track <track>
 python3 animation/audit_anim_v2.py --game <game> --track <track>
 python3 animation/check_card_identity_v2.py --game <game> --track <track>
 
-# 严格音频窗口：无 hold_after_audio 的超窗会失败；默认构建只 WARN
+# 严格音频窗口：素材超出 cue plan duration 会进入诊断
 python3 animation/check_materials.py --game <game> --strict-timing
 
 # 6. 看一个 cue 的展开结果和来源映射

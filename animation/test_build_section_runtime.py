@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Regression tests for section-level TTS runtime expansion."""
+"""Regression tests for section-level TTS runtime expansion.
+
+The expanded runtime is cue-order/media/subtitle data only.  Playback timing
+must not sneak back in as audio-plan, section-audio or title pause fields.
+"""
 from __future__ import annotations
 
 import json
@@ -29,13 +33,15 @@ class SectionRuntimeHelperTests(unittest.TestCase):
             {"word": "每级", "start": 2.0, "end": 2.3},
             {"word": "洗混后，", "start": 2.3, "end": 2.9},
         ]
-        starts = bsr._match_cue_starts(["发展卡共90张，", "每级洗混后，"], words, 3.5)
+        starts = bsr._match_cue_starts(
+            ["发展卡共90张，", "每级洗混后，"], words, 3.5)
         self.assertEqual(len(starts), 2)
         self.assertEqual(starts[0], 0.0)
         self.assertAlmostEqual(starts[1], 2.0, places=3)
 
     def test_match_cue_starts_falls_back_to_proportional_split(self):
-        starts = bsr._match_cue_starts(["短句。", "这是一个更长的句子。"], [], 3.0)
+        starts = bsr._match_cue_starts(
+            ["短句。", "这是一个更长的句子。"], [], 3.0)
         self.assertEqual(starts[0], 0.0)
         self.assertGreater(starts[1], 0.0)
         self.assertLess(starts[1], 3.0)
@@ -79,8 +85,13 @@ class SectionRuntimePipelineTests(unittest.TestCase):
                 ],
             },
         ], ensure_ascii=False), encoding="utf-8")
-        write = lambda p, d: (p.parent.mkdir(parents=True, exist_ok=True),
-                              p.write_text(json.dumps(d, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"))
+
+        def write(path: Path, document: dict) -> None:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                json.dumps(document, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+
         write(tutorial / "shared" / "full.base.anim.json", {
             "schema": "tutorial-anim/v2", "game": "fake", "track": "full",
             "default_tree": "main", "worlds": [], "trees": [],
@@ -95,10 +106,7 @@ class SectionRuntimePipelineTests(unittest.TestCase):
         write(tutorial / "sections" / "a" / "full.anim.json", {
             "section": "a",
             "cues": [
-                {
-                    "id": "title_a", "entry": "initial", "tree": "main",
-                    "pause_after_speech_seconds": 1.5, "events": [],
-                },
+                {"id": "title_a", "entry": "initial", "tree": "main", "events": []},
                 {"id": "001", "tree": "main", "events": []},
             ],
             "time_anchors": [],
@@ -114,7 +122,8 @@ class SectionRuntimePipelineTests(unittest.TestCase):
         })
         return {
             "units": "section",
-            "voice": "v", "format": "mp3", "sample_rate": 24000, "gap_seconds": 0.0,
+            "voice": "v", "format": "mp3", "sample_rate": 24000,
+            "gap_seconds": 0.0,
             "cues": [{
                 "id": "a", "asset": "sec.a", "text": "第一句第二句",
                 "duration": 4.0,
@@ -137,39 +146,33 @@ class SectionRuntimePipelineTests(unittest.TestCase):
             self.assertEqual(entries[0]["text"], "第一句第二句")
             self.assertEqual(entries[0]["cue_ids"], ["a/title_a", "a/001"])
 
-    def test_build_section_runtime_expands_one_audio_into_cues(self):
+    def test_build_section_runtime_is_media_metadata_only(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             manifest = self._fixture(root)
             with mock.patch.object(bsr, "ROOT", root), \
                  mock.patch.object(btr, "ROOT", root), \
                  mock.patch.object(section_source, "ROOT", root):
-                out = bsr.build_section_runtime("fake", "full", force=True, manifest=manifest)
+                out = bsr.build_section_runtime(
+                    "fake", "full", force=True, manifest=manifest)
             runtime = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(runtime["schema_version"], 3)
             self.assertEqual(runtime["units"], "section")
             self.assertEqual(len(runtime["sections"]), 1)
             self.assertEqual(len(runtime["cues"]), 2)
             first, second = runtime["cues"]
-            self.assertFalse(first["section_audio"])
-            self.assertEqual(len(first["audio_plan"]), 2)
-            self.assertEqual(first["audio_plan"][0]["type"], "clip")
-            self.assertEqual(first["audio_plan"][1]["type"], "silence")
-            self.assertAlmostEqual(first["audio_plan"][0]["start"], 0.0, places=3)
-            self.assertAlmostEqual(first["audio_plan"][0]["end"], 1.0, places=3)
-            self.assertAlmostEqual(first["audio_plan"][1]["duration"], 1.5, places=3)
-            self.assertAlmostEqual(first["duration"], 2.5, places=3)
-            self.assertAlmostEqual(second["start"], first["duration"], places=3)
             self.assertEqual(first["audio"], second["audio"])
-            self.assertAlmostEqual(first["audio_start"], 0.0, places=3)
-            self.assertGreater(second["audio_start"], first["audio_start"])
-            self.assertTrue(second["section_audio"])
-            self.assertNotIn("audio_plan", second)
-            self.assertAlmostEqual(second["subtitles"][0]["t"], 0.0, places=3)
-            self.assertAlmostEqual(first["subtitles"][-1]["end"], first["duration"], places=3)
-            self.assertAlmostEqual(second["subtitles"][-1]["end"], second["duration"], places=3)
             self.assertEqual(first["text"], "第一句")
             self.assertEqual(second["text"], "第二句")
+            for cue in runtime["cues"]:
+                self.assertNotIn("audio_plan", cue)
+                self.assertNotIn("section_audio", cue)
+                self.assertNotIn("pause_after_speech_seconds", cue)
+                self.assertNotIn("hold_after_audio", cue)
+                self.assertAlmostEqual(
+                    cue["subtitles"][-1]["end"], cue["duration"], places=3)
+            self.assertGreaterEqual(
+                second["audio_start"], first["audio_start"])
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
 using System;
 // BoardGameTutorial
-// 音频/字幕/导航外壳（v2-only）。
+// 音频/字幕/导航外壳（cue-plan-only）。
 //
-// 动画本身由 BoardGameTutorial.Animation.TutorialAnimPlayer 提供：
-// 运行时只读 {track}.compiled.json，按 audioSource.time 调 Seek(t)。
+// All cue playback is driven by CuePlaybackController's cue-local clock.  The
+// runtime document is cue-order/navigation metadata plus the input for the
+// whole-track compatibility loader; it is never a second duration source.
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -35,23 +36,7 @@ namespace BoardGameTutorial
         public bool pauseAtCueEnd;
 
         [Tooltip("调试：按 B 依次跳转的 cue（循环）；Shift+B 回到原位。")]
-        public List<string> debugJumpCueIds = new List<string>
-        {
-            "setup.gems.001.1",
-            "setup.gems.003.1",
-            "setup.gems.003.2",
-            "setup.gems.004",
-            "setup.nobles.001.2",
-            "setup.cards.001.1",
-            "setup.cards.002.1",
-            "setup.starting_player.001.3",
-            "action.cards.cost.001.1",
-            "action.cards.discount.001",
-            "action.purchase_reserved.002.1",
-            "action.reserve.limit_hand.001.2",
-            "action.nobles.source.001",
-            "endgame.trigger.001",
-        };
+        public List<string> debugJumpCueIds = new List<string>();
 
         public static bool CueModeEnabled = true;
 
@@ -80,7 +65,6 @@ namespace BoardGameTutorial
 
         private TutorialCueDoc doc;
         private string gameRoot;
-        private AudioSource audioSource;
         private TutorialAnimPlayer v2AnimPlayer;
         private Coroutine playbackRoutine;
         private int currentIndex = -1;
@@ -92,7 +76,6 @@ namespace BoardGameTutorial
         private bool debugBuildAllowed;
         private bool isPaused;
         private bool pausedBeforePlay;
-        private float fallbackClock;
         private string currentSubtitle = "";
         private GUIStyle debugStyle;
         private GUIStyle subtitleStyle;
@@ -137,18 +120,26 @@ namespace BoardGameTutorial
                 return CurrentCue != null ? CurrentCue.id : "";
             }
         }
-        public string CurrentCueText => CurrentCue != null ? CurrentCue.text : "";
-        public string CurrentCueGroupPath => CurrentCue != null && CurrentCue.group_path != null
-            ? string.Join(" > ", CurrentCue.group_path) : "";
+        public string CurrentCueText =>
+            cueTimelinePlan != null && !string.IsNullOrEmpty(cueTimelinePlan.text)
+                ? cueTimelinePlan.text
+                : (CurrentCue != null ? CurrentCue.text : "");
+        public string CurrentCueGroupPath
+        {
+            get
+            {
+                if (cueTimelinePlan != null && cueTimelinePlan.group_path != null)
+                    return string.Join(" > ", cueTimelinePlan.group_path);
+                return CurrentCue != null && CurrentCue.group_path != null
+                    ? string.Join(" > ", CurrentCue.group_path) : "";
+            }
+        }
         public bool IsPlaying
         {
             get
             {
-                if (cueTimelineActive && cueTimelineController != null)
-                    return cueTimelineController.State == CuePlaybackState.Playing;
-                return audioPlanActive
-                    ? !isPaused && !playbackFinished
-                    : (audioSource != null && audioSource.isPlaying);
+                return cueTimelineActive && cueTimelineController != null
+                    && cueTimelineController.State == CuePlaybackState.Playing;
             }
         }
         public TutorialCueDoc Document => doc;
@@ -164,9 +155,8 @@ namespace BoardGameTutorial
         }
         public int CurrentCueIndex => currentIndex;
         public int TotalCueCount => doc != null && doc.cues != null ? doc.cues.Count : 0;
-        public float Volume => cueTimelineAudioExecutor != null && cueTimelineActive
-            ? cueTimelineAudioExecutor.Volume
-            : (audioSource != null ? audioSource.volume : 1f);
+        public float Volume => cueTimelineAudioExecutor != null
+            ? cueTimelineAudioExecutor.Volume : 1f;
 
         public float Position
         {
@@ -174,15 +164,7 @@ namespace BoardGameTutorial
             {
                 if (cueTimelineActive && cueTimelineController != null)
                     return Mathf.Max(0f, (float)cueTimelineController.CueTime);
-                if (animationHoldActive) return animationHoldLocal;
-                if (playbackFinished) return lastPosition;
-                var cue = CurrentCue;
-                if (cue != null && HasAudioPlan(cue))
-                    return Mathf.Clamp(audioPlanLocal, 0f, Mathf.Max(0f, Duration));
-                if (audioSource == null || audioSource.clip == null) return 0f;
-                if (cue != null && cue.section_audio)
-                    return Mathf.Clamp(audioSource.time - cue.audio_start, 0f, Mathf.Max(0f, cue.duration));
-                return audioSource.time;
+                return playbackFinished ? Mathf.Max(0f, lastPosition) : 0f;
             }
         }
 
@@ -190,16 +172,9 @@ namespace BoardGameTutorial
         {
             get
             {
-                if (cueTimelineActive && cueTimelinePlan != null)
+                if (cueTimelinePlan != null && cueTimelinePlan.course != null)
                     return Mathf.Max(0f, (float)cueTimelinePlan.course.duration);
-                var cue = CurrentCue;
-                if (cue != null && HasAudioPlan(cue))
-                {
-                    float planned = AudioPlanDuration(cue);
-                    return Mathf.Max(0f, planned > 0f ? planned : cue.duration);
-                }
-                if (cue != null && cue.section_audio) return Mathf.Max(0f, cue.duration);
-                return audioSource != null && audioSource.clip != null ? audioSource.clip.length : 0f;
+                return 0f;
             }
         }
         public bool UnityTouchControlsEnabled
@@ -222,11 +197,6 @@ namespace BoardGameTutorial
 
         private void Awake()
         {
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.loop = false;
-
             v2AnimPlayer = GetComponent<TutorialAnimPlayer>();
             if (v2AnimPlayer == null) v2AnimPlayer = gameObject.AddComponent<TutorialAnimPlayer>();
 
@@ -290,27 +260,7 @@ namespace BoardGameTutorial
         public void StopAndClear()
         {
             DisposeCueTimeline();
-            if (playbackRoutine != null)
-            {
-                StopCoroutine(playbackRoutine);
-                playbackRoutine = null;
-            }
-            if (audioSource != null)
-            {
-                audioSource.Stop();
-                audioSource.clip = null;
-                audioSource.time = 0f;
-            }
-            if (sectionAudioClip != null)
-            {
-                UnityEngine.Object.Destroy(sectionAudioClip);
-                sectionAudioClip = null;
-            }
-            sectionAudioPath = "";
-            audioPlanActive = false;
-            audioPlanLocal = 0f;
-            audioPlanAwaitingStart = false;
-            audioPlanSegmentIsClip = false;
+            StopAllCoroutines();
             if (v2AnimPlayer != null)
             {
                 v2AnimPlayer.ClearScene();
@@ -325,7 +275,6 @@ namespace BoardGameTutorial
             inDebugJump = false;
             isPaused = false;
             pausedBeforePlay = false;
-            fallbackClock = 0f;
             currentSubtitle = "";
         }
     }

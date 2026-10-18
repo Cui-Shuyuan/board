@@ -934,206 +934,209 @@ internal static class Program
     }
 
 
-    private static CueTimelineLegacyCueInput SampleTitleInput()
+    private static CueTimelinePlan MakePlan(
+        string cueId, double start, double duration,
+        params CueTimelineTrack[] tracks)
     {
-        var input = new CueTimelineLegacyCueInput
+        return new CueTimelinePlan
         {
-            cue_id = "quick_intro/title_1",
-            course_start = 0.0,
-            runtime_duration = 2.295,
-            audio_asset = "media/tts/quick/quick.intro.mp3",
-            audio_start = 0.0,
-            compiled_visual_duration = 3.08,
-            sample_rate = 24000,
+            schema = "tutorial-cue-plan/v1",
+            cue_id = cueId,
+            entry = null,
+            course = new CueTimelineCourse { start = start, duration = duration },
+            tracks = new List<CueTimelineTrack>(tracks),
+            subtitles = new List<CueTimelineSubtitle>(),
         };
-        input.audio_plan.Add(new CueTimelineLegacyAudioPlanSegment
-        {
-            type = "clip", file = input.audio_asset, start = 0.0, end = 1.295,
-        });
-        input.audio_plan.Add(new CueTimelineLegacyAudioPlanSegment
-        {
-            type = "silence", duration = 1.0,
-        });
-        input.subtitles.Add(new CueTimelineSubtitle
-        {
-            id = "subtitle.title", cue_start = 0.0, duration = 2.295, text = "title",
-        });
-        return input;
     }
 
-    private static CueTimelineLegacyCueInput SampleBodyInput()
+    private static CueTimelineTrack AudioTrack(params CueTimelineSegment[] segments)
     {
-        var input = new CueTimelineLegacyCueInput
+        return new CueTimelineTrack
         {
-            cue_id = "quick_intro/001",
-            course_start = 2.295,
-            runtime_duration = 9.392,
-            audio_asset = "media/tts/quick/quick.intro.mp3",
-            audio_start = 2.08,
-            section_audio = true,
-            compiled_visual_duration = 10.296,
-            sample_rate = 24000,
+            id = "audio.main", kind = "audio", tail_policy = "silence",
+            segments = new List<CueTimelineSegment>(segments),
+        };
+    }
+
+    private static CueTimelineTrack VisualTrack(params CueTimelineSegment[] segments)
+    {
+        return new CueTimelineTrack
+        {
+            id = "visual.main", kind = "visual", tail_policy = "hold_last_frame",
+            segments = new List<CueTimelineSegment>(segments),
+        };
+    }
+
+    private static CueTimelineSegment AudioClip(
+        string id, double cueStart, string asset, double sourceStart, double sourceEnd)
+    {
+        return new CueTimelineSegment
+        {
+            id = id, type = "audio_clip", cue_start = cueStart,
+            asset = asset, source_start = sourceStart, source_end = sourceEnd,
+        };
+    }
+
+    private static CueTimelineSegment Silence(
+        string id, double cueStart, double duration)
+    {
+        return new CueTimelineSegment
+        {
+            id = id, type = "silence", cue_start = cueStart, duration = duration,
+        };
+    }
+
+    private static CueTimelineSegment Animation(
+        string id, double cueStart, string animation,
+        double sourceStart, double sourceEnd)
+    {
+        return new CueTimelineSegment
+        {
+            id = id, type = "animation", cue_start = cueStart,
+            animation = animation, source_start = sourceStart,
+            source_end = sourceEnd, after_end = "hold_last_frame",
+        };
+    }
+
+    private static CueTimelineSegment Hold(
+        string id, double cueStart, double duration)
+    {
+        return new CueTimelineSegment
+        {
+            id = id, type = "hold", cue_start = cueStart,
+            duration = duration, pose = "last_frame",
+        };
+    }
+
+    private static CueTimelinePlan BuildTitlePlan()
+    {
+        CueTimelinePlan plan = MakePlan(
+            "quick_intro/title_1", 0.0, 3.08,
+            AudioTrack(
+                AudioClip("audio.title.clip", 0.0,
+                    "media/tts/quick/quick.intro.mp3", 0.0, 1.295),
+                Silence("audio.title.silence", 1.295, 1.0)),
+            VisualTrack(Animation("visual.compiled", 0.0,
+                "quick_intro/title_1", 0.0, 3.08)));
+        plan.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.title", cue_start = 0.0, duration = 2.295,
+            text = "title",
+        });
+        return plan;
+    }
+
+    private static CueTimelinePlan BuildBodyPlan()
+    {
+        CueTimelinePlan plan = MakePlan(
+            "quick_intro/001", 2.295, 10.296,
+            AudioTrack(AudioClip("audio.body.clip", 0.0,
+                "media/tts/quick/quick.intro.mp3", 2.08, 11.472)),
+            VisualTrack(Animation("visual.compiled", 0.0,
+                "quick_intro/001", 0.0, 10.296)));
+        plan.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.body.0", cue_start = 0.0, duration = 3.025,
+            text = "body one",
+        });
+        plan.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.body.1", cue_start = 3.38, duration = 6.012,
+            text = "body two",
+        });
+        return plan;
+    }
+
+    private static CueTimelinePlan BuildLongAnimationPlan()
+    {
+        return MakePlan(
+            "quick_nobles/002", 160.525, 6.2,
+            AudioTrack(AudioClip("audio.short.clip", 0.0,
+                "media/tts/quick/quick.nobles.mp3", 8.32, 9.98)),
+            VisualTrack(Animation("visual.compiled", 0.0,
+                "quick_nobles/002", 0.0, 6.2)));
+    }
+
+    private static CueTimelinePlan BuildCompositePlan()
+    {
+        CueTimelinePlan plan = MakePlan(
+            "quick_take_gems/003", 75.977, 10.398,
+            AudioTrack(
+                AudioClip("audio.composite.0", 0.0,
+                    "media/tts/quick/quick.take.mp3", 15.835, 20.245),
+                Silence("audio.composite.1", 4.41, 0.415),
+                AudioClip("audio.composite.2", 4.825,
+                    "media/tts/quick/quick.take.mp3", 20.66, 25.272)),
+            VisualTrack(
+                Animation("visual.compiled", 0.0,
+                    "quick_take_gems/003", 0.0, 9.648),
+                Hold("visual.hold_tail", 9.648, 0.75)));
+        plan.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.composite.0", cue_start = 0.0, duration = 4.41,
+            text = "first",
+        });
+        plan.subtitles.Add(new CueTimelineSubtitle
+        {
+            id = "subtitle.composite.1", cue_start = 4.825, duration = 4.612,
+            text = "second",
+        });
+        return plan;
+    }
+
+    private static void TestCompatibilityPlanFactory()
+    {
+        var input = new CueTimelineCompatibilityCueInput
+        {
+            cue_id = "fixture/compat",
+            course_start = 4.0,
+            runtime_duration = 2.0,
+            audio_asset = "media/fixture.mp3",
+            audio_start = 10.0,
+            compiled_visual_duration = 5.0,
+            sample_rate = 1000,
         };
         input.subtitles.Add(new CueTimelineSubtitle
         {
-            id = "subtitle.body.0", cue_start = 0.0, duration = 3.025, text = "body one",
+            id = "subtitle.compat", cue_start = 1.5, duration = 2.0,
+            text = "clipped",
         });
-        input.subtitles.Add(new CueTimelineSubtitle
-        {
-            id = "subtitle.body.1", cue_start = 3.38, duration = 6.012, text = "body two",
-        });
-        return input;
-    }
-
-    private static CueTimelineLegacyCueInput SampleLongAnimationInput()
-    {
-        var input = new CueTimelineLegacyCueInput
-        {
-            cue_id = "quick_nobles/002",
-            course_start = 160.525,
-            runtime_duration = 1.66,
-            audio_asset = "media/tts/quick/quick.nobles.mp3",
-            audio_start = 8.32,
-            section_audio = true,
-            compiled_visual_duration = 6.2,
-            sample_rate = 24000,
-        };
-        input.subtitles.Add(new CueTimelineSubtitle
-        {
-            id = "subtitle.nobles.002", cue_start = 0.0, duration = 1.66,
-            text = "就拿取这位贵族；",
-        });
-        return input;
-    }
-
-    private static CueTimelineLegacyCueInput SampleCompositeInput()
-    {
-        var input = new CueTimelineLegacyCueInput
-        {
-            cue_id = "quick_take_gems/003",
-            course_start = 75.977,
-            runtime_duration = 9.437,
-            audio_asset = "media/tts/quick/quick.take.mp3",
-            audio_start = 15.835,
-            section_audio = true,
-            compiled_visual_duration = 9.648,
-            sample_rate = 24000,
-            compose_multi_segment_audio = true,
-            visual_hold_seconds = 0.75,
-        };
-        input.subtitles.Add(new CueTimelineSubtitle
-        {
-            id = "subtitle.composite.0", cue_start = 0.0, duration = 4.41, text = "first",
-        });
-        input.subtitles.Add(new CueTimelineSubtitle
-        {
-            id = "subtitle.composite.1", cue_start = 4.825, duration = 4.612, text = "second",
-        });
-        return input;
-    }
-
-    private static void TestFeatureGateAndPlanSelection()
-    {
-        var gate = new CueTimelineFeatureGate();
-        gate.SetAllowlist(new[] { "quick_intro/title_1", "quick_intro/001" });
-        string reason;
-        Check(!gate.ShouldUse("quick_intro/title_1", out reason),
-            "feature flag default off keeps all cues on legacy path");
-        gate.Enabled = true;
-        Check(gate.ShouldUse("quick_intro/title_1", out reason),
-            "flag on and allowlisted selects timeline path");
-        Check(!gate.ShouldUse("quick_take_gems/003", out reason),
-            "flag on but not allowlisted keeps legacy path");
-        Check(!gate.ShouldUse("", out reason),
-            "empty cue id never selects timeline path");
-
         CueTimelinePlan plan;
         string error;
-        var invalid = new CueTimelineLegacyCueInput
+        Check(CueTimelineCompatibilityPlanFactory.TryBuild(
+                input, out plan, out error),
+            "compatibility adapter builds a complete single plan: " + error);
+        CheckClose(2.0, plan.course.duration, 1e-9,
+            "compatibility adapter keeps whole-track runtime duration");
+        CueTimelineTrack audio = CueTimelineTrackResolver.FindTrack(plan, "audio");
+        CueTimelineTrack visual = CueTimelineTrackResolver.FindTrack(plan, "visual");
+        Check(audio != null && audio.segments.Count == 1,
+            "compatibility adapter emits one declared audio range");
+        Check(visual != null && visual.segments.Count == 1,
+            "compatibility adapter emits one bounded visual range");
+        CheckClose(2.0, visual.segments[0].EndCueTime, 1e-9,
+            "compatibility visual never exceeds runtime cue duration");
+        Check(plan.subtitles.Count == 1
+              && Math.Abs(plan.subtitles[0].duration - 0.5) < 1e-9,
+            "compatibility subtitles are clipped to cue duration");
+
+        var invalid = new CueTimelineCompatibilityCueInput
         {
-            cue_id = "quick_intro/001",
+            cue_id = "fixture/invalid",
             course_start = 0.0,
             runtime_duration = 0.0,
             compiled_visual_duration = 1.0,
         };
-        Check(!CueTimelineLegacyPlanFactory.TryBuild(invalid, out plan, out error)
-              && !string.IsNullOrEmpty(error),
-            "failed plan generation is observable and can fall back to legacy");
-    }
-
-    private static void TestLegacyPlanFactorySamples()
-    {
-        CueTimelinePlan plan;
-        string error;
-
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleTitleInput(), out plan, out error),
-            "title sample plan builds: " + error);
-        CueTimelineTrack titleAudio = CueTimelineTrackResolver.FindTrack(plan, "audio");
-        CueTimelineTrack titleVisual = CueTimelineTrackResolver.FindTrack(plan, "visual");
-        Check(titleAudio != null && titleAudio.segments.Count == 2,
-            "title sample has clip + silence");
-        Check(titleAudio != null && titleAudio.segments[0].type == "audio_clip"
-              && titleAudio.segments[1].type == "silence",
-            "title sample keeps explicit title silence");
-        CheckClose(3.08, plan.course.duration, 1e-9,
-            "title sample uses compiled visual duration as plan duration");
-        Check(titleVisual != null && titleVisual.segments.Count == 1
-              && titleVisual.segments[0].type == "animation",
-            "title sample visual animation wired through TutorialAnimPlayer");
-        CheckClose(2.295, titleAudio.segments[1].EndCueTime, 1e-9,
-            "title audio plus silence ends before visual");
-
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleBodyInput(), out plan, out error),
-            "body sample plan builds: " + error);
-        CueTimelineTrack bodyAudio = CueTimelineTrackResolver.FindTrack(plan, "audio");
-        CueTimelineTrack bodyVisual = CueTimelineTrackResolver.FindTrack(plan, "visual");
-        Check(bodyAudio != null && bodyAudio.segments.Count == 1,
-            "ordinary body sample starts as one audio clip");
-        CheckClose(2.08, bodyAudio.segments[0].source_start, 1e-9,
-            "body audio source start preserved");
-        CheckClose(2.08 + 9.392, bodyAudio.segments[0].source_end, 1e-9,
-            "body audio tail is not trimmed by subtitle word timing");
-        Check(bodyVisual != null && bodyVisual.segments[0].type == "animation",
-            "body visual animation generated");
-        CheckClose(10.296, plan.course.duration, 1e-9,
-            "body sample duration uses max of runtime/audio/compiled");
-        CheckClose(9.392, CueTimelineTrackResolver.FindSegment(bodyAudio, 9.391).EndCueTime,
-            1e-9, "body final clip remains active up to its audio end");
-
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleCompositeInput(), out plan, out error),
-            "composite sample plan builds: " + error);
-        CueTimelineTrack compositeAudio = CueTimelineTrackResolver.FindTrack(plan, "audio");
-        CueTimelineTrack compositeVisual = CueTimelineTrackResolver.FindTrack(plan, "visual");
-        Check(compositeAudio != null && compositeAudio.segments.Count == 3,
-            "composite sample has multi audio + explicit silence");
-        Check(compositeAudio.segments[0].type == "audio_clip"
-              && compositeAudio.segments[1].type == "silence"
-              && compositeAudio.segments[2].type == "audio_clip",
-            "composite audio segment order is clip/silence/clip");
-        Check(compositeVisual != null && compositeVisual.segments.Count == 2
-              && compositeVisual.segments[0].type == "animation"
-              && compositeVisual.segments[1].type == "hold",
-            "composite visual is one animation segment plus hold");
-        CheckClose(10.398, plan.course.duration, 1e-9,
-            "composite plan duration includes explicit visual hold");
-        CheckClose(9.437, compositeAudio.segments[2].EndCueTime, 1e-9,
-            "composite audio ends before visual hold ends");
-        CheckClose(10.398, compositeVisual.segments[1].EndCueTime, 1e-9,
-            "composite visual hold reaches cue end");
-        CheckClose(15.835 + 9.437, compositeAudio.segments[2].source_end, 1e-9,
-            "composite final source_end remains the legacy speech boundary");
-        Check(CueTimelineTrackResolver.FindSegment(compositeAudio, 4.41).type == "silence",
-            "composite silence boundary resolves to silence");
-        Check(CueTimelineTrackResolver.FindSegment(compositeVisual, 9.75).type == "hold",
-            "composite visual hold boundary resolves to hold");
+        Check(!CueTimelineCompatibilityPlanFactory.TryBuild(
+                invalid, out plan, out error) && !string.IsNullOrEmpty(error),
+            "invalid compatibility input fails explicitly");
     }
 
     private static void TestPlayAtPausedAndAudioSync()
     {
-        CueTimelinePlan plan;
-        string error;
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleCompositeInput(), out plan, out error),
-            "prepare PlayAt sample: " + error);
+        CueTimelinePlan plan = BuildCompositePlan();
+        Check(CueTimelinePlanValidator.TryValidate(plan, out _),
+            "prepare PlayAt sample: composite plan validates");
 
         var clock = new ManualCueClock();
         var audio = new FakeAudioExecutor(clock);
@@ -1168,16 +1171,15 @@ internal static class Program
 
     private static void TestSampleControllerSequences()
     {
-        CueTimelinePlan title;
-        CueTimelinePlan body;
-        CueTimelinePlan composite;
-        string error;
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleTitleInput(), out title, out error),
-            "title sequence plan: " + error);
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleBodyInput(), out body, out error),
-            "body sequence plan: " + error);
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleCompositeInput(), out composite, out error),
-            "composite sequence plan: " + error);
+        CueTimelinePlan title = BuildTitlePlan();
+        CueTimelinePlan body = BuildBodyPlan();
+        CueTimelinePlan composite = BuildCompositePlan();
+        Check(CueTimelinePlanValidator.TryValidate(title, out _),
+            "title sequence plan validates");
+        Check(CueTimelinePlanValidator.TryValidate(body, out _),
+            "body sequence plan validates");
+        Check(CueTimelinePlanValidator.TryValidate(composite, out _),
+            "composite sequence plan validates");
 
         var titleClock = new ManualCueClock();
         var titleAudio = new FakeAudioExecutor(titleClock);
@@ -1260,11 +1262,9 @@ internal static class Program
 
     private static void TestAnimationLongerThanAudioUsesPlanDuration()
     {
-        CueTimelinePlan plan;
-        string error;
-        Check(CueTimelineLegacyPlanFactory.TryBuild(
-                SampleLongAnimationInput(), out plan, out error),
-            "long-animation sample plan builds: " + error);
+        CueTimelinePlan plan = BuildLongAnimationPlan();
+        Check(CueTimelinePlanValidator.TryValidate(plan, out _),
+            "long-animation sample plan validates");
 
         CueTimelineTrack audio = CueTimelineTrackResolver.FindTrack(plan, "audio");
         CueTimelineTrack visual = CueTimelineTrackResolver.FindTrack(plan, "visual");
@@ -1303,10 +1303,9 @@ internal static class Program
 
     private static void TestFailureCannotAutoAdvance()
     {
-        CueTimelinePlan plan;
-        string error;
-        Check(CueTimelineLegacyPlanFactory.TryBuild(SampleBodyInput(), out plan, out error),
-            "failure sample plan: " + error);
+        CueTimelinePlan plan = BuildBodyPlan();
+        Check(CueTimelinePlanValidator.TryValidate(plan, out _),
+            "failure sample plan validates");
         var clock = new ManualCueClock();
         var audio = new FakeAudioExecutor(clock) { AutoPrepare = false };
         var visual = new FakeVisualExecutor { AutoPrepare = false };
@@ -1532,6 +1531,133 @@ internal static class Program
         }
     }
 
+    private static CueTimelineTrack MultiVisualTrack()
+    {
+        return new CueTimelineTrack
+        {
+            id = "visual.main",
+            kind = "visual",
+            tail_policy = "hold_last_frame",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "v.opening", type = "animation", cue_start = 0.0,
+                    animation = "fixture#opening", source_start = 10.0,
+                    source_end = 12.0, after_end = "hold_last_frame",
+                },
+                new CueTimelineSegment
+                {
+                    id = "v.hold", type = "hold", cue_start = 2.0,
+                    duration = 1.0, pose = "last_frame",
+                },
+                new CueTimelineSegment
+                {
+                    id = "v.closing", type = "animation", cue_start = 3.0,
+                    animation = "fixture#closing", source_start = 100.0,
+                    source_end = 102.0, after_end = "hold_last_frame",
+                },
+            },
+        };
+    }
+
+    private static void TestMultipleVisualSegmentsUseCueLocalTime()
+    {
+        CueTimelineTrack track = MultiVisualTrack();
+
+        CueVisualFrame opening = CueVisualTimelineResolver.Resolve(track, 0.5);
+        Check(opening.Kind == CueVisualFrameKind.Animation
+              && opening.AnimationId == "fixture#opening",
+            "multi visual opening segment selected");
+        CheckClose(10.5, opening.SourceTime, 1e-9,
+            "multi visual opening source time");
+
+        CueVisualFrame hold = CueVisualTimelineResolver.Resolve(track, 2.5);
+        Check(hold.Kind == CueVisualFrameKind.Hold
+              && hold.AnimationId == "fixture#opening",
+            "multi visual hold keeps preceding animation");
+        CheckClose(12.0, hold.SourceTime, 1e-9,
+            "multi visual hold freezes source_end");
+
+        CueVisualFrame closing = CueVisualTimelineResolver.Resolve(track, 3.5);
+        Check(closing.Kind == CueVisualFrameKind.Animation
+              && closing.AnimationId == "fixture#closing",
+            "multi visual second animation selected");
+        CheckClose(100.5, closing.SourceTime, 1e-9,
+            "multi visual second animation source time");
+
+        CueVisualFrame tail = CueVisualTimelineResolver.Resolve(track, 5.5);
+        Check(tail.Kind == CueVisualFrameKind.Hold
+              && tail.AnimationId == "fixture#closing",
+            "multi visual tail holds last animation");
+        CheckClose(102.0, tail.SourceTime, 1e-9,
+            "multi visual tail source_end");
+
+        // Direct seek and a sequential walk must agree at the same cue-local
+        // time because this resolver is a pure function of the cue clock.
+        CueVisualFrame sequential = CueVisualFrame.None();
+        double reached = 0.0;
+        for (int step = 0; step <= 35; step++)
+        {
+            reached = step / 10.0;
+            sequential = CueVisualTimelineResolver.Resolve(track, reached);
+        }
+        CueVisualFrame direct = CueVisualTimelineResolver.Resolve(track, reached);
+        CheckClose(sequential.SourceTime, direct.SourceTime, 1e-9,
+            "multi visual sequential/direct seek agree");
+        Check(sequential.AnimationId == direct.AnimationId,
+            "multi visual sequential/direct animation agree");
+
+        var clearTrack = new CueTimelineTrack
+        {
+            id = "visual.clear", kind = "visual", tail_policy = "clear",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "v.clear", type = "animation", cue_start = 0.0,
+                    animation = "fixture#clear", source_start = 0.0,
+                    source_end = 1.0, after_end = "clear",
+                },
+                new CueTimelineSegment
+                {
+                    id = "v.orphan_hold", type = "hold", cue_start = 2.0,
+                    duration = 1.0, pose = "last_frame",
+                },
+            },
+        };
+        CueVisualFrame blank = CueVisualTimelineResolver.Resolve(clearTrack, 1.5);
+        Check(blank.Kind == CueVisualFrameKind.Clear,
+            "visual gap after after_end=clear clears the scene");
+        CueVisualFrame orphanHold = CueVisualTimelineResolver.Resolve(clearTrack, 2.5);
+        Check(orphanHold.Kind == CueVisualFrameKind.Clear,
+            "hold without preceding animation is visual blank");
+
+        CueTimelinePlan plan = CuePlaybackPlan("fixture/multi-visual");
+        plan.course.duration = 5.5;
+        plan.tracks = new List<CueTimelineTrack>
+        {
+            new CueTimelineTrack
+            {
+                id = "audio.main", kind = "audio", tail_policy = "silence",
+                segments = new List<CueTimelineSegment>
+                {
+                    new CueTimelineSegment
+                    {
+                        id = "a.voice", type = "audio_clip", cue_start = 0.0,
+                        asset = "fixture.mp3", source_start = 0.0,
+                        source_end = 5.5,
+                    },
+                },
+            },
+            track,
+        };
+        Check(CueTimelinePlanValidator.TryValidate(plan, out _),
+            "multi visual plan validates");
+        CheckClose(1.25, AudioSourcePositionAt(plan, 1.25), 1e-9,
+            "visual segments do not alter audio position");
+    }
+
     public static int Main()
     {
         TestLogicalStateAndCamera();
@@ -1540,6 +1666,7 @@ internal static class Program
         TestOverlayShowHideAndModifier();
         TestAnnotationsAndMagnifier();
         TestSameTimeCompiledOrderIsStable();
+        TestMultipleVisualSegmentsUseCueLocalTime();
 
         TestCueTimelinePlanSetValidation();
         TestCueStateMachineAndReadyGating();
@@ -1555,8 +1682,7 @@ internal static class Program
         TestAudioFailureIsExplicitFailure();
         TestVisualFailureIsExplicitFailure();
         TestMultipleCuesNoCumulativeDrift();
-        TestFeatureGateAndPlanSelection();
-        TestLegacyPlanFactorySamples();
+        TestCompatibilityPlanFactory();
         TestPlayAtPausedAndAudioSync();
         TestSampleControllerSequences();
         TestAnimationLongerThanAudioUsesPlanDuration();

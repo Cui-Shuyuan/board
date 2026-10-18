@@ -251,7 +251,7 @@ class TutorialTimeline private constructor(
                     fallbackReason = error.message ?: error.javaClass.simpleName
                     logger(
                         "cue timeline plan disabled for track='$track'; " +
-                            "falling back to legacy runtime for the whole track: " +
+                            "falling back to whole-track runtime compatibility mode: " +
                             fallbackReason
                     )
                     orderedCues = runtimeCues

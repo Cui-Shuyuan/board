@@ -48,6 +48,49 @@ class TutorialTimelineCuePlanTest {
     }
 
     @Test
+    fun fullTrackPlanModeUsesSharedPlanStartDurationAndTotal() {
+        val root = runtimeTree(track = "full")
+        writePlan(root, track = "full")
+        val timeline = TutorialTimeline.load(
+            gameRoot = root,
+            track = "full",
+            planEnabled = true,
+            logger = { }
+        )
+
+        assertEquals(TimelineSource.CUE_PLAN, timeline.source)
+        assertEquals("q/a", timeline.cueAt(0)!!.id)
+        assertEquals(5.5f, timeline.totalDuration, 1e-5f)
+        assertEquals(3.5f, timeline.cueAt(0)!!.duration, 1e-5f)
+        assertEquals(3.5f, timeline.cueAt(1)!!.start, 1e-5f)
+    }
+
+    @Test
+    fun multiVisualSegmentsAreAcceptedByPlanLoader() {
+        val root = runtimeTree()
+        writeCompiled(root)
+        writePlan(root, includeMultiVisual = true)
+        val timeline = TutorialTimeline.load(root, TRACK, planEnabled = true) { }
+        assertEquals(TimelineSource.CUE_PLAN, timeline.source)
+        assertEquals(5.5f, timeline.totalDuration, 1e-5f)
+    }
+
+    @Test
+    fun unknownVisualAnimationReferenceFallsBackWholeTrack() {
+        val root = runtimeTree()
+        writeCompiled(root, ids = emptyList())
+        writePlan(root, includeMultiVisual = true)
+        val logs = mutableListOf<String>()
+        val timeline = TutorialTimeline.load(
+            root, TRACK, planEnabled = true
+        ) { logs += it }
+        assertEquals(TimelineSource.RUNTIME, timeline.source)
+        assertTrue(timeline.fallbackReason!!.contains(
+            "unknown compiled animation"))
+        assertTrue(logs.single().contains("falling back to whole-track runtime compatibility mode"))
+    }
+
+    @Test
     fun globalAndCueLocalMappingUsePlanTimings() {
         val root = runtimeTree()
         writePlan(root)
@@ -68,7 +111,7 @@ class TutorialTimelineCuePlanTest {
     }
 
     @Test
-    fun missingPlanFallsBackToEntireLegacyRuntimeAndLogs() {
+    fun missingPlanFallsBackToWholeTrackCompatibilityAndLogs() {
         val root = runtimeTree()
         val logs = mutableListOf<String>()
 
@@ -83,7 +126,7 @@ class TutorialTimelineCuePlanTest {
         assertEquals(4f, timeline.totalDuration, 1e-5f)
         assertEquals(2f, timeline.cueAt(0)!!.duration, 1e-5f)
         assertTrue(timeline.fallbackReason!!.contains("missing cue timeline plan"))
-        assertTrue(logs.single().contains("falling back to legacy runtime"))
+        assertTrue(logs.single().contains("falling back to whole-track runtime compatibility mode"))
         assertTrue(logs.single().contains("missing cue timeline plan"))
     }
 
@@ -167,7 +210,7 @@ class TutorialTimelineCuePlanTest {
         assertEquals(4f, timeline.totalDuration, 1e-5f)
         assertEquals("runtime A", timeline.cueAt(0)!!.text)
         assertTrue(timeline.fallbackReason!!.contains("missing audio file"))
-        assertTrue(logs.single().contains("falling back to legacy runtime"))
+        assertTrue(logs.single().contains("falling back to whole-track runtime compatibility mode"))
         assertTrue(logs.single().contains("missing audio file"))
     }
 
@@ -203,17 +246,17 @@ class TutorialTimelineCuePlanTest {
         assertEquals(listOf("quick"), entry!!.cueTimelineTracks)
     }
 
-    private fun runtimeTree(): File {
+    private fun runtimeTree(track: String = TRACK): File {
         val root = temp.newFolder("game-root")
         val tutorial = File(root, "tutorial").apply { mkdirs() }
         File(root, "media").mkdirs()
         File(root, "media/fixture.mp3").writeBytes(byteArrayOf(1, 2, 3))
-        File(tutorial, "$TRACK.runtime.json").writeText(
+        File(tutorial, "$track.runtime.json").writeText(
             """
             {
               "schema_version": 3,
               "game_id": "fixture",
-              "track": "$TRACK",
+              "track": "$track",
               "cues": [
                 {
                   "id": "q/a",
@@ -241,12 +284,16 @@ class TutorialTimelineCuePlanTest {
 
     private fun writePlan(
         root: File,
+        track: String = TRACK,
         schema: String = "tutorial-cue-plan-set/v1",
         schemaVersion: Int = 1,
-        omitSecondCue: Boolean = false
+        omitSecondCue: Boolean = false,
+        includeMultiVisual: Boolean = false
     ) {
         val cues = JSONArray()
-        cues.put(planCue("q/a", 0.0, 3.5, "planned A", "Planned Chapter"))
+        cues.put(planCue(
+            "q/a", 0.0, 3.5, "planned A", "Planned Chapter",
+            includeMultiVisual = includeMultiVisual))
         if (!omitSecondCue) {
             cues.put(planCue("q/b", 3.5, 2.0, "planned B", "Planned Chapter"))
         }
@@ -254,13 +301,31 @@ class TutorialTimelineCuePlanTest {
             .put("schema", schema)
             .put("schema_version", schemaVersion)
             .put("game_id", "fixture")
-            .put("track", TRACK)
+            .put("track", track)
             .put("course", JSONObject().put("start", 0.0).put("duration", 5.5))
             .put("cues", cues)
-        File(root, "tutorial/$TRACK.cue-timeline.json").writeText(
+        File(root, "tutorial/$track.cue-timeline.json").writeText(
             document.toString(2),
             Charsets.UTF_8
         )
+    }
+
+    private fun writeCompiled(
+        root: File,
+        ids: List<String> = listOf("q/a", "q/b")
+    ) {
+        val cues = JSONArray()
+        for (id in ids) {
+            cues.put(JSONObject().put("id", id).put("duration", 3.5))
+        }
+        val document = JSONObject()
+            .put("schema", "tutorial-compiled-animation/v2")
+            .put("game", "fixture")
+            .put("track", TRACK)
+            .put("cues", cues)
+        File(root, "tutorial/anim/v2").mkdirs()
+        File(root, "tutorial/anim/v2/$TRACK.compiled.json").writeText(
+            document.toString(2), Charsets.UTF_8)
     }
 
     private fun planCue(
@@ -268,18 +333,11 @@ class TutorialTimelineCuePlanTest {
         start: Double,
         duration: Double,
         text: String,
-        chapter: String
-    ): JSONObject = JSONObject()
-        .put("schema", "tutorial-cue-plan/v1")
-        .put("cue_id", id)
-        .put("entry", JSONObject.NULL)
-        .put("course", JSONObject().put("start", start).put("duration", duration))
-        .put("text", text)
-        .put("group_path", JSONArray(listOf(chapter)))
-        .put("refs", JSONArray(listOf("ref")))
-        .put("subtitles", JSONArray())
-        .put("tracks", JSONArray(listOf(
-            JSONObject()
+        chapter: String,
+        includeMultiVisual: Boolean = false
+    ): JSONObject {
+        val tracks = JSONArray()
+            .put(JSONObject()
                 .put("id", "audio.main")
                 .put("kind", "audio")
                 .put("tail_policy", "silence")
@@ -291,8 +349,8 @@ class TutorialTimelineCuePlanTest {
                         .put("cue_start", 0.0)
                         .put("source_start", 0.0)
                         .put("source_end", duration)
-                ))),
-            JSONObject()
+                ))))
+            .put(JSONObject()
                 .put("id", "subtitle.main")
                 .put("kind", "subtitle")
                 .put("tail_policy", "clear")
@@ -303,8 +361,43 @@ class TutorialTimelineCuePlanTest {
                         .put("cue_start", 0.0)
                         .put("duration", duration)
                         .put("text", text)
+                ))))
+        if (includeMultiVisual) {
+            tracks.put(JSONObject()
+                .put("id", "visual.main")
+                .put("kind", "visual")
+                .put("tail_policy", "hold_last_frame")
+                .put("segments", JSONArray(listOf(
+                    JSONObject()
+                        .put("id", "visual.first")
+                        .put("type", "animation")
+                        .put("animation", id)
+                        .put("cue_start", 0.0)
+                        .put("source_start", 0.0)
+                        .put("source_end", 1.0)
+                        .put("after_end", "hold_last_frame"),
+                    JSONObject()
+                        .put("id", "visual.second")
+                        .put("type", "animation")
+                        .put("animation", id)
+                        .put("cue_start", 1.0)
+                        .put("source_start", 1.0)
+                        .put("source_end", duration)
+                        .put("after_end", "hold_last_frame")
                 )))
-        )))
+            )
+        }
+        return JSONObject()
+            .put("schema", "tutorial-cue-plan/v1")
+            .put("cue_id", id)
+            .put("entry", JSONObject.NULL)
+            .put("course", JSONObject().put("start", start).put("duration", duration))
+            .put("text", text)
+            .put("group_path", JSONArray(listOf(chapter)))
+            .put("refs", JSONArray(listOf("ref")))
+            .put("subtitles", JSONArray())
+            .put("tracks", tracks)
+    }
 
     private companion object {
         const val TRACK = "quick"

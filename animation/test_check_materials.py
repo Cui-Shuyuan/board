@@ -520,7 +520,7 @@ class SelectorAndTimingUnitTests(unittest.TestCase):
         self.assertTrue(any("ambiguous" in e for e in report), report)
 
 
-    def test_audio_window_diagnostics_use_section_audio_boundaries(self):
+    def test_audio_window_diagnostics_use_runtime_cue_durations(self):
         usage = ml.MaterialUsage(
             track="t", section="s", cue="c1", use_index=0, step=None,
             material="m", kind="action", variant=None, mode="continue",
@@ -532,11 +532,7 @@ class SelectorAndTimingUnitTests(unittest.TestCase):
             rt = root / "content/games/casegame/tutorial/full.runtime.json"
             write(rt, {"cues": [
                 {"id": "c0", "audio": "a.mp3", "audio_start": 0.0,
-                 "duration": 2.5,
-                 "audio_plan": [
-                     {"type": "clip", "file": "a.mp3", "start": 0.0, "end": 1.5},
-                     {"type": "silence", "duration": 1.0},
-                 ]},
+                 "duration": 2.5},
                 {"id": "c1", "audio": "a.mp3", "audio_start": 0.0, "duration": 2.0},
                 {"id": "c2", "audio": "a.mp3", "audio_start": 2.0, "duration": 3.0},
                 {"id": "c3", "audio": "b.mp3", "audio_start": 0.0, "duration": 1.0},

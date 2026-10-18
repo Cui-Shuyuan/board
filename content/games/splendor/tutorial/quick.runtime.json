@@ -246,20 +246,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.intro.mp3",
-          "start": 0.0,
-          "end": 1.295
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_intro/001",
@@ -558,8 +545,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_setup_cards/title_2",
@@ -605,20 +591,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.setup.cards.mp3",
-          "start": 0.0,
-          "end": 1.405
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_setup_cards/001.1",
@@ -760,8 +733,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_setup_cards/001.2",
@@ -891,8 +863,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_setup_gems/002",
@@ -1161,8 +1132,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_setup_players/001",
@@ -1316,8 +1286,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_setup_players/002",
@@ -1399,8 +1368,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_setup_players/003",
@@ -1482,8 +1450,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_turn/title_3",
@@ -1547,20 +1514,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.turn.mp3",
-          "start": 0.0,
-          "end": 2.155
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_turn/001",
@@ -1726,8 +1680,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_turn/002",
@@ -1997,8 +1950,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_take_gems/title_3_1",
@@ -2051,20 +2003,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.take.mp3",
-          "start": 0.0,
-          "end": 2.215
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_take_gems/different.001",
@@ -2213,8 +2152,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_take_gems/same.001",
@@ -2315,8 +2253,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_take_gems/002",
@@ -2538,8 +2475,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_take_gems/003",
@@ -2839,8 +2775,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_cards/title_3_2",
@@ -2905,20 +2840,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.cards.mp3",
-          "start": 0.0,
-          "end": 2.435
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_cards/001",
@@ -3152,8 +3074,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_cards/002",
@@ -3544,8 +3465,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_cards/003",
@@ -3802,8 +3722,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_reserve/title_3_3",
@@ -3868,20 +3787,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.reserve.mp3",
-          "start": 0.0,
-          "end": 2.325
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_reserve/001",
@@ -4158,8 +4064,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_reserve/002",
@@ -4442,8 +4347,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_reserve/003",
@@ -4574,8 +4478,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_gold/001",
@@ -4815,8 +4718,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_nobles/title_3_4",
@@ -4863,20 +4765,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.nobles.mp3",
-          "start": 0.0,
-          "end": 1.995
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_nobles/001",
@@ -5092,8 +4981,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_nobles/002",
@@ -5164,8 +5052,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_nobles/003",
@@ -5266,8 +5153,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     },
     {
       "id": "quick_end/title_4",
@@ -5325,20 +5211,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": false,
-      "audio_plan": [
-        {
-          "type": "clip",
-          "file": "media/tts/quick/quick.end.mp3",
-          "start": 0.0,
-          "end": 1.905
-        },
-        {
-          "type": "silence",
-          "duration": 1.0
-        }
-      ]
+      "animation": null
     },
     {
       "id": "quick_end/001",
@@ -5602,8 +5475,7 @@
           ]
         }
       ],
-      "animation": null,
-      "section_audio": true
+      "animation": null
     }
   ]
 }

@@ -1,352 +1,141 @@
 # Cue Timeline Protocol v1
 
-状态：Phase 4 只覆盖 Splendor `quick` track，`full` 仍走 legacy，不在本阶段范围内。Unity 与 Android 读取同一份生成的 `quick.cue-timeline.json`；track 级开关来自内容 catalog 的 `cue_timeline_tracks`，当前只包含 `quick`。开启时 Android 先验证整条 track 的 plan，再把实际使用的模式通过 `LoadGameWithRoot` payload 传给 Unity；任一端加载或校验失败时整条 track 回退 legacy。旧 `runtime` / `compiled` / `section_audio` / `audio_plan` / `pause_after_speech_seconds` / `hold_after_audio` 路径全部保留，留待 Phase 5 清理。用户已完成 quick 主观动画/TTS 验收；未保留录音/波形证据，因此不宣称更高等级的音频验证。
+状态：Phase 5 已完成。Splendor `quick`（32 cue）与 `full`（81 cue）都有
+确定性、固定时间源的 `{track}.audio-slices.json` 和共享
+`{track}.cue-timeline.json`。Android 与 Unity 的 plan 模式都只从共享 plan
+读取 cue start/duration、课程总时长、章节映射和 seek 映射；Unity 的所有
+cue 播放、seek、暂停/恢复与自动前进只由 `CuePlaybackController` 的
+cue-local 时钟驱动。
 
-具体制作流程、TTS 源文件、逻辑音频切片和字幕轨道操作见：
+历史实现中的 `section_audio`、`audio_plan`、`pause_after_speech_seconds`、
+`hold_after_audio`、标题特判、字幕尾词裁切和共享音源交接标记已从生产播放
+路径删除。`runtime` / `compiled` 仍可作为构建输入和全轨兼容回退输入，但
+不再作为 plan 模式下的运行时 cue 时间源。
 
-- `docs/tutorial/audio-timeline-pipeline.md`
+## Phase 5：全量迁移与单轨执行
 
-本文固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
+### 5.1 固定时间轴文件
 
-- 用字幕最后一个词的时间作为音频裁切边界；
-- 标题 cue 特判；
-- `pause_after_speech_seconds` + 跳到下一条 `audio_start`；
-- 共享 `AudioSource` 交接标记；
-- 用 `AudioSource.isPlaying == false` 直接判定自然完成；
-- 固定提前量或延后量补偿 MP3 定位。
-
-## Phase 4：track 级共享 plan 与开关
-
-### 4.1 实现范围
-
-Phase 4 只迁移 `quick` track，`full` 继续走旧 runtime 路径，留给 Phase 5。迁移粒度是 track，不是 cue：
-
-- 一个 track 要么全部 cue 使用 `{track}.cue-timeline.json` 中的 `course.start` / `course.duration`；
-- 要么全部 cue 使用旧 `{track}.runtime.json`；
-- 不允许同一 track 内部分 cue 用 plan duration、部分 cue 用 runtime duration。
-
-原因很直接：旧 runtime 的每条 cue 的 `start` 是按旧 duration 累加出来的；新 plan 的有效 duration 可能因为编译动画更长而改变。只要混合，后续 cue 的全局起点就会同时存在两套坐标系，Android 进度条、章节跳转、QA context、Unity 状态和音频完成事件会逐步漂移且无法恢复一致。因此 loader 在发现缺 cue、额外 cue、顺序错位、总时长不一致、schema/version 不匹配时，必须整条 track 回退，而不是逐 cue 回退。
-
-### 4.2 生成入口与文件
-
-```bash
-python3 animation/build_cue_timeline.py --game splendor --track quick
-```
-
-输出：
-
-```text
-content/games/splendor/tutorial/quick.cue-timeline.json
-```
-
-生成器在 quick 上使用 cue-level TTS 音频源，而不是 legacy section MP3。音频时间、
-source range、字幕 refs、cue/audio-group 映射和 per-cue timing policy 都只来自
-固定文件 `quick.audio-slices.json`：
-
-```text
-content/games/splendor/tutorial/quick.cue.tts.lrc                 # TTS 合成输入
-content/games/splendor/media/tts/quick.cues/*.mp3                 # TTS 生成物
-content/games/splendor/tutorial/build/quick.script.json           # cue 文本/顺序元数据
-content/games/splendor/tutorial/anim/v2/quick.compiled.json       # 编译动画时长
-content/games/splendor/tutorial/quick.audio-slices.json           # 唯一固定时间轴
-content/games/splendor/tutorial/quick.timing-policy.json          # 仅全局流水线配置
-```
-
-先生成逐 cue/逐 beat 的 TTS：
-
-```bash
-python animation/tts_doubao.py \
-  --provider seed2 \
-  --voice zh_female_vv_uranus_bigtts \
-  --resource-id seed-tts-2.0 \
-  --input content/games/splendor/tutorial/quick.cue.tts.lrc \
-  --out-dir content/games/splendor/media/tts/quick.cues \
-  --track quick
-```
-
-再生成共享 plan：
-
-```bash
-python3 animation/build_cue_timeline.py --game splendor --track quick
-```
-
-输出：
-
-```text
-content/games/splendor/tutorial/quick.cue-timeline.json
-```
-
-这里不再对共享 section 音频做任意秒数 seek，也不在运行时根据波形决定从第几秒开始。
-构建器只解析固定文件中的 named refs：一个 cue 可以引用一个或多个逻辑音频
-slice；每个 `audio_clip` 的 `asset/source_start/source_end` 都由 slice 的
-`asset/start_ref/end_ref` 展开。需要固定尾静音的 cue 由固定文件中的 per-cue
-policy 生成 `silence` segment，不在生产脚本里写秒数。
-
-生成结果使用：
-
-- plan set schema：`tutorial-cue-plan-set/v1`
-- plan set `schema_version`：`1`
-- 单 cue schema：`tutorial-cue-plan/v1`
-
-每个 cue 至少包含：
-
-- `cue_id`；
-- `course.start` / `course.duration`；
-- `tracks`：`audio` / `visual` / `subtitle` 三类执行轨道；
-- `entry`。
-
-字幕来自 `quick.audio-slices.json` 中每个逻辑音频的 subtitle timing refs，
-构建为独立的 `kind: "subtitle"` track。plan 仍同步保留扁平 `subtitles` 列表
-用于旧客户端兼容。字幕只作展示，不参与音频裁切或调度。
-
-### 4.2.1 单一固定时间轴与 per-cue timing policy
-
-固定时间轴文件：
+每个 track 的唯一固定时间源：
 
 ```text
 content/games/splendor/tutorial/quick.audio-slices.json
+content/games/splendor/tutorial/full.audio-slices.json
 ```
 
-它是以下信息的唯一权威来源：
+schema 为 `tutorial-audio-slices/v1`、`schema_version=4`。固定文件拥有：
 
 - timing point ID -> 秒数；
-- cue ID -> 逻辑 audio slice ID；
+- cue ID -> logical audio slice ID；
 - audio asset -> source range；
 - subtitle -> timing point refs；
 - cue/audio-group ID 映射；
-- 需要固定时长的 silence、hold、trim 等 per-cue 时间策略。
+- per-cue mode、trim、silence、hold 策略；
+- 需要时的 `cue_visuals`：visual segment ID -> compiled animation 引用、
+  cue-local start ref、source range refs 和 `after_end`。
 
-`quick.timing-policy.json` 只保留全局流水线配置，不包含任何 per-cue ID 或秒数：
+`quick.timing-policy.json` / `full.timing-policy.json` 只保留全局字段：
+`schema`、`schema_version`、`game_id`、`track`、`audio_source`、
+`audio_slice_manifest`、`script_source`、`default_mode`。其中不得出现
+per-cue ID 映射或秒数。
 
-```json
-{
-  "audio_source": "audio_slice_manifest",
-  "audio_slice_manifest": "tutorial/quick.audio-slices.json",
-  "script_source": "tutorial/build/quick.script.json",
-  "default_mode": "max"
-}
+### 5.2 生成与校验
+
+```bash
+python3 animation/build_cue_timeline.py --game splendor --track quick
+python3 animation/build_cue_timeline.py --game splendor --track full
 ```
 
-per-cue policy 位于固定文件的 `cue_timing` 中，例如：
+生成器只按固定文件中的 ID/ref 通用查表，不包含 Splendor 具体 cue ID、
+timing point ID 或课程时间戳。缺失 timing ref、重复 ID、重复 JSON key、
+未知 cue/slice/animation ref、越界 trim、未知 visual segment、源范围越界
+和循环引用都会显式失败。重复运行产物逐字节一致。
+
+full 当前复用已有 section TTS 媒体作为 audio slice source；没有重新生成
+TTS，也不需要新凭据。若未来重新生成 full TTS，应保持 seed2 音色，并在
+重新生成后更新 `full.audio-slices.json` 的 timing points。
+
+### 5.3 多 visual animation segment
+
+多 visual clip 方案采用 **compiled cue id + source range**：
 
 ```json
 {
-  "cue_timing": {
-    "<cue_id>": {
-      "mode": "audio",
-      "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0
-    }
+  "cue_visuals": {
+    "<cue_id>": [
+      {
+        "id": "<segment_id>",
+        "animation": "<compiled_cue_id>",
+        "cue_start_ref": "<cue_id>.visual.0.start",
+        "source_start_ref": "<cue_id>.visual.0.source_start",
+        "source_end_ref": "<cue_id>.visual.0.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ]
   }
 }
 ```
 
-构建器只按 cue ID 通用查表，不包含任何具体 cue 分支或秒数。支持模式：
+`CueVisualTimelineResolver` 按 cue-local time 选择 segment，并输出
+animation id 与 source time；`UnityCueVisualExecutor` 只执行这个结果：
 
-- `max`：cue 在所有 track 都播完后结束。音频先结束则动画继续；动画先结束则
-  保持最后画面等待音频。这是正文 cue 的默认模式；
-- `audio`：cue duration 使用完整 audio track（含显式 trailing silence），
-  visual 超出部分裁到 cue duration 并保持最后画面；
-- `visual`：visual 为准，但若会截断音频则生成失败；
-- `runtime`：以 legacy runtime duration 为基准，并保证不截断音频。
+- 活动 `animation`：加载 `animation` 指向的 compiled cue，并 seek 到
+  `source_start + cue-local offset`；
+- `hold`：冻结前一个 animation 的 `source_end`；
+- animation 结束后的 gap：遵循该 animation 的 `after_end`；
+- `after_end=clear`、无前序 animation 的 hold、或 cue 开头无视觉段：清空
+  画面，不保留陈旧帧；
+- 不同 compiled cue 之间切换时，各自使用 compiled `start_state`，这是明确
+  的状态重置边界，不伪装成可继承状态。
 
-cue 起点按最终 duration 顺序累加；每个 cue 全部轨道完成后自动进入下一条。
-输出同时携带 `text`、`group_path`、`refs` 等非时间元数据，供 Android
-章节树/预览使用，但这些字段不参与播放时钟。
+视觉执行器不读写音频，也不决定 cue 完成。`animationEnabled=false` 只影响
+画面提交，不改变 plan duration、音频执行或控制器完成时刻。
 
-生成器会再次执行 `validate_plan_set`，校验 plan set 总时长等于最后一条 cue
-的 `start + duration`，并且重复运行必须产生逐字节相同的文件。内容发布脚本
-`tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json`、
-固定 `{track}.audio-slices.json`、全局 `{track}.timing-policy.json` 以及 plan
-引用的所有音频加入 release/manifest/SHA-256 校验。
+### 5.4 Android / Unity 一致性
 
-### 4.2.2 逻辑音频切片
+- catalog 的 `cue_timeline_tracks` 同时启用 `quick` 和 `full`；
+- Android 从 `{track}.cue-timeline.json` 读取 cue 顺序、start/duration、
+  总时长、章节树、seek mapping 和 QA context；
+- Unity 校验同一 plan set 的 cue 覆盖/顺序、总时长、visual/audio 段与音频
+  文件存在性；
+- 正常播放是整条 track 的 plan 模式，不按 cue 混合 plan/runtime 时长；
+- 若整个 plan set 缺失或校验失败，Android 与 Unity 都切换到清晰的整轨
+  兼容回退：Android 使用 runtime cue 时间，Unity 由
+  `CueTimelineCompatibilityPlanFactory` 把同一 runtime cue 时间整体适配成
+  plan 形状后仍由 `CuePlaybackController` 执行。不存在第二套播放调度引擎；
+- `LoadGameWithRoot` 携带 Android 实际选择的模式，避免两端各自猜默认值。
 
-原始 TTS 音频不被复制或改写。所有逻辑切片集中记录在：
+### 5.5 旧路径清理结果
 
-```text
-content/games/splendor/tutorial/quick.audio-slices.json
+已删除或收敛：
+
+- Unity `TutorialCuePlayer.SectionPlayback.cs` 旧 section/audio-plan 执行路径；
+- `TutorialCuePlayer` 的逐 cue feature flag、Phase 3 allowlist 和合成样例；
+- `pause_after_speech_seconds` / `hold_after_audio` 编译字段与运行时读取；
+- `IsLegacyTitleCue` / `LastSpokenWordEnd` 驱动的暂停跳转；
+- `preserveSectionAudioPreRollOnNextPlay` / `sectionAudioPreRolledCueIndex`
+  预卷补丁；
+- `playback_group` 共享音源交接字段；
+- 旧 Unity `CueTimelineLegacyPlanFactory` / `CueTimelineFeatureGate`；
+- Python legacy runtime adapter 和 `build_section_runtime.py` 旧构建入口。
+
+Cue 完成只由 plan duration 与权威 cue clock 决定。音频执行器即使发出
+segment 完成诊断，也不会让控制器提前完成或自动进入下一条。
+
+### 5.6 测试入口
+
+```bash
+python3 animation/build_cue_timeline.py --game splendor --track quick
+python3 animation/build_cue_timeline.py --game splendor --track full
+python3 -m unittest animation.test_build_cue_timeline -v
+python3 -m unittest animation.test_cue_timeline -v
+python3 -m unittest discover -s animation -p 'test_*.py'
+TMPDIR="$(pwd)/.tmp-dotnet" /mnt/d/dotnet/dotnet.exe run --project tests/AnimationModelTests
+python3 tools/ops/check_unity_scripts.py --json
+cd clients/android && gradlew.bat testDebugUnitTest
+python3 tools/content/build_content_manifest.py --game splendor
 ```
 
-当前 schema 为 `tutorial-audio-slices/v1`、`schema_version=3`。所有时间点时刻
-只出现在 `timing_points` 中，并拥有稳定 ID；固定时长 silence 等
-per-cue 数值策略只出现在 `cue_timing` 中：
-
-```json
-"timing_points": {
-  "<slice_id>.start": {"time": 0.0},
-  "<slice_id>.end": {"time": 1.656},
-  "<slice_id>.speech_end": {"time": 1.245},
-  "<slice_id>.subtitle.0.start": {"time": 0.285},
-  "<slice_id>.subtitle.0.end": {"time": 1.245}
-}
-```
-
-切片本身只引用这些 ID，不重复写时间戳：
-
-```json
-{
-  "id": "<slice_id>",
-  "asset": "media/tts/quick.cues/<generated>.mp3",
-  "start_ref": "<slice_id>.start",
-  "end_ref": "<slice_id>.end",
-  "speech_end_ref": "<slice_id>.speech_end",
-  "subtitles": [
-    {
-      "start_ref": "<slice_id>.subtitle.0.start",
-      "end_ref": "<slice_id>.subtitle.0.end",
-      "text": "..."
-    }
-  ]
-}
-```
-
-- `id`：逻辑音频 ID，全局唯一；
-- `asset`：原始音频文件，保持完整；
-- `start_ref/end_ref`：逻辑切片起止 timing point；
-- `speech_end_ref`：最后一个 TTS word 结束的 timing point；
-- `subtitles[].start_ref/end_ref`：字幕窗口 timing point；
-- 顶层 `cue_timing`：per-cue timing policy；
-- 顶层 `audio_groups`：共享音频的 cue ID / slice ID 映射。
-
-生成 plan 时：
-
-- 每个 cue 从固定文件解析出一个或多个逻辑切片；
-- plan segment 写入 `audio_slice_id`，并展开 `asset/source_start/source_end`
-  供 Unity/Android 执行；
-- 不产生新的音频文件，不修改原始 MP3；
-- 构建脚本只解析 `*_ref`、ID 和 policy 字段，不包含任何 TTS 秒数；
-- 缺失 timing point、重复 ID、未知 ref、越界或循环引用必须显式失败，不能静默回退。
-
-`trim_to_speech_end` 是编译期显式 policy，不是运行时按字幕最后 word 裁切。
-当它为 true 时，构建器必须校验：
-
-1. slice 有 `speech_end_ref`；
-2. 对应 timing point 是有限数；
-3. `start <= speech_end <= end`；
-4. trim 后 source range 非空且非负；
-5. 追加 silence 后，`mode=audio` 的 cue duration 精确等于 trim 后音频长度加 silence。
-
-标题 cue 的示例关系：
-
-```text
-TTS 文件逻辑范围 = [0, 1.656)
-speech_end       = 1.245
-trim 后音频长度  = 1.245
-追加 silence     = 1.000
-cue duration     = 2.245
-```
-
-口播结束后是**完整 1 秒**静音，而不是在原 TTS 尾部静音后再补 1 秒。
-
-### 4.2.3 字幕是独立轨道
-
-字幕在 plan 中是正式的 track：
-
-```json
-{
-  "id": "subtitle.main",
-  "kind": "subtitle",
-  "tail_policy": "clear",
-  "segments": [
-    {
-      "id": "subtitle.0.1",
-      "type": "subtitle",
-      "cue_start": 3.8900416,
-      "duration": 5.7849994,
-      "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
-    }
-  ]
-}
-```
-
-字幕窗口来自 `quick.audio-slices.json` 每个逻辑音频的 `subtitles` 字段，
-其中保存 timing point refs 和文本。生成器把 refs 解析出的源时间换算成
-cue-local `cue_start/duration`，不再把整条 cue 文本塞成一个超长字幕。
-
-为了兼容旧客户端，plan 仍同步保留扁平 `subtitles` 列表；Unity 字幕执行器
-优先读取 `kind=subtitle` 的 track，缺失时才回退旧列表。Android loader 也校验
-subtitle track 的结构和时间范围。
-
-### 4.3 共享 track 级开关
-
-开关唯一来源是内容 catalog：
-
-```json
-"cue_timeline_tracks": ["quick"]
-```
-
-- 缺省或空数组表示关闭；此时 quick/full 行为与 Phase 3 分支完全一致。
-- 当前只允许把 `quick` 放进该数组；`full` 不迁移。
-- Android `GameCatalogEntry` 解析该字段，并据此决定 `TutorialTimeline` 是否尝试 plan。
-- Android 只有在整条 plan 校验通过后才把 `cueTimelinePlanActive=1` 写入 `LoadGameWithRoot` payload；否则传旧 payload，Unity 会整条 track 使用 legacy。
-- Unity 不再使用独立 Inspector 开关决定 track 模式；它只消费 Android 传来的实际模式。这样不会出现 Android 用 plan、Unity 用旧时长，或反向漂移。
-
-payload 示例：
-
-```text
-splendor|/content/versions/{version}|quick|cue_timeline=1
-```
-
-旧的 `game|root` 与 `game|root|track` payload 继续兼容，默认按旧路径处理。
-
-### 4.4 Android loader
-
-`TutorialTimeline.load(...)` 保留旧 runtime loader，并新增 `planEnabled` 模式：
-
-- `planEnabled=true` 时读取 `tutorial/{track}.cue-timeline.json`；
-- 严格校验 schema、`schema_version=1`、track、course、每 cue `course.start/duration`、tracks 结构、segment 时间范围、cue 顺序/覆盖与总时长；
-- 校验每个 `audio_clip.asset` 是 game-relative 路径且文件真实存在；缺失音频会使整条 track 校验失败；
-- 校验通过后，总时长、章节首 cue start、cue start/duration、`globalToCue` / `cueIndexToGlobal`、进度条、seek 和 QA context 全部使用 plan；
-- plan 缺失、JSON 非法、schema/version 不匹配、cue 覆盖不完整、总时长不一致或音频文件缺失时，记录明确 warning，并回退整条 track 的 runtime timing；
-- `planEnabled=false` 时完全保留旧 runtime 行为，即使 plan 文件存在也不读取。
-
-### 4.5 Unity loader 与控制器
-
-Unity 新增 plan set loader，读取与 Android 完全相同的 `{track}.cue-timeline.json`，并用 runtime cue id 顺序校验完整覆盖。track 模式开启时：
-
-- quick 的每个 cue 都从同一 plan set 取 `CueTimelinePlan`，不再按 cue 临时合成时间轴；
-- `PlayCue` / `PlayCueAt` / `SeekTo` / `SeekRelative` / autoAdvance / cancel 全部由 plan 驱动的同一个 `CuePlaybackController` 执行；
-- 控制器 `position` / `duration` / `cueIndex` 和状态上报中的 cue 全局位置、track 总时长与 Android plan 同源；
-- generation 取消语义不变，旧回调不能改变新 cue/timeline；
-- Unity 在加载 track plan 后还会检查每个 `audio_clip.asset` 是否存在；缺失音频时整条 track 回退 legacy，与 Android 的判定一致；
-- 音频执行器仍支持 PCM 片段解析；quick 的 `audio_clip` 使用固定时间轴展开的
-  source range，正常顺序播放不依赖任意波形边界推断。字幕时间仍只来自
-  plan，不用于决定音频边界。
-
-Phase 3 的 `useCueTimelineV1` + allowlist 代码仅作兼容保留；track 模式开启时先进入 track 分支，该 allowlist 分支完全不执行。plan 校验失败时整个 track 回退 legacy，不会回退到 Phase 3 单 cue 混合模式。
-
-### 4.6 回退策略
-
-Android 与 Unity 都要求整条 track 的 plan 是可解析、版本匹配、cue 覆盖完整、连续且音频资源存在的。任一检查失败时：
-
-- Android：明确日志 + 使用 legacy runtime 的整条 track；
-- Unity：明确日志 + `fallback=legacy-track`，所有 cue 走旧播放路径；
-- 不允许只对成功解析的 cue 使用 plan。
-
-用户已完成 quick 全 track 的主观动画/TTS 验收；Phase 4 未保留真机录音或波形证据，因此文档只声明主观验收通过，不宣称采样级或波形级验证。
-
-### 4.7 Phase 4 验收边界
-
-Phase 4 已验收：
-
-- quick track plan 的生成、schema/ref/时长校验与 Android/Unity 共享；
-- Android 与 Unity 使用同一 `course.start` / `course.duration` 和 cue 顺序；
-- catalog `cue_timeline_tracks=["quick"]` 驱动的 track 级开关与整条 track fallback；
-- plan/release 输入一致性：plan 由固定时间轴生成，引用音频存在，release 包含 plan、固定时间轴与 plan 引用音频；
-- 用户主观动画/TTS 验收通过。
-
-Phase 4 不包含，留待 Phase 5：
-
-- `full` track 迁移；
-- 删除旧播放器路径，包括 `section_audio` / `audio_plan` /
-  `pause_after_speech_seconds` / `hold_after_audio`；
-- 多 visual animation clip 支持；
-- 旧 per-cue 特殊时长/暂停字段的清理。
-
-**多 visual animation clip 仍是 blocker。** 当前 compiled animation 引用仍以 cue
-为粒度，plan 只生成一个 animation segment 加可选 tail hold；不能声称已经支持
-多个独立 visual animation clip。
 
 ## 1. 调查证据（历史背景）
 
@@ -793,12 +582,13 @@ cueTime = (dspTime - cueStartDspTime) - accumulatedPauseDsp
 - Unity 与 Android 读取同一 plan set，任一校验失败整条 track 回退 legacy；
 - 只覆盖 quick，未覆盖 full。
 
-### Phase 5：全量迁移与清理（未开始）
-- full track 迁移到新 plan；
-- 移除 `pause_after_speech_seconds`、`hold_after_audio`、`section_audio` 和旧 audio plan 双路径；
+### Phase 5：全量迁移与清理（已完成）
+- full track 迁移到共享固定时间轴与 plan；
+- 移除旧 pause/hold/section-audio/audio-plan 双路径；
 - 清除旧 per-cue 特殊时长路径；
-- 规划并实现多 visual animation clip（当前 blocker）；
-- 清理播放器中的标题特判和共享音源交接标记。
+- 多 visual animation segment 使用 compiled cue id + source range，并覆盖
+  编译器、纯 resolver、Unity executor/compile 测试；
+- 清理标题特判和共享音源交接标记。
 
 ## 8. 验收矩阵
 
@@ -1157,27 +947,16 @@ adb logcat -s Unity > cue-timeline-device.log
 历史阶段曾要求保留实际录音/波形。Phase 4 的最终声明只按用户已完成的主观
 验收记录，不把日志正确等同于采样级验证。
 
-### 13.5 当前状态、blocker 与 Phase 5 项
+### 13.5 历史状态与 Phase 5 结果
 
-Phase 4 已完成并已修正以下旧状态：
+Phase 5 已完成：
 
-- Android `TutorialTimeline` 已在 plan 模式读取 `{track}.cue-timeline.json` 的
+- Android `TutorialTimeline` 在 plan 模式读取 `{track}.cue-timeline.json` 的
   course start/duration、cue 顺序和总时长；进度条、章节跳转、QA context 与
-  Unity track 模式共用同一份 quick plan；
-- 非 quick track（当前只有 full）仍走旧 runtime，这是 Phase 4 明确范围，
-  不是回归；
+  Unity plan 模式共用同一份 quick/full plan；
+- full 81 cue 已整轨迁移，catalog 同时启用 quick/full plan；
 - 旧 `section_audio` / `audio_plan` / `pause_after_speech_seconds` /
-  `hold_after_audio` 路径仍保留，Phase 5 才清理；
-- 用户已完成 quick 主观动画/TTS 验收，未保留录音/波形证据，不宣称更高等级验证。
-
-仍需 Phase 5 处理：
-
-- **多 visual animation clip blocker**：当前 compiled animation 引用仍以 cue id 为
-  粒度，plan factory 只生成一个 animation segment 加可选的 tail hold。
-  `UnityCueVisualExecutor` 若看到超过一个独立 animation segment 会显式
-  `Failed`，不会假装支持。后续需要 compiler 产出可独立引用的 animation clip
-  或明确的 source-range 子动画 schema。
-- full track 迁移；
-- 旧播放器路径和旧 per-cue pause/hold 字段清理；
-- 若未来需要更高等级音频验证，再单独规划录音/波形/采样级检查，不作为
-  Phase 4 阻塞项。
+  `hold_after_audio` 生产播放路径已删除；
+- 多 visual animation segment 已实现为 compiled cue id + source range，并有
+  合成 resolver 测试与 Unity compile 验证；
+- 用户仍需对 quick/full 做真机主观验收；自动测试不能替代视觉/听感验收。

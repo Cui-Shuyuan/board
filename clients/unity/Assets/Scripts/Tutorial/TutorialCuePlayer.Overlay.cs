@@ -3,7 +3,7 @@ using System;
 // 音频/字幕/导航外壳（v2-only）。
 //
 // 动画本身由 BoardGameTutorial.Animation.TutorialAnimPlayer 提供：
-// 运行时只读 {track}.compiled.json，按 audioSource.time 调 Seek(t)。
+// 所有 cue 的本地时间只来自 CuePlaybackController；编译动画按该时间 Seek。
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -99,7 +99,7 @@ namespace BoardGameTutorial
             GUI.Label(new Rect(24, 52, Screen.width - 48, 24), CurrentCueGroupPath, debugStyle);
             GUI.Label(new Rect(24, 78, Screen.width - 48, 56), CurrentCueText, debugStyle);
 
-            float t = (audioSource != null && audioSource.clip != null) ? Position : 0f;
+            float t = Position;
             string animInfo = v2AnimPlayer != null && v2AnimPlayer.IsLoaded
                 ? $"anim: ON  {v2AnimPlayer.CueId}  t={t:0.00}s  动画总长 {v2AnimPlayer.TotalDuration:0.00}s"
                 : $"anim: none  (t={t:0.00}s)";

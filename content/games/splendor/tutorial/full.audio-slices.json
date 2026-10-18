@@ -1,0 +1,5065 @@
+{
+  "schema": "tutorial-audio-slices/v1",
+  "schema_version": 4,
+  "game_id": "splendor",
+  "track": "full",
+  "sample_rate": 24000,
+  "cue_timing": {},
+  "audio_groups": {
+    "intro": {
+      "cue_ids": [
+        "intro/title_1",
+        "intro/001"
+      ],
+      "slice_ids": [
+        "intro__title_1",
+        "intro__001"
+      ]
+    },
+    "setup_cards": {
+      "cue_ids": [
+        "setup_cards/title_2_1",
+        "setup_cards/001.1",
+        "setup_cards/001.2",
+        "setup_cards/002.1"
+      ],
+      "slice_ids": [
+        "setup_cards__title_2_1",
+        "setup_cards__001.1",
+        "setup_cards__001.2",
+        "setup_cards__002.1"
+      ]
+    },
+    "setup_gems": {
+      "cue_ids": [
+        "setup_gems/title_2_2",
+        "setup_gems/001.1",
+        "setup_gems/002",
+        "setup_gems/003.1",
+        "setup_gems/005.2"
+      ],
+      "slice_ids": [
+        "setup_gems__title_2_2",
+        "setup_gems__001.1",
+        "setup_gems__002",
+        "setup_gems__003.1",
+        "setup_gems__005.2"
+      ]
+    },
+    "setup_players": {
+      "cue_ids": [
+        "setup_players/title_2_3",
+        "setup_players/nobles.001.1",
+        "setup_players/nobles.001.2",
+        "setup_players/nobles.002",
+        "setup_players/title_2_4",
+        "setup_players/starting.001.1",
+        "setup_players/starting.001.3",
+        "setup_players/title_2_5",
+        "setup_players/end.001.1"
+      ],
+      "slice_ids": [
+        "setup_players__title_2_3",
+        "setup_players__nobles.001.1",
+        "setup_players__nobles.001.2",
+        "setup_players__nobles.002",
+        "setup_players__title_2_4",
+        "setup_players__starting.001.1",
+        "setup_players__starting.001.3",
+        "setup_players__title_2_5",
+        "setup_players__end.001.1"
+      ]
+    },
+    "turn": {
+      "cue_ids": [
+        "turn/title_3",
+        "turn/001",
+        "turn/002"
+      ],
+      "slice_ids": [
+        "turn__title_3",
+        "turn__001",
+        "turn__002"
+      ]
+    },
+    "take_gems": {
+      "cue_ids": [
+        "take_gems/title_3_1",
+        "take_gems/different.001",
+        "take_gems/same.001",
+        "take_gems/same.002",
+        "take_gems/draw_rule.001.1",
+        "take_gems/draw_rule.001.2",
+        "take_gems/limit.001.1",
+        "take_gems/limit.001.2",
+        "take_gems/public.001.1",
+        "take_gems/public.001.2"
+      ],
+      "slice_ids": [
+        "take_gems__title_3_1",
+        "take_gems__different.001",
+        "take_gems__same.001",
+        "take_gems__same.002",
+        "take_gems__draw_rule.001.1",
+        "take_gems__draw_rule.001.2",
+        "take_gems__limit.001.1",
+        "take_gems__limit.001.2",
+        "take_gems__public.001.1",
+        "take_gems__public.001.2"
+      ]
+    },
+    "cards": {
+      "cue_ids": [
+        "cards/title_3_2_1",
+        "cards/intro.001",
+        "cards/cost.001.1",
+        "cards/cost.001.2",
+        "cards/market.001.1",
+        "cards/market.001.2",
+        "cards/prestige.001.1",
+        "cards/prestige.001.2",
+        "cards/discount.001",
+        "cards/discount.002.1",
+        "cards/discount.003.1",
+        "cards/discount.003.2",
+        "cards/public.001.1",
+        "cards/limit.001.1"
+      ],
+      "slice_ids": [
+        "cards__title_3_2_1",
+        "cards__intro.001",
+        "cards__cost.001.1",
+        "cards__cost.001.2",
+        "cards__market.001.1",
+        "cards__market.001.2",
+        "cards__prestige.001.1",
+        "cards__prestige.001.2",
+        "cards__discount.001",
+        "cards__discount.002.1",
+        "cards__discount.003.1",
+        "cards__discount.003.2",
+        "cards__public.001.1",
+        "cards__limit.001.1"
+      ]
+    },
+    "nobles": {
+      "cue_ids": [
+        "nobles/title_3_2_2",
+        "nobles/intro.001",
+        "nobles/trigger.001.1",
+        "nobles/forced.001.1",
+        "nobles/source.001",
+        "nobles/choice.001.1",
+        "nobles/repeat.001.1",
+        "nobles/repeat.001.3",
+        "nobles/summary.001.1",
+        "nobles/summary.001.2",
+        "nobles/summary.001.3"
+      ],
+      "slice_ids": [
+        "nobles__title_3_2_2",
+        "nobles__intro.001",
+        "nobles__trigger.001.1",
+        "nobles__forced.001.1",
+        "nobles__source.001",
+        "nobles__choice.001.1",
+        "nobles__repeat.001.1",
+        "nobles__repeat.001.3",
+        "nobles__summary.001.1",
+        "nobles__summary.001.2",
+        "nobles__summary.001.3"
+      ]
+    },
+    "reserve": {
+      "cue_ids": [
+        "reserve/title_3_3",
+        "reserve/intro.001.1",
+        "reserve/gold.001",
+        "reserve/deck.001",
+        "reserve/notes_intro.001",
+        "reserve/limit_gold.001.2",
+        "reserve/limit_hand.001.1",
+        "reserve/private.001.1",
+        "reserve/private.002",
+        "reserve/not_purchase.001"
+      ],
+      "slice_ids": [
+        "reserve__title_3_3",
+        "reserve__intro.001.1",
+        "reserve__gold.001",
+        "reserve__deck.001",
+        "reserve__notes_intro.001",
+        "reserve__limit_gold.001.2",
+        "reserve__limit_hand.001.1",
+        "reserve__private.001.1",
+        "reserve__private.002",
+        "reserve__not_purchase.001"
+      ]
+    },
+    "purchase_reserved": {
+      "cue_ids": [
+        "purchase_reserved/title_3_4",
+        "purchase_reserved/001"
+      ],
+      "slice_ids": [
+        "purchase_reserved__title_3_4",
+        "purchase_reserved__001"
+      ]
+    },
+    "summary": {
+      "cue_ids": [
+        "summary/title_3_5",
+        "summary/001",
+        "summary/002.1",
+        "summary/002.2"
+      ],
+      "slice_ids": [
+        "summary__title_3_5",
+        "summary__001",
+        "summary__002.1",
+        "summary__002.2"
+      ]
+    },
+    "end": {
+      "cue_ids": [
+        "end/title_4",
+        "end/trigger.001",
+        "end/final_rounds.001.1",
+        "end/example.001.1",
+        "end/winner.001",
+        "end/winner.002",
+        "end/winner.003"
+      ],
+      "slice_ids": [
+        "end__title_4",
+        "end__trigger.001",
+        "end__final_rounds.001.1",
+        "end__example.001.1",
+        "end__winner.001",
+        "end__winner.002",
+        "end__winner.003"
+      ]
+    }
+  },
+  "timing_points": {
+    "intro__title_1.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "intro__title_1.subtitle.0.end": {
+      "time": 2.225,
+      "description": "subtitle end"
+    },
+    "intro__title_1.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "intro__title_1.end": {
+      "time": 2.225,
+      "description": "logical slice end"
+    },
+    "intro__title_1.speech_end": {
+      "time": 2.225,
+      "description": "last TTS word end"
+    },
+    "intro__title_1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "intro__title_1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "intro__title_1.visual.source_end": {
+      "time": 3.0,
+      "description": "visual source end"
+    },
+    "intro__001.subtitle.0.start": {
+      "time": 2.0,
+      "description": "subtitle start"
+    },
+    "intro__001.subtitle.0.end": {
+      "time": 6.655,
+      "description": "subtitle end"
+    },
+    "intro__001.subtitle.1.start": {
+      "time": 7.1,
+      "description": "subtitle start"
+    },
+    "intro__001.subtitle.1.end": {
+      "time": 9.035,
+      "description": "subtitle end"
+    },
+    "intro__001.subtitle.2.start": {
+      "time": 9.36,
+      "description": "subtitle start"
+    },
+    "intro__001.subtitle.2.end": {
+      "time": 13.435,
+      "description": "subtitle end"
+    },
+    "intro__001.subtitle.3.start": {
+      "time": 13.76,
+      "description": "subtitle start"
+    },
+    "intro__001.subtitle.3.end": {
+      "time": 16.488,
+      "description": "subtitle end"
+    },
+    "intro__001.start": {
+      "time": 2.0,
+      "description": "logical slice start"
+    },
+    "intro__001.end": {
+      "time": 16.488,
+      "description": "logical slice end"
+    },
+    "intro__001.speech_end": {
+      "time": 16.488,
+      "description": "last TTS word end"
+    },
+    "setup_cards__title_2_1.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "setup_cards__title_2_1.subtitle.0.end": {
+      "time": 3.065,
+      "description": "subtitle end"
+    },
+    "setup_cards__title_2_1.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "setup_cards__title_2_1.end": {
+      "time": 3.065,
+      "description": "logical slice end"
+    },
+    "setup_cards__title_2_1.speech_end": {
+      "time": 3.065,
+      "description": "last TTS word end"
+    },
+    "setup_cards__title_2_1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_cards__title_2_1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_cards__title_2_1.visual.source_end": {
+      "time": 3.34,
+      "description": "visual source end"
+    },
+    "setup_cards__001.1.subtitle.0.start": {
+      "time": 2.66,
+      "description": "subtitle start"
+    },
+    "setup_cards__001.1.subtitle.0.end": {
+      "time": 5.32,
+      "description": "subtitle end"
+    },
+    "setup_cards__001.1.start": {
+      "time": 2.66,
+      "description": "logical slice start"
+    },
+    "setup_cards__001.1.end": {
+      "time": 5.32,
+      "description": "logical slice end"
+    },
+    "setup_cards__001.1.speech_end": {
+      "time": 5.32,
+      "description": "last TTS word end"
+    },
+    "setup_cards__001.2.subtitle.0.start": {
+      "time": 5.32,
+      "description": "subtitle start"
+    },
+    "setup_cards__001.2.subtitle.0.end": {
+      "time": 8.545,
+      "description": "subtitle end"
+    },
+    "setup_cards__001.2.subtitle.1.start": {
+      "time": 8.88,
+      "description": "subtitle start"
+    },
+    "setup_cards__001.2.subtitle.1.end": {
+      "time": 11.785,
+      "description": "subtitle end"
+    },
+    "setup_cards__001.2.subtitle.2.start": {
+      "time": 12.02,
+      "description": "subtitle start"
+    },
+    "setup_cards__001.2.subtitle.2.end": {
+      "time": 14.615,
+      "description": "subtitle end"
+    },
+    "setup_cards__001.2.subtitle.3.start": {
+      "time": 14.84,
+      "description": "subtitle start"
+    },
+    "setup_cards__001.2.subtitle.3.end": {
+      "time": 18.005,
+      "description": "subtitle end"
+    },
+    "setup_cards__001.2.start": {
+      "time": 5.32,
+      "description": "logical slice start"
+    },
+    "setup_cards__001.2.end": {
+      "time": 18.005,
+      "description": "logical slice end"
+    },
+    "setup_cards__001.2.speech_end": {
+      "time": 18.005,
+      "description": "last TTS word end"
+    },
+    "setup_cards__001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_cards__001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_cards__001.2.visual.source_end": {
+      "time": 10.72,
+      "description": "visual source end"
+    },
+    "setup_cards__002.1.subtitle.0.start": {
+      "time": 18.005,
+      "description": "subtitle start"
+    },
+    "setup_cards__002.1.subtitle.0.end": {
+      "time": 21.415,
+      "description": "subtitle end"
+    },
+    "setup_cards__002.1.subtitle.1.start": {
+      "time": 21.96,
+      "description": "subtitle start"
+    },
+    "setup_cards__002.1.subtitle.1.end": {
+      "time": 26.155,
+      "description": "subtitle end"
+    },
+    "setup_cards__002.1.subtitle.2.start": {
+      "time": 26.52,
+      "description": "subtitle start"
+    },
+    "setup_cards__002.1.subtitle.2.end": {
+      "time": 30.24,
+      "description": "subtitle end"
+    },
+    "setup_cards__002.1.start": {
+      "time": 18.005,
+      "description": "logical slice start"
+    },
+    "setup_cards__002.1.end": {
+      "time": 30.24,
+      "description": "logical slice end"
+    },
+    "setup_cards__002.1.speech_end": {
+      "time": 30.24,
+      "description": "last TTS word end"
+    },
+    "setup_cards__002.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_cards__002.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_cards__002.1.visual.source_end": {
+      "time": 8.465,
+      "description": "visual source end"
+    },
+    "setup_gems__title_2_2.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "setup_gems__title_2_2.subtitle.0.end": {
+      "time": 3.205,
+      "description": "subtitle end"
+    },
+    "setup_gems__title_2_2.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "setup_gems__title_2_2.end": {
+      "time": 3.205,
+      "description": "logical slice end"
+    },
+    "setup_gems__title_2_2.speech_end": {
+      "time": 3.205,
+      "description": "last TTS word end"
+    },
+    "setup_gems__title_2_2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_gems__title_2_2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_gems__title_2_2.visual.source_end": {
+      "time": 3.68,
+      "description": "visual source end"
+    },
+    "setup_gems__001.1.subtitle.0.start": {
+      "time": 2.75,
+      "description": "subtitle start"
+    },
+    "setup_gems__001.1.subtitle.0.end": {
+      "time": 5.485,
+      "description": "subtitle end"
+    },
+    "setup_gems__001.1.subtitle.1.start": {
+      "time": 5.945,
+      "description": "subtitle start"
+    },
+    "setup_gems__001.1.subtitle.1.end": {
+      "time": 12.705,
+      "description": "subtitle end"
+    },
+    "setup_gems__001.1.subtitle.2.start": {
+      "time": 13.215,
+      "description": "subtitle start"
+    },
+    "setup_gems__001.1.subtitle.2.end": {
+      "time": 16.155,
+      "description": "subtitle end"
+    },
+    "setup_gems__001.1.start": {
+      "time": 2.75,
+      "description": "logical slice start"
+    },
+    "setup_gems__001.1.end": {
+      "time": 16.155,
+      "description": "logical slice end"
+    },
+    "setup_gems__001.1.speech_end": {
+      "time": 16.155,
+      "description": "last TTS word end"
+    },
+    "setup_gems__001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_gems__001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_gems__001.1.visual.source_end": {
+      "time": 9.84,
+      "description": "visual source end"
+    },
+    "setup_gems__002.subtitle.0.start": {
+      "time": 16.155,
+      "description": "subtitle start"
+    },
+    "setup_gems__002.subtitle.0.end": {
+      "time": 18.495,
+      "description": "subtitle end"
+    },
+    "setup_gems__002.subtitle.1.start": {
+      "time": 18.885,
+      "description": "subtitle start"
+    },
+    "setup_gems__002.subtitle.1.end": {
+      "time": 22.095,
+      "description": "subtitle end"
+    },
+    "setup_gems__002.start": {
+      "time": 16.155,
+      "description": "logical slice start"
+    },
+    "setup_gems__002.end": {
+      "time": 22.095,
+      "description": "logical slice end"
+    },
+    "setup_gems__002.speech_end": {
+      "time": 22.095,
+      "description": "last TTS word end"
+    },
+    "setup_gems__002.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_gems__002.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_gems__002.visual.source_end": {
+      "time": 5.225,
+      "description": "visual source end"
+    },
+    "setup_gems__003.1.subtitle.0.start": {
+      "time": 22.095,
+      "description": "subtitle start"
+    },
+    "setup_gems__003.1.subtitle.0.end": {
+      "time": 25.445,
+      "description": "subtitle end"
+    },
+    "setup_gems__003.1.subtitle.1.start": {
+      "time": 25.965,
+      "description": "subtitle start"
+    },
+    "setup_gems__003.1.subtitle.1.end": {
+      "time": 28.615,
+      "description": "subtitle end"
+    },
+    "setup_gems__003.1.subtitle.2.start": {
+      "time": 29.065,
+      "description": "subtitle start"
+    },
+    "setup_gems__003.1.subtitle.2.end": {
+      "time": 30.845,
+      "description": "subtitle end"
+    },
+    "setup_gems__003.1.subtitle.3.start": {
+      "time": 31.469,
+      "description": "subtitle start"
+    },
+    "setup_gems__003.1.subtitle.3.end": {
+      "time": 34.124,
+      "description": "subtitle end"
+    },
+    "setup_gems__003.1.subtitle.4.start": {
+      "time": 34.609,
+      "description": "subtitle start"
+    },
+    "setup_gems__003.1.subtitle.4.end": {
+      "time": 40.649,
+      "description": "subtitle end"
+    },
+    "setup_gems__003.1.start": {
+      "time": 22.095,
+      "description": "logical slice start"
+    },
+    "setup_gems__003.1.end": {
+      "time": 40.649,
+      "description": "logical slice end"
+    },
+    "setup_gems__003.1.speech_end": {
+      "time": 40.649,
+      "description": "last TTS word end"
+    },
+    "setup_gems__003.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_gems__003.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_gems__003.1.visual.source_end": {
+      "time": 12.514,
+      "description": "visual source end"
+    },
+    "setup_gems__005.2.subtitle.0.start": {
+      "time": 40.649,
+      "description": "subtitle start"
+    },
+    "setup_gems__005.2.subtitle.0.end": {
+      "time": 44.554,
+      "description": "subtitle end"
+    },
+    "setup_gems__005.2.subtitle.1.start": {
+      "time": 44.895,
+      "description": "subtitle start"
+    },
+    "setup_gems__005.2.subtitle.1.end": {
+      "time": 46.92,
+      "description": "subtitle end"
+    },
+    "setup_gems__005.2.start": {
+      "time": 40.649,
+      "description": "logical slice start"
+    },
+    "setup_gems__005.2.end": {
+      "time": 46.92,
+      "description": "logical slice end"
+    },
+    "setup_gems__005.2.speech_end": {
+      "time": 46.92,
+      "description": "last TTS word end"
+    },
+    "setup_gems__005.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_gems__005.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_gems__005.2.visual.source_end": {
+      "time": 2.76,
+      "description": "visual source end"
+    },
+    "setup_players__title_2_3.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "setup_players__title_2_3.subtitle.0.end": {
+      "time": 3.015,
+      "description": "subtitle end"
+    },
+    "setup_players__title_2_3.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "setup_players__title_2_3.end": {
+      "time": 3.015,
+      "description": "logical slice end"
+    },
+    "setup_players__title_2_3.speech_end": {
+      "time": 3.015,
+      "description": "last TTS word end"
+    },
+    "setup_players__title_2_3.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_players__title_2_3.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_players__title_2_3.visual.source_end": {
+      "time": 3.37,
+      "description": "visual source end"
+    },
+    "setup_players__nobles.001.1.subtitle.0.start": {
+      "time": 2.57,
+      "description": "subtitle start"
+    },
+    "setup_players__nobles.001.1.subtitle.0.end": {
+      "time": 4.01,
+      "description": "subtitle end"
+    },
+    "setup_players__nobles.001.1.start": {
+      "time": 2.57,
+      "description": "logical slice start"
+    },
+    "setup_players__nobles.001.1.end": {
+      "time": 4.01,
+      "description": "logical slice end"
+    },
+    "setup_players__nobles.001.1.speech_end": {
+      "time": 4.01,
+      "description": "last TTS word end"
+    },
+    "setup_players__nobles.001.2.subtitle.0.start": {
+      "time": 4.01,
+      "description": "subtitle start"
+    },
+    "setup_players__nobles.001.2.subtitle.0.end": {
+      "time": 7.585,
+      "description": "subtitle end"
+    },
+    "setup_players__nobles.001.2.subtitle.1.start": {
+      "time": 7.97,
+      "description": "subtitle start"
+    },
+    "setup_players__nobles.001.2.subtitle.1.end": {
+      "time": 13.025,
+      "description": "subtitle end"
+    },
+    "setup_players__nobles.001.2.start": {
+      "time": 4.01,
+      "description": "logical slice start"
+    },
+    "setup_players__nobles.001.2.end": {
+      "time": 13.025,
+      "description": "logical slice end"
+    },
+    "setup_players__nobles.001.2.speech_end": {
+      "time": 13.025,
+      "description": "last TTS word end"
+    },
+    "setup_players__nobles.002.subtitle.0.start": {
+      "time": 13.025,
+      "description": "subtitle start"
+    },
+    "setup_players__nobles.002.subtitle.0.end": {
+      "time": 20.205,
+      "description": "subtitle end"
+    },
+    "setup_players__nobles.002.start": {
+      "time": 13.025,
+      "description": "logical slice start"
+    },
+    "setup_players__nobles.002.end": {
+      "time": 20.205,
+      "description": "logical slice end"
+    },
+    "setup_players__nobles.002.speech_end": {
+      "time": 20.205,
+      "description": "last TTS word end"
+    },
+    "setup_players__title_2_4.subtitle.0.start": {
+      "time": 20.205,
+      "description": "subtitle start"
+    },
+    "setup_players__title_2_4.subtitle.0.end": {
+      "time": 22.305,
+      "description": "subtitle end"
+    },
+    "setup_players__title_2_4.start": {
+      "time": 20.205,
+      "description": "logical slice start"
+    },
+    "setup_players__title_2_4.end": {
+      "time": 22.305,
+      "description": "logical slice end"
+    },
+    "setup_players__title_2_4.speech_end": {
+      "time": 22.305,
+      "description": "last TTS word end"
+    },
+    "setup_players__title_2_4.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_players__title_2_4.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_players__title_2_4.visual.source_end": {
+      "time": 2.915,
+      "description": "visual source end"
+    },
+    "setup_players__starting.001.1.subtitle.0.start": {
+      "time": 21.825,
+      "description": "subtitle start"
+    },
+    "setup_players__starting.001.1.subtitle.0.end": {
+      "time": 23.635,
+      "description": "subtitle end"
+    },
+    "setup_players__starting.001.1.subtitle.1.start": {
+      "time": 24.105,
+      "description": "subtitle start"
+    },
+    "setup_players__starting.001.1.subtitle.1.end": {
+      "time": 31.904,
+      "description": "subtitle end"
+    },
+    "setup_players__starting.001.1.start": {
+      "time": 21.825,
+      "description": "logical slice start"
+    },
+    "setup_players__starting.001.1.end": {
+      "time": 31.904,
+      "description": "logical slice end"
+    },
+    "setup_players__starting.001.1.speech_end": {
+      "time": 31.904,
+      "description": "last TTS word end"
+    },
+    "setup_players__starting.001.3.subtitle.0.start": {
+      "time": 31.904,
+      "description": "subtitle start"
+    },
+    "setup_players__starting.001.3.subtitle.0.end": {
+      "time": 33.299,
+      "description": "subtitle end"
+    },
+    "setup_players__starting.001.3.subtitle.1.start": {
+      "time": 33.724,
+      "description": "subtitle start"
+    },
+    "setup_players__starting.001.3.subtitle.1.end": {
+      "time": 35.844,
+      "description": "subtitle end"
+    },
+    "setup_players__starting.001.3.start": {
+      "time": 31.904,
+      "description": "logical slice start"
+    },
+    "setup_players__starting.001.3.end": {
+      "time": 35.844,
+      "description": "logical slice end"
+    },
+    "setup_players__starting.001.3.speech_end": {
+      "time": 35.844,
+      "description": "last TTS word end"
+    },
+    "setup_players__starting.001.3.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_players__starting.001.3.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_players__starting.001.3.visual.source_end": {
+      "time": 2.77,
+      "description": "visual source end"
+    },
+    "setup_players__title_2_5.subtitle.0.start": {
+      "time": 35.844,
+      "description": "subtitle start"
+    },
+    "setup_players__title_2_5.subtitle.0.end": {
+      "time": 38.349,
+      "description": "subtitle end"
+    },
+    "setup_players__title_2_5.start": {
+      "time": 35.844,
+      "description": "logical slice start"
+    },
+    "setup_players__title_2_5.end": {
+      "time": 38.349,
+      "description": "logical slice end"
+    },
+    "setup_players__title_2_5.speech_end": {
+      "time": 38.349,
+      "description": "last TTS word end"
+    },
+    "setup_players__title_2_5.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup_players__title_2_5.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup_players__title_2_5.visual.source_end": {
+      "time": 2.845,
+      "description": "visual source end"
+    },
+    "setup_players__end.001.1.subtitle.0.start": {
+      "time": 37.744,
+      "description": "subtitle start"
+    },
+    "setup_players__end.001.1.subtitle.0.end": {
+      "time": 40.059,
+      "description": "subtitle end"
+    },
+    "setup_players__end.001.1.subtitle.1.start": {
+      "time": 40.849,
+      "description": "subtitle start"
+    },
+    "setup_players__end.001.1.subtitle.1.end": {
+      "time": 43.056,
+      "description": "subtitle end"
+    },
+    "setup_players__end.001.1.start": {
+      "time": 37.744,
+      "description": "logical slice start"
+    },
+    "setup_players__end.001.1.end": {
+      "time": 43.056,
+      "description": "logical slice end"
+    },
+    "setup_players__end.001.1.speech_end": {
+      "time": 43.056,
+      "description": "last TTS word end"
+    },
+    "turn__title_3.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "turn__title_3.subtitle.0.end": {
+      "time": 2.495,
+      "description": "subtitle end"
+    },
+    "turn__title_3.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "turn__title_3.end": {
+      "time": 2.495,
+      "description": "logical slice end"
+    },
+    "turn__title_3.speech_end": {
+      "time": 2.495,
+      "description": "last TTS word end"
+    },
+    "turn__title_3.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "turn__title_3.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "turn__title_3.visual.source_end": {
+      "time": 3.16,
+      "description": "visual source end"
+    },
+    "turn__001.subtitle.0.start": {
+      "time": 2.23,
+      "description": "subtitle start"
+    },
+    "turn__001.subtitle.0.end": {
+      "time": 6.315,
+      "description": "subtitle end"
+    },
+    "turn__001.subtitle.1.start": {
+      "time": 6.655,
+      "description": "subtitle start"
+    },
+    "turn__001.subtitle.1.end": {
+      "time": 10.025,
+      "description": "subtitle end"
+    },
+    "turn__001.start": {
+      "time": 2.23,
+      "description": "logical slice start"
+    },
+    "turn__001.end": {
+      "time": 10.025,
+      "description": "logical slice end"
+    },
+    "turn__001.speech_end": {
+      "time": 10.025,
+      "description": "last TTS word end"
+    },
+    "turn__001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "turn__001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "turn__001.visual.source_end": {
+      "time": 1.215,
+      "description": "visual source end"
+    },
+    "turn__002.subtitle.0.start": {
+      "time": 10.025,
+      "description": "subtitle start"
+    },
+    "turn__002.subtitle.0.end": {
+      "time": 15.072,
+      "description": "subtitle end"
+    },
+    "turn__002.start": {
+      "time": 10.025,
+      "description": "logical slice start"
+    },
+    "turn__002.end": {
+      "time": 15.072,
+      "description": "logical slice end"
+    },
+    "turn__002.speech_end": {
+      "time": 15.072,
+      "description": "last TTS word end"
+    },
+    "take_gems__title_3_1.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "take_gems__title_3_1.subtitle.0.end": {
+      "time": 4.515,
+      "description": "subtitle end"
+    },
+    "take_gems__title_3_1.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "take_gems__title_3_1.end": {
+      "time": 4.515,
+      "description": "logical slice end"
+    },
+    "take_gems__title_3_1.speech_end": {
+      "time": 4.515,
+      "description": "last TTS word end"
+    },
+    "take_gems__title_3_1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__title_3_1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__title_3_1.visual.source_end": {
+      "time": 4.72,
+      "description": "visual source end"
+    },
+    "take_gems__different.001.subtitle.0.start": {
+      "time": 3.93,
+      "description": "subtitle start"
+    },
+    "take_gems__different.001.subtitle.0.end": {
+      "time": 8.695,
+      "description": "subtitle end"
+    },
+    "take_gems__different.001.start": {
+      "time": 3.93,
+      "description": "logical slice start"
+    },
+    "take_gems__different.001.end": {
+      "time": 8.695,
+      "description": "logical slice end"
+    },
+    "take_gems__different.001.speech_end": {
+      "time": 8.695,
+      "description": "last TTS word end"
+    },
+    "take_gems__different.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__different.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__different.001.visual.source_end": {
+      "time": 3.92,
+      "description": "visual source end"
+    },
+    "take_gems__same.001.subtitle.0.start": {
+      "time": 8.695,
+      "description": "subtitle start"
+    },
+    "take_gems__same.001.subtitle.0.end": {
+      "time": 12.415,
+      "description": "subtitle end"
+    },
+    "take_gems__same.001.subtitle.1.start": {
+      "time": 12.655,
+      "description": "subtitle start"
+    },
+    "take_gems__same.001.subtitle.1.end": {
+      "time": 15.355,
+      "description": "subtitle end"
+    },
+    "take_gems__same.001.start": {
+      "time": 8.695,
+      "description": "logical slice start"
+    },
+    "take_gems__same.001.end": {
+      "time": 15.355,
+      "description": "logical slice end"
+    },
+    "take_gems__same.001.speech_end": {
+      "time": 15.355,
+      "description": "last TTS word end"
+    },
+    "take_gems__same.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__same.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__same.001.visual.source_end": {
+      "time": 4.305,
+      "description": "visual source end"
+    },
+    "take_gems__same.002.subtitle.0.start": {
+      "time": 15.355,
+      "description": "subtitle start"
+    },
+    "take_gems__same.002.subtitle.0.end": {
+      "time": 19.675,
+      "description": "subtitle end"
+    },
+    "take_gems__same.002.subtitle.1.start": {
+      "time": 20.12,
+      "description": "subtitle start"
+    },
+    "take_gems__same.002.subtitle.1.end": {
+      "time": 22.045,
+      "description": "subtitle end"
+    },
+    "take_gems__same.002.start": {
+      "time": 15.355,
+      "description": "logical slice start"
+    },
+    "take_gems__same.002.end": {
+      "time": 22.045,
+      "description": "logical slice end"
+    },
+    "take_gems__same.002.speech_end": {
+      "time": 22.045,
+      "description": "last TTS word end"
+    },
+    "take_gems__draw_rule.001.1.subtitle.0.start": {
+      "time": 22.045,
+      "description": "subtitle start"
+    },
+    "take_gems__draw_rule.001.1.subtitle.0.end": {
+      "time": 28.555,
+      "description": "subtitle end"
+    },
+    "take_gems__draw_rule.001.1.start": {
+      "time": 22.045,
+      "description": "logical slice start"
+    },
+    "take_gems__draw_rule.001.1.end": {
+      "time": 28.555,
+      "description": "logical slice end"
+    },
+    "take_gems__draw_rule.001.1.speech_end": {
+      "time": 28.555,
+      "description": "last TTS word end"
+    },
+    "take_gems__draw_rule.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__draw_rule.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__draw_rule.001.1.visual.source_end": {
+      "time": 5.32,
+      "description": "visual source end"
+    },
+    "take_gems__draw_rule.001.2.subtitle.0.start": {
+      "time": 28.555,
+      "description": "subtitle start"
+    },
+    "take_gems__draw_rule.001.2.subtitle.0.end": {
+      "time": 32.349,
+      "description": "subtitle end"
+    },
+    "take_gems__draw_rule.001.2.start": {
+      "time": 28.555,
+      "description": "logical slice start"
+    },
+    "take_gems__draw_rule.001.2.end": {
+      "time": 32.349,
+      "description": "logical slice end"
+    },
+    "take_gems__draw_rule.001.2.speech_end": {
+      "time": 32.349,
+      "description": "last TTS word end"
+    },
+    "take_gems__draw_rule.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__draw_rule.001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__draw_rule.001.2.visual.source_end": {
+      "time": 3.3,
+      "description": "visual source end"
+    },
+    "take_gems__limit.001.1.subtitle.0.start": {
+      "time": 32.349,
+      "description": "subtitle start"
+    },
+    "take_gems__limit.001.1.subtitle.0.end": {
+      "time": 35.384,
+      "description": "subtitle end"
+    },
+    "take_gems__limit.001.1.subtitle.1.start": {
+      "time": 35.789,
+      "description": "subtitle start"
+    },
+    "take_gems__limit.001.1.subtitle.1.end": {
+      "time": 38.664,
+      "description": "subtitle end"
+    },
+    "take_gems__limit.001.1.start": {
+      "time": 32.349,
+      "description": "logical slice start"
+    },
+    "take_gems__limit.001.1.end": {
+      "time": 38.664,
+      "description": "logical slice end"
+    },
+    "take_gems__limit.001.1.speech_end": {
+      "time": 38.664,
+      "description": "last TTS word end"
+    },
+    "take_gems__limit.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__limit.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__limit.001.1.visual.source_end": {
+      "time": 4.48,
+      "description": "visual source end"
+    },
+    "take_gems__limit.001.2.subtitle.0.start": {
+      "time": 38.664,
+      "description": "subtitle start"
+    },
+    "take_gems__limit.001.2.subtitle.0.end": {
+      "time": 44.744,
+      "description": "subtitle end"
+    },
+    "take_gems__limit.001.2.start": {
+      "time": 38.664,
+      "description": "logical slice start"
+    },
+    "take_gems__limit.001.2.end": {
+      "time": 44.744,
+      "description": "logical slice end"
+    },
+    "take_gems__limit.001.2.speech_end": {
+      "time": 44.744,
+      "description": "last TTS word end"
+    },
+    "take_gems__limit.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__limit.001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__limit.001.2.visual.source_end": {
+      "time": 4.72,
+      "description": "visual source end"
+    },
+    "take_gems__public.001.1.subtitle.0.start": {
+      "time": 44.744,
+      "description": "subtitle start"
+    },
+    "take_gems__public.001.1.subtitle.0.end": {
+      "time": 50.494,
+      "description": "subtitle end"
+    },
+    "take_gems__public.001.1.start": {
+      "time": 44.744,
+      "description": "logical slice start"
+    },
+    "take_gems__public.001.1.end": {
+      "time": 50.494,
+      "description": "logical slice end"
+    },
+    "take_gems__public.001.1.speech_end": {
+      "time": 50.494,
+      "description": "last TTS word end"
+    },
+    "take_gems__public.001.2.subtitle.0.start": {
+      "time": 50.494,
+      "description": "subtitle start"
+    },
+    "take_gems__public.001.2.subtitle.0.end": {
+      "time": 52.872,
+      "description": "subtitle end"
+    },
+    "take_gems__public.001.2.start": {
+      "time": 50.494,
+      "description": "logical slice start"
+    },
+    "take_gems__public.001.2.end": {
+      "time": 52.872,
+      "description": "logical slice end"
+    },
+    "take_gems__public.001.2.speech_end": {
+      "time": 52.872,
+      "description": "last TTS word end"
+    },
+    "take_gems__public.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "take_gems__public.001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "take_gems__public.001.2.visual.source_end": {
+      "time": 0.835,
+      "description": "visual source end"
+    },
+    "cards__title_3_2_1.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "cards__title_3_2_1.subtitle.0.end": {
+      "time": 4.185,
+      "description": "subtitle end"
+    },
+    "cards__title_3_2_1.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "cards__title_3_2_1.end": {
+      "time": 4.185,
+      "description": "logical slice end"
+    },
+    "cards__title_3_2_1.speech_end": {
+      "time": 4.185,
+      "description": "last TTS word end"
+    },
+    "cards__title_3_2_1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__title_3_2_1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__title_3_2_1.visual.source_end": {
+      "time": 4.255,
+      "description": "visual source end"
+    },
+    "cards__intro.001.subtitle.0.start": {
+      "time": 3.865,
+      "description": "subtitle start"
+    },
+    "cards__intro.001.subtitle.0.end": {
+      "time": 6.085,
+      "description": "subtitle end"
+    },
+    "cards__intro.001.start": {
+      "time": 3.865,
+      "description": "logical slice start"
+    },
+    "cards__intro.001.end": {
+      "time": 6.085,
+      "description": "logical slice end"
+    },
+    "cards__intro.001.speech_end": {
+      "time": 6.085,
+      "description": "last TTS word end"
+    },
+    "cards__cost.001.1.subtitle.0.start": {
+      "time": 6.085,
+      "description": "subtitle start"
+    },
+    "cards__cost.001.1.subtitle.0.end": {
+      "time": 8.055,
+      "description": "subtitle end"
+    },
+    "cards__cost.001.1.subtitle.1.start": {
+      "time": 8.485,
+      "description": "subtitle start"
+    },
+    "cards__cost.001.1.subtitle.1.end": {
+      "time": 10.03,
+      "description": "subtitle end"
+    },
+    "cards__cost.001.1.start": {
+      "time": 6.085,
+      "description": "logical slice start"
+    },
+    "cards__cost.001.1.end": {
+      "time": 10.03,
+      "description": "logical slice end"
+    },
+    "cards__cost.001.1.speech_end": {
+      "time": 10.03,
+      "description": "last TTS word end"
+    },
+    "cards__cost.001.2.subtitle.0.start": {
+      "time": 10.03,
+      "description": "subtitle start"
+    },
+    "cards__cost.001.2.subtitle.0.end": {
+      "time": 14.695,
+      "description": "subtitle end"
+    },
+    "cards__cost.001.2.subtitle.1.start": {
+      "time": 15.17,
+      "description": "subtitle start"
+    },
+    "cards__cost.001.2.subtitle.1.end": {
+      "time": 20.725,
+      "description": "subtitle end"
+    },
+    "cards__cost.001.2.start": {
+      "time": 10.03,
+      "description": "logical slice start"
+    },
+    "cards__cost.001.2.end": {
+      "time": 20.725,
+      "description": "logical slice end"
+    },
+    "cards__cost.001.2.speech_end": {
+      "time": 20.725,
+      "description": "last TTS word end"
+    },
+    "cards__cost.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__cost.001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__cost.001.2.visual.source_end": {
+      "time": 8.995,
+      "description": "visual source end"
+    },
+    "cards__market.001.1.subtitle.0.start": {
+      "time": 20.725,
+      "description": "subtitle start"
+    },
+    "cards__market.001.1.subtitle.0.end": {
+      "time": 24.895,
+      "description": "subtitle end"
+    },
+    "cards__market.001.1.subtitle.1.start": {
+      "time": 25.615,
+      "description": "subtitle start"
+    },
+    "cards__market.001.1.subtitle.1.end": {
+      "time": 36.055,
+      "description": "subtitle end"
+    },
+    "cards__market.001.1.start": {
+      "time": 20.725,
+      "description": "logical slice start"
+    },
+    "cards__market.001.1.end": {
+      "time": 36.055,
+      "description": "logical slice end"
+    },
+    "cards__market.001.1.speech_end": {
+      "time": 36.055,
+      "description": "last TTS word end"
+    },
+    "cards__market.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__market.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__market.001.1.visual.source_end": {
+      "time": 13.445,
+      "description": "visual source end"
+    },
+    "cards__market.001.2.subtitle.0.start": {
+      "time": 36.055,
+      "description": "subtitle start"
+    },
+    "cards__market.001.2.subtitle.0.end": {
+      "time": 43.669,
+      "description": "subtitle end"
+    },
+    "cards__market.001.2.start": {
+      "time": 36.055,
+      "description": "logical slice start"
+    },
+    "cards__market.001.2.end": {
+      "time": 43.669,
+      "description": "logical slice end"
+    },
+    "cards__market.001.2.speech_end": {
+      "time": 43.669,
+      "description": "last TTS word end"
+    },
+    "cards__market.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__market.001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__market.001.2.visual.source_end": {
+      "time": 2.38,
+      "description": "visual source end"
+    },
+    "cards__prestige.001.1.subtitle.0.start": {
+      "time": 43.669,
+      "description": "subtitle start"
+    },
+    "cards__prestige.001.1.subtitle.0.end": {
+      "time": 45.829,
+      "description": "subtitle end"
+    },
+    "cards__prestige.001.1.subtitle.1.start": {
+      "time": 46.424,
+      "description": "subtitle start"
+    },
+    "cards__prestige.001.1.subtitle.1.end": {
+      "time": 50.344,
+      "description": "subtitle end"
+    },
+    "cards__prestige.001.1.start": {
+      "time": 43.669,
+      "description": "logical slice start"
+    },
+    "cards__prestige.001.1.end": {
+      "time": 50.344,
+      "description": "logical slice end"
+    },
+    "cards__prestige.001.1.speech_end": {
+      "time": 50.344,
+      "description": "last TTS word end"
+    },
+    "cards__prestige.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__prestige.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__prestige.001.1.visual.source_end": {
+      "time": 0.505,
+      "description": "visual source end"
+    },
+    "cards__prestige.001.2.subtitle.0.start": {
+      "time": 50.344,
+      "description": "subtitle start"
+    },
+    "cards__prestige.001.2.subtitle.0.end": {
+      "time": 52.919,
+      "description": "subtitle end"
+    },
+    "cards__prestige.001.2.subtitle.1.start": {
+      "time": 53.264,
+      "description": "subtitle start"
+    },
+    "cards__prestige.001.2.subtitle.1.end": {
+      "time": 56.299,
+      "description": "subtitle end"
+    },
+    "cards__prestige.001.2.start": {
+      "time": 50.344,
+      "description": "logical slice start"
+    },
+    "cards__prestige.001.2.end": {
+      "time": 56.299,
+      "description": "logical slice end"
+    },
+    "cards__prestige.001.2.speech_end": {
+      "time": 56.299,
+      "description": "last TTS word end"
+    },
+    "cards__discount.001.subtitle.0.start": {
+      "time": 56.299,
+      "description": "subtitle start"
+    },
+    "cards__discount.001.subtitle.0.end": {
+      "time": 63.939,
+      "description": "subtitle end"
+    },
+    "cards__discount.001.start": {
+      "time": 56.299,
+      "description": "logical slice start"
+    },
+    "cards__discount.001.end": {
+      "time": 63.939,
+      "description": "logical slice end"
+    },
+    "cards__discount.001.speech_end": {
+      "time": 63.939,
+      "description": "last TTS word end"
+    },
+    "cards__discount.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__discount.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__discount.001.visual.source_end": {
+      "time": 0.475,
+      "description": "visual source end"
+    },
+    "cards__discount.002.1.subtitle.0.start": {
+      "time": 63.939,
+      "description": "subtitle start"
+    },
+    "cards__discount.002.1.subtitle.0.end": {
+      "time": 75.414,
+      "description": "subtitle end"
+    },
+    "cards__discount.002.1.start": {
+      "time": 63.939,
+      "description": "logical slice start"
+    },
+    "cards__discount.002.1.end": {
+      "time": 75.414,
+      "description": "logical slice end"
+    },
+    "cards__discount.002.1.speech_end": {
+      "time": 75.414,
+      "description": "last TTS word end"
+    },
+    "cards__discount.002.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__discount.002.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__discount.002.1.visual.source_end": {
+      "time": 11.265,
+      "description": "visual source end"
+    },
+    "cards__discount.003.1.subtitle.0.start": {
+      "time": 75.414,
+      "description": "subtitle start"
+    },
+    "cards__discount.003.1.subtitle.0.end": {
+      "time": 83.309,
+      "description": "subtitle end"
+    },
+    "cards__discount.003.1.start": {
+      "time": 75.414,
+      "description": "logical slice start"
+    },
+    "cards__discount.003.1.end": {
+      "time": 83.309,
+      "description": "logical slice end"
+    },
+    "cards__discount.003.1.speech_end": {
+      "time": 83.309,
+      "description": "last TTS word end"
+    },
+    "cards__discount.003.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__discount.003.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__discount.003.1.visual.source_end": {
+      "time": 8.2,
+      "description": "visual source end"
+    },
+    "cards__discount.003.2.subtitle.0.start": {
+      "time": 83.309,
+      "description": "subtitle start"
+    },
+    "cards__discount.003.2.subtitle.0.end": {
+      "time": 91.663,
+      "description": "subtitle end"
+    },
+    "cards__discount.003.2.start": {
+      "time": 83.309,
+      "description": "logical slice start"
+    },
+    "cards__discount.003.2.end": {
+      "time": 91.663,
+      "description": "logical slice end"
+    },
+    "cards__discount.003.2.speech_end": {
+      "time": 91.663,
+      "description": "last TTS word end"
+    },
+    "cards__public.001.1.subtitle.0.start": {
+      "time": 91.663,
+      "description": "subtitle start"
+    },
+    "cards__public.001.1.subtitle.0.end": {
+      "time": 103.908,
+      "description": "subtitle end"
+    },
+    "cards__public.001.1.start": {
+      "time": 91.663,
+      "description": "logical slice start"
+    },
+    "cards__public.001.1.end": {
+      "time": 103.908,
+      "description": "logical slice end"
+    },
+    "cards__public.001.1.speech_end": {
+      "time": 103.908,
+      "description": "last TTS word end"
+    },
+    "cards__public.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards__public.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards__public.001.1.visual.source_end": {
+      "time": 4.385,
+      "description": "visual source end"
+    },
+    "cards__limit.001.1.subtitle.0.start": {
+      "time": 103.908,
+      "description": "subtitle start"
+    },
+    "cards__limit.001.1.subtitle.0.end": {
+      "time": 112.56,
+      "description": "subtitle end"
+    },
+    "cards__limit.001.1.start": {
+      "time": 103.908,
+      "description": "logical slice start"
+    },
+    "cards__limit.001.1.end": {
+      "time": 112.56,
+      "description": "logical slice end"
+    },
+    "cards__limit.001.1.speech_end": {
+      "time": 112.56,
+      "description": "last TTS word end"
+    },
+    "nobles__title_3_2_2.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "nobles__title_3_2_2.subtitle.0.end": {
+      "time": 3.665,
+      "description": "subtitle end"
+    },
+    "nobles__title_3_2_2.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "nobles__title_3_2_2.end": {
+      "time": 3.665,
+      "description": "logical slice end"
+    },
+    "nobles__title_3_2_2.speech_end": {
+      "time": 3.665,
+      "description": "last TTS word end"
+    },
+    "nobles__title_3_2_2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__title_3_2_2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__title_3_2_2.visual.source_end": {
+      "time": 3.41,
+      "description": "visual source end"
+    },
+    "nobles__intro.001.subtitle.0.start": {
+      "time": 3.11,
+      "description": "subtitle start"
+    },
+    "nobles__intro.001.subtitle.0.end": {
+      "time": 4.915,
+      "description": "subtitle end"
+    },
+    "nobles__intro.001.subtitle.1.start": {
+      "time": 5.37,
+      "description": "subtitle start"
+    },
+    "nobles__intro.001.subtitle.1.end": {
+      "time": 7.745,
+      "description": "subtitle end"
+    },
+    "nobles__intro.001.subtitle.2.start": {
+      "time": 8.09,
+      "description": "subtitle start"
+    },
+    "nobles__intro.001.subtitle.2.end": {
+      "time": 11.115,
+      "description": "subtitle end"
+    },
+    "nobles__intro.001.subtitle.3.start": {
+      "time": 11.425,
+      "description": "subtitle start"
+    },
+    "nobles__intro.001.subtitle.3.end": {
+      "time": 13.985,
+      "description": "subtitle end"
+    },
+    "nobles__intro.001.start": {
+      "time": 3.11,
+      "description": "logical slice start"
+    },
+    "nobles__intro.001.end": {
+      "time": 13.985,
+      "description": "logical slice end"
+    },
+    "nobles__intro.001.speech_end": {
+      "time": 13.985,
+      "description": "last TTS word end"
+    },
+    "nobles__intro.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__intro.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__intro.001.visual.source_end": {
+      "time": 9.34,
+      "description": "visual source end"
+    },
+    "nobles__trigger.001.1.subtitle.0.start": {
+      "time": 13.985,
+      "description": "subtitle start"
+    },
+    "nobles__trigger.001.1.subtitle.0.end": {
+      "time": 26.205,
+      "description": "subtitle end"
+    },
+    "nobles__trigger.001.1.start": {
+      "time": 13.985,
+      "description": "logical slice start"
+    },
+    "nobles__trigger.001.1.end": {
+      "time": 26.205,
+      "description": "logical slice end"
+    },
+    "nobles__trigger.001.1.speech_end": {
+      "time": 26.205,
+      "description": "last TTS word end"
+    },
+    "nobles__trigger.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__trigger.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__trigger.001.1.visual.source_end": {
+      "time": 11.81,
+      "description": "visual source end"
+    },
+    "nobles__forced.001.1.subtitle.0.start": {
+      "time": 26.205,
+      "description": "subtitle start"
+    },
+    "nobles__forced.001.1.subtitle.0.end": {
+      "time": 33.085,
+      "description": "subtitle end"
+    },
+    "nobles__forced.001.1.subtitle.1.start": {
+      "time": 33.539,
+      "description": "subtitle start"
+    },
+    "nobles__forced.001.1.subtitle.1.end": {
+      "time": 37.904,
+      "description": "subtitle end"
+    },
+    "nobles__forced.001.1.start": {
+      "time": 26.205,
+      "description": "logical slice start"
+    },
+    "nobles__forced.001.1.end": {
+      "time": 37.904,
+      "description": "logical slice end"
+    },
+    "nobles__forced.001.1.speech_end": {
+      "time": 37.904,
+      "description": "last TTS word end"
+    },
+    "nobles__forced.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__forced.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__forced.001.1.visual.source_end": {
+      "time": 7.334,
+      "description": "visual source end"
+    },
+    "nobles__source.001.subtitle.0.start": {
+      "time": 37.904,
+      "description": "subtitle start"
+    },
+    "nobles__source.001.subtitle.0.end": {
+      "time": 42.964,
+      "description": "subtitle end"
+    },
+    "nobles__source.001.start": {
+      "time": 37.904,
+      "description": "logical slice start"
+    },
+    "nobles__source.001.end": {
+      "time": 42.964,
+      "description": "logical slice end"
+    },
+    "nobles__source.001.speech_end": {
+      "time": 42.964,
+      "description": "last TTS word end"
+    },
+    "nobles__source.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__source.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__source.001.visual.source_end": {
+      "time": 7.4,
+      "description": "visual source end"
+    },
+    "nobles__choice.001.1.subtitle.0.start": {
+      "time": 42.964,
+      "description": "subtitle start"
+    },
+    "nobles__choice.001.1.subtitle.0.end": {
+      "time": 51.719,
+      "description": "subtitle end"
+    },
+    "nobles__choice.001.1.start": {
+      "time": 42.964,
+      "description": "logical slice start"
+    },
+    "nobles__choice.001.1.end": {
+      "time": 51.719,
+      "description": "logical slice end"
+    },
+    "nobles__choice.001.1.speech_end": {
+      "time": 51.719,
+      "description": "last TTS word end"
+    },
+    "nobles__choice.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__choice.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__choice.001.1.visual.source_end": {
+      "time": 8.2,
+      "description": "visual source end"
+    },
+    "nobles__repeat.001.1.subtitle.0.start": {
+      "time": 51.719,
+      "description": "subtitle start"
+    },
+    "nobles__repeat.001.1.subtitle.0.end": {
+      "time": 63.649,
+      "description": "subtitle end"
+    },
+    "nobles__repeat.001.1.start": {
+      "time": 51.719,
+      "description": "logical slice start"
+    },
+    "nobles__repeat.001.1.end": {
+      "time": 63.649,
+      "description": "logical slice end"
+    },
+    "nobles__repeat.001.1.speech_end": {
+      "time": 63.649,
+      "description": "last TTS word end"
+    },
+    "nobles__repeat.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "nobles__repeat.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "nobles__repeat.001.1.visual.source_end": {
+      "time": 10.925,
+      "description": "visual source end"
+    },
+    "nobles__repeat.001.3.subtitle.0.start": {
+      "time": 63.649,
+      "description": "subtitle start"
+    },
+    "nobles__repeat.001.3.subtitle.0.end": {
+      "time": 70.01,
+      "description": "subtitle end"
+    },
+    "nobles__repeat.001.3.start": {
+      "time": 63.649,
+      "description": "logical slice start"
+    },
+    "nobles__repeat.001.3.end": {
+      "time": 70.01,
+      "description": "logical slice end"
+    },
+    "nobles__repeat.001.3.speech_end": {
+      "time": 70.01,
+      "description": "last TTS word end"
+    },
+    "nobles__summary.001.1.subtitle.0.start": {
+      "time": 70.01,
+      "description": "subtitle start"
+    },
+    "nobles__summary.001.1.subtitle.0.end": {
+      "time": 74.615,
+      "description": "subtitle end"
+    },
+    "nobles__summary.001.1.start": {
+      "time": 70.01,
+      "description": "logical slice start"
+    },
+    "nobles__summary.001.1.end": {
+      "time": 74.615,
+      "description": "logical slice end"
+    },
+    "nobles__summary.001.1.speech_end": {
+      "time": 74.615,
+      "description": "last TTS word end"
+    },
+    "nobles__summary.001.2.subtitle.0.start": {
+      "time": 74.615,
+      "description": "subtitle start"
+    },
+    "nobles__summary.001.2.subtitle.0.end": {
+      "time": 78.885,
+      "description": "subtitle end"
+    },
+    "nobles__summary.001.2.start": {
+      "time": 74.615,
+      "description": "logical slice start"
+    },
+    "nobles__summary.001.2.end": {
+      "time": 78.885,
+      "description": "logical slice end"
+    },
+    "nobles__summary.001.2.speech_end": {
+      "time": 78.885,
+      "description": "last TTS word end"
+    },
+    "nobles__summary.001.3.subtitle.0.start": {
+      "time": 78.885,
+      "description": "subtitle start"
+    },
+    "nobles__summary.001.3.subtitle.0.end": {
+      "time": 85.224,
+      "description": "subtitle end"
+    },
+    "nobles__summary.001.3.start": {
+      "time": 78.885,
+      "description": "logical slice start"
+    },
+    "nobles__summary.001.3.end": {
+      "time": 85.224,
+      "description": "logical slice end"
+    },
+    "nobles__summary.001.3.speech_end": {
+      "time": 85.224,
+      "description": "last TTS word end"
+    },
+    "reserve__title_3_3.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "reserve__title_3_3.subtitle.0.end": {
+      "time": 3.935,
+      "description": "subtitle end"
+    },
+    "reserve__title_3_3.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "reserve__title_3_3.end": {
+      "time": 3.935,
+      "description": "logical slice end"
+    },
+    "reserve__title_3_3.speech_end": {
+      "time": 3.935,
+      "description": "last TTS word end"
+    },
+    "reserve__title_3_3.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__title_3_3.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__title_3_3.visual.source_end": {
+      "time": 4.37,
+      "description": "visual source end"
+    },
+    "reserve__intro.001.1.subtitle.0.start": {
+      "time": 3.5,
+      "description": "subtitle start"
+    },
+    "reserve__intro.001.1.subtitle.0.end": {
+      "time": 6.205,
+      "description": "subtitle end"
+    },
+    "reserve__intro.001.1.subtitle.1.start": {
+      "time": 6.5,
+      "description": "subtitle start"
+    },
+    "reserve__intro.001.1.subtitle.1.end": {
+      "time": 9.055,
+      "description": "subtitle end"
+    },
+    "reserve__intro.001.1.subtitle.2.start": {
+      "time": 9.4,
+      "description": "subtitle start"
+    },
+    "reserve__intro.001.1.subtitle.2.end": {
+      "time": 14.685,
+      "description": "subtitle end"
+    },
+    "reserve__intro.001.1.start": {
+      "time": 3.5,
+      "description": "logical slice start"
+    },
+    "reserve__intro.001.1.end": {
+      "time": 14.685,
+      "description": "logical slice end"
+    },
+    "reserve__intro.001.1.speech_end": {
+      "time": 14.685,
+      "description": "last TTS word end"
+    },
+    "reserve__intro.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__intro.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__intro.001.1.visual.source_end": {
+      "time": 10.235,
+      "description": "visual source end"
+    },
+    "reserve__gold.001.subtitle.0.start": {
+      "time": 14.685,
+      "description": "subtitle start"
+    },
+    "reserve__gold.001.subtitle.0.end": {
+      "time": 16.635,
+      "description": "subtitle end"
+    },
+    "reserve__gold.001.subtitle.1.start": {
+      "time": 17.0,
+      "description": "subtitle start"
+    },
+    "reserve__gold.001.subtitle.1.end": {
+      "time": 21.86,
+      "description": "subtitle end"
+    },
+    "reserve__gold.001.start": {
+      "time": 14.685,
+      "description": "logical slice start"
+    },
+    "reserve__gold.001.end": {
+      "time": 21.86,
+      "description": "logical slice end"
+    },
+    "reserve__gold.001.speech_end": {
+      "time": 21.86,
+      "description": "last TTS word end"
+    },
+    "reserve__gold.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__gold.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__gold.001.visual.source_end": {
+      "time": 5.7,
+      "description": "visual source end"
+    },
+    "reserve__deck.001.subtitle.0.start": {
+      "time": 21.86,
+      "description": "subtitle start"
+    },
+    "reserve__deck.001.subtitle.0.end": {
+      "time": 29.505,
+      "description": "subtitle end"
+    },
+    "reserve__deck.001.start": {
+      "time": 21.86,
+      "description": "logical slice start"
+    },
+    "reserve__deck.001.end": {
+      "time": 29.505,
+      "description": "logical slice end"
+    },
+    "reserve__deck.001.speech_end": {
+      "time": 29.505,
+      "description": "last TTS word end"
+    },
+    "reserve__deck.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__deck.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__deck.001.visual.source_end": {
+      "time": 5.415,
+      "description": "visual source end"
+    },
+    "reserve__notes_intro.001.subtitle.0.start": {
+      "time": 29.505,
+      "description": "subtitle start"
+    },
+    "reserve__notes_intro.001.subtitle.0.end": {
+      "time": 38.192,
+      "description": "subtitle end"
+    },
+    "reserve__notes_intro.001.start": {
+      "time": 29.505,
+      "description": "logical slice start"
+    },
+    "reserve__notes_intro.001.end": {
+      "time": 38.192,
+      "description": "logical slice end"
+    },
+    "reserve__notes_intro.001.speech_end": {
+      "time": 38.192,
+      "description": "last TTS word end"
+    },
+    "reserve__notes_intro.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__notes_intro.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__notes_intro.001.visual.source_end": {
+      "time": 6.9,
+      "description": "visual source end"
+    },
+    "reserve__limit_gold.001.2.subtitle.0.start": {
+      "time": 38.192,
+      "description": "subtitle start"
+    },
+    "reserve__limit_gold.001.2.subtitle.0.end": {
+      "time": 43.802,
+      "description": "subtitle end"
+    },
+    "reserve__limit_gold.001.2.start": {
+      "time": 38.192,
+      "description": "logical slice start"
+    },
+    "reserve__limit_gold.001.2.end": {
+      "time": 43.802,
+      "description": "logical slice end"
+    },
+    "reserve__limit_gold.001.2.speech_end": {
+      "time": 43.802,
+      "description": "last TTS word end"
+    },
+    "reserve__limit_gold.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__limit_gold.001.2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__limit_gold.001.2.visual.source_end": {
+      "time": 3.2,
+      "description": "visual source end"
+    },
+    "reserve__limit_hand.001.1.subtitle.0.start": {
+      "time": 43.802,
+      "description": "subtitle start"
+    },
+    "reserve__limit_hand.001.1.subtitle.0.end": {
+      "time": 46.932,
+      "description": "subtitle end"
+    },
+    "reserve__limit_hand.001.1.subtitle.1.start": {
+      "time": 47.367,
+      "description": "subtitle start"
+    },
+    "reserve__limit_hand.001.1.subtitle.1.end": {
+      "time": 51.987,
+      "description": "subtitle end"
+    },
+    "reserve__limit_hand.001.1.start": {
+      "time": 43.802,
+      "description": "logical slice start"
+    },
+    "reserve__limit_hand.001.1.end": {
+      "time": 51.987,
+      "description": "logical slice end"
+    },
+    "reserve__limit_hand.001.1.speech_end": {
+      "time": 51.987,
+      "description": "last TTS word end"
+    },
+    "reserve__limit_hand.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__limit_hand.001.1.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__limit_hand.001.1.visual.source_end": {
+      "time": 6.9,
+      "description": "visual source end"
+    },
+    "reserve__private.001.1.subtitle.0.start": {
+      "time": 51.987,
+      "description": "subtitle start"
+    },
+    "reserve__private.001.1.subtitle.0.end": {
+      "time": 58.232,
+      "description": "subtitle end"
+    },
+    "reserve__private.001.1.subtitle.1.start": {
+      "time": 58.608,
+      "description": "subtitle start"
+    },
+    "reserve__private.001.1.subtitle.1.end": {
+      "time": 63.097,
+      "description": "subtitle end"
+    },
+    "reserve__private.001.1.start": {
+      "time": 51.987,
+      "description": "logical slice start"
+    },
+    "reserve__private.001.1.end": {
+      "time": 63.097,
+      "description": "logical slice end"
+    },
+    "reserve__private.001.1.speech_end": {
+      "time": 63.097,
+      "description": "last TTS word end"
+    },
+    "reserve__private.002.subtitle.0.start": {
+      "time": 63.097,
+      "description": "subtitle start"
+    },
+    "reserve__private.002.subtitle.0.end": {
+      "time": 69.277,
+      "description": "subtitle end"
+    },
+    "reserve__private.002.start": {
+      "time": 63.097,
+      "description": "logical slice start"
+    },
+    "reserve__private.002.end": {
+      "time": 69.277,
+      "description": "logical slice end"
+    },
+    "reserve__private.002.speech_end": {
+      "time": 69.277,
+      "description": "last TTS word end"
+    },
+    "reserve__private.002.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "reserve__private.002.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "reserve__private.002.visual.source_end": {
+      "time": 4.52,
+      "description": "visual source end"
+    },
+    "reserve__not_purchase.001.subtitle.0.start": {
+      "time": 69.277,
+      "description": "subtitle start"
+    },
+    "reserve__not_purchase.001.subtitle.0.end": {
+      "time": 75.984,
+      "description": "subtitle end"
+    },
+    "reserve__not_purchase.001.start": {
+      "time": 69.277,
+      "description": "logical slice start"
+    },
+    "reserve__not_purchase.001.end": {
+      "time": 75.984,
+      "description": "logical slice end"
+    },
+    "reserve__not_purchase.001.speech_end": {
+      "time": 75.984,
+      "description": "last TTS word end"
+    },
+    "purchase_reserved__title_3_4.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__title_3_4.subtitle.0.end": {
+      "time": 4.445,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__title_3_4.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "purchase_reserved__title_3_4.end": {
+      "time": 4.445,
+      "description": "logical slice end"
+    },
+    "purchase_reserved__title_3_4.speech_end": {
+      "time": 4.445,
+      "description": "last TTS word end"
+    },
+    "purchase_reserved__title_3_4.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "purchase_reserved__title_3_4.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "purchase_reserved__title_3_4.visual.source_end": {
+      "time": 4.34,
+      "description": "visual source end"
+    },
+    "purchase_reserved__001.subtitle.0.start": {
+      "time": 4.015,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__001.subtitle.0.end": {
+      "time": 8.915,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__001.subtitle.1.start": {
+      "time": 9.455,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__001.subtitle.1.end": {
+      "time": 11.235,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__001.subtitle.2.start": {
+      "time": 11.44,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__001.subtitle.2.end": {
+      "time": 13.815,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__001.subtitle.3.start": {
+      "time": 14.08,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__001.subtitle.3.end": {
+      "time": 17.435,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__001.subtitle.4.start": {
+      "time": 18.055,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__001.subtitle.4.end": {
+      "time": 20.025,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__001.subtitle.5.start": {
+      "time": 20.54,
+      "description": "subtitle start"
+    },
+    "purchase_reserved__001.subtitle.5.end": {
+      "time": 23.664,
+      "description": "subtitle end"
+    },
+    "purchase_reserved__001.start": {
+      "time": 4.015,
+      "description": "logical slice start"
+    },
+    "purchase_reserved__001.end": {
+      "time": 23.664,
+      "description": "logical slice end"
+    },
+    "purchase_reserved__001.speech_end": {
+      "time": 23.664,
+      "description": "last TTS word end"
+    },
+    "purchase_reserved__001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "purchase_reserved__001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "purchase_reserved__001.visual.source_end": {
+      "time": 19.649,
+      "description": "visual source end"
+    },
+    "summary__title_3_5.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "summary__title_3_5.subtitle.0.end": {
+      "time": 3.775,
+      "description": "subtitle end"
+    },
+    "summary__title_3_5.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "summary__title_3_5.end": {
+      "time": 3.775,
+      "description": "logical slice end"
+    },
+    "summary__title_3_5.speech_end": {
+      "time": 3.775,
+      "description": "last TTS word end"
+    },
+    "summary__title_3_5.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "summary__title_3_5.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "summary__title_3_5.visual.source_end": {
+      "time": 3.98,
+      "description": "visual source end"
+    },
+    "summary__001.subtitle.0.start": {
+      "time": 3.38,
+      "description": "subtitle start"
+    },
+    "summary__001.subtitle.0.end": {
+      "time": 6.185,
+      "description": "subtitle end"
+    },
+    "summary__001.subtitle.1.start": {
+      "time": 6.48,
+      "description": "subtitle start"
+    },
+    "summary__001.subtitle.1.end": {
+      "time": 10.475,
+      "description": "subtitle end"
+    },
+    "summary__001.start": {
+      "time": 3.38,
+      "description": "logical slice start"
+    },
+    "summary__001.end": {
+      "time": 10.475,
+      "description": "logical slice end"
+    },
+    "summary__001.speech_end": {
+      "time": 10.475,
+      "description": "last TTS word end"
+    },
+    "summary__002.1.subtitle.0.start": {
+      "time": 10.475,
+      "description": "subtitle start"
+    },
+    "summary__002.1.subtitle.0.end": {
+      "time": 13.265,
+      "description": "subtitle end"
+    },
+    "summary__002.1.subtitle.1.start": {
+      "time": 13.665,
+      "description": "subtitle start"
+    },
+    "summary__002.1.subtitle.1.end": {
+      "time": 16.775,
+      "description": "subtitle end"
+    },
+    "summary__002.1.subtitle.2.start": {
+      "time": 17.08,
+      "description": "subtitle start"
+    },
+    "summary__002.1.subtitle.2.end": {
+      "time": 19.455,
+      "description": "subtitle end"
+    },
+    "summary__002.1.start": {
+      "time": 10.475,
+      "description": "logical slice start"
+    },
+    "summary__002.1.end": {
+      "time": 19.455,
+      "description": "logical slice end"
+    },
+    "summary__002.1.speech_end": {
+      "time": 19.455,
+      "description": "last TTS word end"
+    },
+    "summary__002.2.subtitle.0.start": {
+      "time": 19.455,
+      "description": "subtitle start"
+    },
+    "summary__002.2.subtitle.0.end": {
+      "time": 22.704,
+      "description": "subtitle end"
+    },
+    "summary__002.2.start": {
+      "time": 19.455,
+      "description": "logical slice start"
+    },
+    "summary__002.2.end": {
+      "time": 22.704,
+      "description": "logical slice end"
+    },
+    "summary__002.2.speech_end": {
+      "time": 22.704,
+      "description": "last TTS word end"
+    },
+    "end__title_4.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "end__title_4.subtitle.0.end": {
+      "time": 2.715,
+      "description": "subtitle end"
+    },
+    "end__title_4.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "end__title_4.end": {
+      "time": 2.715,
+      "description": "logical slice end"
+    },
+    "end__title_4.speech_end": {
+      "time": 2.715,
+      "description": "last TTS word end"
+    },
+    "end__title_4.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "end__title_4.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "end__title_4.visual.source_end": {
+      "time": 3.17,
+      "description": "visual source end"
+    },
+    "end__trigger.001.subtitle.0.start": {
+      "time": 2.25,
+      "description": "subtitle start"
+    },
+    "end__trigger.001.subtitle.0.end": {
+      "time": 7.275,
+      "description": "subtitle end"
+    },
+    "end__trigger.001.start": {
+      "time": 2.25,
+      "description": "logical slice start"
+    },
+    "end__trigger.001.end": {
+      "time": 7.275,
+      "description": "logical slice end"
+    },
+    "end__trigger.001.speech_end": {
+      "time": 7.275,
+      "description": "last TTS word end"
+    },
+    "end__trigger.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "end__trigger.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "end__trigger.001.visual.source_end": {
+      "time": 5.025,
+      "description": "visual source end"
+    },
+    "end__final_rounds.001.1.subtitle.0.start": {
+      "time": 7.275,
+      "description": "subtitle start"
+    },
+    "end__final_rounds.001.1.subtitle.0.end": {
+      "time": 10.375,
+      "description": "subtitle end"
+    },
+    "end__final_rounds.001.1.subtitle.1.start": {
+      "time": 10.63,
+      "description": "subtitle start"
+    },
+    "end__final_rounds.001.1.subtitle.1.end": {
+      "time": 12.045,
+      "description": "subtitle end"
+    },
+    "end__final_rounds.001.1.subtitle.2.start": {
+      "time": 12.35,
+      "description": "subtitle start"
+    },
+    "end__final_rounds.001.1.subtitle.2.end": {
+      "time": 17.755,
+      "description": "subtitle end"
+    },
+    "end__final_rounds.001.1.start": {
+      "time": 7.275,
+      "description": "logical slice start"
+    },
+    "end__final_rounds.001.1.end": {
+      "time": 17.755,
+      "description": "logical slice end"
+    },
+    "end__final_rounds.001.1.speech_end": {
+      "time": 17.755,
+      "description": "last TTS word end"
+    },
+    "end__example.001.1.subtitle.0.start": {
+      "time": 17.755,
+      "description": "subtitle start"
+    },
+    "end__example.001.1.subtitle.0.end": {
+      "time": 22.145,
+      "description": "subtitle end"
+    },
+    "end__example.001.1.subtitle.1.start": {
+      "time": 22.15,
+      "description": "subtitle start"
+    },
+    "end__example.001.1.subtitle.1.end": {
+      "time": 27.045,
+      "description": "subtitle end"
+    },
+    "end__example.001.1.subtitle.2.start": {
+      "time": 27.475,
+      "description": "subtitle start"
+    },
+    "end__example.001.1.subtitle.2.end": {
+      "time": 34.785,
+      "description": "subtitle end"
+    },
+    "end__example.001.1.start": {
+      "time": 17.755,
+      "description": "logical slice start"
+    },
+    "end__example.001.1.end": {
+      "time": 34.785,
+      "description": "logical slice end"
+    },
+    "end__example.001.1.speech_end": {
+      "time": 34.785,
+      "description": "last TTS word end"
+    },
+    "end__winner.001.subtitle.0.start": {
+      "time": 34.785,
+      "description": "subtitle start"
+    },
+    "end__winner.001.subtitle.0.end": {
+      "time": 37.96,
+      "description": "subtitle end"
+    },
+    "end__winner.001.subtitle.1.start": {
+      "time": 38.35,
+      "description": "subtitle start"
+    },
+    "end__winner.001.subtitle.1.end": {
+      "time": 42.94,
+      "description": "subtitle end"
+    },
+    "end__winner.001.start": {
+      "time": 34.785,
+      "description": "logical slice start"
+    },
+    "end__winner.001.end": {
+      "time": 42.94,
+      "description": "logical slice end"
+    },
+    "end__winner.001.speech_end": {
+      "time": 42.94,
+      "description": "last TTS word end"
+    },
+    "end__winner.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "end__winner.001.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "end__winner.001.visual.source_end": {
+      "time": 7.705,
+      "description": "visual source end"
+    },
+    "end__winner.002.subtitle.0.start": {
+      "time": 42.94,
+      "description": "subtitle start"
+    },
+    "end__winner.002.subtitle.0.end": {
+      "time": 48.7,
+      "description": "subtitle end"
+    },
+    "end__winner.002.subtitle.1.start": {
+      "time": 49.075,
+      "description": "subtitle start"
+    },
+    "end__winner.002.subtitle.1.end": {
+      "time": 55.17,
+      "description": "subtitle end"
+    },
+    "end__winner.002.start": {
+      "time": 42.94,
+      "description": "logical slice start"
+    },
+    "end__winner.002.end": {
+      "time": 55.17,
+      "description": "logical slice end"
+    },
+    "end__winner.002.speech_end": {
+      "time": 55.17,
+      "description": "last TTS word end"
+    },
+    "end__winner.002.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "end__winner.002.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "end__winner.002.visual.source_end": {
+      "time": 11.8,
+      "description": "visual source end"
+    },
+    "end__winner.003.subtitle.0.start": {
+      "time": 55.17,
+      "description": "subtitle start"
+    },
+    "end__winner.003.subtitle.0.end": {
+      "time": 61.68,
+      "description": "subtitle end"
+    },
+    "end__winner.003.subtitle.1.start": {
+      "time": 62.141,
+      "description": "subtitle start"
+    },
+    "end__winner.003.subtitle.1.end": {
+      "time": 65.904,
+      "description": "subtitle end"
+    },
+    "end__winner.003.start": {
+      "time": 55.17,
+      "description": "logical slice start"
+    },
+    "end__winner.003.end": {
+      "time": 65.904,
+      "description": "logical slice end"
+    },
+    "end__winner.003.speech_end": {
+      "time": 65.904,
+      "description": "last TTS word end"
+    },
+    "end__winner.003.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "end__winner.003.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "end__winner.003.visual.source_end": {
+      "time": 10.366,
+      "description": "visual source end"
+    }
+  },
+  "cues": {
+    "intro/title_1": [
+      {
+        "id": "intro__title_1",
+        "asset": "media/tts/full/bg.intro.mp3",
+        "start_ref": "intro__title_1.start",
+        "end_ref": "intro__title_1.end",
+        "speech_end_ref": "intro__title_1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "intro__title_1.subtitle.0.start",
+            "end_ref": "intro__title_1.subtitle.0.end",
+            "text": "一，背景。"
+          }
+        ]
+      }
+    ],
+    "intro/001": [
+      {
+        "id": "intro__001",
+        "asset": "media/tts/full/bg.intro.mp3",
+        "start_ref": "intro__001.start",
+        "end_ref": "intro__001.end",
+        "speech_end_ref": "intro__001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "intro__001.subtitle.0.start",
+            "end_ref": "intro__001.subtitle.0.end",
+            "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。"
+          },
+          {
+            "start_ref": "intro__001.subtitle.1.start",
+            "end_ref": "intro__001.subtitle.1.end",
+            "text": "玩家将扮演一位丝路商人，"
+          },
+          {
+            "start_ref": "intro__001.subtitle.2.start",
+            "end_ref": "intro__001.subtitle.2.end",
+            "text": "在宝石贸易中积累财富与声望，结识各地的贵族，"
+          },
+          {
+            "start_ref": "intro__001.subtitle.3.start",
+            "end_ref": "intro__001.subtitle.3.end",
+            "text": "最终成为最负盛名的贸易商人。"
+          }
+        ]
+      }
+    ],
+    "setup_cards/title_2_1": [
+      {
+        "id": "setup_cards__title_2_1",
+        "asset": "media/tts/full/setup.cards.mp3",
+        "start_ref": "setup_cards__title_2_1.start",
+        "end_ref": "setup_cards__title_2_1.end",
+        "speech_end_ref": "setup_cards__title_2_1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_cards__title_2_1.subtitle.0.start",
+            "end_ref": "setup_cards__title_2_1.subtitle.0.end",
+            "text": "2.1，发展卡牌。"
+          }
+        ]
+      }
+    ],
+    "setup_cards/001.1": [
+      {
+        "id": "setup_cards__001.1",
+        "asset": "media/tts/full/setup.cards.mp3",
+        "start_ref": "setup_cards__001.1.start",
+        "end_ref": "setup_cards__001.1.end",
+        "speech_end_ref": "setup_cards__001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_cards__001.1.subtitle.0.start",
+            "end_ref": "setup_cards__001.1.subtitle.0.end",
+            "text": "这是发展卡牌，共90张。"
+          }
+        ]
+      }
+    ],
+    "setup_cards/001.2": [
+      {
+        "id": "setup_cards__001.2",
+        "asset": "media/tts/full/setup.cards.mp3",
+        "start_ref": "setup_cards__001.2.start",
+        "end_ref": "setup_cards__001.2.end",
+        "speech_end_ref": "setup_cards__001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_cards__001.2.subtitle.0.start",
+            "end_ref": "setup_cards__001.2.subtitle.0.end",
+            "text": "根据背面可以将所有发展卡牌分为三类，"
+          },
+          {
+            "start_ref": "setup_cards__001.2.subtitle.1.start",
+            "end_ref": "setup_cards__001.2.subtitle.1.end",
+            "text": "分别是40张绿色的一级发展卡牌、"
+          },
+          {
+            "start_ref": "setup_cards__001.2.subtitle.2.start",
+            "end_ref": "setup_cards__001.2.subtitle.2.end",
+            "text": "30张黄色的二级发展卡牌，"
+          },
+          {
+            "start_ref": "setup_cards__001.2.subtitle.3.start",
+            "end_ref": "setup_cards__001.2.subtitle.3.end",
+            "text": "和20张蓝色的三级发展卡牌。"
+          }
+        ]
+      }
+    ],
+    "setup_cards/002.1": [
+      {
+        "id": "setup_cards__002.1",
+        "asset": "media/tts/full/setup.cards.mp3",
+        "start_ref": "setup_cards__002.1.start",
+        "end_ref": "setup_cards__002.1.end",
+        "speech_end_ref": "setup_cards__002.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_cards__002.1.subtitle.0.start",
+            "end_ref": "setup_cards__002.1.subtitle.0.end",
+            "text": "将这三类牌分别洗混后按顺序摆成一列。"
+          },
+          {
+            "start_ref": "setup_cards__002.1.subtitle.1.start",
+            "end_ref": "setup_cards__002.1.subtitle.1.end",
+            "text": "从每摞牌上方分别翻开四张牌，在一侧摆成一行。"
+          },
+          {
+            "start_ref": "setup_cards__002.1.subtitle.2.start",
+            "end_ref": "setup_cards__002.1.subtitle.2.end",
+            "text": "最终组成一个3乘4的发展卡牌供应堆。"
+          }
+        ]
+      }
+    ],
+    "setup_gems/title_2_2": [
+      {
+        "id": "setup_gems__title_2_2",
+        "asset": "media/tts/full/setup.gems.mp3",
+        "start_ref": "setup_gems__title_2_2.start",
+        "end_ref": "setup_gems__title_2_2.end",
+        "speech_end_ref": "setup_gems__title_2_2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_gems__title_2_2.subtitle.0.start",
+            "end_ref": "setup_gems__title_2_2.subtitle.0.end",
+            "text": "2.2，宝石与黄金。"
+          }
+        ]
+      }
+    ],
+    "setup_gems/001.1": [
+      {
+        "id": "setup_gems__001.1",
+        "asset": "media/tts/full/setup.gems.mp3",
+        "start_ref": "setup_gems__001.1.start",
+        "end_ref": "setup_gems__001.1.end",
+        "speech_end_ref": "setup_gems__001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_gems__001.1.subtitle.0.start",
+            "end_ref": "setup_gems__001.1.subtitle.0.end",
+            "text": "这些是标记，后续称之为宝石。"
+          },
+          {
+            "start_ref": "setup_gems__001.1.subtitle.1.start",
+            "end_ref": "setup_gems__001.1.subtitle.1.end",
+            "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。"
+          },
+          {
+            "start_ref": "setup_gems__001.1.subtitle.2.start",
+            "end_ref": "setup_gems__001.1.subtitle.2.end",
+            "text": "后续我们就直接以颜色称呼它们了。"
+          }
+        ]
+      }
+    ],
+    "setup_gems/002": [
+      {
+        "id": "setup_gems__002",
+        "asset": "media/tts/full/setup.gems.mp3",
+        "start_ref": "setup_gems__002.start",
+        "end_ref": "setup_gems__002.end",
+        "speech_end_ref": "setup_gems__002.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_gems__002.subtitle.0.start",
+            "end_ref": "setup_gems__002.subtitle.0.end",
+            "text": "这是黄金，黄金不属于宝石。"
+          },
+          {
+            "start_ref": "setup_gems__002.subtitle.1.start",
+            "end_ref": "setup_gems__002.subtitle.1.end",
+            "text": "我们所说的宝石指的就是这五种宝石。"
+          }
+        ]
+      }
+    ],
+    "setup_gems/003.1": [
+      {
+        "id": "setup_gems__003.1",
+        "asset": "media/tts/full/setup.gems.mp3",
+        "start_ref": "setup_gems__003.1.start",
+        "end_ref": "setup_gems__003.1.end",
+        "speech_end_ref": "setup_gems__003.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_gems__003.1.subtitle.0.start",
+            "end_ref": "setup_gems__003.1.subtitle.0.end",
+            "text": "我们需要根据玩家人数拿取对应数量的宝石。"
+          },
+          {
+            "start_ref": "setup_gems__003.1.subtitle.1.start",
+            "end_ref": "setup_gems__003.1.subtitle.1.end",
+            "text": "2人游戏时，每种宝石拿取4枚。"
+          },
+          {
+            "start_ref": "setup_gems__003.1.subtitle.2.start",
+            "end_ref": "setup_gems__003.1.subtitle.2.end",
+            "text": "3人游戏时，拿取5枚。"
+          },
+          {
+            "start_ref": "setup_gems__003.1.subtitle.3.start",
+            "end_ref": "setup_gems__003.1.subtitle.3.end",
+            "text": "4人游戏时则使用全部的7枚宝石。"
+          },
+          {
+            "start_ref": "setup_gems__003.1.subtitle.4.start",
+            "end_ref": "setup_gems__003.1.subtitle.4.end",
+            "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。"
+          }
+        ]
+      }
+    ],
+    "setup_gems/005.2": [
+      {
+        "id": "setup_gems__005.2",
+        "asset": "media/tts/full/setup.gems.mp3",
+        "start_ref": "setup_gems__005.2.start",
+        "end_ref": "setup_gems__005.2.end",
+        "speech_end_ref": "setup_gems__005.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_gems__005.2.subtitle.0.start",
+            "end_ref": "setup_gems__005.2.subtitle.0.end",
+            "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。"
+          },
+          {
+            "start_ref": "setup_gems__005.2.subtitle.1.start",
+            "end_ref": "setup_gems__005.2.subtitle.1.end",
+            "text": "其余的宝石放回盒子。"
+          }
+        ]
+      }
+    ],
+    "setup_players/title_2_3": [
+      {
+        "id": "setup_players__title_2_3",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__title_2_3.start",
+        "end_ref": "setup_players__title_2_3.end",
+        "speech_end_ref": "setup_players__title_2_3.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__title_2_3.subtitle.0.start",
+            "end_ref": "setup_players__title_2_3.subtitle.0.end",
+            "text": "2.3，贵族板块。"
+          }
+        ]
+      }
+    ],
+    "setup_players/nobles.001.1": [
+      {
+        "id": "setup_players__nobles.001.1",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__nobles.001.1.start",
+        "end_ref": "setup_players__nobles.001.1.end",
+        "speech_end_ref": "setup_players__nobles.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__nobles.001.1.subtitle.0.start",
+            "end_ref": "setup_players__nobles.001.1.subtitle.0.end",
+            "text": "这些是贵族板块。"
+          }
+        ]
+      }
+    ],
+    "setup_players/nobles.001.2": [
+      {
+        "id": "setup_players__nobles.001.2",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__nobles.001.2.start",
+        "end_ref": "setup_players__nobles.001.2.end",
+        "speech_end_ref": "setup_players__nobles.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__nobles.001.2.subtitle.0.start",
+            "end_ref": "setup_players__nobles.001.2.subtitle.0.end",
+            "text": "从所有的贵族板块中随机抽出玩家数量+1块，"
+          },
+          {
+            "start_ref": "setup_players__nobles.001.2.subtitle.1.start",
+            "end_ref": "setup_players__nobles.001.2.subtitle.1.end",
+            "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
+          }
+        ]
+      }
+    ],
+    "setup_players/nobles.002": [
+      {
+        "id": "setup_players__nobles.002",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__nobles.002.start",
+        "end_ref": "setup_players__nobles.002.end",
+        "speech_end_ref": "setup_players__nobles.002.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__nobles.002.subtitle.0.start",
+            "end_ref": "setup_players__nobles.002.subtitle.0.end",
+            "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。"
+          }
+        ]
+      }
+    ],
+    "setup_players/title_2_4": [
+      {
+        "id": "setup_players__title_2_4",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__title_2_4.start",
+        "end_ref": "setup_players__title_2_4.end",
+        "speech_end_ref": "setup_players__title_2_4.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__title_2_4.subtitle.0.start",
+            "end_ref": "setup_players__title_2_4.subtitle.0.end",
+            "text": "2.4，起始玩家。"
+          }
+        ]
+      }
+    ],
+    "setup_players/starting.001.1": [
+      {
+        "id": "setup_players__starting.001.1",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__starting.001.1.start",
+        "end_ref": "setup_players__starting.001.1.end",
+        "speech_end_ref": "setup_players__starting.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__starting.001.1.subtitle.0.start",
+            "end_ref": "setup_players__starting.001.1.subtitle.0.end",
+            "text": "现在需要决定起始玩家。"
+          },
+          {
+            "start_ref": "setup_players__starting.001.1.subtitle.1.start",
+            "end_ref": "setup_players__starting.001.1.subtitle.1.end",
+            "text": "规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家。"
+          }
+        ]
+      }
+    ],
+    "setup_players/starting.001.3": [
+      {
+        "id": "setup_players__starting.001.3",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__starting.001.3.start",
+        "end_ref": "setup_players__starting.001.3.end",
+        "speech_end_ref": "setup_players__starting.001.3.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__starting.001.3.subtitle.0.start",
+            "end_ref": "setup_players__starting.001.3.subtitle.0.end",
+            "text": "这是起始玩家标记。"
+          },
+          {
+            "start_ref": "setup_players__starting.001.3.subtitle.1.start",
+            "end_ref": "setup_players__starting.001.3.subtitle.1.end",
+            "text": "起始玩家获得这枚标记。"
+          }
+        ]
+      }
+    ],
+    "setup_players/title_2_5": [
+      {
+        "id": "setup_players__title_2_5",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__title_2_5.start",
+        "end_ref": "setup_players__title_2_5.end",
+        "speech_end_ref": "setup_players__title_2_5.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__title_2_5.subtitle.0.start",
+            "end_ref": "setup_players__title_2_5.subtitle.0.end",
+            "text": "2.5，设置完成。"
+          }
+        ]
+      }
+    ],
+    "setup_players/end.001.1": [
+      {
+        "id": "setup_players__end.001.1",
+        "asset": "media/tts/full/setup.players.mp3",
+        "start_ref": "setup_players__end.001.1.start",
+        "end_ref": "setup_players__end.001.1.end",
+        "speech_end_ref": "setup_players__end.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup_players__end.001.1.subtitle.0.start",
+            "end_ref": "setup_players__end.001.1.subtitle.0.end",
+            "text": "至此，整个设置环节就大功告成了。"
+          },
+          {
+            "start_ref": "setup_players__end.001.1.subtitle.1.start",
+            "end_ref": "setup_players__end.001.1.subtitle.1.end",
+            "text": "接下来可以正式开始游戏了。"
+          }
+        ]
+      }
+    ],
+    "turn/title_3": [
+      {
+        "id": "turn__title_3",
+        "asset": "media/tts/full/action.turn.mp3",
+        "start_ref": "turn__title_3.start",
+        "end_ref": "turn__title_3.end",
+        "speech_end_ref": "turn__title_3.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "turn__title_3.subtitle.0.start",
+            "end_ref": "turn__title_3.subtitle.0.end",
+            "text": "3，行动。"
+          }
+        ]
+      }
+    ],
+    "turn/001": [
+      {
+        "id": "turn__001",
+        "asset": "media/tts/full/action.turn.mp3",
+        "start_ref": "turn__001.start",
+        "end_ref": "turn__001.end",
+        "speech_end_ref": "turn__001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "turn__001.subtitle.0.start",
+            "end_ref": "turn__001.subtitle.0.end",
+            "text": "整场游戏将持续若干个回合，从起始玩家开始，"
+          },
+          {
+            "start_ref": "turn__001.subtitle.1.start",
+            "end_ref": "turn__001.subtitle.1.end",
+            "text": "按顺时针顺序所有玩家依次进行行动。"
+          }
+        ]
+      }
+    ],
+    "turn/002": [
+      {
+        "id": "turn__002",
+        "asset": "media/tts/full/action.turn.mp3",
+        "start_ref": "turn__002.start",
+        "end_ref": "turn__002.end",
+        "speech_end_ref": "turn__002.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "turn__002.subtitle.0.start",
+            "end_ref": "turn__002.subtitle.0.end",
+            "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行：\n"
+          }
+        ]
+      }
+    ],
+    "take_gems/title_3_1": [
+      {
+        "id": "take_gems__title_3_1",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__title_3_1.start",
+        "end_ref": "take_gems__title_3_1.end",
+        "speech_end_ref": "take_gems__title_3_1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__title_3_1.subtitle.0.start",
+            "end_ref": "take_gems__title_3_1.subtitle.0.end",
+            "text": "3.1，从宝石供应堆拿取宝石。"
+          }
+        ]
+      }
+    ],
+    "take_gems/different.001": [
+      {
+        "id": "take_gems__different.001",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__different.001.start",
+        "end_ref": "take_gems__different.001.end",
+        "speech_end_ref": "take_gems__different.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__different.001.subtitle.0.start",
+            "end_ref": "take_gems__different.001.subtitle.0.end",
+            "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。"
+          }
+        ]
+      }
+    ],
+    "take_gems/same.001": [
+      {
+        "id": "take_gems__same.001",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__same.001.start",
+        "end_ref": "take_gems__same.001.end",
+        "speech_end_ref": "take_gems__same.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__same.001.subtitle.0.start",
+            "end_ref": "take_gems__same.001.subtitle.0.end",
+            "text": "当某种宝石在供应堆中的数量大于等于4时，"
+          },
+          {
+            "start_ref": "take_gems__same.001.subtitle.1.start",
+            "end_ref": "take_gems__same.001.subtitle.1.end",
+            "text": "也可以改为拿取这种宝石两枚。"
+          }
+        ]
+      }
+    ],
+    "take_gems/same.002": [
+      {
+        "id": "take_gems__same.002",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__same.002.start",
+        "end_ref": "take_gems__same.002.end",
+        "speech_end_ref": "take_gems__same.002.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__same.002.subtitle.0.start",
+            "end_ref": "take_gems__same.002.subtitle.0.end",
+            "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，"
+          },
+          {
+            "start_ref": "take_gems__same.002.subtitle.1.start",
+            "end_ref": "take_gems__same.002.subtitle.1.end",
+            "text": "否则就不能这样拿取。"
+          }
+        ]
+      }
+    ],
+    "take_gems/draw_rule.001.1": [
+      {
+        "id": "take_gems__draw_rule.001.1",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__draw_rule.001.1.start",
+        "end_ref": "take_gems__draw_rule.001.1.end",
+        "speech_end_ref": "take_gems__draw_rule.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__draw_rule.001.1.subtitle.0.start",
+            "end_ref": "take_gems__draw_rule.001.1.subtitle.0.end",
+            "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。"
+          }
+        ]
+      }
+    ],
+    "take_gems/draw_rule.001.2": [
+      {
+        "id": "take_gems__draw_rule.001.2",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__draw_rule.001.2.start",
+        "end_ref": "take_gems__draw_rule.001.2.end",
+        "speech_end_ref": "take_gems__draw_rule.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__draw_rule.001.2.subtitle.0.start",
+            "end_ref": "take_gems__draw_rule.001.2.subtitle.0.end",
+            "text": "当供应堆宝石不足时，尽可能拿取宝石。"
+          }
+        ]
+      }
+    ],
+    "take_gems/limit.001.1": [
+      {
+        "id": "take_gems__limit.001.1",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__limit.001.1.start",
+        "end_ref": "take_gems__limit.001.1.end",
+        "speech_end_ref": "take_gems__limit.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__limit.001.1.subtitle.0.start",
+            "end_ref": "take_gems__limit.001.1.subtitle.0.end",
+            "text": "玩家持有的宝石和黄金总数上限为10个。"
+          },
+          {
+            "start_ref": "take_gems__limit.001.1.subtitle.1.start",
+            "end_ref": "take_gems__limit.001.1.subtitle.1.end",
+            "text": "任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
+          }
+        ]
+      }
+    ],
+    "take_gems/limit.001.2": [
+      {
+        "id": "take_gems__limit.001.2",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__limit.001.2.start",
+        "end_ref": "take_gems__limit.001.2.end",
+        "speech_end_ref": "take_gems__limit.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__limit.001.2.subtitle.0.start",
+            "end_ref": "take_gems__limit.001.2.subtitle.0.end",
+            "text": "任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
+          }
+        ]
+      }
+    ],
+    "take_gems/public.001.1": [
+      {
+        "id": "take_gems__public.001.1",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__public.001.1.start",
+        "end_ref": "take_gems__public.001.1.end",
+        "speech_end_ref": "take_gems__public.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__public.001.1.subtitle.0.start",
+            "end_ref": "take_gems__public.001.1.subtitle.0.end",
+            "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。"
+          }
+        ]
+      }
+    ],
+    "take_gems/public.001.2": [
+      {
+        "id": "take_gems__public.001.2",
+        "asset": "media/tts/full/action.take.mp3",
+        "start_ref": "take_gems__public.001.2.start",
+        "end_ref": "take_gems__public.001.2.end",
+        "speech_end_ref": "take_gems__public.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "take_gems__public.001.2.subtitle.0.start",
+            "end_ref": "take_gems__public.001.2.subtitle.0.end",
+            "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。"
+          }
+        ]
+      }
+    ],
+    "cards/title_3_2_1": [
+      {
+        "id": "cards__title_3_2_1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__title_3_2_1.start",
+        "end_ref": "cards__title_3_2_1.end",
+        "speech_end_ref": "cards__title_3_2_1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__title_3_2_1.subtitle.0.start",
+            "end_ref": "cards__title_3_2_1.subtitle.0.end",
+            "text": "3.2.1，认识发展卡牌。"
+          }
+        ]
+      }
+    ],
+    "cards/intro.001": [
+      {
+        "id": "cards__intro.001",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__intro.001.start",
+        "end_ref": "cards__intro.001.end",
+        "speech_end_ref": "cards__intro.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__intro.001.subtitle.0.start",
+            "end_ref": "cards__intro.001.subtitle.0.end",
+            "text": "我们介绍一下发展卡牌。"
+          }
+        ]
+      }
+    ],
+    "cards/cost.001.1": [
+      {
+        "id": "cards__cost.001.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__cost.001.1.start",
+        "end_ref": "cards__cost.001.1.end",
+        "speech_end_ref": "cards__cost.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__cost.001.1.subtitle.0.start",
+            "end_ref": "cards__cost.001.1.subtitle.0.end",
+            "text": "左下角是这张牌的价格。"
+          },
+          {
+            "start_ref": "cards__cost.001.1.subtitle.1.start",
+            "end_ref": "cards__cost.001.1.subtitle.1.end",
+            "text": "要想购买这张牌，"
+          }
+        ]
+      }
+    ],
+    "cards/cost.001.2": [
+      {
+        "id": "cards__cost.001.2",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__cost.001.2.start",
+        "end_ref": "cards__cost.001.2.end",
+        "speech_end_ref": "cards__cost.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__cost.001.2.subtitle.0.start",
+            "end_ref": "cards__cost.001.2.subtitle.0.end",
+            "text": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，"
+          },
+          {
+            "start_ref": "cards__cost.001.2.subtitle.1.start",
+            "end_ref": "cards__cost.001.2.subtitle.1.end",
+            "text": "之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。"
+          }
+        ]
+      }
+    ],
+    "cards/market.001.1": [
+      {
+        "id": "cards__market.001.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__market.001.1.start",
+        "end_ref": "cards__market.001.1.end",
+        "speech_end_ref": "cards__market.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__market.001.1.subtitle.0.start",
+            "end_ref": "cards__market.001.1.subtitle.0.end",
+            "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，"
+          },
+          {
+            "start_ref": "cards__market.001.1.subtitle.1.start",
+            "end_ref": "cards__market.001.1.subtitle.1.end",
+            "text": "并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。"
+          }
+        ]
+      }
+    ],
+    "cards/market.001.2": [
+      {
+        "id": "cards__market.001.2",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__market.001.2.start",
+        "end_ref": "cards__market.001.2.end",
+        "speech_end_ref": "cards__market.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__market.001.2.subtitle.0.start",
+            "end_ref": "cards__market.001.2.subtitle.0.end",
+            "text": "并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。"
+          }
+        ]
+      }
+    ],
+    "cards/prestige.001.1": [
+      {
+        "id": "cards__prestige.001.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__prestige.001.1.start",
+        "end_ref": "cards__prestige.001.1.end",
+        "speech_end_ref": "cards__prestige.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__prestige.001.1.subtitle.0.start",
+            "end_ref": "cards__prestige.001.1.subtitle.0.end",
+            "text": "左上角是这张牌的声望值。"
+          },
+          {
+            "start_ref": "cards__prestige.001.1.subtitle.1.start",
+            "end_ref": "cards__prestige.001.1.subtitle.1.end",
+            "text": "玩家购买发展卡牌后，立即获得对应的声望值。"
+          }
+        ]
+      }
+    ],
+    "cards/prestige.001.2": [
+      {
+        "id": "cards__prestige.001.2",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__prestige.001.2.start",
+        "end_ref": "cards__prestige.001.2.end",
+        "speech_end_ref": "cards__prestige.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__prestige.001.2.subtitle.0.start",
+            "end_ref": "cards__prestige.001.2.subtitle.0.end",
+            "text": "不过并不是所有卡牌都有声望值。"
+          },
+          {
+            "start_ref": "cards__prestige.001.2.subtitle.1.start",
+            "end_ref": "cards__prestige.001.2.subtitle.1.end",
+            "text": "很多一级发展卡牌都没有声望值。"
+          }
+        ]
+      }
+    ],
+    "cards/discount.001": [
+      {
+        "id": "cards__discount.001",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__discount.001.start",
+        "end_ref": "cards__discount.001.end",
+        "speech_end_ref": "cards__discount.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__discount.001.subtitle.0.start",
+            "end_ref": "cards__discount.001.subtitle.0.end",
+            "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。"
+          }
+        ]
+      }
+    ],
+    "cards/discount.002.1": [
+      {
+        "id": "cards__discount.002.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__discount.002.1.start",
+        "end_ref": "cards__discount.002.1.end",
+        "speech_end_ref": "cards__discount.002.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__discount.002.1.subtitle.0.start",
+            "end_ref": "cards__discount.002.1.subtitle.0.end",
+            "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。"
+          }
+        ]
+      }
+    ],
+    "cards/discount.003.1": [
+      {
+        "id": "cards__discount.003.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__discount.003.1.start",
+        "end_ref": "cards__discount.003.1.end",
+        "speech_end_ref": "cards__discount.003.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__discount.003.1.subtitle.0.start",
+            "end_ref": "cards__discount.003.1.subtitle.0.end",
+            "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。"
+          }
+        ]
+      }
+    ],
+    "cards/discount.003.2": [
+      {
+        "id": "cards__discount.003.2",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__discount.003.2.start",
+        "end_ref": "cards__discount.003.2.end",
+        "speech_end_ref": "cards__discount.003.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__discount.003.2.subtitle.0.start",
+            "end_ref": "cards__discount.003.2.subtitle.0.end",
+            "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。"
+          }
+        ]
+      }
+    ],
+    "cards/public.001.1": [
+      {
+        "id": "cards__public.001.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__public.001.1.start",
+        "end_ref": "cards__public.001.1.end",
+        "speech_end_ref": "cards__public.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__public.001.1.subtitle.0.start",
+            "end_ref": "cards__public.001.1.subtitle.0.end",
+            "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。"
+          }
+        ]
+      }
+    ],
+    "cards/limit.001.1": [
+      {
+        "id": "cards__limit.001.1",
+        "asset": "media/tts/full/action.cards.mp3",
+        "start_ref": "cards__limit.001.1.start",
+        "end_ref": "cards__limit.001.1.end",
+        "speech_end_ref": "cards__limit.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards__limit.001.1.subtitle.0.start",
+            "end_ref": "cards__limit.001.1.subtitle.0.end",
+            "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。"
+          }
+        ]
+      }
+    ],
+    "nobles/title_3_2_2": [
+      {
+        "id": "nobles__title_3_2_2",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__title_3_2_2.start",
+        "end_ref": "nobles__title_3_2_2.end",
+        "speech_end_ref": "nobles__title_3_2_2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__title_3_2_2.subtitle.0.start",
+            "end_ref": "nobles__title_3_2_2.subtitle.0.end",
+            "text": "3.2.2，贵族结算。"
+          }
+        ]
+      }
+    ],
+    "nobles/intro.001": [
+      {
+        "id": "nobles__intro.001",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__intro.001.start",
+        "end_ref": "nobles__intro.001.end",
+        "speech_end_ref": "nobles__intro.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__intro.001.subtitle.0.start",
+            "end_ref": "nobles__intro.001.subtitle.0.end",
+            "text": "我们再介绍一下贵族板块。"
+          },
+          {
+            "start_ref": "nobles__intro.001.subtitle.1.start",
+            "end_ref": "nobles__intro.001.subtitle.1.end",
+            "text": "左上角是这位贵族的声望值，"
+          },
+          {
+            "start_ref": "nobles__intro.001.subtitle.2.start",
+            "end_ref": "nobles__intro.001.subtitle.2.end",
+            "text": "下方则是结识这位贵族所需要的条件，"
+          },
+          {
+            "start_ref": "nobles__intro.001.subtitle.3.start",
+            "end_ref": "nobles__intro.001.subtitle.3.end",
+            "text": "也就是已购买的卡牌数量。"
+          }
+        ]
+      }
+    ],
+    "nobles/trigger.001.1": [
+      {
+        "id": "nobles__trigger.001.1",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__trigger.001.1.start",
+        "end_ref": "nobles__trigger.001.1.end",
+        "speech_end_ref": "nobles__trigger.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__trigger.001.1.subtitle.0.start",
+            "end_ref": "nobles__trigger.001.1.subtitle.0.end",
+            "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。"
+          }
+        ]
+      }
+    ],
+    "nobles/forced.001.1": [
+      {
+        "id": "nobles__forced.001.1",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__forced.001.1.start",
+        "end_ref": "nobles__forced.001.1.end",
+        "speech_end_ref": "nobles__forced.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__forced.001.1.subtitle.0.start",
+            "end_ref": "nobles__forced.001.1.subtitle.0.end",
+            "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。"
+          },
+          {
+            "start_ref": "nobles__forced.001.1.subtitle.1.start",
+            "end_ref": "nobles__forced.001.1.subtitle.1.end",
+            "text": "并且这个行动是强制性的，玩家不可以选择跳过。"
+          }
+        ]
+      }
+    ],
+    "nobles/source.001": [
+      {
+        "id": "nobles__source.001",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__source.001.start",
+        "end_ref": "nobles__source.001.end",
+        "speech_end_ref": "nobles__source.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__source.001.subtitle.0.start",
+            "end_ref": "nobles__source.001.subtitle.0.end",
+            "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。"
+          }
+        ]
+      }
+    ],
+    "nobles/choice.001.1": [
+      {
+        "id": "nobles__choice.001.1",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__choice.001.1.start",
+        "end_ref": "nobles__choice.001.1.end",
+        "speech_end_ref": "nobles__choice.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__choice.001.1.subtitle.0.start",
+            "end_ref": "nobles__choice.001.1.subtitle.0.end",
+            "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。"
+          }
+        ]
+      }
+    ],
+    "nobles/repeat.001.1": [
+      {
+        "id": "nobles__repeat.001.1",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__repeat.001.1.start",
+        "end_ref": "nobles__repeat.001.1.end",
+        "speech_end_ref": "nobles__repeat.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__repeat.001.1.subtitle.0.start",
+            "end_ref": "nobles__repeat.001.1.subtitle.0.end",
+            "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
+          }
+        ]
+      }
+    ],
+    "nobles/repeat.001.3": [
+      {
+        "id": "nobles__repeat.001.3",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__repeat.001.3.start",
+        "end_ref": "nobles__repeat.001.3.end",
+        "speech_end_ref": "nobles__repeat.001.3.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__repeat.001.3.subtitle.0.start",
+            "end_ref": "nobles__repeat.001.3.subtitle.0.end",
+            "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。"
+          }
+        ]
+      }
+    ],
+    "nobles/summary.001.1": [
+      {
+        "id": "nobles__summary.001.1",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__summary.001.1.start",
+        "end_ref": "nobles__summary.001.1.end",
+        "speech_end_ref": "nobles__summary.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__summary.001.1.subtitle.0.start",
+            "end_ref": "nobles__summary.001.1.subtitle.0.end",
+            "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。"
+          }
+        ]
+      }
+    ],
+    "nobles/summary.001.2": [
+      {
+        "id": "nobles__summary.001.2",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__summary.001.2.start",
+        "end_ref": "nobles__summary.001.2.end",
+        "speech_end_ref": "nobles__summary.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__summary.001.2.subtitle.0.start",
+            "end_ref": "nobles__summary.001.2.subtitle.0.end",
+            "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。"
+          }
+        ]
+      }
+    ],
+    "nobles/summary.001.3": [
+      {
+        "id": "nobles__summary.001.3",
+        "asset": "media/tts/full/action.nobles.mp3",
+        "start_ref": "nobles__summary.001.3.start",
+        "end_ref": "nobles__summary.001.3.end",
+        "speech_end_ref": "nobles__summary.001.3.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "nobles__summary.001.3.subtitle.0.start",
+            "end_ref": "nobles__summary.001.3.subtitle.0.end",
+            "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。"
+          }
+        ]
+      }
+    ],
+    "reserve/title_3_3": [
+      {
+        "id": "reserve__title_3_3",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__title_3_3.start",
+        "end_ref": "reserve__title_3_3.end",
+        "speech_end_ref": "reserve__title_3_3.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__title_3_3.subtitle.0.start",
+            "end_ref": "reserve__title_3_3.subtitle.0.end",
+            "text": "3.3，保留一张发展卡牌。"
+          }
+        ]
+      }
+    ],
+    "reserve/intro.001.1": [
+      {
+        "id": "reserve__intro.001.1",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__intro.001.1.start",
+        "end_ref": "reserve__intro.001.1.end",
+        "speech_end_ref": "reserve__intro.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__intro.001.1.subtitle.0.start",
+            "end_ref": "reserve__intro.001.1.subtitle.0.end",
+            "text": "除购买外，玩家也可以不支付费用，"
+          },
+          {
+            "start_ref": "reserve__intro.001.1.subtitle.1.start",
+            "end_ref": "reserve__intro.001.1.subtitle.1.end",
+            "text": "把一张发展卡牌从供应堆拿走，"
+          },
+          {
+            "start_ref": "reserve__intro.001.1.subtitle.2.start",
+            "end_ref": "reserve__intro.001.1.subtitle.2.end",
+            "text": "正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。"
+          }
+        ]
+      }
+    ],
+    "reserve/gold.001": [
+      {
+        "id": "reserve__gold.001",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__gold.001.start",
+        "end_ref": "reserve__gold.001.end",
+        "speech_end_ref": "reserve__gold.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__gold.001.subtitle.0.start",
+            "end_ref": "reserve__gold.001.subtitle.0.end",
+            "text": "黄金相当于万能宝石，"
+          },
+          {
+            "start_ref": "reserve__gold.001.subtitle.1.start",
+            "end_ref": "reserve__gold.001.subtitle.1.end",
+            "text": "它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
+          }
+        ]
+      }
+    ],
+    "reserve/deck.001": [
+      {
+        "id": "reserve__deck.001",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__deck.001.start",
+        "end_ref": "reserve__deck.001.end",
+        "speech_end_ref": "reserve__deck.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__deck.001.subtitle.0.start",
+            "end_ref": "reserve__deck.001.subtitle.0.end",
+            "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。"
+          }
+        ]
+      }
+    ],
+    "reserve/notes_intro.001": [
+      {
+        "id": "reserve__notes_intro.001",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__notes_intro.001.start",
+        "end_ref": "reserve__notes_intro.001.end",
+        "speech_end_ref": "reserve__notes_intro.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__notes_intro.001.subtitle.0.start",
+            "end_ref": "reserve__notes_intro.001.subtitle.0.end",
+            "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。"
+          }
+        ]
+      }
+    ],
+    "reserve/limit_gold.001.2": [
+      {
+        "id": "reserve__limit_gold.001.2",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__limit_gold.001.2.start",
+        "end_ref": "reserve__limit_gold.001.2.end",
+        "speech_end_ref": "reserve__limit_gold.001.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__limit_gold.001.2.subtitle.0.start",
+            "end_ref": "reserve__limit_gold.001.2.subtitle.0.end",
+            "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。"
+          }
+        ]
+      }
+    ],
+    "reserve/limit_hand.001.1": [
+      {
+        "id": "reserve__limit_hand.001.1",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__limit_hand.001.1.start",
+        "end_ref": "reserve__limit_hand.001.1.end",
+        "speech_end_ref": "reserve__limit_hand.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__limit_hand.001.1.subtitle.0.start",
+            "end_ref": "reserve__limit_hand.001.1.subtitle.0.end",
+            "text": "每位玩家最多同时保留3张发展卡牌；"
+          },
+          {
+            "start_ref": "reserve__limit_hand.001.1.subtitle.1.start",
+            "end_ref": "reserve__limit_hand.001.1.subtitle.1.end",
+            "text": "已经保留3张时，就不能再保留，必须选择其他行动。"
+          }
+        ]
+      }
+    ],
+    "reserve/private.001.1": [
+      {
+        "id": "reserve__private.001.1",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__private.001.1.start",
+        "end_ref": "reserve__private.001.1.end",
+        "speech_end_ref": "reserve__private.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__private.001.1.subtitle.0.start",
+            "end_ref": "reserve__private.001.1.subtitle.0.end",
+            "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；"
+          },
+          {
+            "start_ref": "reserve__private.001.1.subtitle.1.start",
+            "end_ref": "reserve__private.001.1.subtitle.1.end",
+            "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。"
+          }
+        ]
+      }
+    ],
+    "reserve/private.002": [
+      {
+        "id": "reserve__private.002",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__private.002.start",
+        "end_ref": "reserve__private.002.end",
+        "speech_end_ref": "reserve__private.002.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__private.002.subtitle.0.start",
+            "end_ref": "reserve__private.002.subtitle.0.end",
+            "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。"
+          }
+        ]
+      }
+    ],
+    "reserve/not_purchase.001": [
+      {
+        "id": "reserve__not_purchase.001",
+        "asset": "media/tts/full/action.reserve.mp3",
+        "start_ref": "reserve__not_purchase.001.start",
+        "end_ref": "reserve__not_purchase.001.end",
+        "speech_end_ref": "reserve__not_purchase.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "reserve__not_purchase.001.subtitle.0.start",
+            "end_ref": "reserve__not_purchase.001.subtitle.0.end",
+            "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。"
+          }
+        ]
+      }
+    ],
+    "purchase_reserved/title_3_4": [
+      {
+        "id": "purchase_reserved__title_3_4",
+        "asset": "media/tts/full/action.purchase_reserved.mp3",
+        "start_ref": "purchase_reserved__title_3_4.start",
+        "end_ref": "purchase_reserved__title_3_4.end",
+        "speech_end_ref": "purchase_reserved__title_3_4.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "purchase_reserved__title_3_4.subtitle.0.start",
+            "end_ref": "purchase_reserved__title_3_4.subtitle.0.end",
+            "text": "3.4，购买保留的发展卡牌。"
+          }
+        ]
+      }
+    ],
+    "purchase_reserved/001": [
+      {
+        "id": "purchase_reserved__001",
+        "asset": "media/tts/full/action.purchase_reserved.mp3",
+        "start_ref": "purchase_reserved__001.start",
+        "end_ref": "purchase_reserved__001.end",
+        "speech_end_ref": "purchase_reserved__001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "purchase_reserved__001.subtitle.0.start",
+            "end_ref": "purchase_reserved__001.subtitle.0.end",
+            "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。"
+          },
+          {
+            "start_ref": "purchase_reserved__001.subtitle.1.start",
+            "end_ref": "purchase_reserved__001.subtitle.1.end",
+            "text": "按照之前介绍过的规则，"
+          },
+          {
+            "start_ref": "purchase_reserved__001.subtitle.2.start",
+            "end_ref": "purchase_reserved__001.subtitle.2.end",
+            "text": "支付费用，将一张被保留的，"
+          },
+          {
+            "start_ref": "purchase_reserved__001.subtitle.3.start",
+            "end_ref": "purchase_reserved__001.subtitle.3.end",
+            "text": "背面朝上的卡牌翻面，正常结算它的声望值，"
+          },
+          {
+            "start_ref": "purchase_reserved__001.subtitle.4.start",
+            "end_ref": "purchase_reserved__001.subtitle.4.end",
+            "text": "查看是否满足贵族条件，"
+          },
+          {
+            "start_ref": "purchase_reserved__001.subtitle.5.start",
+            "end_ref": "purchase_reserved__001.subtitle.5.end",
+            "text": "并在后续的回合中适用它所带来的折扣。"
+          }
+        ]
+      }
+    ],
+    "summary/title_3_5": [
+      {
+        "id": "summary__title_3_5",
+        "asset": "media/tts/full/action.summary.mp3",
+        "start_ref": "summary__title_3_5.start",
+        "end_ref": "summary__title_3_5.end",
+        "speech_end_ref": "summary__title_3_5.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "summary__title_3_5.subtitle.0.start",
+            "end_ref": "summary__title_3_5.subtitle.0.end",
+            "text": "3.5，回合结束与循环。"
+          }
+        ]
+      }
+    ],
+    "summary/001": [
+      {
+        "id": "summary__001",
+        "asset": "media/tts/full/action.summary.mp3",
+        "start_ref": "summary__001.start",
+        "end_ref": "summary__001.end",
+        "speech_end_ref": "summary__001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "summary__001.subtitle.0.start",
+            "end_ref": "summary__001.subtitle.0.end",
+            "text": "以上就是玩家在回合内可以选择的行动，"
+          },
+          {
+            "start_ref": "summary__001.subtitle.1.start",
+            "end_ref": "summary__001.subtitle.1.end",
+            "text": "分别为拿取宝石、购买卡牌和保留卡牌。"
+          }
+        ]
+      }
+    ],
+    "summary/002.1": [
+      {
+        "id": "summary__002.1",
+        "asset": "media/tts/full/action.summary.mp3",
+        "start_ref": "summary__002.1.start",
+        "end_ref": "summary__002.1.end",
+        "speech_end_ref": "summary__002.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "summary__002.1.subtitle.0.start",
+            "end_ref": "summary__002.1.subtitle.0.end",
+            "text": "一个回合内，只能选择一种行动进行，"
+          },
+          {
+            "start_ref": "summary__002.1.subtitle.1.start",
+            "end_ref": "summary__002.1.subtitle.1.end",
+            "text": "随后回合立刻结束，按照顺时针顺序，"
+          },
+          {
+            "start_ref": "summary__002.1.subtitle.2.start",
+            "end_ref": "summary__002.1.subtitle.2.end",
+            "text": "左手边的玩家开始他的回合。"
+          }
+        ]
+      }
+    ],
+    "summary/002.2": [
+      {
+        "id": "summary__002.2",
+        "asset": "media/tts/full/action.summary.mp3",
+        "start_ref": "summary__002.2.start",
+        "end_ref": "summary__002.2.end",
+        "speech_end_ref": "summary__002.2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "summary__002.2.subtitle.0.start",
+            "end_ref": "summary__002.2.subtitle.0.end",
+            "text": "就这样一直循环，直到整局游戏结束。"
+          }
+        ]
+      }
+    ],
+    "end/title_4": [
+      {
+        "id": "end__title_4",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__title_4.start",
+        "end_ref": "end__title_4.end",
+        "speech_end_ref": "end__title_4.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__title_4.subtitle.0.start",
+            "end_ref": "end__title_4.subtitle.0.end",
+            "text": "4，游戏结束。"
+          }
+        ]
+      }
+    ],
+    "end/trigger.001": [
+      {
+        "id": "end__trigger.001",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__trigger.001.start",
+        "end_ref": "end__trigger.001.end",
+        "speech_end_ref": "end__trigger.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__trigger.001.subtitle.0.start",
+            "end_ref": "end__trigger.001.subtitle.0.end",
+            "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。"
+          }
+        ]
+      }
+    ],
+    "end/final_rounds.001.1": [
+      {
+        "id": "end__final_rounds.001.1",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__final_rounds.001.1.start",
+        "end_ref": "end__final_rounds.001.1.end",
+        "speech_end_ref": "end__final_rounds.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__final_rounds.001.1.subtitle.0.start",
+            "end_ref": "end__final_rounds.001.1.subtitle.0.end",
+            "text": "为了让所有玩家都进行相同数量的回合，"
+          },
+          {
+            "start_ref": "end__final_rounds.001.1.subtitle.1.start",
+            "end_ref": "end__final_rounds.001.1.subtitle.1.end",
+            "text": "游戏会继续进行，"
+          },
+          {
+            "start_ref": "end__final_rounds.001.1.subtitle.2.start",
+            "end_ref": "end__final_rounds.001.1.subtitle.2.end",
+            "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
+          }
+        ]
+      }
+    ],
+    "end/example.001.1": [
+      {
+        "id": "end__example.001.1",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__example.001.1.start",
+        "end_ref": "end__example.001.1.end",
+        "speech_end_ref": "end__example.001.1.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__example.001.1.subtitle.0.start",
+            "end_ref": "end__example.001.1.subtitle.0.end",
+            "text": "以4人局为例：如果起始玩家的声望值达到15，"
+          },
+          {
+            "start_ref": "end__example.001.1.subtitle.1.start",
+            "end_ref": "end__example.001.1.subtitle.1.end",
+            "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。"
+          },
+          {
+            "start_ref": "end__example.001.1.subtitle.2.start",
+            "end_ref": "end__example.001.1.subtitle.2.end",
+            "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。"
+          }
+        ]
+      }
+    ],
+    "end/winner.001": [
+      {
+        "id": "end__winner.001",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__winner.001.start",
+        "end_ref": "end__winner.001.end",
+        "speech_end_ref": "end__winner.001.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__winner.001.subtitle.0.start",
+            "end_ref": "end__winner.001.subtitle.0.end",
+            "text": "第一种情况：声望值最高的玩家获得胜利。"
+          },
+          {
+            "start_ref": "end__winner.001.subtitle.1.start",
+            "end_ref": "end__winner.001.subtitle.1.end",
+            "text": "比如玩家A有17分，玩家B有14分，A获胜。"
+          }
+        ]
+      }
+    ],
+    "end/winner.002": [
+      {
+        "id": "end__winner.002",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__winner.002.start",
+        "end_ref": "end__winner.002.end",
+        "speech_end_ref": "end__winner.002.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__winner.002.subtitle.0.start",
+            "end_ref": "end__winner.002.subtitle.0.end",
+            "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。"
+          },
+          {
+            "start_ref": "end__winner.002.subtitle.1.start",
+            "end_ref": "end__winner.002.subtitle.1.end",
+            "text": "现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。"
+          }
+        ]
+      }
+    ],
+    "end/winner.003": [
+      {
+        "id": "end__winner.003",
+        "asset": "media/tts/full/endgame.mp3",
+        "start_ref": "end__winner.003.start",
+        "end_ref": "end__winner.003.end",
+        "speech_end_ref": "end__winner.003.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "end__winner.003.subtitle.0.start",
+            "end_ref": "end__winner.003.subtitle.0.end",
+            "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。"
+          },
+          {
+            "start_ref": "end__winner.003.subtitle.1.start",
+            "end_ref": "end__winner.003.subtitle.1.end",
+            "text": "现在两人都是17分、10张牌，共享胜利。"
+          }
+        ]
+      }
+    ]
+  },
+  "cue_visuals": {
+    "intro/title_1": [
+      {
+        "id": "visual.intro__title_1",
+        "animation": "intro/title_1",
+        "cue_start_ref": "intro__title_1.visual.cue_start",
+        "source_start_ref": "intro__title_1.visual.source_start",
+        "source_end_ref": "intro__title_1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_cards/title_2_1": [
+      {
+        "id": "visual.setup_cards__title_2_1",
+        "animation": "setup_cards/title_2_1",
+        "cue_start_ref": "setup_cards__title_2_1.visual.cue_start",
+        "source_start_ref": "setup_cards__title_2_1.visual.source_start",
+        "source_end_ref": "setup_cards__title_2_1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_cards/001.2": [
+      {
+        "id": "visual.setup_cards__001.2",
+        "animation": "setup_cards/001.2",
+        "cue_start_ref": "setup_cards__001.2.visual.cue_start",
+        "source_start_ref": "setup_cards__001.2.visual.source_start",
+        "source_end_ref": "setup_cards__001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_cards/002.1": [
+      {
+        "id": "visual.setup_cards__002.1",
+        "animation": "setup_cards/002.1",
+        "cue_start_ref": "setup_cards__002.1.visual.cue_start",
+        "source_start_ref": "setup_cards__002.1.visual.source_start",
+        "source_end_ref": "setup_cards__002.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_gems/title_2_2": [
+      {
+        "id": "visual.setup_gems__title_2_2",
+        "animation": "setup_gems/title_2_2",
+        "cue_start_ref": "setup_gems__title_2_2.visual.cue_start",
+        "source_start_ref": "setup_gems__title_2_2.visual.source_start",
+        "source_end_ref": "setup_gems__title_2_2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_gems/001.1": [
+      {
+        "id": "visual.setup_gems__001.1",
+        "animation": "setup_gems/001.1",
+        "cue_start_ref": "setup_gems__001.1.visual.cue_start",
+        "source_start_ref": "setup_gems__001.1.visual.source_start",
+        "source_end_ref": "setup_gems__001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_gems/002": [
+      {
+        "id": "visual.setup_gems__002",
+        "animation": "setup_gems/002",
+        "cue_start_ref": "setup_gems__002.visual.cue_start",
+        "source_start_ref": "setup_gems__002.visual.source_start",
+        "source_end_ref": "setup_gems__002.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_gems/003.1": [
+      {
+        "id": "visual.setup_gems__003.1",
+        "animation": "setup_gems/003.1",
+        "cue_start_ref": "setup_gems__003.1.visual.cue_start",
+        "source_start_ref": "setup_gems__003.1.visual.source_start",
+        "source_end_ref": "setup_gems__003.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_gems/005.2": [
+      {
+        "id": "visual.setup_gems__005.2",
+        "animation": "setup_gems/005.2",
+        "cue_start_ref": "setup_gems__005.2.visual.cue_start",
+        "source_start_ref": "setup_gems__005.2.visual.source_start",
+        "source_end_ref": "setup_gems__005.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_players/title_2_3": [
+      {
+        "id": "visual.setup_players__title_2_3",
+        "animation": "setup_players/title_2_3",
+        "cue_start_ref": "setup_players__title_2_3.visual.cue_start",
+        "source_start_ref": "setup_players__title_2_3.visual.source_start",
+        "source_end_ref": "setup_players__title_2_3.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_players/title_2_4": [
+      {
+        "id": "visual.setup_players__title_2_4",
+        "animation": "setup_players/title_2_4",
+        "cue_start_ref": "setup_players__title_2_4.visual.cue_start",
+        "source_start_ref": "setup_players__title_2_4.visual.source_start",
+        "source_end_ref": "setup_players__title_2_4.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_players/starting.001.3": [
+      {
+        "id": "visual.setup_players__starting.001.3",
+        "animation": "setup_players/starting.001.3",
+        "cue_start_ref": "setup_players__starting.001.3.visual.cue_start",
+        "source_start_ref": "setup_players__starting.001.3.visual.source_start",
+        "source_end_ref": "setup_players__starting.001.3.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_players/title_2_5": [
+      {
+        "id": "visual.setup_players__title_2_5",
+        "animation": "setup_players/title_2_5",
+        "cue_start_ref": "setup_players__title_2_5.visual.cue_start",
+        "source_start_ref": "setup_players__title_2_5.visual.source_start",
+        "source_end_ref": "setup_players__title_2_5.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "turn/title_3": [
+      {
+        "id": "visual.turn__title_3",
+        "animation": "turn/title_3",
+        "cue_start_ref": "turn__title_3.visual.cue_start",
+        "source_start_ref": "turn__title_3.visual.source_start",
+        "source_end_ref": "turn__title_3.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "turn/001": [
+      {
+        "id": "visual.turn__001",
+        "animation": "turn/001",
+        "cue_start_ref": "turn__001.visual.cue_start",
+        "source_start_ref": "turn__001.visual.source_start",
+        "source_end_ref": "turn__001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/title_3_1": [
+      {
+        "id": "visual.take_gems__title_3_1",
+        "animation": "take_gems/title_3_1",
+        "cue_start_ref": "take_gems__title_3_1.visual.cue_start",
+        "source_start_ref": "take_gems__title_3_1.visual.source_start",
+        "source_end_ref": "take_gems__title_3_1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/different.001": [
+      {
+        "id": "visual.take_gems__different.001",
+        "animation": "take_gems/different.001",
+        "cue_start_ref": "take_gems__different.001.visual.cue_start",
+        "source_start_ref": "take_gems__different.001.visual.source_start",
+        "source_end_ref": "take_gems__different.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/same.001": [
+      {
+        "id": "visual.take_gems__same.001",
+        "animation": "take_gems/same.001",
+        "cue_start_ref": "take_gems__same.001.visual.cue_start",
+        "source_start_ref": "take_gems__same.001.visual.source_start",
+        "source_end_ref": "take_gems__same.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/draw_rule.001.1": [
+      {
+        "id": "visual.take_gems__draw_rule.001.1",
+        "animation": "take_gems/draw_rule.001.1",
+        "cue_start_ref": "take_gems__draw_rule.001.1.visual.cue_start",
+        "source_start_ref": "take_gems__draw_rule.001.1.visual.source_start",
+        "source_end_ref": "take_gems__draw_rule.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/draw_rule.001.2": [
+      {
+        "id": "visual.take_gems__draw_rule.001.2",
+        "animation": "take_gems/draw_rule.001.2",
+        "cue_start_ref": "take_gems__draw_rule.001.2.visual.cue_start",
+        "source_start_ref": "take_gems__draw_rule.001.2.visual.source_start",
+        "source_end_ref": "take_gems__draw_rule.001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/limit.001.1": [
+      {
+        "id": "visual.take_gems__limit.001.1",
+        "animation": "take_gems/limit.001.1",
+        "cue_start_ref": "take_gems__limit.001.1.visual.cue_start",
+        "source_start_ref": "take_gems__limit.001.1.visual.source_start",
+        "source_end_ref": "take_gems__limit.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/limit.001.2": [
+      {
+        "id": "visual.take_gems__limit.001.2",
+        "animation": "take_gems/limit.001.2",
+        "cue_start_ref": "take_gems__limit.001.2.visual.cue_start",
+        "source_start_ref": "take_gems__limit.001.2.visual.source_start",
+        "source_end_ref": "take_gems__limit.001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "take_gems/public.001.2": [
+      {
+        "id": "visual.take_gems__public.001.2",
+        "animation": "take_gems/public.001.2",
+        "cue_start_ref": "take_gems__public.001.2.visual.cue_start",
+        "source_start_ref": "take_gems__public.001.2.visual.source_start",
+        "source_end_ref": "take_gems__public.001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/title_3_2_1": [
+      {
+        "id": "visual.cards__title_3_2_1",
+        "animation": "cards/title_3_2_1",
+        "cue_start_ref": "cards__title_3_2_1.visual.cue_start",
+        "source_start_ref": "cards__title_3_2_1.visual.source_start",
+        "source_end_ref": "cards__title_3_2_1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/cost.001.2": [
+      {
+        "id": "visual.cards__cost.001.2",
+        "animation": "cards/cost.001.2",
+        "cue_start_ref": "cards__cost.001.2.visual.cue_start",
+        "source_start_ref": "cards__cost.001.2.visual.source_start",
+        "source_end_ref": "cards__cost.001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/market.001.1": [
+      {
+        "id": "visual.cards__market.001.1",
+        "animation": "cards/market.001.1",
+        "cue_start_ref": "cards__market.001.1.visual.cue_start",
+        "source_start_ref": "cards__market.001.1.visual.source_start",
+        "source_end_ref": "cards__market.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/market.001.2": [
+      {
+        "id": "visual.cards__market.001.2",
+        "animation": "cards/market.001.2",
+        "cue_start_ref": "cards__market.001.2.visual.cue_start",
+        "source_start_ref": "cards__market.001.2.visual.source_start",
+        "source_end_ref": "cards__market.001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/prestige.001.1": [
+      {
+        "id": "visual.cards__prestige.001.1",
+        "animation": "cards/prestige.001.1",
+        "cue_start_ref": "cards__prestige.001.1.visual.cue_start",
+        "source_start_ref": "cards__prestige.001.1.visual.source_start",
+        "source_end_ref": "cards__prestige.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/discount.001": [
+      {
+        "id": "visual.cards__discount.001",
+        "animation": "cards/discount.001",
+        "cue_start_ref": "cards__discount.001.visual.cue_start",
+        "source_start_ref": "cards__discount.001.visual.source_start",
+        "source_end_ref": "cards__discount.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/discount.002.1": [
+      {
+        "id": "visual.cards__discount.002.1",
+        "animation": "cards/discount.002.1",
+        "cue_start_ref": "cards__discount.002.1.visual.cue_start",
+        "source_start_ref": "cards__discount.002.1.visual.source_start",
+        "source_end_ref": "cards__discount.002.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/discount.003.1": [
+      {
+        "id": "visual.cards__discount.003.1",
+        "animation": "cards/discount.003.1",
+        "cue_start_ref": "cards__discount.003.1.visual.cue_start",
+        "source_start_ref": "cards__discount.003.1.visual.source_start",
+        "source_end_ref": "cards__discount.003.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/public.001.1": [
+      {
+        "id": "visual.cards__public.001.1",
+        "animation": "cards/public.001.1",
+        "cue_start_ref": "cards__public.001.1.visual.cue_start",
+        "source_start_ref": "cards__public.001.1.visual.source_start",
+        "source_end_ref": "cards__public.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/title_3_2_2": [
+      {
+        "id": "visual.nobles__title_3_2_2",
+        "animation": "nobles/title_3_2_2",
+        "cue_start_ref": "nobles__title_3_2_2.visual.cue_start",
+        "source_start_ref": "nobles__title_3_2_2.visual.source_start",
+        "source_end_ref": "nobles__title_3_2_2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/intro.001": [
+      {
+        "id": "visual.nobles__intro.001",
+        "animation": "nobles/intro.001",
+        "cue_start_ref": "nobles__intro.001.visual.cue_start",
+        "source_start_ref": "nobles__intro.001.visual.source_start",
+        "source_end_ref": "nobles__intro.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/trigger.001.1": [
+      {
+        "id": "visual.nobles__trigger.001.1",
+        "animation": "nobles/trigger.001.1",
+        "cue_start_ref": "nobles__trigger.001.1.visual.cue_start",
+        "source_start_ref": "nobles__trigger.001.1.visual.source_start",
+        "source_end_ref": "nobles__trigger.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/forced.001.1": [
+      {
+        "id": "visual.nobles__forced.001.1",
+        "animation": "nobles/forced.001.1",
+        "cue_start_ref": "nobles__forced.001.1.visual.cue_start",
+        "source_start_ref": "nobles__forced.001.1.visual.source_start",
+        "source_end_ref": "nobles__forced.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/source.001": [
+      {
+        "id": "visual.nobles__source.001",
+        "animation": "nobles/source.001",
+        "cue_start_ref": "nobles__source.001.visual.cue_start",
+        "source_start_ref": "nobles__source.001.visual.source_start",
+        "source_end_ref": "nobles__source.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/choice.001.1": [
+      {
+        "id": "visual.nobles__choice.001.1",
+        "animation": "nobles/choice.001.1",
+        "cue_start_ref": "nobles__choice.001.1.visual.cue_start",
+        "source_start_ref": "nobles__choice.001.1.visual.source_start",
+        "source_end_ref": "nobles__choice.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/repeat.001.1": [
+      {
+        "id": "visual.nobles__repeat.001.1",
+        "animation": "nobles/repeat.001.1",
+        "cue_start_ref": "nobles__repeat.001.1.visual.cue_start",
+        "source_start_ref": "nobles__repeat.001.1.visual.source_start",
+        "source_end_ref": "nobles__repeat.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/title_3_3": [
+      {
+        "id": "visual.reserve__title_3_3",
+        "animation": "reserve/title_3_3",
+        "cue_start_ref": "reserve__title_3_3.visual.cue_start",
+        "source_start_ref": "reserve__title_3_3.visual.source_start",
+        "source_end_ref": "reserve__title_3_3.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/intro.001.1": [
+      {
+        "id": "visual.reserve__intro.001.1",
+        "animation": "reserve/intro.001.1",
+        "cue_start_ref": "reserve__intro.001.1.visual.cue_start",
+        "source_start_ref": "reserve__intro.001.1.visual.source_start",
+        "source_end_ref": "reserve__intro.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/gold.001": [
+      {
+        "id": "visual.reserve__gold.001",
+        "animation": "reserve/gold.001",
+        "cue_start_ref": "reserve__gold.001.visual.cue_start",
+        "source_start_ref": "reserve__gold.001.visual.source_start",
+        "source_end_ref": "reserve__gold.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/deck.001": [
+      {
+        "id": "visual.reserve__deck.001",
+        "animation": "reserve/deck.001",
+        "cue_start_ref": "reserve__deck.001.visual.cue_start",
+        "source_start_ref": "reserve__deck.001.visual.source_start",
+        "source_end_ref": "reserve__deck.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/notes_intro.001": [
+      {
+        "id": "visual.reserve__notes_intro.001",
+        "animation": "reserve/notes_intro.001",
+        "cue_start_ref": "reserve__notes_intro.001.visual.cue_start",
+        "source_start_ref": "reserve__notes_intro.001.visual.source_start",
+        "source_end_ref": "reserve__notes_intro.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/limit_gold.001.2": [
+      {
+        "id": "visual.reserve__limit_gold.001.2",
+        "animation": "reserve/limit_gold.001.2",
+        "cue_start_ref": "reserve__limit_gold.001.2.visual.cue_start",
+        "source_start_ref": "reserve__limit_gold.001.2.visual.source_start",
+        "source_end_ref": "reserve__limit_gold.001.2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/limit_hand.001.1": [
+      {
+        "id": "visual.reserve__limit_hand.001.1",
+        "animation": "reserve/limit_hand.001.1",
+        "cue_start_ref": "reserve__limit_hand.001.1.visual.cue_start",
+        "source_start_ref": "reserve__limit_hand.001.1.visual.source_start",
+        "source_end_ref": "reserve__limit_hand.001.1.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "reserve/private.002": [
+      {
+        "id": "visual.reserve__private.002",
+        "animation": "reserve/private.002",
+        "cue_start_ref": "reserve__private.002.visual.cue_start",
+        "source_start_ref": "reserve__private.002.visual.source_start",
+        "source_end_ref": "reserve__private.002.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "purchase_reserved/title_3_4": [
+      {
+        "id": "visual.purchase_reserved__title_3_4",
+        "animation": "purchase_reserved/title_3_4",
+        "cue_start_ref": "purchase_reserved__title_3_4.visual.cue_start",
+        "source_start_ref": "purchase_reserved__title_3_4.visual.source_start",
+        "source_end_ref": "purchase_reserved__title_3_4.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "purchase_reserved/001": [
+      {
+        "id": "visual.purchase_reserved__001",
+        "animation": "purchase_reserved/001",
+        "cue_start_ref": "purchase_reserved__001.visual.cue_start",
+        "source_start_ref": "purchase_reserved__001.visual.source_start",
+        "source_end_ref": "purchase_reserved__001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "summary/title_3_5": [
+      {
+        "id": "visual.summary__title_3_5",
+        "animation": "summary/title_3_5",
+        "cue_start_ref": "summary__title_3_5.visual.cue_start",
+        "source_start_ref": "summary__title_3_5.visual.source_start",
+        "source_end_ref": "summary__title_3_5.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "end/title_4": [
+      {
+        "id": "visual.end__title_4",
+        "animation": "end/title_4",
+        "cue_start_ref": "end__title_4.visual.cue_start",
+        "source_start_ref": "end__title_4.visual.source_start",
+        "source_end_ref": "end__title_4.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "end/trigger.001": [
+      {
+        "id": "visual.end__trigger.001",
+        "animation": "end/trigger.001",
+        "cue_start_ref": "end__trigger.001.visual.cue_start",
+        "source_start_ref": "end__trigger.001.visual.source_start",
+        "source_end_ref": "end__trigger.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "end/winner.001": [
+      {
+        "id": "visual.end__winner.001",
+        "animation": "end/winner.001",
+        "cue_start_ref": "end__winner.001.visual.cue_start",
+        "source_start_ref": "end__winner.001.visual.source_start",
+        "source_end_ref": "end__winner.001.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "end/winner.002": [
+      {
+        "id": "visual.end__winner.002",
+        "animation": "end/winner.002",
+        "cue_start_ref": "end__winner.002.visual.cue_start",
+        "source_start_ref": "end__winner.002.visual.source_start",
+        "source_end_ref": "end__winner.002.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "end/winner.003": [
+      {
+        "id": "visual.end__winner.003",
+        "animation": "end/winner.003",
+        "cue_start_ref": "end__winner.003.visual.cue_start",
+        "source_start_ref": "end__winner.003.visual.source_start",
+        "source_end_ref": "end__winner.003.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ]
+  }
+}

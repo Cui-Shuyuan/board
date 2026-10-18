@@ -123,6 +123,11 @@ namespace BoardGameTutorial.Animation
         // Subtitle timing is presentation data only.  It never controls audio
         // scheduling or cue completion.
         public List<CueTimelineSubtitle> subtitles = new List<CueTimelineSubtitle>();
+        // Navigation/presentation metadata carried by the shared plan.  These
+        // fields never participate in timing or playback completion.
+        public string text;
+        public List<string> group_path = new List<string>();
+        public List<string> refs = new List<string>();
     }
 
     [Serializable]
@@ -167,10 +172,6 @@ namespace BoardGameTutorial.Animation
         public long source_start_sample;
         public long source_end_sample;
         public string asset;
-        // Consecutive cues may reference contiguous ranges of one shared TTS
-        // file.  The group id lets an executor preserve decoder continuity
-        // without inferring that relationship from asset names.
-        public string playback_group;
         public string animation;
         public string pose;
         public string after_end;
@@ -423,10 +424,19 @@ namespace BoardGameTutorial.Animation
                         error = path + ".asset must be non-empty";
                         return false;
                     }
-                    if (segment.type == "animation" && string.IsNullOrEmpty(segment.animation))
+                    if (segment.type == "animation")
                     {
-                        error = path + ".animation must be non-empty";
-                        return false;
+                        if (string.IsNullOrEmpty(segment.animation))
+                        {
+                            error = path + ".animation must be non-empty";
+                            return false;
+                        }
+                        if (segment.after_end != "hold_last_frame"
+                            && segment.after_end != "clear")
+                        {
+                            error = path + ".after_end is invalid";
+                            return false;
+                        }
                     }
                     if (segment.type == "subtitle" && segment.text == null)
                     {

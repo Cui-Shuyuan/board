@@ -265,10 +265,6 @@ namespace BoardGameTutorial.Animation
         public string transition;
         public string stage;
         public bool demo;
-        public bool hold_after_audio;
-        // Pause after the last spoken subtitle word, before the next cue, while
-        // skipping any trailing TTS silence. Used for natural chapter-title gaps.
-        public float pause_after_speech_seconds;
         public float duration;
         public CompiledCameraDef camera_in;
         public List<CompiledCameraOpDef> camera_ops = new List<CompiledCameraOpDef>();
