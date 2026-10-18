@@ -33,7 +33,7 @@ AUDIO_BOUNDARIES_VERSION = 1
 TIMING_POLICY_SCHEMA = "tutorial-cue-timing-policy/v1"
 TIMING_POLICY_VERSION = 1
 AUDIO_SLICES_SCHEMA = "tutorial-audio-slices/v1"
-AUDIO_SLICES_VERSION = 1
+AUDIO_SLICES_VERSION = 2
 
 
 class BuildError(RuntimeError):
@@ -912,6 +912,8 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
         raise BuildError(f"{path}: expected schema {AUDIO_SLICES_SCHEMA!r}")
     if document.get("schema_version") != AUDIO_SLICES_VERSION:
         raise BuildError(f"{path}: expected schema_version {AUDIO_SLICES_VERSION}")
+    if not isinstance(document.get("timing_points"), dict):
+        raise BuildError(f"{path}: timing_points must be an object")
     if document.get("game_id") not in (None, game):
         raise BuildError(f"{path}: game_id mismatch")
     if document.get("track") not in (None, track):
@@ -919,6 +921,35 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
     if not isinstance(document.get("cues"), dict):
         raise BuildError(f"{path}: cues must be an object")
     return document
+
+
+def _slice_time(
+    raw_slice: dict,
+    field: str,
+    timing_points: dict,
+    default: float | None = None,
+) -> float:
+    ref_key = field + "_ref"
+    if ref_key in raw_slice:
+        ref = str(raw_slice.get(ref_key) or "").strip()
+        if not ref:
+            raise BuildError(f"audio slice {raw_slice.get('id')!r} has empty {ref_key}")
+        point = timing_points.get(ref)
+        if not isinstance(point, dict) or "time" not in point:
+            raise BuildError(f"unknown timing point reference {ref!r}")
+        value = point.get("time")
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise BuildError(f"timing point {ref!r} must contain a numeric time")
+        return float(value)
+    if field in raw_slice:
+        value = raw_slice.get(field)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise BuildError(f"audio slice field {field!r} must be numeric")
+        return float(value)
+    if default is not None:
+        return default
+    raise BuildError(
+        f"audio slice {raw_slice.get('id')!r} is missing {field}_ref or {field}")
 
 
 def _build_cue_plan_set_from_audio_slices(
@@ -944,6 +975,7 @@ def _build_cue_plan_set_from_audio_slices(
             "audio_slice_manifest timing policy requires "
             "audio_slice_manifest and script_source")
     slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)
+    timing_points = slice_doc["timing_points"]
     script = _load_json(game_dir / script_rel)
     sample_rate = int(slice_doc.get("sample_rate") or runtime.get("sample_rate") or 24000)
     compiled_by_id = {
@@ -989,9 +1021,10 @@ def _build_cue_plan_set_from_audio_slices(
             slice_id = str(raw_slice.get("id") or "").strip()
             asset = _normalize_game_relative_path(
                 str(raw_slice.get("asset") or ""), game_dir, game)
-            start = float(raw_slice.get("start", 0.0))
-            end = float(raw_slice.get("end", 0.0))
-            speech_end = float(raw_slice.get("speech_end", end))
+            start = _slice_time(raw_slice, "start", timing_points, 0.0)
+            end = _slice_time(raw_slice, "end", timing_points)
+            speech_end = _slice_time(
+                raw_slice, "speech_end", timing_points, end)
             if not math.isfinite(start) or not math.isfinite(end) or end <= start:
                 raise BuildError(
                     f"audio slice {cue_id!r}[{slice_index}] has invalid range")
@@ -1014,8 +1047,10 @@ def _build_cue_plan_set_from_audio_slices(
                     raw_slice.get("subtitles") or []):
                 if not isinstance(raw_subtitle, dict):
                     continue
-                sub_start = float(raw_subtitle.get("start", start))
-                sub_end = float(raw_subtitle.get("end", end))
+                sub_start = _slice_time(
+                    raw_subtitle, "start", timing_points, start)
+                sub_end = _slice_time(
+                    raw_subtitle, "end", timing_points, end)
                 sub_start = max(start, min(end, sub_start))
                 sub_end = max(sub_start, min(end, sub_end))
                 if sub_end <= sub_start:

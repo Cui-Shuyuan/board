@@ -141,23 +141,43 @@ cue 起点按最终 duration 顺序累加；每个 cue 全部轨道完成后自�
 content/games/splendor/tutorial/quick.audio-slices.json
 ```
 
-schema 为 `tutorial-audio-slices/v1`。每个切片有稳定的逻辑 id，并集中记录：
+schema 为 `tutorial-audio-slices/v1`，当前 `schema_version=2`。所有实际秒数
+只出现在 `timing_points` 中，并拥有稳定 id：
+
+```json
+"timing_points": {
+  "quick_nobles__001.start": {"time": 0.0},
+  "quick_nobles__001.end": {"time": 6.4475625},
+  "quick_nobles__001.speech_end": {"time": 6.2950416},
+  "quick_nobles__001.subtitle.0.start": {"time": 0.265},
+  "quick_nobles__001.subtitle.0.end": {"time": 1.695}
+}
+```
+
+切片本身只引用这些 id，不重复写时间戳：
 
 ```json
 {
   "id": "quick_nobles__001",
   "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
-  "start": 0.0,
-  "end": 6.4475625,
-  "speech_end": 6.2950416
+  "start_ref": "quick_nobles__001.start",
+  "end_ref": "quick_nobles__001.end",
+  "speech_end_ref": "quick_nobles__001.speech_end",
+  "subtitles": [
+    {
+      "start_ref": "quick_nobles__001.subtitle.0.start",
+      "end_ref": "quick_nobles__001.subtitle.0.end",
+      "text": "贵族是额外得分。"
+    }
+  ]
 }
 ```
 
 - `id`：脚本/plan 中引用的逻辑音频名；
 - `asset`：原始音频文件，保持完整；
-- `start/end`：该逻辑切片在原始音频中的采样范围；
-- `speech_end`：该段最后一个 TTS word 的结束时间。标题 cue 的逻辑切片
-  `end` 会设为 `speech_end`，从而逻辑截掉 TTS 文件自带的尾部静音。
+- `start_ref/end_ref`：逻辑切片起止时间点的 id；
+- `speech_end_ref`：最后一个 TTS word 结束时间点的 id；
+- `subtitles[].start_ref/end_ref`：字幕窗口时间点的 id。
 
 cue 与逻辑切片的对应关系也集中在这个文件的 `cues` 映射里。生成 plan 时：
 
@@ -165,7 +185,8 @@ cue 与逻辑切片的对应关系也集中在这个文件的 `cues` 映射里�
 - plan segment 写入 `audio_slice_id`，并展开 `asset/source_start/source_end`
   供 Unity/Android 执行；
 - 不产生新的音频文件，不修改原始 MP3；
-- 时间点不在构建脚本里散落，全部集中在 slice manifest。
+- 构建脚本只解析 `*_ref` 名称，不包含任何 TTS 秒数；
+- 所有原始秒数集中在 `timing_points` 一处。
 
 标题 cue 的停顿不再通过“扣除 TTS 尾部静音”来计算。正确流程是：
 

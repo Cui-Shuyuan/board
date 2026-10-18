@@ -221,13 +221,18 @@ class BuildCueTimelineTests(unittest.TestCase):
             "game_id": self.game,
             "track": self.track,
             "sample_rate": 24000,
+            "timing_points": {
+                "logical/one.audio.start": {"time": 0.0},
+                "logical/one.audio.end": {"time": 0.8},
+                "logical/one.audio.speech_end": {"time": 0.8},
+            },
             "cues": {
                 "quick/one": [{
                     "id": "logical/one.audio",
                     "asset": "media/tts/test/one.mp3",
-                    "start": 0.0,
-                    "end": 0.8,
-                    "speech_end": 0.8,
+                    "start_ref": "logical/one.audio.start",
+                    "end_ref": "logical/one.audio.end",
+                    "speech_end_ref": "logical/one.audio.speech_end",
                 }],
             },
         }), encoding="utf-8")
