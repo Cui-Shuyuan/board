@@ -2,7 +2,11 @@
 
 状态：Phase 4 已建立 Unity 与 Android 共同读取的生成后 plan set，并把 Splendor `quick` track 作为整体迁移到新时间轴。track 级开关来自内容 catalog 的 `cue_timeline_tracks`；默认关闭。开启时 Android 先验证整条 track 的 plan，然后把实际使用的模式通过 `LoadGameWithRoot` payload 传给 Unity。旧 `runtime` / `compiled` / `section_audio` / `audio_plan` 路径全部保留；`full` 尚未迁移。真机全 quick track 音频仍待用户实际听测。
 
-本文先固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
+具体制作流程、TTS 源文件、逻辑音频切片和字幕轨道操作见：
+
+- `docs/tutorial/audio-timeline-pipeline.md`
+
+本文固定 cue 的时间轴协议、状态机、职责边界、迁移顺序和验收方式。实现时可以替换内部类与文件名，但不应在实现过程中重新引入以下临时机制：
 
 - 用字幕最后一个词的时间作为音频裁切边界；
 - 标题 cue 特判；
@@ -84,11 +88,12 @@ content/games/splendor/tutorial/quick.cue-timeline.json
 
 - `cue_id`；
 - `course.start` / `course.duration`；
-- `tracks`（audio/visual 执行数据；字幕窗口在 `subtitles`）；
+- `tracks`：`audio` / `visual` / `subtitle` 三类执行轨道；
 - `entry`。
 
-字幕来自每个 beat 的 TTS subtitle JSON，转换为 plan 的
-`id` / `cue_start` / `duration` / `text`。字幕只作展示，不参与音频裁切或调度。
+字幕来自 `quick.audio-slices.json` 中每个逻辑音频的 subtitle timing refs，
+构建为独立的 `kind: "subtitle"` track。plan 仍同步保留扁平 `subtitles` 列表
+用于旧客户端兼容。字幕只作展示，不参与音频裁切或调度。
 
 ### 4.2.1 per-cue timing policy
 

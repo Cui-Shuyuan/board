@@ -7,6 +7,9 @@
 `animation/check_materials.py`、`animation/material_cli.py`、`animation/section_source.py`、
 `animation/compile_animation_v2.py` 及其现有消费者。不要绕过这条链去手改 compiled。
 
+音频/字幕时间轴（cue-level TTS、逻辑切片、字幕 track）的现行入口见
+`docs/tutorial/audio-timeline-pipeline.md`。
+
 ## 0. 先确认事实，再写内容
 
 1. 读当前游戏规则数据、组件资料和已有 QA；不要用 FAQ 中不确定的说法当规则。
@@ -116,6 +119,35 @@ content/games/<game>/tutorial/
 - 时间不足时默认报错并说明缺少多少、来自哪个素材调用；作者显式选择紧凑表现或延长停留。
 - `hold_after_audio` 等已有播放器时长必须纳入同一个实际播放时长模型，不能另起一套时钟。
 - 连续播放、跳 cue、回退、重播、问答打断恢复必须得到同一逻辑状态和画面；素材不能依赖“必须先播放过一次”。
+
+### 5.1 Phase 4：cue-level TTS、逻辑音频切片与字幕轨道
+
+quick track 现在不再只用 section 级共享 MP3。音频/字幕的制作流程是：
+
+1. `tutorial/quick.cue.tts.lrc` 按 beat 写 TTS 合成行；需要保持连续语气的多条串行
+   cue 可以通过 `quick.timing-policy.json` 的 `audio_groups` 合并成一次 TTS。
+2. 重新生成 TTS 后，把 word timing 审核写入
+   `tutorial/quick.audio-slices.json` 的 `timing_points`。
+3. 每条 cue/逻辑音频只引用命名时间点：
+   `start_ref` / `end_ref` / `speech_end_ref` / `subtitle.*_ref`。
+   不要在构建脚本或 timing policy 中写 TTS 秒数。
+4. `quick.timing-policy.json` 用 per-cue `mode` 控制 cue duration：
+   - `max`：所有轨道都结束后再切下一 cue，动画不会被音频截断；
+   - `audio`：音频轨道为准，用于标题 cue；
+   - `visual`：画面为准，裁剪音频则构建失败；
+   - `runtime`：legacy duration 为准。
+5. 标题 cue 的逻辑音频 `end_ref` 指向 `speech_end`，截掉 TTS 自带尾静音，再由
+   `trailing_silence_seconds: 1.0` 追加完整 1 秒。
+6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
+   subtitle refs 生成，不再用整条 cue 文本生成超长字幕。
+7. 构建入口：
+
+```bash
+python3 animation/build_cue_timeline.py --game splendor --track quick
+python3 tools/content/build_content_manifest.py --game splendor
+```
+
+完整字段、命令和故障排查见 `docs/tutorial/audio-timeline-pipeline.md`。
 
 ## 6. 作者标绳：每一步都跑确定性检查
 

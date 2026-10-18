@@ -20,11 +20,20 @@ shared/stage/*.stage.json                          跨 section 的 zone / templa
 tutorial/build/{track}.{script,anim}.json          装配中间产物（不进 Git）
         │
         ▼  animation/compile_tutorial.py
-tutorial/{track}.runtime.json                      音频 / 字幕 / 时长
+tutorial/{track}.runtime.json                      音频 / 字幕 / 时长（full legacy）
 tutorial/anim/v2/{track}.compiled.json             Unity 只读 compiled
+        │
+        ├─ quick Phase 4:
+        │   tutorial/quick.cue.tts.lrc
+        │   tutorial/quick.audio-slices.json        命名 timing points / 逻辑切片 / 字幕窗口
+        │   tutorial/quick.timing-policy.json       cue duration policy
+        │   tutorial/quick.cue-timeline.json        Android/Unity 共用 plan
         │
         ▼  Unity TutorialCuePlayer / TutorialAnimPlayer
 ```
+
+> quick 已迁移到 cue-level TTS + 逻辑音频切片。完整制作流程见
+> `docs/tutorial/audio-timeline-pipeline.md`。
 
 ## 生产顺序
 
