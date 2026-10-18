@@ -30,6 +30,8 @@ import cue_timeline
 ROOT = Path(__file__).resolve().parent.parent
 AUDIO_BOUNDARIES_SCHEMA = "tutorial-audio-boundaries/v1"
 AUDIO_BOUNDARIES_VERSION = 1
+TIMING_POLICY_SCHEMA = "tutorial-cue-timing-policy/v1"
+TIMING_POLICY_VERSION = 1
 
 
 class BuildError(RuntimeError):
@@ -96,89 +98,141 @@ def _recompute_course_timeline(
     document["course"]["duration"] = round(cursor, 9)
 
 
-def _apply_audio_authoritative_timing(document: dict) -> None:
-    """Use the audio track (including explicit silence) as the cue clock.
+def _track_content_end(plan: dict, kind: str) -> float:
+    end = 0.0
+    for track in plan.get("tracks") or []:
+        if not isinstance(track, dict) or track.get("kind") != kind:
+            continue
+        for segment in track.get("segments") or []:
+            if not isinstance(segment, dict):
+                continue
+            cue_start = float(segment.get("cue_start", 0.0))
+            segment_type = segment.get("type")
+            if segment_type == "silence" or segment_type == "hold":
+                content_end = cue_start + float(segment["duration"])
+            elif segment_type in ("audio_clip", "animation"):
+                content_end = (
+                    cue_start
+                    + float(segment["source_end"])
+                    - float(segment["source_start"])
+                )
+            else:
+                continue
+            end = max(end, content_end)
+    return end
 
-    Legacy compiled animation often extends past the authored audio+silence by
-    a few hundred milliseconds.  Letting that tail define cue duration creates
-    audible pauses longer than the explicit silence.  For Phase 4 quick, the
-    authored audio track is authoritative; visual segments are clipped to the
-    cue duration and the last frame is held by the visual executor.
+
+def _trim_visual_to_duration(plan: dict, duration: float) -> None:
+    for track in plan.get("tracks") or []:
+        if not isinstance(track, dict) or track.get("kind") != "visual":
+            continue
+        kept_segments = []
+        for segment in track.get("segments") or []:
+            if not isinstance(segment, dict):
+                continue
+            cue_start = float(segment.get("cue_start", 0.0))
+            remain = duration - cue_start
+            if remain <= 1e-9:
+                continue
+            if segment.get("type") == "animation":
+                source_start = float(segment["source_start"])
+                source_end = float(segment["source_end"])
+                if source_end - source_start > remain:
+                    segment["source_end"] = round(source_start + remain, 9)
+            elif segment.get("type") == "hold":
+                if float(segment["duration"]) > remain:
+                    segment["duration"] = round(remain, 9)
+            kept_segments.append(segment)
+        track["segments"] = kept_segments
+
+
+def _apply_timing_policy(
+    document: dict,
+    policy_document: dict,
+    legacy_runtime_durations: dict[str, float],
+) -> None:
+    """Apply a per-cue duration policy.
+
+    ``max`` keeps the Phase 1 semantics and therefore never truncates a longer
+    visual animation.  ``audio`` uses the complete authored audio track
+    (including explicit silence) as the cue clock and trims visual overflow,
+    which is appropriate for title cues with an authored 1-second pause.
     """
+    default_mode = str(policy_document.get("default_mode") or "max").strip()
+    cue_modes = policy_document.get("cues") or {}
+    if not isinstance(cue_modes, dict):
+        raise BuildError("timing policy cues must be an object")
+
+    valid_modes = {"max", "audio", "visual", "runtime"}
+    if default_mode not in valid_modes:
+        raise BuildError(
+            f"timing policy default_mode {default_mode!r} is not one of "
+            + ", ".join(sorted(valid_modes)))
+    for cue_id, mode in cue_modes.items():
+        if not isinstance(cue_id, str) or not cue_id:
+            raise BuildError("timing policy cue id must be a non-empty string")
+        if mode not in valid_modes:
+            raise BuildError(
+                f"timing policy cue {cue_id!r} has invalid mode {mode!r}")
+
     diagnostics = document.setdefault("diagnostics", [])
+    known_ids = set()
     for plan in document.get("cues") or []:
-        audio_end = 0.0
-        for track in plan.get("tracks") or []:
-            if not isinstance(track, dict) or track.get("kind") != "audio":
-                continue
-            for segment in track.get("segments") or []:
-                if not isinstance(segment, dict):
-                    continue
-                cue_start = float(segment.get("cue_start", 0.0))
-                if segment.get("type") == "silence":
-                    content_end = cue_start + float(segment["duration"])
-                elif segment.get("type") == "audio_clip":
-                    content_end = (
-                        cue_start
-                        + float(segment["source_end"])
-                        - float(segment["source_start"])
-                    )
-                else:
-                    continue
-                audio_end = max(audio_end, content_end)
-        if audio_end <= 0.0:
-            continue
-
+        cue_id = str(plan.get("cue_id") or "")
+        known_ids.add(cue_id)
+        mode = str(cue_modes.get(cue_id, default_mode))
         old_duration = float(plan["course"]["duration"])
-        new_duration = audio_end
-        if abs(new_duration - old_duration) <= 1e-9:
-            continue
+        audio_end = _track_content_end(plan, "audio")
+        visual_end = _track_content_end(plan, "visual")
 
-        # Audio-driven duration wins.  Trim visual content to the new cue end;
-        # tail_policy=hold_last_frame keeps the final visual pose until the cue
-        # boundary without extending the cue itself.
-        for track in plan.get("tracks") or []:
-            if not isinstance(track, dict) or track.get("kind") != "visual":
-                continue
-            kept_segments = []
-            for segment in track.get("segments") or []:
-                if not isinstance(segment, dict):
-                    continue
-                cue_start = float(segment.get("cue_start", 0.0))
-                remain = new_duration - cue_start
-                if remain <= 1e-9:
-                    continue
-                if segment.get("type") == "animation":
-                    source_start = float(segment["source_start"])
-                    source_end = float(segment["source_end"])
-                    available = source_end - source_start
-                    if available > remain:
-                        segment["source_end"] = round(source_start + remain, 9)
-                elif segment.get("type") == "hold":
-                    if float(segment["duration"]) > remain:
-                        segment["duration"] = round(remain, 9)
-                kept_segments.append(segment)
-            track["segments"] = kept_segments
+        if mode == "max":
+            new_duration = max(old_duration, audio_end, visual_end)
+        elif mode == "audio":
+            new_duration = audio_end if audio_end > 0.0 else old_duration
+        elif mode == "visual":
+            if audio_end > visual_end + 1e-6:
+                raise BuildError(
+                    f"timing policy cue {cue_id!r} mode=visual would cut audio "
+                    f"(audio_end={audio_end:g}, visual_end={visual_end:g}); "
+                    "use max or audio")
+            new_duration = visual_end if visual_end > 0.0 else old_duration
+        else:  # runtime
+            new_duration = max(
+                legacy_runtime_durations.get(cue_id, old_duration),
+                audio_end,
+            )
+
+        if new_duration <= 0.0:
+            raise BuildError(
+                f"timing policy cue {cue_id!r} produced a non-positive duration")
+        if new_duration < visual_end - 1e-9:
+            _trim_visual_to_duration(plan, new_duration)
+        if audio_end > new_duration + 1e-6:
+            raise BuildError(
+                f"timing policy cue {cue_id!r} would cut audio: "
+                f"audio_end={audio_end:g}, duration={new_duration:g}")
 
         plan["course"]["duration"] = round(new_duration, 9)
         diagnostics.append({
-            "code": "audio_authoritative_duration",
+            "code": "cue_timing_policy",
             "severity": "info",
-            "cue_id": plan.get("cue_id"),
+            "cue_id": cue_id,
+            "mode": mode,
             "original_duration": round(old_duration, 9),
-            "audio_duration": round(new_duration, 9),
+            "audio_end": round(audio_end, 9),
+            "visual_end": round(visual_end, 9),
+            "duration": round(new_duration, 9),
         })
 
-    _recompute_course_timeline(document)
+    unknown = sorted(set(cue_modes) - known_ids)
+    if unknown:
+        raise BuildError(
+            "timing policy references unknown cue ids: " + ", ".join(unknown))
+
 
 
 def _extend_last_subtitle_to_cue_end(document: dict) -> None:
-    """Keep the final subtitle visible for the complete audio-driven cue.
-
-    Audio-boundary corrections can lengthen a cue by a small lead or tail.  The
-    legacy subtitle file does not know about that change; without this clamp the
-    last line can disappear before the cue audio ends.
-    """
+    """Keep the final subtitle visible for the complete cue duration."""
     for plan in document.get("cues") or []:
         duration = float(plan["course"]["duration"])
         subtitles = plan.get("subtitles") or []
@@ -241,6 +295,27 @@ def _load_audio_boundaries(repo_root: Path, game: str, track: str) -> dict:
     boundaries = document.get("boundaries") or []
     if not isinstance(boundaries, list):
         raise BuildError(f"{path}: boundaries must be an array")
+    return document
+
+
+def _load_timing_policy(repo_root: Path, game: str, track: str) -> dict:
+    path = (
+        repo_root / "content" / "games" / game / "tutorial"
+        / f"{track}.timing-policy.json"
+    )
+    if not path.is_file():
+        return {"default_mode": "max", "cues": {}}
+    document = _load_json(path)
+    if document.get("schema") != TIMING_POLICY_SCHEMA:
+        raise BuildError(
+            f"{path}: expected schema {TIMING_POLICY_SCHEMA!r}")
+    if document.get("schema_version") != TIMING_POLICY_VERSION:
+        raise BuildError(
+            f"{path}: expected schema_version {TIMING_POLICY_VERSION}")
+    if document.get("game_id") not in (None, game):
+        raise BuildError(f"{path}: game_id mismatch")
+    if document.get("track") not in (None, track):
+        raise BuildError(f"{path}: track mismatch")
     return document
 
 
@@ -349,8 +424,14 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
     try:
         document = cue_timeline.adapt_legacy_runtime(runtime, compiled)
         boundaries = _load_audio_boundaries(repo_root, game, track)
+        timing_policy = _load_timing_policy(repo_root, game, track)
         _apply_audio_boundaries(document, game, track, boundaries)
-        _apply_audio_authoritative_timing(document)
+        legacy_runtime_durations = {
+            str(cue.get("id")): float(cue.get("duration", 0.0))
+            for cue in runtime.get("cues") or []
+            if isinstance(cue, dict) and cue.get("id") is not None
+        }
+        _apply_timing_policy(document, timing_policy, legacy_runtime_durations)
         _recompute_course_timeline(
             document, _legacy_explicit_gaps(runtime))
         _extend_last_subtitle_to_cue_end(document)

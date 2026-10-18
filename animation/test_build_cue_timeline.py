@@ -77,21 +77,45 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(parsed["schema"], timeline.PLAN_SET_SCHEMA)
         self.assertEqual(parsed["schema_version"], timeline.PLAN_SET_VERSION)
         self.assertEqual(parsed["track"], self.track)
-        self.assertEqual(parsed["cues"][0]["course"]["duration"], 2.0)
+        self.assertEqual(parsed["cues"][0]["course"]["duration"], 3.5)
         visual_track = next(
             track for track in parsed["cues"][0]["tracks"]
             if track["kind"] == "visual"
         )
-        self.assertEqual(visual_track["segments"][0]["source_end"], 2.0)
+        self.assertEqual(visual_track["segments"][0]["source_end"], 3.5)
         self.assertEqual(parsed["cues"][0]["group_path"], ["chapter"])
         self.assertEqual(parsed["cues"][0]["text"], "hello")
         self.assertEqual(parsed["cues"][0]["subtitles"], [{
             "id": "subtitle.0",
             "cue_start": 0.0,
-            "duration": 2.0,
+            "duration": 3.5,
             "text": "hello subtitle",
         }])
         self.assertIs(timeline.validate_plan_set(parsed), parsed)
+
+    def test_per_cue_audio_policy_trims_visual_and_keeps_default_max_elsewhere(self) -> None:
+        policy = self.root / "content" / "games" / self.game / "tutorial" / "quick.timing-policy.json"
+        policy.write_text(json.dumps({
+            "schema": builder.TIMING_POLICY_SCHEMA,
+            "schema_version": builder.TIMING_POLICY_VERSION,
+            "game_id": self.game,
+            "track": self.track,
+            "default_mode": "max",
+            "cues": {"quick/one": "audio"},
+        }), encoding="utf-8")
+
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        plan = document["cues"][0]
+        self.assertEqual(plan["course"]["duration"], 2.0)
+        visual_track = next(
+            track for track in plan["tracks"] if track["kind"] == "visual")
+        self.assertEqual(visual_track["segments"][0]["source_end"], 2.0)
+
+        policy_doc = json.loads(policy.read_text(encoding="utf-8"))
+        policy_doc["cues"]["missing/cue"] = "audio"
+        policy.write_text(json.dumps(policy_doc), encoding="utf-8")
+        with self.assertRaisesRegex(builder.BuildError, "unknown cue ids"):
+            builder.build_plan_set(self.root, self.game, self.track)
 
     def test_content_audio_boundary_override_is_applied_and_validated(self) -> None:
         boundaries = self.root / "content" / "games" / self.game / "tutorial" / "quick.audio-boundaries.json"

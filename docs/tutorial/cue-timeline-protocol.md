@@ -69,14 +69,28 @@ Phase 1 adapter 仍保留通用语义：
 max(旧 runtime duration, audio track 内容结束, compiled animation duration)
 ```
 
-但 Phase 4 的 quick 生成入口在 adapter 输出之上应用音轨优先策略：
+但 Phase 4 的 quick 生成入口在 adapter 输出之上应用可配置的 per-cue timing policy：
 
-- cue duration 等于该 cue 的完整 audio track 结束时间（包括显式 silence）；
-- 标题 cue 因此严格等于“MP3 clip + authored 1 秒 silence”；
-- compiled visual 若比音频更长，会裁到 cue duration，结束后由 `tail_policy=hold_last_frame` 保持最后画面，不再把 cue 拉长成额外停顿；
-- cue 起点按修正后的 duration 和 legacy runtime 中显式 gap 重新累加。
+```text
+content/games/splendor/tutorial/quick.timing-policy.json
+```
 
-只有 legacy runtime 存在的 gap 会被保留，compiled 动画尾部不会伪装成 gap。输出同时携带 `text`、`group_path`、`refs` 等非时间元数据，供 Android 章节树/预览使用，但这些字段不参与播放时钟。
+schema 为 `tutorial-cue-timing-policy/v1`，`schema_version=1`。支持：
+
+- `default_mode: "max"`：默认保持 Phase 1 语义，音频结束但动画更长时不会被截断；
+- 单 cue 覆盖 `"audio"`：cue duration 使用完整 audio track（含显式 silence），visual 超出部分裁到 cue duration，并由 `hold_last_frame` 保持最后画面；
+- 可选 `"visual"`：visual 为准，但若会截断音频则生成失败，要求改用 `max`；
+- 可选 `"runtime"`：以 legacy runtime duration 为基准，并确保不会截断音频。
+
+当前 quick 的配置是：
+
+- 默认 `max`，因此 section 10/11 等动画长于音频的 cue 仍会完整播放动画；
+- 所有标题 cue 单独设为 `audio`。标题 cue 的时长因此严格等于
+  “MP3 clip + authored 1 秒 silence”，不会因为 compiled 动画尾部多出额外停顿。
+
+cue 起点按最终 duration 和 legacy runtime 中显式 gap 重新累加。只有 legacy runtime
+存在的 gap 会被保留，compiled 动画尾部不会伪装成 gap。输出同时携带 `text`、
+`group_path`、`refs` 等非时间元数据，供 Android 章节树/预览使用，但这些字段不参与播放时钟。
 
 生成器会再次执行 `validate_plan_set`，并且重复运行必须产生逐字节相同的文件。内容发布脚本 `tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json` 加入 release 文件集合、manifest entry、大小与 SHA-256 完整性校验。
 

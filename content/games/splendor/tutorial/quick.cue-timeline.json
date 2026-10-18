@@ -5,7 +5,7 @@
   "track": "quick",
   "course": {
     "start": 0.0,
-    "duration": 181.161
+    "duration": 194.753
   },
   "cues": [
     {
@@ -75,7 +75,7 @@
       "entry": null,
       "course": {
         "start": 2.295,
-        "duration": 9.572
+        "duration": 10.296
       },
       "tracks": [
         {
@@ -89,7 +89,7 @@
               "animation": "quick_intro/001",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 9.572,
+              "source_end": 10.296,
               "after_end": "hold_last_frame"
             }
           ]
@@ -120,7 +120,7 @@
         {
           "id": "subtitle.1",
           "cue_start": 3.38,
-          "duration": 6.192,
+          "duration": 6.916,
           "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
         }
       ],
@@ -135,7 +135,7 @@
       "cue_id": "quick_setup_cards/title_2",
       "entry": null,
       "course": {
-        "start": 11.867,
+        "start": 12.591,
         "duration": 2.405
       },
       "tracks": [
@@ -196,7 +196,7 @@
       "cue_id": "quick_setup_cards/001.1",
       "entry": null,
       "course": {
-        "start": 14.272,
+        "start": 14.996,
         "duration": 6.305
       },
       "tracks": [
@@ -251,7 +251,7 @@
       "cue_id": "quick_setup_cards/001.2",
       "entry": null,
       "course": {
-        "start": 20.577,
+        "start": 21.301,
         "duration": 4.509
       },
       "tracks": [
@@ -306,8 +306,8 @@
       "cue_id": "quick_setup_gems/002",
       "entry": null,
       "course": {
-        "start": 25.086,
-        "duration": 9.648
+        "start": 25.81,
+        "duration": 10.032
       },
       "tracks": [
         {
@@ -321,7 +321,7 @@
               "animation": "quick_setup_gems/002",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 9.648,
+              "source_end": 10.032,
               "after_end": "hold_last_frame"
             }
           ]
@@ -346,7 +346,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 9.648,
+          "duration": 10.032,
           "text": "再按人数摆宝石：两人每种四枚，三人每种五枚，四人每种七枚；"
         },
         {
@@ -367,7 +367,7 @@
       "cue_id": "quick_setup_players/001",
       "entry": null,
       "course": {
-        "start": 34.734,
+        "start": 35.842,
         "duration": 5.06
       },
       "tracks": [
@@ -414,7 +414,7 @@
       "cue_id": "quick_setup_players/002",
       "entry": null,
       "course": {
-        "start": 39.794,
+        "start": 40.902,
         "duration": 1.815
       },
       "tracks": [
@@ -469,7 +469,7 @@
       "cue_id": "quick_setup_players/003",
       "entry": null,
       "course": {
-        "start": 41.609,
+        "start": 42.717,
         "duration": 1.981
       },
       "tracks": [
@@ -524,7 +524,7 @@
       "cue_id": "quick_turn/title_3",
       "entry": null,
       "course": {
-        "start": 43.59,
+        "start": 44.698,
         "duration": 3.155
       },
       "tracks": [
@@ -585,7 +585,7 @@
       "cue_id": "quick_turn/001",
       "entry": null,
       "course": {
-        "start": 46.745,
+        "start": 47.853,
         "duration": 5.575
       },
       "tracks": [
@@ -640,8 +640,8 @@
       "cue_id": "quick_turn/002",
       "entry": null,
       "course": {
-        "start": 52.32,
-        "duration": 9.499
+        "start": 53.428,
+        "duration": 10.032
       },
       "tracks": [
         {
@@ -655,7 +655,7 @@
               "animation": "quick_turn/002",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 9.499,
+              "source_end": 10.032,
               "after_end": "hold_last_frame"
             }
           ]
@@ -680,7 +680,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 9.499,
+          "duration": 10.032,
           "text": "自己的回合，需要从三种行动中选一种：拿宝石、"
         },
         {
@@ -707,7 +707,7 @@
       "cue_id": "quick_take_gems/title_3_1",
       "entry": null,
       "course": {
-        "start": 61.819,
+        "start": 63.46,
         "duration": 3.215
       },
       "tracks": [
@@ -769,8 +769,8 @@
       "cue_id": "quick_take_gems/different.001",
       "entry": null,
       "course": {
-        "start": 65.034,
-        "duration": 4.345
+        "start": 66.675,
+        "duration": 4.824
       },
       "tracks": [
         {
@@ -784,7 +784,7 @@
               "animation": "quick_take_gems/different.001",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.345,
+              "source_end": 4.824,
               "after_end": "hold_last_frame"
             }
           ]
@@ -809,7 +809,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 4.345,
+          "duration": 4.824,
           "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。"
         }
       ],
@@ -825,8 +825,8 @@
       "cue_id": "quick_take_gems/same.001",
       "entry": null,
       "course": {
-        "start": 69.379,
-        "duration": 2.74
+        "start": 71.499,
+        "duration": 3.24
       },
       "tracks": [
         {
@@ -840,7 +840,7 @@
               "animation": "quick_take_gems/same.001",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.74,
+              "source_end": 3.24,
               "after_end": "hold_last_frame"
             }
           ]
@@ -865,7 +865,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 2.74,
+          "duration": 3.24,
           "text": "二是拿两枚相同颜色的宝石。"
         }
       ],
@@ -881,8 +881,8 @@
       "cue_id": "quick_take_gems/002",
       "entry": null,
       "course": {
-        "start": 72.119,
-        "duration": 6.95
+        "start": 74.739,
+        "duration": 6.955
       },
       "tracks": [
         {
@@ -896,7 +896,7 @@
               "animation": "quick_take_gems/002",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 6.95,
+              "source_end": 6.955,
               "after_end": "hold_last_frame"
             }
           ]
@@ -921,7 +921,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 6.95,
+          "duration": 6.955,
           "text": "拿两枚同色时，这种宝石在供应堆里必须至少剩四枚，"
         },
         {
@@ -943,8 +943,8 @@
       "cue_id": "quick_take_gems/003",
       "entry": null,
       "course": {
-        "start": 79.069,
-        "duration": 9.593
+        "start": 81.694,
+        "duration": 9.648
       },
       "tracks": [
         {
@@ -958,7 +958,7 @@
               "animation": "quick_take_gems/003",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 9.593,
+              "source_end": 9.648,
               "after_end": "hold_last_frame"
             }
           ]
@@ -989,7 +989,7 @@
         {
           "id": "subtitle.1",
           "cue_start": 4.905,
-          "duration": 4.688,
+          "duration": 4.743,
           "text": "自己持有的宝石和已买的卡都放在面前，属于公开信息。"
         }
       ],
@@ -1005,7 +1005,7 @@
       "cue_id": "quick_cards/title_3_2",
       "entry": null,
       "course": {
-        "start": 88.662,
+        "start": 91.342,
         "duration": 3.435
       },
       "tracks": [
@@ -1067,8 +1067,8 @@
       "cue_id": "quick_cards/001",
       "entry": null,
       "course": {
-        "start": 92.097,
-        "duration": 8.755
+        "start": 94.777,
+        "duration": 9.264
       },
       "tracks": [
         {
@@ -1082,7 +1082,7 @@
               "animation": "quick_cards/001",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 8.755,
+              "source_end": 9.264,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1107,7 +1107,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 8.755,
+          "duration": 9.264,
           "text": "看发展卡：左下角是价格，买它要支付对应宝石；"
         },
         {
@@ -1129,7 +1129,7 @@
       "cue_id": "quick_cards/002",
       "entry": null,
       "course": {
-        "start": 100.852,
+        "start": 104.041,
         "duration": 13.1
       },
       "tracks": [
@@ -1197,8 +1197,8 @@
       "cue_id": "quick_cards/003",
       "entry": null,
       "course": {
-        "start": 113.952,
-        "duration": 8.697
+        "start": 117.141,
+        "duration": 8.832
       },
       "tracks": [
         {
@@ -1212,7 +1212,7 @@
               "animation": "quick_cards/003",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 8.697,
+              "source_end": 8.832,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1237,7 +1237,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 8.697,
+          "duration": 8.832,
           "text": "已购发展卡提供永久折扣：每有一张同色卡，买卡时就少付一颗对应宝石，折扣最多让卡免费。"
         }
       ],
@@ -1253,7 +1253,7 @@
       "cue_id": "quick_reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 122.649,
+        "start": 125.973,
         "duration": 3.325
       },
       "tracks": [
@@ -1315,7 +1315,7 @@
       "cue_id": "quick_reserve/001",
       "entry": null,
       "course": {
-        "start": 125.974,
+        "start": 129.298,
         "duration": 9.42
       },
       "tracks": [
@@ -1383,7 +1383,7 @@
       "cue_id": "quick_reserve/002",
       "entry": null,
       "course": {
-        "start": 135.394,
+        "start": 138.718,
         "duration": 9.08
       },
       "tracks": [
@@ -1451,7 +1451,7 @@
       "cue_id": "quick_reserve/003",
       "entry": null,
       "course": {
-        "start": 144.474,
+        "start": 147.798,
         "duration": 3.581
       },
       "tracks": [
@@ -1507,7 +1507,7 @@
       "cue_id": "quick_gold/001",
       "entry": null,
       "course": {
-        "start": 148.055,
+        "start": 151.379,
         "duration": 7.896
       },
       "tracks": [
@@ -1569,7 +1569,7 @@
       "cue_id": "quick_nobles/title_3_4",
       "entry": null,
       "course": {
-        "start": 155.951,
+        "start": 159.275,
         "duration": 2.995
       },
       "tracks": [
@@ -1631,8 +1631,8 @@
       "cue_id": "quick_nobles/001",
       "entry": null,
       "course": {
-        "start": 158.946,
-        "duration": 6.5
+        "start": 162.27,
+        "duration": 6.69
       },
       "tracks": [
         {
@@ -1646,7 +1646,7 @@
               "animation": "quick_nobles/001",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 6.5,
+              "source_end": 6.69,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1677,7 +1677,7 @@
         {
           "id": "subtitle.1",
           "cue_start": 1.92,
-          "duration": 4.58,
+          "duration": 4.77,
           "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
         }
       ],
@@ -1693,8 +1693,8 @@
       "cue_id": "quick_nobles/002",
       "entry": null,
       "course": {
-        "start": 165.446,
-        "duration": 1.66
+        "start": 168.96,
+        "duration": 6.2
       },
       "tracks": [
         {
@@ -1708,7 +1708,7 @@
               "animation": "quick_nobles/002",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.66,
+              "source_end": 6.2,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1733,7 +1733,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 1.66,
+          "duration": 6.2,
           "text": "就拿取这位贵族；"
         }
       ],
@@ -1749,8 +1749,8 @@
       "cue_id": "quick_nobles/003",
       "entry": null,
       "course": {
-        "start": 167.106,
-        "duration": 2.882
+        "start": 175.16,
+        "duration": 8.0
       },
       "tracks": [
         {
@@ -1764,7 +1764,7 @@
               "animation": "quick_nobles/003",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.882,
+              "source_end": 8.0,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1789,7 +1789,7 @@
         {
           "id": "subtitle.0",
           "cue_start": 0.0,
-          "duration": 2.882,
+          "duration": 8.0,
           "text": "同时满足多位时，选一位拿取。"
         }
       ],
@@ -1805,7 +1805,7 @@
       "cue_id": "quick_end/title_4",
       "entry": null,
       "course": {
-        "start": 169.988,
+        "start": 183.16,
         "duration": 2.905
       },
       "tracks": [
@@ -1866,8 +1866,8 @@
       "cue_id": "quick_end/001",
       "entry": null,
       "course": {
-        "start": 172.893,
-        "duration": 8.268
+        "start": 186.065,
+        "duration": 8.688
       },
       "tracks": [
         {
@@ -1881,7 +1881,7 @@
               "animation": "quick_end/001",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 8.268,
+              "source_end": 8.688,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1912,7 +1912,7 @@
         {
           "id": "subtitle.1",
           "cue_start": 3.44,
-          "duration": 4.828,
+          "duration": 5.248,
           "text": "确保所有玩家回合数相同后，游戏结束；"
         },
         {
@@ -1964,165 +1964,324 @@
       "reason": "Legacy audio_start=2.87 lands after the first phoneme; waveform speech onset is 2.83s."
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_intro/title_1",
+      "mode": "audio",
       "original_duration": 3.08,
-      "audio_duration": 2.295
+      "audio_end": 2.295,
+      "visual_end": 3.08,
+      "duration": 2.295
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_intro/001",
+      "mode": "max",
       "original_duration": 10.296,
-      "audio_duration": 9.572
+      "audio_end": 9.572,
+      "visual_end": 10.296,
+      "duration": 10.296
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_setup_cards/title_2",
+      "mode": "audio",
       "original_duration": 2.99,
-      "audio_duration": 2.405
+      "audio_end": 2.405,
+      "visual_end": 2.99,
+      "duration": 2.405
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_setup_cards/001.1",
+      "mode": "max",
       "original_duration": 6.225,
-      "audio_duration": 6.305
+      "audio_end": 6.305,
+      "visual_end": 5.522,
+      "duration": 6.305
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_setup_cards/001.2",
+      "mode": "max",
+      "original_duration": 4.509,
+      "audio_end": 4.509,
+      "visual_end": 3.84,
+      "duration": 4.509
+    },
+    {
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_setup_gems/002",
+      "mode": "max",
       "original_duration": 10.032,
-      "audio_duration": 9.648
+      "audio_end": 9.648,
+      "visual_end": 10.032,
+      "duration": 10.032
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_setup_players/001",
+      "mode": "max",
+      "original_duration": 5.06,
+      "audio_end": 5.06,
+      "visual_end": 0.0,
+      "duration": 5.06
+    },
+    {
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_setup_players/002",
+      "mode": "max",
+      "original_duration": 1.815,
+      "audio_end": 1.815,
+      "visual_end": 0.321,
+      "duration": 1.815
+    },
+    {
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_setup_players/003",
+      "mode": "max",
+      "original_duration": 1.981,
+      "audio_end": 1.981,
+      "visual_end": 0.321,
+      "duration": 1.981
+    },
+    {
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_turn/title_3",
+      "mode": "audio",
       "original_duration": 3.57,
-      "audio_duration": 3.155
+      "audio_end": 3.155,
+      "visual_end": 3.57,
+      "duration": 3.155
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_turn/001",
+      "mode": "max",
       "original_duration": 5.535,
-      "audio_duration": 5.575
+      "audio_end": 5.575,
+      "visual_end": 5.472,
+      "duration": 5.575
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_turn/002",
+      "mode": "max",
       "original_duration": 10.032,
-      "audio_duration": 9.499
+      "audio_end": 9.499,
+      "visual_end": 10.032,
+      "duration": 10.032
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_take_gems/title_3_1",
+      "mode": "audio",
       "original_duration": 3.31,
-      "audio_duration": 3.215
+      "audio_end": 3.215,
+      "visual_end": 3.31,
+      "duration": 3.215
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_take_gems/different.001",
+      "mode": "max",
       "original_duration": 4.824,
-      "audio_duration": 4.345
+      "audio_end": 4.345,
+      "visual_end": 4.824,
+      "duration": 4.824
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_take_gems/same.001",
+      "mode": "max",
       "original_duration": 3.24,
-      "audio_duration": 2.74
+      "audio_end": 2.74,
+      "visual_end": 3.24,
+      "duration": 3.24
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_take_gems/002",
+      "mode": "max",
       "original_duration": 6.955,
-      "audio_duration": 6.95
+      "audio_end": 6.95,
+      "visual_end": 6.955,
+      "duration": 6.955
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_take_gems/003",
+      "mode": "max",
       "original_duration": 9.648,
-      "audio_duration": 9.593
+      "audio_end": 9.593,
+      "visual_end": 9.648,
+      "duration": 9.648
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_cards/title_3_2",
+      "mode": "audio",
       "original_duration": 3.6,
-      "audio_duration": 3.435
+      "audio_end": 3.435,
+      "visual_end": 3.6,
+      "duration": 3.435
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_cards/001",
+      "mode": "max",
       "original_duration": 9.264,
-      "audio_duration": 8.755
+      "audio_end": 8.755,
+      "visual_end": 9.264,
+      "duration": 9.264
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_cards/002",
+      "mode": "max",
+      "original_duration": 13.1,
+      "audio_end": 13.1,
+      "visual_end": 13.056,
+      "duration": 13.1
+    },
+    {
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_cards/003",
+      "mode": "max",
       "original_duration": 8.832,
-      "audio_duration": 8.697
+      "audio_end": 8.697,
+      "visual_end": 8.832,
+      "duration": 8.832
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_reserve/title_3_3",
+      "mode": "audio",
       "original_duration": 3.55,
-      "audio_duration": 3.325
+      "audio_end": 3.325,
+      "visual_end": 3.55,
+      "duration": 3.325
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_reserve/001",
+      "mode": "max",
+      "original_duration": 9.42,
+      "audio_end": 9.42,
+      "visual_end": 9.24,
+      "duration": 9.42
+    },
+    {
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_reserve/002",
+      "mode": "max",
+      "original_duration": 9.08,
+      "audio_end": 9.08,
+      "visual_end": 8.856,
+      "duration": 9.08
+    },
+    {
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_reserve/003",
+      "mode": "max",
+      "original_duration": 3.581,
+      "audio_end": 3.581,
+      "visual_end": 3.563,
+      "duration": 3.581
+    },
+    {
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "quick_gold/001",
+      "mode": "max",
+      "original_duration": 7.896,
+      "audio_end": 7.896,
+      "visual_end": 7.656,
+      "duration": 7.896
+    },
+    {
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_nobles/title_3_4",
+      "mode": "audio",
       "original_duration": 3.44,
-      "audio_duration": 2.995
+      "audio_end": 2.995,
+      "visual_end": 3.44,
+      "duration": 2.995
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_nobles/001",
+      "mode": "max",
       "original_duration": 6.69,
-      "audio_duration": 6.5
+      "audio_end": 6.5,
+      "visual_end": 6.69,
+      "duration": 6.69
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_nobles/002",
+      "mode": "max",
       "original_duration": 6.2,
-      "audio_duration": 1.66
+      "audio_end": 1.66,
+      "visual_end": 6.2,
+      "duration": 6.2
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_nobles/003",
+      "mode": "max",
       "original_duration": 8.0,
-      "audio_duration": 2.882
+      "audio_end": 2.882,
+      "visual_end": 8.0,
+      "duration": 8.0
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_end/title_4",
+      "mode": "audio",
       "original_duration": 3.26,
-      "audio_duration": 2.905
+      "audio_end": 2.905,
+      "visual_end": 3.26,
+      "duration": 2.905
     },
     {
-      "code": "audio_authoritative_duration",
+      "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "quick_end/001",
+      "mode": "max",
       "original_duration": 8.688,
-      "audio_duration": 8.268
+      "audio_end": 8.268,
+      "visual_end": 8.688,
+      "duration": 8.688
     }
   ]
 }
