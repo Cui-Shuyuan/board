@@ -35,14 +35,18 @@ python3 animation/build_cue_timeline.py --game splendor --track quick
 content/games/splendor/tutorial/quick.cue-timeline.json
 ```
 
-生成器只读取：
+生成器读取：
 
 ```text
 content/games/splendor/tutorial/quick.runtime.json
 content/games/splendor/tutorial/anim/v2/quick.compiled.json
+content/games/splendor/tutorial/quick.audio-boundaries.json   # 可选
 ```
 
-不会修改任何已有 runtime/compiled 文件。生成结果使用：
+`*.audio-boundaries.json` 是对 legacy 字幕对齐得到的 `audio_start` 落点晚于
+真实首音素时的显式、内容级修正。它记录具体 cue/segment 的波形起点，不是
+固定 pre-roll 常量；修正后重新计算 cue duration、后续 course.start 和 track
+总时长。生成器不会修改任何已有 runtime/compiled 文件。生成结果使用：
 
 - plan set schema：`tutorial-cue-plan-set/v1`
 - plan set `schema_version`：`1`

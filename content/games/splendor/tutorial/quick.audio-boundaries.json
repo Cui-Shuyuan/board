@@ -1,0 +1,14 @@
+{
+  "schema": "tutorial-audio-boundaries/v1",
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "quick",
+  "boundaries": [
+    {
+      "cue_id": "quick_intro/001",
+      "segment_id": "audio.section_audio",
+      "source_start": 1.9,
+      "reason": "Legacy subtitle-derived audio_start=2.08 lands after the first phoneme; waveform speech onset is 1.90s. The corrected boundary is content-derived, not a fixed pre-roll."
+    }
+  ]
+}

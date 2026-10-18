@@ -104,7 +104,7 @@
               "type": "audio_clip",
               "asset": "media/tts/quick/quick.intro.mp3",
               "cue_start": 0.0,
-              "source_start": 2.08,
+              "source_start": 1.9,
               "source_end": 11.472
             }
           ]
@@ -1935,6 +1935,15 @@
       "severity": "warning",
       "cue_id": "quick_setup_players/001",
       "message": "cue 'quick_setup_players/001' has a compiled cue with zero duration; no visual segment was emitted"
+    },
+    {
+      "code": "audio_start_onset_guard",
+      "severity": "info",
+      "cue_id": "quick_intro/001",
+      "segment_id": "audio.section_audio",
+      "original_source_start": 2.08,
+      "corrected_source_start": 1.9,
+      "reason": "Legacy subtitle-derived audio_start=2.08 lands after the first phoneme; waveform speech onset is 1.90s. The corrected boundary is content-derived, not a fixed pre-roll."
     }
   ]
 }

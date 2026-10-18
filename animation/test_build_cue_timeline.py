@@ -38,7 +38,7 @@ class BuildCueTimelineTests(unittest.TestCase):
                 "start": 0.0,
                 "duration": 2.0,
                 "audio": "media/one.mp3",
-                "audio_start": 0.0,
+                "audio_start": 0.75,
                 "text": "hello",
                 "group_path": ["chapter"],
                 "refs": ["concept"],
@@ -87,6 +87,38 @@ class BuildCueTimelineTests(unittest.TestCase):
             "text": "hello subtitle",
         }])
         self.assertIs(timeline.validate_plan_set(parsed), parsed)
+
+    def test_content_audio_boundary_override_is_applied_and_validated(self) -> None:
+        boundaries = self.root / "content" / "games" / self.game / "tutorial" / "quick.audio-boundaries.json"
+        boundaries.write_text(json.dumps({
+            "schema": builder.AUDIO_BOUNDARIES_SCHEMA,
+            "schema_version": builder.AUDIO_BOUNDARIES_VERSION,
+            "game_id": self.game,
+            "track": self.track,
+            "boundaries": [{
+                "cue_id": "quick/one",
+                "segment_id": "audio.single_audio",
+                "source_start": 0.5,
+                "reason": "synthetic waveform onset",
+            }],
+        }), encoding="utf-8")
+
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        audio_track = next(
+            track for track in document["cues"][0]["tracks"]
+            if track["kind"] == "audio"
+        )
+        audio = audio_track["segments"][0]
+        self.assertEqual(audio["source_start"], 0.5)
+        self.assertEqual(audio["source_end"], 2.75)
+        self.assertIn("audio_start_onset_guard",
+                      [item["code"] for item in document["diagnostics"]])
+
+        bad = json.loads(boundaries.read_text(encoding="utf-8"))
+        bad["boundaries"][0]["cue_id"] = "missing/cue"
+        boundaries.write_text(json.dumps(bad), encoding="utf-8")
+        with self.assertRaisesRegex(builder.BuildError, "unknown cue_id"):
+            builder.build_plan_set(self.root, self.game, self.track)
 
     def test_missing_plan_input_is_an_explicit_build_error(self) -> None:
         self.compiled_path.unlink()
