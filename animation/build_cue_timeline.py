@@ -171,46 +171,6 @@ def _cue_trailing_silence_seconds(policy_document: dict, cue_id: str) -> float:
     return seconds
 
 
-def _cue_post_speech_silence_seconds(policy_document: dict, cue_id: str) -> float | None:
-    option = (policy_document.get("cues") or {}).get(cue_id)
-    if not isinstance(option, dict) or "post_speech_silence_seconds" not in option:
-        return None
-    value = option.get("post_speech_silence_seconds")
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise BuildError(
-            f"timing policy cue {cue_id!r} post_speech_silence_seconds must be numeric")
-    seconds = float(value)
-    if not math.isfinite(seconds) or seconds < 0.0:
-        raise BuildError(
-            f"timing policy cue {cue_id!r} post_speech_silence_seconds must be >= 0")
-    return seconds
-
-
-def _tts_last_word_end_seconds(
-    raw_subtitle_path: str | None,
-    game_dir: Path,
-    game: str,
-) -> float | None:
-    if not raw_subtitle_path:
-        return None
-    rel = _normalize_game_relative_path(raw_subtitle_path, game_dir, game)
-    events = json.loads((game_dir / rel).read_text(encoding="utf-8"))
-    if not isinstance(events, list):
-        return None
-    ends: list[float] = []
-    for event in events:
-        if not isinstance(event, dict):
-            continue
-        for word in event.get("words") or []:
-            if not isinstance(word, dict):
-                continue
-            try:
-                ends.append(float(word.get("endTime", 0.0)))
-            except (TypeError, ValueError):
-                continue
-    return max(ends) if ends else None
-
-
 def _apply_timing_policy(
     document: dict,
     policy_document: dict,
@@ -775,7 +735,6 @@ def _build_cue_plan_set_from_tts(
         audio_segments: list[dict] = []
         subtitles: list[dict] = []
         cursor = 0.0
-        last_speech_end = 0.0
         beats = script_cue.get("beats") or []
         cue_text = cue_texts.get(cue_id, "")
         group_id = cue_to_audio_group.get(cue_id)
@@ -820,7 +779,6 @@ def _build_cue_plan_set_from_tts(
                 "text": cue_text,
             })
             cursor = segment_duration
-            last_speech_end = segment_duration
         else:
             for beat_index, beat in enumerate(beats):
                 if not isinstance(beat, dict):
@@ -835,11 +793,6 @@ def _build_cue_plan_set_from_tts(
                     raise BuildError(f"invalid TTS duration for beat {beat_id!r}")
                 asset = _normalize_game_relative_path(
                     str(entry.get("file") or ""), game_dir, game)
-                beat_speech_end = _tts_last_word_end_seconds(
-                    entry.get("subtitle_file"), game_dir, game)
-                if beat_speech_end is None:
-                    beat_speech_end = duration
-                last_speech_end = cursor + min(duration, max(0.0, beat_speech_end))
                 audio_segments.append({
                     "id": f"audio.beat.{beat_index}",
                     "type": "audio_clip",
@@ -860,13 +813,7 @@ def _build_cue_plan_set_from_tts(
                     })
                 cursor += duration
 
-        post_speech_target = _cue_post_speech_silence_seconds(
-            policy_document, cue_id)
-        if post_speech_target is not None:
-            existing_tail = max(0.0, cursor - last_speech_end)
-            trailing = max(0.0, post_speech_target - existing_tail)
-        else:
-            trailing = _cue_trailing_silence_seconds(policy_document, cue_id)
+        trailing = _cue_trailing_silence_seconds(policy_document, cue_id)
         if trailing > 0.0:
             audio_segments.append({
                 "id": "audio.trailing_silence",

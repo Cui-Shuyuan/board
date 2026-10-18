@@ -109,7 +109,7 @@ content/games/splendor/tutorial/quick.timing-policy.json
   "cues": {
     "quick_intro/title_1": {
       "mode": "audio",
-      "post_speech_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0
     }
   }
 }
@@ -120,12 +120,9 @@ content/games/splendor/tutorial/quick.timing-policy.json
 - `max`：cue 在所有 track 都播完后结束。音频先结束则动画继续；动画先结束则
   保持最后画面等待音频。这是正文 cue 的默认模式，因此 section 10/11 等动画
   更长的 cue 不会被截断；
-- `audio`：cue duration 使用完整 audio track（含追加 silence），visual 超出
-  部分裁到 cue duration 并保持最后画面。标题 cue 使用该模式；
-- `post_speech_silence_seconds`：从该 cue 最后一个 TTS word 的 `endTime` 开始
-  计算目标静音。如果 TTS 文件本身已带 0.4 秒尾部静音，只会再补 0.6 秒，使
-  口播结束到下一 cue 的总间隔为 1.0 秒。它与 `trailing_silence_seconds` 的区别
-  是后者直接追加到文件末尾，不扣除 TTS 自带尾部静音；
+- `audio`：cue duration 使用完整 audio track（含 `trailing_silence_seconds`），
+  visual 超出部分裁到 cue duration 并保持最后画面。标题 cue 使用该模式，
+  因此严格等于“MP3 + 1 秒 silence”；
 - `visual`：visual 为准，但若会截断音频则生成失败；
 - `runtime`：以 legacy runtime duration 为基准，并保证不截断音频。
 
