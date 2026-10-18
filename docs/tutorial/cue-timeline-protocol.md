@@ -102,7 +102,8 @@ content/games/splendor/tutorial/quick.timing-policy.json
 
 ```json
 {
-  "audio_source": "cue_tts_manifest",
+  "audio_source": "audio_slice_manifest",
+  "audio_slice_manifest": "tutorial/quick.audio-slices.json",
   "tts_manifest": "media/tts/quick.cues/tts_manifest.json",
   "script_source": "tutorial/build/quick.script.json",
   "default_mode": "max",
@@ -132,51 +133,42 @@ cue 起点按最终 duration 顺序累加；每个 cue 全部轨道完成后自�
 
 生成器会再次执行 `validate_plan_set`，并且重复运行必须产生逐字节相同的文件。内容发布脚本 `tools/content/build_content_manifest.py` 会把存在的 `{track}.cue-timeline.json` 加入 release 文件集合、manifest entry、大小与 SHA-256 完整性校验。
 
-### 4.2.2 跨 cue 共享一次 TTS 生成，构建期切成独立音频
+### 4.2.2 逻辑音频切片
 
-timing policy 的 `audio_groups` 用于把多条串行 cue 的文本合并为一次 TTS：
+原始 TTS 音频不被复制或改写。所有逻辑切片集中记录在：
+
+```text
+content/games/splendor/tutorial/quick.audio-slices.json
+```
+
+schema 为 `tutorial-audio-slices/v1`。每个切片有稳定的逻辑 id，并集中记录：
 
 ```json
 {
-  "audio_groups": {
-    "quick_nobles_001_002": {
-      "cue_ids": ["quick_nobles/001", "quick_nobles/002"],
-      "beat_id": "quick_nobles/001_002.b1"
-    }
-  }
+  "id": "quick_nobles__001",
+  "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+  "start": 0.0,
+  "end": 6.4475625,
+  "speech_end": 6.2950416
 }
 ```
 
-TTS 仍只生成一次，保证这一段的语气连贯。随后运行：
+- `id`：脚本/plan 中引用的逻辑音频名；
+- `asset`：原始音频文件，保持完整；
+- `start/end`：该逻辑切片在原始音频中的采样范围；
+- `speech_end`：该段最后一个 TTS word 的结束时间，供停顿策略使用。
 
-```bash
-python animation/split_shared_cue_audio.py --game splendor --track quick
-```
+cue 与逻辑切片的对应关系也集中在这个文件的 `cues` 映射里。生成 plan 时：
 
-该工具使用 TTS 返回的 word timing 找到 cue 分界，并在词间静音中点切开原始
-音频，写出每条 cue 自己的 WAV：
+- 每个 cue 解析出一个或多个逻辑切片；
+- plan segment 写入 `audio_slice_id`，并展开 `asset/source_start/source_end`
+  供 Unity/Android 执行；
+- 不产生新的音频文件，不修改原始 MP3；
+- 时间点不在构建脚本里散落，全部集中在 slice manifest。
 
-```text
-media/tts/quick.cues/split/quick_nobles__001.wav
-media/tts/quick.cues/split/quick_nobles__002.wav
-```
-
-同时生成：
-
-```text
-media/tts/quick.cues/split/slices_manifest.json
-```
-
-timing policy 通过 `slice_manifest` 引用它。plan 中每条 cue 的音频都是完整文件、
-`source_start=0`，不再需要：
-
-- 在多个 cue 间共享运行时 source range；
-- `playback_group`；
-- 波形搜索 cue 起点。
-
-这样既保留“一次 TTS 的自然语气”，又保持“每条 cue 一个完整音频文件”的简单
-运行时模型。一个 cue 仍可包含多个音频文件，多条 cue 也可以来自同一次 TTS，
-只是共享发生在构建期而不是运行时。
+`post_speech_silence_seconds` 现在也读取这里的 `speech_end`。例如标题 TTS
+文件自带 0.411s 尾部静音、配置目标为 1.0s 时，只追加 0.589s silence，使
+口播最后一个 word 到下一 cue 的总停顿为 1.0s。
 
 ### 4.3 共享 track 级开关
 

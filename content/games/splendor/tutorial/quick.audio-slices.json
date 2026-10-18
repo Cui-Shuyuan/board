@@ -1,0 +1,325 @@
+{
+  "schema": "tutorial-audio-slices/v1",
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "quick",
+  "sample_rate": 24000,
+  "cues": {
+    "quick_intro/title_1": [
+      {
+        "id": "quick_intro__title_1.b1",
+        "asset": "media/tts/quick.cues/quick_intro__title_1.b1.mp3",
+        "start": 0.0,
+        "end": 1.656,
+        "speech_end": 1.245
+      }
+    ],
+    "quick_intro/001": [
+      {
+        "id": "quick_intro__001.b1",
+        "asset": "media/tts/quick.cues/quick_intro__001.b1.mp3",
+        "start": 0.0,
+        "end": 10.056,
+        "speech_end": 9.675041
+      }
+    ],
+    "quick_setup_cards/title_2": [
+      {
+        "id": "quick_setup_cards__title_2.b1",
+        "asset": "media/tts/quick.cues/quick_setup_cards__title_2.b1.mp3",
+        "start": 0.0,
+        "end": 1.872,
+        "speech_end": 1.445
+      }
+    ],
+    "quick_setup_cards/001.1": [
+      {
+        "id": "quick_setup_cards__001.1.b1",
+        "asset": "media/tts/quick.cues/quick_setup_cards__001.1.b1.mp3",
+        "start": 0.0,
+        "end": 2.04,
+        "speech_end": 1.685
+      },
+      {
+        "id": "quick_setup_cards__001.1.b2",
+        "asset": "media/tts/quick.cues/quick_setup_cards__001.1.b2.mp3",
+        "start": 0.0,
+        "end": 4.056,
+        "speech_end": 3.815
+      }
+    ],
+    "quick_setup_cards/001.2": [
+      {
+        "id": "quick_setup_cards__001.2.b1",
+        "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b1.mp3",
+        "start": 0.0,
+        "end": 1.632,
+        "speech_end": 1.415
+      },
+      {
+        "id": "quick_setup_cards__001.2.b2",
+        "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b2.mp3",
+        "start": 0.0,
+        "end": 1.872,
+        "speech_end": 1.425
+      },
+      {
+        "id": "quick_setup_cards__001.2.b3",
+        "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b3.mp3",
+        "start": 0.0,
+        "end": 1.464,
+        "speech_end": 1.085
+      },
+      {
+        "id": "quick_setup_cards__001.2.b4",
+        "asset": "media/tts/quick.cues/quick_setup_cards__001.2.b4.mp3",
+        "start": 0.0,
+        "end": 1.464,
+        "speech_end": 1.155
+      }
+    ],
+    "quick_setup_gems/002": [
+      {
+        "id": "quick_setup_gems__002.b1",
+        "asset": "media/tts/quick.cues/quick_setup_gems__002.b1.mp3",
+        "start": 0.0,
+        "end": 9.912,
+        "speech_end": 9.625042
+      }
+    ],
+    "quick_setup_players/001": [
+      {
+        "id": "quick_setup_players__001.b1",
+        "asset": "media/tts/quick.cues/quick_setup_players__001.b1.mp3",
+        "start": 0.0,
+        "end": 4.848,
+        "speech_end": 4.535
+      }
+    ],
+    "quick_setup_players/002": [
+      {
+        "id": "quick_setup_players__002.b1",
+        "asset": "media/tts/quick.cues/quick_setup_players__002.b1.mp3",
+        "start": 0.0,
+        "end": 2.28,
+        "speech_end": 1.885
+      }
+    ],
+    "quick_setup_players/003": [
+      {
+        "id": "quick_setup_players__003.b1",
+        "asset": "media/tts/quick.cues/quick_setup_players__003.b1.mp3",
+        "start": 0.0,
+        "end": 2.448,
+        "speech_end": 2.215
+      }
+    ],
+    "quick_turn/title_3": [
+      {
+        "id": "quick_turn__title_3.b1",
+        "asset": "media/tts/quick.cues/quick_turn__title_3.b1.mp3",
+        "start": 0.0,
+        "end": 2.448,
+        "speech_end": 2.085
+      }
+    ],
+    "quick_turn/001": [
+      {
+        "id": "quick_turn__001.b1",
+        "asset": "media/tts/quick.cues/quick_turn__001.b1.mp3",
+        "start": 0.0,
+        "end": 5.448,
+        "speech_end": 5.205
+      }
+    ],
+    "quick_turn/002": [
+      {
+        "id": "quick_turn__002.b1",
+        "asset": "media/tts/quick.cues/quick_turn__002.b1.mp3",
+        "start": 0.0,
+        "end": 9.648,
+        "speech_end": 8.915083
+      }
+    ],
+    "quick_take_gems/title_3_1": [
+      {
+        "id": "quick_take_gems__title_3_1.b1",
+        "asset": "media/tts/quick.cues/quick_take_gems__title_3_1.b1.mp3",
+        "start": 0.0,
+        "end": 2.256,
+        "speech_end": 1.905
+      }
+    ],
+    "quick_take_gems/different.001": [
+      {
+        "id": "quick_take_gems__different.001.b1",
+        "asset": "media/tts/quick.cues/quick_take_gems__different.001.b1.mp3",
+        "start": 0.0,
+        "end": 4.44,
+        "speech_end": 4.135
+      }
+    ],
+    "quick_take_gems/same.001": [
+      {
+        "id": "quick_take_gems__same.001.b1",
+        "asset": "media/tts/quick.cues/quick_take_gems__same.001.b1.mp3",
+        "start": 0.0,
+        "end": 2.832,
+        "speech_end": 2.535
+      }
+    ],
+    "quick_take_gems/002": [
+      {
+        "id": "quick_take_gems__002.b1",
+        "asset": "media/tts/quick.cues/quick_take_gems__002.b1.mp3",
+        "start": 0.0,
+        "end": 7.248,
+        "speech_end": 6.875042
+      }
+    ],
+    "quick_take_gems/003": [
+      {
+        "id": "quick_take_gems__003.b1",
+        "asset": "media/tts/quick.cues/quick_take_gems__003.b1.mp3",
+        "start": 0.0,
+        "end": 10.272,
+        "speech_end": 9.435041
+      }
+    ],
+    "quick_cards/title_3_2": [
+      {
+        "id": "quick_cards__title_3_2.b1",
+        "asset": "media/tts/quick.cues/quick_cards__title_3_2.b1.mp3",
+        "start": 0.0,
+        "end": 2.856,
+        "speech_end": 2.495
+      }
+    ],
+    "quick_cards/001": [
+      {
+        "id": "quick_cards__001.b1",
+        "asset": "media/tts/quick.cues/quick_cards__001.b1.mp3",
+        "start": 0.0,
+        "end": 8.28,
+        "speech_end": 7.4650416
+      }
+    ],
+    "quick_cards/002": [
+      {
+        "id": "quick_cards__002.b1",
+        "asset": "media/tts/quick.cues/quick_cards__002.b1.mp3",
+        "start": 0.0,
+        "end": 13.68,
+        "speech_end": 13.225082
+      }
+    ],
+    "quick_cards/003": [
+      {
+        "id": "quick_cards__003.b1",
+        "asset": "media/tts/quick.cues/quick_cards__003.b1.mp3",
+        "start": 0.0,
+        "end": 8.688,
+        "speech_end": 8.025042
+      }
+    ],
+    "quick_reserve/title_3_3": [
+      {
+        "id": "quick_reserve__title_3_3.b1",
+        "asset": "media/tts/quick.cues/quick_reserve__title_3_3.b1.mp3",
+        "start": 0.0,
+        "end": 2.448,
+        "speech_end": 2.255
+      }
+    ],
+    "quick_reserve/001": [
+      {
+        "id": "quick_reserve__001.b1",
+        "asset": "media/tts/quick.cues/quick_reserve__001.b1.mp3",
+        "start": 0.0,
+        "end": 9.48,
+        "speech_end": 9.005083
+      }
+    ],
+    "quick_reserve/002": [
+      {
+        "id": "quick_reserve__002.b1",
+        "asset": "media/tts/quick.cues/quick_reserve__002.b1.mp3",
+        "start": 0.0,
+        "end": 9.24,
+        "speech_end": 8.495084
+      }
+    ],
+    "quick_reserve/003": [
+      {
+        "id": "quick_reserve__003.b1",
+        "asset": "media/tts/quick.cues/quick_reserve__003.b1.mp3",
+        "start": 0.0,
+        "end": 3.888,
+        "speech_end": 3.475
+      }
+    ],
+    "quick_gold/001": [
+      {
+        "id": "quick_gold__001.b1",
+        "asset": "media/tts/quick.cues/quick_gold__001.b1.mp3",
+        "start": 0.0,
+        "end": 7.656,
+        "speech_end": 6.8650417
+      }
+    ],
+    "quick_nobles/title_3_4": [
+      {
+        "id": "quick_nobles__title_3_4.b1",
+        "asset": "media/tts/quick.cues/quick_nobles__title_3_4.b1.mp3",
+        "start": 0.0,
+        "end": 2.256,
+        "speech_end": 1.995
+      }
+    ],
+    "quick_nobles/001": [
+      {
+        "id": "quick_nobles__001",
+        "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+        "start": 0.0,
+        "end": 6.4475625,
+        "speech_end": 6.2950416
+      }
+    ],
+    "quick_nobles/002": [
+      {
+        "id": "quick_nobles__002",
+        "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+        "start": 6.4475625,
+        "end": 8.064,
+        "speech_end": 7.755083
+      }
+    ],
+    "quick_nobles/003": [
+      {
+        "id": "quick_nobles__003.b1",
+        "asset": "media/tts/quick.cues/quick_nobles__003.b1.mp3",
+        "start": 0.0,
+        "end": 3.24,
+        "speech_end": 2.965
+      }
+    ],
+    "quick_end/title_4": [
+      {
+        "id": "quick_end__title_4.b1",
+        "asset": "media/tts/quick.cues/quick_end__title_4.b1.mp3",
+        "start": 0.0,
+        "end": 1.848,
+        "speech_end": 1.645
+      }
+    ],
+    "quick_end/001": [
+      {
+        "id": "quick_end__001.b1",
+        "asset": "media/tts/quick.cues/quick_end__001.b1.mp3",
+        "start": 0.0,
+        "end": 8.448,
+        "speech_end": 8.075084
+      }
+    ]
+  }
+}

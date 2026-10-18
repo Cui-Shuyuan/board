@@ -200,6 +200,65 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(plan["subtitles"][0]["cue_start"], 0.1)
         self.assertEqual(plan["subtitles"][0]["duration"], 0.7)
 
+    def test_audio_slice_manifest_references_logical_slices_without_copying(self) -> None:
+        game_dir = self.root / "content" / "games" / self.game
+        media = game_dir / "media" / "tts" / "test"
+        media.mkdir(parents=True)
+        (media / "one.mp3").write_bytes(b"fake-mp3")
+        script_path = game_dir / "tutorial" / "build" / "quick.script.json"
+        script_path.parent.mkdir(parents=True)
+        script_path.write_text(json.dumps({
+            "cues": [{
+                "id": "quick/one",
+                "group_path": ["chapter"],
+                "beats": [{"id": "quick/one.b1", "text": "hello"}],
+            }],
+        }), encoding="utf-8")
+        slices_path = game_dir / "tutorial" / "quick.audio-slices.json"
+        slices_path.write_text(json.dumps({
+            "schema": builder.AUDIO_SLICES_SCHEMA,
+            "schema_version": builder.AUDIO_SLICES_VERSION,
+            "game_id": self.game,
+            "track": self.track,
+            "sample_rate": 24000,
+            "cues": {
+                "quick/one": [{
+                    "id": "logical/one.audio",
+                    "asset": "media/tts/test/one.mp3",
+                    "start": 0.0,
+                    "end": 1.0,
+                    "speech_end": 0.8,
+                }],
+            },
+        }), encoding="utf-8")
+        (game_dir / "tutorial" / "quick.timing-policy.json").write_text(json.dumps({
+            "schema": builder.TIMING_POLICY_SCHEMA,
+            "schema_version": builder.TIMING_POLICY_VERSION,
+            "game_id": self.game,
+            "track": self.track,
+            "audio_source": "audio_slice_manifest",
+            "audio_slice_manifest": "tutorial/quick.audio-slices.json",
+            "script_source": "tutorial/build/quick.script.json",
+            "default_mode": "max",
+            "cues": {
+                "quick/one": {
+                    "mode": "audio",
+                    "post_speech_silence_seconds": 1.0,
+                },
+            },
+        }), encoding="utf-8")
+
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        plan = document["cues"][0]
+        audio = next(
+            track for track in plan["tracks"] if track["kind"] == "audio")["segments"]
+        self.assertEqual(audio[0]["audio_slice_id"], "logical/one.audio")
+        self.assertEqual(audio[0]["source_start"], 0.0)
+        self.assertEqual(audio[0]["source_end"], 1.0)
+        self.assertEqual(audio[1]["type"], "silence")
+        self.assertAlmostEqual(audio[1]["duration"], 0.8, places=6)
+        self.assertAlmostEqual(plan["course"]["duration"], 1.8, places=6)
+
     def test_shared_audio_group_assigns_contiguous_ranges_to_serial_cues(self) -> None:
         game_dir = self.root / "content" / "games" / self.game
         media = game_dir / "media" / "tts" / "test"

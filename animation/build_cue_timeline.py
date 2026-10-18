@@ -32,6 +32,8 @@ AUDIO_BOUNDARIES_SCHEMA = "tutorial-audio-boundaries/v1"
 AUDIO_BOUNDARIES_VERSION = 1
 TIMING_POLICY_SCHEMA = "tutorial-cue-timing-policy/v1"
 TIMING_POLICY_VERSION = 1
+AUDIO_SLICES_SCHEMA = "tutorial-audio-slices/v1"
+AUDIO_SLICES_VERSION = 1
 
 
 class BuildError(RuntimeError):
@@ -168,6 +170,21 @@ def _cue_trailing_silence_seconds(policy_document: dict, cue_id: str) -> float:
     if not math.isfinite(seconds) or seconds < 0.0:
         raise BuildError(
             f"timing policy cue {cue_id!r} trailing_silence_seconds must be >= 0")
+    return seconds
+
+
+def _cue_post_speech_silence_seconds(policy_document: dict, cue_id: str) -> float | None:
+    option = (policy_document.get("cues") or {}).get(cue_id)
+    if not isinstance(option, dict) or "post_speech_silence_seconds" not in option:
+        return None
+    value = option.get("post_speech_silence_seconds")
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise BuildError(
+            f"timing policy cue {cue_id!r} post_speech_silence_seconds must be numeric")
+    seconds = float(value)
+    if not math.isfinite(seconds) or seconds < 0.0:
+        raise BuildError(
+            f"timing policy cue {cue_id!r} post_speech_silence_seconds must be >= 0")
     return seconds
 
 
@@ -888,6 +905,190 @@ def _build_cue_plan_set_from_tts(
     return document
 
 
+def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) -> dict:
+    path = repo_root / "content" / "games" / game / rel_path
+    document = _load_json(path)
+    if document.get("schema") != AUDIO_SLICES_SCHEMA:
+        raise BuildError(f"{path}: expected schema {AUDIO_SLICES_SCHEMA!r}")
+    if document.get("schema_version") != AUDIO_SLICES_VERSION:
+        raise BuildError(f"{path}: expected schema_version {AUDIO_SLICES_VERSION}")
+    if document.get("game_id") not in (None, game):
+        raise BuildError(f"{path}: game_id mismatch")
+    if document.get("track") not in (None, track):
+        raise BuildError(f"{path}: track mismatch")
+    if not isinstance(document.get("cues"), dict):
+        raise BuildError(f"{path}: cues must be an object")
+    return document
+
+
+def _build_cue_plan_set_from_audio_slices(
+    repo_root: Path,
+    game: str,
+    track: str,
+    runtime: dict,
+    compiled: dict,
+    policy_document: dict,
+) -> dict:
+    """Build plans from a central logical audio-slice manifest.
+
+    The manifest is the single place that owns asset source ranges and
+    ``speech_end`` timestamps.  Cue plans reference a logical slice id and get
+    the resolved asset/range at build time; the original audio files are never
+    modified or duplicated.
+    """
+    game_dir = repo_root / "content" / "games" / game
+    slice_rel = str(policy_document.get("audio_slice_manifest") or "").strip()
+    script_rel = str(policy_document.get("script_source") or "").strip()
+    if not slice_rel or not script_rel:
+        raise BuildError(
+            "audio_slice_manifest timing policy requires "
+            "audio_slice_manifest and script_source")
+    slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)
+    script = _load_json(game_dir / script_rel)
+    sample_rate = int(slice_doc.get("sample_rate") or runtime.get("sample_rate") or 24000)
+    compiled_by_id = {
+        str(cue.get("id")): cue
+        for cue in compiled.get("cues") or []
+        if isinstance(cue, dict) and cue.get("id") is not None
+    }
+    runtime_by_id = {
+        str(cue.get("id")): cue
+        for cue in runtime.get("cues") or []
+        if isinstance(cue, dict) and cue.get("id") is not None
+    }
+    plans: list[dict] = []
+    diagnostics: list[dict] = [{
+        "code": "audio_slice_source",
+        "severity": "info",
+        "message": "cue audio references central logical audio slices",
+    }]
+    for script_cue in script.get("cues") or []:
+        if not isinstance(script_cue, dict):
+            continue
+        cue_id = str(script_cue.get("id") or "").strip()
+        if not cue_id:
+            raise BuildError("script cue id is empty")
+        runtime_cue = runtime_by_id.get(cue_id, {})
+        cue_text = "".join(
+            str(beat.get("text") or "")
+            for beat in (script_cue.get("beats") or [])
+            if isinstance(beat, dict)
+        )
+        raw_slices = slice_doc["cues"].get(cue_id)
+        if not isinstance(raw_slices, list) or not raw_slices:
+            raise BuildError(f"audio slice manifest has no slices for cue {cue_id!r}")
+
+        audio_segments: list[dict] = []
+        cursor = 0.0
+        last_speech_end = 0.0
+        for slice_index, raw_slice in enumerate(raw_slices):
+            if not isinstance(raw_slice, dict):
+                raise BuildError(
+                    f"audio slice {cue_id!r}[{slice_index}] must be an object")
+            slice_id = str(raw_slice.get("id") or "").strip()
+            asset = _normalize_game_relative_path(
+                str(raw_slice.get("asset") or ""), game_dir, game)
+            start = float(raw_slice.get("start", 0.0))
+            end = float(raw_slice.get("end", 0.0))
+            speech_end = float(raw_slice.get("speech_end", end))
+            if not math.isfinite(start) or not math.isfinite(end) or end <= start:
+                raise BuildError(
+                    f"audio slice {cue_id!r}[{slice_index}] has invalid range")
+            if not math.isfinite(speech_end):
+                raise BuildError(
+                    f"audio slice {cue_id!r}[{slice_index}] has invalid speech_end")
+            duration = end - start
+            audio_segments.append({
+                "id": f"audio.slice.{slice_index}",
+                "type": "audio_clip",
+                "audio_slice_id": slice_id,
+                "asset": asset,
+                "cue_start": round(cursor, 9),
+                "source_start": round(start, 9),
+                "source_end": round(end, 9),
+                "source_start_sample": int(round(start * sample_rate)),
+                "source_end_sample": int(round(end * sample_rate)),
+            })
+            last_speech_end = cursor + min(
+                duration, max(0.0, speech_end - start))
+            cursor += duration
+
+        post_speech_target = _cue_post_speech_silence_seconds(
+            policy_document, cue_id)
+        if post_speech_target is not None:
+            existing_tail = max(0.0, cursor - last_speech_end)
+            trailing = max(0.0, post_speech_target - existing_tail)
+        else:
+            trailing = _cue_trailing_silence_seconds(policy_document, cue_id)
+        if trailing > 0.0:
+            audio_segments.append({
+                "id": "audio.trailing_silence",
+                "type": "silence",
+                "cue_start": round(cursor, 9),
+                "duration": round(trailing, 9),
+            })
+            cursor += trailing
+
+        visual_duration = 0.0
+        compiled_cue = compiled_by_id.get(cue_id)
+        if compiled_cue is not None:
+            visual_duration = float(compiled_cue.get("duration", 0.0) or 0.0)
+        tracks: list[dict] = []
+        if visual_duration > 0.0:
+            tracks.append({
+                "id": "visual.main",
+                "kind": "visual",
+                "tail_policy": "hold_last_frame",
+                "segments": [{
+                    "id": "visual.compiled",
+                    "type": "animation",
+                    "animation": cue_id,
+                    "cue_start": 0.0,
+                    "source_start": 0.0,
+                    "source_end": round(visual_duration, 9),
+                    "after_end": "hold_last_frame",
+                }],
+            })
+        if audio_segments:
+            tracks.append({
+                "id": "audio.main",
+                "kind": "audio",
+                "tail_policy": "silence",
+                "segments": audio_segments,
+            })
+        group_path = script_cue.get("group_path") or runtime_cue.get("group_path") or []
+        refs = script_cue.get("refs") or runtime_cue.get("refs") or []
+        plans.append({
+            "schema": cue_timeline.PLAN_SCHEMA,
+            "cue_id": cue_id,
+            "entry": runtime_cue.get("entry"),
+            "course": {
+                "start": 0.0,
+                "duration": round(max(cursor, visual_duration), 9),
+            },
+            "tracks": tracks,
+            "subtitles": [{
+                "id": "subtitle.0",
+                "cue_start": 0.0,
+                "duration": round(cursor, 9),
+                "text": cue_text,
+            }],
+            "text": runtime_cue.get("text") or cue_text,
+            "group_path": list(group_path),
+            "refs": list(refs),
+        })
+
+    return {
+        "schema": cue_timeline.PLAN_SET_SCHEMA,
+        "schema_version": cue_timeline.PLAN_SET_VERSION,
+        "game_id": runtime.get("game_id") or game,
+        "track": track,
+        "course": {"start": 0.0, "duration": 0.0},
+        "cues": plans,
+        "diagnostics": diagnostics,
+    }
+
+
 def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
     """Build and validate one complete plan set without writing it."""
     game_dir = repo_root / "content" / "games" / game
@@ -910,7 +1111,11 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
     try:
         timing_policy = _load_timing_policy(repo_root, game, track)
         audio_source = str(timing_policy.get("audio_source") or "legacy_runtime")
-        if audio_source == "cue_tts_manifest":
+        if audio_source == "audio_slice_manifest":
+            document = _build_cue_plan_set_from_audio_slices(
+                repo_root, game, track, runtime, compiled, timing_policy)
+            explicit_gaps = [0.0] * len(document.get("cues") or [])
+        elif audio_source == "cue_tts_manifest":
             document = _build_cue_plan_set_from_tts(
                 repo_root, game, track, runtime, compiled, timing_policy)
             explicit_gaps = [0.0] * len(document.get("cues") or [])
