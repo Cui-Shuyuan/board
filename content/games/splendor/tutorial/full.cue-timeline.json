@@ -565,7 +565,7 @@
               "animation": "setup_cards/002.1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 8.465,
+              "source_end": 8.055,
               "after_end": "hold_last_frame"
             }
           ]
@@ -7148,7 +7148,7 @@
       "trailing_silence_seconds": 0.0,
       "original_duration": 12.235,
       "audio_end": 12.235,
-      "visual_end": 8.465,
+      "visual_end": 8.055,
       "duration": 12.235
     },
     {

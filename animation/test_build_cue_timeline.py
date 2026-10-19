@@ -834,6 +834,24 @@ class BuildCueTimelineTests(unittest.TestCase):
             missing = sorted(all_paths - direct_paths)
             self.assertEqual(missing, [], f"{track} chapters without own cue")
 
+    def test_full_market_deal_animation_spacing_is_uniform(self) -> None:
+        compiled = json.loads(
+            (ROOT / "content" / "games" / "splendor" / "tutorial"
+             / "anim" / "v2" / "full.compiled.json").read_text("utf-8"))
+        cue = next(
+            item for item in compiled["cues"]
+            if item["id"] == "setup_cards/002.1")
+        flips = [
+            clip for clip in cue["clips"]
+            if clip.get("kind") == "flip"
+        ]
+        self.assertEqual(len(flips), 12)
+        spacings = [
+            round(flips[index + 1]["at"] - flips[index]["at"], 9)
+            for index in range(len(flips) - 1)
+        ]
+        self.assertEqual(set(spacings), {0.39})
+
     def test_full_audio_slice_ranges_do_not_overlap(self) -> None:
         slices_path = (
             ROOT / "content" / "games" / "splendor" / "tutorial"
