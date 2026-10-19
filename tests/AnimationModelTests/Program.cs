@@ -1531,6 +1531,55 @@ internal static class Program
         }
     }
 
+    private static void TestZeroDurationStateSegmentAppliesStaticFrame()
+    {
+        var visual = new CueTimelineTrack
+        {
+            id = "visual.main", kind = "visual",
+            tail_policy = "hold_last_frame",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "v.state", type = "state", cue_start = 0.0,
+                    duration = 5.0, animation = "fixture#static",
+                    after_end = "hold_last_frame",
+                },
+            },
+        };
+        var plan = new CueTimelinePlan
+        {
+            schema = "tutorial-cue-plan/v1",
+            cue_id = "fixture/state",
+            course = new CueTimelineCourse { start = 0.0, duration = 5.0 },
+            tracks = new List<CueTimelineTrack>
+            {
+                new CueTimelineTrack
+                {
+                    id = "audio.main", kind = "audio", tail_policy = "silence",
+                    segments = new List<CueTimelineSegment>
+                    {
+                        new CueTimelineSegment
+                        {
+                            id = "a.clip", type = "audio_clip", cue_start = 0.0,
+                            asset = "fixture.mp3", source_start = 0.0,
+                            source_end = 5.0,
+                        },
+                    },
+                },
+                visual,
+            },
+        };
+        Check(CueTimelinePlanValidator.TryValidate(plan, out _),
+            "zero-duration state visual plan validates");
+        CueVisualFrame frame = CueVisualTimelineResolver.Resolve(visual, 2.5);
+        Check(frame.Kind == CueVisualFrameKind.Animation
+              && frame.AnimationId == "fixture#static",
+            "state segment applies its compiled frame");
+        CheckClose(0.0, frame.SourceTime, 1e-9,
+            "state segment seeks compiled cue at source zero");
+    }
+
     private static CueTimelineTrack MultiVisualTrack()
     {
         return new CueTimelineTrack
@@ -1666,6 +1715,7 @@ internal static class Program
         TestOverlayShowHideAndModifier();
         TestAnnotationsAndMagnifier();
         TestSameTimeCompiledOrderIsStable();
+        TestZeroDurationStateSegmentAppliesStaticFrame();
         TestMultipleVisualSegmentsUseCueLocalTime();
 
         TestCueTimelinePlanSetValidation();

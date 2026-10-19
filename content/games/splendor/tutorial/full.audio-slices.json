@@ -16,6 +16,14 @@
         "intro__001"
       ]
     },
+    "setup": {
+      "cue_ids": [
+        "setup/title_2"
+      ],
+      "slice_ids": [
+        "setup__title_2"
+      ]
+    },
     "setup_cards": {
       "cue_ids": [
         "setup_cards/title_2_1",
@@ -106,6 +114,14 @@
         "take_gems__limit.001.2",
         "take_gems__public.001.1",
         "take_gems__public.001.2"
+      ]
+    },
+    "cards_group": {
+      "cue_ids": [
+        "cards_group/title_3_2"
+      ],
+      "slice_ids": [
+        "cards_group__title_3_2"
       ]
     },
     "cards": {
@@ -239,22 +255,6 @@
         "end__winner.002",
         "end__winner.003"
       ]
-    },
-    "setup": {
-      "cue_ids": [
-        "setup/title_2"
-      ],
-      "slice_ids": [
-        "setup__title_2"
-      ]
-    },
-    "cards_group": {
-      "cue_ids": [
-        "cards_group/title_3_2"
-      ],
-      "slice_ids": [
-        "cards_group__title_3_2"
-      ]
     }
   },
   "timing_points": {
@@ -263,7 +263,7 @@
       "description": "subtitle start"
     },
     "intro__title_1.subtitle.0.end": {
-      "time": 2.225,
+      "time": 2.0,
       "description": "subtitle end"
     },
     "intro__title_1.start": {
@@ -271,11 +271,11 @@
       "description": "logical slice start"
     },
     "intro__title_1.end": {
-      "time": 2.225,
+      "time": 2.0,
       "description": "logical slice end"
     },
     "intro__title_1.speech_end": {
-      "time": 2.225,
+      "time": 2.0,
       "description": "last TTS word end"
     },
     "intro__title_1.visual.cue_start": {
@@ -334,12 +334,48 @@
       "time": 16.488,
       "description": "last TTS word end"
     },
+    "intro__001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup__title_2.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "setup__title_2.subtitle.0.end": {
+      "time": 1.632,
+      "description": "subtitle end"
+    },
+    "setup__title_2.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "setup__title_2.end": {
+      "time": 1.632,
+      "description": "logical slice end"
+    },
+    "setup__title_2.speech_end": {
+      "time": 1.632,
+      "description": "last TTS word end"
+    },
+    "setup__title_2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup__title_2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup__title_2.visual.source_end": {
+      "time": 3.0,
+      "description": "visual source end"
+    },
     "setup_cards__title_2_1.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "setup_cards__title_2_1.subtitle.0.end": {
-      "time": 3.065,
+      "time": 2.66,
       "description": "subtitle end"
     },
     "setup_cards__title_2_1.start": {
@@ -347,11 +383,11 @@
       "description": "logical slice start"
     },
     "setup_cards__title_2_1.end": {
-      "time": 3.065,
+      "time": 2.66,
       "description": "logical slice end"
     },
     "setup_cards__title_2_1.speech_end": {
-      "time": 3.065,
+      "time": 2.66,
       "description": "last TTS word end"
     },
     "setup_cards__title_2_1.visual.cue_start": {
@@ -385,6 +421,10 @@
     "setup_cards__001.1.speech_end": {
       "time": 5.32,
       "description": "last TTS word end"
+    },
+    "setup_cards__001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
     },
     "setup_cards__001.2.subtitle.0.start": {
       "time": 5.32,
@@ -495,7 +535,7 @@
       "description": "subtitle start"
     },
     "setup_gems__title_2_2.subtitle.0.end": {
-      "time": 3.205,
+      "time": 2.75,
       "description": "subtitle end"
     },
     "setup_gems__title_2_2.start": {
@@ -503,11 +543,11 @@
       "description": "logical slice start"
     },
     "setup_gems__title_2_2.end": {
-      "time": 3.205,
+      "time": 2.75,
       "description": "logical slice end"
     },
     "setup_gems__title_2_2.speech_end": {
-      "time": 3.205,
+      "time": 2.75,
       "description": "last TTS word end"
     },
     "setup_gems__title_2_2.visual.cue_start": {
@@ -719,7 +759,7 @@
       "description": "subtitle start"
     },
     "setup_players__title_2_3.subtitle.0.end": {
-      "time": 3.015,
+      "time": 2.57,
       "description": "subtitle end"
     },
     "setup_players__title_2_3.start": {
@@ -727,11 +767,11 @@
       "description": "logical slice start"
     },
     "setup_players__title_2_3.end": {
-      "time": 3.015,
+      "time": 2.57,
       "description": "logical slice end"
     },
     "setup_players__title_2_3.speech_end": {
-      "time": 3.015,
+      "time": 2.57,
       "description": "last TTS word end"
     },
     "setup_players__title_2_3.visual.cue_start": {
@@ -766,6 +806,10 @@
       "time": 4.01,
       "description": "last TTS word end"
     },
+    "setup_players__nobles.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "setup_players__nobles.001.2.subtitle.0.start": {
       "time": 4.01,
       "description": "subtitle start"
@@ -794,6 +838,10 @@
       "time": 13.025,
       "description": "last TTS word end"
     },
+    "setup_players__nobles.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "setup_players__nobles.002.subtitle.0.start": {
       "time": 13.025,
       "description": "subtitle start"
@@ -814,12 +862,16 @@
       "time": 20.205,
       "description": "last TTS word end"
     },
+    "setup_players__nobles.002.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "setup_players__title_2_4.subtitle.0.start": {
       "time": 20.205,
       "description": "subtitle start"
     },
     "setup_players__title_2_4.subtitle.0.end": {
-      "time": 22.305,
+      "time": 21.825,
       "description": "subtitle end"
     },
     "setup_players__title_2_4.start": {
@@ -827,11 +879,11 @@
       "description": "logical slice start"
     },
     "setup_players__title_2_4.end": {
-      "time": 22.305,
+      "time": 21.825,
       "description": "logical slice end"
     },
     "setup_players__title_2_4.speech_end": {
-      "time": 22.305,
+      "time": 21.825,
       "description": "last TTS word end"
     },
     "setup_players__title_2_4.visual.cue_start": {
@@ -873,6 +925,10 @@
     "setup_players__starting.001.1.speech_end": {
       "time": 31.904,
       "description": "last TTS word end"
+    },
+    "setup_players__starting.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
     },
     "setup_players__starting.001.3.subtitle.0.start": {
       "time": 31.904,
@@ -919,7 +975,7 @@
       "description": "subtitle start"
     },
     "setup_players__title_2_5.subtitle.0.end": {
-      "time": 38.349,
+      "time": 37.744,
       "description": "subtitle end"
     },
     "setup_players__title_2_5.start": {
@@ -927,11 +983,11 @@
       "description": "logical slice start"
     },
     "setup_players__title_2_5.end": {
-      "time": 38.349,
+      "time": 37.744,
       "description": "logical slice end"
     },
     "setup_players__title_2_5.speech_end": {
-      "time": 38.349,
+      "time": 37.744,
       "description": "last TTS word end"
     },
     "setup_players__title_2_5.visual.cue_start": {
@@ -974,12 +1030,16 @@
       "time": 43.056,
       "description": "last TTS word end"
     },
+    "setup_players__end.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "turn__title_3.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "turn__title_3.subtitle.0.end": {
-      "time": 2.495,
+      "time": 2.23,
       "description": "subtitle end"
     },
     "turn__title_3.start": {
@@ -987,11 +1047,11 @@
       "description": "logical slice start"
     },
     "turn__title_3.end": {
-      "time": 2.495,
+      "time": 2.23,
       "description": "logical slice end"
     },
     "turn__title_3.speech_end": {
-      "time": 2.495,
+      "time": 2.23,
       "description": "last TTS word end"
     },
     "turn__title_3.visual.cue_start": {
@@ -1066,12 +1126,16 @@
       "time": 15.072,
       "description": "last TTS word end"
     },
+    "turn__002.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "take_gems__title_3_1.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "take_gems__title_3_1.subtitle.0.end": {
-      "time": 4.515,
+      "time": 3.93,
       "description": "subtitle end"
     },
     "take_gems__title_3_1.start": {
@@ -1079,11 +1143,11 @@
       "description": "logical slice start"
     },
     "take_gems__title_3_1.end": {
-      "time": 4.515,
+      "time": 3.93,
       "description": "logical slice end"
     },
     "take_gems__title_3_1.speech_end": {
-      "time": 4.515,
+      "time": 3.93,
       "description": "last TTS word end"
     },
     "take_gems__title_3_1.visual.cue_start": {
@@ -1197,6 +1261,10 @@
     "take_gems__same.002.speech_end": {
       "time": 22.045,
       "description": "last TTS word end"
+    },
+    "take_gems__same.002.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
     },
     "take_gems__draw_rule.001.1.subtitle.0.start": {
       "time": 22.045,
@@ -1354,6 +1422,10 @@
       "time": 50.494,
       "description": "last TTS word end"
     },
+    "take_gems__public.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "take_gems__public.001.2.subtitle.0.start": {
       "time": 50.494,
       "description": "subtitle start"
@@ -1386,12 +1458,44 @@
       "time": 0.835,
       "description": "visual source end"
     },
+    "cards_group__title_3_2.subtitle.0.start": {
+      "time": 0.0,
+      "description": "subtitle start"
+    },
+    "cards_group__title_3_2.subtitle.0.end": {
+      "time": 3.456,
+      "description": "subtitle end"
+    },
+    "cards_group__title_3_2.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "cards_group__title_3_2.end": {
+      "time": 3.456,
+      "description": "logical slice end"
+    },
+    "cards_group__title_3_2.speech_end": {
+      "time": 3.456,
+      "description": "last TTS word end"
+    },
+    "cards_group__title_3_2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards_group__title_3_2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards_group__title_3_2.visual.source_end": {
+      "time": 3.0,
+      "description": "visual source end"
+    },
     "cards__title_3_2_1.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "cards__title_3_2_1.subtitle.0.end": {
-      "time": 4.185,
+      "time": 3.865,
       "description": "subtitle end"
     },
     "cards__title_3_2_1.start": {
@@ -1399,11 +1503,11 @@
       "description": "logical slice start"
     },
     "cards__title_3_2_1.end": {
-      "time": 4.185,
+      "time": 3.865,
       "description": "logical slice end"
     },
     "cards__title_3_2_1.speech_end": {
-      "time": 4.185,
+      "time": 3.865,
       "description": "last TTS word end"
     },
     "cards__title_3_2_1.visual.cue_start": {
@@ -1438,6 +1542,10 @@
       "time": 6.085,
       "description": "last TTS word end"
     },
+    "cards__intro.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "cards__cost.001.1.subtitle.0.start": {
       "time": 6.085,
       "description": "subtitle start"
@@ -1465,6 +1573,10 @@
     "cards__cost.001.1.speech_end": {
       "time": 10.03,
       "description": "last TTS word end"
+    },
+    "cards__cost.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
     },
     "cards__cost.001.2.subtitle.0.start": {
       "time": 10.03,
@@ -1646,6 +1758,10 @@
       "time": 56.299,
       "description": "last TTS word end"
     },
+    "cards__prestige.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "cards__discount.001.subtitle.0.start": {
       "time": 56.299,
       "description": "subtitle start"
@@ -1762,6 +1878,10 @@
       "time": 91.663,
       "description": "last TTS word end"
     },
+    "cards__discount.003.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "cards__public.001.1.subtitle.0.start": {
       "time": 91.663,
       "description": "subtitle start"
@@ -1814,12 +1934,16 @@
       "time": 112.56,
       "description": "last TTS word end"
     },
+    "cards__limit.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "nobles__title_3_2_2.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "nobles__title_3_2_2.subtitle.0.end": {
-      "time": 3.665,
+      "time": 3.11,
       "description": "subtitle end"
     },
     "nobles__title_3_2_2.start": {
@@ -1827,11 +1951,11 @@
       "description": "logical slice start"
     },
     "nobles__title_3_2_2.end": {
-      "time": 3.665,
+      "time": 3.11,
       "description": "logical slice end"
     },
     "nobles__title_3_2_2.speech_end": {
-      "time": 3.665,
+      "time": 3.11,
       "description": "last TTS word end"
     },
     "nobles__title_3_2_2.visual.cue_start": {
@@ -2090,6 +2214,10 @@
       "time": 70.01,
       "description": "last TTS word end"
     },
+    "nobles__repeat.001.3.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "nobles__summary.001.1.subtitle.0.start": {
       "time": 70.01,
       "description": "subtitle start"
@@ -2109,6 +2237,10 @@
     "nobles__summary.001.1.speech_end": {
       "time": 74.615,
       "description": "last TTS word end"
+    },
+    "nobles__summary.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
     },
     "nobles__summary.001.2.subtitle.0.start": {
       "time": 74.615,
@@ -2130,6 +2262,10 @@
       "time": 78.885,
       "description": "last TTS word end"
     },
+    "nobles__summary.001.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "nobles__summary.001.3.subtitle.0.start": {
       "time": 78.885,
       "description": "subtitle start"
@@ -2150,12 +2286,16 @@
       "time": 85.224,
       "description": "last TTS word end"
     },
+    "nobles__summary.001.3.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "reserve__title_3_3.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "reserve__title_3_3.subtitle.0.end": {
-      "time": 3.935,
+      "time": 3.5,
       "description": "subtitle end"
     },
     "reserve__title_3_3.start": {
@@ -2163,11 +2303,11 @@
       "description": "logical slice start"
     },
     "reserve__title_3_3.end": {
-      "time": 3.935,
+      "time": 3.5,
       "description": "logical slice end"
     },
     "reserve__title_3_3.speech_end": {
-      "time": 3.935,
+      "time": 3.5,
       "description": "last TTS word end"
     },
     "reserve__title_3_3.visual.cue_start": {
@@ -2434,6 +2574,10 @@
       "time": 63.097,
       "description": "last TTS word end"
     },
+    "reserve__private.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "reserve__private.002.subtitle.0.start": {
       "time": 63.097,
       "description": "subtitle start"
@@ -2486,12 +2630,16 @@
       "time": 75.984,
       "description": "last TTS word end"
     },
+    "reserve__not_purchase.001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "purchase_reserved__title_3_4.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "purchase_reserved__title_3_4.subtitle.0.end": {
-      "time": 4.445,
+      "time": 4.015,
       "description": "subtitle end"
     },
     "purchase_reserved__title_3_4.start": {
@@ -2499,11 +2647,11 @@
       "description": "logical slice start"
     },
     "purchase_reserved__title_3_4.end": {
-      "time": 4.445,
+      "time": 4.015,
       "description": "logical slice end"
     },
     "purchase_reserved__title_3_4.speech_end": {
-      "time": 4.445,
+      "time": 4.015,
       "description": "last TTS word end"
     },
     "purchase_reserved__title_3_4.visual.cue_start": {
@@ -2595,7 +2743,7 @@
       "description": "subtitle start"
     },
     "summary__title_3_5.subtitle.0.end": {
-      "time": 3.775,
+      "time": 3.38,
       "description": "subtitle end"
     },
     "summary__title_3_5.start": {
@@ -2603,11 +2751,11 @@
       "description": "logical slice start"
     },
     "summary__title_3_5.end": {
-      "time": 3.775,
+      "time": 3.38,
       "description": "logical slice end"
     },
     "summary__title_3_5.speech_end": {
-      "time": 3.775,
+      "time": 3.38,
       "description": "last TTS word end"
     },
     "summary__title_3_5.visual.cue_start": {
@@ -2650,6 +2798,10 @@
       "time": 10.475,
       "description": "last TTS word end"
     },
+    "summary__001.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "summary__002.1.subtitle.0.start": {
       "time": 10.475,
       "description": "subtitle start"
@@ -2686,6 +2838,10 @@
       "time": 19.455,
       "description": "last TTS word end"
     },
+    "summary__002.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "summary__002.2.subtitle.0.start": {
       "time": 19.455,
       "description": "subtitle start"
@@ -2706,12 +2862,16 @@
       "time": 22.704,
       "description": "last TTS word end"
     },
+    "summary__002.2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "end__title_4.subtitle.0.start": {
       "time": 0.0,
       "description": "subtitle start"
     },
     "end__title_4.subtitle.0.end": {
-      "time": 2.715,
+      "time": 2.25,
       "description": "subtitle end"
     },
     "end__title_4.start": {
@@ -2719,11 +2879,11 @@
       "description": "logical slice start"
     },
     "end__title_4.end": {
-      "time": 2.715,
+      "time": 2.25,
       "description": "logical slice end"
     },
     "end__title_4.speech_end": {
-      "time": 2.715,
+      "time": 2.25,
       "description": "last TTS word end"
     },
     "end__title_4.visual.cue_start": {
@@ -2806,6 +2966,10 @@
       "time": 17.755,
       "description": "last TTS word end"
     },
+    "end__final_rounds.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
     "end__example.001.1.subtitle.0.start": {
       "time": 17.755,
       "description": "subtitle start"
@@ -2841,6 +3005,10 @@
     "end__example.001.1.speech_end": {
       "time": 34.785,
       "description": "last TTS word end"
+    },
+    "end__example.001.1.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
     },
     "end__winner.001.subtitle.0.start": {
       "time": 34.785,
@@ -2960,70 +3128,6 @@
     },
     "end__winner.003.visual.source_end": {
       "time": 10.366,
-      "description": "visual source end"
-    },
-    "setup__title_2.start": {
-      "time": 0.0,
-      "description": "logical slice start"
-    },
-    "setup__title_2.end": {
-      "time": 1.632,
-      "description": "logical slice end"
-    },
-    "setup__title_2.speech_end": {
-      "time": 1.265,
-      "description": "last TTS word end"
-    },
-    "setup__title_2.subtitle.0.start": {
-      "time": 0.525,
-      "description": "subtitle start"
-    },
-    "setup__title_2.subtitle.0.end": {
-      "time": 1.265,
-      "description": "subtitle end"
-    },
-    "setup__title_2.visual.cue_start": {
-      "time": 0.0,
-      "description": "visual cue-local start"
-    },
-    "setup__title_2.visual.source_start": {
-      "time": 0.0,
-      "description": "visual source start"
-    },
-    "setup__title_2.visual.source_end": {
-      "time": 3.0,
-      "description": "visual source end"
-    },
-    "cards_group__title_3_2.start": {
-      "time": 0.0,
-      "description": "logical slice start"
-    },
-    "cards_group__title_3_2.end": {
-      "time": 3.456,
-      "description": "logical slice end"
-    },
-    "cards_group__title_3_2.speech_end": {
-      "time": 3.165,
-      "description": "last TTS word end"
-    },
-    "cards_group__title_3_2.subtitle.0.start": {
-      "time": 1.335,
-      "description": "subtitle start"
-    },
-    "cards_group__title_3_2.subtitle.0.end": {
-      "time": 3.165,
-      "description": "subtitle end"
-    },
-    "cards_group__title_3_2.visual.cue_start": {
-      "time": 0.0,
-      "description": "visual cue-local start"
-    },
-    "cards_group__title_3_2.visual.source_start": {
-      "time": 0.0,
-      "description": "visual source start"
-    },
-    "cards_group__title_3_2.visual.source_end": {
-      "time": 3.0,
       "description": "visual source end"
     }
   },
@@ -4626,6 +4730,7 @@
     "intro/title_1": [
       {
         "id": "visual.intro__title_1",
+        "type": "animation",
         "animation": "intro/title_1",
         "cue_start_ref": "intro__title_1.visual.cue_start",
         "source_start_ref": "intro__title_1.visual.source_start",
@@ -4633,9 +4738,30 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "intro/001": [
+      {
+        "id": "visual.intro__001",
+        "type": "state",
+        "animation": "intro/001",
+        "cue_start_ref": "intro__001.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup/title_2": [
+      {
+        "id": "visual.setup__title_2",
+        "type": "animation",
+        "animation": "setup/title_2",
+        "cue_start_ref": "setup__title_2.visual.cue_start",
+        "source_start_ref": "setup__title_2.visual.source_start",
+        "source_end_ref": "setup__title_2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "setup_cards/title_2_1": [
       {
         "id": "visual.setup_cards__title_2_1",
+        "type": "animation",
         "animation": "setup_cards/title_2_1",
         "cue_start_ref": "setup_cards__title_2_1.visual.cue_start",
         "source_start_ref": "setup_cards__title_2_1.visual.source_start",
@@ -4643,9 +4769,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "setup_cards/001.1": [
+      {
+        "id": "visual.setup_cards__001.1",
+        "type": "state",
+        "animation": "setup_cards/001.1",
+        "cue_start_ref": "setup_cards__001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "setup_cards/001.2": [
       {
         "id": "visual.setup_cards__001.2",
+        "type": "animation",
         "animation": "setup_cards/001.2",
         "cue_start_ref": "setup_cards__001.2.visual.cue_start",
         "source_start_ref": "setup_cards__001.2.visual.source_start",
@@ -4656,6 +4792,7 @@
     "setup_cards/002.1": [
       {
         "id": "visual.setup_cards__002.1",
+        "type": "animation",
         "animation": "setup_cards/002.1",
         "cue_start_ref": "setup_cards__002.1.visual.cue_start",
         "source_start_ref": "setup_cards__002.1.visual.source_start",
@@ -4666,6 +4803,7 @@
     "setup_gems/title_2_2": [
       {
         "id": "visual.setup_gems__title_2_2",
+        "type": "animation",
         "animation": "setup_gems/title_2_2",
         "cue_start_ref": "setup_gems__title_2_2.visual.cue_start",
         "source_start_ref": "setup_gems__title_2_2.visual.source_start",
@@ -4676,6 +4814,7 @@
     "setup_gems/001.1": [
       {
         "id": "visual.setup_gems__001.1",
+        "type": "animation",
         "animation": "setup_gems/001.1",
         "cue_start_ref": "setup_gems__001.1.visual.cue_start",
         "source_start_ref": "setup_gems__001.1.visual.source_start",
@@ -4686,6 +4825,7 @@
     "setup_gems/002": [
       {
         "id": "visual.setup_gems__002",
+        "type": "animation",
         "animation": "setup_gems/002",
         "cue_start_ref": "setup_gems__002.visual.cue_start",
         "source_start_ref": "setup_gems__002.visual.source_start",
@@ -4696,6 +4836,7 @@
     "setup_gems/003.1": [
       {
         "id": "visual.setup_gems__003.1",
+        "type": "animation",
         "animation": "setup_gems/003.1",
         "cue_start_ref": "setup_gems__003.1.visual.cue_start",
         "source_start_ref": "setup_gems__003.1.visual.source_start",
@@ -4706,6 +4847,7 @@
     "setup_gems/005.2": [
       {
         "id": "visual.setup_gems__005.2",
+        "type": "animation",
         "animation": "setup_gems/005.2",
         "cue_start_ref": "setup_gems__005.2.visual.cue_start",
         "source_start_ref": "setup_gems__005.2.visual.source_start",
@@ -4716,6 +4858,7 @@
     "setup_players/title_2_3": [
       {
         "id": "visual.setup_players__title_2_3",
+        "type": "animation",
         "animation": "setup_players/title_2_3",
         "cue_start_ref": "setup_players__title_2_3.visual.cue_start",
         "source_start_ref": "setup_players__title_2_3.visual.source_start",
@@ -4723,9 +4866,37 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "setup_players/nobles.001.1": [
+      {
+        "id": "visual.setup_players__nobles.001.1",
+        "type": "state",
+        "animation": "setup_players/nobles.001.1",
+        "cue_start_ref": "setup_players__nobles.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_players/nobles.001.2": [
+      {
+        "id": "visual.setup_players__nobles.001.2",
+        "type": "state",
+        "animation": "setup_players/nobles.001.2",
+        "cue_start_ref": "setup_players__nobles.001.2.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup_players/nobles.002": [
+      {
+        "id": "visual.setup_players__nobles.002",
+        "type": "state",
+        "animation": "setup_players/nobles.002",
+        "cue_start_ref": "setup_players__nobles.002.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "setup_players/title_2_4": [
       {
         "id": "visual.setup_players__title_2_4",
+        "type": "animation",
         "animation": "setup_players/title_2_4",
         "cue_start_ref": "setup_players__title_2_4.visual.cue_start",
         "source_start_ref": "setup_players__title_2_4.visual.source_start",
@@ -4733,9 +4904,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "setup_players/starting.001.1": [
+      {
+        "id": "visual.setup_players__starting.001.1",
+        "type": "state",
+        "animation": "setup_players/starting.001.1",
+        "cue_start_ref": "setup_players__starting.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "setup_players/starting.001.3": [
       {
         "id": "visual.setup_players__starting.001.3",
+        "type": "animation",
         "animation": "setup_players/starting.001.3",
         "cue_start_ref": "setup_players__starting.001.3.visual.cue_start",
         "source_start_ref": "setup_players__starting.001.3.visual.source_start",
@@ -4746,6 +4927,7 @@
     "setup_players/title_2_5": [
       {
         "id": "visual.setup_players__title_2_5",
+        "type": "animation",
         "animation": "setup_players/title_2_5",
         "cue_start_ref": "setup_players__title_2_5.visual.cue_start",
         "source_start_ref": "setup_players__title_2_5.visual.source_start",
@@ -4753,9 +4935,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "setup_players/end.001.1": [
+      {
+        "id": "visual.setup_players__end.001.1",
+        "type": "state",
+        "animation": "setup_players/end.001.1",
+        "cue_start_ref": "setup_players__end.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "turn/title_3": [
       {
         "id": "visual.turn__title_3",
+        "type": "animation",
         "animation": "turn/title_3",
         "cue_start_ref": "turn__title_3.visual.cue_start",
         "source_start_ref": "turn__title_3.visual.source_start",
@@ -4766,6 +4958,7 @@
     "turn/001": [
       {
         "id": "visual.turn__001",
+        "type": "animation",
         "animation": "turn/001",
         "cue_start_ref": "turn__001.visual.cue_start",
         "source_start_ref": "turn__001.visual.source_start",
@@ -4773,9 +4966,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "turn/002": [
+      {
+        "id": "visual.turn__002",
+        "type": "state",
+        "animation": "turn/002",
+        "cue_start_ref": "turn__002.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "take_gems/title_3_1": [
       {
         "id": "visual.take_gems__title_3_1",
+        "type": "animation",
         "animation": "take_gems/title_3_1",
         "cue_start_ref": "take_gems__title_3_1.visual.cue_start",
         "source_start_ref": "take_gems__title_3_1.visual.source_start",
@@ -4786,6 +4989,7 @@
     "take_gems/different.001": [
       {
         "id": "visual.take_gems__different.001",
+        "type": "animation",
         "animation": "take_gems/different.001",
         "cue_start_ref": "take_gems__different.001.visual.cue_start",
         "source_start_ref": "take_gems__different.001.visual.source_start",
@@ -4796,6 +5000,7 @@
     "take_gems/same.001": [
       {
         "id": "visual.take_gems__same.001",
+        "type": "animation",
         "animation": "take_gems/same.001",
         "cue_start_ref": "take_gems__same.001.visual.cue_start",
         "source_start_ref": "take_gems__same.001.visual.source_start",
@@ -4803,9 +5008,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "take_gems/same.002": [
+      {
+        "id": "visual.take_gems__same.002",
+        "type": "state",
+        "animation": "take_gems/same.002",
+        "cue_start_ref": "take_gems__same.002.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "take_gems/draw_rule.001.1": [
       {
         "id": "visual.take_gems__draw_rule.001.1",
+        "type": "animation",
         "animation": "take_gems/draw_rule.001.1",
         "cue_start_ref": "take_gems__draw_rule.001.1.visual.cue_start",
         "source_start_ref": "take_gems__draw_rule.001.1.visual.source_start",
@@ -4816,6 +5031,7 @@
     "take_gems/draw_rule.001.2": [
       {
         "id": "visual.take_gems__draw_rule.001.2",
+        "type": "animation",
         "animation": "take_gems/draw_rule.001.2",
         "cue_start_ref": "take_gems__draw_rule.001.2.visual.cue_start",
         "source_start_ref": "take_gems__draw_rule.001.2.visual.source_start",
@@ -4826,6 +5042,7 @@
     "take_gems/limit.001.1": [
       {
         "id": "visual.take_gems__limit.001.1",
+        "type": "animation",
         "animation": "take_gems/limit.001.1",
         "cue_start_ref": "take_gems__limit.001.1.visual.cue_start",
         "source_start_ref": "take_gems__limit.001.1.visual.source_start",
@@ -4836,6 +5053,7 @@
     "take_gems/limit.001.2": [
       {
         "id": "visual.take_gems__limit.001.2",
+        "type": "animation",
         "animation": "take_gems/limit.001.2",
         "cue_start_ref": "take_gems__limit.001.2.visual.cue_start",
         "source_start_ref": "take_gems__limit.001.2.visual.source_start",
@@ -4843,9 +5061,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "take_gems/public.001.1": [
+      {
+        "id": "visual.take_gems__public.001.1",
+        "type": "state",
+        "animation": "take_gems/public.001.1",
+        "cue_start_ref": "take_gems__public.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "take_gems/public.001.2": [
       {
         "id": "visual.take_gems__public.001.2",
+        "type": "animation",
         "animation": "take_gems/public.001.2",
         "cue_start_ref": "take_gems__public.001.2.visual.cue_start",
         "source_start_ref": "take_gems__public.001.2.visual.source_start",
@@ -4853,9 +5081,21 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "cards_group/title_3_2": [
+      {
+        "id": "visual.cards_group__title_3_2",
+        "type": "animation",
+        "animation": "cards_group/title_3_2",
+        "cue_start_ref": "cards_group__title_3_2.visual.cue_start",
+        "source_start_ref": "cards_group__title_3_2.visual.source_start",
+        "source_end_ref": "cards_group__title_3_2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "cards/title_3_2_1": [
       {
         "id": "visual.cards__title_3_2_1",
+        "type": "animation",
         "animation": "cards/title_3_2_1",
         "cue_start_ref": "cards__title_3_2_1.visual.cue_start",
         "source_start_ref": "cards__title_3_2_1.visual.source_start",
@@ -4863,9 +5103,28 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "cards/intro.001": [
+      {
+        "id": "visual.cards__intro.001",
+        "type": "state",
+        "animation": "cards/intro.001",
+        "cue_start_ref": "cards__intro.001.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards/cost.001.1": [
+      {
+        "id": "visual.cards__cost.001.1",
+        "type": "state",
+        "animation": "cards/cost.001.1",
+        "cue_start_ref": "cards__cost.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "cards/cost.001.2": [
       {
         "id": "visual.cards__cost.001.2",
+        "type": "animation",
         "animation": "cards/cost.001.2",
         "cue_start_ref": "cards__cost.001.2.visual.cue_start",
         "source_start_ref": "cards__cost.001.2.visual.source_start",
@@ -4876,6 +5135,7 @@
     "cards/market.001.1": [
       {
         "id": "visual.cards__market.001.1",
+        "type": "animation",
         "animation": "cards/market.001.1",
         "cue_start_ref": "cards__market.001.1.visual.cue_start",
         "source_start_ref": "cards__market.001.1.visual.source_start",
@@ -4886,6 +5146,7 @@
     "cards/market.001.2": [
       {
         "id": "visual.cards__market.001.2",
+        "type": "animation",
         "animation": "cards/market.001.2",
         "cue_start_ref": "cards__market.001.2.visual.cue_start",
         "source_start_ref": "cards__market.001.2.visual.source_start",
@@ -4896,6 +5157,7 @@
     "cards/prestige.001.1": [
       {
         "id": "visual.cards__prestige.001.1",
+        "type": "animation",
         "animation": "cards/prestige.001.1",
         "cue_start_ref": "cards__prestige.001.1.visual.cue_start",
         "source_start_ref": "cards__prestige.001.1.visual.source_start",
@@ -4903,9 +5165,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "cards/prestige.001.2": [
+      {
+        "id": "visual.cards__prestige.001.2",
+        "type": "state",
+        "animation": "cards/prestige.001.2",
+        "cue_start_ref": "cards__prestige.001.2.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "cards/discount.001": [
       {
         "id": "visual.cards__discount.001",
+        "type": "animation",
         "animation": "cards/discount.001",
         "cue_start_ref": "cards__discount.001.visual.cue_start",
         "source_start_ref": "cards__discount.001.visual.source_start",
@@ -4916,6 +5188,7 @@
     "cards/discount.002.1": [
       {
         "id": "visual.cards__discount.002.1",
+        "type": "animation",
         "animation": "cards/discount.002.1",
         "cue_start_ref": "cards__discount.002.1.visual.cue_start",
         "source_start_ref": "cards__discount.002.1.visual.source_start",
@@ -4926,6 +5199,7 @@
     "cards/discount.003.1": [
       {
         "id": "visual.cards__discount.003.1",
+        "type": "animation",
         "animation": "cards/discount.003.1",
         "cue_start_ref": "cards__discount.003.1.visual.cue_start",
         "source_start_ref": "cards__discount.003.1.visual.source_start",
@@ -4933,9 +5207,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "cards/discount.003.2": [
+      {
+        "id": "visual.cards__discount.003.2",
+        "type": "state",
+        "animation": "cards/discount.003.2",
+        "cue_start_ref": "cards__discount.003.2.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "cards/public.001.1": [
       {
         "id": "visual.cards__public.001.1",
+        "type": "animation",
         "animation": "cards/public.001.1",
         "cue_start_ref": "cards__public.001.1.visual.cue_start",
         "source_start_ref": "cards__public.001.1.visual.source_start",
@@ -4943,9 +5227,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "cards/limit.001.1": [
+      {
+        "id": "visual.cards__limit.001.1",
+        "type": "state",
+        "animation": "cards/limit.001.1",
+        "cue_start_ref": "cards__limit.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "nobles/title_3_2_2": [
       {
         "id": "visual.nobles__title_3_2_2",
+        "type": "animation",
         "animation": "nobles/title_3_2_2",
         "cue_start_ref": "nobles__title_3_2_2.visual.cue_start",
         "source_start_ref": "nobles__title_3_2_2.visual.source_start",
@@ -4956,6 +5250,7 @@
     "nobles/intro.001": [
       {
         "id": "visual.nobles__intro.001",
+        "type": "animation",
         "animation": "nobles/intro.001",
         "cue_start_ref": "nobles__intro.001.visual.cue_start",
         "source_start_ref": "nobles__intro.001.visual.source_start",
@@ -4966,6 +5261,7 @@
     "nobles/trigger.001.1": [
       {
         "id": "visual.nobles__trigger.001.1",
+        "type": "animation",
         "animation": "nobles/trigger.001.1",
         "cue_start_ref": "nobles__trigger.001.1.visual.cue_start",
         "source_start_ref": "nobles__trigger.001.1.visual.source_start",
@@ -4976,6 +5272,7 @@
     "nobles/forced.001.1": [
       {
         "id": "visual.nobles__forced.001.1",
+        "type": "animation",
         "animation": "nobles/forced.001.1",
         "cue_start_ref": "nobles__forced.001.1.visual.cue_start",
         "source_start_ref": "nobles__forced.001.1.visual.source_start",
@@ -4986,6 +5283,7 @@
     "nobles/source.001": [
       {
         "id": "visual.nobles__source.001",
+        "type": "animation",
         "animation": "nobles/source.001",
         "cue_start_ref": "nobles__source.001.visual.cue_start",
         "source_start_ref": "nobles__source.001.visual.source_start",
@@ -4996,6 +5294,7 @@
     "nobles/choice.001.1": [
       {
         "id": "visual.nobles__choice.001.1",
+        "type": "animation",
         "animation": "nobles/choice.001.1",
         "cue_start_ref": "nobles__choice.001.1.visual.cue_start",
         "source_start_ref": "nobles__choice.001.1.visual.source_start",
@@ -5006,6 +5305,7 @@
     "nobles/repeat.001.1": [
       {
         "id": "visual.nobles__repeat.001.1",
+        "type": "animation",
         "animation": "nobles/repeat.001.1",
         "cue_start_ref": "nobles__repeat.001.1.visual.cue_start",
         "source_start_ref": "nobles__repeat.001.1.visual.source_start",
@@ -5013,9 +5313,46 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "nobles/repeat.001.3": [
+      {
+        "id": "visual.nobles__repeat.001.3",
+        "type": "state",
+        "animation": "nobles/repeat.001.3",
+        "cue_start_ref": "nobles__repeat.001.3.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/summary.001.1": [
+      {
+        "id": "visual.nobles__summary.001.1",
+        "type": "state",
+        "animation": "nobles/summary.001.1",
+        "cue_start_ref": "nobles__summary.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/summary.001.2": [
+      {
+        "id": "visual.nobles__summary.001.2",
+        "type": "state",
+        "animation": "nobles/summary.001.2",
+        "cue_start_ref": "nobles__summary.001.2.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "nobles/summary.001.3": [
+      {
+        "id": "visual.nobles__summary.001.3",
+        "type": "state",
+        "animation": "nobles/summary.001.3",
+        "cue_start_ref": "nobles__summary.001.3.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "reserve/title_3_3": [
       {
         "id": "visual.reserve__title_3_3",
+        "type": "animation",
         "animation": "reserve/title_3_3",
         "cue_start_ref": "reserve__title_3_3.visual.cue_start",
         "source_start_ref": "reserve__title_3_3.visual.source_start",
@@ -5026,6 +5363,7 @@
     "reserve/intro.001.1": [
       {
         "id": "visual.reserve__intro.001.1",
+        "type": "animation",
         "animation": "reserve/intro.001.1",
         "cue_start_ref": "reserve__intro.001.1.visual.cue_start",
         "source_start_ref": "reserve__intro.001.1.visual.source_start",
@@ -5036,6 +5374,7 @@
     "reserve/gold.001": [
       {
         "id": "visual.reserve__gold.001",
+        "type": "animation",
         "animation": "reserve/gold.001",
         "cue_start_ref": "reserve__gold.001.visual.cue_start",
         "source_start_ref": "reserve__gold.001.visual.source_start",
@@ -5046,6 +5385,7 @@
     "reserve/deck.001": [
       {
         "id": "visual.reserve__deck.001",
+        "type": "animation",
         "animation": "reserve/deck.001",
         "cue_start_ref": "reserve__deck.001.visual.cue_start",
         "source_start_ref": "reserve__deck.001.visual.source_start",
@@ -5056,6 +5396,7 @@
     "reserve/notes_intro.001": [
       {
         "id": "visual.reserve__notes_intro.001",
+        "type": "animation",
         "animation": "reserve/notes_intro.001",
         "cue_start_ref": "reserve__notes_intro.001.visual.cue_start",
         "source_start_ref": "reserve__notes_intro.001.visual.source_start",
@@ -5066,6 +5407,7 @@
     "reserve/limit_gold.001.2": [
       {
         "id": "visual.reserve__limit_gold.001.2",
+        "type": "animation",
         "animation": "reserve/limit_gold.001.2",
         "cue_start_ref": "reserve__limit_gold.001.2.visual.cue_start",
         "source_start_ref": "reserve__limit_gold.001.2.visual.source_start",
@@ -5076,6 +5418,7 @@
     "reserve/limit_hand.001.1": [
       {
         "id": "visual.reserve__limit_hand.001.1",
+        "type": "animation",
         "animation": "reserve/limit_hand.001.1",
         "cue_start_ref": "reserve__limit_hand.001.1.visual.cue_start",
         "source_start_ref": "reserve__limit_hand.001.1.visual.source_start",
@@ -5083,9 +5426,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "reserve/private.001.1": [
+      {
+        "id": "visual.reserve__private.001.1",
+        "type": "state",
+        "animation": "reserve/private.001.1",
+        "cue_start_ref": "reserve__private.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "reserve/private.002": [
       {
         "id": "visual.reserve__private.002",
+        "type": "animation",
         "animation": "reserve/private.002",
         "cue_start_ref": "reserve__private.002.visual.cue_start",
         "source_start_ref": "reserve__private.002.visual.source_start",
@@ -5093,9 +5446,19 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "reserve/not_purchase.001": [
+      {
+        "id": "visual.reserve__not_purchase.001",
+        "type": "state",
+        "animation": "reserve/not_purchase.001",
+        "cue_start_ref": "reserve__not_purchase.001.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "purchase_reserved/title_3_4": [
       {
         "id": "visual.purchase_reserved__title_3_4",
+        "type": "animation",
         "animation": "purchase_reserved/title_3_4",
         "cue_start_ref": "purchase_reserved__title_3_4.visual.cue_start",
         "source_start_ref": "purchase_reserved__title_3_4.visual.source_start",
@@ -5106,6 +5469,7 @@
     "purchase_reserved/001": [
       {
         "id": "visual.purchase_reserved__001",
+        "type": "animation",
         "animation": "purchase_reserved/001",
         "cue_start_ref": "purchase_reserved__001.visual.cue_start",
         "source_start_ref": "purchase_reserved__001.visual.source_start",
@@ -5116,6 +5480,7 @@
     "summary/title_3_5": [
       {
         "id": "visual.summary__title_3_5",
+        "type": "animation",
         "animation": "summary/title_3_5",
         "cue_start_ref": "summary__title_3_5.visual.cue_start",
         "source_start_ref": "summary__title_3_5.visual.source_start",
@@ -5123,9 +5488,37 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "summary/001": [
+      {
+        "id": "visual.summary__001",
+        "type": "state",
+        "animation": "summary/001",
+        "cue_start_ref": "summary__001.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "summary/002.1": [
+      {
+        "id": "visual.summary__002.1",
+        "type": "state",
+        "animation": "summary/002.1",
+        "cue_start_ref": "summary__002.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "summary/002.2": [
+      {
+        "id": "visual.summary__002.2",
+        "type": "state",
+        "animation": "summary/002.2",
+        "cue_start_ref": "summary__002.2.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "end/title_4": [
       {
         "id": "visual.end__title_4",
+        "type": "animation",
         "animation": "end/title_4",
         "cue_start_ref": "end__title_4.visual.cue_start",
         "source_start_ref": "end__title_4.visual.source_start",
@@ -5136,6 +5529,7 @@
     "end/trigger.001": [
       {
         "id": "visual.end__trigger.001",
+        "type": "animation",
         "animation": "end/trigger.001",
         "cue_start_ref": "end__trigger.001.visual.cue_start",
         "source_start_ref": "end__trigger.001.visual.source_start",
@@ -5143,9 +5537,28 @@
         "after_end": "hold_last_frame"
       }
     ],
+    "end/final_rounds.001.1": [
+      {
+        "id": "visual.end__final_rounds.001.1",
+        "type": "state",
+        "animation": "end/final_rounds.001.1",
+        "cue_start_ref": "end__final_rounds.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "end/example.001.1": [
+      {
+        "id": "visual.end__example.001.1",
+        "type": "state",
+        "animation": "end/example.001.1",
+        "cue_start_ref": "end__example.001.1.visual.cue_start",
+        "after_end": "hold_last_frame"
+      }
+    ],
     "end/winner.001": [
       {
         "id": "visual.end__winner.001",
+        "type": "animation",
         "animation": "end/winner.001",
         "cue_start_ref": "end__winner.001.visual.cue_start",
         "source_start_ref": "end__winner.001.visual.source_start",
@@ -5156,6 +5569,7 @@
     "end/winner.002": [
       {
         "id": "visual.end__winner.002",
+        "type": "animation",
         "animation": "end/winner.002",
         "cue_start_ref": "end__winner.002.visual.cue_start",
         "source_start_ref": "end__winner.002.visual.source_start",
@@ -5166,30 +5580,11 @@
     "end/winner.003": [
       {
         "id": "visual.end__winner.003",
+        "type": "animation",
         "animation": "end/winner.003",
         "cue_start_ref": "end__winner.003.visual.cue_start",
         "source_start_ref": "end__winner.003.visual.source_start",
         "source_end_ref": "end__winner.003.visual.source_end",
-        "after_end": "hold_last_frame"
-      }
-    ],
-    "setup/title_2": [
-      {
-        "id": "visual.setup__title_2",
-        "animation": "setup/title_2",
-        "cue_start_ref": "setup__title_2.visual.cue_start",
-        "source_start_ref": "setup__title_2.visual.source_start",
-        "source_end_ref": "setup__title_2.visual.source_end",
-        "after_end": "hold_last_frame"
-      }
-    ],
-    "cards_group/title_3_2": [
-      {
-        "id": "visual.cards_group__title_3_2",
-        "animation": "cards_group/title_3_2",
-        "cue_start_ref": "cards_group__title_3_2.visual.cue_start",
-        "source_start_ref": "cards_group__title_3_2.visual.source_start",
-        "source_end_ref": "cards_group__title_3_2.visual.source_end",
         "after_end": "hold_last_frame"
       }
     ]

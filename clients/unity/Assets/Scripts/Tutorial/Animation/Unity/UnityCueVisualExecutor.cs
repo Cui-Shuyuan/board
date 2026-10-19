@@ -48,7 +48,9 @@ namespace BoardGameTutorial.Animation
             for (int i = 0; i < visualTrack.segments.Count; i++)
             {
                 CueTimelineSegment segment = visualTrack.segments[i];
-                if (segment == null || segment.type != "animation") continue;
+                if (segment == null
+                    || (segment.type != "animation" && segment.type != "state"))
+                    continue;
                 if (string.IsNullOrEmpty(segment.animation))
                 {
                     CallbackFail(generation, "visual segment has no animation id");

@@ -42,6 +42,8 @@ per-cue ID 映射或秒数。
 ### 5.2 生成与校验
 
 ```bash
+# section-level TTS runtime 变更后先同步固定切片
+python3 animation/build_audio_slices.py --game splendor --track full
 python3 animation/build_cue_timeline.py --game splendor --track quick
 python3 animation/build_cue_timeline.py --game splendor --track full
 ```
@@ -92,7 +94,10 @@ animation id 与 source time；`UnityCueVisualExecutor` 只执行这个结果：
 - `after_end=clear`、无前序 animation 的 hold、或 cue 开头无视觉段：清空
   画面，不保留陈旧帧；
 - 不同 compiled cue 之间切换时，各自使用 compiled `start_state`，这是明确
-  的状态重置边界，不伪装成可继承状态。
+  的状态重置边界，不伪装成可继承状态；
+- duration 为 0 的 compiled cue 使用 `type: "state"` 视觉段：加载该 cue
+  的 compiled frame、seek 到 source time 0，并在 cue 时长内保持。这样
+  纯音频 cue 里的瞬发 state/overlay 变更不会被漏掉，画面也不会停在旧状态。
 
 视觉执行器不读写音频，也不决定 cue 完成。`animationEnabled=false` 只影响
 画面提交，不改变 plan duration、音频执行或控制器完成时刻。

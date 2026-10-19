@@ -76,6 +76,16 @@ class TutorialTimelineCuePlanTest {
     }
 
     @Test
+    fun stateVisualSegmentIsAcceptedByPlanLoader() {
+        val root = runtimeTree()
+        writeCompiled(root)
+        writePlan(root, includeStateVisual = true)
+        val timeline = TutorialTimeline.load(root, TRACK, planEnabled = true) { }
+        assertEquals(TimelineSource.CUE_PLAN, timeline.source)
+        assertEquals(5.5f, timeline.totalDuration, 1e-5f)
+    }
+
+    @Test
     fun unknownVisualAnimationReferenceFallsBackWholeTrack() {
         val root = runtimeTree()
         writeCompiled(root, ids = emptyList())
@@ -288,12 +298,14 @@ class TutorialTimelineCuePlanTest {
         schema: String = "tutorial-cue-plan-set/v1",
         schemaVersion: Int = 1,
         omitSecondCue: Boolean = false,
-        includeMultiVisual: Boolean = false
+        includeMultiVisual: Boolean = false,
+        includeStateVisual: Boolean = false
     ) {
         val cues = JSONArray()
         cues.put(planCue(
             "q/a", 0.0, 3.5, "planned A", "Planned Chapter",
-            includeMultiVisual = includeMultiVisual))
+            includeMultiVisual = includeMultiVisual,
+            includeStateVisual = includeStateVisual))
         if (!omitSecondCue) {
             cues.put(planCue("q/b", 3.5, 2.0, "planned B", "Planned Chapter"))
         }
@@ -334,7 +346,8 @@ class TutorialTimelineCuePlanTest {
         duration: Double,
         text: String,
         chapter: String,
-        includeMultiVisual: Boolean = false
+        includeMultiVisual: Boolean = false,
+        includeStateVisual: Boolean = false
     ): JSONObject {
         val tracks = JSONArray()
             .put(JSONObject()
@@ -362,6 +375,22 @@ class TutorialTimelineCuePlanTest {
                         .put("duration", duration)
                         .put("text", text)
                 ))))
+        if (includeStateVisual) {
+            tracks.put(JSONObject()
+                .put("id", "visual.main")
+                .put("kind", "visual")
+                .put("tail_policy", "hold_last_frame")
+                .put("segments", JSONArray(listOf(
+                    JSONObject()
+                        .put("id", "visual.state")
+                        .put("type", "state")
+                        .put("animation", id)
+                        .put("cue_start", 0.0)
+                        .put("duration", duration)
+                        .put("after_end", "hold_last_frame")
+                )))
+            )
+        }
         if (includeMultiVisual) {
             tracks.put(JSONObject()
                 .put("id", "visual.main")

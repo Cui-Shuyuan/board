@@ -88,6 +88,16 @@ namespace BoardGameTutorial.Animation
                         SourceTime = active.source_start + local,
                     };
                 }
+                if (active.type == "state")
+                {
+                    return new CueVisualFrame
+                    {
+                        Kind = CueVisualFrameKind.Animation,
+                        SegmentId = active.id,
+                        AnimationId = active.animation,
+                        SourceTime = 0.0,
+                    };
+                }
                 if (active.type == "hold")
                 {
                     CueTimelineSegment previous = PreviousAnimation(track, active);
@@ -97,7 +107,8 @@ namespace BoardGameTutorial.Animation
                         Kind = CueVisualFrameKind.Hold,
                         SegmentId = active.id,
                         AnimationId = previous.animation,
-                        SourceTime = previous.source_end,
+                        SourceTime = previous.type == "state"
+                            ? 0.0 : previous.source_end,
                     };
                 }
                 return CueVisualFrame.Clear(active.id);
@@ -117,7 +128,7 @@ namespace BoardGameTutorial.Animation
 
             if (latest == null) return CueVisualFrame.Clear("");
 
-            if (latest.type == "animation")
+            if (latest.type == "animation" || latest.type == "state")
             {
                 if (latest.after_end == "hold_last_frame")
                 {
@@ -126,7 +137,8 @@ namespace BoardGameTutorial.Animation
                         Kind = CueVisualFrameKind.Hold,
                         SegmentId = latest.id,
                         AnimationId = latest.animation,
-                        SourceTime = latest.source_end,
+                        SourceTime = latest.type == "state"
+                            ? 0.0 : latest.source_end,
                     };
                 }
                 return CueVisualFrame.Clear(latest.id);
@@ -142,7 +154,8 @@ namespace BoardGameTutorial.Animation
                         Kind = CueVisualFrameKind.Hold,
                         SegmentId = latest.id,
                         AnimationId = previous.animation,
-                        SourceTime = previous.source_end,
+                        SourceTime = previous.type == "state"
+                            ? 0.0 : previous.source_end,
                     };
                 }
                 return CueVisualFrame.Clear(latest.id);
@@ -158,7 +171,9 @@ namespace BoardGameTutorial.Animation
             for (int i = 0; i < track.segments.Count; i++)
             {
                 CueTimelineSegment candidate = track.segments[i];
-                if (candidate == null || candidate.type != "animation") continue;
+                if (candidate == null
+                    || (candidate.type != "animation" && candidate.type != "state"))
+                    continue;
                 if (candidate.EndCueTime > current.cue_start + Epsilon) continue;
                 bool adjacent = candidate.EndCueTime >= current.cue_start - Epsilon;
                 if (!adjacent && candidate.after_end != "hold_last_frame") continue;

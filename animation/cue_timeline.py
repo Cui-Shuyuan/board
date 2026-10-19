@@ -35,6 +35,14 @@ SEGMENT_TYPES = {
     "audio": frozenset({"audio_clip", "silence"}),
     "subtitle": frozenset({"subtitle"}),
 }
+# Plan-only visual segment.  ``state`` applies the compiled cue's frame at
+# source time 0 and holds it for the cue duration.  It exists so compiled cues
+# with duration 0 (instant state/overlay changes) are not dropped from the plan.
+PLAN_SEGMENT_TYPES = {
+    "visual": frozenset({"animation", "hold", "state"}),
+    "audio": SEGMENT_TYPES["audio"],
+    "subtitle": SEGMENT_TYPES["subtitle"],
+}
 AFTER_END_POLICIES = frozenset({"hold_last_frame", "clear"})
 
 _EPSILON = 1e-9
@@ -482,7 +490,7 @@ def _validate_plan_segment(track_kind: str, segment: dict, path: str,
     segment_type = segment.get("type")
     if not isinstance(segment_type, str) or not segment_type:
         raise CueTimelineError(f"{path}.type: expected a non-empty string")
-    if segment_type not in SEGMENT_TYPES[track_kind]:
+    if segment_type not in PLAN_SEGMENT_TYPES[track_kind]:
         raise CueTimelineError(
             f"{path}.type: unknown {track_kind} segment type {segment_type!r}")
     cue_start = _number(segment.get("cue_start"), f"{path}.cue_start",
@@ -502,6 +510,14 @@ def _validate_plan_segment(track_kind: str, segment: dict, path: str,
             raise CueTimelineError(
                 f"{path}.source_end: must be greater than source_start")
         end = cue_start + (source_end - source_start)
+    elif segment_type == "state":
+        _text(segment.get("animation"), f"{path}.animation")
+        after_end = segment.get("after_end")
+        if after_end not in AFTER_END_POLICIES:
+            raise CueTimelineError(
+                f"{path}.after_end: unknown visual tail policy {after_end!r}")
+        end = cue_start + _number(segment.get("duration"),
+                                  f"{path}.duration", positive=True)
     elif segment_type == "hold":
         end = cue_start + _number(segment.get("duration"),
                                   f"{path}.duration", positive=True)

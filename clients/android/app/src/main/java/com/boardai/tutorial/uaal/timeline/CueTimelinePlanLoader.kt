@@ -193,6 +193,26 @@ internal object CueTimelinePlanLoader {
                     "$segmentPath.cue_start"
                 )
                 val cueEnd = when {
+                    kind == "visual" && type == "state" -> {
+                        val animation = segment.optString("animation", "").trim()
+                        require(animation.isNotBlank()) {
+                            "$segmentPath.animation must be non-empty"
+                        }
+                        require(animationDurations[animation] != null) {
+                            "$segmentPath.animation references unknown compiled animation: " +
+                                animation
+                        }
+                        require(segment.optString("after_end", "") in
+                            setOf("hold_last_frame", "clear")) {
+                            "$segmentPath.after_end is invalid"
+                        }
+                        cueStart + finitePositive(
+                            segment,
+                            "duration",
+                            "$segmentPath.duration"
+                        )
+                    }
+
                     kind == "visual" && type == "animation" -> {
                         val animation = segment.optString("animation", "").trim()
                         require(animation.isNotBlank()) {

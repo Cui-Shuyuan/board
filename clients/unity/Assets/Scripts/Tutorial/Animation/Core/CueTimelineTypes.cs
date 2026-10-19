@@ -181,7 +181,8 @@ namespace BoardGameTutorial.Animation
         {
             get
             {
-                if (type == "hold" || type == "silence" || type == "subtitle")
+                if (type == "hold" || type == "state" || type == "silence"
+                    || type == "subtitle")
                     return duration;
                 return source_end - source_start;
             }
@@ -404,7 +405,8 @@ namespace BoardGameTutorial.Animation
                         error = path + ".type is invalid for track kind " + track.kind;
                         return false;
                     }
-                    if ((segment.type == "hold" || segment.type == "silence"
+                    if ((segment.type == "hold" || segment.type == "state"
+                         || segment.type == "silence"
                          || segment.type == "subtitle")
                         && !IsFinitePositive(segment.duration))
                     {
@@ -424,7 +426,7 @@ namespace BoardGameTutorial.Animation
                         error = path + ".asset must be non-empty";
                         return false;
                     }
-                    if (segment.type == "animation")
+                    if (segment.type == "animation" || segment.type == "state")
                     {
                         if (string.IsNullOrEmpty(segment.animation))
                         {
@@ -473,7 +475,8 @@ namespace BoardGameTutorial.Animation
         private static string SegmentKind(string type)
         {
             if (type == "audio_clip" || type == "silence") return "audio";
-            if (type == "animation" || type == "hold") return "visual";
+            if (type == "animation" || type == "hold" || type == "state")
+                return "visual";
             if (type == "subtitle") return "subtitle";
             return null;
         }

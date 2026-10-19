@@ -59,6 +59,7 @@ python3 animation/qa_anim_ask.py --game splendor --track quick --only quick_nobl
 # Phase 5 quick/full：固定时间轴 / 共享 plan / 内容发布
 python animation/tts_doubao.py --provider seed2 --voice zh_female_vv_uranus_bigtts --resource-id seed-tts-2.0 --input content/games/splendor/tutorial/quick.cue.tts.lrc --out-dir content/games/splendor/media/tts/quick.cues --track quick --prune
 python3 animation/build_cue_timeline.py --game splendor --track quick
+python3 animation/build_audio_slices.py --game splendor --track full
 python3 animation/build_cue_timeline.py --game splendor --track full
 python3 tools/content/build_content_manifest.py --game splendor
 

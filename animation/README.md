@@ -20,6 +20,10 @@
   没有重新生成音频；quick 使用 cue-level TTS。
 - 固定文件是 timing points、source range、字幕 refs、per-cue policy 和
   visual segment 映射的唯一来源；`{track}.timing-policy.json` 只保留全局配置。
+- full 的 section TTS/runtime 变更后先运行
+  `python3 animation/build_audio_slices.py --game splendor --track full`；
+  它会重建无重叠 source ranges，并为零时长 compiled cue 生成 `state`
+  visual segment。
 - full 的 83 cue 与 quick 的 32 cue 都有确定性 plan，构建入口为
   `python3 animation/build_cue_timeline.py --game splendor --track {quick,full}`。
 - 旧 `section_audio` / `audio_plan` / `pause_after_speech_seconds` /
@@ -47,6 +51,7 @@ Phase 5 quick/full plan 构建：
 # quick: cue-level TTS（已有产物时可不重跑）
 python animation/tts_doubao.py --provider seed2 --voice zh_female_vv_uranus_bigtts --resource-id seed-tts-2.0 --input content/games/splendor/tutorial/quick.cue.tts.lrc --out-dir content/games/splendor/media/tts/quick.cues --track quick --prune
 python3 animation/build_cue_timeline.py --game splendor --track quick
+python3 animation/build_audio_slices.py --game splendor --track full
 python3 animation/build_cue_timeline.py --game splendor --track full
 python3 tools/content/build_content_manifest.py --game splendor
 ```

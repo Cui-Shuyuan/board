@@ -239,12 +239,14 @@ cue 起点按最终 duration 顺序累加；plan set 的 `course.duration` 必�
 
 字幕在 plan 中是正式 track，只作展示，不参与音频裁切或 cue completion。
 
-视觉 track 支持零到多个 animation segment：
+视觉 track 支持零到多个 animation/state segment：
 
-- 每个 segment 有 id、compiled animation 引用、cue-local start、source
-  range、`after_end`；
+- 每个 `animation` segment 有 id、compiled animation 引用、cue-local start、
+  source range、`after_end`；
+- 每个 `state` segment 引用一个零时长 compiled cue，在 cue 时长内加载其
+  compiled frame 并保持在 source time 0，用于瞬发 state/overlay 变更；
 - 活动 animation 按 cue-local time 映射到 `source_start + offset`；
-- `hold` 冻结前一个 animation 的 `source_end`；
+- `hold` 冻结前一个 animation/state 的 source time；
 - `after_end=clear`、无前序 animation 的 hold、以及 cue 开头无视觉段都表示
   视觉空白，会清空画面；
 - 不同 compiled cue 间切换时各自使用 compiled `start_state`，状态不自动
@@ -253,9 +255,17 @@ cue 起点按最终 duration 顺序累加；plan set 的 `course.duration` 必�
 ## 7. 生成 plan
 
 ```bash
+# section-level TTS：先重生成 runtime，再同步固定切片，最后生成 plan
+python3 animation/build_audio_slices.py --game splendor --track full
 python3 animation/build_cue_timeline.py --game splendor --track quick
 python3 animation/build_cue_timeline.py --game splendor --track full
 ```
+
+`build_audio_slices.py` 从当前 `full.runtime.json` 的 cue 顺序、audio_start、
+duration 和字幕窗口重建固定文件，保证同一 source asset 上的 cue range
+严格不重叠。任何 TTS/runtime 变更后都必须先跑这一步，否则旧 source range
+可能把下一 cue 的开头重复播放。该脚本也为 duration=0 的 compiled cue 生成
+`type: "state"` visual 映射，避免瞬发画面状态丢失。
 
 产物：
 
@@ -305,6 +315,7 @@ plan 中缺失音频引用、或 manifest 收集时发现引用文件不存在�
 ## 10. 验证清单
 
 ```bash
+python3 animation/build_audio_slices.py --game splendor --track full
 python3 animation/build_cue_timeline.py --game splendor --track quick
 python3 animation/build_cue_timeline.py --game splendor --track full
 python3 -m unittest animation.test_build_cue_timeline -v

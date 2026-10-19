@@ -488,6 +488,21 @@
       },
       "tracks": [
         {
+          "id": "visual.main",
+          "kind": "visual",
+          "tail_policy": "hold_last_frame",
+          "segments": [
+            {
+              "id": "visual.state",
+              "type": "state",
+              "animation": "quick_setup_players/001",
+              "cue_start": 0.0,
+              "duration": 4.848,
+              "after_end": "hold_last_frame"
+            }
+          ]
+        },
+        {
           "id": "audio.main",
           "kind": "audio",
           "tail_policy": "silence",

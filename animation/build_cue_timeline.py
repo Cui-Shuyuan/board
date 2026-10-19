@@ -134,7 +134,9 @@ def _track_content_end(plan: dict, kind: str) -> float:
                 continue
             cue_start = float(segment.get("cue_start", 0.0))
             segment_type = segment.get("type")
-            if segment_type == "silence" or segment_type == "hold":
+            if segment_type == "state":
+                content_end = cue_start
+            elif segment_type == "silence" or segment_type == "hold":
                 content_end = cue_start + float(segment["duration"])
             elif segment_type in ("audio_clip", "animation"):
                 content_end = (
@@ -165,8 +167,8 @@ def _trim_visual_to_duration(plan: dict, duration: float) -> None:
                 source_end = float(segment["source_end"])
                 if source_end - source_start > remain:
                     segment["source_end"] = round(source_start + remain, 9)
-            elif segment.get("type") == "hold":
-                if float(segment["duration"]) > remain:
+            elif segment.get("type") in ("hold", "state"):
+                if float(segment.get("duration", 0.0)) > remain:
                     segment["duration"] = round(remain, 9)
             kept_segments.append(segment)
         track["segments"] = kept_segments
@@ -191,12 +193,14 @@ TIMING_POLICY_GLOBAL_KEYS = frozenset({
 })
 VISUAL_SEGMENT_KEYS = frozenset({
     "id",
+    "type",
     "animation",
     "cue_start_ref",
     "source_start_ref",
     "source_end_ref",
     "after_end",
 })
+VISUAL_SEGMENT_TYPES = frozenset({"animation", "state"})
 VISUAL_AFTER_END_POLICIES = frozenset({"hold_last_frame", "clear"})
 
 
@@ -353,6 +357,17 @@ def _apply_timing_policy(
                 f"timing policy cue {cue_id!r} produced a non-positive duration")
         if new_duration < visual_end - 1e-9:
             _trim_visual_to_duration(plan, new_duration)
+        for track_plan in plan.get("tracks") or []:
+            if not isinstance(track_plan, dict) or track_plan.get("kind") != "visual":
+                continue
+            for segment in track_plan.get("segments") or []:
+                if isinstance(segment, dict) and segment.get("type") == "state":
+                    remaining = new_duration - float(segment.get("cue_start", 0.0))
+                    if remaining <= 1e-9:
+                        raise BuildError(
+                            f"cue {cue_id!r} state visual segment starts at "
+                            f"or after cue end")
+                    segment["duration"] = round(remaining, 9)
         if audio_end > new_duration + 1e-6:
             raise BuildError(
                 f"timing policy cue {cue_id!r} would cut audio: "
@@ -593,6 +608,11 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
             animation = raw_visual.get("animation")
             if not isinstance(animation, str) or not animation.strip():
                 raise BuildError(f"{visual_path}.animation is required")
+            visual_type = str(raw_visual.get("type") or "animation").strip()
+            if visual_type not in VISUAL_SEGMENT_TYPES:
+                raise BuildError(
+                    f"{visual_path}.type must be one of "
+                    + ", ".join(sorted(VISUAL_SEGMENT_TYPES)))
             after_end = raw_visual.get("after_end")
             if after_end not in VISUAL_AFTER_END_POLICIES:
                 raise BuildError(
@@ -602,17 +622,19 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
                 timing_points,
                 _required_visual_ref(raw_visual, "cue_start", visual_path),
                 segment_id, "cue_start_ref")
-            source_start = _resolve_timing_ref(
-                timing_points,
-                _required_visual_ref(raw_visual, "source_start", visual_path),
-                segment_id, "source_start_ref")
-            source_end = _resolve_timing_ref(
-                timing_points,
-                _required_visual_ref(raw_visual, "source_end", visual_path),
-                segment_id, "source_end_ref")
-            if source_end <= source_start:
-                raise BuildError(
-                    f"{visual_path}: source range must be positive")
+            if visual_type == "animation":
+                source_start = _resolve_timing_ref(
+                    timing_points,
+                    _required_visual_ref(
+                        raw_visual, "source_start", visual_path),
+                    segment_id, "source_start_ref")
+                source_end = _resolve_timing_ref(
+                    timing_points,
+                    _required_visual_ref(raw_visual, "source_end", visual_path),
+                    segment_id, "source_end_ref")
+                if source_end <= source_start:
+                    raise BuildError(
+                        f"{visual_path}: source range must be positive")
             if cue_start < previous_cue_start:
                 raise BuildError(
                     f"{visual_path}.cue_start_ref: visual segments must be "
@@ -930,6 +952,8 @@ def _build_cue_plan_set_from_audio_slices(
             for visual_index, raw_visual in enumerate(raw_visuals):
                 segment_id = str(raw_visual.get("id") or "").strip()
                 animation = str(raw_visual.get("animation") or "").strip()
+                visual_type = str(
+                    raw_visual.get("type") or "animation").strip()
                 compiled_cue = compiled_by_id.get(animation)
                 if compiled_cue is None:
                     raise BuildError(
@@ -940,6 +964,17 @@ def _build_cue_plan_set_from_audio_slices(
                     _required_visual_ref(
                         raw_visual, "cue_start", segment_id),
                     segment_id, "cue_start_ref")
+                if visual_type == "state":
+                    visual_segments.append({
+                        "id": segment_id,
+                        "type": "state",
+                        "animation": animation,
+                        "cue_start": round(cue_start, 9),
+                        # Filled to the final cue duration after timing policy.
+                        "duration": 1e-9,
+                        "after_end": str(raw_visual.get("after_end")),
+                    })
+                    continue
                 source_start = _resolve_timing_ref(
                     timing_points,
                     _required_visual_ref(
@@ -971,19 +1006,34 @@ def _build_cue_plan_set_from_audio_slices(
             compiled_cue = compiled_by_id.get(cue_id)
             if compiled_cue is not None:
                 visual_duration = float(compiled_cue.get("duration", 0.0) or 0.0)
-            if visual_duration > 0.0:
-                visual_segments.append({
-                    "id": "visual.compiled",
-                    "type": "animation",
-                    "animation": cue_id,
-                    "cue_start": 0.0,
-                    "source_start": 0.0,
-                    "source_end": round(visual_duration, 9),
-                    "after_end": "hold_last_frame",
-                })
+            if compiled_cue is not None:
+                if visual_duration > 0.0:
+                    visual_segments.append({
+                        "id": "visual.compiled",
+                        "type": "animation",
+                        "animation": cue_id,
+                        "cue_start": 0.0,
+                        "source_start": 0.0,
+                        "source_end": round(visual_duration, 9),
+                        "after_end": "hold_last_frame",
+                    })
+                else:
+                    # A zero-duration compiled cue still owns an instant
+                    # state/overlay frame.  Dropping it would freeze or clear
+                    # the visual state across audio-only cues.
+                    visual_segments.append({
+                        "id": "visual.state",
+                        "type": "state",
+                        "animation": cue_id,
+                        "cue_start": 0.0,
+                        "duration": 1e-9,
+                        "after_end": "hold_last_frame",
+                    })
 
         visual_duration = 0.0
         for segment in visual_segments:
+            if segment["type"] == "state":
+                continue
             visual_duration = max(
                 visual_duration,
                 float(segment["cue_start"])

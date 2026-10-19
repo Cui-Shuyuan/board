@@ -19,6 +19,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
+import build_audio_slices as audio_slice_builder  # noqa: E402
 import build_cue_timeline as builder  # noqa: E402
 import cue_timeline as timeline  # noqa: E402
 
@@ -729,6 +730,48 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertTrue((tutorial / "full.timing-policy.json").is_file())
         self.assertTrue((tutorial / "full.cue-timeline.json").is_file())
 
+    def test_zero_duration_compiled_cue_emits_state_visual_segment(self) -> None:
+        self.write_compiled([{"id": "fixture/one", "duration": 0.0}])
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        plan = document["cues"][0]
+        visual = next(
+            track for track in plan["tracks"] if track["kind"] == "visual")
+        self.assertEqual(visual["segments"][0]["type"], "state")
+        self.assertEqual(
+            visual["segments"][0]["animation"], "fixture/one")
+        self.assertAlmostEqual(
+            visual["segments"][0]["duration"],
+            plan["course"]["duration"],
+            places=9,
+        )
+        self.assertIs(timeline.validate_plan_set(document), document)
+
+    def test_full_zero_duration_compiled_cues_keep_state_visuals(self) -> None:
+        compiled = json.loads(
+            (ROOT / "content" / "games" / "splendor" / "tutorial"
+             / "anim" / "v2" / "full.compiled.json").read_text("utf-8"))
+        zero_ids = {
+            str(cue["id"]) for cue in compiled["cues"]
+            if float(cue.get("duration", 0.0) or 0.0) <= 0.0
+        }
+        document = builder.build_plan_set(ROOT, "splendor", "full")
+        for cue in document["cues"]:
+            visual_segments = [
+                segment
+                for track in cue["tracks"] if track["kind"] == "visual"
+                for segment in track["segments"]
+            ]
+            self.assertTrue(
+                visual_segments,
+                f"{cue['cue_id']} has no visual track in the plan")
+            if cue["cue_id"] in zero_ids:
+                self.assertEqual(visual_segments[0]["type"], "state")
+                self.assertAlmostEqual(
+                    visual_segments[0]["duration"],
+                    cue["course"]["duration"],
+                    places=9,
+                )
+
     def test_full_parent_chapter_titles_use_independent_audio_slices(self) -> None:
         document = builder.build_plan_set(ROOT, "splendor", "full")
         expectations = {
@@ -785,6 +828,35 @@ class BuildCueTimelineTests(unittest.TestCase):
                     all_paths.add(path[:end])
             missing = sorted(all_paths - direct_paths)
             self.assertEqual(missing, [], f"{track} chapters without own cue")
+
+    def test_full_audio_slice_ranges_do_not_overlap(self) -> None:
+        slices_path = (
+            ROOT / "content" / "games" / "splendor" / "tutorial"
+            / "full.audio-slices.json")
+        document = json.loads(slices_path.read_text(encoding="utf-8"))
+        by_asset: dict[str, list[tuple[float, float, str]]] = {}
+        for cue_id, cue_slices in document["cues"].items():
+            for raw_slice in cue_slices:
+                start = float(document["timing_points"][
+                    raw_slice["start_ref"]]["time"])
+                end = float(document["timing_points"][
+                    raw_slice["end_ref"]]["time"])
+                by_asset.setdefault(raw_slice["asset"], []).append(
+                    (start, end, cue_id))
+        for asset, intervals in by_asset.items():
+            intervals.sort()
+            for previous, current in zip(intervals, intervals[1:]):
+                self.assertGreaterEqual(
+                    current[0], previous[1] - 1e-9,
+                    f"{asset}: {previous[2]} overlaps {current[2]}")
+
+    def test_full_audio_slice_file_matches_runtime_input(self) -> None:
+        expected = audio_slice_builder.build_audio_slices(
+            ROOT, "splendor", "full")
+        actual = json.loads(
+            (ROOT / "content" / "games" / "splendor" / "tutorial"
+             / "full.audio-slices.json").read_text(encoding="utf-8"))
+        self.assertEqual(actual, expected)
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (
