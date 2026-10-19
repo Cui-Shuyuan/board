@@ -84,6 +84,11 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
     compiled_path = tutorial_dir / "anim" / "v2" / f"{track}.compiled.json"
     runtime = _load_json(runtime_path)
     compiled = _load_json(compiled_path)
+    output_path = tutorial_dir / f"{track}.audio-slices.json"
+    existing = _load_json(output_path) if output_path.is_file() else {}
+    existing_cue_timing = existing.get("cue_timing", {})
+    if not isinstance(existing_cue_timing, dict):
+        raise BuildError(f"{output_path}: cue_timing must be an object")
 
     if runtime.get("game_id") not in (None, game):
         raise BuildError(f"{runtime_path}: game_id mismatch")
@@ -133,7 +138,7 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         seen_slice_ids.add(slice_id)
 
         subtitles: list[dict] = []
-        speech_end = audio_end
+        speech_end: float | None = None
         raw_subtitles = raw_cue.get("subtitles") or []
         if not isinstance(raw_subtitles, list):
             raise BuildError(f"{path}.subtitles must be an array")
@@ -167,7 +172,9 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                 word_end = audio_start + _finite(
                     word.get("end"),
                     f"{sub_path}.words[].end")
-                speech_end = max(speech_end, min(audio_end, word_end))
+                bounded = min(audio_end, word_end)
+                speech_end = bounded if speech_end is None else max(
+                    speech_end, bounded)
 
         start_ref = f"{slice_id}.start"
         end_ref = f"{slice_id}.end"
@@ -177,7 +184,8 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         timing_points[end_ref] = {
             "time": audio_end, "description": "logical slice end"}
         timing_points[speech_ref] = {
-            "time": _round(speech_end), "description": "last TTS word end"}
+            "time": _round(audio_end if speech_end is None else speech_end),
+            "description": "last TTS word end"}
         cues[cue_id] = [{
             "id": slice_id,
             "asset": asset,
@@ -246,7 +254,13 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         "game_id": game,
         "track": track,
         "sample_rate": sample_rate,
-        "cue_timing": {},
+        # Per-cue policies are authored in the fixed file and must survive
+        # regeneration from runtime; otherwise title trim rules silently
+        # revert to raw next-cue audio boundaries.
+        "cue_timing": {
+            cue_id: policy for cue_id, policy in existing_cue_timing.items()
+            if cue_id in seen_cue_ids
+        },
         "audio_groups": audio_groups,
         "timing_points": timing_points,
         "cues": cues,

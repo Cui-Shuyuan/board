@@ -913,11 +913,15 @@ def _build_cue_plan_set_from_audio_slices(
                     raise BuildError(
                         f"audio slice {owner!r} subtitle[{subtitle_index}] "
                         "must have a positive duration")
-                if sub_start < start or sub_end > effective_end:
+                # Subtitle windows are presentation-only and may extend into
+                # the explicit trailing silence after a trimmed audio slice.
+                # The final plan validator still enforces that every subtitle
+                # segment ends within the cue duration.
+                if sub_start < start or sub_end > end + 1e-9:
                     raise BuildError(
                         f"audio slice {owner!r} subtitle[{subtitle_index}] "
                         f"range [{sub_start:g}, {sub_end:g}] is outside "
-                        f"[{start:g}, {effective_end:g}]")
+                        f"[{start:g}, {end:g}]")
                 subtitle_segments.append({
                     "id": f"subtitle.{slice_index}.{subtitle_index}",
                     "type": "subtitle",

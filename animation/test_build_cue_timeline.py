@@ -778,12 +778,12 @@ class BuildCueTimelineTests(unittest.TestCase):
             "2，设置。": (
                 ["2 设置"],
                 "media/tts/full/setup.intro.mp3",
-                1.632,
+                1.265,
             ),
             "3.2，发展卡牌与贵族。": (
                 ["3 行动", "3.2 发展卡牌与贵族"],
                 "media/tts/full/action.cards.group.mp3",
-                3.456,
+                3.165,
             ),
         }
         for text, (group_path, asset, source_end) in expectations.items():
@@ -810,6 +810,11 @@ class BuildCueTimelineTests(unittest.TestCase):
             self.assertEqual(audio_segment["source_start"], 0.0)
             self.assertAlmostEqual(
                 audio_segment["source_end"], source_end, places=9)
+            audio_track = next(
+                track for track in cue["tracks"] if track["kind"] == "audio")
+            self.assertEqual(audio_track["segments"][-1]["type"], "silence")
+            self.assertAlmostEqual(
+                audio_track["segments"][-1]["duration"], 1.0, places=9)
             self.assertTrue(
                 (ROOT / "content" / "games" / "splendor"
                  / audio_segment["asset"]).is_file())
@@ -857,6 +862,34 @@ class BuildCueTimelineTests(unittest.TestCase):
             (ROOT / "content" / "games" / "splendor" / "tutorial"
              / "full.audio-slices.json").read_text(encoding="utf-8"))
         self.assertEqual(actual, expected)
+
+    def test_all_full_title_cues_trim_at_their_own_speech_end(self) -> None:
+        slices = json.loads(
+            (ROOT / "content" / "games" / "splendor" / "tutorial"
+             / "full.audio-slices.json").read_text("utf-8"))
+        plan = builder.build_plan_set(ROOT, "splendor", "full")
+        title_cues = [
+            cue for cue in plan["cues"]
+            if cue["cue_id"].rsplit("/", 1)[-1].startswith("title")
+        ]
+        self.assertTrue(title_cues)
+        for cue in title_cues:
+            policy = slices["cue_timing"][cue["cue_id"]]
+            self.assertEqual(policy["mode"], "audio")
+            self.assertIs(policy["trim_to_speech_end"], True)
+            self.assertAlmostEqual(
+                policy["trailing_silence_seconds"], 1.0, places=9)
+            audio_track = next(
+                track for track in cue["tracks"] if track["kind"] == "audio")
+            self.assertEqual(audio_track["segments"][-1]["type"], "silence")
+            self.assertAlmostEqual(
+                audio_track["segments"][-1]["duration"], 1.0, places=9)
+            self.assertAlmostEqual(
+                audio_track["segments"][-1]["cue_start"],
+                audio_track["segments"][0]["source_end"]
+                - audio_track["segments"][0]["source_start"],
+                places=9,
+            )
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (
