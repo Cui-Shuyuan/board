@@ -16,6 +16,9 @@ data class ChapterNode(
     var firstCueIndex: Int = -1
     var firstCueId: String = ""
 
+    /** Number of cues whose exact group path ends at this chapter node. */
+    var ownCueCount: Int = 0
+
     val key: String get() = path.joinToString(CHAPTER_KEY_SEPARATOR)
 
     val depth: Int get() = path.size

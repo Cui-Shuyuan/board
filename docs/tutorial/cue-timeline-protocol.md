@@ -105,7 +105,21 @@ animation id 与 source time；`UnityCueVisualExecutor` 只执行这个结果：
   plan 形状后仍由 `CuePlaybackController` 执行。不存在第二套播放调度引擎；
 - `LoadGameWithRoot` 携带 Android 实际选择的模式，避免两端各自猜默认值。
 
-### 5.5 旧路径清理结果
+### 5.5 空分组章节的显示规则
+
+full 的 `group_path` 可能包含只有子章节、没有直属 cue 的分组节点，例如
+`2 设置` 下有 `2.1 发展卡牌` 但没有直接归到 `2 设置` 的 cue。Android 章节
+时间轴与章节面板会：
+
+- 对时间轴 segment 使用最近的空分组祖先 + 当前叶子标题，显示为
+  `2 设置。2.1 发展卡牌`，而不是只显示 `2.1 发展卡牌`；
+- 在章节面板中把纯分组节点折叠进子节点显示，避免留下一个没有直接内容、
+  只有展开箭头的空一级目录；
+- 保留真实 `group_path` 用于 seek、当前章节高亮和 QA context。
+
+这是纯展示层规则，不改变 plan 时间、cue 顺序或 TTS 内容。
+
+### 5.6 旧路径清理结果
 
 已删除或收敛：
 
@@ -122,7 +136,7 @@ animation id 与 source time；`UnityCueVisualExecutor` 只执行这个结果：
 Cue 完成只由 plan duration 与权威 cue clock 决定。音频执行器即使发出
 segment 完成诊断，也不会让控制器提前完成或自动进入下一条。
 
-### 5.6 测试入口
+### 5.7 测试入口
 
 ```bash
 python3 animation/build_cue_timeline.py --game splendor --track quick

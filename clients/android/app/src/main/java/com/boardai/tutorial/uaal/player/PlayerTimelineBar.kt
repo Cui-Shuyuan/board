@@ -43,12 +43,34 @@ internal data class TimelineSegment(
     val duration: Float
 )
 
+internal fun chapterDisplayTitle(
+    path: List<String>,
+    directPathKeys: Set<String>
+): String {
+    val clean = path.filter { it.isNotBlank() }
+    if (clean.isEmpty()) return ""
+    var firstVisible = 0
+    for (index in 0 until clean.lastIndex) {
+        val ancestorKey = chapterPathKey(clean.subList(0, index + 1))
+        if (ancestorKey in directPathKeys) {
+            firstVisible = index + 1
+        }
+    }
+    return clean.subList(firstVisible, clean.size).joinToString("。")
+}
+
 internal fun buildTimelineSegments(
     cues: List<TimelineCue>,
     totalDuration: Float
 ): List<TimelineSegment> {
+    val ordered = cues.sortedWith(
+        compareBy<TimelineCue> { it.start }.thenBy { it.index })
+    val directPathKeys = ordered
+        .map { chapterPathKey(it.groupPath) }
+        .filter { it.isNotBlank() }
+        .toSet()
     val firstStarts = LinkedHashMap<String, Pair<List<String>, Float>>()
-    cues.sortedWith(compareBy<TimelineCue> { it.start }.thenBy { it.index }).forEach { cue ->
+    ordered.forEach { cue ->
         val key = chapterPathKey(cue.groupPath)
         if (key.isNotEmpty() && !firstStarts.containsKey(key)) {
             firstStarts[key] = cue.groupPath to cue.start
@@ -61,7 +83,8 @@ internal fun buildTimelineSegments(
         val end = entries.getOrNull(index + 1)?.value?.second ?: totalDuration
         TimelineSegment(
             key = entry.key,
-            title = entry.value.first.lastOrNull()?.takeIf { it.isNotBlank() } ?: entry.key,
+            title = chapterDisplayTitle(entry.value.first, directPathKeys)
+                .ifBlank { entry.key },
             start = start,
             end = end,
             duration = (end - start).coerceAtLeast(0.1f)

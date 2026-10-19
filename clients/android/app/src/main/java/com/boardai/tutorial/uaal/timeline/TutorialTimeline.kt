@@ -614,6 +614,7 @@ class TutorialTimeline private constructor(
             for (cue in cues) {
                 var siblings = roots
                 val prefix = ArrayList<String>(cue.groupPath.size)
+                var lastNode: ChapterNode? = null
 
                 for (title in cue.groupPath) {
                     if (title.isBlank()) continue
@@ -626,8 +627,10 @@ class TutorialTimeline private constructor(
                         node.firstCueIndex = cue.index
                         node.firstCueId = cue.id
                     }
+                    lastNode = node
                     siblings = node.children
                 }
+                lastNode?.ownCueCount = (lastNode.ownCueCount) + 1
             }
 
             return roots

@@ -32,10 +32,46 @@ import androidx.compose.ui.unit.sp
 import com.boardai.tutorial.uaal.timeline.ChapterNode
 import com.boardai.tutorial.uaal.timeline.TutorialTimeline
 
-private data class ChapterRow(
+internal data class ChapterRow(
     val node: ChapterNode,
-    val depth: Int
+    val depth: Int,
+    val title: String
 )
+
+internal fun buildChapterRows(
+    nodes: List<ChapterNode>,
+    expanded: Map<String, Boolean>
+): List<ChapterRow> {
+    val rows = mutableListOf<ChapterRow>()
+
+    fun visit(
+        siblings: List<ChapterNode>,
+        depth: Int,
+        inheritedTitles: List<String>
+    ) {
+        for (node in siblings) {
+            val displayTitles = inheritedTitles + node.title
+            if (node.ownCueCount > 0 || node.children.isEmpty()) {
+                rows += ChapterRow(
+                    node = node,
+                    depth = depth,
+                    title = displayTitles.joinToString("。")
+                )
+                if (expanded[node.key] == true) {
+                    visit(node.children, depth + 1, emptyList())
+                }
+            } else {
+                // A pure grouping node has no cue of its own.  Promote its
+                // children and carry the group title into their display label
+                // instead of rendering an empty expandable directory.
+                visit(node.children, depth, displayTitles)
+            }
+        }
+    }
+
+    visit(nodes, 0, emptyList())
+    return rows
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,16 +121,7 @@ private fun ChapterTree(
         }
     }
 
-    val rows = mutableListOf<ChapterRow>()
-    fun visit(nodes: List<ChapterNode>, depth: Int) {
-        for (node in nodes) {
-            rows += ChapterRow(node = node, depth = depth)
-            if (expanded[node.key] == true) {
-                visit(node.children, depth + 1)
-            }
-        }
-    }
-    visit(timeline.rootChapters, 0)
+    val rows = buildChapterRows(timeline.rootChapters, expanded)
 
     Column(
         modifier = Modifier
@@ -180,7 +207,7 @@ private fun ChapterRowItem(
         }
 
         Text(
-            text = row.node.title,
+            text = row.title,
             color = Color.White,
             fontSize = 14.sp,
             fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal,
