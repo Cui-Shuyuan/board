@@ -1,6 +1,6 @@
 # Cue Timeline Protocol v1
 
-状态：Phase 5 已完成。Splendor `quick`（32 cue）与 `full`（81 cue）都有
+状态：Phase 5 已完成。Splendor `quick`（32 cue）与 `full`（82 cue）都有
 确定性、固定时间源的 `{track}.audio-slices.json` 和共享
 `{track}.cue-timeline.json`。Android 与 Unity 的 plan 模式都只从共享 plan
 读取 cue start/duration、课程总时长、章节映射和 seek 映射；Unity 的所有
@@ -51,9 +51,11 @@ timing point ID 或课程时间戳。缺失 timing ref、重复 ID、重复 JSON
 未知 cue/slice/animation ref、越界 trim、未知 visual segment、源范围越界
 和循环引用都会显式失败。重复运行产物逐字节一致。
 
-full 当前复用已有 section TTS 媒体作为 audio slice source；没有重新生成
-TTS，也不需要新凭据。若未来重新生成 full TTS，应保持 seed2 音色，并在
-重新生成后更新 `full.audio-slices.json` 的 timing points。
+full 在 Phase 5 后新增了独立的父章节标题 cue `setup/title_2`，文本为
+`2，设置。`，并用 seed2 音色单独生成 `setup.intro.mp3`。该 cue 不共享
+`setup.cards.mp3`，是独立的 section/slice。其余 full cue 继续复用已有
+section TTS 媒体作为 audio slice source。若未来重新生成 full TTS，应保持
+seed2 音色，并在重新生成后更新 `full.audio-slices.json` 的 timing points。
 
 ### 5.3 多 visual animation segment
 
@@ -107,17 +109,17 @@ animation id 与 source time；`UnityCueVisualExecutor` 只执行这个结果：
 
 ### 5.5 空分组章节的显示规则
 
-full 的 `group_path` 可能包含只有子章节、没有直属 cue 的分组节点，例如
-`2 设置` 下有 `2.1 发展卡牌` 但没有直接归到 `2 设置` 的 cue。Android 章节
-时间轴与章节面板会：
+full 的 `group_path` 仍可能包含只有子章节、没有直属 cue 的分组节点，例如
+`3.2 发展卡牌与贵族` 下有 `3.2.1` / `3.2.2`。Android 章节时间轴与章节面板会：
 
 - 对时间轴 segment 使用最近的空分组祖先 + 当前叶子标题，显示为
-  `2 设置。2.1 发展卡牌`，而不是只显示 `2.1 发展卡牌`；
-- 在章节面板中把纯分组节点折叠进子节点显示，避免留下一个没有直接内容、
-  只有展开箭头的空一级目录；
+  `3.2 发展卡牌与贵族。3.2.1 认识发展卡牌`；
+- 在章节面板中把纯分组节点折叠进子节点显示，避免留下没有直接内容的空目录；
 - 保留真实 `group_path` 用于 seek、当前章节高亮和 QA context。
 
-这是纯展示层规则，不改变 plan 时间、cue 顺序或 TTS 内容。
+`2 设置` 现在有独立 cue `setup/title_2` 和独立 `setup.intro.mp3`，因此
+时间轴会先显示 `2 设置` 段，再进入 `2.1 发展卡牌`。这是展示层规则加一条
+独立标题 cue，不改变其他 plan 时间或 TTS 内容。
 
 ### 5.6 旧路径清理结果
 
@@ -968,7 +970,7 @@ Phase 5 已完成：
 - Android `TutorialTimeline` 在 plan 模式读取 `{track}.cue-timeline.json` 的
   course start/duration、cue 顺序和总时长；进度条、章节跳转、QA context 与
   Unity plan 模式共用同一份 quick/full plan；
-- full 81 cue 已整轨迁移，catalog 同时启用 quick/full plan；
+- full 82 cue 已整轨迁移，catalog 同时启用 quick/full plan；
 - 旧 `section_audio` / `audio_plan` / `pause_after_speech_seconds` /
   `hold_after_audio` 生产播放路径已删除；
 - 多 visual animation segment 已实现为 compiled cue id + source range，并有

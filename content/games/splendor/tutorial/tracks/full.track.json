@@ -7,6 +7,7 @@
   "base_anim": "../shared/full.base.anim.json",
   "sections": [
     "intro",
+    "setup",
     "setup_cards",
     "setup_gems",
     "setup_players",

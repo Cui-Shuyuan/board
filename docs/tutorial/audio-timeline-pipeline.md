@@ -72,14 +72,23 @@ python animation/tts_doubao.py \
   --track quick --prune
 ```
 
-full 当前**没有重新生成 TTS**。`full.audio-slices.json` 复用仓库已有的
-full section TTS 媒体，并以固定 source range 表示 81 条 cue 的音频窗口。
-不需要新凭据或新音色资源。若未来重新生成 full TTS，必须：
+full 新增父章节标题 cue `setup/title_2`，文本为 `2，设置。`，使用 seed2
+音色 `zh_female_vv_uranus_bigtts` / `seed-tts-2.0` 单独生成
+`content/games/splendor/media/tts/full/setup.intro.mp3`。它不复用
+`setup.cards.mp3`。其余 full cue 继续复用已有 section TTS 媒体，并以固定
+source range 表示音频窗口。
 
-1. 使用 seed2 音色 `zh_female_vv_uranus_bigtts` / `seed-tts-2.0`；
-2. 先确认凭据和产物成本；
-3. 重新生成后更新 `full.audio-slices.json` 的 timing points 和字幕 refs；
-4. 重新运行 plan 生成、manifest 和全部测试。
+重新生成 full title cue 的入口：
+
+```bash
+DOUBAO_TTS_PROVIDER=seed2 \
+DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts \
+DOUBAO_RESOURCE_ID=seed-tts-2.0 \
+python animation/compile_tutorial.py --game splendor --track full
+```
+
+如果新增/修改 section TTS，必须同步更新 `full.audio-slices.json` 的
+timing points、字幕 refs、audio group 和 plan，再重新构建 manifest。
 
 规则：
 
@@ -247,7 +256,7 @@ python3 animation/build_cue_timeline.py --game splendor --track full
 
 ```text
 content/games/splendor/tutorial/quick.cue-timeline.json   # 32 cues
-content/games/splendor/tutorial/full.cue-timeline.json    # 81 cues
+content/games/splendor/tutorial/full.cue-timeline.json    # 82 cues
 ```
 
 生成器会再次执行 `validate_plan_set`。固定文件改动后重新生成即可更新 plan；
@@ -302,6 +311,6 @@ cd clients/android && gradlew.bat testDebugUnitTest
 python3 tools/content/build_content_manifest.py --game splendor
 ```
 
-自动测试覆盖固定时间轴校验、full 81 cue、确定性、多 visual segment
+自动测试覆盖固定时间轴校验、full 82 cue、确定性、多 visual segment
 resolver、控制器暂停/seek/generation/失败/完成、Android plan loader 与两端
 总时长一致性。自动测试不能替代真机视觉/听感验收。

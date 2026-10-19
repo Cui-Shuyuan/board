@@ -30,6 +30,23 @@
       ]
     },
     {
+      "id": "setup",
+      "asset": "setup.intro",
+      "text": "2，设置。",
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "cue_ids": [
+        "setup/title_2"
+      ],
+      "start": 16.488,
+      "duration": 1.632,
+      "file": "content/games/splendor/media/tts/full/setup.intro.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup.intro.subtitle.json",
+      "refs": []
+    },
+    {
       "id": "setup_cards",
       "asset": "setup.cards",
       "text": "2.1，发展卡牌。这是发展卡牌，共90张。根据背面可以将所有发展卡牌分为三类，分别是40张绿色的一级发展卡牌、30张黄色的二级发展卡牌，和20张蓝色的三级发展卡牌。将这三类牌分别洗混后按顺序摆成一列。从每摞牌上方分别翻开四张牌，在一侧摆成一行。最终组成一个3乘4的发展卡牌供应堆。",
@@ -44,7 +61,7 @@
         "setup_cards/001.2",
         "setup_cards/002.1"
       ],
-      "start": 16.488,
+      "start": 18.12,
       "duration": 30.24,
       "file": "content/games/splendor/media/tts/full/setup.cards.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/setup.cards.subtitle.json",
@@ -78,7 +95,7 @@
         "setup_gems/003.1",
         "setup_gems/005.2"
       ],
-      "start": 46.728,
+      "start": 48.36,
       "duration": 46.92,
       "file": "content/games/splendor/media/tts/full/setup.gems.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/setup.gems.subtitle.json",
@@ -112,7 +129,7 @@
         "setup_players/title_2_5",
         "setup_players/end.001.1"
       ],
-      "start": 93.648,
+      "start": 95.28,
       "duration": 43.056,
       "file": "content/games/splendor/media/tts/full/setup.players.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/setup.players.subtitle.json",
@@ -140,7 +157,7 @@
         "turn/001",
         "turn/002"
       ],
-      "start": 136.704,
+      "start": 138.336,
       "duration": 15.072,
       "file": "content/games/splendor/media/tts/full/action.turn.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.turn.subtitle.json",
@@ -172,7 +189,7 @@
         "take_gems/public.001.1",
         "take_gems/public.001.2"
       ],
-      "start": 151.776,
+      "start": 153.408,
       "duration": 52.872,
       "file": "content/games/splendor/media/tts/full/action.take.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.take.subtitle.json",
@@ -212,7 +229,7 @@
         "cards/public.001.1",
         "cards/limit.001.1"
       ],
-      "start": 204.648,
+      "start": 206.28,
       "duration": 112.56,
       "file": "content/games/splendor/media/tts/full/action.cards.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.cards.subtitle.json",
@@ -250,7 +267,7 @@
         "nobles/summary.001.2",
         "nobles/summary.001.3"
       ],
-      "start": 317.208,
+      "start": 318.84,
       "duration": 85.224,
       "file": "content/games/splendor/media/tts/full/action.nobles.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.nobles.subtitle.json",
@@ -284,7 +301,7 @@
         "reserve/private.002",
         "reserve/not_purchase.001"
       ],
-      "start": 402.432,
+      "start": 404.064,
       "duration": 75.984,
       "file": "content/games/splendor/media/tts/full/action.reserve.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.subtitle.json",
@@ -318,7 +335,7 @@
         "purchase_reserved/title_3_4",
         "purchase_reserved/001"
       ],
-      "start": 478.416,
+      "start": 480.048,
       "duration": 23.664,
       "file": "content/games/splendor/media/tts/full/action.purchase_reserved.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.purchase_reserved.subtitle.json",
@@ -342,7 +359,7 @@
         "summary/002.1",
         "summary/002.2"
       ],
-      "start": 502.08,
+      "start": 503.712,
       "duration": 22.704,
       "file": "content/games/splendor/media/tts/full/action.summary.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.summary.subtitle.json",
@@ -373,7 +390,7 @@
         "end/winner.002",
         "end/winner.003"
       ],
-      "start": 524.784,
+      "start": 526.416,
       "duration": 65.904,
       "file": "content/games/splendor/media/tts/full/endgame.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.subtitle.json",

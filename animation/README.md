@@ -9,7 +9,7 @@
 - Unity 播放器：`clients/unity/Assets/Scripts/Tutorial/`
 - 本目录只放跨游戏动画工具，不放 Unity 工程，也不放 per-game 动画数据。
 
-当前 Splendor：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。两轨引用同一批 `library/` 素材；迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。`check_materials.py` 已接入 `compile_tutorial.py` 构建门禁，失败会恢复旧 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
+当前 Splendor：full 82 cue / 13 section / 398 anchors；quick 32 cue / 11 section / 138 anchors。两轨引用同一批 `library/` 素材；迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。`check_materials.py` 已接入 `compile_tutorial.py` 构建门禁，失败会恢复旧 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
 
 ## 原语与检查
 
@@ -20,7 +20,7 @@
   没有重新生成音频；quick 使用 cue-level TTS。
 - 固定文件是 timing points、source range、字幕 refs、per-cue policy 和
   visual segment 映射的唯一来源；`{track}.timing-policy.json` 只保留全局配置。
-- full 的 81 cue 与 quick 的 32 cue 都有确定性 plan，构建入口为
+- full 的 82 cue 与 quick 的 32 cue 都有确定性 plan，构建入口为
   `python3 animation/build_cue_timeline.py --game splendor --track {quick,full}`。
 - 旧 `section_audio` / `audio_plan` / `pause_after_speech_seconds` /
   `hold_after_audio` 生产播放路径已经删除。

@@ -27,15 +27,16 @@ content/games/splendor/tutorial/{full,quick}.cue-timeline.json           Phase 5
 
 - `build/` 是 `section_source.py` 生成的装配中间产物，不进 Git，不是源真值。
 - 旧单文件 `script.{track}.json`、`anim/v2/{track}.anim.json`、`anim/v2/_stage/` 已删除；不要再去改这些路径。
-- `quick` 与 `full` 都已迁移到固定时间轴 + 共享 plan。`full` 当前复用已有
-  section TTS 媒体，没有重新生成 TTS；`quick` 使用 cue-level TTS。
+- `quick` 与 `full` 都已迁移到固定时间轴 + 共享 plan。`quick` 使用
+  cue-level TTS；`full` 复用已有 section TTS，并为新增父章节标题 cue
+  `setup/title_2` 单独生成 `setup.intro.mp3`。
 - 一个 cue 可包含多个逻辑 MP3 slice，也可通过固定文件中的 visual segment
   引用多个 compiled animation segment。所有秒数、source range、字幕 refs、
   per-cue timing policy 和 visual mapping 都只在该固定文件中。
 - 正常运行只使用 `{track}.cue-timeline.json`；整条 plan 缺失/非法时两端
   才切换到清晰的整轨 runtime 兼容回退。具体见
   `docs/tutorial/audio-timeline-pipeline.md`。
-- 当前编译基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。
+- 当前编译基线：full 82 cue / 13 section / 398 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
 

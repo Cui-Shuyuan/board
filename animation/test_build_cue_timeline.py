@@ -711,12 +711,12 @@ class BuildCueTimelineTests(unittest.TestCase):
                                     "unknown compiled animation"):
             builder.build_plan_set(self.root, self.game, self.track)
 
-    def test_full_track_plan_has_81_cues_and_is_deterministic(self) -> None:
+    def test_full_track_plan_has_82_cues_and_is_deterministic(self) -> None:
         tutorial = ROOT / "content" / "games" / "splendor" / "tutorial"
         first = builder.build_plan_set(ROOT, "splendor", "full")
         second = builder.build_plan_set(ROOT, "splendor", "full")
         self.assertEqual(first, second)
-        self.assertEqual(len(first["cues"]), 81)
+        self.assertEqual(len(first["cues"]), 82)
         self.assertEqual(first["track"], "full")
         last = first["cues"][-1]
         self.assertAlmostEqual(
@@ -728,6 +728,34 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertTrue((tutorial / "full.audio-slices.json").is_file())
         self.assertTrue((tutorial / "full.timing-policy.json").is_file())
         self.assertTrue((tutorial / "full.cue-timeline.json").is_file())
+
+    def test_full_setup_title_uses_its_own_audio_slice(self) -> None:
+        document = builder.build_plan_set(ROOT, "splendor", "full")
+        setup_cue = next(
+            cue for cue in document["cues"] if cue["text"] == "2，设置。")
+        next_cue = document["cues"][document["cues"].index(setup_cue) + 1]
+        self.assertEqual(setup_cue["group_path"], ["2 设置"])
+        self.assertEqual(setup_cue["tracks"][0]["kind"], "visual")
+        audio_segment = next(
+            segment
+            for track in setup_cue["tracks"] if track["kind"] == "audio"
+            for segment in track["segments"]
+            if segment["type"] == "audio_clip"
+        )
+        next_audio_segment = next(
+            segment
+            for track in next_cue["tracks"] if track["kind"] == "audio"
+            for segment in track["segments"]
+            if segment["type"] == "audio_clip"
+        )
+        self.assertEqual(audio_segment["asset"],
+                         "media/tts/full/setup.intro.mp3")
+        self.assertNotEqual(audio_segment["asset"], next_audio_segment["asset"])
+        self.assertEqual(audio_segment["source_start"], 0.0)
+        self.assertAlmostEqual(audio_segment["source_end"], 1.632, places=9)
+        self.assertTrue(
+            (ROOT / "content" / "games" / "splendor"
+             / audio_segment["asset"]).is_file())
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (

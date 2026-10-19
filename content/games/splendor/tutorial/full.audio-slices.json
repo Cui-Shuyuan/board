@@ -239,6 +239,14 @@
         "end__winner.002",
         "end__winner.003"
       ]
+    },
+    "setup": {
+      "cue_ids": [
+        "setup/title_2"
+      ],
+      "slice_ids": [
+        "setup__title_2"
+      ]
     }
   },
   "timing_points": {
@@ -2945,6 +2953,38 @@
     "end__winner.003.visual.source_end": {
       "time": 10.366,
       "description": "visual source end"
+    },
+    "setup__title_2.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "setup__title_2.end": {
+      "time": 1.632,
+      "description": "logical slice end"
+    },
+    "setup__title_2.speech_end": {
+      "time": 1.265,
+      "description": "last TTS word end"
+    },
+    "setup__title_2.subtitle.0.start": {
+      "time": 0.525,
+      "description": "subtitle start"
+    },
+    "setup__title_2.subtitle.0.end": {
+      "time": 1.265,
+      "description": "subtitle end"
+    },
+    "setup__title_2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "setup__title_2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "setup__title_2.visual.source_end": {
+      "time": 3.0,
+      "description": "visual source end"
     }
   },
   "cues": {
@@ -2991,6 +3031,22 @@
             "start_ref": "intro__001.subtitle.3.start",
             "end_ref": "intro__001.subtitle.3.end",
             "text": "最终成为最负盛名的贸易商人。"
+          }
+        ]
+      }
+    ],
+    "setup/title_2": [
+      {
+        "id": "setup__title_2",
+        "asset": "media/tts/full/setup.intro.mp3",
+        "start_ref": "setup__title_2.start",
+        "end_ref": "setup__title_2.end",
+        "speech_end_ref": "setup__title_2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "setup__title_2.subtitle.0.start",
+            "end_ref": "setup__title_2.subtitle.0.end",
+            "text": "2，设置。"
           }
         ]
       }
@@ -5058,6 +5114,16 @@
         "cue_start_ref": "end__winner.003.visual.cue_start",
         "source_start_ref": "end__winner.003.visual.source_start",
         "source_end_ref": "end__winner.003.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "setup/title_2": [
+      {
+        "id": "visual.setup__title_2",
+        "animation": "setup/title_2",
+        "cue_start_ref": "setup__title_2.visual.cue_start",
+        "source_start_ref": "setup__title_2.visual.source_start",
+        "source_end_ref": "setup__title_2.visual.source_end",
         "after_end": "hold_last_frame"
       }
     ]

@@ -23,7 +23,22 @@
         "intro/title_1",
         "intro/001"
       ],
-      "duration": 16.713
+      "duration": 16.488
+    },
+    {
+      "id": "setup",
+      "title": "设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "order": 1,
+      "asset": "setup.intro",
+      "audio": "media/tts/full/setup.intro.mp3",
+      "start": 16.488,
+      "cue_ids": [
+        "setup/title_2"
+      ],
+      "duration": 1.632
     },
     {
       "id": "setup_cards",
@@ -32,17 +47,17 @@
         "2 设置",
         "2.1 发展卡牌"
       ],
-      "order": 1,
+      "order": 2,
       "asset": "setup.cards",
       "audio": "media/tts/full/setup.cards.mp3",
-      "start": 16.713,
+      "start": 18.12,
       "cue_ids": [
         "setup_cards/title_2_1",
         "setup_cards/001.1",
         "setup_cards/001.2",
         "setup_cards/002.1"
       ],
-      "duration": 30.645
+      "duration": 30.24
     },
     {
       "id": "setup_gems",
@@ -51,10 +66,10 @@
         "2 设置",
         "2.2 宝石与黄金"
       ],
-      "order": 2,
+      "order": 3,
       "asset": "setup.gems",
       "audio": "media/tts/full/setup.gems.mp3",
-      "start": 47.358,
+      "start": 48.36,
       "cue_ids": [
         "setup_gems/title_2_2",
         "setup_gems/001.1",
@@ -62,7 +77,7 @@
         "setup_gems/003.1",
         "setup_gems/005.2"
       ],
-      "duration": 47.375
+      "duration": 46.92
     },
     {
       "id": "setup_players",
@@ -71,10 +86,10 @@
         "2 设置",
         "2.3 贵族板块"
       ],
-      "order": 3,
+      "order": 4,
       "asset": "setup.players",
       "audio": "media/tts/full/setup.players.mp3",
-      "start": 94.733,
+      "start": 95.28,
       "cue_ids": [
         "setup_players/title_2_3",
         "setup_players/nobles.001.1",
@@ -86,7 +101,7 @@
         "setup_players/title_2_5",
         "setup_players/end.001.1"
       ],
-      "duration": 44.586
+      "duration": 43.056
     },
     {
       "id": "turn",
@@ -94,16 +109,16 @@
       "group_path": [
         "3 行动"
       ],
-      "order": 4,
+      "order": 5,
       "asset": "action.turn",
       "audio": "media/tts/full/action.turn.mp3",
-      "start": 139.319,
+      "start": 138.336,
       "cue_ids": [
         "turn/title_3",
         "turn/001",
         "turn/002"
       ],
-      "duration": 15.337
+      "duration": 15.072
     },
     {
       "id": "take_gems",
@@ -112,10 +127,10 @@
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
-      "order": 5,
+      "order": 6,
       "asset": "action.take",
       "audio": "media/tts/full/action.take.mp3",
-      "start": 154.656,
+      "start": 153.408,
       "cue_ids": [
         "take_gems/title_3_1",
         "take_gems/different.001",
@@ -128,7 +143,7 @@
         "take_gems/public.001.1",
         "take_gems/public.001.2"
       ],
-      "duration": 53.457
+      "duration": 52.872
     },
     {
       "id": "cards",
@@ -138,10 +153,10 @@
         "3.2 发展卡牌与贵族",
         "3.2.1 认识发展卡牌"
       ],
-      "order": 6,
+      "order": 7,
       "asset": "action.cards",
       "audio": "media/tts/full/action.cards.mp3",
-      "start": 208.113,
+      "start": 206.28,
       "cue_ids": [
         "cards/title_3_2_1",
         "cards/intro.001",
@@ -158,7 +173,7 @@
         "cards/public.001.1",
         "cards/limit.001.1"
       ],
-      "duration": 112.88
+      "duration": 112.56
     },
     {
       "id": "nobles",
@@ -168,10 +183,10 @@
         "3.2 发展卡牌与贵族",
         "3.2.2 贵族结算"
       ],
-      "order": 7,
+      "order": 8,
       "asset": "action.nobles",
       "audio": "media/tts/full/action.nobles.mp3",
-      "start": 320.993,
+      "start": 318.84,
       "cue_ids": [
         "nobles/title_3_2_2",
         "nobles/intro.001",
@@ -185,7 +200,7 @@
         "nobles/summary.001.2",
         "nobles/summary.001.3"
       ],
-      "duration": 85.779
+      "duration": 85.224
     },
     {
       "id": "reserve",
@@ -194,10 +209,10 @@
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
-      "order": 8,
+      "order": 9,
       "asset": "action.reserve",
       "audio": "media/tts/full/action.reserve.mp3",
-      "start": 406.772,
+      "start": 404.064,
       "cue_ids": [
         "reserve/title_3_3",
         "reserve/intro.001.1",
@@ -210,7 +225,7 @@
         "reserve/private.002",
         "reserve/not_purchase.001"
       ],
-      "duration": 76.419
+      "duration": 75.984
     },
     {
       "id": "purchase_reserved",
@@ -219,15 +234,15 @@
         "3 行动",
         "3.4 购买保留的发展卡牌"
       ],
-      "order": 9,
+      "order": 10,
       "asset": "action.purchase_reserved",
       "audio": "media/tts/full/action.purchase_reserved.mp3",
-      "start": 483.191,
+      "start": 480.048,
       "cue_ids": [
         "purchase_reserved/title_3_4",
         "purchase_reserved/001"
       ],
-      "duration": 24.094
+      "duration": 23.664
     },
     {
       "id": "summary",
@@ -236,17 +251,17 @@
         "3 行动",
         "3.5 回合结束与循环"
       ],
-      "order": 10,
+      "order": 11,
       "asset": "action.summary",
       "audio": "media/tts/full/action.summary.mp3",
-      "start": 507.285,
+      "start": 503.712,
       "cue_ids": [
         "summary/title_3_5",
         "summary/001",
         "summary/002.1",
         "summary/002.2"
       ],
-      "duration": 23.099
+      "duration": 22.704
     },
     {
       "id": "end",
@@ -254,10 +269,10 @@
       "group_path": [
         "4 游戏结束"
       ],
-      "order": 11,
+      "order": 12,
       "asset": "endgame",
       "audio": "media/tts/full/endgame.mp3",
-      "start": 530.384,
+      "start": 526.416,
       "cue_ids": [
         "end/title_4",
         "end/trigger.001",
@@ -267,7 +282,7 @@
         "end/winner.002",
         "end/winner.003"
       ],
-      "duration": 66.369
+      "duration": 65.904
     }
   ],
   "cues": [
@@ -285,13 +300,13 @@
       "text": "一，背景。",
       "audio": "media/tts/full/bg.intro.mp3",
       "audio_start": 0.0,
-      "duration": 2.225,
+      "duration": 2.0,
       "start": 0.0,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.225,
+          "end": 2.0,
           "text": "一，背景。",
           "words": [
             {
@@ -332,7 +347,7 @@
       "audio": "media/tts/full/bg.intro.mp3",
       "audio_start": 2.0,
       "duration": 14.488,
-      "start": 2.225,
+      "start": 2.0,
       "refs": [
         "rulebook:background"
       ],
@@ -771,12 +786,58 @@
       "animation": null
     },
     {
-      "id": "setup_cards/title_2_1",
-      "section": "setup_cards",
-      "local_id": "title_2_1",
+      "id": "setup/title_2",
+      "section": "setup",
+      "local_id": "title_2",
       "section_index": 1,
       "local_index": 0,
       "cue_index": 2,
+      "group": "2 设置",
+      "group_path": [
+        "2 设置"
+      ],
+      "text": "2，设置。",
+      "audio": "media/tts/full/setup.intro.mp3",
+      "audio_start": 0.0,
+      "duration": 1.632,
+      "start": 16.488,
+      "refs": [],
+      "subtitles": [
+        {
+          "t": 0.0,
+          "end": 1.632,
+          "text": "2，设置。",
+          "words": [
+            {
+              "word": "2，",
+              "start": 0.525,
+              "end": 0.555,
+              "confidence": 0.3434
+            },
+            {
+              "word": "设",
+              "start": 0.705,
+              "end": 0.985,
+              "confidence": 0.9683
+            },
+            {
+              "word": "置。",
+              "start": 0.985,
+              "end": 1.265,
+              "confidence": 0.9631
+            }
+          ]
+        }
+      ],
+      "animation": null
+    },
+    {
+      "id": "setup_cards/title_2_1",
+      "section": "setup_cards",
+      "local_id": "title_2_1",
+      "section_index": 2,
+      "local_index": 0,
+      "cue_index": 3,
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
@@ -785,13 +846,13 @@
       "text": "2.1，发展卡牌。",
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 0.0,
-      "duration": 3.065,
-      "start": 16.713,
+      "duration": 2.66,
+      "start": 18.12,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.065,
+          "end": 2.66,
           "text": "2.1，发展卡牌。",
           "words": [
             {
@@ -833,9 +894,9 @@
       "id": "setup_cards/001.1",
       "section": "setup_cards",
       "local_id": "001.1",
-      "section_index": 1,
+      "section_index": 2,
       "local_index": 1,
-      "cue_index": 3,
+      "cue_index": 4,
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
@@ -845,7 +906,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 2.66,
       "duration": 2.66,
-      "start": 19.778,
+      "start": 20.78,
       "refs": [
         "<development_card>",
         "rulebook:setup"
@@ -919,9 +980,9 @@
       "id": "setup_cards/001.2",
       "section": "setup_cards",
       "local_id": "001.2",
-      "section_index": 1,
+      "section_index": 2,
       "local_index": 2,
-      "cue_index": 4,
+      "cue_index": 5,
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
@@ -931,7 +992,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 5.32,
       "duration": 12.685,
-      "start": 22.438,
+      "start": 23.44,
       "refs": [
         "<development_card>",
         "rulebook:setup"
@@ -1296,9 +1357,9 @@
       "id": "setup_cards/002.1",
       "section": "setup_cards",
       "local_id": "002.1",
-      "section_index": 1,
+      "section_index": 2,
       "local_index": 3,
-      "cue_index": 5,
+      "cue_index": 6,
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
@@ -1308,7 +1369,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 18.005,
       "duration": 12.235,
-      "start": 35.123,
+      "start": 36.125,
       "refs": [
         "flow:prepare_level_1_deck",
         "flow:prepare_level_2_deck",
@@ -1673,9 +1734,9 @@
       "id": "setup_gems/title_2_2",
       "section": "setup_gems",
       "local_id": "title_2_2",
-      "section_index": 2,
+      "section_index": 3,
       "local_index": 0,
-      "cue_index": 6,
+      "cue_index": 7,
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
@@ -1684,13 +1745,13 @@
       "text": "2.2，宝石与黄金。",
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 0.0,
-      "duration": 3.205,
-      "start": 47.358,
+      "duration": 2.75,
+      "start": 48.36,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.205,
+          "end": 2.75,
           "text": "2.2，宝石与黄金。",
           "words": [
             {
@@ -1738,9 +1799,9 @@
       "id": "setup_gems/001.1",
       "section": "setup_gems",
       "local_id": "001.1",
-      "section_index": 2,
+      "section_index": 3,
       "local_index": 1,
-      "cue_index": 7,
+      "cue_index": 8,
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
@@ -1750,7 +1811,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 2.75,
       "duration": 13.405,
-      "start": 50.563,
+      "start": 51.11,
       "refs": [
         "<gem>",
         "rulebook:setup"
@@ -2096,9 +2157,9 @@
       "id": "setup_gems/002",
       "section": "setup_gems",
       "local_id": "002",
-      "section_index": 2,
+      "section_index": 3,
       "local_index": 2,
-      "cue_index": 8,
+      "cue_index": 9,
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
@@ -2108,7 +2169,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 16.155,
       "duration": 5.94,
-      "start": 63.968,
+      "start": 64.515,
       "refs": [
         "<gold>",
         "rulebook:setup"
@@ -2297,9 +2358,9 @@
       "id": "setup_gems/003.1",
       "section": "setup_gems",
       "local_id": "003.1",
-      "section_index": 2,
+      "section_index": 3,
       "local_index": 3,
-      "cue_index": 9,
+      "cue_index": 10,
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
@@ -2309,7 +2370,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 22.095,
       "duration": 18.554,
-      "start": 69.908,
+      "start": 70.455,
       "refs": [
         "flow:distribute_gems"
       ],
@@ -2866,9 +2927,9 @@
       "id": "setup_gems/005.2",
       "section": "setup_gems",
       "local_id": "005.2",
-      "section_index": 2,
+      "section_index": 3,
       "local_index": 4,
-      "cue_index": 10,
+      "cue_index": 11,
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
@@ -2878,7 +2939,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 40.649,
       "duration": 6.271,
-      "start": 88.462,
+      "start": 89.009,
       "refs": [
         "<gem_supply>",
         "<gold_supply>",
@@ -3075,9 +3136,9 @@
       "id": "setup_players/title_2_3",
       "section": "setup_players",
       "local_id": "title_2_3",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 0,
-      "cue_index": 11,
+      "cue_index": 12,
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -3086,13 +3147,13 @@
       "text": "2.3，贵族板块。",
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 0.0,
-      "duration": 3.015,
-      "start": 94.733,
+      "duration": 2.57,
+      "start": 95.28,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.015,
+          "end": 2.57,
           "text": "2.3，贵族板块。",
           "words": [
             {
@@ -3134,9 +3195,9 @@
       "id": "setup_players/nobles.001.1",
       "section": "setup_players",
       "local_id": "nobles.001.1",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 1,
-      "cue_index": 12,
+      "cue_index": 13,
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -3146,7 +3207,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 2.57,
       "duration": 1.44,
-      "start": 97.748,
+      "start": 97.85,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3209,9 +3270,9 @@
       "id": "setup_players/nobles.001.2",
       "section": "setup_players",
       "local_id": "nobles.001.2",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 2,
-      "cue_index": 13,
+      "cue_index": 14,
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -3221,7 +3282,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 4.01,
       "duration": 9.015,
-      "start": 99.188,
+      "start": 99.29,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3501,9 +3562,9 @@
       "id": "setup_players/nobles.002",
       "section": "setup_players",
       "local_id": "nobles.002",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 3,
-      "cue_index": 14,
+      "cue_index": 15,
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
@@ -3513,7 +3574,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 13.025,
       "duration": 7.18,
-      "start": 108.203,
+      "start": 108.305,
       "refs": [
         "flow:deal_nobles"
       ],
@@ -3730,9 +3791,9 @@
       "id": "setup_players/title_2_4",
       "section": "setup_players",
       "local_id": "title_2_4",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 4,
-      "cue_index": 15,
+      "cue_index": 16,
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
@@ -3741,13 +3802,13 @@
       "text": "2.4，起始玩家。",
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 20.205,
-      "duration": 2.1,
-      "start": 115.383,
+      "duration": 1.62,
+      "start": 115.485,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.1,
+          "end": 1.62,
           "text": "2.4，起始玩家。",
           "words": [
             {
@@ -3789,9 +3850,9 @@
       "id": "setup_players/starting.001.1",
       "section": "setup_players",
       "local_id": "starting.001.1",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 5,
-      "cue_index": 16,
+      "cue_index": 17,
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
@@ -3801,7 +3862,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 21.825,
       "duration": 10.079,
-      "start": 117.483,
+      "start": 117.105,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -4129,9 +4190,9 @@
       "id": "setup_players/starting.001.3",
       "section": "setup_players",
       "local_id": "starting.001.3",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 6,
-      "cue_index": 17,
+      "cue_index": 18,
       "group": "2.4 起始玩家",
       "group_path": [
         "2 设置",
@@ -4141,7 +4202,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 31.904,
       "duration": 3.94,
-      "start": 127.562,
+      "start": 127.184,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -4277,9 +4338,9 @@
       "id": "setup_players/title_2_5",
       "section": "setup_players",
       "local_id": "title_2_5",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 7,
-      "cue_index": 18,
+      "cue_index": 19,
       "group": "2.5 设置完成",
       "group_path": [
         "2 设置",
@@ -4288,13 +4349,13 @@
       "text": "2.5，设置完成。",
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 35.844,
-      "duration": 2.505,
-      "start": 131.502,
+      "duration": 1.9,
+      "start": 131.124,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.505,
+          "end": 1.9,
           "text": "2.5，设置完成。",
           "words": [
             {
@@ -4336,9 +4397,9 @@
       "id": "setup_players/end.001.1",
       "section": "setup_players",
       "local_id": "end.001.1",
-      "section_index": 3,
+      "section_index": 4,
       "local_index": 8,
-      "cue_index": 19,
+      "cue_index": 20,
       "group": "2.5 设置完成",
       "group_path": [
         "2 设置",
@@ -4348,7 +4409,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 37.744,
       "duration": 5.312,
-      "start": 134.007,
+      "start": 133.024,
       "refs": [
         "rulebook:setup",
         "flow:main_gameplay"
@@ -4531,9 +4592,9 @@
       "id": "turn/title_3",
       "section": "turn",
       "local_id": "title_3",
-      "section_index": 4,
+      "section_index": 5,
       "local_index": 0,
-      "cue_index": 20,
+      "cue_index": 21,
       "group": "3 行动",
       "group_path": [
         "3 行动"
@@ -4541,13 +4602,13 @@
       "text": "3，行动。",
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 0.0,
-      "duration": 2.495,
-      "start": 139.319,
+      "duration": 2.23,
+      "start": 138.336,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.495,
+          "end": 2.23,
           "text": "3，行动。",
           "words": [
             {
@@ -4577,9 +4638,9 @@
       "id": "turn/001",
       "section": "turn",
       "local_id": "001",
-      "section_index": 4,
+      "section_index": 5,
       "local_index": 1,
-      "cue_index": 21,
+      "cue_index": 22,
       "group": "3 行动",
       "group_path": [
         "3 行动"
@@ -4588,7 +4649,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 2.23,
       "duration": 7.795,
-      "start": 141.814,
+      "start": 140.566,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -4826,9 +4887,9 @@
       "id": "turn/002",
       "section": "turn",
       "local_id": "002",
-      "section_index": 4,
+      "section_index": 5,
       "local_index": 2,
-      "cue_index": 22,
+      "cue_index": 23,
       "group": "3 行动",
       "group_path": [
         "3 行动"
@@ -4837,7 +4898,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 10.025,
       "duration": 5.047,
-      "start": 149.609,
+      "start": 148.361,
       "refs": [
         "flow:action_phase"
       ],
@@ -5012,9 +5073,9 @@
       "id": "take_gems/title_3_1",
       "section": "take_gems",
       "local_id": "title_3_1",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 0,
-      "cue_index": 23,
+      "cue_index": 24,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -5023,13 +5084,13 @@
       "text": "3.1，从宝石供应堆拿取宝石。",
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 0.0,
-      "duration": 4.515,
-      "start": 154.656,
+      "duration": 3.93,
+      "start": 153.408,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.515,
+          "end": 3.93,
           "text": "3.1，从宝石供应堆拿取宝石。",
           "words": [
             {
@@ -5107,9 +5168,9 @@
       "id": "take_gems/different.001",
       "section": "take_gems",
       "local_id": "different.001",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 1,
-      "cue_index": 24,
+      "cue_index": 25,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -5119,7 +5180,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 3.93,
       "duration": 4.765,
-      "start": 159.171,
+      "start": 157.338,
       "refs": [
         "<take_gems_different>",
         "flow:player_action_turn"
@@ -5277,9 +5338,9 @@
       "id": "take_gems/same.001",
       "section": "take_gems",
       "local_id": "same.001",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 2,
-      "cue_index": 25,
+      "cue_index": 26,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -5289,7 +5350,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 8.695,
       "duration": 6.66,
-      "start": 163.936,
+      "start": 162.103,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5508,9 +5569,9 @@
       "id": "take_gems/same.002",
       "section": "take_gems",
       "local_id": "same.002",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 3,
-      "cue_index": 26,
+      "cue_index": 27,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -5520,7 +5581,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 15.355,
       "duration": 6.69,
-      "start": 170.596,
+      "start": 168.763,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5739,9 +5800,9 @@
       "id": "take_gems/draw_rule.001.1",
       "section": "take_gems",
       "local_id": "draw_rule.001.1",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 4,
-      "cue_index": 27,
+      "cue_index": 28,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -5751,7 +5812,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 22.045,
       "duration": 6.51,
-      "start": 177.286,
+      "start": 175.453,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -5963,9 +6024,9 @@
       "id": "take_gems/draw_rule.001.2",
       "section": "take_gems",
       "local_id": "draw_rule.001.2",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 5,
-      "cue_index": 28,
+      "cue_index": 29,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -5975,7 +6036,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 28.555,
       "duration": 3.794,
-      "start": 183.796,
+      "start": 181.963,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -6091,9 +6152,9 @@
       "id": "take_gems/limit.001.1",
       "section": "take_gems",
       "local_id": "limit.001.1",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 6,
-      "cue_index": 29,
+      "cue_index": 30,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -6103,7 +6164,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 32.349,
       "duration": 6.315,
-      "start": 187.59,
+      "start": 185.757,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -6317,9 +6378,9 @@
       "id": "take_gems/limit.001.2",
       "section": "take_gems",
       "local_id": "limit.001.2",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 7,
-      "cue_index": 30,
+      "cue_index": 31,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -6329,7 +6390,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 38.664,
       "duration": 6.08,
-      "start": 193.905,
+      "start": 192.072,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -6524,9 +6585,9 @@
       "id": "take_gems/public.001.1",
       "section": "take_gems",
       "local_id": "public.001.1",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 8,
-      "cue_index": 31,
+      "cue_index": 32,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -6536,7 +6597,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 44.744,
       "duration": 5.75,
-      "start": 199.985,
+      "start": 198.152,
       "refs": [
         "<player_holding>"
       ],
@@ -6729,9 +6790,9 @@
       "id": "take_gems/public.001.2",
       "section": "take_gems",
       "local_id": "public.001.2",
-      "section_index": 5,
+      "section_index": 6,
       "local_index": 9,
-      "cue_index": 32,
+      "cue_index": 33,
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
@@ -6741,7 +6802,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 50.494,
       "duration": 2.378,
-      "start": 205.735,
+      "start": 203.902,
       "refs": [
         "<player_holding>"
       ],
@@ -6832,9 +6893,9 @@
       "id": "cards/title_3_2_1",
       "section": "cards",
       "local_id": "title_3_2_1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 0,
-      "cue_index": 33,
+      "cue_index": 34,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -6844,13 +6905,13 @@
       "text": "3.2.1，认识发展卡牌。",
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 0.0,
-      "duration": 4.185,
-      "start": 208.113,
+      "duration": 3.865,
+      "start": 206.28,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.185,
+          "end": 3.865,
           "text": "3.2.1，认识发展卡牌。",
           "words": [
             {
@@ -6904,9 +6965,9 @@
       "id": "cards/intro.001",
       "section": "cards",
       "local_id": "intro.001",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 1,
-      "cue_index": 34,
+      "cue_index": 35,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -6917,7 +6978,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 3.865,
       "duration": 2.22,
-      "start": 212.298,
+      "start": 210.145,
       "refs": [
         "<development_card>"
       ],
@@ -6996,9 +7057,9 @@
       "id": "cards/cost.001.1",
       "section": "cards",
       "local_id": "cost.001.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 2,
-      "cue_index": 35,
+      "cue_index": 36,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7009,7 +7070,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 6.085,
       "duration": 3.945,
-      "start": 214.518,
+      "start": 212.365,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -7139,9 +7200,9 @@
       "id": "cards/cost.001.2",
       "section": "cards",
       "local_id": "cost.001.2",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 3,
-      "cue_index": 36,
+      "cue_index": 37,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7152,7 +7213,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 10.03,
       "duration": 10.695,
-      "start": 218.463,
+      "start": 216.31,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -7474,9 +7535,9 @@
       "id": "cards/market.001.1",
       "section": "cards",
       "local_id": "market.001.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 4,
-      "cue_index": 37,
+      "cue_index": 38,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7487,7 +7548,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 20.725,
       "duration": 15.33,
-      "start": 229.158,
+      "start": 227.005,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -7940,9 +8001,9 @@
       "id": "cards/market.001.2",
       "section": "cards",
       "local_id": "market.001.2",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 5,
-      "cue_index": 38,
+      "cue_index": 39,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -7953,7 +8014,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 36.055,
       "duration": 7.614,
-      "start": 244.488,
+      "start": 242.335,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -8177,9 +8238,9 @@
       "id": "cards/prestige.001.1",
       "section": "cards",
       "local_id": "prestige.001.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 6,
-      "cue_index": 39,
+      "cue_index": 40,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8190,7 +8251,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 43.669,
       "duration": 6.675,
-      "start": 252.102,
+      "start": 249.949,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -8397,9 +8458,9 @@
       "id": "cards/prestige.001.2",
       "section": "cards",
       "local_id": "prestige.001.2",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 7,
-      "cue_index": 40,
+      "cue_index": 41,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8410,7 +8471,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 50.344,
       "duration": 5.955,
-      "start": 258.777,
+      "start": 256.624,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -8605,9 +8666,9 @@
       "id": "cards/discount.001",
       "section": "cards",
       "local_id": "discount.001",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 8,
-      "cue_index": 41,
+      "cue_index": 42,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8618,7 +8679,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 56.299,
       "duration": 7.64,
-      "start": 264.732,
+      "start": 262.579,
       "refs": [
         "<discount>"
       ],
@@ -8853,9 +8914,9 @@
       "id": "cards/discount.002.1",
       "section": "cards",
       "local_id": "discount.002.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 9,
-      "cue_index": 42,
+      "cue_index": 43,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -8866,7 +8927,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 63.939,
       "duration": 11.475,
-      "start": 272.372,
+      "start": 270.219,
       "refs": [
         "<discount>"
       ],
@@ -9215,9 +9276,9 @@
       "id": "cards/discount.003.1",
       "section": "cards",
       "local_id": "discount.003.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 10,
-      "cue_index": 43,
+      "cue_index": 44,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -9228,7 +9289,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 75.414,
       "duration": 7.895,
-      "start": 283.847,
+      "start": 281.694,
       "refs": [
         "<discount>"
       ],
@@ -9475,9 +9536,9 @@
       "id": "cards/discount.003.2",
       "section": "cards",
       "local_id": "discount.003.2",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 11,
-      "cue_index": 44,
+      "cue_index": 45,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -9488,7 +9549,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 83.309,
       "duration": 8.354,
-      "start": 291.742,
+      "start": 289.589,
       "refs": [
         "<discount>"
       ],
@@ -9741,9 +9802,9 @@
       "id": "cards/public.001.1",
       "section": "cards",
       "local_id": "public.001.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 12,
-      "cue_index": 45,
+      "cue_index": 46,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -9754,7 +9815,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 91.663,
       "duration": 12.245,
-      "start": 300.096,
+      "start": 297.943,
       "refs": [
         "<development_area>"
       ],
@@ -10121,9 +10182,9 @@
       "id": "cards/limit.001.1",
       "section": "cards",
       "local_id": "limit.001.1",
-      "section_index": 6,
+      "section_index": 7,
       "local_index": 13,
-      "cue_index": 46,
+      "cue_index": 47,
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -10134,7 +10195,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 103.908,
       "duration": 8.652,
-      "start": 312.341,
+      "start": 310.188,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -10406,9 +10467,9 @@
       "id": "nobles/title_3_2_2",
       "section": "nobles",
       "local_id": "title_3_2_2",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 0,
-      "cue_index": 47,
+      "cue_index": 48,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -10418,13 +10479,13 @@
       "text": "3.2.2，贵族结算。",
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 0.0,
-      "duration": 3.665,
-      "start": 320.993,
+      "duration": 3.11,
+      "start": 318.84,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.665,
+          "end": 3.11,
           "text": "3.2.2，贵族结算。",
           "words": [
             {
@@ -10466,9 +10527,9 @@
       "id": "nobles/intro.001",
       "section": "nobles",
       "local_id": "intro.001",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 1,
-      "cue_index": 48,
+      "cue_index": 49,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -10479,7 +10540,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 3.11,
       "duration": 10.875,
-      "start": 324.658,
+      "start": 321.95,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -10820,9 +10881,9 @@
       "id": "nobles/trigger.001.1",
       "section": "nobles",
       "local_id": "trigger.001.1",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 2,
-      "cue_index": 49,
+      "cue_index": 50,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -10833,7 +10894,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 13.985,
       "duration": 12.22,
-      "start": 335.533,
+      "start": 332.825,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11207,9 +11268,9 @@
       "id": "nobles/forced.001.1",
       "section": "nobles",
       "local_id": "forced.001.1",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 3,
-      "cue_index": 50,
+      "cue_index": 51,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11220,7 +11281,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 26.205,
       "duration": 11.699,
-      "start": 347.753,
+      "start": 345.045,
       "refs": [
         "<attract_noble>"
       ],
@@ -11570,9 +11631,9 @@
       "id": "nobles/source.001",
       "section": "nobles",
       "local_id": "source.001",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 4,
-      "cue_index": 51,
+      "cue_index": 52,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11583,7 +11644,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 37.904,
       "duration": 5.06,
-      "start": 359.452,
+      "start": 356.744,
       "refs": [
         "<noble_market>",
         "<attract_noble>"
@@ -11747,9 +11808,9 @@
       "id": "nobles/choice.001.1",
       "section": "nobles",
       "local_id": "choice.001.1",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 5,
-      "cue_index": 52,
+      "cue_index": 53,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -11760,7 +11821,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 42.964,
       "duration": 8.755,
-      "start": 364.512,
+      "start": 361.804,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -12038,9 +12099,9 @@
       "id": "nobles/repeat.001.1",
       "section": "nobles",
       "local_id": "repeat.001.1",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 6,
-      "cue_index": 53,
+      "cue_index": 54,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -12051,7 +12112,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 51.719,
       "duration": 11.93,
-      "start": 373.267,
+      "start": 370.559,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12431,9 +12492,9 @@
       "id": "nobles/repeat.001.3",
       "section": "nobles",
       "local_id": "repeat.001.3",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 7,
-      "cue_index": 54,
+      "cue_index": 55,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -12444,7 +12505,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 63.649,
       "duration": 6.361,
-      "start": 385.197,
+      "start": 382.489,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12650,9 +12711,9 @@
       "id": "nobles/summary.001.1",
       "section": "nobles",
       "local_id": "summary.001.1",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 8,
-      "cue_index": 55,
+      "cue_index": 56,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -12663,7 +12724,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 70.01,
       "duration": 4.605,
-      "start": 391.558,
+      "start": 388.85,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12817,9 +12878,9 @@
       "id": "nobles/summary.001.2",
       "section": "nobles",
       "local_id": "summary.001.2",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 9,
-      "cue_index": 56,
+      "cue_index": 57,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -12830,7 +12891,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 74.615,
       "duration": 4.27,
-      "start": 396.163,
+      "start": 393.455,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12972,9 +13033,9 @@
       "id": "nobles/summary.001.3",
       "section": "nobles",
       "local_id": "summary.001.3",
-      "section_index": 7,
+      "section_index": 8,
       "local_index": 10,
-      "cue_index": 57,
+      "cue_index": 58,
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -12985,7 +13046,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 78.885,
       "duration": 6.339,
-      "start": 400.433,
+      "start": 397.725,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13193,9 +13254,9 @@
       "id": "reserve/title_3_3",
       "section": "reserve",
       "local_id": "title_3_3",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 0,
-      "cue_index": 58,
+      "cue_index": 59,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -13204,13 +13265,13 @@
       "text": "3.3，保留一张发展卡牌。",
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 0.0,
-      "duration": 3.935,
-      "start": 406.772,
+      "duration": 3.5,
+      "start": 404.064,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.935,
+          "end": 3.5,
           "text": "3.3，保留一张发展卡牌。",
           "words": [
             {
@@ -13276,9 +13337,9 @@
       "id": "reserve/intro.001.1",
       "section": "reserve",
       "local_id": "intro.001.1",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 1,
-      "cue_index": 59,
+      "cue_index": 60,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -13288,7 +13349,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 3.5,
       "duration": 11.185,
-      "start": 410.707,
+      "start": 407.564,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13617,9 +13678,9 @@
       "id": "reserve/gold.001",
       "section": "reserve",
       "local_id": "gold.001",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 2,
-      "cue_index": 60,
+      "cue_index": 61,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -13629,7 +13690,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 14.685,
       "duration": 7.175,
-      "start": 421.892,
+      "start": 418.749,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -13854,9 +13915,9 @@
       "id": "reserve/deck.001",
       "section": "reserve",
       "local_id": "deck.001",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 3,
-      "cue_index": 61,
+      "cue_index": 62,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -13866,7 +13927,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 21.86,
       "duration": 7.645,
-      "start": 429.067,
+      "start": 425.924,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -14110,9 +14171,9 @@
       "id": "reserve/notes_intro.001",
       "section": "reserve",
       "local_id": "notes_intro.001",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 4,
-      "cue_index": 62,
+      "cue_index": 63,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -14122,7 +14183,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 29.505,
       "duration": 8.687,
-      "start": 436.712,
+      "start": 433.569,
       "refs": [
         "<reserve_development_card>",
         "<player_holding>",
@@ -14378,9 +14439,9 @@
       "id": "reserve/limit_gold.001.2",
       "section": "reserve",
       "local_id": "limit_gold.001.2",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 5,
-      "cue_index": 63,
+      "cue_index": 64,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -14390,7 +14451,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 38.192,
       "duration": 5.61,
-      "start": 445.399,
+      "start": 442.256,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14567,9 +14628,9 @@
       "id": "reserve/limit_hand.001.1",
       "section": "reserve",
       "local_id": "limit_hand.001.1",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 6,
-      "cue_index": 64,
+      "cue_index": 65,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -14579,7 +14640,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 43.802,
       "duration": 8.185,
-      "start": 451.009,
+      "start": 447.866,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -14828,9 +14889,9 @@
       "id": "reserve/private.001.1",
       "section": "reserve",
       "local_id": "private.001.1",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 7,
-      "cue_index": 65,
+      "cue_index": 66,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -14840,7 +14901,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 51.987,
       "duration": 11.11,
-      "start": 459.194,
+      "start": 456.051,
       "refs": [
         "<hand>"
       ],
@@ -15196,9 +15257,9 @@
       "id": "reserve/private.002",
       "section": "reserve",
       "local_id": "private.002",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 8,
-      "cue_index": 66,
+      "cue_index": 67,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -15208,7 +15269,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 63.097,
       "duration": 6.18,
-      "start": 470.304,
+      "start": 467.161,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15402,9 +15463,9 @@
       "id": "reserve/not_purchase.001",
       "section": "reserve",
       "local_id": "not_purchase.001",
-      "section_index": 8,
+      "section_index": 9,
       "local_index": 9,
-      "cue_index": 67,
+      "cue_index": 68,
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
@@ -15414,7 +15475,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 69.277,
       "duration": 6.707,
-      "start": 476.484,
+      "start": 473.341,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -15621,9 +15682,9 @@
       "id": "purchase_reserved/title_3_4",
       "section": "purchase_reserved",
       "local_id": "title_3_4",
-      "section_index": 9,
+      "section_index": 10,
       "local_index": 0,
-      "cue_index": 68,
+      "cue_index": 69,
       "group": "3.4 购买保留的发展卡牌",
       "group_path": [
         "3 行动",
@@ -15632,13 +15693,13 @@
       "text": "3.4，购买保留的发展卡牌。",
       "audio": "media/tts/full/action.purchase_reserved.mp3",
       "audio_start": 0.0,
-      "duration": 4.445,
-      "start": 483.191,
+      "duration": 4.015,
+      "start": 480.048,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 4.445,
+          "end": 4.015,
           "text": "3.4，购买保留的发展卡牌。",
           "words": [
             {
@@ -15710,9 +15771,9 @@
       "id": "purchase_reserved/001",
       "section": "purchase_reserved",
       "local_id": "001",
-      "section_index": 9,
+      "section_index": 10,
       "local_index": 1,
-      "cue_index": 69,
+      "cue_index": 70,
       "group": "3.4 购买保留的发展卡牌",
       "group_path": [
         "3 行动",
@@ -15722,7 +15783,7 @@
       "audio": "media/tts/full/action.purchase_reserved.mp3",
       "audio_start": 4.015,
       "duration": 19.649,
-      "start": 487.636,
+      "start": 484.063,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -16329,9 +16390,9 @@
       "id": "summary/title_3_5",
       "section": "summary",
       "local_id": "title_3_5",
-      "section_index": 10,
+      "section_index": 11,
       "local_index": 0,
-      "cue_index": 70,
+      "cue_index": 71,
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
@@ -16340,13 +16401,13 @@
       "text": "3.5，回合结束与循环。",
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 0.0,
-      "duration": 3.775,
-      "start": 507.285,
+      "duration": 3.38,
+      "start": 503.712,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.775,
+          "end": 3.38,
           "text": "3.5，回合结束与循环。",
           "words": [
             {
@@ -16406,9 +16467,9 @@
       "id": "summary/001",
       "section": "summary",
       "local_id": "001",
-      "section_index": 10,
+      "section_index": 11,
       "local_index": 1,
-      "cue_index": 71,
+      "cue_index": 72,
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
@@ -16418,7 +16479,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 3.38,
       "duration": 7.095,
-      "start": 511.06,
+      "start": 507.092,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16645,9 +16706,9 @@
       "id": "summary/002.1",
       "section": "summary",
       "local_id": "002.1",
-      "section_index": 10,
+      "section_index": 11,
       "local_index": 2,
-      "cue_index": 72,
+      "cue_index": 73,
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
@@ -16657,7 +16718,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 10.475,
       "duration": 8.98,
-      "start": 518.155,
+      "start": 514.187,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -16944,9 +17005,9 @@
       "id": "summary/002.2",
       "section": "summary",
       "local_id": "002.2",
-      "section_index": 10,
+      "section_index": 11,
       "local_index": 3,
-      "cue_index": 73,
+      "cue_index": 74,
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
@@ -16956,7 +17017,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 19.455,
       "duration": 3.249,
-      "start": 527.135,
+      "start": 523.167,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17067,9 +17128,9 @@
       "id": "end/title_4",
       "section": "end",
       "local_id": "title_4",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 0,
-      "cue_index": 74,
+      "cue_index": 75,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -17077,13 +17138,13 @@
       "text": "4，游戏结束。",
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 0.0,
-      "duration": 2.715,
-      "start": 530.384,
+      "duration": 2.25,
+      "start": 526.416,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.715,
+          "end": 2.25,
           "text": "4，游戏结束。",
           "words": [
             {
@@ -17125,9 +17186,9 @@
       "id": "end/trigger.001",
       "section": "end",
       "local_id": "trigger.001",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 1,
-      "cue_index": 75,
+      "cue_index": 76,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -17136,7 +17197,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 2.25,
       "duration": 5.025,
-      "start": 533.099,
+      "start": 528.666,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17288,9 +17349,9 @@
       "id": "end/final_rounds.001.1",
       "section": "end",
       "local_id": "final_rounds.001.1",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 2,
-      "cue_index": 76,
+      "cue_index": 77,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -17299,7 +17360,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 7.275,
       "duration": 10.48,
-      "start": 538.124,
+      "start": 533.691,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17628,9 +17689,9 @@
       "id": "end/example.001.1",
       "section": "end",
       "local_id": "example.001.1",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 3,
-      "cue_index": 77,
+      "cue_index": 78,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -17639,7 +17700,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 17.755,
       "duration": 17.03,
-      "start": 548.604,
+      "start": 544.171,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18152,9 +18213,9 @@
       "id": "end/winner.001",
       "section": "end",
       "local_id": "winner.001",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 4,
-      "cue_index": 78,
+      "cue_index": 79,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -18163,7 +18224,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 34.785,
       "duration": 8.155,
-      "start": 565.634,
+      "start": 561.201,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18394,9 +18455,9 @@
       "id": "end/winner.002",
       "section": "end",
       "local_id": "winner.002",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 5,
-      "cue_index": 79,
+      "cue_index": 80,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -18405,7 +18466,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 42.94,
       "duration": 12.23,
-      "start": 573.789,
+      "start": 569.356,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18750,9 +18811,9 @@
       "id": "end/winner.003",
       "section": "end",
       "local_id": "winner.003",
-      "section_index": 11,
+      "section_index": 12,
       "local_index": 6,
-      "cue_index": 80,
+      "cue_index": 81,
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
@@ -18761,7 +18822,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 55.17,
       "duration": 10.734,
-      "start": 586.019,
+      "start": 581.586,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
