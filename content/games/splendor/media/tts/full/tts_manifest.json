@@ -204,6 +204,24 @@
       ]
     },
     {
+      "id": "cards_group",
+      "asset": "action.cards.group",
+      "text": "3.2，发展卡牌与贵族。",
+      "group": "3.2 发展卡牌与贵族",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族"
+      ],
+      "cue_ids": [
+        "cards_group/title_3_2"
+      ],
+      "start": 206.28,
+      "duration": 3.456,
+      "file": "content/games/splendor/media/tts/full/action.cards.group.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/action.cards.group.subtitle.json",
+      "refs": []
+    },
+    {
       "id": "cards",
       "asset": "action.cards",
       "text": "3.2.1，认识发展卡牌。我们介绍一下发展卡牌。左下角是这张牌的价格。要想购买这张牌，玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值。不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值。右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
@@ -229,7 +247,7 @@
         "cards/public.001.1",
         "cards/limit.001.1"
       ],
-      "start": 206.28,
+      "start": 209.736,
       "duration": 112.56,
       "file": "content/games/splendor/media/tts/full/action.cards.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.cards.subtitle.json",
@@ -267,7 +285,7 @@
         "nobles/summary.001.2",
         "nobles/summary.001.3"
       ],
-      "start": 318.84,
+      "start": 322.296,
       "duration": 85.224,
       "file": "content/games/splendor/media/tts/full/action.nobles.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.nobles.subtitle.json",
@@ -301,7 +319,7 @@
         "reserve/private.002",
         "reserve/not_purchase.001"
       ],
-      "start": 404.064,
+      "start": 407.52,
       "duration": 75.984,
       "file": "content/games/splendor/media/tts/full/action.reserve.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.subtitle.json",
@@ -335,7 +353,7 @@
         "purchase_reserved/title_3_4",
         "purchase_reserved/001"
       ],
-      "start": 480.048,
+      "start": 483.504,
       "duration": 23.664,
       "file": "content/games/splendor/media/tts/full/action.purchase_reserved.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.purchase_reserved.subtitle.json",
@@ -359,7 +377,7 @@
         "summary/002.1",
         "summary/002.2"
       ],
-      "start": 503.712,
+      "start": 507.168,
       "duration": 22.704,
       "file": "content/games/splendor/media/tts/full/action.summary.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.summary.subtitle.json",
@@ -390,7 +408,7 @@
         "end/winner.002",
         "end/winner.003"
       ],
-      "start": 526.416,
+      "start": 529.872,
       "duration": 65.904,
       "file": "content/games/splendor/media/tts/full/endgame.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/endgame.subtitle.json",

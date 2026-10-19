@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "cards_group",
+  "cues": [
+    {
+      "id": "title_3_2",
+      "group": "3.2 发展卡牌与贵族",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "cards_group/title_3_2.b1",
+          "text": "3.2，发展卡牌与贵族。"
+        }
+      ]
+    }
+  ]
+}

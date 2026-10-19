@@ -36,7 +36,7 @@ content/games/splendor/tutorial/{full,quick}.cue-timeline.json           Phase 5
 - 正常运行只使用 `{track}.cue-timeline.json`；整条 plan 缺失/非法时两端
   才切换到清晰的整轨 runtime 兼容回退。具体见
   `docs/tutorial/audio-timeline-pipeline.md`。
-- 当前编译基线：full 82 cue / 13 section / 398 anchors；quick 32 cue / 11 section / 138 anchors。
+- 当前编译基线：full 83 cue / 14 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
 

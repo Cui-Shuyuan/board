@@ -247,6 +247,14 @@
       "slice_ids": [
         "setup__title_2"
       ]
+    },
+    "cards_group": {
+      "cue_ids": [
+        "cards_group/title_3_2"
+      ],
+      "slice_ids": [
+        "cards_group__title_3_2"
+      ]
     }
   },
   "timing_points": {
@@ -2985,6 +2993,38 @@
     "setup__title_2.visual.source_end": {
       "time": 3.0,
       "description": "visual source end"
+    },
+    "cards_group__title_3_2.start": {
+      "time": 0.0,
+      "description": "logical slice start"
+    },
+    "cards_group__title_3_2.end": {
+      "time": 3.456,
+      "description": "logical slice end"
+    },
+    "cards_group__title_3_2.speech_end": {
+      "time": 3.165,
+      "description": "last TTS word end"
+    },
+    "cards_group__title_3_2.subtitle.0.start": {
+      "time": 1.335,
+      "description": "subtitle start"
+    },
+    "cards_group__title_3_2.subtitle.0.end": {
+      "time": 3.165,
+      "description": "subtitle end"
+    },
+    "cards_group__title_3_2.visual.cue_start": {
+      "time": 0.0,
+      "description": "visual cue-local start"
+    },
+    "cards_group__title_3_2.visual.source_start": {
+      "time": 0.0,
+      "description": "visual source start"
+    },
+    "cards_group__title_3_2.visual.source_end": {
+      "time": 3.0,
+      "description": "visual source end"
     }
   },
   "cues": {
@@ -3648,6 +3688,22 @@
             "start_ref": "take_gems__public.001.2.subtitle.0.start",
             "end_ref": "take_gems__public.001.2.subtitle.0.end",
             "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。"
+          }
+        ]
+      }
+    ],
+    "cards_group/title_3_2": [
+      {
+        "id": "cards_group__title_3_2",
+        "asset": "media/tts/full/action.cards.group.mp3",
+        "start_ref": "cards_group__title_3_2.start",
+        "end_ref": "cards_group__title_3_2.end",
+        "speech_end_ref": "cards_group__title_3_2.speech_end",
+        "subtitles": [
+          {
+            "start_ref": "cards_group__title_3_2.subtitle.0.start",
+            "end_ref": "cards_group__title_3_2.subtitle.0.end",
+            "text": "3.2，发展卡牌与贵族。"
           }
         ]
       }
@@ -5124,6 +5180,16 @@
         "cue_start_ref": "setup__title_2.visual.cue_start",
         "source_start_ref": "setup__title_2.visual.source_start",
         "source_end_ref": "setup__title_2.visual.source_end",
+        "after_end": "hold_last_frame"
+      }
+    ],
+    "cards_group/title_3_2": [
+      {
+        "id": "visual.cards_group__title_3_2",
+        "animation": "cards_group/title_3_2",
+        "cue_start_ref": "cards_group__title_3_2.visual.cue_start",
+        "source_start_ref": "cards_group__title_3_2.visual.source_start",
+        "source_end_ref": "cards_group__title_3_2.visual.source_end",
         "after_end": "hold_last_frame"
       }
     ]

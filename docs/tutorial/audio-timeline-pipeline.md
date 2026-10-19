@@ -72,11 +72,16 @@ python animation/tts_doubao.py \
   --track quick --prune
 ```
 
-full 新增父章节标题 cue `setup/title_2`，文本为 `2，设置。`，使用 seed2
-音色 `zh_female_vv_uranus_bigtts` / `seed-tts-2.0` 单独生成
-`content/games/splendor/media/tts/full/setup.intro.mp3`。它不复用
-`setup.cards.mp3`。其余 full cue 继续复用已有 section TTS 媒体，并以固定
-source range 表示音频窗口。
+full 为两个父章节新增了独立标题 cue：
+
+- `setup/title_2`，文本 `2，设置。`，独立音频
+  `content/games/splendor/media/tts/full/setup.intro.mp3`；
+- `cards_group/title_3_2`，文本 `3.2，发展卡牌与贵族。`，独立音频
+  `content/games/splendor/media/tts/full/action.cards.group.mp3`。
+
+两者均使用 seed2 音色 `zh_female_vv_uranus_bigtts` / `seed-tts-2.0`
+单独生成，不复用子章节音频。其余 full cue 继续复用已有 section TTS 媒体，
+并以固定 source range 表示音频窗口。
 
 重新生成 full title cue 的入口：
 
@@ -256,7 +261,7 @@ python3 animation/build_cue_timeline.py --game splendor --track full
 
 ```text
 content/games/splendor/tutorial/quick.cue-timeline.json   # 32 cues
-content/games/splendor/tutorial/full.cue-timeline.json    # 82 cues
+content/games/splendor/tutorial/full.cue-timeline.json    # 83 cues
 ```
 
 生成器会再次执行 `validate_plan_set`。固定文件改动后重新生成即可更新 plan；
@@ -311,6 +316,6 @@ cd clients/android && gradlew.bat testDebugUnitTest
 python3 tools/content/build_content_manifest.py --game splendor
 ```
 
-自动测试覆盖固定时间轴校验、full 82 cue、确定性、多 visual segment
+自动测试覆盖固定时间轴校验、full 83 cue、确定性、多 visual segment
 resolver、控制器暂停/seek/generation/失败/完成、Android plan loader 与两端
 总时长一致性。自动测试不能替代真机视觉/听感验收。

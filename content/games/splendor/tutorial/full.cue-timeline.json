@@ -5,7 +5,7 @@
   "track": "full",
   "course": {
     "start": 0.0,
-    "duration": 607.468
+    "duration": 610.924
   },
   "cues": [
     {
@@ -2723,10 +2723,83 @@
     },
     {
       "schema": "tutorial-cue-plan/v1",
-      "cue_id": "cards/title_3_2_1",
+      "cue_id": "cards_group/title_3_2",
       "entry": null,
       "course": {
         "start": 215.018,
+        "duration": 3.456
+      },
+      "tracks": [
+        {
+          "id": "visual.main",
+          "kind": "visual",
+          "tail_policy": "hold_last_frame",
+          "segments": [
+            {
+              "id": "visual.cards_group__title_3_2",
+              "type": "animation",
+              "animation": "cards_group/title_3_2",
+              "cue_start": 0.0,
+              "source_start": 0.0,
+              "source_end": 3.0,
+              "after_end": "hold_last_frame"
+            }
+          ]
+        },
+        {
+          "id": "audio.main",
+          "kind": "audio",
+          "tail_policy": "silence",
+          "segments": [
+            {
+              "id": "audio.slice.0",
+              "type": "audio_clip",
+              "audio_slice_id": "cards_group__title_3_2",
+              "asset": "media/tts/full/action.cards.group.mp3",
+              "cue_start": 0.0,
+              "source_start": 0.0,
+              "source_end": 3.456,
+              "source_start_sample": 0,
+              "source_end_sample": 82944
+            }
+          ]
+        },
+        {
+          "id": "subtitle.main",
+          "kind": "subtitle",
+          "tail_policy": "clear",
+          "segments": [
+            {
+              "id": "subtitle.0.0",
+              "type": "subtitle",
+              "cue_start": 1.335,
+              "duration": 1.83,
+              "text": "3.2，发展卡牌与贵族。"
+            }
+          ]
+        }
+      ],
+      "subtitles": [
+        {
+          "id": "subtitle.0.0",
+          "cue_start": 1.335,
+          "duration": 1.83,
+          "text": "3.2，发展卡牌与贵族。"
+        }
+      ],
+      "text": "3.2，发展卡牌与贵族。",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族"
+      ],
+      "refs": []
+    },
+    {
+      "schema": "tutorial-cue-plan/v1",
+      "cue_id": "cards/title_3_2_1",
+      "entry": null,
+      "course": {
+        "start": 218.474,
         "duration": 4.255
       },
       "tracks": [
@@ -2800,7 +2873,7 @@
       "cue_id": "cards/intro.001",
       "entry": null,
       "course": {
-        "start": 219.273,
+        "start": 222.729,
         "duration": 2.22
       },
       "tracks": [
@@ -2860,7 +2933,7 @@
       "cue_id": "cards/cost.001.1",
       "entry": null,
       "course": {
-        "start": 221.493,
+        "start": 224.949,
         "duration": 3.945
       },
       "tracks": [
@@ -2935,7 +3008,7 @@
       "cue_id": "cards/cost.001.2",
       "entry": null,
       "course": {
-        "start": 225.438,
+        "start": 228.894,
         "duration": 10.695
       },
       "tracks": [
@@ -3026,7 +3099,7 @@
       "cue_id": "cards/market.001.1",
       "entry": null,
       "course": {
-        "start": 236.133,
+        "start": 239.589,
         "duration": 15.33
       },
       "tracks": [
@@ -3116,7 +3189,7 @@
       "cue_id": "cards/market.001.2",
       "entry": null,
       "course": {
-        "start": 251.463,
+        "start": 254.919,
         "duration": 7.614
       },
       "tracks": [
@@ -3193,7 +3266,7 @@
       "cue_id": "cards/prestige.001.1",
       "entry": null,
       "course": {
-        "start": 259.077,
+        "start": 262.533,
         "duration": 6.675
       },
       "tracks": [
@@ -3283,7 +3356,7 @@
       "cue_id": "cards/prestige.001.2",
       "entry": null,
       "course": {
-        "start": 265.752,
+        "start": 269.208,
         "duration": 5.955
       },
       "tracks": [
@@ -3357,7 +3430,7 @@
       "cue_id": "cards/discount.001",
       "entry": null,
       "course": {
-        "start": 271.707,
+        "start": 275.163,
         "duration": 7.64
       },
       "tracks": [
@@ -3433,7 +3506,7 @@
       "cue_id": "cards/discount.002.1",
       "entry": null,
       "course": {
-        "start": 279.347,
+        "start": 282.803,
         "duration": 11.475
       },
       "tracks": [
@@ -3509,7 +3582,7 @@
       "cue_id": "cards/discount.003.1",
       "entry": null,
       "course": {
-        "start": 290.822,
+        "start": 294.278,
         "duration": 8.2
       },
       "tracks": [
@@ -3585,7 +3658,7 @@
       "cue_id": "cards/discount.003.2",
       "entry": null,
       "course": {
-        "start": 299.022,
+        "start": 302.478,
         "duration": 8.354
       },
       "tracks": [
@@ -3645,7 +3718,7 @@
       "cue_id": "cards/public.001.1",
       "entry": null,
       "course": {
-        "start": 307.376,
+        "start": 310.832,
         "duration": 12.245
       },
       "tracks": [
@@ -3721,7 +3794,7 @@
       "cue_id": "cards/limit.001.1",
       "entry": null,
       "course": {
-        "start": 319.621,
+        "start": 323.077,
         "duration": 8.652
       },
       "tracks": [
@@ -3782,7 +3855,7 @@
       "cue_id": "nobles/title_3_2_2",
       "entry": null,
       "course": {
-        "start": 328.273,
+        "start": 331.729,
         "duration": 3.665
       },
       "tracks": [
@@ -3856,7 +3929,7 @@
       "cue_id": "nobles/intro.001",
       "entry": null,
       "course": {
-        "start": 331.938,
+        "start": 335.394,
         "duration": 10.875
       },
       "tracks": [
@@ -3972,7 +4045,7 @@
       "cue_id": "nobles/trigger.001.1",
       "entry": null,
       "course": {
-        "start": 342.813,
+        "start": 346.269,
         "duration": 12.22
       },
       "tracks": [
@@ -4049,7 +4122,7 @@
       "cue_id": "nobles/forced.001.1",
       "entry": null,
       "course": {
-        "start": 355.033,
+        "start": 358.489,
         "duration": 11.699
       },
       "tracks": [
@@ -4138,7 +4211,7 @@
       "cue_id": "nobles/source.001",
       "entry": null,
       "course": {
-        "start": 366.732,
+        "start": 370.188,
         "duration": 7.4
       },
       "tracks": [
@@ -4215,7 +4288,7 @@
       "cue_id": "nobles/choice.001.1",
       "entry": null,
       "course": {
-        "start": 374.132,
+        "start": 377.588,
         "duration": 8.755
       },
       "tracks": [
@@ -4292,7 +4365,7 @@
       "cue_id": "nobles/repeat.001.1",
       "entry": null,
       "course": {
-        "start": 382.887,
+        "start": 386.343,
         "duration": 11.93
       },
       "tracks": [
@@ -4369,7 +4442,7 @@
       "cue_id": "nobles/repeat.001.3",
       "entry": null,
       "course": {
-        "start": 394.817,
+        "start": 398.273,
         "duration": 6.361
       },
       "tracks": [
@@ -4430,7 +4503,7 @@
       "cue_id": "nobles/summary.001.1",
       "entry": null,
       "course": {
-        "start": 401.178,
+        "start": 404.634,
         "duration": 4.605
       },
       "tracks": [
@@ -4493,7 +4566,7 @@
       "cue_id": "nobles/summary.001.2",
       "entry": null,
       "course": {
-        "start": 405.783,
+        "start": 409.239,
         "duration": 4.27
       },
       "tracks": [
@@ -4556,7 +4629,7 @@
       "cue_id": "nobles/summary.001.3",
       "entry": null,
       "course": {
-        "start": 410.053,
+        "start": 413.509,
         "duration": 6.339
       },
       "tracks": [
@@ -4619,7 +4692,7 @@
       "cue_id": "reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 416.392,
+        "start": 419.848,
         "duration": 4.37
       },
       "tracks": [
@@ -4692,7 +4765,7 @@
       "cue_id": "reserve/intro.001.1",
       "entry": null,
       "course": {
-        "start": 420.762,
+        "start": 424.218,
         "duration": 11.185
       },
       "tracks": [
@@ -4795,7 +4868,7 @@
       "cue_id": "reserve/gold.001",
       "entry": null,
       "course": {
-        "start": 431.947,
+        "start": 435.403,
         "duration": 7.175
       },
       "tracks": [
@@ -4884,7 +4957,7 @@
       "cue_id": "reserve/deck.001",
       "entry": null,
       "course": {
-        "start": 439.122,
+        "start": 442.578,
         "duration": 7.645
       },
       "tracks": [
@@ -4962,7 +5035,7 @@
       "cue_id": "reserve/notes_intro.001",
       "entry": null,
       "course": {
-        "start": 446.767,
+        "start": 450.223,
         "duration": 8.687
       },
       "tracks": [
@@ -5040,7 +5113,7 @@
       "cue_id": "reserve/limit_gold.001.2",
       "entry": null,
       "course": {
-        "start": 455.454,
+        "start": 458.91,
         "duration": 5.61
       },
       "tracks": [
@@ -5117,7 +5190,7 @@
       "cue_id": "reserve/limit_hand.001.1",
       "entry": null,
       "course": {
-        "start": 461.064,
+        "start": 464.52,
         "duration": 8.185
       },
       "tracks": [
@@ -5206,7 +5279,7 @@
       "cue_id": "reserve/private.001.1",
       "entry": null,
       "course": {
-        "start": 469.249,
+        "start": 472.705,
         "duration": 11.11
       },
       "tracks": [
@@ -5278,7 +5351,7 @@
       "cue_id": "reserve/private.002",
       "entry": null,
       "course": {
-        "start": 480.359,
+        "start": 483.815,
         "duration": 6.18
       },
       "tracks": [
@@ -5354,7 +5427,7 @@
       "cue_id": "reserve/not_purchase.001",
       "entry": null,
       "course": {
-        "start": 486.539,
+        "start": 489.995,
         "duration": 6.707
       },
       "tracks": [
@@ -5415,7 +5488,7 @@
       "cue_id": "purchase_reserved/title_3_4",
       "entry": null,
       "course": {
-        "start": 493.246,
+        "start": 496.702,
         "duration": 4.445
       },
       "tracks": [
@@ -5488,7 +5561,7 @@
       "cue_id": "purchase_reserved/001",
       "entry": null,
       "course": {
-        "start": 497.691,
+        "start": 501.147,
         "duration": 19.649
       },
       "tracks": [
@@ -5629,7 +5702,7 @@
       "cue_id": "summary/title_3_5",
       "entry": null,
       "course": {
-        "start": 517.34,
+        "start": 520.796,
         "duration": 3.98
       },
       "tracks": [
@@ -5702,7 +5775,7 @@
       "cue_id": "summary/001",
       "entry": null,
       "course": {
-        "start": 521.32,
+        "start": 524.776,
         "duration": 7.095
       },
       "tracks": [
@@ -5777,7 +5850,7 @@
       "cue_id": "summary/002.1",
       "entry": null,
       "course": {
-        "start": 528.415,
+        "start": 531.871,
         "duration": 8.98
       },
       "tracks": [
@@ -5864,7 +5937,7 @@
       "cue_id": "summary/002.2",
       "entry": null,
       "course": {
-        "start": 537.395,
+        "start": 540.851,
         "duration": 3.249
       },
       "tracks": [
@@ -5925,7 +5998,7 @@
       "cue_id": "end/title_4",
       "entry": null,
       "course": {
-        "start": 540.644,
+        "start": 544.1,
         "duration": 3.17
       },
       "tracks": [
@@ -5997,7 +6070,7 @@
       "cue_id": "end/trigger.001",
       "entry": null,
       "course": {
-        "start": 543.814,
+        "start": 547.27,
         "duration": 5.025
       },
       "tracks": [
@@ -6072,7 +6145,7 @@
       "cue_id": "end/final_rounds.001.1",
       "entry": null,
       "course": {
-        "start": 548.839,
+        "start": 552.295,
         "duration": 10.48
       },
       "tracks": [
@@ -6158,7 +6231,7 @@
       "cue_id": "end/example.001.1",
       "entry": null,
       "course": {
-        "start": 559.319,
+        "start": 562.775,
         "duration": 17.03
       },
       "tracks": [
@@ -6242,7 +6315,7 @@
       "cue_id": "end/winner.001",
       "entry": null,
       "course": {
-        "start": 576.349,
+        "start": 579.805,
         "duration": 8.155
       },
       "tracks": [
@@ -6330,7 +6403,7 @@
       "cue_id": "end/winner.002",
       "entry": null,
       "course": {
-        "start": 584.504,
+        "start": 587.96,
         "duration": 12.23
       },
       "tracks": [
@@ -6418,7 +6491,7 @@
       "cue_id": "end/winner.003",
       "entry": null,
       "course": {
-        "start": 596.734,
+        "start": 600.19,
         "duration": 10.734
       },
       "tracks": [
@@ -6915,6 +6988,18 @@
       "audio_end": 2.378,
       "visual_end": 0.835,
       "duration": 2.378
+    },
+    {
+      "code": "cue_timing_policy",
+      "severity": "info",
+      "cue_id": "cards_group/title_3_2",
+      "mode": "max",
+      "trim_to_speech_end": false,
+      "trailing_silence_seconds": 0.0,
+      "original_duration": 3.456,
+      "audio_end": 3.456,
+      "visual_end": 3.0,
+      "duration": 3.456
     },
     {
       "code": "cue_timing_policy",
