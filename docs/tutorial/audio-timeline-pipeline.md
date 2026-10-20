@@ -112,12 +112,31 @@ full 标题使用 `mode: audio`、`trim_to_speech_end: true`、
 `setup_players/title_2_4` 的源区间为 `[20.055, 21.385)`，
 cue 时长为 1.83 秒。
 
-quick 标题与正文也启用 `trim_to_speech_end`，标题 guard 为 0，
-正文 guard 为 0.08 秒；停顿目标为普通 cue 0.5 秒、下一 cue 是章节标题
-时 1.0 秒。quick 的 cue-level ASR word end 会低估最后一个音节，不能直接
-当作裁尾点；`quick.audio-slices.json` 的 `speech_end_ref` 使用已审查的
-PCM 能量尾部锚点，策略用 `post_speech_silence_seconds` 从该锚点补足到
-目标停顿，保证不会裁掉句尾字。具体值以各 track 的固定文件为准。
+quick 标题与正文也启用 `trim_to_speech_end`，全部 cue 的 guard 为
+0.1 秒；停顿目标为普通 cue 0.5 秒、下一 cue 是章节标题时 1.0 秒。
+quick 的 cue-level ASR word end 会低估最后一个音节，不能直接当作裁尾点；
+`quick.audio-slices.json` 的 `speech_end_ref` 是制作期从 PCM 能量尾部
+生成并落盘的时间戳，策略再从该时间戳加 0.1 秒 guard 裁切，并用
+`post_speech_silence_seconds` 补足目标停顿，保证不会裁掉句尾字。
+
+### quick 能量尾部锚点
+
+`animation/measure_audio_tail.py` 只负责制作期测量：它把音频解码成 PCM，
+按 10ms 窗口找到 source range 内最后一个有意义能量窗口，把结果写成
+`speech_end_ref` 时间戳，并同步最后一个匹配的字幕 end ref。播放器和
+`build_cue_timeline.py` 只读这些时间戳，不在运行时或构建时解码音频。
+
+```bash
+python3 animation/measure_audio_tail.py \
+  --game splendor --track quick \
+  --ffmpeg /path/to/ffmpeg \
+  --write --guard-seconds 0.1
+python3 animation/build_cue_timeline.py --game splendor --track quick
+```
+
+`--check` 可以对比已落盘时间戳是否与当前音频测量结果一致。`ffmpeg` 是
+显式测量步骤的外部工具，不属于运行时依赖；也可以通过 `FFMPEG_EXE` 或
+PATH 提供。具体值以各 track 的固定文件为准。
 
 ## 时长、字幕与视觉
 

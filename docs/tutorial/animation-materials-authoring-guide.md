@@ -140,10 +140,13 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
 5. 所有 cue 都启用 `trim_to_speech_end: true`：先把音频尾部裁到
    审查后的 speech end 再加 guard，然后追加显式反应停顿。章节标题和
    普通 cue 的目标停顿为 0.5 秒；普通 cue 的下一 cue 是章节标题时为
-   1.0 秒。full 标题与正文的尾部 guard 为 0.08 秒，quick 标题为 0，
-   quick 正文为 0.08 秒。full 用 `trailing_silence_seconds` 追加固定
-   静音；quick 的 ASR word end 会低估句尾，使用 PCM 能量审查后的
-   `speech_end_ref` 加 `post_speech_silence_seconds` 补足目标停顿。
+   1.0 秒。full 标题与正文的尾部 guard 为 0.08 秒；quick 全部 cue 的
+   guard 为 0.1 秒。full 用 `trailing_silence_seconds` 追加固定静音；
+   quick 的 ASR word end 会低估句尾，使用 PCM 能量审查后的
+   `speech_end_ref` 时间戳加 0.1 秒 guard 做逻辑裁切，再用
+   `post_speech_silence_seconds` 补足目标停顿。能量测量只在制作期由
+   `animation/measure_audio_tail.py` 写入固定时间戳，播放和 plan 构建
+   不运行能量分析。
    full 导入器为标题与正文保留最多 0.15 秒前置上下文；如果左侧 cue
    trim 后的终点距右侧首词不足 0.15 秒，右侧起点会夹到左侧终点，避免
    音频重叠。`source_boundary_contracts` 记录并校验连续、显式裁尾和

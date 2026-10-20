@@ -45,15 +45,15 @@
               "asset": "media/tts/quick.cues/quick_intro__title_1.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.56,
+              "source_end": 1.656,
               "source_start_sample": 0,
-              "source_end_sample": 37440
+              "source_end_sample": 39744
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.56,
-              "duration": 0.5
+              "cue_start": 1.656,
+              "duration": 0.404
             }
           ]
         },
@@ -214,15 +214,15 @@
               "asset": "media/tts/quick.cues/quick_setup_cards__title_2.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.86,
+              "source_end": 1.872,
               "source_start_sample": 0,
-              "source_end_sample": 44640
+              "source_end_sample": 44928
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.86,
-              "duration": 0.5
+              "cue_start": 1.872,
+              "duration": 0.488
             }
           ]
         },
@@ -772,15 +772,15 @@
               "asset": "media/tts/quick.cues/quick_turn__title_3.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.43,
+              "source_end": 2.448,
               "source_start_sample": 0,
-              "source_end_sample": 58320
+              "source_end_sample": 58752
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.43,
-              "duration": 0.5
+              "cue_start": 2.448,
+              "duration": 0.482
             }
           ]
         },
@@ -1032,15 +1032,15 @@
               "asset": "media/tts/quick.cues/quick_take_gems__title_3_1.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.25,
+              "source_end": 2.256,
               "source_start_sample": 0,
-              "source_end_sample": 54000
+              "source_end_sample": 54144
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.25,
-              "duration": 0.5
+              "cue_start": 2.256,
+              "duration": 0.494
             }
           ]
         },
@@ -1453,15 +1453,15 @@
               "asset": "media/tts/quick.cues/quick_cards__title_3_2.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.84,
+              "source_end": 2.856,
               "source_start_sample": 0,
-              "source_end_sample": 68160
+              "source_end_sample": 68544
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.84,
-              "duration": 0.5
+              "cue_start": 2.856,
+              "duration": 0.484
             }
           ]
         },
@@ -1729,15 +1729,15 @@
               "asset": "media/tts/quick.cues/quick_cards__003.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 8.68,
+              "source_end": 8.688,
               "source_start_sample": 0,
-              "source_end_sample": 208320
+              "source_end_sample": 208512
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.68,
-              "duration": 0.92
+              "cue_start": 8.688,
+              "duration": 0.912
             }
           ]
         },
@@ -1821,15 +1821,15 @@
               "asset": "media/tts/quick.cues/quick_reserve__title_3_3.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.43,
+              "source_end": 2.448,
               "source_start_sample": 0,
-              "source_end_sample": 58320
+              "source_end_sample": 58752
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.43,
-              "duration": 0.5
+              "cue_start": 2.448,
+              "duration": 0.482
             }
           ]
         },
@@ -2281,15 +2281,15 @@
               "asset": "media/tts/quick.cues/quick_nobles__title_3_4.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.24,
+              "source_end": 2.256,
               "source_start_sample": 0,
-              "source_end_sample": 53760
+              "source_end_sample": 54144
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.24,
-              "duration": 0.5
+              "cue_start": 2.256,
+              "duration": 0.484
             }
           ]
         },
@@ -2610,15 +2610,15 @@
               "asset": "media/tts/quick.cues/quick_end__title_4.b1.mp3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 1.83,
+              "source_end": 1.848,
               "source_start_sample": 0,
-              "source_end_sample": 43920
+              "source_end_sample": 44352
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.83,
-              "duration": 0.5
+              "cue_start": 1.848,
+              "duration": 0.482
             }
           ]
         },
@@ -2768,7 +2768,7 @@
       "cue_id": "quick_intro/title_1",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.08,
       "audio_end": 2.06,
@@ -2781,7 +2781,7 @@
       "cue_id": "quick_intro/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 11.04,
       "audio_end": 11.04,
@@ -2794,7 +2794,7 @@
       "cue_id": "quick_setup_cards/title_2",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 2.99,
       "audio_end": 2.36,
@@ -2807,7 +2807,7 @@
       "cue_id": "quick_setup_cards/001.1",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 6.75,
       "audio_end": 6.75,
@@ -2820,7 +2820,7 @@
       "cue_id": "quick_setup_cards/001.2",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 5.54,
       "audio_end": 5.54,
@@ -2833,7 +2833,7 @@
       "cue_id": "quick_setup_gems/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 10.41,
       "audio_end": 10.41,
@@ -2846,7 +2846,7 @@
       "cue_id": "quick_setup_players/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 5.34,
       "audio_end": 5.34,
@@ -2859,7 +2859,7 @@
       "cue_id": "quick_setup_players/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 2.76,
       "audio_end": 2.76,
@@ -2872,7 +2872,7 @@
       "cue_id": "quick_setup_players/003",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.43,
       "audio_end": 3.43,
@@ -2885,7 +2885,7 @@
       "cue_id": "quick_turn/title_3",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.57,
       "audio_end": 2.93,
@@ -2898,7 +2898,7 @@
       "cue_id": "quick_turn/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 5.93,
       "audio_end": 5.93,
@@ -2911,7 +2911,7 @@
       "cue_id": "quick_turn/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 10.64,
       "audio_end": 10.64,
@@ -2924,7 +2924,7 @@
       "cue_id": "quick_take_gems/title_3_1",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.31,
       "audio_end": 2.75,
@@ -2937,7 +2937,7 @@
       "cue_id": "quick_take_gems/different.001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 4.93,
       "audio_end": 4.93,
@@ -2950,7 +2950,7 @@
       "cue_id": "quick_take_gems/same.001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.27,
       "audio_end": 3.27,
@@ -2963,7 +2963,7 @@
       "cue_id": "quick_take_gems/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 7.74,
       "audio_end": 7.74,
@@ -2976,7 +2976,7 @@
       "cue_id": "quick_take_gems/003",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 11.22,
       "audio_end": 11.22,
@@ -2989,7 +2989,7 @@
       "cue_id": "quick_cards/title_3_2",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.6,
       "audio_end": 3.34,
@@ -3002,7 +3002,7 @@
       "cue_id": "quick_cards/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 9.264,
       "audio_end": 8.76,
@@ -3015,7 +3015,7 @@
       "cue_id": "quick_cards/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 14.14,
       "audio_end": 14.14,
@@ -3028,7 +3028,7 @@
       "cue_id": "quick_cards/003",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 9.6,
       "audio_end": 9.6,
@@ -3041,7 +3041,7 @@
       "cue_id": "quick_reserve/title_3_3",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.55,
       "audio_end": 2.93,
@@ -3054,7 +3054,7 @@
       "cue_id": "quick_reserve/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 9.96,
       "audio_end": 9.96,
@@ -3067,7 +3067,7 @@
       "cue_id": "quick_reserve/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 9.72,
       "audio_end": 9.72,
@@ -3080,7 +3080,7 @@
       "cue_id": "quick_reserve/003",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 4.37,
       "audio_end": 4.37,
@@ -3093,7 +3093,7 @@
       "cue_id": "quick_gold/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 8.65,
       "audio_end": 8.65,
@@ -3106,7 +3106,7 @@
       "cue_id": "quick_nobles/title_3_4",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.44,
       "audio_end": 2.74,
@@ -3119,7 +3119,7 @@
       "cue_id": "quick_nobles/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 6.94,
       "audio_end": 6.94,
@@ -3132,7 +3132,7 @@
       "cue_id": "quick_nobles/002",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 6.2,
       "audio_end": 2.1100205,
@@ -3145,7 +3145,7 @@
       "cue_id": "quick_nobles/003",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 8.0,
       "audio_end": 4.23,
@@ -3158,7 +3158,7 @@
       "cue_id": "quick_end/title_4",
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.0,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 3.26,
       "audio_end": 2.33,
@@ -3171,7 +3171,7 @@
       "cue_id": "quick_end/001",
       "mode": "max",
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08,
+      "trim_tail_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 8.94,
       "audio_end": 8.94,

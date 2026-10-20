@@ -1393,6 +1393,9 @@ class BuildCueTimelineTests(unittest.TestCase):
                 # last syllable.  The fixed timeline must use a reviewed
                 # energy tail anchor close to the real end of speech.
                 self.assertLessEqual(source_end - speech_end, 0.12)
+                policy = slices["cue_timing"][cue_id]
+                self.assertAlmostEqual(
+                    policy.get("trim_tail_guard_seconds"), 0.1, places=9)
                 subtitle_ends = [
                     timing_points[subtitle["end_ref"]]["time"]
                     for subtitle in raw_slice.get("subtitles") or []
