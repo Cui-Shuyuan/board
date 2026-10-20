@@ -463,8 +463,9 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
     audio_groups: dict[str, dict] = {}
     for group_id, group in groups.items():
         if len(group["assets"]) != 1:
-            raise BuildError(
-                f"runtime section {group_id!r} spans multiple audio assets")
+            # Per-cue audio overrides can split one section across multiple
+            # assets.  Such a section has no single shared-audio group.
+            continue
         audio_groups[group_id] = {
             "cue_ids": group["cue_ids"],
             "slice_ids": group["slice_ids"],

@@ -1649,6 +1649,43 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertAlmostEqual(
             audio_track["segments"][-1]["duration"], 0.5, places=9)
 
+    def test_full_intro_title_and_body_use_separate_audio_assets(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        runtime = json.loads(
+            (tutorial / "full.runtime.json").read_text(encoding="utf-8"))
+        plan = json.loads(
+            (tutorial / "full.cue-timeline.json").read_text(encoding="utf-8"))
+        runtime_by_id = {cue["id"]: cue for cue in runtime["cues"]}
+        self.assertEqual(
+            runtime_by_id["intro/title_1"]["audio"],
+            "media/tts/full/intro.title.mp3",
+        )
+        self.assertEqual(
+            runtime_by_id["intro/001"]["audio"],
+            "media/tts/full/intro.body.mp3",
+        )
+        for cue_id, expected_asset in (
+                ("intro/title_1", "media/tts/full/intro.title.mp3"),
+                ("intro/001", "media/tts/full/intro.body.mp3")):
+            cue = next(item for item in plan["cues"]
+                       if item["cue_id"] == cue_id)
+            clip = next(
+                segment
+                for track in cue["tracks"] if track["kind"] == "audio"
+                for segment in track["segments"]
+                if segment["type"] == "audio_clip")
+            self.assertEqual(clip["asset"], expected_asset)
+        title = next(item for item in plan["cues"]
+                     if item["cue_id"] == "intro/title_1")
+        body = next(item for item in plan["cues"]
+                    if item["cue_id"] == "intro/001")
+        self.assertAlmostEqual(
+            title["course"]["start"] + title["course"]["duration"],
+            body["course"]["start"],
+            places=9,
+        )
+
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (
             ROOT / "content" / "games" / "splendor" / "tutorial"

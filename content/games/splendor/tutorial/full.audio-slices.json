@@ -6,11 +6,6 @@
   "sample_rate": 24000,
   "source_boundary_contracts": [
     {
-      "left_slice": "intro__title_1",
-      "right_slice": "intro__001",
-      "kind": "trimmed_tail"
-    },
-    {
       "left_slice": "setup_cards__title_2_1",
       "right_slice": "setup_cards__001.1",
       "kind": "trimmed_tail"
@@ -357,8 +352,8 @@
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true,
       "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_end": true,
       "use_measured_speech_start": true,
       "trim_to_speech_start": true,
       "use_measured_source_window": true
@@ -368,8 +363,8 @@
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true,
       "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_end": true,
       "use_measured_speech_start": true,
       "trim_to_speech_start": true,
       "use_measured_source_window": true
@@ -1267,16 +1262,6 @@
     }
   },
   "audio_groups": {
-    "intro": {
-      "cue_ids": [
-        "intro/title_1",
-        "intro/001"
-      ],
-      "slice_ids": [
-        "intro__title_1",
-        "intro__001"
-      ]
-    },
     "setup": {
       "cue_ids": [
         "setup/title_2"
@@ -1520,11 +1505,11 @@
   },
   "timing_points": {
     "intro__title_1.subtitle.0.start": {
-      "time": 0.0,
+      "time": 0.295,
       "description": "subtitle start"
     },
     "intro__title_1.subtitle.0.end": {
-      "time": 1.655,
+      "time": 1.235,
       "description": "subtitle end"
     },
     "intro__title_1.start": {
@@ -1532,15 +1517,15 @@
       "description": "logical slice start"
     },
     "intro__title_1.end": {
-      "time": 1.655,
+      "time": 1.632,
       "description": "logical slice end"
     },
     "intro__title_1.speech_end": {
-      "time": 1.65,
+      "time": 1.58,
       "description": "measured speech end"
     },
     "intro__title_1.speech_start": {
-      "time": 0.38,
+      "time": 0.17,
       "description": "measured speech start"
     },
     "intro__title_1.visual.cue_start": {
@@ -1556,51 +1541,51 @@
       "description": "visual source end"
     },
     "intro__001.subtitle.0.start": {
-      "time": 2.0,
+      "time": 0.285,
       "description": "subtitle start"
     },
     "intro__001.subtitle.0.end": {
-      "time": 6.655,
+      "time": 5.385,
       "description": "subtitle end"
     },
     "intro__001.subtitle.1.start": {
-      "time": 7.1,
+      "time": 5.9,
       "description": "subtitle start"
     },
     "intro__001.subtitle.1.end": {
-      "time": 9.035,
+      "time": 7.905,
       "description": "subtitle end"
     },
     "intro__001.subtitle.2.start": {
-      "time": 9.36,
+      "time": 8.28,
       "description": "subtitle start"
     },
     "intro__001.subtitle.2.end": {
-      "time": 13.435,
+      "time": 10.705,
       "description": "subtitle end"
     },
     "intro__001.subtitle.3.start": {
-      "time": 13.76,
+      "time": 11.16,
       "description": "subtitle start"
     },
     "intro__001.subtitle.3.end": {
-      "time": 16.488,
+      "time": 14.895,
       "description": "subtitle end"
     },
     "intro__001.start": {
-      "time": 1.655,
+      "time": 0.0,
       "description": "logical slice start"
     },
     "intro__001.end": {
-      "time": 16.488,
+      "time": 15.288,
       "description": "logical slice end"
     },
     "intro__001.speech_end": {
-      "time": 16.475,
+      "time": 15.28,
       "description": "measured speech end"
     },
     "intro__001.speech_start": {
-      "time": 1.905,
+      "time": 0.36,
       "description": "measured speech start"
     },
     "intro__001.visual.cue_start": {
@@ -4728,7 +4713,7 @@
     "intro/title_1": [
       {
         "id": "intro__title_1",
-        "asset": "media/tts/full/bg.intro.mp3",
+        "asset": "media/tts/full/intro.title.mp3",
         "start_ref": "intro__title_1.start",
         "end_ref": "intro__title_1.end",
         "speech_end_ref": "intro__title_1.speech_end",
@@ -4745,7 +4730,7 @@
     "intro/001": [
       {
         "id": "intro__001",
-        "asset": "media/tts/full/bg.intro.mp3",
+        "asset": "media/tts/full/intro.body.mp3",
         "start_ref": "intro__001.start",
         "end_ref": "intro__001.end",
         "speech_end_ref": "intro__001.speech_end",
@@ -4763,12 +4748,12 @@
           {
             "start_ref": "intro__001.subtitle.2.start",
             "end_ref": "intro__001.subtitle.2.end",
-            "text": "在宝石贸易中积累财富与声望，结识各地的贵族，"
+            "text": "在宝石贸易中积累财富与声望，"
           },
           {
             "start_ref": "intro__001.subtitle.3.start",
             "end_ref": "intro__001.subtitle.3.end",
-            "text": "最终成为最负盛名的贸易商人。"
+            "text": "结识各地的贵族，最终成为最负盛名的贸易商人。"
           }
         ],
         "speech_start_ref": "intro__001.speech_start"

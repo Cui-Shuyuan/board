@@ -11,6 +11,7 @@
 | 文件 | 职责 |
 | --- | --- |
 | `tracks/<track>.track.json` | section 顺序和 track 元信息 |
+| `{track}.cue-audio-overrides.json` | 可选：把指定 cue 指向独立 TTS 音频与字幕，避免从连续 section 音频中硬切 |
 | `sections/<id>/<track>.script.json` | 口播文字、cue 切分、beats 和 refs |
 | `sections/<id>/<track>.anim.json` | 动画事件、素材引用、镜头和 QA |
 | `build/<track>.script.json` | section 装配生成的文字与导航中间产物 |
@@ -42,7 +43,7 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
 | quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 199.206 秒 |
-| full | section TTS 与独立父章节标题素材 | 83 | 638.336 秒 |
+| full | section TTS 与独立父章节标题素材 | 83 | 638.868 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
 `cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
@@ -181,6 +182,33 @@ PATH 提供。具体值以各 track 的固定文件为准。
 
 不同 compiled cue 各自使用编译好的 `start_state`。同一动画素材的多个源区间
 可以连续定位。视觉执行器使用课程位置派生的 cue-local 时间进行 Seek。
+
+### 独立 cue 音频覆盖
+
+连续 section TTS 用能量静音中点只能找到切分位置，不能凭空补出被切断的
+换气声。若标题和正文来自同一段连续音频，但中间的气口必须完整保留，应将
+其中一条或两条 cue 单独生成 TTS，并在
+`{track}.cue-audio-overrides.json` 中声明：
+
+```json
+{
+  "track": "full",
+  "cues": {
+    "intro/title_1": {
+      "audio": "media/tts/full/intro.title.mp3",
+      "subtitle_file": "media/tts/full/intro.title.subtitle.json"
+    },
+    "intro/001": {
+      "audio": "media/tts/full/intro.body.mp3",
+      "subtitle_file": "media/tts/full/intro.body.subtitle.json"
+    }
+  }
+}
+```
+
+运行时生成器会把这些 cue 改为独立 `audio_start=0` 的音频窗口，后续
+audio-slices/plan 仍按实测首尾时间戳裁剪。这样每个 MP3 都有自己的自然
+起音、收音和换气，不再从中间切开同一个气口。
 
 ## 生成与发布
 

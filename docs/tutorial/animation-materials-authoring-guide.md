@@ -157,7 +157,11 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
 6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
    subtitle refs 生成。播放器从课程 DSP 位置派生 cue-local 时间，同步字幕、
    视觉和连续音频。
-7. 构建入口：
+7. 如果连续 section TTS 中某个标题和正文之间的换气不能被硬切，可用
+   `{track}.cue-audio-overrides.json` 把相关 cue 指向单独生成的 MP3 和
+   字幕文件；每条 cue 使用自己的 `audio_start=0`，同时仍按 PCM 能量首尾
+   时间戳裁切。
+8. 构建入口：
 
 ```bash
 python3 animation/build_cue_timeline.py --game splendor --track quick

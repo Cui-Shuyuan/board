@@ -1,0 +1,14 @@
+{
+  "schema": "tutorial-cue-audio-overrides/v1",
+  "track": "full",
+  "cues": {
+    "intro/title_1": {
+      "audio": "media/tts/full/intro.title.mp3",
+      "subtitle_file": "media/tts/full/intro.title.subtitle.json"
+    },
+    "intro/001": {
+      "audio": "media/tts/full/intro.body.mp3",
+      "subtitle_file": "media/tts/full/intro.body.subtitle.json"
+    }
+  }
+}

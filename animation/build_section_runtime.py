@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT / "animation"))
 
 from section_source import load_track_source  # noqa: E402
 from build_tutorial_runtime import load_subtitles, normalize_relative  # noqa: E402
+import audio_probe  # noqa: E402
 
 
 def key_text(text: str) -> str:
@@ -156,6 +157,29 @@ def _pseudo_words(text: str, duration: float) -> list[dict]:
     } for index, ch in enumerate(chars)]
 
 
+def _load_cue_audio_overrides(tutorial_dir: Path, track: str) -> dict[str, dict]:
+    path = tutorial_dir / f"{track}.cue-audio-overrides.json"
+    if not path.is_file():
+        return {}
+    document = json.loads(path.read_text(encoding="utf-8"))
+    if document.get("track") not in (None, track):
+        raise SystemExit(f"{path}: track mismatch")
+    cues = document.get("cues")
+    if not isinstance(cues, dict):
+        raise SystemExit(f"{path}: cues must be an object")
+    result: dict[str, dict] = {}
+    for cue_id, raw in cues.items():
+        if not isinstance(cue_id, str) or not cue_id.strip():
+            raise SystemExit(f"{path}: cue id must be non-empty")
+        if not isinstance(raw, dict):
+            raise SystemExit(f"{path}: cue {cue_id!r} must be an object")
+        audio = str(raw.get("audio") or "").strip()
+        if not audio:
+            raise SystemExit(f"{path}: cue {cue_id!r} audio is required")
+        result[cue_id.strip()] = raw
+    return result
+
+
 def build_section_runtime(
     game: str,
     track: str,
@@ -169,6 +193,8 @@ def build_section_runtime(
     if manifest is None:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     source = load_track_source(game, track)
+    cue_audio_overrides = _load_cue_audio_overrides(
+        game_dir / "tutorial", track)
 
     manifest_by = {
         str(cue.get("id")): cue
@@ -244,6 +270,54 @@ def build_section_runtime(
                             float(subtitle.get("t", 0.0) or 0.0)),
                     )
 
+            cue_id = str(source_cue.get("id"))
+            cue_audio_rel = audio_rel
+            cue_audio_start = cue_start
+            override = cue_audio_overrides.get(cue_id)
+            if override is not None:
+                cue_audio_rel = normalize_relative(
+                    str(override.get("audio") or ""), game_dir)
+                cue_audio_path = game_dir / cue_audio_rel
+                if not cue_audio_path.is_file():
+                    raise SystemExit(
+                        f"cue audio override missing file: {cue_audio_path}")
+                override_duration = override.get("duration")
+                if override_duration is None:
+                    try:
+                        cue_duration = float(
+                            audio_probe.media_duration_seconds(cue_audio_path))
+                    except audio_probe.AudioProbeError as exc:
+                        raise SystemExit(
+                            f"cue audio override cannot be measured: {exc}"
+                        ) from exc
+                else:
+                    cue_duration = float(override_duration)
+                if cue_duration <= 0.0:
+                    raise SystemExit(
+                        f"cue {cue_id!r}: override duration must be positive")
+                cue_audio_start = 0.0
+                subtitle_override = override.get("subtitle_file")
+                if subtitle_override:
+                    subtitle_path = game_dir / normalize_relative(
+                        str(subtitle_override), game_dir)
+                    subtitles = load_subtitles(
+                        subtitle_path, text, cue_duration)
+                else:
+                    subtitles = [{
+                        "t": 0.0,
+                        "end": round(cue_duration, 3),
+                        "text": text,
+                        "words": _pseudo_words(text, cue_duration),
+                    }]
+                for subtitle in subtitles:
+                    subtitle["t"] = max(
+                        0.0, min(cue_duration,
+                                 float(subtitle.get("t", 0.0) or 0.0)))
+                    subtitle["end"] = max(
+                        float(subtitle["t"]),
+                        min(cue_duration,
+                            float(subtitle.get("end", 0.0) or 0.0)))
+
             group = source_cue.get("group") or section.meta.get("title") or section.id
             group_path = (
                 source_cue.get("group_path")
@@ -261,8 +335,8 @@ def build_section_runtime(
                 "group": group,
                 "group_path": list(group_path),
                 "text": text,
-                "audio": audio_rel,
-                "audio_start": round(cue_start, 3),
+                "audio": cue_audio_rel,
+                "audio_start": round(cue_audio_start, 3),
                 "duration": round(cue_duration, 3),
                 "start": round(cue_cursor, 3),
                 "refs": list(source_cue.get("refs") or []),

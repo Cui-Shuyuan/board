@@ -23,7 +23,7 @@
         "intro/title_1",
         "intro/001"
       ],
-      "duration": 16.488
+      "duration": 16.92
     },
     {
       "id": "setup",
@@ -34,7 +34,7 @@
       "order": 1,
       "asset": "setup.intro",
       "audio": "media/tts/full/setup.intro.mp3",
-      "start": 16.488,
+      "start": 16.92,
       "cue_ids": [
         "setup/title_2"
       ],
@@ -50,7 +50,7 @@
       "order": 2,
       "asset": "setup.cards",
       "audio": "media/tts/full/setup.cards.mp3",
-      "start": 18.12,
+      "start": 18.552,
       "cue_ids": [
         "setup_cards/title_2_1",
         "setup_cards/001.1",
@@ -69,7 +69,7 @@
       "order": 3,
       "asset": "setup.gems",
       "audio": "media/tts/full/setup.gems.mp3",
-      "start": 48.36,
+      "start": 48.792,
       "cue_ids": [
         "setup_gems/title_2_2",
         "setup_gems/001.1",
@@ -89,7 +89,7 @@
       "order": 4,
       "asset": "setup.players",
       "audio": "media/tts/full/setup.players.mp3",
-      "start": 95.28,
+      "start": 95.712,
       "cue_ids": [
         "setup_players/title_2_3",
         "setup_players/nobles.001.1",
@@ -112,7 +112,7 @@
       "order": 5,
       "asset": "action.turn",
       "audio": "media/tts/full/action.turn.mp3",
-      "start": 138.336,
+      "start": 138.768,
       "cue_ids": [
         "turn/title_3",
         "turn/001",
@@ -130,7 +130,7 @@
       "order": 6,
       "asset": "action.take",
       "audio": "media/tts/full/action.take.mp3",
-      "start": 153.408,
+      "start": 153.84,
       "cue_ids": [
         "take_gems/title_3_1",
         "take_gems/different.001",
@@ -155,7 +155,7 @@
       "order": 7,
       "asset": "action.cards.group",
       "audio": "media/tts/full/action.cards.group.mp3",
-      "start": 206.28,
+      "start": 206.712,
       "cue_ids": [
         "cards_group/title_3_2"
       ],
@@ -172,7 +172,7 @@
       "order": 8,
       "asset": "action.cards",
       "audio": "media/tts/full/action.cards.mp3",
-      "start": 209.736,
+      "start": 210.168,
       "cue_ids": [
         "cards/title_3_2_1",
         "cards/intro.001",
@@ -202,7 +202,7 @@
       "order": 9,
       "asset": "action.nobles",
       "audio": "media/tts/full/action.nobles.mp3",
-      "start": 322.296,
+      "start": 322.728,
       "cue_ids": [
         "nobles/title_3_2_2",
         "nobles/intro.001",
@@ -228,7 +228,7 @@
       "order": 10,
       "asset": "action.reserve",
       "audio": "media/tts/full/action.reserve.mp3",
-      "start": 407.52,
+      "start": 407.952,
       "cue_ids": [
         "reserve/title_3_3",
         "reserve/intro.001.1",
@@ -253,7 +253,7 @@
       "order": 11,
       "asset": "action.purchase_reserved",
       "audio": "media/tts/full/action.purchase_reserved.mp3",
-      "start": 483.504,
+      "start": 483.936,
       "cue_ids": [
         "purchase_reserved/title_3_4",
         "purchase_reserved/001"
@@ -270,7 +270,7 @@
       "order": 12,
       "asset": "action.summary",
       "audio": "media/tts/full/action.summary.mp3",
-      "start": 507.168,
+      "start": 507.6,
       "cue_ids": [
         "summary/title_3_5",
         "summary/001",
@@ -288,7 +288,7 @@
       "order": 13,
       "asset": "endgame",
       "audio": "media/tts/full/endgame.mp3",
-      "start": 529.872,
+      "start": 530.304,
       "cue_ids": [
         "end/title_4",
         "end/trigger.001",
@@ -314,34 +314,34 @@
         "1 背景"
       ],
       "text": "一，背景。",
-      "audio": "media/tts/full/bg.intro.mp3",
+      "audio": "media/tts/full/intro.title.mp3",
       "audio_start": 0.0,
-      "duration": 2.0,
+      "duration": 1.632,
       "start": 0.0,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 2.0,
+          "t": 0.295,
+          "end": 1.235,
           "text": "一，背景。",
           "words": [
             {
               "word": "一，",
-              "start": 0.305,
-              "end": 0.595,
-              "confidence": 0.913
+              "start": 0.295,
+              "end": 0.585,
+              "confidence": 0.87
             },
             {
               "word": "背",
-              "start": 0.815,
-              "end": 0.995,
-              "confidence": 0.9726
+              "start": 0.845,
+              "end": 1.005,
+              "confidence": 0.9408
             },
             {
               "word": "景。",
-              "start": 0.995,
-              "end": 1.225,
-              "confidence": 0.9097
+              "start": 1.005,
+              "end": 1.235,
+              "confidence": 0.905
             }
           ]
         }
@@ -360,441 +360,441 @@
         "1 背景"
       ],
       "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。",
-      "audio": "media/tts/full/bg.intro.mp3",
-      "audio_start": 2.0,
-      "duration": 14.488,
-      "start": 2.0,
+      "audio": "media/tts/full/intro.body.mp3",
+      "audio_start": 0.0,
+      "duration": 15.288,
+      "start": 1.632,
       "refs": [
         "rulebook:background"
       ],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 4.655,
+          "t": 0.285,
+          "end": 5.385,
           "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。",
           "words": [
             {
               "word": "璀",
-              "start": 0.0,
-              "end": 0.075,
-              "confidence": 0.4628
+              "start": 0.285,
+              "end": 0.465,
+              "confidence": 0.8362
             },
             {
               "word": "璨",
-              "start": 0.075,
-              "end": 0.155,
-              "confidence": 0.5718
+              "start": 0.465,
+              "end": 0.655,
+              "confidence": 0.9046
             },
             {
               "word": "宝",
-              "start": 0.155,
-              "end": 0.335,
-              "confidence": 0.9751
+              "start": 0.655,
+              "end": 0.845,
+              "confidence": 0.9729
             },
             {
               "word": "石",
-              "start": 0.335,
-              "end": 0.625,
-              "confidence": 0.908
+              "start": 0.845,
+              "end": 1.135,
+              "confidence": 0.8855
             },
             {
               "word": "是",
-              "start": 0.625,
-              "end": 0.805,
-              "confidence": 0.9583
+              "start": 1.135,
+              "end": 1.315,
+              "confidence": 0.9281
             },
             {
               "word": "一",
-              "start": 0.805,
-              "end": 0.915,
-              "confidence": 0.9144
+              "start": 1.315,
+              "end": 1.435,
+              "confidence": 0.8987
             },
             {
               "word": "款",
-              "start": 0.915,
-              "end": 1.155,
-              "confidence": 0.974
+              "start": 1.435,
+              "end": 1.695,
+              "confidence": 0.9583
             },
             {
               "word": "支",
-              "start": 1.155,
-              "end": 1.355,
-              "confidence": 0.9701
+              "start": 1.695,
+              "end": 1.895,
+              "confidence": 0.9483
             },
             {
               "word": "持",
-              "start": 1.355,
-              "end": 1.625,
-              "confidence": 0.982
+              "start": 1.895,
+              "end": 2.215,
+              "confidence": 0.9827
             },
             {
               "word": "二",
-              "start": 1.655,
-              "end": 1.825,
-              "confidence": 0.9352
+              "start": 2.255,
+              "end": 2.435,
+              "confidence": 0.914
             },
             {
               "word": "到",
-              "start": 1.825,
-              "end": 2.005,
-              "confidence": 0.9672
+              "start": 2.435,
+              "end": 2.625,
+              "confidence": 0.9422
             },
             {
               "word": "四",
-              "start": 2.005,
-              "end": 2.225,
-              "confidence": 0.9695
+              "start": 2.625,
+              "end": 2.855,
+              "confidence": 0.9433
             },
             {
               "word": "人",
-              "start": 2.225,
-              "end": 2.335,
-              "confidence": 0.8972
+              "start": 2.855,
+              "end": 2.975,
+              "confidence": 0.8745
             },
             {
               "word": "的",
-              "start": 2.335,
-              "end": 2.445,
-              "confidence": 0.9404
+              "start": 2.975,
+              "end": 3.085,
+              "confidence": 0.9411
             },
             {
               "word": "游",
-              "start": 2.445,
-              "end": 2.585,
-              "confidence": 0.8774
+              "start": 3.085,
+              "end": 3.215,
+              "confidence": 0.8939
             },
             {
               "word": "戏，",
-              "start": 2.585,
-              "end": 2.905,
-              "confidence": 0.9814
+              "start": 3.215,
+              "end": 3.555,
+              "confidence": 0.9876
             },
             {
               "word": "主",
-              "start": 3.205,
-              "end": 3.355,
-              "confidence": 0.9797
+              "start": 3.915,
+              "end": 4.065,
+              "confidence": 0.9702
             },
             {
               "word": "题",
-              "start": 3.355,
-              "end": 3.535,
-              "confidence": 0.9705
+              "start": 4.065,
+              "end": 4.235,
+              "confidence": 0.9738
             },
             {
               "word": "是",
-              "start": 3.535,
-              "end": 3.825,
-              "confidence": 0.9132
+              "start": 4.235,
+              "end": 4.545,
+              "confidence": 0.9227
             },
             {
               "word": "丝",
-              "start": 3.825,
-              "end": 4.045,
-              "confidence": 0.8517
+              "start": 4.545,
+              "end": 4.765,
+              "confidence": 0.824
             },
             {
               "word": "绸",
-              "start": 4.045,
-              "end": 4.245,
-              "confidence": 0.8757
+              "start": 4.765,
+              "end": 4.985,
+              "confidence": 0.8491
             },
             {
               "word": "之",
-              "start": 4.245,
-              "end": 4.445,
-              "confidence": 0.9505
+              "start": 4.985,
+              "end": 5.165,
+              "confidence": 0.935
             },
             {
               "word": "路。",
-              "start": 4.445,
-              "end": 4.655,
-              "confidence": 0.9826
+              "start": 5.165,
+              "end": 5.385,
+              "confidence": 0.9774
             }
           ]
         },
         {
-          "t": 5.1,
-          "end": 7.035,
+          "t": 5.9,
+          "end": 7.905,
           "text": "玩家将扮演一位丝路商人，",
           "words": [
             {
               "word": "玩",
-              "start": 5.1,
-              "end": 5.155,
-              "confidence": 0.7058
+              "start": 5.9,
+              "end": 5.955,
+              "confidence": 0.7168
             },
             {
               "word": "家",
-              "start": 5.155,
-              "end": 5.405,
-              "confidence": 0.906
+              "start": 5.955,
+              "end": 6.245,
+              "confidence": 0.8738
             },
             {
               "word": "将",
-              "start": 5.405,
-              "end": 5.575,
-              "confidence": 0.9366
+              "start": 6.245,
+              "end": 6.445,
+              "confidence": 0.8692
             },
             {
               "word": "扮",
-              "start": 5.575,
-              "end": 5.745,
-              "confidence": 0.9575
+              "start": 6.445,
+              "end": 6.635,
+              "confidence": 0.9595
             },
             {
               "word": "演",
-              "start": 5.745,
-              "end": 5.835,
-              "confidence": 0.9062
+              "start": 6.635,
+              "end": 6.725,
+              "confidence": 0.8951
             },
             {
               "word": "一",
-              "start": 5.835,
-              "end": 5.995,
-              "confidence": 0.875
+              "start": 6.725,
+              "end": 6.885,
+              "confidence": 0.8822
             },
             {
               "word": "位",
-              "start": 5.995,
-              "end": 6.225,
-              "confidence": 0.954
+              "start": 6.885,
+              "end": 7.105,
+              "confidence": 0.953
             },
             {
               "word": "丝",
-              "start": 6.225,
-              "end": 6.435,
-              "confidence": 0.7277
+              "start": 7.105,
+              "end": 7.295,
+              "confidence": 0.7356
             },
             {
               "word": "路",
-              "start": 6.435,
-              "end": 6.545,
-              "confidence": 0.9709
+              "start": 7.295,
+              "end": 7.415,
+              "confidence": 0.9693
             },
             {
               "word": "商",
-              "start": 6.545,
-              "end": 6.795,
-              "confidence": 0.9361
+              "start": 7.415,
+              "end": 7.675,
+              "confidence": 0.9466
             },
             {
               "word": "人，",
-              "start": 6.795,
-              "end": 7.035,
-              "confidence": 0.9587
+              "start": 7.675,
+              "end": 7.905,
+              "confidence": 0.9447
             }
           ]
         },
         {
-          "t": 7.36,
-          "end": 11.435,
-          "text": "在宝石贸易中积累财富与声望，结识各地的贵族，",
+          "t": 8.28,
+          "end": 10.705,
+          "text": "在宝石贸易中积累财富与声望，",
           "words": [
             {
               "word": "在",
-              "start": 7.36,
-              "end": 7.565,
-              "confidence": 0.9307
+              "start": 8.28,
+              "end": 8.495,
+              "confidence": 0.8667
             },
             {
               "word": "宝",
-              "start": 7.565,
-              "end": 7.735,
-              "confidence": 0.9704
+              "start": 8.495,
+              "end": 8.665,
+              "confidence": 0.9628
             },
             {
               "word": "石",
-              "start": 7.735,
-              "end": 7.925,
-              "confidence": 0.9689
+              "start": 8.665,
+              "end": 8.845,
+              "confidence": 0.969
             },
             {
               "word": "贸",
-              "start": 7.925,
-              "end": 8.095,
-              "confidence": 0.9685
+              "start": 8.845,
+              "end": 9.015,
+              "confidence": 0.9739
             },
             {
               "word": "易",
-              "start": 8.095,
-              "end": 8.215,
-              "confidence": 0.9454
+              "start": 9.015,
+              "end": 9.155,
+              "confidence": 0.9431
             },
             {
               "word": "中",
-              "start": 8.215,
-              "end": 8.445,
-              "confidence": 0.9585
+              "start": 9.155,
+              "end": 9.385,
+              "confidence": 0.96
             },
             {
               "word": "积",
-              "start": 8.445,
-              "end": 8.655,
-              "confidence": 0.8909
+              "start": 9.385,
+              "end": 9.585,
+              "confidence": 0.8443
             },
             {
               "word": "累",
-              "start": 8.655,
-              "end": 8.805,
-              "confidence": 0.9182
+              "start": 9.585,
+              "end": 9.735,
+              "confidence": 0.9257
             },
             {
               "word": "财",
-              "start": 8.805,
-              "end": 9.045,
-              "confidence": 0.961
+              "start": 9.735,
+              "end": 9.975,
+              "confidence": 0.9681
             },
             {
               "word": "富",
-              "start": 9.045,
-              "end": 9.275,
-              "confidence": 0.9785
+              "start": 9.975,
+              "end": 10.175,
+              "confidence": 0.981
             },
             {
               "word": "与",
-              "start": 9.275,
-              "end": 9.335,
-              "confidence": 0.8608
+              "start": 10.175,
+              "end": 10.255,
+              "confidence": 0.8818
             },
             {
               "word": "声",
-              "start": 9.335,
-              "end": 9.575,
-              "confidence": 0.9429
+              "start": 10.255,
+              "end": 10.495,
+              "confidence": 0.9298
             },
             {
               "word": "望，",
-              "start": 9.575,
-              "end": 9.755,
-              "confidence": 0.9135
-            },
-            {
-              "word": "结",
-              "start": 10.045,
-              "end": 10.215,
-              "confidence": 0.9469
-            },
-            {
-              "word": "识",
-              "start": 10.215,
-              "end": 10.515,
-              "confidence": 0.9438
-            },
-            {
-              "word": "各",
-              "start": 10.515,
-              "end": 10.695,
-              "confidence": 0.8035
-            },
-            {
-              "word": "地",
-              "start": 10.695,
-              "end": 10.825,
-              "confidence": 0.9493
-            },
-            {
-              "word": "的",
-              "start": 10.825,
-              "end": 10.925,
-              "confidence": 0.9622
-            },
-            {
-              "word": "贵",
-              "start": 10.925,
-              "end": 11.115,
-              "confidence": 0.9744
-            },
-            {
-              "word": "族，",
-              "start": 11.115,
-              "end": 11.435,
-              "confidence": 0.9619
+              "start": 10.495,
+              "end": 10.705,
+              "confidence": 0.921
             }
           ]
         },
         {
-          "t": 11.76,
-          "end": 14.488,
-          "text": "最终成为最负盛名的贸易商人。",
+          "t": 11.16,
+          "end": 14.895,
+          "text": "结识各地的贵族，最终成为最负盛名的贸易商人。",
           "words": [
             {
-              "word": "最",
-              "start": 11.76,
-              "end": 11.915,
-              "confidence": 0.8824
+              "word": "结",
+              "start": 11.16,
+              "end": 11.235,
+              "confidence": 0.5471
             },
             {
-              "word": "终",
-              "start": 11.915,
-              "end": 12.095,
-              "confidence": 0.9487
+              "word": "识",
+              "start": 11.235,
+              "end": 11.465,
+              "confidence": 0.8438
             },
             {
-              "word": "成",
-              "start": 12.095,
-              "end": 12.285,
-              "confidence": 0.9452
+              "word": "各",
+              "start": 11.465,
+              "end": 11.635,
+              "confidence": 0.8175
             },
             {
-              "word": "为",
-              "start": 12.285,
-              "end": 12.515,
-              "confidence": 0.9517
-            },
-            {
-              "word": "最",
-              "start": 12.515,
-              "end": 12.725,
-              "confidence": 0.8811
-            },
-            {
-              "word": "负",
-              "start": 12.725,
-              "end": 12.875,
-              "confidence": 0.9233
-            },
-            {
-              "word": "盛",
-              "start": 12.875,
-              "end": 13.075,
-              "confidence": 0.8959
-            },
-            {
-              "word": "名",
-              "start": 13.075,
-              "end": 13.275,
-              "confidence": 0.9764
+              "word": "地",
+              "start": 11.635,
+              "end": 11.775,
+              "confidence": 0.9524
             },
             {
               "word": "的",
-              "start": 13.275,
-              "end": 13.405,
-              "confidence": 0.9834
+              "start": 11.775,
+              "end": 11.875,
+              "confidence": 0.9449
+            },
+            {
+              "word": "贵",
+              "start": 11.875,
+              "end": 12.075,
+              "confidence": 0.9655
+            },
+            {
+              "word": "族，",
+              "start": 12.075,
+              "end": 12.395,
+              "confidence": 0.9664
+            },
+            {
+              "word": "最",
+              "start": 12.695,
+              "end": 12.845,
+              "confidence": 0.9368
+            },
+            {
+              "word": "终",
+              "start": 12.845,
+              "end": 13.015,
+              "confidence": 0.9736
+            },
+            {
+              "word": "成",
+              "start": 13.015,
+              "end": 13.235,
+              "confidence": 0.9361
+            },
+            {
+              "word": "为",
+              "start": 13.235,
+              "end": 13.455,
+              "confidence": 0.9379
+            },
+            {
+              "word": "最",
+              "start": 13.455,
+              "end": 13.675,
+              "confidence": 0.8734
+            },
+            {
+              "word": "负",
+              "start": 13.675,
+              "end": 13.835,
+              "confidence": 0.937
+            },
+            {
+              "word": "盛",
+              "start": 13.835,
+              "end": 14.045,
+              "confidence": 0.9089
+            },
+            {
+              "word": "名",
+              "start": 14.045,
+              "end": 14.235,
+              "confidence": 0.9718
+            },
+            {
+              "word": "的",
+              "start": 14.235,
+              "end": 14.345,
+              "confidence": 0.9871
             },
             {
               "word": "贸",
-              "start": 13.405,
-              "end": 13.575,
-              "confidence": 0.9612
+              "start": 14.345,
+              "end": 14.515,
+              "confidence": 0.9488
             },
             {
               "word": "易",
-              "start": 13.575,
-              "end": 13.655,
-              "confidence": 0.9242
+              "start": 14.515,
+              "end": 14.595,
+              "confidence": 0.9492
             },
             {
               "word": "商",
-              "start": 13.655,
-              "end": 13.875,
-              "confidence": 0.8991
+              "start": 14.595,
+              "end": 14.825,
+              "confidence": 0.8895
             },
             {
               "word": "人。",
-              "start": 13.875,
-              "end": 13.955,
-              "confidence": 0.8206
+              "start": 14.825,
+              "end": 14.895,
+              "confidence": 0.7467
             }
           ]
         }
@@ -816,7 +816,7 @@
       "audio": "media/tts/full/setup.intro.mp3",
       "audio_start": 0.0,
       "duration": 1.632,
-      "start": 16.488,
+      "start": 16.92,
       "refs": [],
       "subtitles": [
         {
@@ -863,7 +863,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 0.0,
       "duration": 2.66,
-      "start": 18.12,
+      "start": 18.552,
       "refs": [],
       "subtitles": [
         {
@@ -922,7 +922,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 2.66,
       "duration": 2.66,
-      "start": 20.78,
+      "start": 21.212,
       "refs": [
         "<development_card>",
         "rulebook:setup"
@@ -1008,7 +1008,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 5.32,
       "duration": 12.685,
-      "start": 23.44,
+      "start": 23.872,
       "refs": [
         "<development_card>",
         "rulebook:setup"
@@ -1385,7 +1385,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 18.005,
       "duration": 12.235,
-      "start": 36.125,
+      "start": 36.557,
       "refs": [
         "flow:prepare_level_1_deck",
         "flow:prepare_level_2_deck",
@@ -1762,7 +1762,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 0.0,
       "duration": 2.75,
-      "start": 48.36,
+      "start": 48.792,
       "refs": [],
       "subtitles": [
         {
@@ -1827,7 +1827,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 2.75,
       "duration": 13.405,
-      "start": 51.11,
+      "start": 51.542,
       "refs": [
         "<gem>",
         "rulebook:setup"
@@ -2185,7 +2185,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 16.155,
       "duration": 5.94,
-      "start": 64.515,
+      "start": 64.947,
       "refs": [
         "<gold>",
         "rulebook:setup"
@@ -2386,7 +2386,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 22.095,
       "duration": 18.554,
-      "start": 70.455,
+      "start": 70.887,
       "refs": [
         "flow:distribute_gems"
       ],
@@ -2955,7 +2955,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 40.649,
       "duration": 6.271,
-      "start": 89.009,
+      "start": 89.441,
       "refs": [
         "<gem_supply>",
         "<gold_supply>",
@@ -3164,7 +3164,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 0.0,
       "duration": 2.57,
-      "start": 95.28,
+      "start": 95.712,
       "refs": [],
       "subtitles": [
         {
@@ -3223,7 +3223,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 2.57,
       "duration": 1.44,
-      "start": 97.85,
+      "start": 98.282,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3298,7 +3298,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 4.01,
       "duration": 9.015,
-      "start": 99.29,
+      "start": 99.722,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3590,7 +3590,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 13.025,
       "duration": 7.18,
-      "start": 108.305,
+      "start": 108.737,
       "refs": [
         "flow:deal_nobles"
       ],
@@ -3819,7 +3819,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 20.205,
       "duration": 1.62,
-      "start": 115.485,
+      "start": 115.917,
       "refs": [],
       "subtitles": [
         {
@@ -3878,7 +3878,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 21.825,
       "duration": 10.079,
-      "start": 117.105,
+      "start": 117.537,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -4218,7 +4218,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 31.904,
       "duration": 3.94,
-      "start": 127.184,
+      "start": 127.616,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -4366,7 +4366,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 35.844,
       "duration": 1.9,
-      "start": 131.124,
+      "start": 131.556,
       "refs": [],
       "subtitles": [
         {
@@ -4425,7 +4425,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 37.744,
       "duration": 5.312,
-      "start": 133.024,
+      "start": 133.456,
       "refs": [
         "rulebook:setup",
         "flow:main_gameplay"
@@ -4619,7 +4619,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 0.0,
       "duration": 2.23,
-      "start": 138.336,
+      "start": 138.768,
       "refs": [],
       "subtitles": [
         {
@@ -4665,7 +4665,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 2.23,
       "duration": 7.795,
-      "start": 140.566,
+      "start": 140.998,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -4914,7 +4914,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 10.025,
       "duration": 5.047,
-      "start": 148.361,
+      "start": 148.793,
       "refs": [
         "flow:action_phase"
       ],
@@ -5101,7 +5101,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 0.0,
       "duration": 3.93,
-      "start": 153.408,
+      "start": 153.84,
       "refs": [],
       "subtitles": [
         {
@@ -5196,7 +5196,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 3.93,
       "duration": 4.765,
-      "start": 157.338,
+      "start": 157.77,
       "refs": [
         "<take_gems_different>",
         "flow:player_action_turn"
@@ -5366,7 +5366,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 8.695,
       "duration": 6.66,
-      "start": 162.103,
+      "start": 162.535,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5597,7 +5597,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 15.355,
       "duration": 6.69,
-      "start": 168.763,
+      "start": 169.195,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5828,7 +5828,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 22.045,
       "duration": 6.51,
-      "start": 175.453,
+      "start": 175.885,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -6052,7 +6052,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 28.555,
       "duration": 3.794,
-      "start": 181.963,
+      "start": 182.395,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -6180,7 +6180,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 32.349,
       "duration": 6.315,
-      "start": 185.757,
+      "start": 186.189,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -6406,7 +6406,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 38.664,
       "duration": 6.08,
-      "start": 192.072,
+      "start": 192.504,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -6613,7 +6613,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 44.744,
       "duration": 5.75,
-      "start": 198.152,
+      "start": 198.584,
       "refs": [
         "<player_holding>"
       ],
@@ -6818,7 +6818,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 50.494,
       "duration": 2.378,
-      "start": 203.902,
+      "start": 204.334,
       "refs": [
         "<player_holding>"
       ],
@@ -6921,7 +6921,7 @@
       "audio": "media/tts/full/action.cards.group.mp3",
       "audio_start": 0.0,
       "duration": 3.456,
-      "start": 206.28,
+      "start": 206.712,
       "refs": [],
       "subtitles": [
         {
@@ -6999,7 +6999,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 0.0,
       "duration": 3.865,
-      "start": 209.736,
+      "start": 210.168,
       "refs": [],
       "subtitles": [
         {
@@ -7071,7 +7071,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 3.865,
       "duration": 2.22,
-      "start": 213.601,
+      "start": 214.033,
       "refs": [
         "<development_card>"
       ],
@@ -7163,7 +7163,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 6.085,
       "duration": 3.945,
-      "start": 215.821,
+      "start": 216.253,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -7306,7 +7306,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 10.03,
       "duration": 10.695,
-      "start": 219.766,
+      "start": 220.198,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -7641,7 +7641,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 20.725,
       "duration": 15.33,
-      "start": 230.461,
+      "start": 230.893,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -8107,7 +8107,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 36.055,
       "duration": 7.614,
-      "start": 245.791,
+      "start": 246.223,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -8344,7 +8344,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 43.669,
       "duration": 6.675,
-      "start": 253.405,
+      "start": 253.837,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -8564,7 +8564,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 50.344,
       "duration": 5.955,
-      "start": 260.08,
+      "start": 260.512,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -8772,7 +8772,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 56.299,
       "duration": 7.64,
-      "start": 266.035,
+      "start": 266.467,
       "refs": [
         "<discount>"
       ],
@@ -9020,7 +9020,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 63.939,
       "duration": 11.475,
-      "start": 273.675,
+      "start": 274.107,
       "refs": [
         "<discount>"
       ],
@@ -9382,7 +9382,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 75.414,
       "duration": 7.895,
-      "start": 285.15,
+      "start": 285.582,
       "refs": [
         "<discount>"
       ],
@@ -9642,7 +9642,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 83.309,
       "duration": 8.354,
-      "start": 293.045,
+      "start": 293.477,
       "refs": [
         "<discount>"
       ],
@@ -9908,7 +9908,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 91.663,
       "duration": 12.245,
-      "start": 301.399,
+      "start": 301.831,
       "refs": [
         "<development_area>"
       ],
@@ -10288,7 +10288,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 103.908,
       "duration": 8.652,
-      "start": 313.644,
+      "start": 314.076,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -10573,7 +10573,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 0.0,
       "duration": 3.11,
-      "start": 322.296,
+      "start": 322.728,
       "refs": [],
       "subtitles": [
         {
@@ -10633,7 +10633,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 3.11,
       "duration": 10.875,
-      "start": 325.406,
+      "start": 325.838,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -10987,7 +10987,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 13.985,
       "duration": 12.22,
-      "start": 336.281,
+      "start": 336.713,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11374,7 +11374,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 26.205,
       "duration": 11.699,
-      "start": 348.501,
+      "start": 348.933,
       "refs": [
         "<attract_noble>"
       ],
@@ -11737,7 +11737,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 37.904,
       "duration": 5.06,
-      "start": 360.2,
+      "start": 360.632,
       "refs": [
         "<noble_market>",
         "<attract_noble>"
@@ -11914,7 +11914,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 42.964,
       "duration": 8.755,
-      "start": 365.26,
+      "start": 365.692,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -12205,7 +12205,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 51.719,
       "duration": 11.93,
-      "start": 374.015,
+      "start": 374.447,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12598,7 +12598,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 63.649,
       "duration": 6.361,
-      "start": 385.945,
+      "start": 386.377,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12817,7 +12817,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 70.01,
       "duration": 4.605,
-      "start": 392.306,
+      "start": 392.738,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12984,7 +12984,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 74.615,
       "duration": 4.27,
-      "start": 396.911,
+      "start": 397.343,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13139,7 +13139,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 78.885,
       "duration": 6.339,
-      "start": 401.181,
+      "start": 401.613,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13359,7 +13359,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 0.0,
       "duration": 3.5,
-      "start": 407.52,
+      "start": 407.952,
       "refs": [],
       "subtitles": [
         {
@@ -13442,7 +13442,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 3.5,
       "duration": 11.185,
-      "start": 411.02,
+      "start": 411.452,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13783,7 +13783,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 14.685,
       "duration": 7.175,
-      "start": 422.205,
+      "start": 422.637,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -14020,7 +14020,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 21.86,
       "duration": 7.645,
-      "start": 429.38,
+      "start": 429.812,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -14276,7 +14276,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 29.505,
       "duration": 8.687,
-      "start": 437.025,
+      "start": 437.457,
       "refs": [
         "<reserve_development_card>",
         "<player_holding>",
@@ -14544,7 +14544,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 38.192,
       "duration": 5.61,
-      "start": 445.712,
+      "start": 446.144,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14733,7 +14733,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 43.802,
       "duration": 8.185,
-      "start": 451.322,
+      "start": 451.754,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -14994,7 +14994,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 51.987,
       "duration": 11.11,
-      "start": 459.507,
+      "start": 459.939,
       "refs": [
         "<hand>"
       ],
@@ -15362,7 +15362,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 63.097,
       "duration": 6.18,
-      "start": 470.617,
+      "start": 471.049,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15568,7 +15568,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 69.277,
       "duration": 6.707,
-      "start": 476.797,
+      "start": 477.229,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -15787,7 +15787,7 @@
       "audio": "media/tts/full/action.purchase_reserved.mp3",
       "audio_start": 0.0,
       "duration": 4.015,
-      "start": 483.504,
+      "start": 483.936,
       "refs": [],
       "subtitles": [
         {
@@ -15876,7 +15876,7 @@
       "audio": "media/tts/full/action.purchase_reserved.mp3",
       "audio_start": 4.015,
       "duration": 19.649,
-      "start": 487.519,
+      "start": 487.951,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -16495,7 +16495,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 0.0,
       "duration": 3.38,
-      "start": 507.168,
+      "start": 507.6,
       "refs": [],
       "subtitles": [
         {
@@ -16572,7 +16572,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 3.38,
       "duration": 7.095,
-      "start": 510.548,
+      "start": 510.98,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16811,7 +16811,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 10.475,
       "duration": 8.98,
-      "start": 517.643,
+      "start": 518.075,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17110,7 +17110,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 19.455,
       "duration": 3.249,
-      "start": 526.623,
+      "start": 527.055,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17232,7 +17232,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 0.0,
       "duration": 2.25,
-      "start": 529.872,
+      "start": 530.304,
       "refs": [],
       "subtitles": [
         {
@@ -17290,7 +17290,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 2.25,
       "duration": 5.025,
-      "start": 532.122,
+      "start": 532.554,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17453,7 +17453,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 7.275,
       "duration": 10.48,
-      "start": 537.147,
+      "start": 537.579,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17793,7 +17793,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 17.755,
       "duration": 17.03,
-      "start": 547.627,
+      "start": 548.059,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18317,7 +18317,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 34.785,
       "duration": 8.155,
-      "start": 564.657,
+      "start": 565.089,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18559,7 +18559,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 42.94,
       "duration": 12.23,
-      "start": 572.812,
+      "start": 573.244,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18915,7 +18915,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 55.17,
       "duration": 10.734,
-      "start": 585.042,
+      "start": 585.474,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
