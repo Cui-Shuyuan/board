@@ -189,6 +189,7 @@ TIMING_OPTION_KEYS = frozenset({
     "trim_tail_guard_seconds",
     "trailing_silence_seconds",
     "post_speech_silence_seconds",
+    "use_measured_speech_end",
 })
 TIMING_POLICY_GLOBAL_KEYS = frozenset({
     "schema",
@@ -279,6 +280,12 @@ def _normalize_cue_timing_options(
                 f"audio slices cue_timing {cue_id!r} "
                 "trim_to_speech_end must be boolean")
 
+        measured_end = option.get("use_measured_speech_end", False)
+        if not isinstance(measured_end, bool):
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "use_measured_speech_end must be boolean")
+
         trim_tail_guard = option.get("trim_tail_guard_seconds", 0.0)
         if isinstance(trim_tail_guard, bool) or not isinstance(
                 trim_tail_guard, (int, float)):
@@ -321,6 +328,7 @@ def _normalize_cue_timing_options(
             "trim_tail_guard_seconds": trim_tail_guard,
             "trailing_silence_seconds": trailing,
             "post_speech_silence_seconds": post_speech,
+            "use_measured_speech_end": measured_end,
         }
     return normalized
 

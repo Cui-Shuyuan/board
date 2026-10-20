@@ -9,193 +9,225 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_intro/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_setup_cards/title_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_setup_cards/001.1": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_setup_cards/001.2": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_setup_gems/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_setup_players/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_setup_players/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_setup_players/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_turn/title_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_turn/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_turn/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_take_gems/title_3_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_take_gems/different.001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_take_gems/same.001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_take_gems/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_take_gems/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_cards/title_3_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_cards/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_cards/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_cards/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_reserve/title_3_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_reserve/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_reserve/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_reserve/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_gold/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_nobles/title_3_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_nobles/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_nobles/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     },
     "quick_nobles/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 1.0
+      "post_speech_silence_seconds": 1.0,
+      "use_measured_speech_end": true
     },
     "quick_end/title_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.1
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "quick_end/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
-      "post_speech_silence_seconds": 0.5
+      "post_speech_silence_seconds": 0.5,
+      "use_measured_speech_end": true
     }
   },
   "audio_groups": {

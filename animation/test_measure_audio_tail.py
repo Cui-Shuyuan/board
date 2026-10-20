@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import json
 import math
 import sys
+import tempfile
 import unittest
 from array import array
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -44,6 +47,58 @@ class MeasureAudioTailTests(unittest.TestCase):
         samples = array("h", [0] * (self.SAMPLE_RATE * 2))
         measured = tail.last_voiced_end_seconds(samples, self.SAMPLE_RATE, 0.25, 1.5)
         self.assertEqual(measured, 0.25)
+
+    def test_runtime_window_mode_writes_measured_timestamp_and_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            tutorial = root / "tutorial"
+            tutorial.mkdir(parents=True)
+            slices = {
+                "sample_rate": self.SAMPLE_RATE,
+                "cues": {
+                    "fixture/one": [{
+                        "id": "fixture__one",
+                        "asset": "media/one.mp3",
+                        "start_ref": "fixture__one.start",
+                        "end_ref": "fixture__one.end",
+                        "speech_end_ref": "fixture__one.speech_end",
+                        "subtitles": [],
+                    }],
+                },
+                "timing_points": {
+                    "fixture__one.start": {"time": 0.0},
+                    "fixture__one.end": {"time": 2.0},
+                    "fixture__one.speech_end": {"time": 0.9},
+                },
+                "cue_timing": {
+                    "fixture/one": {"trim_to_speech_end": True},
+                },
+            }
+            (tutorial / "full.audio-slices.json").write_text(
+                json.dumps(slices), encoding="utf-8")
+            runtime = {
+                "cues": [{
+                    "id": "fixture/one",
+                    "audio": "media/one.mp3",
+                    "audio_start": 0.5,
+                    "duration": 1.0,
+                }],
+            }
+            (tutorial / "full.runtime.json").write_text(
+                json.dumps(runtime), encoding="utf-8")
+            samples = self._tone_samples(duration=2.0, start=0.8, end=1.4)
+            with mock.patch.object(tail, "_decode_pcm", return_value=samples):
+                document, changes = tail.measure_timeline(
+                    tutorial, root, "full", "ffmpeg",
+                    guard_seconds=0.1, runtime_windows=True)
+            cue = document["cues"]["fixture/one"][0]
+            measured = document["timing_points"][cue["speech_end_ref"]]["time"]
+            self.assertGreaterEqual(measured, 1.38)
+            self.assertLessEqual(measured, 1.42)
+            policy = document["cue_timing"]["fixture/one"]
+            self.assertIs(policy["use_measured_speech_end"], True)
+            self.assertAlmostEqual(policy["trim_tail_guard_seconds"], 0.1)
+            self.assertEqual(len(changes), 1)
 
     def test_analysis_is_clamped_to_authored_source_end(self) -> None:
         samples = self._tone_samples(duration=1.5, start=0.5, end=1.4)

@@ -153,6 +153,9 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
     existing_cue_timing = existing.get("cue_timing", {})
     if not isinstance(existing_cue_timing, dict):
         raise BuildError(f"{output_path}: cue_timing must be an object")
+    existing_timing_points = existing.get("timing_points", {})
+    if not isinstance(existing_timing_points, dict):
+        raise BuildError(f"{output_path}: timing_points must be an object")
 
     if runtime.get("game_id") not in (None, game):
         raise BuildError(f"{runtime_path}: game_id mismatch")
@@ -248,9 +251,28 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         trim_to_speech_end = bool(
             isinstance(policy, dict)
             and policy.get("trim_to_speech_end") is True)
+        measured_speech_end = bool(
+            isinstance(policy, dict)
+            and policy.get("use_measured_speech_end") is True)
+        if measured_speech_end:
+            measured_ref = f"{slice_id}.speech_end"
+            measured_point = existing_timing_points.get(measured_ref)
+            if not isinstance(measured_point, dict) or not isinstance(
+                    measured_point.get("time"), (int, float)):
+                raise BuildError(
+                    f"{path}: use_measured_speech_end requires existing timing "
+                    f"point {measured_ref!r}")
+            measured_value = float(measured_point["time"])
+            if measured_value < audio_start - 1e-9 \
+                    or measured_value > audio_end + 1e-9:
+                raise BuildError(
+                    f"{path}: measured speech end {measured_value:g} is outside "
+                    f"cue audio window [{audio_start:g}, {audio_end:g}]")
+            speech_end = measured_value
         if trim_to_speech_end and speech_end is None:
             raise BuildError(
-                f"{path}: trim_to_speech_end requires TTS word timings")
+                f"{path}: trim_to_speech_end requires TTS word timings "
+                "or use_measured_speech_end")
 
         effective_start = audio_start
         effective_end = audio_end
@@ -322,7 +344,9 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         timing_points[speech_ref] = {
             "time": _round(
                 effective_end if speech_end is None else min(speech_end, effective_end)),
-            "description": "last TTS word end"}
+            "description": (
+                "measured speech end" if measured_speech_end
+                else "last TTS word end")}
         source_ranges.append({
             "cue": cue_id, "asset": asset,
             "raw_start": audio_start, "raw_end": audio_end,

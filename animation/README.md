@@ -26,9 +26,12 @@
   `state` visual segment。
 - full 的 83 cue 与 quick 的 32 cue 都有确定性 plan，构建入口为
   `python3 animation/build_cue_timeline.py --game splendor --track {quick,full}`。
-- quick cue-level TTS 的末词时间戳会低估真实语音尾部。需要重生成 quick
-  TTS 后，用制作期工具把 PCM 能量尾部写成固定时间戳：
+- TTS 的末词时间戳可能低估真实语音尾部，quick 和 full 都受影响。需要
+  重生成 TTS 后，用制作期工具把 PCM 能量尾部写成固定时间戳：
+  quick 用 authored cue-level windows：
   `python3 animation/measure_audio_tail.py --game splendor --track quick --ffmpeg <ffmpeg> --write --guard-seconds 0.1`；
+  full 用 runtime section windows：
+  `python3 animation/measure_audio_tail.py --game splendor --track full --runtime-windows --ffmpeg <ffmpeg> --write --guard-seconds 0.1`。
   plan 构建只读时间戳，不运行能量分析。
 - Unity 按课程 DSP 时钟播放连续 PCM 块，cue 标记驱动字幕、视觉与导航。
 - [完整制作流程](../docs/tutorial/audio-timeline-pipeline.md)、

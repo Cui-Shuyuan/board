@@ -10,8 +10,15 @@ slice's ``speech_end_ref`` timestamp.  Playback and trim never run energy
 analysis; they only consume the stored timestamps.
 
 Usage:
+    # quick: measure each authored cue-level source window
     python3 animation/measure_audio_tail.py \
         --game splendor --track quick \
+        --ffmpeg /path/to/ffmpeg \
+        --write --guard-seconds 0.1
+
+    # full: measure raw runtime section windows before rebuilding audio-slices
+    python3 animation/measure_audio_tail.py \
+        --game splendor --track full --runtime-windows \
         --ffmpeg /path/to/ffmpeg \
         --write --guard-seconds 0.1
 
@@ -169,6 +176,7 @@ def measure_timeline(
     ffmpeg: str,
     *,
     guard_seconds: float | None = None,
+    runtime_windows: bool = False,
 ) -> tuple[dict, list[dict]]:
     slices_path = tutorial_dir / f"{track}.audio-slices.json"
     document = _load_json(slices_path)
@@ -185,6 +193,18 @@ def measure_timeline(
     if isinstance(sample_rate, bool) or not isinstance(sample_rate, int) \
             or sample_rate <= 0:
         raise MeasureError(f"{slices_path}: sample_rate must be positive")
+
+    runtime_by_id: dict[str, dict] = {}
+    if runtime_windows:
+        runtime_path = tutorial_dir / f"{track}.runtime.json"
+        runtime = _load_json(runtime_path)
+        for runtime_cue in runtime.get("cues") or []:
+            if not isinstance(runtime_cue, dict):
+                raise MeasureError(f"{runtime_path}: cue must be an object")
+            cue_id = str(runtime_cue.get("id") or "").strip()
+            if not cue_id:
+                raise MeasureError(f"{runtime_path}: cue id is empty")
+            runtime_by_id[cue_id] = runtime_cue
 
     pcm_cache: dict[str, array] = {}
     changes: list[dict] = []
@@ -209,8 +229,20 @@ def measure_timeline(
                         point.get("time"), (int, float)):
                     raise MeasureError(
                         f"cue {cue_id!r}: missing timing point {ref!r}")
-            source_start = float(timing_points[start_ref]["time"])
-            source_end = float(timing_points[end_ref]["time"])
+            if runtime_windows:
+                runtime_cue = runtime_by_id.get(cue_id)
+                if runtime_cue is None:
+                    raise MeasureError(
+                        f"cue {cue_id!r}: missing from runtime cues")
+                source_start = float(runtime_cue.get("audio_start", 0.0))
+                source_end = source_start + float(
+                    runtime_cue.get("duration", 0.0))
+                if source_end <= source_start:
+                    raise MeasureError(
+                        f"cue {cue_id!r}: invalid runtime audio window")
+            else:
+                source_start = float(timing_points[start_ref]["time"])
+                source_end = float(timing_points[end_ref]["time"])
             old_speech_end = float(timing_points[speech_ref]["time"])
             measured = last_voiced_end_seconds(
                 pcm_cache[asset], sample_rate, source_start, source_end)
@@ -229,16 +261,19 @@ def measure_timeline(
                 if abs(old_end - old_speech_end) <= 1e-6:
                     point["time"] = new_speech_end
                     subtitle_changes.append(subtitle_end_ref)
+            policy = cue_timing.setdefault(cue_id, {})
+            if not isinstance(policy, dict):
+                raise MeasureError(
+                    f"cue {cue_id!r}: cue_timing must be an object")
             guard_changed = False
             old_guard = 0.0
             if guard_seconds is not None:
-                policy = cue_timing.setdefault(cue_id, {})
-                if not isinstance(policy, dict):
-                    raise MeasureError(
-                        f"cue {cue_id!r}: cue_timing must be an object")
                 old_guard = float(policy.get("trim_tail_guard_seconds", 0.0))
                 policy["trim_tail_guard_seconds"] = float(guard_seconds)
                 guard_changed = abs(old_guard - float(guard_seconds)) > EPSILON
+            old_measured = bool(policy.get("use_measured_speech_end", False))
+            policy["use_measured_speech_end"] = True
+            preserve_changed = not old_measured
             changes.append({
                 "cue_id": cue_id,
                 "slice_id": str(raw_slice.get("id") or ""),
@@ -250,6 +285,7 @@ def measure_timeline(
                 "old_guard": old_guard,
                 "guard": guard_seconds,
                 "guard_changed": guard_changed,
+                "preserve_changed": preserve_changed,
             })
     return document, changes
 
@@ -260,6 +296,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--track", required=True)
     parser.add_argument("--ffmpeg", default=None)
     parser.add_argument("--guard-seconds", type=float, default=None)
+    parser.add_argument(
+        "--runtime-windows",
+        action="store_true",
+        help="measure from runtime audio_start/duration instead of trimmed slice refs")
     parser.add_argument("--write", action="store_true")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args(argv)
@@ -274,7 +314,8 @@ def main(argv: list[str] | None = None) -> int:
         ffmpeg = _resolve_ffmpeg(args.ffmpeg)
         document, changes = measure_timeline(
             tutorial_dir, game_dir, args.track.strip(), ffmpeg,
-            guard_seconds=args.guard_seconds)
+            guard_seconds=args.guard_seconds,
+            runtime_windows=args.runtime_windows)
     except MeasureError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
@@ -283,16 +324,21 @@ def main(argv: list[str] | None = None) -> int:
     changed = any(
         abs(change["new_speech_end"] - change["old_speech_end"]) > EPSILON
         or change["guard_changed"]
+        or change["preserve_changed"]
         for change in changes)
     for change in changes:
-        guard_note = ""
+        notes = []
         if change["guard_changed"]:
-            guard_note = f"  guard {change['old_guard']:.3f} -> {change['guard']:.3f}"
+            notes.append(
+                f"guard {change['old_guard']:.3f} -> {change['guard']:.3f}")
+        if change["preserve_changed"]:
+            notes.append("mark measured")
+        note = ("  " + "; ".join(notes)) if notes else ""
         print(
             f"{change['cue_id']:35} "
             f"speech_end {change['old_speech_end']:7.3f} -> "
             f"{change['new_speech_end']:7.3f}  "
-            f"tail={change['remaining_to_source_end']:6.3f}{guard_note}")
+            f"tail={change['remaining_to_source_end']:6.3f}{note}")
     if args.check:
         if changed:
             print(f"FAIL {output_path}: measured tail anchors differ")

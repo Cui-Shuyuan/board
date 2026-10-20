@@ -356,499 +356,582 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "intro/001": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup/title_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_cards/title_2_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_cards/001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_cards/001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_cards/002.1": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_gems/title_2_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_gems/001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_gems/002": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_gems/003.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_gems/005.2": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/title_2_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/nobles.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/nobles.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/nobles.002": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/title_2_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/starting.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/starting.001.3": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/title_2_5": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "setup_players/end.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "turn/title_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "turn/001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "turn/002": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/title_3_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/different.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/same.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/same.002": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/draw_rule.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/draw_rule.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/limit.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/limit.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/public.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "take_gems/public.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards_group/title_3_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/title_3_2_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/intro.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/cost.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/cost.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/market.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/market.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/prestige.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/prestige.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/discount.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/discount.002.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/discount.003.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/discount.003.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/public.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "cards/limit.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/title_3_2_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/intro.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/trigger.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/forced.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/source.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/choice.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/repeat.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/repeat.001.3": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/summary.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/summary.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "nobles/summary.001.3": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/title_3_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/intro.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/gold.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/deck.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/notes_intro.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/limit_gold.001.2": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/limit_hand.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/private.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/private.002": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "reserve/not_purchase.001": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "purchase_reserved/title_3_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "purchase_reserved/001": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "summary/title_3_5": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "summary/001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "summary/002.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "summary/002.2": {
       "mode": "max",
       "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/title_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "trailing_silence_seconds": 0.5,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/trigger.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/final_rounds.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/example.001.1": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/winner.001": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/winner.002": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     },
     "end/winner.003": {
       "mode": "max",
       "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.1,
+      "use_measured_speech_end": true
     }
   },
   "audio_groups": {
@@ -1109,7 +1192,7 @@
       "description": "subtitle start"
     },
     "intro__title_1.subtitle.0.end": {
-      "time": 1.305,
+      "time": 2.0,
       "description": "subtitle end"
     },
     "intro__title_1.start": {
@@ -1117,12 +1200,12 @@
       "description": "logical slice start"
     },
     "intro__title_1.end": {
-      "time": 1.305,
+      "time": 2.0,
       "description": "logical slice end"
     },
     "intro__title_1.speech_end": {
-      "time": 1.225,
-      "description": "last TTS word end"
+      "time": 2.0,
+      "description": "measured speech end"
     },
     "intro__title_1.visual.cue_start": {
       "time": 0.0,
@@ -1165,20 +1248,20 @@
       "description": "subtitle start"
     },
     "intro__001.subtitle.3.end": {
-      "time": 16.035,
+      "time": 16.488,
       "description": "subtitle end"
     },
     "intro__001.start": {
-      "time": 1.85,
+      "time": 2.0,
       "description": "logical slice start"
     },
     "intro__001.end": {
-      "time": 16.035,
+      "time": 16.488,
       "description": "logical slice end"
     },
     "intro__001.speech_end": {
-      "time": 15.955,
-      "description": "last TTS word end"
+      "time": 16.48,
+      "description": "measured speech end"
     },
     "intro__001.visual.cue_start": {
       "time": 0.0,
@@ -1189,7 +1272,7 @@
       "description": "subtitle start"
     },
     "setup__title_2.subtitle.0.end": {
-      "time": 1.345,
+      "time": 1.632,
       "description": "subtitle end"
     },
     "setup__title_2.start": {
@@ -1197,12 +1280,12 @@
       "description": "logical slice start"
     },
     "setup__title_2.end": {
-      "time": 1.345,
+      "time": 1.632,
       "description": "logical slice end"
     },
     "setup__title_2.speech_end": {
-      "time": 1.265,
-      "description": "last TTS word end"
+      "time": 1.62,
+      "description": "measured speech end"
     },
     "setup__title_2.visual.cue_start": {
       "time": 0.0,
@@ -1221,7 +1304,7 @@
       "description": "subtitle start"
     },
     "setup_cards__title_2_1.subtitle.0.end": {
-      "time": 2.145,
+      "time": 2.66,
       "description": "subtitle end"
     },
     "setup_cards__title_2_1.start": {
@@ -1229,12 +1312,12 @@
       "description": "logical slice start"
     },
     "setup_cards__title_2_1.end": {
-      "time": 2.145,
+      "time": 2.66,
       "description": "logical slice end"
     },
     "setup_cards__title_2_1.speech_end": {
-      "time": 2.065,
-      "description": "last TTS word end"
+      "time": 2.66,
+      "description": "measured speech end"
     },
     "setup_cards__title_2_1.visual.cue_start": {
       "time": 0.0,
@@ -1253,20 +1336,20 @@
       "description": "subtitle start"
     },
     "setup_cards__001.1.subtitle.0.end": {
-      "time": 4.915,
+      "time": 5.32,
       "description": "subtitle end"
     },
     "setup_cards__001.1.start": {
-      "time": 2.51,
+      "time": 2.66,
       "description": "logical slice start"
     },
     "setup_cards__001.1.end": {
-      "time": 4.915,
+      "time": 5.32,
       "description": "logical slice end"
     },
     "setup_cards__001.1.speech_end": {
-      "time": 4.835,
-      "description": "last TTS word end"
+      "time": 5.32,
+      "description": "measured speech end"
     },
     "setup_cards__001.1.visual.cue_start": {
       "time": 0.0,
@@ -1301,20 +1384,20 @@
       "description": "subtitle start"
     },
     "setup_cards__001.2.subtitle.3.end": {
-      "time": 17.135,
+      "time": 18.005,
       "description": "subtitle end"
     },
     "setup_cards__001.2.start": {
-      "time": 5.17,
+      "time": 5.32,
       "description": "logical slice start"
     },
     "setup_cards__001.2.end": {
-      "time": 17.135,
+      "time": 18.005,
       "description": "logical slice end"
     },
     "setup_cards__001.2.speech_end": {
-      "time": 17.055,
-      "description": "last TTS word end"
+      "time": 18.0,
+      "description": "measured speech end"
     },
     "setup_cards__001.2.visual.cue_start": {
       "time": 0.0,
@@ -1349,20 +1432,20 @@
       "description": "subtitle start"
     },
     "setup_cards__002.1.subtitle.2.end": {
-      "time": 29.915,
+      "time": 30.24,
       "description": "subtitle end"
     },
     "setup_cards__002.1.start": {
-      "time": 17.855,
+      "time": 18.005,
       "description": "logical slice start"
     },
     "setup_cards__002.1.end": {
-      "time": 29.915,
+      "time": 30.24,
       "description": "logical slice end"
     },
     "setup_cards__002.1.speech_end": {
-      "time": 29.835,
-      "description": "last TTS word end"
+      "time": 30.215,
+      "description": "measured speech end"
     },
     "setup_cards__002.1.visual.cue_start": {
       "time": 0.0,
@@ -1381,7 +1464,7 @@
       "description": "subtitle start"
     },
     "setup_gems__title_2_2.subtitle.0.end": {
-      "time": 2.285,
+      "time": 2.75,
       "description": "subtitle end"
     },
     "setup_gems__title_2_2.start": {
@@ -1389,12 +1472,12 @@
       "description": "logical slice start"
     },
     "setup_gems__title_2_2.end": {
-      "time": 2.285,
+      "time": 2.75,
       "description": "logical slice end"
     },
     "setup_gems__title_2_2.speech_end": {
-      "time": 2.205,
-      "description": "last TTS word end"
+      "time": 2.73,
+      "description": "measured speech end"
     },
     "setup_gems__title_2_2.visual.cue_start": {
       "time": 0.0,
@@ -1429,20 +1512,20 @@
       "description": "subtitle start"
     },
     "setup_gems__001.1.subtitle.2.end": {
-      "time": 15.725,
+      "time": 16.155,
       "description": "subtitle end"
     },
     "setup_gems__001.1.start": {
-      "time": 2.6,
+      "time": 2.75,
       "description": "logical slice start"
     },
     "setup_gems__001.1.end": {
-      "time": 15.725,
+      "time": 16.155,
       "description": "logical slice end"
     },
     "setup_gems__001.1.speech_end": {
-      "time": 15.645,
-      "description": "last TTS word end"
+      "time": 16.14,
+      "description": "measured speech end"
     },
     "setup_gems__001.1.visual.cue_start": {
       "time": 0.0,
@@ -1469,20 +1552,20 @@
       "description": "subtitle start"
     },
     "setup_gems__002.subtitle.1.end": {
-      "time": 21.775,
+      "time": 22.095,
       "description": "subtitle end"
     },
     "setup_gems__002.start": {
-      "time": 16.005,
+      "time": 16.155,
       "description": "logical slice start"
     },
     "setup_gems__002.end": {
-      "time": 21.775,
+      "time": 22.095,
       "description": "logical slice end"
     },
     "setup_gems__002.speech_end": {
-      "time": 21.695,
-      "description": "last TTS word end"
+      "time": 22.095,
+      "description": "measured speech end"
     },
     "setup_gems__002.visual.cue_start": {
       "time": 0.0,
@@ -1533,20 +1616,20 @@
       "description": "subtitle start"
     },
     "setup_gems__003.1.subtitle.4.end": {
-      "time": 40.254,
+      "time": 40.649,
       "description": "subtitle end"
     },
     "setup_gems__003.1.start": {
-      "time": 21.945,
+      "time": 22.095,
       "description": "logical slice start"
     },
     "setup_gems__003.1.end": {
-      "time": 40.254,
+      "time": 40.649,
       "description": "logical slice end"
     },
     "setup_gems__003.1.speech_end": {
-      "time": 40.174,
-      "description": "last TTS word end"
+      "time": 40.645,
+      "description": "measured speech end"
     },
     "setup_gems__003.1.visual.cue_start": {
       "time": 0.0,
@@ -1573,20 +1656,20 @@
       "description": "subtitle start"
     },
     "setup_gems__005.2.subtitle.1.end": {
-      "time": 46.594,
+      "time": 46.889,
       "description": "subtitle end"
     },
     "setup_gems__005.2.start": {
-      "time": 40.499,
+      "time": 40.649,
       "description": "logical slice start"
     },
     "setup_gems__005.2.end": {
-      "time": 46.594,
+      "time": 46.889,
       "description": "logical slice end"
     },
     "setup_gems__005.2.speech_end": {
-      "time": 46.514,
-      "description": "last TTS word end"
+      "time": 46.789,
+      "description": "measured speech end"
     },
     "setup_gems__005.2.visual.cue_start": {
       "time": 0.0,
@@ -1605,7 +1688,7 @@
       "description": "subtitle start"
     },
     "setup_players__title_2_3.subtitle.0.end": {
-      "time": 2.095,
+      "time": 2.57,
       "description": "subtitle end"
     },
     "setup_players__title_2_3.start": {
@@ -1613,12 +1696,12 @@
       "description": "logical slice start"
     },
     "setup_players__title_2_3.end": {
-      "time": 2.095,
+      "time": 2.57,
       "description": "logical slice end"
     },
     "setup_players__title_2_3.speech_end": {
-      "time": 2.015,
-      "description": "last TTS word end"
+      "time": 2.57,
+      "description": "measured speech end"
     },
     "setup_players__title_2_3.visual.cue_start": {
       "time": 0.0,
@@ -1637,20 +1720,20 @@
       "description": "subtitle start"
     },
     "setup_players__nobles.001.1.subtitle.0.end": {
-      "time": 3.695,
+      "time": 4.01,
       "description": "subtitle end"
     },
     "setup_players__nobles.001.1.start": {
-      "time": 2.42,
+      "time": 2.57,
       "description": "logical slice start"
     },
     "setup_players__nobles.001.1.end": {
-      "time": 3.695,
+      "time": 4.01,
       "description": "logical slice end"
     },
     "setup_players__nobles.001.1.speech_end": {
-      "time": 3.615,
-      "description": "last TTS word end"
+      "time": 4.01,
+      "description": "measured speech end"
     },
     "setup_players__nobles.001.1.visual.cue_start": {
       "time": 0.0,
@@ -1669,20 +1752,20 @@
       "description": "subtitle start"
     },
     "setup_players__nobles.001.2.subtitle.1.end": {
-      "time": 12.285,
+      "time": 13.025,
       "description": "subtitle end"
     },
     "setup_players__nobles.001.2.start": {
-      "time": 3.86,
+      "time": 4.01,
       "description": "logical slice start"
     },
     "setup_players__nobles.001.2.end": {
-      "time": 12.285,
+      "time": 13.025,
       "description": "logical slice end"
     },
     "setup_players__nobles.001.2.speech_end": {
-      "time": 12.205,
-      "description": "last TTS word end"
+      "time": 13.02,
+      "description": "measured speech end"
     },
     "setup_players__nobles.001.2.visual.cue_start": {
       "time": 0.0,
@@ -1693,20 +1776,20 @@
       "description": "subtitle start"
     },
     "setup_players__nobles.002.subtitle.0.end": {
-      "time": 19.365,
+      "time": 20.205,
       "description": "subtitle end"
     },
     "setup_players__nobles.002.start": {
-      "time": 12.875,
+      "time": 13.025,
       "description": "logical slice start"
     },
     "setup_players__nobles.002.end": {
-      "time": 19.365,
+      "time": 20.205,
       "description": "logical slice end"
     },
     "setup_players__nobles.002.speech_end": {
-      "time": 19.285,
-      "description": "last TTS word end"
+      "time": 20.205,
+      "description": "measured speech end"
     },
     "setup_players__nobles.002.visual.cue_start": {
       "time": 0.0,
@@ -1717,20 +1800,20 @@
       "description": "subtitle start"
     },
     "setup_players__title_2_4.subtitle.0.end": {
-      "time": 21.385,
+      "time": 21.825,
       "description": "subtitle end"
     },
     "setup_players__title_2_4.start": {
-      "time": 20.055,
+      "time": 20.205,
       "description": "logical slice start"
     },
     "setup_players__title_2_4.end": {
-      "time": 21.385,
+      "time": 21.825,
       "description": "logical slice end"
     },
     "setup_players__title_2_4.speech_end": {
-      "time": 21.305,
-      "description": "last TTS word end"
+      "time": 21.825,
+      "description": "measured speech end"
     },
     "setup_players__title_2_4.visual.cue_start": {
       "time": 0.0,
@@ -1757,20 +1840,20 @@
       "description": "subtitle start"
     },
     "setup_players__starting.001.1.subtitle.1.end": {
-      "time": 31.515,
+      "time": 31.904,
       "description": "subtitle end"
     },
     "setup_players__starting.001.1.start": {
-      "time": 21.675,
+      "time": 21.825,
       "description": "logical slice start"
     },
     "setup_players__starting.001.1.end": {
-      "time": 31.515,
+      "time": 31.904,
       "description": "logical slice end"
     },
     "setup_players__starting.001.1.speech_end": {
-      "time": 31.435,
-      "description": "last TTS word end"
+      "time": 31.895,
+      "description": "measured speech end"
     },
     "setup_players__starting.001.1.visual.cue_start": {
       "time": 0.0,
@@ -1789,20 +1872,20 @@
       "description": "subtitle start"
     },
     "setup_players__starting.001.3.subtitle.1.end": {
-      "time": 35.599,
+      "time": 35.844,
       "description": "subtitle end"
     },
     "setup_players__starting.001.3.start": {
-      "time": 31.754,
+      "time": 31.904,
       "description": "logical slice start"
     },
     "setup_players__starting.001.3.end": {
-      "time": 35.599,
+      "time": 35.844,
       "description": "logical slice end"
     },
     "setup_players__starting.001.3.speech_end": {
-      "time": 35.519,
-      "description": "last TTS word end"
+      "time": 35.844,
+      "description": "measured speech end"
     },
     "setup_players__starting.001.3.visual.cue_start": {
       "time": 0.0,
@@ -1821,20 +1904,20 @@
       "description": "subtitle start"
     },
     "setup_players__title_2_5.subtitle.0.end": {
-      "time": 37.429,
+      "time": 37.744,
       "description": "subtitle end"
     },
     "setup_players__title_2_5.start": {
-      "time": 35.694,
+      "time": 35.844,
       "description": "logical slice start"
     },
     "setup_players__title_2_5.end": {
-      "time": 37.429,
+      "time": 37.744,
       "description": "logical slice end"
     },
     "setup_players__title_2_5.speech_end": {
-      "time": 37.349,
-      "description": "last TTS word end"
+      "time": 37.734,
+      "description": "measured speech end"
     },
     "setup_players__title_2_5.visual.cue_start": {
       "time": 0.0,
@@ -1861,20 +1944,20 @@
       "description": "subtitle start"
     },
     "setup_players__end.001.1.subtitle.1.end": {
-      "time": 42.85,
+      "time": 43.056,
       "description": "subtitle end"
     },
     "setup_players__end.001.1.start": {
-      "time": 37.594,
+      "time": 37.744,
       "description": "logical slice start"
     },
     "setup_players__end.001.1.end": {
-      "time": 42.85,
+      "time": 43.056,
       "description": "logical slice end"
     },
     "setup_players__end.001.1.speech_end": {
-      "time": 42.77,
-      "description": "last TTS word end"
+      "time": 43.034,
+      "description": "measured speech end"
     },
     "setup_players__end.001.1.visual.cue_start": {
       "time": 0.0,
@@ -1885,7 +1968,7 @@
       "description": "subtitle start"
     },
     "turn__title_3.subtitle.0.end": {
-      "time": 1.575,
+      "time": 2.23,
       "description": "subtitle end"
     },
     "turn__title_3.start": {
@@ -1893,12 +1976,12 @@
       "description": "logical slice start"
     },
     "turn__title_3.end": {
-      "time": 1.575,
+      "time": 2.23,
       "description": "logical slice end"
     },
     "turn__title_3.speech_end": {
-      "time": 1.495,
-      "description": "last TTS word end"
+      "time": 2.23,
+      "description": "measured speech end"
     },
     "turn__title_3.visual.cue_start": {
       "time": 0.0,
@@ -1925,20 +2008,20 @@
       "description": "subtitle start"
     },
     "turn__001.subtitle.1.end": {
-      "time": 9.565,
+      "time": 10.025,
       "description": "subtitle end"
     },
     "turn__001.start": {
-      "time": 2.08,
+      "time": 2.23,
       "description": "logical slice start"
     },
     "turn__001.end": {
-      "time": 9.565,
+      "time": 10.025,
       "description": "logical slice end"
     },
     "turn__001.speech_end": {
-      "time": 9.485,
-      "description": "last TTS word end"
+      "time": 9.99,
+      "description": "measured speech end"
     },
     "turn__001.visual.cue_start": {
       "time": 0.0,
@@ -1957,20 +2040,20 @@
       "description": "subtitle start"
     },
     "turn__002.subtitle.0.end": {
-      "time": 14.285,
+      "time": 15.072,
       "description": "subtitle end"
     },
     "turn__002.start": {
-      "time": 9.875,
+      "time": 10.025,
       "description": "logical slice start"
     },
     "turn__002.end": {
-      "time": 14.285,
+      "time": 15.072,
       "description": "logical slice end"
     },
     "turn__002.speech_end": {
-      "time": 14.205,
-      "description": "last TTS word end"
+      "time": 15.055,
+      "description": "measured speech end"
     },
     "turn__002.visual.cue_start": {
       "time": 0.0,
@@ -1981,7 +2064,7 @@
       "description": "subtitle start"
     },
     "take_gems__title_3_1.subtitle.0.end": {
-      "time": 3.595,
+      "time": 3.93,
       "description": "subtitle end"
     },
     "take_gems__title_3_1.start": {
@@ -1989,12 +2072,12 @@
       "description": "logical slice start"
     },
     "take_gems__title_3_1.end": {
-      "time": 3.595,
+      "time": 3.93,
       "description": "logical slice end"
     },
     "take_gems__title_3_1.speech_end": {
-      "time": 3.515,
-      "description": "last TTS word end"
+      "time": 3.9,
+      "description": "measured speech end"
     },
     "take_gems__title_3_1.visual.cue_start": {
       "time": 0.0,
@@ -2013,20 +2096,20 @@
       "description": "subtitle start"
     },
     "take_gems__different.001.subtitle.0.end": {
-      "time": 8.315,
+      "time": 8.695,
       "description": "subtitle end"
     },
     "take_gems__different.001.start": {
-      "time": 3.78,
+      "time": 3.93,
       "description": "logical slice start"
     },
     "take_gems__different.001.end": {
-      "time": 8.315,
+      "time": 8.695,
       "description": "logical slice end"
     },
     "take_gems__different.001.speech_end": {
-      "time": 8.235,
-      "description": "last TTS word end"
+      "time": 8.69,
+      "description": "measured speech end"
     },
     "take_gems__different.001.visual.cue_start": {
       "time": 0.0,
@@ -2053,20 +2136,20 @@
       "description": "subtitle start"
     },
     "take_gems__same.001.subtitle.1.end": {
-      "time": 15.055,
+      "time": 15.355,
       "description": "subtitle end"
     },
     "take_gems__same.001.start": {
-      "time": 8.545,
+      "time": 8.695,
       "description": "logical slice start"
     },
     "take_gems__same.001.end": {
-      "time": 15.055,
+      "time": 15.355,
       "description": "logical slice end"
     },
     "take_gems__same.001.speech_end": {
-      "time": 14.975,
-      "description": "last TTS word end"
+      "time": 15.355,
+      "description": "measured speech end"
     },
     "take_gems__same.001.visual.cue_start": {
       "time": 0.0,
@@ -2093,20 +2176,20 @@
       "description": "subtitle start"
     },
     "take_gems__same.002.subtitle.1.end": {
-      "time": 21.685,
+      "time": 22.045,
       "description": "subtitle end"
     },
     "take_gems__same.002.start": {
-      "time": 15.205,
+      "time": 15.355,
       "description": "logical slice start"
     },
     "take_gems__same.002.end": {
-      "time": 21.685,
+      "time": 22.045,
       "description": "logical slice end"
     },
     "take_gems__same.002.speech_end": {
-      "time": 21.605,
-      "description": "last TTS word end"
+      "time": 22.035,
+      "description": "measured speech end"
     },
     "take_gems__same.002.visual.cue_start": {
       "time": 0.0,
@@ -2117,20 +2200,20 @@
       "description": "subtitle start"
     },
     "take_gems__draw_rule.001.1.subtitle.0.end": {
-      "time": 27.755,
+      "time": 28.555,
       "description": "subtitle end"
     },
     "take_gems__draw_rule.001.1.start": {
-      "time": 21.895,
+      "time": 22.045,
       "description": "logical slice start"
     },
     "take_gems__draw_rule.001.1.end": {
-      "time": 27.755,
+      "time": 28.555,
       "description": "logical slice end"
     },
     "take_gems__draw_rule.001.1.speech_end": {
-      "time": 27.675,
-      "description": "last TTS word end"
+      "time": 28.535,
+      "description": "measured speech end"
     },
     "take_gems__draw_rule.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2149,20 +2232,20 @@
       "description": "subtitle start"
     },
     "take_gems__draw_rule.001.2.subtitle.0.end": {
-      "time": 31.905,
+      "time": 32.349,
       "description": "subtitle end"
     },
     "take_gems__draw_rule.001.2.start": {
-      "time": 28.405,
+      "time": 28.555,
       "description": "logical slice start"
     },
     "take_gems__draw_rule.001.2.end": {
-      "time": 31.905,
+      "time": 32.349,
       "description": "logical slice end"
     },
     "take_gems__draw_rule.001.2.speech_end": {
-      "time": 31.825,
-      "description": "last TTS word end"
+      "time": 32.345,
+      "description": "measured speech end"
     },
     "take_gems__draw_rule.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2189,20 +2272,20 @@
       "description": "subtitle start"
     },
     "take_gems__limit.001.1.subtitle.1.end": {
-      "time": 38.564,
+      "time": 38.664,
       "description": "subtitle end"
     },
     "take_gems__limit.001.1.start": {
-      "time": 32.199,
+      "time": 32.349,
       "description": "logical slice start"
     },
     "take_gems__limit.001.1.end": {
-      "time": 38.564,
+      "time": 38.664,
       "description": "logical slice end"
     },
     "take_gems__limit.001.1.speech_end": {
-      "time": 38.484,
-      "description": "last TTS word end"
+      "time": 38.659,
+      "description": "measured speech end"
     },
     "take_gems__limit.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2221,20 +2304,20 @@
       "description": "subtitle start"
     },
     "take_gems__limit.001.2.subtitle.0.end": {
-      "time": 43.894,
+      "time": 44.744,
       "description": "subtitle end"
     },
     "take_gems__limit.001.2.start": {
-      "time": 38.564,
+      "time": 38.664,
       "description": "logical slice start"
     },
     "take_gems__limit.001.2.end": {
-      "time": 43.894,
+      "time": 44.744,
       "description": "logical slice end"
     },
     "take_gems__limit.001.2.speech_end": {
-      "time": 43.814,
-      "description": "last TTS word end"
+      "time": 44.744,
+      "description": "measured speech end"
     },
     "take_gems__limit.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2253,20 +2336,20 @@
       "description": "subtitle start"
     },
     "take_gems__public.001.1.subtitle.0.end": {
-      "time": 50.354,
+      "time": 50.494,
       "description": "subtitle end"
     },
     "take_gems__public.001.1.start": {
-      "time": 44.594,
+      "time": 44.744,
       "description": "logical slice start"
     },
     "take_gems__public.001.1.end": {
-      "time": 50.354,
+      "time": 50.494,
       "description": "logical slice end"
     },
     "take_gems__public.001.1.speech_end": {
-      "time": 50.274,
-      "description": "last TTS word end"
+      "time": 50.494,
+      "description": "measured speech end"
     },
     "take_gems__public.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2277,20 +2360,20 @@
       "description": "subtitle start"
     },
     "take_gems__public.001.2.subtitle.0.end": {
-      "time": 52.284,
+      "time": 52.872,
       "description": "subtitle end"
     },
     "take_gems__public.001.2.start": {
-      "time": 50.354,
+      "time": 50.494,
       "description": "logical slice start"
     },
     "take_gems__public.001.2.end": {
-      "time": 52.284,
+      "time": 52.872,
       "description": "logical slice end"
     },
     "take_gems__public.001.2.speech_end": {
-      "time": 52.204,
-      "description": "last TTS word end"
+      "time": 52.854,
+      "description": "measured speech end"
     },
     "take_gems__public.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2309,7 +2392,7 @@
       "description": "subtitle start"
     },
     "cards_group__title_3_2.subtitle.0.end": {
-      "time": 3.245,
+      "time": 3.456,
       "description": "subtitle end"
     },
     "cards_group__title_3_2.start": {
@@ -2317,12 +2400,12 @@
       "description": "logical slice start"
     },
     "cards_group__title_3_2.end": {
-      "time": 3.245,
+      "time": 3.456,
       "description": "logical slice end"
     },
     "cards_group__title_3_2.speech_end": {
-      "time": 3.165,
-      "description": "last TTS word end"
+      "time": 3.45,
+      "description": "measured speech end"
     },
     "cards_group__title_3_2.visual.cue_start": {
       "time": 0.0,
@@ -2341,7 +2424,7 @@
       "description": "subtitle start"
     },
     "cards__title_3_2_1.subtitle.0.end": {
-      "time": 3.265,
+      "time": 3.865,
       "description": "subtitle end"
     },
     "cards__title_3_2_1.start": {
@@ -2349,12 +2432,12 @@
       "description": "logical slice start"
     },
     "cards__title_3_2_1.end": {
-      "time": 3.265,
+      "time": 3.865,
       "description": "logical slice end"
     },
     "cards__title_3_2_1.speech_end": {
-      "time": 3.185,
-      "description": "last TTS word end"
+      "time": 3.84,
+      "description": "measured speech end"
     },
     "cards__title_3_2_1.visual.cue_start": {
       "time": 0.0,
@@ -2373,20 +2456,20 @@
       "description": "subtitle start"
     },
     "cards__intro.001.subtitle.0.end": {
-      "time": 5.655,
+      "time": 6.085,
       "description": "subtitle end"
     },
     "cards__intro.001.start": {
-      "time": 3.715,
+      "time": 3.865,
       "description": "logical slice start"
     },
     "cards__intro.001.end": {
-      "time": 5.655,
+      "time": 6.085,
       "description": "logical slice end"
     },
     "cards__intro.001.speech_end": {
-      "time": 5.575,
-      "description": "last TTS word end"
+      "time": 6.085,
+      "description": "measured speech end"
     },
     "cards__intro.001.visual.cue_start": {
       "time": 0.0,
@@ -2405,20 +2488,20 @@
       "description": "subtitle start"
     },
     "cards__cost.001.1.subtitle.1.end": {
-      "time": 9.865,
+      "time": 10.03,
       "description": "subtitle end"
     },
     "cards__cost.001.1.start": {
-      "time": 5.935,
+      "time": 6.085,
       "description": "logical slice start"
     },
     "cards__cost.001.1.end": {
-      "time": 9.865,
+      "time": 10.03,
       "description": "logical slice end"
     },
     "cards__cost.001.1.speech_end": {
-      "time": 9.785,
-      "description": "last TTS word end"
+      "time": 10.025,
+      "description": "measured speech end"
     },
     "cards__cost.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2437,20 +2520,20 @@
       "description": "subtitle start"
     },
     "cards__cost.001.2.subtitle.1.end": {
-      "time": 20.29,
+      "time": 20.725,
       "description": "subtitle end"
     },
     "cards__cost.001.2.start": {
-      "time": 9.88,
+      "time": 10.03,
       "description": "logical slice start"
     },
     "cards__cost.001.2.end": {
-      "time": 20.29,
+      "time": 20.725,
       "description": "logical slice end"
     },
     "cards__cost.001.2.speech_end": {
-      "time": 20.21,
-      "description": "last TTS word end"
+      "time": 20.72,
+      "description": "measured speech end"
     },
     "cards__cost.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2477,20 +2560,20 @@
       "description": "subtitle start"
     },
     "cards__market.001.1.subtitle.1.end": {
-      "time": 35.705,
+      "time": 36.055,
       "description": "subtitle end"
     },
     "cards__market.001.1.start": {
-      "time": 20.575,
+      "time": 20.725,
       "description": "logical slice start"
     },
     "cards__market.001.1.end": {
-      "time": 35.705,
+      "time": 36.055,
       "description": "logical slice end"
     },
     "cards__market.001.1.speech_end": {
-      "time": 35.625,
-      "description": "last TTS word end"
+      "time": 36.055,
+      "description": "measured speech end"
     },
     "cards__market.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2509,20 +2592,20 @@
       "description": "subtitle start"
     },
     "cards__market.001.2.subtitle.0.end": {
-      "time": 42.825,
+      "time": 43.669,
       "description": "subtitle end"
     },
     "cards__market.001.2.start": {
-      "time": 35.905,
+      "time": 36.055,
       "description": "logical slice start"
     },
     "cards__market.001.2.end": {
-      "time": 42.825,
+      "time": 43.669,
       "description": "logical slice end"
     },
     "cards__market.001.2.speech_end": {
-      "time": 42.745,
-      "description": "last TTS word end"
+      "time": 43.665,
+      "description": "measured speech end"
     },
     "cards__market.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2549,20 +2632,20 @@
       "description": "subtitle start"
     },
     "cards__prestige.001.1.subtitle.1.end": {
-      "time": 50.079,
+      "time": 50.344,
       "description": "subtitle end"
     },
     "cards__prestige.001.1.start": {
-      "time": 43.519,
+      "time": 43.669,
       "description": "logical slice start"
     },
     "cards__prestige.001.1.end": {
-      "time": 50.079,
+      "time": 50.344,
       "description": "logical slice end"
     },
     "cards__prestige.001.1.speech_end": {
-      "time": 49.999,
-      "description": "last TTS word end"
+      "time": 50.329,
+      "description": "measured speech end"
     },
     "cards__prestige.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2589,20 +2672,20 @@
       "description": "subtitle start"
     },
     "cards__prestige.001.2.subtitle.1.end": {
-      "time": 55.869,
+      "time": 56.299,
       "description": "subtitle end"
     },
     "cards__prestige.001.2.start": {
-      "time": 50.194,
+      "time": 50.344,
       "description": "logical slice start"
     },
     "cards__prestige.001.2.end": {
-      "time": 55.869,
+      "time": 56.299,
       "description": "logical slice end"
     },
     "cards__prestige.001.2.speech_end": {
-      "time": 55.789,
-      "description": "last TTS word end"
+      "time": 56.294,
+      "description": "measured speech end"
     },
     "cards__prestige.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2613,20 +2696,20 @@
       "description": "subtitle start"
     },
     "cards__discount.001.subtitle.0.end": {
-      "time": 63.499,
+      "time": 63.939,
       "description": "subtitle end"
     },
     "cards__discount.001.start": {
-      "time": 56.149,
+      "time": 56.299,
       "description": "logical slice start"
     },
     "cards__discount.001.end": {
-      "time": 63.499,
+      "time": 63.939,
       "description": "logical slice end"
     },
     "cards__discount.001.speech_end": {
-      "time": 63.419,
-      "description": "last TTS word end"
+      "time": 63.939,
+      "description": "measured speech end"
     },
     "cards__discount.001.visual.cue_start": {
       "time": 0.0,
@@ -2645,20 +2728,20 @@
       "description": "subtitle start"
     },
     "cards__discount.002.1.subtitle.0.end": {
-      "time": 74.634,
+      "time": 75.414,
       "description": "subtitle end"
     },
     "cards__discount.002.1.start": {
-      "time": 63.789,
+      "time": 63.939,
       "description": "logical slice start"
     },
     "cards__discount.002.1.end": {
-      "time": 74.634,
+      "time": 75.414,
       "description": "logical slice end"
     },
     "cards__discount.002.1.speech_end": {
-      "time": 74.554,
-      "description": "last TTS word end"
+      "time": 75.409,
+      "description": "measured speech end"
     },
     "cards__discount.002.1.visual.cue_start": {
       "time": 0.0,
@@ -2677,20 +2760,20 @@
       "description": "subtitle start"
     },
     "cards__discount.003.1.subtitle.0.end": {
-      "time": 83.044,
+      "time": 83.309,
       "description": "subtitle end"
     },
     "cards__discount.003.1.start": {
-      "time": 75.264,
+      "time": 75.414,
       "description": "logical slice start"
     },
     "cards__discount.003.1.end": {
-      "time": 83.044,
+      "time": 83.309,
       "description": "logical slice end"
     },
     "cards__discount.003.1.speech_end": {
-      "time": 82.964,
-      "description": "last TTS word end"
+      "time": 83.294,
+      "description": "measured speech end"
     },
     "cards__discount.003.1.visual.cue_start": {
       "time": 0.0,
@@ -2709,20 +2792,20 @@
       "description": "subtitle start"
     },
     "cards__discount.003.2.subtitle.0.end": {
-      "time": 91.134,
+      "time": 91.663,
       "description": "subtitle end"
     },
     "cards__discount.003.2.start": {
-      "time": 83.159,
+      "time": 83.309,
       "description": "logical slice start"
     },
     "cards__discount.003.2.end": {
-      "time": 91.134,
+      "time": 91.663,
       "description": "logical slice end"
     },
     "cards__discount.003.2.speech_end": {
-      "time": 91.054,
-      "description": "last TTS word end"
+      "time": 91.659,
+      "description": "measured speech end"
     },
     "cards__discount.003.2.visual.cue_start": {
       "time": 0.0,
@@ -2733,20 +2816,20 @@
       "description": "subtitle start"
     },
     "cards__public.001.1.subtitle.0.end": {
-      "time": 103.078,
+      "time": 103.908,
       "description": "subtitle end"
     },
     "cards__public.001.1.start": {
-      "time": 91.513,
+      "time": 91.663,
       "description": "logical slice start"
     },
     "cards__public.001.1.end": {
-      "time": 103.078,
+      "time": 103.908,
       "description": "logical slice end"
     },
     "cards__public.001.1.speech_end": {
-      "time": 102.998,
-      "description": "last TTS word end"
+      "time": 103.903,
+      "description": "measured speech end"
     },
     "cards__public.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2765,20 +2848,20 @@
       "description": "subtitle start"
     },
     "cards__limit.001.1.subtitle.0.end": {
-      "time": 112.218,
+      "time": 112.56,
       "description": "subtitle end"
     },
     "cards__limit.001.1.start": {
-      "time": 103.758,
+      "time": 103.908,
       "description": "logical slice start"
     },
     "cards__limit.001.1.end": {
-      "time": 112.218,
+      "time": 112.56,
       "description": "logical slice end"
     },
     "cards__limit.001.1.speech_end": {
-      "time": 112.138,
-      "description": "last TTS word end"
+      "time": 112.478,
+      "description": "measured speech end"
     },
     "cards__limit.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2789,7 +2872,7 @@
       "description": "subtitle start"
     },
     "nobles__title_3_2_2.subtitle.0.end": {
-      "time": 2.745,
+      "time": 3.11,
       "description": "subtitle end"
     },
     "nobles__title_3_2_2.start": {
@@ -2797,12 +2880,12 @@
       "description": "logical slice start"
     },
     "nobles__title_3_2_2.end": {
-      "time": 2.745,
+      "time": 3.11,
       "description": "logical slice end"
     },
     "nobles__title_3_2_2.speech_end": {
-      "time": 2.665,
-      "description": "last TTS word end"
+      "time": 3.11,
+      "description": "measured speech end"
     },
     "nobles__title_3_2_2.visual.cue_start": {
       "time": 0.0,
@@ -2845,20 +2928,20 @@
       "description": "subtitle start"
     },
     "nobles__intro.001.subtitle.3.end": {
-      "time": 13.245,
+      "time": 13.985,
       "description": "subtitle end"
     },
     "nobles__intro.001.start": {
-      "time": 2.96,
+      "time": 3.11,
       "description": "logical slice start"
     },
     "nobles__intro.001.end": {
-      "time": 13.245,
+      "time": 13.985,
       "description": "logical slice end"
     },
     "nobles__intro.001.speech_end": {
-      "time": 13.165,
-      "description": "last TTS word end"
+      "time": 13.94,
+      "description": "measured speech end"
     },
     "nobles__intro.001.visual.cue_start": {
       "time": 0.0,
@@ -2877,20 +2960,20 @@
       "description": "subtitle start"
     },
     "nobles__trigger.001.1.subtitle.0.end": {
-      "time": 25.875,
+      "time": 26.205,
       "description": "subtitle end"
     },
     "nobles__trigger.001.1.start": {
-      "time": 13.835,
+      "time": 13.985,
       "description": "logical slice start"
     },
     "nobles__trigger.001.1.end": {
-      "time": 25.875,
+      "time": 26.205,
       "description": "logical slice end"
     },
     "nobles__trigger.001.1.speech_end": {
-      "time": 25.795,
-      "description": "last TTS word end"
+      "time": 26.175,
+      "description": "measured speech end"
     },
     "nobles__trigger.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2917,20 +3000,20 @@
       "description": "subtitle start"
     },
     "nobles__forced.001.1.subtitle.1.end": {
-      "time": 37.554,
+      "time": 37.904,
       "description": "subtitle end"
     },
     "nobles__forced.001.1.start": {
-      "time": 26.055,
+      "time": 26.205,
       "description": "logical slice start"
     },
     "nobles__forced.001.1.end": {
-      "time": 37.554,
+      "time": 37.904,
       "description": "logical slice end"
     },
     "nobles__forced.001.1.speech_end": {
-      "time": 37.474,
-      "description": "last TTS word end"
+      "time": 37.895,
+      "description": "measured speech end"
     },
     "nobles__forced.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2949,20 +3032,20 @@
       "description": "subtitle start"
     },
     "nobles__source.001.subtitle.0.end": {
-      "time": 42.154,
+      "time": 42.964,
       "description": "subtitle end"
     },
     "nobles__source.001.start": {
-      "time": 37.754,
+      "time": 37.904,
       "description": "logical slice start"
     },
     "nobles__source.001.end": {
-      "time": 42.154,
+      "time": 42.964,
       "description": "logical slice end"
     },
     "nobles__source.001.speech_end": {
-      "time": 42.074,
-      "description": "last TTS word end"
+      "time": 42.924,
+      "description": "measured speech end"
     },
     "nobles__source.001.visual.cue_start": {
       "time": 0.0,
@@ -2981,20 +3064,20 @@
       "description": "subtitle start"
     },
     "nobles__choice.001.1.subtitle.0.end": {
-      "time": 51.444,
+      "time": 51.719,
       "description": "subtitle end"
     },
     "nobles__choice.001.1.start": {
-      "time": 42.814,
+      "time": 42.964,
       "description": "logical slice start"
     },
     "nobles__choice.001.1.end": {
-      "time": 51.444,
+      "time": 51.719,
       "description": "logical slice end"
     },
     "nobles__choice.001.1.speech_end": {
-      "time": 51.364,
-      "description": "last TTS word end"
+      "time": 51.694,
+      "description": "measured speech end"
     },
     "nobles__choice.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3013,20 +3096,20 @@
       "description": "subtitle start"
     },
     "nobles__repeat.001.1.subtitle.0.end": {
-      "time": 63.344,
+      "time": 63.649,
       "description": "subtitle end"
     },
     "nobles__repeat.001.1.start": {
-      "time": 51.569,
+      "time": 51.719,
       "description": "logical slice start"
     },
     "nobles__repeat.001.1.end": {
-      "time": 63.344,
+      "time": 63.649,
       "description": "logical slice end"
     },
     "nobles__repeat.001.1.speech_end": {
-      "time": 63.264,
-      "description": "last TTS word end"
+      "time": 63.649,
+      "description": "measured speech end"
     },
     "nobles__repeat.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3045,20 +3128,20 @@
       "description": "subtitle start"
     },
     "nobles__repeat.001.3.subtitle.0.end": {
-      "time": 69.704,
+      "time": 70.01,
       "description": "subtitle end"
     },
     "nobles__repeat.001.3.start": {
-      "time": 63.499,
+      "time": 63.649,
       "description": "logical slice start"
     },
     "nobles__repeat.001.3.end": {
-      "time": 69.704,
+      "time": 70.01,
       "description": "logical slice end"
     },
     "nobles__repeat.001.3.speech_end": {
-      "time": 69.624,
-      "description": "last TTS word end"
+      "time": 70.009,
+      "description": "measured speech end"
     },
     "nobles__repeat.001.3.visual.cue_start": {
       "time": 0.0,
@@ -3069,20 +3152,20 @@
       "description": "subtitle start"
     },
     "nobles__summary.001.1.subtitle.0.end": {
-      "time": 74.394,
+      "time": 74.615,
       "description": "subtitle end"
     },
     "nobles__summary.001.1.start": {
-      "time": 69.86,
+      "time": 70.01,
       "description": "logical slice start"
     },
     "nobles__summary.001.1.end": {
-      "time": 74.394,
+      "time": 74.615,
       "description": "logical slice end"
     },
     "nobles__summary.001.1.speech_end": {
-      "time": 74.314,
-      "description": "last TTS word end"
+      "time": 74.61,
+      "description": "measured speech end"
     },
     "nobles__summary.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3093,20 +3176,20 @@
       "description": "subtitle start"
     },
     "nobles__summary.001.2.subtitle.0.end": {
-      "time": 78.364,
+      "time": 78.885,
       "description": "subtitle end"
     },
     "nobles__summary.001.2.start": {
-      "time": 74.465,
+      "time": 74.615,
       "description": "logical slice start"
     },
     "nobles__summary.001.2.end": {
-      "time": 78.364,
+      "time": 78.885,
       "description": "logical slice end"
     },
     "nobles__summary.001.2.speech_end": {
-      "time": 78.284,
-      "description": "last TTS word end"
+      "time": 78.865,
+      "description": "measured speech end"
     },
     "nobles__summary.001.2.visual.cue_start": {
       "time": 0.0,
@@ -3117,20 +3200,20 @@
       "description": "subtitle start"
     },
     "nobles__summary.001.3.subtitle.0.end": {
-      "time": 85.045,
+      "time": 85.224,
       "description": "subtitle end"
     },
     "nobles__summary.001.3.start": {
-      "time": 78.735,
+      "time": 78.885,
       "description": "logical slice start"
     },
     "nobles__summary.001.3.end": {
-      "time": 85.045,
+      "time": 85.224,
       "description": "logical slice end"
     },
     "nobles__summary.001.3.speech_end": {
-      "time": 84.965,
-      "description": "last TTS word end"
+      "time": 85.155,
+      "description": "measured speech end"
     },
     "nobles__summary.001.3.visual.cue_start": {
       "time": 0.0,
@@ -3141,7 +3224,7 @@
       "description": "subtitle start"
     },
     "reserve__title_3_3.subtitle.0.end": {
-      "time": 3.015,
+      "time": 3.5,
       "description": "subtitle end"
     },
     "reserve__title_3_3.start": {
@@ -3149,12 +3232,12 @@
       "description": "logical slice start"
     },
     "reserve__title_3_3.end": {
-      "time": 3.015,
+      "time": 3.5,
       "description": "logical slice end"
     },
     "reserve__title_3_3.speech_end": {
-      "time": 2.935,
-      "description": "last TTS word end"
+      "time": 3.5,
+      "description": "measured speech end"
     },
     "reserve__title_3_3.visual.cue_start": {
       "time": 0.0,
@@ -3189,20 +3272,20 @@
       "description": "subtitle start"
     },
     "reserve__intro.001.1.subtitle.2.end": {
-      "time": 13.695,
+      "time": 14.685,
       "description": "subtitle end"
     },
     "reserve__intro.001.1.start": {
-      "time": 3.35,
+      "time": 3.5,
       "description": "logical slice start"
     },
     "reserve__intro.001.1.end": {
-      "time": 13.695,
+      "time": 14.685,
       "description": "logical slice end"
     },
     "reserve__intro.001.1.speech_end": {
-      "time": 13.615,
-      "description": "last TTS word end"
+      "time": 14.67,
+      "description": "measured speech end"
     },
     "reserve__intro.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3229,20 +3312,20 @@
       "description": "subtitle start"
     },
     "reserve__gold.001.subtitle.1.end": {
-      "time": 21.475,
+      "time": 21.86,
       "description": "subtitle end"
     },
     "reserve__gold.001.start": {
-      "time": 14.535,
+      "time": 14.685,
       "description": "logical slice start"
     },
     "reserve__gold.001.end": {
-      "time": 21.475,
+      "time": 21.86,
       "description": "logical slice end"
     },
     "reserve__gold.001.speech_end": {
-      "time": 21.395,
-      "description": "last TTS word end"
+      "time": 21.795,
+      "description": "measured speech end"
     },
     "reserve__gold.001.visual.cue_start": {
       "time": 0.0,
@@ -3261,20 +3344,20 @@
       "description": "subtitle start"
     },
     "reserve__deck.001.subtitle.0.end": {
-      "time": 28.695,
+      "time": 29.505,
       "description": "subtitle end"
     },
     "reserve__deck.001.start": {
-      "time": 21.71,
+      "time": 21.86,
       "description": "logical slice start"
     },
     "reserve__deck.001.end": {
-      "time": 28.695,
+      "time": 29.505,
       "description": "logical slice end"
     },
     "reserve__deck.001.speech_end": {
-      "time": 28.615,
-      "description": "last TTS word end"
+      "time": 29.47,
+      "description": "measured speech end"
     },
     "reserve__deck.001.visual.cue_start": {
       "time": 0.0,
@@ -3293,20 +3376,20 @@
       "description": "subtitle start"
     },
     "reserve__notes_intro.001.subtitle.0.end": {
-      "time": 37.845,
+      "time": 38.192,
       "description": "subtitle end"
     },
     "reserve__notes_intro.001.start": {
-      "time": 29.355,
+      "time": 29.505,
       "description": "logical slice start"
     },
     "reserve__notes_intro.001.end": {
-      "time": 37.845,
+      "time": 38.192,
       "description": "logical slice end"
     },
     "reserve__notes_intro.001.speech_end": {
-      "time": 37.765,
-      "description": "last TTS word end"
+      "time": 38.185,
+      "description": "measured speech end"
     },
     "reserve__notes_intro.001.visual.cue_start": {
       "time": 0.0,
@@ -3325,20 +3408,20 @@
       "description": "subtitle start"
     },
     "reserve__limit_gold.001.2.subtitle.0.end": {
-      "time": 42.952,
+      "time": 43.802,
       "description": "subtitle end"
     },
     "reserve__limit_gold.001.2.start": {
-      "time": 38.042,
+      "time": 38.192,
       "description": "logical slice start"
     },
     "reserve__limit_gold.001.2.end": {
-      "time": 42.952,
+      "time": 43.802,
       "description": "logical slice end"
     },
     "reserve__limit_gold.001.2.speech_end": {
-      "time": 42.872,
-      "description": "last TTS word end"
+      "time": 43.742,
+      "description": "measured speech end"
     },
     "reserve__limit_gold.001.2.visual.cue_start": {
       "time": 0.0,
@@ -3365,20 +3448,20 @@
       "description": "subtitle start"
     },
     "reserve__limit_hand.001.1.subtitle.1.end": {
-      "time": 51.612,
+      "time": 51.987,
       "description": "subtitle end"
     },
     "reserve__limit_hand.001.1.start": {
-      "time": 43.652,
+      "time": 43.802,
       "description": "logical slice start"
     },
     "reserve__limit_hand.001.1.end": {
-      "time": 51.612,
+      "time": 51.987,
       "description": "logical slice end"
     },
     "reserve__limit_hand.001.1.speech_end": {
-      "time": 51.532,
-      "description": "last TTS word end"
+      "time": 51.902,
+      "description": "measured speech end"
     },
     "reserve__limit_hand.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3405,20 +3488,20 @@
       "description": "subtitle start"
     },
     "reserve__private.001.1.subtitle.1.end": {
-      "time": 62.743,
+      "time": 63.097,
       "description": "subtitle end"
     },
     "reserve__private.001.1.start": {
-      "time": 51.837,
+      "time": 51.987,
       "description": "logical slice start"
     },
     "reserve__private.001.1.end": {
-      "time": 62.743,
+      "time": 63.097,
       "description": "logical slice end"
     },
     "reserve__private.001.1.speech_end": {
-      "time": 62.663,
-      "description": "last TTS word end"
+      "time": 63.047,
+      "description": "measured speech end"
     },
     "reserve__private.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3429,20 +3512,20 @@
       "description": "subtitle start"
     },
     "reserve__private.002.subtitle.0.end": {
-      "time": 68.962,
+      "time": 69.277,
       "description": "subtitle end"
     },
     "reserve__private.002.start": {
-      "time": 62.947,
+      "time": 63.097,
       "description": "logical slice start"
     },
     "reserve__private.002.end": {
-      "time": 68.962,
+      "time": 69.277,
       "description": "logical slice end"
     },
     "reserve__private.002.speech_end": {
-      "time": 68.882,
-      "description": "last TTS word end"
+      "time": 69.277,
+      "description": "measured speech end"
     },
     "reserve__private.002.visual.cue_start": {
       "time": 0.0,
@@ -3461,20 +3544,20 @@
       "description": "subtitle start"
     },
     "reserve__not_purchase.001.subtitle.0.end": {
-      "time": 75.432,
+      "time": 75.984,
       "description": "subtitle end"
     },
     "reserve__not_purchase.001.start": {
-      "time": 69.127,
+      "time": 69.277,
       "description": "logical slice start"
     },
     "reserve__not_purchase.001.end": {
-      "time": 75.432,
+      "time": 75.984,
       "description": "logical slice end"
     },
     "reserve__not_purchase.001.speech_end": {
-      "time": 75.352,
-      "description": "last TTS word end"
+      "time": 75.937,
+      "description": "measured speech end"
     },
     "reserve__not_purchase.001.visual.cue_start": {
       "time": 0.0,
@@ -3485,7 +3568,7 @@
       "description": "subtitle start"
     },
     "purchase_reserved__title_3_4.subtitle.0.end": {
-      "time": 3.525,
+      "time": 4.015,
       "description": "subtitle end"
     },
     "purchase_reserved__title_3_4.start": {
@@ -3493,12 +3576,12 @@
       "description": "logical slice start"
     },
     "purchase_reserved__title_3_4.end": {
-      "time": 3.525,
+      "time": 4.015,
       "description": "logical slice end"
     },
     "purchase_reserved__title_3_4.speech_end": {
-      "time": 3.445,
-      "description": "last TTS word end"
+      "time": 4.01,
+      "description": "measured speech end"
     },
     "purchase_reserved__title_3_4.visual.cue_start": {
       "time": 0.0,
@@ -3557,20 +3640,20 @@
       "description": "subtitle start"
     },
     "purchase_reserved__001.subtitle.5.end": {
-      "time": 23.505,
+      "time": 23.664,
       "description": "subtitle end"
     },
     "purchase_reserved__001.start": {
-      "time": 3.865,
+      "time": 4.015,
       "description": "logical slice start"
     },
     "purchase_reserved__001.end": {
-      "time": 23.505,
+      "time": 23.664,
       "description": "logical slice end"
     },
     "purchase_reserved__001.speech_end": {
-      "time": 23.425,
-      "description": "last TTS word end"
+      "time": 23.645,
+      "description": "measured speech end"
     },
     "purchase_reserved__001.visual.cue_start": {
       "time": 0.0,
@@ -3589,7 +3672,7 @@
       "description": "subtitle start"
     },
     "summary__title_3_5.subtitle.0.end": {
-      "time": 2.855,
+      "time": 3.38,
       "description": "subtitle end"
     },
     "summary__title_3_5.start": {
@@ -3597,12 +3680,12 @@
       "description": "logical slice start"
     },
     "summary__title_3_5.end": {
-      "time": 2.855,
+      "time": 3.38,
       "description": "logical slice end"
     },
     "summary__title_3_5.speech_end": {
-      "time": 2.775,
-      "description": "last TTS word end"
+      "time": 3.38,
+      "description": "measured speech end"
     },
     "summary__title_3_5.visual.cue_start": {
       "time": 0.0,
@@ -3629,20 +3712,20 @@
       "description": "subtitle start"
     },
     "summary__001.subtitle.1.end": {
-      "time": 10.125,
+      "time": 10.475,
       "description": "subtitle end"
     },
     "summary__001.start": {
-      "time": 3.23,
+      "time": 3.38,
       "description": "logical slice start"
     },
     "summary__001.end": {
-      "time": 10.125,
+      "time": 10.475,
       "description": "logical slice end"
     },
     "summary__001.speech_end": {
-      "time": 10.045,
-      "description": "last TTS word end"
+      "time": 10.47,
+      "description": "measured speech end"
     },
     "summary__001.visual.cue_start": {
       "time": 0.0,
@@ -3669,20 +3752,20 @@
       "description": "subtitle start"
     },
     "summary__002.1.subtitle.2.end": {
-      "time": 18.425,
+      "time": 19.455,
       "description": "subtitle end"
     },
     "summary__002.1.start": {
-      "time": 10.325,
+      "time": 10.475,
       "description": "logical slice start"
     },
     "summary__002.1.end": {
-      "time": 18.425,
+      "time": 19.455,
       "description": "logical slice end"
     },
     "summary__002.1.speech_end": {
-      "time": 18.345,
-      "description": "last TTS word end"
+      "time": 19.415,
+      "description": "measured speech end"
     },
     "summary__002.1.visual.cue_start": {
       "time": 0.0,
@@ -3693,20 +3776,20 @@
       "description": "subtitle start"
     },
     "summary__002.2.subtitle.0.end": {
-      "time": 22.485,
+      "time": 22.685,
       "description": "subtitle end"
     },
     "summary__002.2.start": {
-      "time": 19.305,
+      "time": 19.455,
       "description": "logical slice start"
     },
     "summary__002.2.end": {
-      "time": 22.485,
+      "time": 22.685,
       "description": "logical slice end"
     },
     "summary__002.2.speech_end": {
-      "time": 22.405,
-      "description": "last TTS word end"
+      "time": 22.585,
+      "description": "measured speech end"
     },
     "summary__002.2.visual.cue_start": {
       "time": 0.0,
@@ -3717,7 +3800,7 @@
       "description": "subtitle start"
     },
     "end__title_4.subtitle.0.end": {
-      "time": 1.795,
+      "time": 2.25,
       "description": "subtitle end"
     },
     "end__title_4.start": {
@@ -3725,12 +3808,12 @@
       "description": "logical slice start"
     },
     "end__title_4.end": {
-      "time": 1.795,
+      "time": 2.25,
       "description": "logical slice end"
     },
     "end__title_4.speech_end": {
-      "time": 1.715,
-      "description": "last TTS word end"
+      "time": 2.25,
+      "description": "measured speech end"
     },
     "end__title_4.visual.cue_start": {
       "time": 0.0,
@@ -3749,20 +3832,20 @@
       "description": "subtitle start"
     },
     "end__trigger.001.subtitle.0.end": {
-      "time": 6.835,
+      "time": 7.275,
       "description": "subtitle end"
     },
     "end__trigger.001.start": {
-      "time": 2.1,
+      "time": 2.25,
       "description": "logical slice start"
     },
     "end__trigger.001.end": {
-      "time": 6.835,
+      "time": 7.275,
       "description": "logical slice end"
     },
     "end__trigger.001.speech_end": {
-      "time": 6.755,
-      "description": "last TTS word end"
+      "time": 7.27,
+      "description": "measured speech end"
     },
     "end__trigger.001.visual.cue_start": {
       "time": 0.0,
@@ -3797,20 +3880,20 @@
       "description": "subtitle start"
     },
     "end__final_rounds.001.1.subtitle.2.end": {
-      "time": 16.985,
+      "time": 17.755,
       "description": "subtitle end"
     },
     "end__final_rounds.001.1.start": {
-      "time": 7.125,
+      "time": 7.275,
       "description": "logical slice start"
     },
     "end__final_rounds.001.1.end": {
-      "time": 16.985,
+      "time": 17.755,
       "description": "logical slice end"
     },
     "end__final_rounds.001.1.speech_end": {
-      "time": 16.905,
-      "description": "last TTS word end"
+      "time": 17.745,
+      "description": "measured speech end"
     },
     "end__final_rounds.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3837,20 +3920,20 @@
       "description": "subtitle start"
     },
     "end__example.001.1.subtitle.2.end": {
-      "time": 34.495,
+      "time": 34.785,
       "description": "subtitle end"
     },
     "end__example.001.1.start": {
-      "time": 17.605,
+      "time": 17.755,
       "description": "logical slice start"
     },
     "end__example.001.1.end": {
-      "time": 34.495,
+      "time": 34.785,
       "description": "logical slice end"
     },
     "end__example.001.1.speech_end": {
-      "time": 34.415,
-      "description": "last TTS word end"
+      "time": 34.785,
+      "description": "measured speech end"
     },
     "end__example.001.1.visual.cue_start": {
       "time": 0.0,
@@ -3869,20 +3952,20 @@
       "description": "subtitle start"
     },
     "end__winner.001.subtitle.1.end": {
-      "time": 42.57,
+      "time": 42.94,
       "description": "subtitle end"
     },
     "end__winner.001.start": {
-      "time": 34.635,
+      "time": 34.785,
       "description": "logical slice start"
     },
     "end__winner.001.end": {
-      "time": 42.57,
+      "time": 42.94,
       "description": "logical slice end"
     },
     "end__winner.001.speech_end": {
-      "time": 42.49,
-      "description": "last TTS word end"
+      "time": 42.885,
+      "description": "measured speech end"
     },
     "end__winner.001.visual.cue_start": {
       "time": 0.0,
@@ -3909,20 +3992,20 @@
       "description": "subtitle start"
     },
     "end__winner.002.subtitle.1.end": {
-      "time": 54.82,
+      "time": 55.17,
       "description": "subtitle end"
     },
     "end__winner.002.start": {
-      "time": 42.79,
+      "time": 42.94,
       "description": "logical slice start"
     },
     "end__winner.002.end": {
-      "time": 54.82,
+      "time": 55.17,
       "description": "logical slice end"
     },
     "end__winner.002.speech_end": {
-      "time": 54.74,
-      "description": "last TTS word end"
+      "time": 55.17,
+      "description": "measured speech end"
     },
     "end__winner.002.visual.cue_start": {
       "time": 0.0,
@@ -3949,20 +4032,20 @@
       "description": "subtitle start"
     },
     "end__winner.003.subtitle.1.end": {
-      "time": 65.616,
+      "time": 65.904,
       "description": "subtitle end"
     },
     "end__winner.003.start": {
-      "time": 55.02,
+      "time": 55.17,
       "description": "logical slice start"
     },
     "end__winner.003.end": {
-      "time": 65.616,
+      "time": 65.904,
       "description": "logical slice end"
     },
     "end__winner.003.speech_end": {
-      "time": 65.536,
-      "description": "last TTS word end"
+      "time": 65.88,
+      "description": "measured speech end"
     },
     "end__winner.003.visual.cue_start": {
       "time": 0.0,
