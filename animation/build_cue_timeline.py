@@ -193,6 +193,7 @@ TIMING_OPTION_KEYS = frozenset({
     "trim_to_speech_start",
     "trim_start_guard_seconds",
     "use_measured_speech_start",
+    "use_measured_source_window",
 })
 TIMING_POLICY_GLOBAL_KEYS = frozenset({
     "schema",
@@ -301,6 +302,13 @@ def _normalize_cue_timing_options(
                 f"audio slices cue_timing {cue_id!r} "
                 "use_measured_speech_start must be boolean")
 
+        measured_source_window = option.get(
+            "use_measured_source_window", False)
+        if not isinstance(measured_source_window, bool):
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "use_measured_source_window must be boolean")
+
         trim_start_guard = option.get("trim_start_guard_seconds", 0.0)
         if isinstance(trim_start_guard, bool) or not isinstance(
                 trim_start_guard, (int, float)):
@@ -359,6 +367,7 @@ def _normalize_cue_timing_options(
             "trim_to_speech_start": trim_start,
             "trim_start_guard_seconds": trim_start_guard,
             "use_measured_speech_start": measured_start,
+            "use_measured_source_window": measured_source_window,
         }
     return normalized
 

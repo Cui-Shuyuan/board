@@ -144,7 +144,9 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
    `trailing_silence_seconds` 追加固定静音；quick 用
    `post_speech_silence_seconds` 从实测 speech end 补足目标停顿。
    full/quick 的 `speech_start_ref` / `speech_end_ref` 都是 PCM 能量
-   审查后的时间戳。能量测量只在制作期由
+   审查后的时间戳。full 连续 section 音频还要用能量静音中点校正相邻
+   cue 的 provider 边界；校正后的 source window 通过
+   `use_measured_source_window` 保留。能量测量只在制作期由
    `animation/measure_audio_boundaries.py` 写入固定时间戳，播放和 plan
    构建不运行能量分析；full 的 measured 时间戳通过
    `use_measured_speech_start/end` 在重生成 `audio-slices` 时保留。

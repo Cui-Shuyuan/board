@@ -42,7 +42,7 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
 | quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 199.206 秒 |
-| full | section TTS 与独立父章节标题素材 | 83 | 642.136 秒 |
+| full | section TTS 与独立父章节标题素材 | 83 | 638.336 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
 `cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
@@ -120,16 +120,22 @@ cue-level ASR word 边界会低估真实语音尾部，不能直接当作裁切�
 制作期从 PCM 能量边界生成并落盘的时间戳，策略再在两侧各留 0.1 秒
 guard，并用 `post_speech_silence_seconds` 补足目标停顿。
 
-### PCM 能量首尾锚点
+### PCM 能量首尾锚点与边界校正
 
 TTS word 边界可能明显偏离真实 PCM 语音首尾，full 的正文也有同样问题。
 `animation/measure_audio_boundaries.py` 只负责制作期测量：它把音频解码
 成 PCM，按 10ms 窗口找到 source range 内第一个持续有意义的能量窗口和
 最后一个有意义的能量窗口，分别写成 `speech_start_ref` /
-`speech_end_ref` 时间戳，并标记 `use_measured_speech_start/end`。full
-重建 `audio-slices` 时会保留这些已测量时间戳，不会再用 TTS word 边界
-覆盖。播放器和 `build_cue_timeline.py` 只读这些时间戳，不在运行时或
-构建时解码音频。
+`speech_end_ref` 时间戳，并标记 `use_measured_speech_start/end`。
+
+full 的 section 音频是连续的；provider 的下一 cue `audio_start` 可能比
+真实起音晚 0.1–0.35 秒，导致上一 cue 包含下一 cue 的第一个音节。
+`--runtime-windows` 模式会围绕相邻 cue 的 provider 边界 ±0.8 秒寻找
+最近的足够长静音，把边界移到静音中点，再测量两段能量首尾。校正后的
+source window 写入 `start_ref` / `end_ref` 并标记
+`use_measured_source_window`；full 重建 `audio-slices` 时保留这些边界和
+时间戳，不会再用 TTS word 边界覆盖。播放器和 `build_cue_timeline.py`
+只读这些时间戳，不在运行时或构建时解码音频。
 
 ```bash
 # quick 使用 authored cue-level source windows

@@ -5,7 +5,7 @@
   "track": "full",
   "course": {
     "start": 0.0,
-    "duration": 642.136
+    "duration": 638.336
   },
   "cues": [
     {
@@ -14,7 +14,7 @@
       "entry": null,
       "course": {
         "start": 0.0,
-        "duration": 2.22
+        "duration": 1.875
       },
       "tracks": [
         {
@@ -28,7 +28,7 @@
               "animation": "intro/title_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.22,
+              "source_end": 1.875,
               "after_end": "hold_last_frame"
             }
           ]
@@ -45,14 +45,14 @@
               "asset": "media/tts/full/bg.intro.mp3",
               "cue_start": 0.0,
               "source_start": 0.28,
-              "source_end": 2.0,
+              "source_end": 1.655,
               "source_start_sample": 6720,
-              "source_end_sample": 48000
+              "source_end_sample": 39720
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.72,
+              "cue_start": 1.375,
               "duration": 0.5
             }
           ]
@@ -66,7 +66,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.72,
+              "duration": 1.375,
               "text": "一，背景。"
             }
           ]
@@ -76,7 +76,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.72,
+          "duration": 1.375,
           "text": "一，背景。"
         }
       ],
@@ -91,8 +91,8 @@
       "cue_id": "intro/001",
       "entry": null,
       "course": {
-        "start": 2.22,
-        "duration": 15.488
+        "start": 1.875,
+        "duration": 15.683
       },
       "tracks": [
         {
@@ -105,7 +105,7 @@
               "type": "state",
               "animation": "intro/001",
               "cue_start": 0.0,
-              "duration": 15.488,
+              "duration": 15.683,
               "after_end": "hold_last_frame"
             }
           ]
@@ -121,15 +121,15 @@
               "audio_slice_id": "intro__001",
               "asset": "media/tts/full/bg.intro.mp3",
               "cue_start": 0.0,
-              "source_start": 2.0,
+              "source_start": 1.805,
               "source_end": 16.488,
-              "source_start_sample": 48000,
+              "source_start_sample": 43320,
               "source_end_sample": 395712
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 14.488,
+              "cue_start": 14.683,
               "duration": 1.0
             }
           ]
@@ -142,28 +142,28 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.195,
               "duration": 4.655,
               "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 5.1,
+              "cue_start": 5.295,
               "duration": 1.935,
               "text": "玩家将扮演一位丝路商人，"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 7.36,
+              "cue_start": 7.555,
               "duration": 4.075,
               "text": "在宝石贸易中积累财富与声望，结识各地的贵族，"
             },
             {
               "id": "subtitle.0.3",
               "type": "subtitle",
-              "cue_start": 11.76,
+              "cue_start": 11.955,
               "duration": 2.728,
               "text": "最终成为最负盛名的贸易商人。"
             }
@@ -173,25 +173,25 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.195,
           "duration": 4.655,
           "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 5.1,
+          "cue_start": 5.295,
           "duration": 1.935,
           "text": "玩家将扮演一位丝路商人，"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 7.36,
+          "cue_start": 7.555,
           "duration": 4.075,
           "text": "在宝石贸易中积累财富与声望，结识各地的贵族，"
         },
         {
           "id": "subtitle.0.3",
-          "cue_start": 11.76,
+          "cue_start": 11.955,
           "duration": 2.728,
           "text": "最终成为最负盛名的贸易商人。"
         }
@@ -209,7 +209,7 @@
       "cue_id": "setup/title_2",
       "entry": null,
       "course": {
-        "start": 17.708,
+        "start": 17.558,
         "duration": 1.882
       },
       "tracks": [
@@ -287,8 +287,8 @@
       "cue_id": "setup_cards/title_2_1",
       "entry": null,
       "course": {
-        "start": 19.59,
-        "duration": 2.92
+        "start": 19.44,
+        "duration": 2.79
       },
       "tracks": [
         {
@@ -302,7 +302,7 @@
               "animation": "setup_cards/title_2_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.92,
+              "source_end": 2.79,
               "after_end": "hold_last_frame"
             }
           ]
@@ -319,14 +319,14 @@
               "asset": "media/tts/full/setup.cards.mp3",
               "cue_start": 0.0,
               "source_start": 0.24,
-              "source_end": 2.66,
+              "source_end": 2.53,
               "source_start_sample": 5760,
-              "source_end_sample": 63840
+              "source_end_sample": 60720
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.42,
+              "cue_start": 2.29,
               "duration": 0.5
             }
           ]
@@ -340,7 +340,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.42,
+              "duration": 2.29,
               "text": "2.1，发展卡牌。"
             }
           ]
@@ -350,7 +350,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.42,
+          "duration": 2.29,
           "text": "2.1，发展卡牌。"
         }
       ],
@@ -366,8 +366,8 @@
       "cue_id": "setup_cards/001.1",
       "entry": null,
       "course": {
-        "start": 22.51,
-        "duration": 3.16
+        "start": 22.23,
+        "duration": 2.89
       },
       "tracks": [
         {
@@ -380,7 +380,7 @@
               "type": "state",
               "animation": "setup_cards/001.1",
               "cue_start": 0.0,
-              "duration": 3.16,
+              "duration": 2.89,
               "after_end": "hold_last_frame"
             }
           ]
@@ -396,15 +396,15 @@
               "audio_slice_id": "setup_cards__001.1",
               "asset": "media/tts/full/setup.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 2.66,
-              "source_end": 5.32,
-              "source_start_sample": 63840,
-              "source_end_sample": 127680
+              "source_start": 2.58,
+              "source_end": 4.97,
+              "source_start_sample": 61920,
+              "source_end_sample": 119280
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.66,
+              "cue_start": 2.39,
               "duration": 0.5
             }
           ]
@@ -417,8 +417,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 2.66,
+              "cue_start": 0.08,
+              "duration": 2.31,
               "text": "这是发展卡牌，共90张。"
             }
           ]
@@ -427,8 +427,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 2.66,
+          "cue_start": 0.08,
+          "duration": 2.31,
           "text": "这是发展卡牌，共90张。"
         }
       ],
@@ -447,8 +447,8 @@
       "cue_id": "setup_cards/001.2",
       "entry": null,
       "course": {
-        "start": 25.67,
-        "duration": 13.185
+        "start": 25.12,
+        "duration": 13.295
       },
       "tracks": [
         {
@@ -478,15 +478,15 @@
               "audio_slice_id": "setup_cards__001.2",
               "asset": "media/tts/full/setup.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 5.32,
-              "source_end": 18.005,
-              "source_start_sample": 127680,
-              "source_end_sample": 432120
+              "source_start": 5.22,
+              "source_end": 18.015,
+              "source_start_sample": 125280,
+              "source_end_sample": 432360
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 12.685,
+              "cue_start": 12.795,
               "duration": 0.5
             }
           ]
@@ -499,28 +499,28 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.1,
               "duration": 3.225,
               "text": "根据背面可以将所有发展卡牌分为三类，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.56,
+              "cue_start": 3.66,
               "duration": 2.905,
               "text": "分别是40张绿色的一级发展卡牌、"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 6.7,
+              "cue_start": 6.8,
               "duration": 2.595,
               "text": "30张黄色的二级发展卡牌，"
             },
             {
               "id": "subtitle.0.3",
               "type": "subtitle",
-              "cue_start": 9.52,
+              "cue_start": 9.62,
               "duration": 3.165,
               "text": "和20张蓝色的三级发展卡牌。"
             }
@@ -530,25 +530,25 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.1,
           "duration": 3.225,
           "text": "根据背面可以将所有发展卡牌分为三类，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.56,
+          "cue_start": 3.66,
           "duration": 2.905,
           "text": "分别是40张绿色的一级发展卡牌、"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 6.7,
+          "cue_start": 6.8,
           "duration": 2.595,
           "text": "30张黄色的二级发展卡牌，"
         },
         {
           "id": "subtitle.0.3",
-          "cue_start": 9.52,
+          "cue_start": 9.62,
           "duration": 3.165,
           "text": "和20张蓝色的三级发展卡牌。"
         }
@@ -568,8 +568,8 @@
       "cue_id": "setup_cards/002.1",
       "entry": null,
       "course": {
-        "start": 38.855,
-        "duration": 13.235
+        "start": 38.415,
+        "duration": 13.225
       },
       "tracks": [
         {
@@ -599,15 +599,15 @@
               "audio_slice_id": "setup_cards__002.1",
               "asset": "media/tts/full/setup.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 18.005,
+              "source_start": 18.015,
               "source_end": 30.24,
-              "source_start_sample": 432120,
+              "source_start_sample": 432360,
               "source_end_sample": 725760
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 12.235,
+              "cue_start": 12.225,
               "duration": 1.0
             }
           ]
@@ -621,20 +621,20 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.41,
+              "duration": 3.4,
               "text": "将这三类牌分别洗混后按顺序摆成一列。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.955,
+              "cue_start": 3.945,
               "duration": 4.195,
               "text": "从每摞牌上方分别翻开四张牌，在一侧摆成一行。"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 8.515,
+              "cue_start": 8.505,
               "duration": 3.72,
               "text": "最终组成一个3乘4的发展卡牌供应堆。"
             }
@@ -645,18 +645,18 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.41,
+          "duration": 3.4,
           "text": "将这三类牌分别洗混后按顺序摆成一列。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.955,
+          "cue_start": 3.945,
           "duration": 4.195,
           "text": "从每摞牌上方分别翻开四张牌，在一侧摆成一行。"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 8.515,
+          "cue_start": 8.505,
           "duration": 3.72,
           "text": "最终组成一个3乘4的发展卡牌供应堆。"
         }
@@ -683,8 +683,8 @@
       "cue_id": "setup_gems/title_2_2",
       "entry": null,
       "course": {
-        "start": 52.09,
-        "duration": 2.98
+        "start": 51.64,
+        "duration": 2.92
       },
       "tracks": [
         {
@@ -698,7 +698,7 @@
               "animation": "setup_gems/title_2_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.98,
+              "source_end": 2.92,
               "after_end": "hold_last_frame"
             }
           ]
@@ -715,14 +715,14 @@
               "asset": "media/tts/full/setup.gems.mp3",
               "cue_start": 0.0,
               "source_start": 0.27,
-              "source_end": 2.75,
+              "source_end": 2.69,
               "source_start_sample": 6480,
-              "source_end_sample": 66000
+              "source_end_sample": 64560
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.48,
+              "cue_start": 2.42,
               "duration": 0.5
             }
           ]
@@ -736,7 +736,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.48,
+              "duration": 2.42,
               "text": "2.2，宝石与黄金。"
             }
           ]
@@ -746,7 +746,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.48,
+          "duration": 2.42,
           "text": "2.2，宝石与黄金。"
         }
       ],
@@ -762,8 +762,8 @@
       "cue_id": "setup_gems/001.1",
       "entry": null,
       "course": {
-        "start": 55.07,
-        "duration": 13.905
+        "start": 54.56,
+        "duration": 13.87
       },
       "tracks": [
         {
@@ -793,15 +793,15 @@
               "audio_slice_id": "setup_gems__001.1",
               "asset": "media/tts/full/setup.gems.mp3",
               "cue_start": 0.0,
-              "source_start": 2.75,
-              "source_end": 16.155,
-              "source_start_sample": 66000,
-              "source_end_sample": 387720
+              "source_start": 2.73,
+              "source_end": 16.1,
+              "source_start_sample": 65520,
+              "source_end_sample": 386400
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 13.405,
+              "cue_start": 13.37,
               "duration": 0.5
             }
           ]
@@ -814,22 +814,22 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.02,
               "duration": 2.735,
               "text": "这些是标记，后续称之为宝石。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.195,
+              "cue_start": 3.215,
               "duration": 6.76,
               "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 10.465,
-              "duration": 2.94,
+              "cue_start": 10.485,
+              "duration": 2.885,
               "text": "后续我们就直接以颜色称呼它们了。"
             }
           ]
@@ -838,20 +838,20 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.02,
           "duration": 2.735,
           "text": "这些是标记，后续称之为宝石。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.195,
+          "cue_start": 3.215,
           "duration": 6.76,
           "text": "宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 10.465,
-          "duration": 2.94,
+          "cue_start": 10.485,
+          "duration": 2.885,
           "text": "后续我们就直接以颜色称呼它们了。"
         }
       ],
@@ -870,8 +870,8 @@
       "cue_id": "setup_gems/002",
       "entry": null,
       "course": {
-        "start": 68.975,
-        "duration": 6.44
+        "start": 68.43,
+        "duration": 6.465
       },
       "tracks": [
         {
@@ -901,15 +901,15 @@
               "audio_slice_id": "setup_gems__002",
               "asset": "media/tts/full/setup.gems.mp3",
               "cue_start": 0.0,
-              "source_start": 16.155,
+              "source_start": 16.13,
               "source_end": 22.095,
-              "source_start_sample": 387720,
+              "source_start_sample": 387120,
               "source_end_sample": 530280
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.94,
+              "cue_start": 5.965,
               "duration": 0.5
             }
           ]
@@ -922,14 +922,14 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.025,
               "duration": 2.34,
               "text": "这是黄金，黄金不属于宝石。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.73,
+              "cue_start": 2.755,
               "duration": 3.21,
               "text": "我们所说的宝石指的就是这五种宝石。"
             }
@@ -939,13 +939,13 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.025,
           "duration": 2.34,
           "text": "这是黄金，黄金不属于宝石。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.73,
+          "cue_start": 2.755,
           "duration": 3.21,
           "text": "我们所说的宝石指的就是这五种宝石。"
         }
@@ -965,8 +965,8 @@
       "cue_id": "setup_gems/003.1",
       "entry": null,
       "course": {
-        "start": 75.415,
-        "duration": 19.054
+        "start": 74.895,
+        "duration": 18.949
       },
       "tracks": [
         {
@@ -997,14 +997,14 @@
               "asset": "media/tts/full/setup.gems.mp3",
               "cue_start": 0.0,
               "source_start": 22.095,
-              "source_end": 40.649,
+              "source_end": 40.544,
               "source_start_sample": 530280,
-              "source_end_sample": 975576
+              "source_end_sample": 973056
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 18.554,
+              "cue_start": 18.449,
               "duration": 0.5
             }
           ]
@@ -1046,7 +1046,7 @@
               "id": "subtitle.0.4",
               "type": "subtitle",
               "cue_start": 12.514,
-              "duration": 6.04,
+              "duration": 5.935,
               "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。"
             }
           ]
@@ -1080,7 +1080,7 @@
         {
           "id": "subtitle.0.4",
           "cue_start": 12.514,
-          "duration": 6.04,
+          "duration": 5.935,
           "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。"
         }
       ],
@@ -1098,8 +1098,8 @@
       "cue_id": "setup_gems/005.2",
       "entry": null,
       "course": {
-        "start": 94.469,
-        "duration": 7.24
+        "start": 93.844,
+        "duration": 7.32
       },
       "tracks": [
         {
@@ -1129,15 +1129,15 @@
               "audio_slice_id": "setup_gems__005.2",
               "asset": "media/tts/full/setup.gems.mp3",
               "cue_start": 0.0,
-              "source_start": 40.649,
-              "source_end": 46.889,
-              "source_start_sample": 975576,
-              "source_end_sample": 1125336
+              "source_start": 40.564,
+              "source_end": 46.884,
+              "source_start_sample": 973536,
+              "source_end_sample": 1125216
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.24,
+              "cue_start": 6.32,
               "duration": 1.0
             }
           ]
@@ -1150,15 +1150,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.085,
               "duration": 3.905,
               "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 4.246,
-              "duration": 1.994,
+              "cue_start": 4.331,
+              "duration": 2.025,
               "text": "其余的宝石放回盒子。"
             }
           ]
@@ -1167,14 +1167,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.085,
           "duration": 3.905,
           "text": "将全部5枚黄金也放在一旁，成为黄金供应堆。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 4.246,
-          "duration": 1.994,
+          "cue_start": 4.331,
+          "duration": 2.025,
           "text": "其余的宝石放回盒子。"
         }
       ],
@@ -1195,8 +1195,8 @@
       "cue_id": "setup_players/title_2_3",
       "entry": null,
       "course": {
-        "start": 101.709,
-        "duration": 3.0
+        "start": 101.164,
+        "duration": 2.735
       },
       "tracks": [
         {
@@ -1210,7 +1210,7 @@
               "animation": "setup_players/title_2_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.0,
+              "source_end": 2.735,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1227,14 +1227,14 @@
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
               "source_start": 0.07,
-              "source_end": 2.57,
+              "source_end": 2.305,
               "source_start_sample": 1680,
-              "source_end_sample": 61680
+              "source_end_sample": 55320
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.5,
+              "cue_start": 2.235,
               "duration": 0.5
             }
           ]
@@ -1248,7 +1248,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.5,
+              "duration": 2.235,
               "text": "2.3，贵族板块。"
             }
           ]
@@ -1258,7 +1258,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.5,
+          "duration": 2.235,
           "text": "2.3，贵族板块。"
         }
       ],
@@ -1274,8 +1274,8 @@
       "cue_id": "setup_players/nobles.001.1",
       "entry": null,
       "course": {
-        "start": 104.709,
-        "duration": 1.94
+        "start": 103.899,
+        "duration": 1.91
       },
       "tracks": [
         {
@@ -1288,7 +1288,7 @@
               "type": "state",
               "animation": "setup_players/nobles.001.1",
               "cue_start": 0.0,
-              "duration": 1.94,
+              "duration": 1.91,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1304,15 +1304,15 @@
               "audio_slice_id": "setup_players__nobles.001.1",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 2.57,
-              "source_end": 4.01,
-              "source_start_sample": 61680,
-              "source_end_sample": 96240
+              "source_start": 2.455,
+              "source_end": 3.865,
+              "source_start_sample": 58920,
+              "source_end_sample": 92760
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.44,
+              "cue_start": 1.41,
               "duration": 0.5
             }
           ]
@@ -1325,8 +1325,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 1.44,
+              "cue_start": 0.115,
+              "duration": 1.295,
               "text": "这些是贵族板块。"
             }
           ]
@@ -1335,8 +1335,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 1.44,
+          "cue_start": 0.115,
+          "duration": 1.295,
           "text": "这些是贵族板块。"
         }
       ],
@@ -1356,8 +1356,8 @@
       "cue_id": "setup_players/nobles.001.2",
       "entry": null,
       "course": {
-        "start": 106.649,
-        "duration": 9.515
+        "start": 105.809,
+        "duration": 9.505
       },
       "tracks": [
         {
@@ -1370,7 +1370,7 @@
               "type": "state",
               "animation": "setup_players/nobles.001.2",
               "cue_start": 0.0,
-              "duration": 9.515,
+              "duration": 9.505,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1386,15 +1386,15 @@
               "audio_slice_id": "setup_players__nobles.001.2",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 4.01,
-              "source_end": 13.025,
-              "source_start_sample": 96240,
-              "source_end_sample": 312600
+              "source_start": 3.935,
+              "source_end": 12.94,
+              "source_start_sample": 94440,
+              "source_end_sample": 310560
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 9.015,
+              "cue_start": 9.005,
               "duration": 0.5
             }
           ]
@@ -1407,15 +1407,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.075,
               "duration": 3.575,
               "text": "从所有的贵族板块中随机抽出玩家数量+1块，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.96,
-              "duration": 5.055,
+              "cue_start": 4.035,
+              "duration": 4.97,
               "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
             }
           ]
@@ -1424,14 +1424,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.075,
           "duration": 3.575,
           "text": "从所有的贵族板块中随机抽出玩家数量+1块，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.96,
-          "duration": 5.055,
+          "cue_start": 4.035,
+          "duration": 4.97,
           "text": "正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
         }
       ],
@@ -1451,8 +1451,8 @@
       "cue_id": "setup_players/nobles.002",
       "entry": null,
       "course": {
-        "start": 116.164,
-        "duration": 8.18
+        "start": 115.314,
+        "duration": 8.375
       },
       "tracks": [
         {
@@ -1465,7 +1465,7 @@
               "type": "state",
               "animation": "setup_players/nobles.002",
               "cue_start": 0.0,
-              "duration": 8.18,
+              "duration": 8.375,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1481,15 +1481,15 @@
               "audio_slice_id": "setup_players__nobles.002",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 13.025,
-              "source_end": 20.205,
-              "source_start_sample": 312600,
-              "source_end_sample": 484920
+              "source_start": 13.02,
+              "source_end": 20.395,
+              "source_start_sample": 312480,
+              "source_end_sample": 489480
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.18,
+              "cue_start": 7.375,
               "duration": 1.0
             }
           ]
@@ -1502,7 +1502,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.005,
               "duration": 7.18,
               "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。"
             }
@@ -1512,7 +1512,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.005,
           "duration": 7.18,
           "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。"
         }
@@ -1531,8 +1531,8 @@
       "cue_id": "setup_players/title_2_4",
       "entry": null,
       "course": {
-        "start": 124.344,
-        "duration": 2.12
+        "start": 123.689,
+        "duration": 1.78
       },
       "tracks": [
         {
@@ -1546,7 +1546,7 @@
               "animation": "setup_players/title_2_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.12,
+              "source_end": 1.78,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1562,15 +1562,15 @@
               "audio_slice_id": "setup_players__title_2_4",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 20.205,
-              "source_end": 21.825,
-              "source_start_sample": 484920,
-              "source_end_sample": 523800
+              "source_start": 20.505,
+              "source_end": 21.785,
+              "source_start_sample": 492120,
+              "source_end_sample": 522840
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.62,
+              "cue_start": 1.28,
               "duration": 0.5
             }
           ]
@@ -1584,7 +1584,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.62,
+              "duration": 1.28,
               "text": "2.4，起始玩家。"
             }
           ]
@@ -1594,7 +1594,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.62,
+          "duration": 1.28,
           "text": "2.4，起始玩家。"
         }
       ],
@@ -1610,8 +1610,8 @@
       "cue_id": "setup_players/starting.001.1",
       "entry": null,
       "course": {
-        "start": 126.464,
-        "duration": 10.579
+        "start": 125.469,
+        "duration": 10.489
       },
       "tracks": [
         {
@@ -1624,7 +1624,7 @@
               "type": "state",
               "animation": "setup_players/starting.001.1",
               "cue_start": 0.0,
-              "duration": 10.579,
+              "duration": 10.489,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1641,14 +1641,14 @@
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
               "source_start": 21.825,
-              "source_end": 31.904,
+              "source_end": 31.814,
               "source_start_sample": 523800,
-              "source_end_sample": 765696
+              "source_end_sample": 763536
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 10.079,
+              "cue_start": 9.989,
               "duration": 0.5
             }
           ]
@@ -1669,7 +1669,7 @@
               "id": "subtitle.0.1",
               "type": "subtitle",
               "cue_start": 2.28,
-              "duration": 7.799,
+              "duration": 7.709,
               "text": "规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家。"
             }
           ]
@@ -1685,7 +1685,7 @@
         {
           "id": "subtitle.0.1",
           "cue_start": 2.28,
-          "duration": 7.799,
+          "duration": 7.709,
           "text": "规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家。"
         }
       ],
@@ -1705,8 +1705,8 @@
       "cue_id": "setup_players/starting.001.3",
       "entry": null,
       "course": {
-        "start": 137.043,
-        "duration": 4.94
+        "start": 135.958,
+        "duration": 5.05
       },
       "tracks": [
         {
@@ -1736,15 +1736,15 @@
               "audio_slice_id": "setup_players__starting.001.3",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 31.904,
-              "source_end": 35.844,
-              "source_start_sample": 765696,
-              "source_end_sample": 860256
+              "source_start": 31.814,
+              "source_end": 35.864,
+              "source_start_sample": 763536,
+              "source_end_sample": 860736
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.94,
+              "cue_start": 4.05,
               "duration": 1.0
             }
           ]
@@ -1757,14 +1757,14 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.09,
               "duration": 1.395,
               "text": "这是起始玩家标记。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 1.82,
+              "cue_start": 1.91,
               "duration": 2.12,
               "text": "起始玩家获得这枚标记。"
             }
@@ -1774,13 +1774,13 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.09,
           "duration": 1.395,
           "text": "这是起始玩家标记。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 1.82,
+          "cue_start": 1.91,
           "duration": 2.12,
           "text": "起始玩家获得这枚标记。"
         }
@@ -1801,8 +1801,8 @@
       "cue_id": "setup_players/title_2_5",
       "entry": null,
       "course": {
-        "start": 141.983,
-        "duration": 2.4
+        "start": 141.008,
+        "duration": 2.375
       },
       "tracks": [
         {
@@ -1816,7 +1816,7 @@
               "animation": "setup_players/title_2_5",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.4,
+              "source_end": 2.375,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1832,15 +1832,15 @@
               "audio_slice_id": "setup_players__title_2_5",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 35.844,
-              "source_end": 37.744,
-              "source_start_sample": 860256,
-              "source_end_sample": 905856
+              "source_start": 35.864,
+              "source_end": 37.739,
+              "source_start_sample": 860736,
+              "source_end_sample": 905736
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.9,
+              "cue_start": 1.875,
               "duration": 0.5
             }
           ]
@@ -1854,7 +1854,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.9,
+              "duration": 1.875,
               "text": "2.5，设置完成。"
             }
           ]
@@ -1864,7 +1864,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.9,
+          "duration": 1.875,
           "text": "2.5，设置完成。"
         }
       ],
@@ -1880,8 +1880,8 @@
       "cue_id": "setup_players/end.001.1",
       "entry": null,
       "course": {
-        "start": 144.383,
-        "duration": 6.292
+        "start": 143.383,
+        "duration": 6.297
       },
       "tracks": [
         {
@@ -1894,7 +1894,7 @@
               "type": "state",
               "animation": "setup_players/end.001.1",
               "cue_start": 0.0,
-              "duration": 6.292,
+              "duration": 6.297,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1910,15 +1910,15 @@
               "audio_slice_id": "setup_players__end.001.1",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 37.764,
+              "source_start": 37.759,
               "source_end": 43.056,
-              "source_start_sample": 906336,
+              "source_start_sample": 906216,
               "source_end_sample": 1033344
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.292,
+              "cue_start": 5.297,
               "duration": 1.0
             }
           ]
@@ -1932,13 +1932,13 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.295,
+              "duration": 2.3,
               "text": "至此，整个设置环节就大功告成了。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.085,
+              "cue_start": 3.09,
               "duration": 2.207,
               "text": "接下来可以正式开始游戏了。"
             }
@@ -1949,12 +1949,12 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.295,
+          "duration": 2.3,
           "text": "至此，整个设置环节就大功告成了。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.085,
+          "cue_start": 3.09,
           "duration": 2.207,
           "text": "接下来可以正式开始游戏了。"
         }
@@ -1974,8 +1974,8 @@
       "cue_id": "turn/title_3",
       "entry": null,
       "course": {
-        "start": 150.675,
-        "duration": 2.46
+        "start": 149.68,
+        "duration": 2.155
       },
       "tracks": [
         {
@@ -1989,7 +1989,7 @@
               "animation": "turn/title_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.46,
+              "source_end": 2.155,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2006,14 +2006,14 @@
               "asset": "media/tts/full/action.turn.mp3",
               "cue_start": 0.0,
               "source_start": 0.27,
-              "source_end": 2.23,
+              "source_end": 1.925,
               "source_start_sample": 6480,
-              "source_end_sample": 53520
+              "source_end_sample": 46200
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.96,
+              "cue_start": 1.655,
               "duration": 0.5
             }
           ]
@@ -2027,7 +2027,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.96,
+              "duration": 1.655,
               "text": "3，行动。"
             }
           ]
@@ -2037,7 +2037,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.96,
+          "duration": 1.655,
           "text": "3，行动。"
         }
       ],
@@ -2052,8 +2052,8 @@
       "cue_id": "turn/001",
       "entry": null,
       "course": {
-        "start": 153.135,
-        "duration": 8.295
+        "start": 151.835,
+        "duration": 8.38
       },
       "tracks": [
         {
@@ -2083,15 +2083,15 @@
               "audio_slice_id": "turn__001",
               "asset": "media/tts/full/action.turn.mp3",
               "cue_start": 0.0,
-              "source_start": 2.23,
-              "source_end": 10.025,
-              "source_start_sample": 53520,
-              "source_end_sample": 240600
+              "source_start": 2.055,
+              "source_end": 9.935,
+              "source_start_sample": 49320,
+              "source_end_sample": 238440
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.795,
+              "cue_start": 7.88,
               "duration": 0.5
             }
           ]
@@ -2104,15 +2104,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.175,
               "duration": 4.085,
               "text": "整场游戏将持续若干个回合，从起始玩家开始，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 4.425,
-              "duration": 3.37,
+              "cue_start": 4.6,
+              "duration": 3.28,
               "text": "按顺时针顺序所有玩家依次进行行动。"
             }
           ]
@@ -2121,14 +2121,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.175,
           "duration": 4.085,
           "text": "整场游戏将持续若干个回合，从起始玩家开始，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 4.425,
-          "duration": 3.37,
+          "cue_start": 4.6,
+          "duration": 3.28,
           "text": "按顺时针顺序所有玩家依次进行行动。"
         }
       ],
@@ -2147,8 +2147,8 @@
       "cue_id": "turn/002",
       "entry": null,
       "course": {
-        "start": 161.43,
-        "duration": 6.047
+        "start": 160.215,
+        "duration": 6.117
       },
       "tracks": [
         {
@@ -2161,7 +2161,7 @@
               "type": "state",
               "animation": "turn/002",
               "cue_start": 0.0,
-              "duration": 6.047,
+              "duration": 6.117,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2177,15 +2177,15 @@
               "audio_slice_id": "turn__002",
               "asset": "media/tts/full/action.turn.mp3",
               "cue_start": 0.0,
-              "source_start": 10.025,
+              "source_start": 9.955,
               "source_end": 15.072,
-              "source_start_sample": 240600,
+              "source_start_sample": 238920,
               "source_end_sample": 361728
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.047,
+              "cue_start": 5.117,
               "duration": 1.0
             }
           ]
@@ -2198,7 +2198,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.07,
               "duration": 5.047,
               "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行："
             }
@@ -2208,7 +2208,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.07,
           "duration": 5.047,
           "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行："
         }
@@ -2226,8 +2226,8 @@
       "cue_id": "take_gems/title_3_1",
       "entry": null,
       "course": {
-        "start": 167.477,
-        "duration": 4.16
+        "start": 166.332,
+        "duration": 4.105
       },
       "tracks": [
         {
@@ -2241,7 +2241,7 @@
               "animation": "take_gems/title_3_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.16,
+              "source_end": 4.105,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2258,14 +2258,14 @@
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
               "source_start": 0.27,
-              "source_end": 3.93,
+              "source_end": 3.875,
               "source_start_sample": 6480,
-              "source_end_sample": 94320
+              "source_end_sample": 93000
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.66,
+              "cue_start": 3.605,
               "duration": 0.5
             }
           ]
@@ -2279,7 +2279,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.66,
+              "duration": 3.605,
               "text": "3.1，从宝石供应堆拿取宝石。"
             }
           ]
@@ -2289,7 +2289,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.66,
+          "duration": 3.605,
           "text": "3.1，从宝石供应堆拿取宝石。"
         }
       ],
@@ -2305,8 +2305,8 @@
       "cue_id": "take_gems/different.001",
       "entry": null,
       "course": {
-        "start": 171.637,
-        "duration": 5.265
+        "start": 170.437,
+        "duration": 5.285
       },
       "tracks": [
         {
@@ -2336,15 +2336,15 @@
               "audio_slice_id": "take_gems__different.001",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 3.93,
-              "source_end": 8.695,
-              "source_start_sample": 94320,
-              "source_end_sample": 208680
+              "source_start": 3.875,
+              "source_end": 8.66,
+              "source_start_sample": 93000,
+              "source_end_sample": 207840
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 4.765,
+              "cue_start": 4.785,
               "duration": 0.5
             }
           ]
@@ -2357,8 +2357,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 4.765,
+              "cue_start": 0.055,
+              "duration": 4.73,
               "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。"
             }
           ]
@@ -2367,8 +2367,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 4.765,
+          "cue_start": 0.055,
+          "duration": 4.73,
           "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。"
         }
       ],
@@ -2387,8 +2387,8 @@
       "cue_id": "take_gems/same.001",
       "entry": null,
       "course": {
-        "start": 176.902,
-        "duration": 7.16
+        "start": 175.722,
+        "duration": 6.975
       },
       "tracks": [
         {
@@ -2418,15 +2418,15 @@
               "audio_slice_id": "take_gems__same.001",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 8.695,
-              "source_end": 15.355,
-              "source_start_sample": 208680,
-              "source_end_sample": 368520
+              "source_start": 8.66,
+              "source_end": 15.135,
+              "source_start_sample": 207840,
+              "source_end_sample": 363240
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.66,
+              "cue_start": 6.475,
               "duration": 0.5
             }
           ]
@@ -2439,15 +2439,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.035,
               "duration": 3.72,
               "text": "当某种宝石在供应堆中的数量大于等于4时，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.96,
-              "duration": 2.7,
+              "cue_start": 3.995,
+              "duration": 2.48,
               "text": "也可以改为拿取这种宝石两枚。"
             }
           ]
@@ -2456,14 +2456,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.035,
           "duration": 3.72,
           "text": "当某种宝石在供应堆中的数量大于等于4时，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.96,
-          "duration": 2.7,
+          "cue_start": 3.995,
+          "duration": 2.48,
           "text": "也可以改为拿取这种宝石两枚。"
         }
       ],
@@ -2482,7 +2482,7 @@
       "cue_id": "take_gems/same.002",
       "entry": null,
       "course": {
-        "start": 184.062,
+        "start": 182.697,
         "duration": 7.19
       },
       "tracks": [
@@ -2512,10 +2512,10 @@
               "audio_slice_id": "take_gems__same.002",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 15.355,
-              "source_end": 22.045,
-              "source_start_sample": 368520,
-              "source_end_sample": 529080
+              "source_start": 15.335,
+              "source_end": 22.025,
+              "source_start_sample": 368040,
+              "source_end_sample": 528600
             },
             {
               "id": "audio.trailing_silence",
@@ -2533,15 +2533,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.02,
               "duration": 4.32,
               "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 4.765,
-              "duration": 1.925,
+              "cue_start": 4.785,
+              "duration": 1.905,
               "text": "否则就不能这样拿取。"
             }
           ]
@@ -2550,14 +2550,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.02,
           "duration": 4.32,
           "text": "拿取之后必须保证这种宝石在供应堆中至少剩下2枚，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 4.765,
-          "duration": 1.925,
+          "cue_start": 4.785,
+          "duration": 1.905,
           "text": "否则就不能这样拿取。"
         }
       ],
@@ -2576,8 +2576,8 @@
       "cue_id": "take_gems/draw_rule.001.1",
       "entry": null,
       "course": {
-        "start": 191.252,
-        "duration": 7.01
+        "start": 189.887,
+        "duration": 7.07
       },
       "tracks": [
         {
@@ -2607,15 +2607,15 @@
               "audio_slice_id": "take_gems__draw_rule.001.1",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 22.045,
-              "source_end": 28.555,
-              "source_start_sample": 529080,
-              "source_end_sample": 685320
+              "source_start": 22.035,
+              "source_end": 28.605,
+              "source_start_sample": 528840,
+              "source_end_sample": 686520
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.51,
+              "cue_start": 6.57,
               "duration": 0.5
             }
           ]
@@ -2628,7 +2628,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.01,
               "duration": 6.51,
               "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。"
             }
@@ -2638,7 +2638,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.01,
           "duration": 6.51,
           "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。"
         }
@@ -2658,8 +2658,8 @@
       "cue_id": "take_gems/draw_rule.001.2",
       "entry": null,
       "course": {
-        "start": 198.262,
-        "duration": 4.294
+        "start": 196.957,
+        "duration": 4.064
       },
       "tracks": [
         {
@@ -2689,15 +2689,15 @@
               "audio_slice_id": "take_gems__draw_rule.001.2",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 28.555,
-              "source_end": 32.349,
-              "source_start_sample": 685320,
-              "source_end_sample": 776376
+              "source_start": 28.605,
+              "source_end": 32.169,
+              "source_start_sample": 686520,
+              "source_end_sample": 772056
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.794,
+              "cue_start": 3.564,
               "duration": 0.5
             }
           ]
@@ -2711,7 +2711,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.794,
+              "duration": 3.564,
               "text": "当供应堆宝石不足时，尽可能拿取宝石。"
             }
           ]
@@ -2721,7 +2721,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.794,
+          "duration": 3.564,
           "text": "当供应堆宝石不足时，尽可能拿取宝石。"
         }
       ],
@@ -2740,8 +2740,8 @@
       "cue_id": "take_gems/limit.001.1",
       "entry": null,
       "course": {
-        "start": 202.556,
-        "duration": 6.815
+        "start": 201.021,
+        "duration": 6.995
       },
       "tracks": [
         {
@@ -2771,15 +2771,15 @@
               "audio_slice_id": "take_gems__limit.001.1",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 32.349,
+              "source_start": 32.169,
               "source_end": 38.664,
-              "source_start_sample": 776376,
+              "source_start_sample": 772056,
               "source_end_sample": 927936
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.315,
+              "cue_start": 6.495,
               "duration": 0.5
             }
           ]
@@ -2792,14 +2792,14 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.18,
               "duration": 3.035,
               "text": "玩家持有的宝石和黄金总数上限为10个。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.44,
+              "cue_start": 3.62,
               "duration": 2.875,
               "text": "任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
             }
@@ -2809,13 +2809,13 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.18,
           "duration": 3.035,
           "text": "玩家持有的宝石和黄金总数上限为10个。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.44,
+          "cue_start": 3.62,
           "duration": 2.875,
           "text": "任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
         }
@@ -2836,8 +2836,8 @@
       "cue_id": "take_gems/limit.001.2",
       "entry": null,
       "course": {
-        "start": 209.371,
-        "duration": 6.58
+        "start": 208.016,
+        "duration": 6.37
       },
       "tracks": [
         {
@@ -2868,14 +2868,14 @@
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
               "source_start": 38.664,
-              "source_end": 44.744,
+              "source_end": 44.534,
               "source_start_sample": 927936,
-              "source_end_sample": 1073856
+              "source_end_sample": 1068816
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.08,
+              "cue_start": 5.87,
               "duration": 0.5
             }
           ]
@@ -2889,7 +2889,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 6.08,
+              "duration": 5.87,
               "text": "任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
             }
           ]
@@ -2899,7 +2899,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 6.08,
+          "duration": 5.87,
           "text": "任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。"
         }
       ],
@@ -2919,8 +2919,8 @@
       "cue_id": "take_gems/public.001.1",
       "entry": null,
       "course": {
-        "start": 215.951,
-        "duration": 6.25
+        "start": 214.386,
+        "duration": 6.34
       },
       "tracks": [
         {
@@ -2933,7 +2933,7 @@
               "type": "state",
               "animation": "take_gems/public.001.1",
               "cue_start": 0.0,
-              "duration": 6.25,
+              "duration": 6.34,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2949,15 +2949,15 @@
               "audio_slice_id": "take_gems__public.001.1",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 44.744,
+              "source_start": 44.654,
               "source_end": 50.494,
-              "source_start_sample": 1073856,
+              "source_start_sample": 1071696,
               "source_end_sample": 1211856
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.75,
+              "cue_start": 5.84,
               "duration": 0.5
             }
           ]
@@ -2970,7 +2970,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.09,
               "duration": 5.75,
               "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。"
             }
@@ -2980,7 +2980,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.09,
           "duration": 5.75,
           "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。"
         }
@@ -2999,7 +2999,7 @@
       "cue_id": "take_gems/public.001.2",
       "entry": null,
       "course": {
-        "start": 222.201,
+        "start": 220.726,
         "duration": 3.378
       },
       "tracks": [
@@ -3080,7 +3080,7 @@
       "cue_id": "cards_group/title_3_2",
       "entry": null,
       "course": {
-        "start": 225.579,
+        "start": 224.104,
         "duration": 3.686
       },
       "tracks": [
@@ -3159,8 +3159,8 @@
       "cue_id": "cards/title_3_2_1",
       "entry": null,
       "course": {
-        "start": 229.265,
-        "duration": 4.095
+        "start": 227.79,
+        "duration": 3.95
       },
       "tracks": [
         {
@@ -3174,7 +3174,7 @@
               "animation": "cards/title_3_2_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.095,
+              "source_end": 3.95,
               "after_end": "hold_last_frame"
             }
           ]
@@ -3191,14 +3191,14 @@
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
               "source_start": 0.27,
-              "source_end": 3.865,
+              "source_end": 3.72,
               "source_start_sample": 6480,
-              "source_end_sample": 92760
+              "source_end_sample": 89280
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.595,
+              "cue_start": 3.45,
               "duration": 0.5
             }
           ]
@@ -3212,7 +3212,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.595,
+              "duration": 3.45,
               "text": "3.2.1，认识发展卡牌。"
             }
           ]
@@ -3222,7 +3222,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.595,
+          "duration": 3.45,
           "text": "3.2.1，认识发展卡牌。"
         }
       ],
@@ -3239,8 +3239,8 @@
       "cue_id": "cards/intro.001",
       "entry": null,
       "course": {
-        "start": 233.36,
-        "duration": 2.72
+        "start": 231.74,
+        "duration": 2.735
       },
       "tracks": [
         {
@@ -3253,7 +3253,7 @@
               "type": "state",
               "animation": "cards/intro.001",
               "cue_start": 0.0,
-              "duration": 2.72,
+              "duration": 2.735,
               "after_end": "hold_last_frame"
             }
           ]
@@ -3269,15 +3269,15 @@
               "audio_slice_id": "cards__intro.001",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 3.865,
-              "source_end": 6.085,
-              "source_start_sample": 92760,
-              "source_end_sample": 146040
+              "source_start": 3.84,
+              "source_end": 6.075,
+              "source_start_sample": 92160,
+              "source_end_sample": 145800
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.22,
+              "cue_start": 2.235,
               "duration": 0.5
             }
           ]
@@ -3290,8 +3290,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 2.22,
+              "cue_start": 0.025,
+              "duration": 2.21,
               "text": "我们介绍一下发展卡牌。"
             }
           ]
@@ -3300,8 +3300,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 2.22,
+          "cue_start": 0.025,
+          "duration": 2.21,
           "text": "我们介绍一下发展卡牌。"
         }
       ],
@@ -3320,8 +3320,8 @@
       "cue_id": "cards/cost.001.1",
       "entry": null,
       "course": {
-        "start": 236.08,
-        "duration": 4.445
+        "start": 234.475,
+        "duration": 4.455
       },
       "tracks": [
         {
@@ -3334,7 +3334,7 @@
               "type": "state",
               "animation": "cards/cost.001.1",
               "cue_start": 0.0,
-              "duration": 4.445,
+              "duration": 4.455,
               "after_end": "hold_last_frame"
             }
           ]
@@ -3350,15 +3350,15 @@
               "audio_slice_id": "cards__cost.001.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 6.085,
+              "source_start": 6.075,
               "source_end": 10.03,
-              "source_start_sample": 146040,
+              "source_start_sample": 145800,
               "source_end_sample": 240720
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.945,
+              "cue_start": 3.955,
               "duration": 0.5
             }
           ]
@@ -3371,14 +3371,14 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.01,
               "duration": 1.97,
               "text": "左下角是这张牌的价格。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.4,
+              "cue_start": 2.41,
               "duration": 1.545,
               "text": "要想购买这张牌，"
             }
@@ -3388,13 +3388,13 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.01,
           "duration": 1.97,
           "text": "左下角是这张牌的价格。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.4,
+          "cue_start": 2.41,
           "duration": 1.545,
           "text": "要想购买这张牌，"
         }
@@ -3416,8 +3416,8 @@
       "cue_id": "cards/cost.001.2",
       "entry": null,
       "course": {
-        "start": 240.525,
-        "duration": 11.195
+        "start": 238.93,
+        "duration": 11.07
       },
       "tracks": [
         {
@@ -3448,14 +3448,14 @@
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
               "source_start": 10.03,
-              "source_end": 20.725,
+              "source_end": 20.6,
               "source_start_sample": 240720,
-              "source_end_sample": 497400
+              "source_end_sample": 494400
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 10.695,
+              "cue_start": 10.57,
               "duration": 0.5
             }
           ]
@@ -3476,7 +3476,7 @@
               "id": "subtitle.0.1",
               "type": "subtitle",
               "cue_start": 5.14,
-              "duration": 5.555,
+              "duration": 5.43,
               "text": "之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。"
             }
           ]
@@ -3492,7 +3492,7 @@
         {
           "id": "subtitle.0.1",
           "cue_start": 5.14,
-          "duration": 5.555,
+          "duration": 5.43,
           "text": "之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。"
         }
       ],
@@ -3513,8 +3513,8 @@
       "cue_id": "cards/market.001.1",
       "entry": null,
       "course": {
-        "start": 251.72,
-        "duration": 15.83
+        "start": 250.0,
+        "duration": 15.885
       },
       "tracks": [
         {
@@ -3544,15 +3544,15 @@
               "audio_slice_id": "cards__market.001.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 20.725,
-              "source_end": 36.055,
-              "source_start_sample": 497400,
-              "source_end_sample": 865320
+              "source_start": 20.64,
+              "source_end": 36.025,
+              "source_start_sample": 495360,
+              "source_end_sample": 864600
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 15.33,
+              "cue_start": 15.385,
               "duration": 0.5
             }
           ]
@@ -3565,15 +3565,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.085,
               "duration": 4.17,
               "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 4.89,
-              "duration": 10.44,
+              "cue_start": 4.975,
+              "duration": 10.41,
               "text": "并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。"
             }
           ]
@@ -3582,14 +3582,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.085,
           "duration": 4.17,
           "text": "玩家只可以从被翻开的12张发展卡牌中选择一张购买，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 4.89,
-          "duration": 10.44,
+          "cue_start": 4.975,
+          "duration": 10.41,
           "text": "并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。"
         }
       ],
@@ -3609,8 +3609,8 @@
       "cue_id": "cards/market.001.2",
       "entry": null,
       "course": {
-        "start": 267.55,
-        "duration": 8.114
+        "start": 265.885,
+        "duration": 8.079
       },
       "tracks": [
         {
@@ -3640,15 +3640,15 @@
               "audio_slice_id": "cards__market.001.2",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 36.055,
-              "source_end": 43.669,
-              "source_start_sample": 865320,
-              "source_end_sample": 1048056
+              "source_start": 36.025,
+              "source_end": 43.604,
+              "source_start_sample": 864600,
+              "source_end_sample": 1046496
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.614,
+              "cue_start": 7.579,
               "duration": 0.5
             }
           ]
@@ -3661,8 +3661,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 7.614,
+              "cue_start": 0.03,
+              "duration": 7.549,
               "text": "并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。"
             }
           ]
@@ -3671,8 +3671,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 7.614,
+          "cue_start": 0.03,
+          "duration": 7.549,
           "text": "并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。"
         }
       ],
@@ -3692,8 +3692,8 @@
       "cue_id": "cards/prestige.001.1",
       "entry": null,
       "course": {
-        "start": 275.664,
-        "duration": 7.175
+        "start": 273.964,
+        "duration": 7.055
       },
       "tracks": [
         {
@@ -3723,15 +3723,15 @@
               "audio_slice_id": "cards__prestige.001.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 43.669,
-              "source_end": 50.344,
-              "source_start_sample": 1048056,
-              "source_end_sample": 1208256
+              "source_start": 43.664,
+              "source_end": 50.219,
+              "source_start_sample": 1047936,
+              "source_end_sample": 1205256
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.675,
+              "cue_start": 6.555,
               "duration": 0.5
             }
           ]
@@ -3744,15 +3744,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.005,
               "duration": 2.16,
               "text": "左上角是这张牌的声望值。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.755,
-              "duration": 3.92,
+              "cue_start": 2.76,
+              "duration": 3.795,
               "text": "玩家购买发展卡牌后，立即获得对应的声望值。"
             }
           ]
@@ -3761,14 +3761,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.005,
           "duration": 2.16,
           "text": "左上角是这张牌的声望值。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.755,
-          "duration": 3.92,
+          "cue_start": 2.76,
+          "duration": 3.795,
           "text": "玩家购买发展卡牌后，立即获得对应的声望值。"
         }
       ],
@@ -3788,8 +3788,8 @@
       "cue_id": "cards/prestige.001.2",
       "entry": null,
       "course": {
-        "start": 282.839,
-        "duration": 6.445
+        "start": 281.019,
+        "duration": 6.35
       },
       "tracks": [
         {
@@ -3802,7 +3802,7 @@
               "type": "state",
               "animation": "cards/prestige.001.2",
               "cue_start": 0.0,
-              "duration": 6.445,
+              "duration": 6.35,
               "after_end": "hold_last_frame"
             }
           ]
@@ -3818,15 +3818,15 @@
               "audio_slice_id": "cards__prestige.001.2",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 50.354,
-              "source_end": 56.299,
-              "source_start_sample": 1208496,
-              "source_end_sample": 1351176
+              "source_start": 50.359,
+              "source_end": 56.209,
+              "source_start_sample": 1208616,
+              "source_end_sample": 1349016
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.945,
+              "cue_start": 5.85,
               "duration": 0.5
             }
           ]
@@ -3840,14 +3840,14 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.565,
+              "duration": 2.56,
               "text": "不过并不是所有卡牌都有声望值。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.91,
-              "duration": 3.035,
+              "cue_start": 2.905,
+              "duration": 2.945,
               "text": "很多一级发展卡牌都没有声望值。"
             }
           ]
@@ -3857,13 +3857,13 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.565,
+          "duration": 2.56,
           "text": "不过并不是所有卡牌都有声望值。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.91,
-          "duration": 3.035,
+          "cue_start": 2.905,
+          "duration": 2.945,
           "text": "很多一级发展卡牌都没有声望值。"
         }
       ],
@@ -3883,8 +3883,8 @@
       "cue_id": "cards/discount.001",
       "entry": null,
       "course": {
-        "start": 289.284,
-        "duration": 8.14
+        "start": 287.369,
+        "duration": 7.92
       },
       "tracks": [
         {
@@ -3914,15 +3914,15 @@
               "audio_slice_id": "cards__discount.001",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 56.299,
-              "source_end": 63.939,
-              "source_start_sample": 1351176,
-              "source_end_sample": 1534536
+              "source_start": 56.209,
+              "source_end": 63.629,
+              "source_start_sample": 1349016,
+              "source_end_sample": 1527096
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.64,
+              "cue_start": 7.42,
               "duration": 0.5
             }
           ]
@@ -3935,8 +3935,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 7.64,
+              "cue_start": 0.09,
+              "duration": 7.33,
               "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。"
             }
           ]
@@ -3945,8 +3945,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 7.64,
+          "cue_start": 0.09,
+          "duration": 7.33,
           "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。"
         }
       ],
@@ -3965,8 +3965,8 @@
       "cue_id": "cards/discount.002.1",
       "entry": null,
       "course": {
-        "start": 297.424,
-        "duration": 11.975
+        "start": 295.289,
+        "duration": 11.93
       },
       "tracks": [
         {
@@ -3996,15 +3996,15 @@
               "audio_slice_id": "cards__discount.002.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 63.939,
-              "source_end": 75.414,
-              "source_start_sample": 1534536,
-              "source_end_sample": 1809936
+              "source_start": 63.789,
+              "source_end": 75.219,
+              "source_start_sample": 1530936,
+              "source_end_sample": 1805256
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 11.475,
+              "cue_start": 11.43,
               "duration": 0.5
             }
           ]
@@ -4017,8 +4017,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 11.475,
+              "cue_start": 0.15,
+              "duration": 11.28,
               "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。"
             }
           ]
@@ -4027,8 +4027,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 11.475,
+          "cue_start": 0.15,
+          "duration": 11.28,
           "text": "举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。"
         }
       ],
@@ -4047,7 +4047,7 @@
       "cue_id": "cards/discount.003.1",
       "entry": null,
       "course": {
-        "start": 309.399,
+        "start": 307.219,
         "duration": 8.395
       },
       "tracks": [
@@ -4078,10 +4078,10 @@
               "audio_slice_id": "cards__discount.003.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 75.414,
-              "source_end": 83.309,
-              "source_start_sample": 1809936,
-              "source_end_sample": 1999416
+              "source_start": 75.369,
+              "source_end": 83.264,
+              "source_start_sample": 1808856,
+              "source_end_sample": 1998336
             },
             {
               "id": "audio.trailing_silence",
@@ -4099,8 +4099,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 7.895,
+              "cue_start": 0.045,
+              "duration": 7.85,
               "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。"
             }
           ]
@@ -4109,8 +4109,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 7.895,
+          "cue_start": 0.045,
+          "duration": 7.85,
           "text": "如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。"
         }
       ],
@@ -4129,8 +4129,8 @@
       "cue_id": "cards/discount.003.2",
       "entry": null,
       "course": {
-        "start": 317.794,
-        "duration": 8.854
+        "start": 315.614,
+        "duration": 8.589
       },
       "tracks": [
         {
@@ -4143,7 +4143,7 @@
               "type": "state",
               "animation": "cards/discount.003.2",
               "cue_start": 0.0,
-              "duration": 8.854,
+              "duration": 8.589,
               "after_end": "hold_last_frame"
             }
           ]
@@ -4159,15 +4159,15 @@
               "audio_slice_id": "cards__discount.003.2",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 83.309,
-              "source_end": 91.663,
-              "source_start_sample": 1999416,
-              "source_end_sample": 2199912
+              "source_start": 83.294,
+              "source_end": 91.383,
+              "source_start_sample": 1999056,
+              "source_end_sample": 2193192
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.354,
+              "cue_start": 8.089,
               "duration": 0.5
             }
           ]
@@ -4180,8 +4180,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 8.354,
+              "cue_start": 0.015,
+              "duration": 8.074,
               "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。"
             }
           ]
@@ -4190,8 +4190,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 8.354,
+          "cue_start": 0.015,
+          "duration": 8.074,
           "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。"
         }
       ],
@@ -4210,8 +4210,8 @@
       "cue_id": "cards/public.001.1",
       "entry": null,
       "course": {
-        "start": 326.648,
-        "duration": 12.745
+        "start": 324.203,
+        "duration": 12.875
       },
       "tracks": [
         {
@@ -4241,15 +4241,15 @@
               "audio_slice_id": "cards__public.001.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 91.663,
-              "source_end": 103.908,
-              "source_start_sample": 2199912,
-              "source_end_sample": 2493792
+              "source_start": 91.523,
+              "source_end": 103.898,
+              "source_start_sample": 2196552,
+              "source_end_sample": 2493552
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 12.245,
+              "cue_start": 12.375,
               "duration": 0.5
             }
           ]
@@ -4262,8 +4262,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 12.245,
+              "cue_start": 0.14,
+              "duration": 12.235,
               "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。"
             }
           ]
@@ -4272,8 +4272,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 12.245,
+          "cue_start": 0.14,
+          "duration": 12.235,
           "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。"
         }
       ],
@@ -4292,8 +4292,8 @@
       "cue_id": "cards/limit.001.1",
       "entry": null,
       "course": {
-        "start": 339.393,
-        "duration": 9.652
+        "start": 337.078,
+        "duration": 9.662
       },
       "tracks": [
         {
@@ -4306,7 +4306,7 @@
               "type": "state",
               "animation": "cards/limit.001.1",
               "cue_start": 0.0,
-              "duration": 9.652,
+              "duration": 9.662,
               "after_end": "hold_last_frame"
             }
           ]
@@ -4322,15 +4322,15 @@
               "audio_slice_id": "cards__limit.001.1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 103.908,
+              "source_start": 103.898,
               "source_end": 112.56,
-              "source_start_sample": 2493792,
+              "source_start_sample": 2493552,
               "source_end_sample": 2701440
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.652,
+              "cue_start": 8.662,
               "duration": 1.0
             }
           ]
@@ -4343,7 +4343,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.01,
               "duration": 8.652,
               "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。"
             }
@@ -4353,7 +4353,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.01,
           "duration": 8.652,
           "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。"
         }
@@ -4374,8 +4374,8 @@
       "cue_id": "nobles/title_3_2_2",
       "entry": null,
       "course": {
-        "start": 349.045,
-        "duration": 3.33
+        "start": 346.74,
+        "duration": 3.23
       },
       "tracks": [
         {
@@ -4389,7 +4389,7 @@
               "animation": "nobles/title_3_2_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.33,
+              "source_end": 3.23,
               "after_end": "hold_last_frame"
             }
           ]
@@ -4406,14 +4406,14 @@
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
               "source_start": 0.28,
-              "source_end": 3.11,
+              "source_end": 3.01,
               "source_start_sample": 6720,
-              "source_end_sample": 74640
+              "source_end_sample": 72240
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.83,
+              "cue_start": 2.73,
               "duration": 0.5
             }
           ]
@@ -4427,7 +4427,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.83,
+              "duration": 2.73,
               "text": "3.2.2，贵族结算。"
             }
           ]
@@ -4437,7 +4437,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.83,
+          "duration": 2.73,
           "text": "3.2.2，贵族结算。"
         }
       ],
@@ -4454,8 +4454,8 @@
       "cue_id": "nobles/intro.001",
       "entry": null,
       "course": {
-        "start": 352.375,
-        "duration": 11.375
+        "start": 349.97,
+        "duration": 11.35
       },
       "tracks": [
         {
@@ -4485,15 +4485,15 @@
               "audio_slice_id": "nobles__intro.001",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 3.11,
-              "source_end": 13.985,
-              "source_start_sample": 74640,
-              "source_end_sample": 335640
+              "source_start": 3.09,
+              "source_end": 13.94,
+              "source_start_sample": 74160,
+              "source_end_sample": 334560
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 10.875,
+              "cue_start": 10.85,
               "duration": 0.5
             }
           ]
@@ -4506,29 +4506,29 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.02,
               "duration": 1.805,
               "text": "我们再介绍一下贵族板块。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.26,
+              "cue_start": 2.28,
               "duration": 2.375,
               "text": "左上角是这位贵族的声望值，"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 4.98,
+              "cue_start": 5.0,
               "duration": 3.025,
               "text": "下方则是结识这位贵族所需要的条件，"
             },
             {
               "id": "subtitle.0.3",
               "type": "subtitle",
-              "cue_start": 8.315,
-              "duration": 2.56,
+              "cue_start": 8.335,
+              "duration": 2.515,
               "text": "也就是已购买的卡牌数量。"
             }
           ]
@@ -4537,26 +4537,26 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.02,
           "duration": 1.805,
           "text": "我们再介绍一下贵族板块。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.26,
+          "cue_start": 2.28,
           "duration": 2.375,
           "text": "左上角是这位贵族的声望值，"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 4.98,
+          "cue_start": 5.0,
           "duration": 3.025,
           "text": "下方则是结识这位贵族所需要的条件，"
         },
         {
           "id": "subtitle.0.3",
-          "cue_start": 8.315,
-          "duration": 2.56,
+          "cue_start": 8.335,
+          "duration": 2.515,
           "text": "也就是已购买的卡牌数量。"
         }
       ],
@@ -4576,8 +4576,8 @@
       "cue_id": "nobles/trigger.001.1",
       "entry": null,
       "course": {
-        "start": 363.75,
-        "duration": 12.72
+        "start": 361.32,
+        "duration": 12.68
       },
       "tracks": [
         {
@@ -4607,15 +4607,15 @@
               "audio_slice_id": "nobles__trigger.001.1",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 13.985,
-              "source_end": 26.205,
-              "source_start_sample": 335640,
-              "source_end_sample": 628920
+              "source_start": 13.97,
+              "source_end": 26.15,
+              "source_start_sample": 335280,
+              "source_end_sample": 627600
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 12.22,
+              "cue_start": 12.18,
               "duration": 0.5
             }
           ]
@@ -4628,8 +4628,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 12.22,
+              "cue_start": 0.015,
+              "duration": 12.165,
               "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。"
             }
           ]
@@ -4638,8 +4638,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 12.22,
+          "cue_start": 0.015,
+          "duration": 12.165,
           "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。"
         }
       ],
@@ -4659,8 +4659,8 @@
       "cue_id": "nobles/forced.001.1",
       "entry": null,
       "course": {
-        "start": 376.47,
-        "duration": 12.199
+        "start": 374.0,
+        "duration": 11.994
       },
       "tracks": [
         {
@@ -4690,15 +4690,15 @@
               "audio_slice_id": "nobles__forced.001.1",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 26.205,
-              "source_end": 37.904,
-              "source_start_sample": 628920,
-              "source_end_sample": 909696
+              "source_start": 26.18,
+              "source_end": 37.674,
+              "source_start_sample": 628320,
+              "source_end_sample": 904176
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 11.699,
+              "cue_start": 11.494,
               "duration": 0.5
             }
           ]
@@ -4711,15 +4711,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.025,
               "duration": 6.88,
               "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 7.334,
-              "duration": 4.365,
+              "cue_start": 7.359,
+              "duration": 4.135,
               "text": "并且这个行动是强制性的，玩家不可以选择跳过。"
             }
           ]
@@ -4728,14 +4728,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.025,
           "duration": 6.88,
           "text": "请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 7.334,
-          "duration": 4.365,
+          "cue_start": 7.359,
+          "duration": 4.135,
           "text": "并且这个行动是强制性的，玩家不可以选择跳过。"
         }
       ],
@@ -4754,7 +4754,7 @@
       "cue_id": "nobles/source.001",
       "entry": null,
       "course": {
-        "start": 388.669,
+        "start": 385.994,
         "duration": 7.4
       },
       "tracks": [
@@ -4785,15 +4785,15 @@
               "audio_slice_id": "nobles__source.001",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 37.904,
-              "source_end": 42.964,
-              "source_start_sample": 909696,
-              "source_end_sample": 1031136
+              "source_start": 37.814,
+              "source_end": 42.789,
+              "source_start_sample": 907536,
+              "source_end_sample": 1026936
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.06,
+              "cue_start": 4.975,
               "duration": 0.5
             }
           ]
@@ -4806,8 +4806,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 5.06,
+              "cue_start": 0.09,
+              "duration": 4.885,
               "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。"
             }
           ]
@@ -4816,8 +4816,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 5.06,
+          "cue_start": 0.09,
+          "duration": 4.885,
           "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。"
         }
       ],
@@ -4837,8 +4837,8 @@
       "cue_id": "nobles/choice.001.1",
       "entry": null,
       "course": {
-        "start": 396.069,
-        "duration": 9.255
+        "start": 393.394,
+        "duration": 9.23
       },
       "tracks": [
         {
@@ -4868,15 +4868,15 @@
               "audio_slice_id": "nobles__choice.001.1",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 42.964,
-              "source_end": 51.719,
-              "source_start_sample": 1031136,
-              "source_end_sample": 1241256
+              "source_start": 42.949,
+              "source_end": 51.679,
+              "source_start_sample": 1030776,
+              "source_end_sample": 1240296
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.755,
+              "cue_start": 8.73,
               "duration": 0.5
             }
           ]
@@ -4889,8 +4889,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 8.755,
+              "cue_start": 0.015,
+              "duration": 8.715,
               "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。"
             }
           ]
@@ -4899,8 +4899,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 8.755,
+          "cue_start": 0.015,
+          "duration": 8.715,
           "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。"
         }
       ],
@@ -4920,8 +4920,8 @@
       "cue_id": "nobles/repeat.001.1",
       "entry": null,
       "course": {
-        "start": 405.324,
-        "duration": 12.43
+        "start": 402.624,
+        "duration": 12.385
       },
       "tracks": [
         {
@@ -4951,15 +4951,15 @@
               "audio_slice_id": "nobles__repeat.001.1",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 51.719,
-              "source_end": 63.649,
-              "source_start_sample": 1241256,
-              "source_end_sample": 1527576
+              "source_start": 51.679,
+              "source_end": 63.564,
+              "source_start_sample": 1240296,
+              "source_end_sample": 1525536
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 11.93,
+              "cue_start": 11.885,
               "duration": 0.5
             }
           ]
@@ -4972,8 +4972,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 11.93,
+              "cue_start": 0.04,
+              "duration": 11.845,
               "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
             }
           ]
@@ -4982,8 +4982,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 11.93,
+          "cue_start": 0.04,
+          "duration": 11.845,
           "text": "当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
         }
       ],
@@ -5003,8 +5003,8 @@
       "cue_id": "nobles/repeat.001.3",
       "entry": null,
       "course": {
-        "start": 417.754,
-        "duration": 6.861
+        "start": 415.009,
+        "duration": 6.966
       },
       "tracks": [
         {
@@ -5017,7 +5017,7 @@
               "type": "state",
               "animation": "nobles/repeat.001.3",
               "cue_start": 0.0,
-              "duration": 6.861,
+              "duration": 6.966,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5033,15 +5033,15 @@
               "audio_slice_id": "nobles__repeat.001.3",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 63.649,
-              "source_end": 70.01,
-              "source_start_sample": 1527576,
-              "source_end_sample": 1680240
+              "source_start": 63.564,
+              "source_end": 70.03,
+              "source_start_sample": 1525536,
+              "source_end_sample": 1680720
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.361,
+              "cue_start": 6.466,
               "duration": 0.5
             }
           ]
@@ -5054,7 +5054,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.085,
               "duration": 6.361,
               "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。"
             }
@@ -5064,7 +5064,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.085,
           "duration": 6.361,
           "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。"
         }
@@ -5085,8 +5085,8 @@
       "cue_id": "nobles/summary.001.1",
       "entry": null,
       "course": {
-        "start": 424.615,
-        "duration": 5.105
+        "start": 421.975,
+        "duration": 5.075
       },
       "tracks": [
         {
@@ -5099,7 +5099,7 @@
               "type": "state",
               "animation": "nobles/summary.001.1",
               "cue_start": 0.0,
-              "duration": 5.105,
+              "duration": 5.075,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5115,15 +5115,15 @@
               "audio_slice_id": "nobles__summary.001.1",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 70.01,
-              "source_end": 74.615,
-              "source_start_sample": 1680240,
-              "source_end_sample": 1790760
+              "source_start": 70.03,
+              "source_end": 74.605,
+              "source_start_sample": 1680720,
+              "source_end_sample": 1790520
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 4.605,
+              "cue_start": 4.575,
               "duration": 0.5
             }
           ]
@@ -5137,7 +5137,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 4.605,
+              "duration": 4.575,
               "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。"
             }
           ]
@@ -5147,7 +5147,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 4.605,
+          "duration": 4.575,
           "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。"
         }
       ],
@@ -5169,8 +5169,8 @@
       "cue_id": "nobles/summary.001.2",
       "entry": null,
       "course": {
-        "start": 429.72,
-        "duration": 4.77
+        "start": 427.05,
+        "duration": 4.73
       },
       "tracks": [
         {
@@ -5183,7 +5183,7 @@
               "type": "state",
               "animation": "nobles/summary.001.2",
               "cue_start": 0.0,
-              "duration": 4.77,
+              "duration": 4.73,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5199,15 +5199,15 @@
               "audio_slice_id": "nobles__summary.001.2",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 74.615,
-              "source_end": 78.885,
-              "source_start_sample": 1790760,
-              "source_end_sample": 1893240
+              "source_start": 74.605,
+              "source_end": 78.835,
+              "source_start_sample": 1790520,
+              "source_end_sample": 1892040
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 4.27,
+              "cue_start": 4.23,
               "duration": 0.5
             }
           ]
@@ -5220,8 +5220,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 4.27,
+              "cue_start": 0.01,
+              "duration": 4.22,
               "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。"
             }
           ]
@@ -5230,8 +5230,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 4.27,
+          "cue_start": 0.01,
+          "duration": 4.22,
           "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。"
         }
       ],
@@ -5253,8 +5253,8 @@
       "cue_id": "nobles/summary.001.3",
       "entry": null,
       "course": {
-        "start": 434.49,
-        "duration": 7.339
+        "start": 431.78,
+        "duration": 7.359
       },
       "tracks": [
         {
@@ -5267,7 +5267,7 @@
               "type": "state",
               "animation": "nobles/summary.001.3",
               "cue_start": 0.0,
-              "duration": 7.339,
+              "duration": 7.359,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5283,15 +5283,15 @@
               "audio_slice_id": "nobles__summary.001.3",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 78.885,
+              "source_start": 78.865,
               "source_end": 85.224,
-              "source_start_sample": 1893240,
+              "source_start_sample": 1892760,
               "source_end_sample": 2045376
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.339,
+              "cue_start": 6.359,
               "duration": 1.0
             }
           ]
@@ -5304,7 +5304,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.02,
               "duration": 6.339,
               "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。"
             }
@@ -5314,7 +5314,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.02,
           "duration": 6.339,
           "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。"
         }
@@ -5337,8 +5337,8 @@
       "cue_id": "reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 441.829,
-        "duration": 3.92
+        "start": 439.139,
+        "duration": 3.815
       },
       "tracks": [
         {
@@ -5352,7 +5352,7 @@
               "animation": "reserve/title_3_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.92,
+              "source_end": 3.815,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5369,14 +5369,14 @@
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
               "source_start": 0.08,
-              "source_end": 3.5,
+              "source_end": 3.395,
               "source_start_sample": 1920,
-              "source_end_sample": 84000
+              "source_end_sample": 81480
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.42,
+              "cue_start": 3.315,
               "duration": 0.5
             }
           ]
@@ -5390,7 +5390,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.42,
+              "duration": 3.315,
               "text": "3.3，保留一张发展卡牌。"
             }
           ]
@@ -5400,7 +5400,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.42,
+          "duration": 3.315,
           "text": "3.3，保留一张发展卡牌。"
         }
       ],
@@ -5416,8 +5416,8 @@
       "cue_id": "reserve/intro.001.1",
       "entry": null,
       "course": {
-        "start": 445.749,
-        "duration": 11.685
+        "start": 442.954,
+        "duration": 11.6
       },
       "tracks": [
         {
@@ -5447,15 +5447,15 @@
               "audio_slice_id": "reserve__intro.001.1",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 3.5,
-              "source_end": 14.685,
-              "source_start_sample": 84000,
-              "source_end_sample": 352440
+              "source_start": 3.435,
+              "source_end": 14.535,
+              "source_start_sample": 82440,
+              "source_end_sample": 348840
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 11.185,
+              "cue_start": 11.1,
               "duration": 0.5
             }
           ]
@@ -5468,22 +5468,22 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.065,
               "duration": 2.705,
               "text": "除购买外，玩家也可以不支付费用，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.0,
+              "cue_start": 3.065,
               "duration": 2.555,
               "text": "把一张发展卡牌从供应堆拿走，"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 5.9,
-              "duration": 5.285,
+              "cue_start": 5.965,
+              "duration": 5.135,
               "text": "正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。"
             }
           ]
@@ -5492,20 +5492,20 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.065,
           "duration": 2.705,
           "text": "除购买外，玩家也可以不支付费用，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.0,
+          "cue_start": 3.065,
           "duration": 2.555,
           "text": "把一张发展卡牌从供应堆拿走，"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 5.9,
-          "duration": 5.285,
+          "cue_start": 5.965,
+          "duration": 5.135,
           "text": "正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。"
         }
       ],
@@ -5525,8 +5525,8 @@
       "cue_id": "reserve/gold.001",
       "entry": null,
       "course": {
-        "start": 457.434,
-        "duration": 7.645
+        "start": 454.554,
+        "duration": 7.425
       },
       "tracks": [
         {
@@ -5557,14 +5557,14 @@
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
               "source_start": 14.715,
-              "source_end": 21.86,
+              "source_end": 21.64,
               "source_start_sample": 353160,
-              "source_end_sample": 524640
+              "source_end_sample": 519360
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.145,
+              "cue_start": 6.925,
               "duration": 0.5
             }
           ]
@@ -5585,7 +5585,7 @@
               "id": "subtitle.0.1",
               "type": "subtitle",
               "cue_start": 2.285,
-              "duration": 4.86,
+              "duration": 4.64,
               "text": "它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
             }
           ]
@@ -5601,7 +5601,7 @@
         {
           "id": "subtitle.0.1",
           "cue_start": 2.285,
-          "duration": 4.86,
+          "duration": 4.64,
           "text": "它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
         }
       ],
@@ -5620,8 +5620,8 @@
       "cue_id": "reserve/deck.001",
       "entry": null,
       "course": {
-        "start": 465.079,
-        "duration": 8.145
+        "start": 461.979,
+        "duration": 8.13
       },
       "tracks": [
         {
@@ -5651,15 +5651,15 @@
               "audio_slice_id": "reserve__deck.001",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 21.86,
-              "source_end": 29.505,
-              "source_start_sample": 524640,
-              "source_end_sample": 708120
+              "source_start": 21.82,
+              "source_end": 29.45,
+              "source_start_sample": 523680,
+              "source_end_sample": 706800
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.645,
+              "cue_start": 7.63,
               "duration": 0.5
             }
           ]
@@ -5672,8 +5672,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 7.645,
+              "cue_start": 0.04,
+              "duration": 7.59,
               "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。"
             }
           ]
@@ -5682,8 +5682,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 7.645,
+          "cue_start": 0.04,
+          "duration": 7.59,
           "text": "除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。"
         }
       ],
@@ -5704,8 +5704,8 @@
       "cue_id": "reserve/notes_intro.001",
       "entry": null,
       "course": {
-        "start": 473.224,
-        "duration": 9.187
+        "start": 470.109,
+        "duration": 9.192
       },
       "tracks": [
         {
@@ -5735,15 +5735,15 @@
               "audio_slice_id": "reserve__notes_intro.001",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 29.505,
-              "source_end": 38.192,
-              "source_start_sample": 708120,
-              "source_end_sample": 916608
+              "source_start": 29.48,
+              "source_end": 38.172,
+              "source_start_sample": 707520,
+              "source_end_sample": 916128
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.687,
+              "cue_start": 8.692,
               "duration": 0.5
             }
           ]
@@ -5756,8 +5756,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 8.687,
+              "cue_start": 0.025,
+              "duration": 8.667,
               "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。"
             }
           ]
@@ -5766,8 +5766,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 8.687,
+          "cue_start": 0.025,
+          "duration": 8.667,
           "text": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。"
         }
       ],
@@ -5788,8 +5788,8 @@
       "cue_id": "reserve/limit_gold.001.2",
       "entry": null,
       "course": {
-        "start": 482.411,
-        "duration": 6.11
+        "start": 479.301,
+        "duration": 6.085
       },
       "tracks": [
         {
@@ -5819,15 +5819,15 @@
               "audio_slice_id": "reserve__limit_gold.001.2",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 38.192,
-              "source_end": 43.802,
-              "source_start_sample": 916608,
-              "source_end_sample": 1051248
+              "source_start": 38.172,
+              "source_end": 43.757,
+              "source_start_sample": 916128,
+              "source_end_sample": 1050168
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.61,
+              "cue_start": 5.585,
               "duration": 0.5
             }
           ]
@@ -5840,8 +5840,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 5.61,
+              "cue_start": 0.02,
+              "duration": 5.565,
               "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。"
             }
           ]
@@ -5850,8 +5850,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 5.61,
+          "cue_start": 0.02,
+          "duration": 5.565,
           "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。"
         }
       ],
@@ -5871,8 +5871,8 @@
       "cue_id": "reserve/limit_hand.001.1",
       "entry": null,
       "course": {
-        "start": 488.521,
-        "duration": 8.685
+        "start": 485.386,
+        "duration": 8.52
       },
       "tracks": [
         {
@@ -5902,15 +5902,15 @@
               "audio_slice_id": "reserve__limit_hand.001.1",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 43.802,
-              "source_end": 51.987,
-              "source_start_sample": 1051248,
-              "source_end_sample": 1247688
+              "source_start": 43.777,
+              "source_end": 51.797,
+              "source_start_sample": 1050648,
+              "source_end_sample": 1243128
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.185,
+              "cue_start": 8.02,
               "duration": 0.5
             }
           ]
@@ -5923,15 +5923,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.025,
               "duration": 3.13,
               "text": "每位玩家最多同时保留3张发展卡牌；"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.565,
-              "duration": 4.62,
+              "cue_start": 3.59,
+              "duration": 4.43,
               "text": "已经保留3张时，就不能再保留，必须选择其他行动。"
             }
           ]
@@ -5940,14 +5940,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.025,
           "duration": 3.13,
           "text": "每位玩家最多同时保留3张发展卡牌；"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.565,
-          "duration": 4.62,
+          "cue_start": 3.59,
+          "duration": 4.43,
           "text": "已经保留3张时，就不能再保留，必须选择其他行动。"
         }
       ],
@@ -5966,8 +5966,8 @@
       "cue_id": "reserve/private.001.1",
       "entry": null,
       "course": {
-        "start": 497.206,
-        "duration": 11.61
+        "start": 493.906,
+        "duration": 11.565
       },
       "tracks": [
         {
@@ -5980,7 +5980,7 @@
               "type": "state",
               "animation": "reserve/private.001.1",
               "cue_start": 0.0,
-              "duration": 11.61,
+              "duration": 11.565,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5996,15 +5996,15 @@
               "audio_slice_id": "reserve__private.001.1",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 51.987,
-              "source_end": 63.097,
-              "source_start_sample": 1247688,
-              "source_end_sample": 1514328
+              "source_start": 51.947,
+              "source_end": 63.012,
+              "source_start_sample": 1246728,
+              "source_end_sample": 1512288
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 11.11,
+              "cue_start": 11.065,
               "duration": 0.5
             }
           ]
@@ -6017,15 +6017,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.04,
               "duration": 6.245,
               "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 6.621,
-              "duration": 4.489,
+              "cue_start": 6.661,
+              "duration": 4.404,
               "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。"
             }
           ]
@@ -6034,14 +6034,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.04,
           "duration": 6.245,
           "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 6.621,
-          "duration": 4.489,
+          "cue_start": 6.661,
+          "duration": 4.404,
           "text": "不可以给其他玩家看，其他玩家也不可以主动去查看。"
         }
       ],
@@ -6059,8 +6059,8 @@
       "cue_id": "reserve/private.002",
       "entry": null,
       "course": {
-        "start": 508.816,
-        "duration": 6.68
+        "start": 505.471,
+        "duration": 6.515
       },
       "tracks": [
         {
@@ -6090,15 +6090,15 @@
               "audio_slice_id": "reserve__private.002",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 63.097,
-              "source_end": 69.277,
-              "source_start_sample": 1514328,
-              "source_end_sample": 1662648
+              "source_start": 63.032,
+              "source_end": 69.047,
+              "source_start_sample": 1512768,
+              "source_end_sample": 1657128
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.18,
+              "cue_start": 6.015,
               "duration": 0.5
             }
           ]
@@ -6111,8 +6111,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 6.18,
+              "cue_start": 0.065,
+              "duration": 5.95,
               "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。"
             }
           ]
@@ -6121,8 +6121,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 6.18,
+          "cue_start": 0.065,
+          "duration": 5.95,
           "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。"
         }
       ],
@@ -6141,8 +6141,8 @@
       "cue_id": "reserve/not_purchase.001",
       "entry": null,
       "course": {
-        "start": 515.496,
-        "duration": 7.707
+        "start": 511.986,
+        "duration": 7.807
       },
       "tracks": [
         {
@@ -6155,7 +6155,7 @@
               "type": "state",
               "animation": "reserve/not_purchase.001",
               "cue_start": 0.0,
-              "duration": 7.707,
+              "duration": 7.807,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6171,15 +6171,15 @@
               "audio_slice_id": "reserve__not_purchase.001",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 69.277,
+              "source_start": 69.177,
               "source_end": 75.984,
-              "source_start_sample": 1662648,
+              "source_start_sample": 1660248,
               "source_end_sample": 1823616
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.707,
+              "cue_start": 6.807,
               "duration": 1.0
             }
           ]
@@ -6192,7 +6192,7 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.1,
               "duration": 6.707,
               "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。"
             }
@@ -6202,7 +6202,7 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.1,
           "duration": 6.707,
           "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。"
         }
@@ -6223,8 +6223,8 @@
       "cue_id": "purchase_reserved/title_3_4",
       "entry": null,
       "course": {
-        "start": 523.203,
-        "duration": 4.255
+        "start": 519.793,
+        "duration": 4.205
       },
       "tracks": [
         {
@@ -6238,7 +6238,7 @@
               "animation": "purchase_reserved/title_3_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.255,
+              "source_end": 4.205,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6255,14 +6255,14 @@
               "asset": "media/tts/full/action.purchase_reserved.mp3",
               "cue_start": 0.0,
               "source_start": 0.26,
-              "source_end": 4.015,
+              "source_end": 3.965,
               "source_start_sample": 6240,
-              "source_end_sample": 96360
+              "source_end_sample": 95160
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.755,
+              "cue_start": 3.705,
               "duration": 0.5
             }
           ]
@@ -6276,7 +6276,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.755,
+              "duration": 3.705,
               "text": "3.4，购买保留的发展卡牌。"
             }
           ]
@@ -6286,7 +6286,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.755,
+          "duration": 3.705,
           "text": "3.4，购买保留的发展卡牌。"
         }
       ],
@@ -6302,8 +6302,8 @@
       "cue_id": "purchase_reserved/001",
       "entry": null,
       "course": {
-        "start": 527.458,
-        "duration": 20.649
+        "start": 523.998,
+        "duration": 20.679
       },
       "tracks": [
         {
@@ -6333,15 +6333,15 @@
               "audio_slice_id": "purchase_reserved__001",
               "asset": "media/tts/full/action.purchase_reserved.mp3",
               "cue_start": 0.0,
-              "source_start": 4.015,
+              "source_start": 3.985,
               "source_end": 23.664,
-              "source_start_sample": 96360,
+              "source_start_sample": 95640,
               "source_end_sample": 567936
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 19.649,
+              "cue_start": 19.679,
               "duration": 1.0
             }
           ]
@@ -6354,42 +6354,42 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.03,
               "duration": 4.9,
               "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 5.44,
+              "cue_start": 5.47,
               "duration": 1.78,
               "text": "按照之前介绍过的规则，"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 7.425,
+              "cue_start": 7.455,
               "duration": 2.375,
               "text": "支付费用，将一张被保留的，"
             },
             {
               "id": "subtitle.0.3",
               "type": "subtitle",
-              "cue_start": 10.065,
+              "cue_start": 10.095,
               "duration": 3.355,
               "text": "背面朝上的卡牌翻面，正常结算它的声望值，"
             },
             {
               "id": "subtitle.0.4",
               "type": "subtitle",
-              "cue_start": 14.04,
+              "cue_start": 14.07,
               "duration": 1.97,
               "text": "查看是否满足贵族条件，"
             },
             {
               "id": "subtitle.0.5",
               "type": "subtitle",
-              "cue_start": 16.525,
+              "cue_start": 16.555,
               "duration": 3.124,
               "text": "并在后续的回合中适用它所带来的折扣。"
             }
@@ -6399,37 +6399,37 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.03,
           "duration": 4.9,
           "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 5.44,
+          "cue_start": 5.47,
           "duration": 1.78,
           "text": "按照之前介绍过的规则，"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 7.425,
+          "cue_start": 7.455,
           "duration": 2.375,
           "text": "支付费用，将一张被保留的，"
         },
         {
           "id": "subtitle.0.3",
-          "cue_start": 10.065,
+          "cue_start": 10.095,
           "duration": 3.355,
           "text": "背面朝上的卡牌翻面，正常结算它的声望值，"
         },
         {
           "id": "subtitle.0.4",
-          "cue_start": 14.04,
+          "cue_start": 14.07,
           "duration": 1.97,
           "text": "查看是否满足贵族条件，"
         },
         {
           "id": "subtitle.0.5",
-          "cue_start": 16.525,
+          "cue_start": 16.555,
           "duration": 3.124,
           "text": "并在后续的回合中适用它所带来的折扣。"
         }
@@ -6449,8 +6449,8 @@
       "cue_id": "summary/title_3_5",
       "entry": null,
       "course": {
-        "start": 548.107,
-        "duration": 3.6
+        "start": 544.677,
+        "duration": 3.32
       },
       "tracks": [
         {
@@ -6464,7 +6464,7 @@
               "animation": "summary/title_3_5",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.6,
+              "source_end": 3.32,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6481,14 +6481,14 @@
               "asset": "media/tts/full/action.summary.mp3",
               "cue_start": 0.0,
               "source_start": 0.28,
-              "source_end": 3.38,
+              "source_end": 3.1,
               "source_start_sample": 6720,
-              "source_end_sample": 81120
+              "source_end_sample": 74400
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.1,
+              "cue_start": 2.82,
               "duration": 0.5
             }
           ]
@@ -6502,7 +6502,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.1,
+              "duration": 2.82,
               "text": "3.5，回合结束与循环。"
             }
           ]
@@ -6512,7 +6512,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.1,
+          "duration": 2.82,
           "text": "3.5，回合结束与循环。"
         }
       ],
@@ -6528,8 +6528,8 @@
       "cue_id": "summary/001",
       "entry": null,
       "course": {
-        "start": 551.707,
-        "duration": 7.595
+        "start": 547.997,
+        "duration": 7.68
       },
       "tracks": [
         {
@@ -6542,7 +6542,7 @@
               "type": "state",
               "animation": "summary/001",
               "cue_start": 0.0,
-              "duration": 7.595,
+              "duration": 7.68,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6558,15 +6558,15 @@
               "audio_slice_id": "summary__001",
               "asset": "media/tts/full/action.summary.mp3",
               "cue_start": 0.0,
-              "source_start": 3.38,
-              "source_end": 10.475,
-              "source_start_sample": 81120,
-              "source_end_sample": 251400
+              "source_start": 3.26,
+              "source_end": 10.44,
+              "source_start_sample": 78240,
+              "source_end_sample": 250560
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.095,
+              "cue_start": 7.18,
               "duration": 0.5
             }
           ]
@@ -6579,15 +6579,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.12,
               "duration": 2.805,
               "text": "以上就是玩家在回合内可以选择的行动，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.1,
-              "duration": 3.995,
+              "cue_start": 3.22,
+              "duration": 3.96,
               "text": "分别为拿取宝石、购买卡牌和保留卡牌。"
             }
           ]
@@ -6596,14 +6596,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.12,
           "duration": 2.805,
           "text": "以上就是玩家在回合内可以选择的行动，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.1,
-          "duration": 3.995,
+          "cue_start": 3.22,
+          "duration": 3.96,
           "text": "分别为拿取宝石、购买卡牌和保留卡牌。"
         }
       ],
@@ -6624,8 +6624,8 @@
       "cue_id": "summary/002.1",
       "entry": null,
       "course": {
-        "start": 559.302,
-        "duration": 9.48
+        "start": 555.677,
+        "duration": 9.475
       },
       "tracks": [
         {
@@ -6638,7 +6638,7 @@
               "type": "state",
               "animation": "summary/002.1",
               "cue_start": 0.0,
-              "duration": 9.48,
+              "duration": 9.475,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6654,15 +6654,15 @@
               "audio_slice_id": "summary__002.1",
               "asset": "media/tts/full/action.summary.mp3",
               "cue_start": 0.0,
-              "source_start": 10.475,
-              "source_end": 19.455,
-              "source_start_sample": 251400,
-              "source_end_sample": 466920
+              "source_start": 10.44,
+              "source_end": 19.415,
+              "source_start_sample": 250560,
+              "source_end_sample": 465960
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.98,
+              "cue_start": 8.975,
               "duration": 0.5
             }
           ]
@@ -6675,22 +6675,22 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.035,
               "duration": 2.79,
               "text": "一个回合内，只能选择一种行动进行，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.19,
+              "cue_start": 3.225,
               "duration": 3.11,
               "text": "随后回合立刻结束，按照顺时针顺序，"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 6.605,
-              "duration": 2.375,
+              "cue_start": 6.64,
+              "duration": 2.335,
               "text": "左手边的玩家开始他的回合。"
             }
           ]
@@ -6699,20 +6699,20 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.035,
           "duration": 2.79,
           "text": "一个回合内，只能选择一种行动进行，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.19,
+          "cue_start": 3.225,
           "duration": 3.11,
           "text": "随后回合立刻结束，按照顺时针顺序，"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 6.605,
-          "duration": 2.375,
+          "cue_start": 6.64,
+          "duration": 2.335,
           "text": "左手边的玩家开始他的回合。"
         }
       ],
@@ -6732,8 +6732,8 @@
       "cue_id": "summary/002.2",
       "entry": null,
       "course": {
-        "start": 568.782,
-        "duration": 4.23
+        "start": 565.152,
+        "duration": 4.25
       },
       "tracks": [
         {
@@ -6746,7 +6746,7 @@
               "type": "state",
               "animation": "summary/002.2",
               "cue_start": 0.0,
-              "duration": 4.23,
+              "duration": 4.25,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6762,15 +6762,15 @@
               "audio_slice_id": "summary__002.2",
               "asset": "media/tts/full/action.summary.mp3",
               "cue_start": 0.0,
-              "source_start": 19.455,
+              "source_start": 19.435,
               "source_end": 22.685,
-              "source_start_sample": 466920,
+              "source_start_sample": 466440,
               "source_end_sample": 544440
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.23,
+              "cue_start": 3.25,
               "duration": 1.0
             }
           ]
@@ -6783,8 +6783,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 3.23,
+              "cue_start": 0.02,
+              "duration": 3.249,
               "text": "就这样一直循环，直到整局游戏结束。"
             }
           ]
@@ -6793,8 +6793,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 3.23,
+          "cue_start": 0.02,
+          "duration": 3.249,
           "text": "就这样一直循环，直到整局游戏结束。"
         }
       ],
@@ -6814,8 +6814,8 @@
       "cue_id": "end/title_4",
       "entry": null,
       "course": {
-        "start": 573.012,
-        "duration": 2.47
+        "start": 569.402,
+        "duration": 2.175
       },
       "tracks": [
         {
@@ -6829,7 +6829,7 @@
               "animation": "end/title_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.47,
+              "source_end": 2.175,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6846,14 +6846,14 @@
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
               "source_start": 0.28,
-              "source_end": 2.25,
+              "source_end": 1.955,
               "source_start_sample": 6720,
-              "source_end_sample": 54000
+              "source_end_sample": 46920
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.97,
+              "cue_start": 1.675,
               "duration": 0.5
             }
           ]
@@ -6867,7 +6867,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.97,
+              "duration": 1.675,
               "text": "4，游戏结束。"
             }
           ]
@@ -6877,7 +6877,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.97,
+          "duration": 1.675,
           "text": "4，游戏结束。"
         }
       ],
@@ -6892,8 +6892,8 @@
       "cue_id": "end/trigger.001",
       "entry": null,
       "course": {
-        "start": 575.482,
-        "duration": 5.525
+        "start": 571.577,
+        "duration": 5.735
       },
       "tracks": [
         {
@@ -6923,15 +6923,15 @@
               "audio_slice_id": "end__trigger.001",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 2.25,
-              "source_end": 7.275,
-              "source_start_sample": 54000,
-              "source_end_sample": 174600
+              "source_start": 2.025,
+              "source_end": 7.26,
+              "source_start_sample": 48600,
+              "source_end_sample": 174240
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.025,
+              "cue_start": 5.235,
               "duration": 0.5
             }
           ]
@@ -6944,8 +6944,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 5.025,
+              "cue_start": 0.225,
+              "duration": 5.01,
               "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。"
             }
           ]
@@ -6954,8 +6954,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 5.025,
+          "cue_start": 0.225,
+          "duration": 5.01,
           "text": "当一位玩家的声望值达到15或更多时，触发游戏结束。"
         }
       ],
@@ -6973,8 +6973,8 @@
       "cue_id": "end/final_rounds.001.1",
       "entry": null,
       "course": {
-        "start": 581.007,
-        "duration": 10.98
+        "start": 577.312,
+        "duration": 10.93
       },
       "tracks": [
         {
@@ -6987,7 +6987,7 @@
               "type": "state",
               "animation": "end/final_rounds.001.1",
               "cue_start": 0.0,
-              "duration": 10.98,
+              "duration": 10.93,
               "after_end": "hold_last_frame"
             }
           ]
@@ -7003,15 +7003,15 @@
               "audio_slice_id": "end__final_rounds.001.1",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 7.275,
-              "source_end": 17.755,
-              "source_start_sample": 174600,
-              "source_end_sample": 426120
+              "source_start": 7.26,
+              "source_end": 17.69,
+              "source_start_sample": 174240,
+              "source_end_sample": 424560
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 10.48,
+              "cue_start": 10.43,
               "duration": 0.5
             }
           ]
@@ -7024,22 +7024,22 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.015,
               "duration": 3.1,
               "text": "为了让所有玩家都进行相同数量的回合，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.355,
+              "cue_start": 3.37,
               "duration": 1.415,
               "text": "游戏会继续进行，"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 5.075,
-              "duration": 5.405,
+              "cue_start": 5.09,
+              "duration": 5.34,
               "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
             }
           ]
@@ -7048,20 +7048,20 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.015,
           "duration": 3.1,
           "text": "为了让所有玩家都进行相同数量的回合，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.355,
+          "cue_start": 3.37,
           "duration": 1.415,
           "text": "游戏会继续进行，"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 5.075,
-          "duration": 5.405,
+          "cue_start": 5.09,
+          "duration": 5.34,
           "text": "直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
         }
       ],
@@ -7080,8 +7080,8 @@
       "cue_id": "end/example.001.1",
       "entry": null,
       "course": {
-        "start": 591.987,
-        "duration": 17.53
+        "start": 588.242,
+        "duration": 17.37
       },
       "tracks": [
         {
@@ -7094,7 +7094,7 @@
               "type": "state",
               "animation": "end/example.001.1",
               "cue_start": 0.0,
-              "duration": 17.53,
+              "duration": 17.37,
               "after_end": "hold_last_frame"
             }
           ]
@@ -7110,15 +7110,15 @@
               "audio_slice_id": "end__example.001.1",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 17.755,
-              "source_end": 34.785,
-              "source_start_sample": 426120,
-              "source_end_sample": 834840
+              "source_start": 17.72,
+              "source_end": 34.59,
+              "source_start_sample": 425280,
+              "source_end_sample": 830160
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 17.03,
+              "cue_start": 16.87,
               "duration": 0.5
             }
           ]
@@ -7131,22 +7131,22 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.035,
               "duration": 4.39,
               "text": "以4人局为例：如果起始玩家的声望值达到15，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 4.395,
+              "cue_start": 4.43,
               "duration": 4.895,
               "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。"
             },
             {
               "id": "subtitle.0.2",
               "type": "subtitle",
-              "cue_start": 9.72,
-              "duration": 7.31,
+              "cue_start": 9.755,
+              "duration": 7.115,
               "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。"
             }
           ]
@@ -7155,20 +7155,20 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.035,
           "duration": 4.39,
           "text": "以4人局为例：如果起始玩家的声望值达到15，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 4.395,
+          "cue_start": 4.43,
           "duration": 4.895,
           "text": "剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。"
         },
         {
           "id": "subtitle.0.2",
-          "cue_start": 9.72,
-          "duration": 7.31,
+          "cue_start": 9.755,
+          "duration": 7.115,
           "text": "但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。"
         }
       ],
@@ -7185,8 +7185,8 @@
       "cue_id": "end/winner.001",
       "entry": null,
       "course": {
-        "start": 609.517,
-        "duration": 8.655
+        "start": 605.612,
+        "duration": 8.8
       },
       "tracks": [
         {
@@ -7216,15 +7216,15 @@
               "audio_slice_id": "end__winner.001",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 34.785,
-              "source_end": 42.94,
-              "source_start_sample": 834840,
-              "source_end_sample": 1030560
+              "source_start": 34.68,
+              "source_end": 42.98,
+              "source_start_sample": 832320,
+              "source_end_sample": 1031520
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 8.155,
+              "cue_start": 8.3,
               "duration": 0.5
             }
           ]
@@ -7237,14 +7237,14 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
+              "cue_start": 0.105,
               "duration": 3.175,
               "text": "第一种情况：声望值最高的玩家获得胜利。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.565,
+              "cue_start": 3.67,
               "duration": 4.59,
               "text": "比如玩家A有17分，玩家B有14分，A获胜。"
             }
@@ -7254,13 +7254,13 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
+          "cue_start": 0.105,
           "duration": 3.175,
           "text": "第一种情况：声望值最高的玩家获得胜利。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.565,
+          "cue_start": 3.67,
           "duration": 4.59,
           "text": "比如玩家A有17分，玩家B有14分，A获胜。"
         }
@@ -7279,8 +7279,8 @@
       "cue_id": "end/winner.002",
       "entry": null,
       "course": {
-        "start": 618.172,
-        "duration": 12.73
+        "start": 614.412,
+        "duration": 12.725
       },
       "tracks": [
         {
@@ -7310,15 +7310,15 @@
               "audio_slice_id": "end__winner.002",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 42.94,
-              "source_end": 55.17,
-              "source_start_sample": 1030560,
-              "source_end_sample": 1324080
+              "source_start": 42.98,
+              "source_end": 55.205,
+              "source_start_sample": 1031520,
+              "source_end_sample": 1324920
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 12.23,
+              "cue_start": 12.225,
               "duration": 0.5
             }
           ]
@@ -7332,13 +7332,13 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 5.76,
+              "duration": 5.72,
               "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 6.135,
+              "cue_start": 6.095,
               "duration": 6.095,
               "text": "现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。"
             }
@@ -7349,12 +7349,12 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 5.76,
+          "duration": 5.72,
           "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 6.135,
+          "cue_start": 6.095,
           "duration": 6.095,
           "text": "现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。"
         }
@@ -7373,8 +7373,8 @@
       "cue_id": "end/winner.003",
       "entry": null,
       "course": {
-        "start": 630.902,
-        "duration": 11.234
+        "start": 627.137,
+        "duration": 11.199
       },
       "tracks": [
         {
@@ -7404,15 +7404,15 @@
               "audio_slice_id": "end__winner.003",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 55.17,
+              "source_start": 55.205,
               "source_end": 65.904,
-              "source_start_sample": 1324080,
+              "source_start_sample": 1324920,
               "source_end_sample": 1581696
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 10.734,
+              "cue_start": 10.699,
               "duration": 0.5
             }
           ]
@@ -7426,13 +7426,13 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 6.51,
+              "duration": 6.475,
               "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 6.971,
+              "cue_start": 6.936,
               "duration": 3.763,
               "text": "现在两人都是17分、10张牌，共享胜利。"
             }
@@ -7443,12 +7443,12 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 6.51,
+          "duration": 6.475,
           "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 6.971,
+          "cue_start": 6.936,
           "duration": 3.763,
           "text": "现在两人都是17分、10张牌，共享胜利。"
         }
@@ -7480,9 +7480,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.0,
-      "audio_end": 2.22,
+      "audio_end": 1.875,
       "visual_end": 3.0,
-      "duration": 2.22
+      "duration": 1.875
     },
     {
       "code": "cue_timing_policy",
@@ -7494,10 +7494,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 15.488,
-      "audio_end": 15.488,
+      "original_duration": 15.683,
+      "audio_end": 15.683,
       "visual_end": 0.0,
-      "duration": 15.488
+      "duration": 15.683
     },
     {
       "code": "cue_timing_policy",
@@ -7525,9 +7525,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.34,
-      "audio_end": 2.92,
+      "audio_end": 2.79,
       "visual_end": 3.34,
-      "duration": 2.92
+      "duration": 2.79
     },
     {
       "code": "cue_timing_policy",
@@ -7539,10 +7539,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 3.16,
-      "audio_end": 3.16,
+      "original_duration": 2.89,
+      "audio_end": 2.89,
       "visual_end": 0.0,
-      "duration": 3.16
+      "duration": 2.89
     },
     {
       "code": "cue_timing_policy",
@@ -7554,10 +7554,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 13.185,
-      "audio_end": 13.185,
+      "original_duration": 13.295,
+      "audio_end": 13.295,
       "visual_end": 10.72,
-      "duration": 13.185
+      "duration": 13.295
     },
     {
       "code": "cue_timing_policy",
@@ -7569,10 +7569,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 13.235,
-      "audio_end": 13.235,
+      "original_duration": 13.225,
+      "audio_end": 13.225,
       "visual_end": 8.055,
-      "duration": 13.235
+      "duration": 13.225
     },
     {
       "code": "cue_timing_policy",
@@ -7585,9 +7585,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.68,
-      "audio_end": 2.98,
+      "audio_end": 2.92,
       "visual_end": 3.68,
-      "duration": 2.98
+      "duration": 2.92
     },
     {
       "code": "cue_timing_policy",
@@ -7599,10 +7599,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 13.905,
-      "audio_end": 13.905,
+      "original_duration": 13.87,
+      "audio_end": 13.87,
       "visual_end": 9.84,
-      "duration": 13.905
+      "duration": 13.87
     },
     {
       "code": "cue_timing_policy",
@@ -7614,10 +7614,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.44,
-      "audio_end": 6.44,
+      "original_duration": 6.465,
+      "audio_end": 6.465,
       "visual_end": 5.225,
-      "duration": 6.44
+      "duration": 6.465
     },
     {
       "code": "cue_timing_policy",
@@ -7629,10 +7629,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 19.054,
-      "audio_end": 19.054,
+      "original_duration": 18.949,
+      "audio_end": 18.949,
       "visual_end": 12.514,
-      "duration": 19.054
+      "duration": 18.949
     },
     {
       "code": "cue_timing_policy",
@@ -7644,10 +7644,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 7.24,
-      "audio_end": 7.24,
+      "original_duration": 7.32,
+      "audio_end": 7.32,
       "visual_end": 2.76,
-      "duration": 7.24
+      "duration": 7.32
     },
     {
       "code": "cue_timing_policy",
@@ -7660,9 +7660,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.37,
-      "audio_end": 3.0,
+      "audio_end": 2.735,
       "visual_end": 3.37,
-      "duration": 3.0
+      "duration": 2.735
     },
     {
       "code": "cue_timing_policy",
@@ -7674,10 +7674,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 1.94,
-      "audio_end": 1.94,
+      "original_duration": 1.91,
+      "audio_end": 1.91,
       "visual_end": 0.0,
-      "duration": 1.94
+      "duration": 1.91
     },
     {
       "code": "cue_timing_policy",
@@ -7689,10 +7689,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 9.515,
-      "audio_end": 9.515,
+      "original_duration": 9.505,
+      "audio_end": 9.505,
       "visual_end": 0.0,
-      "duration": 9.515
+      "duration": 9.505
     },
     {
       "code": "cue_timing_policy",
@@ -7704,10 +7704,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 8.18,
-      "audio_end": 8.18,
+      "original_duration": 8.375,
+      "audio_end": 8.375,
       "visual_end": 0.0,
-      "duration": 8.18
+      "duration": 8.375
     },
     {
       "code": "cue_timing_policy",
@@ -7720,9 +7720,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 2.915,
-      "audio_end": 2.12,
+      "audio_end": 1.78,
       "visual_end": 2.915,
-      "duration": 2.12
+      "duration": 1.78
     },
     {
       "code": "cue_timing_policy",
@@ -7734,10 +7734,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 10.579,
-      "audio_end": 10.579,
+      "original_duration": 10.489,
+      "audio_end": 10.489,
       "visual_end": 0.0,
-      "duration": 10.579
+      "duration": 10.489
     },
     {
       "code": "cue_timing_policy",
@@ -7749,10 +7749,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 4.94,
-      "audio_end": 4.94,
+      "original_duration": 5.05,
+      "audio_end": 5.05,
       "visual_end": 2.77,
-      "duration": 4.94
+      "duration": 5.05
     },
     {
       "code": "cue_timing_policy",
@@ -7765,9 +7765,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 2.845,
-      "audio_end": 2.4,
+      "audio_end": 2.375,
       "visual_end": 2.845,
-      "duration": 2.4
+      "duration": 2.375
     },
     {
       "code": "cue_timing_policy",
@@ -7779,10 +7779,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 6.292,
-      "audio_end": 6.292,
+      "original_duration": 6.297,
+      "audio_end": 6.297,
       "visual_end": 0.0,
-      "duration": 6.292
+      "duration": 6.297
     },
     {
       "code": "cue_timing_policy",
@@ -7795,9 +7795,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.16,
-      "audio_end": 2.46,
+      "audio_end": 2.155,
       "visual_end": 3.16,
-      "duration": 2.46
+      "duration": 2.155
     },
     {
       "code": "cue_timing_policy",
@@ -7809,10 +7809,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.295,
-      "audio_end": 8.295,
+      "original_duration": 8.38,
+      "audio_end": 8.38,
       "visual_end": 1.215,
-      "duration": 8.295
+      "duration": 8.38
     },
     {
       "code": "cue_timing_policy",
@@ -7824,10 +7824,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 6.047,
-      "audio_end": 6.047,
+      "original_duration": 6.117,
+      "audio_end": 6.117,
       "visual_end": 0.0,
-      "duration": 6.047
+      "duration": 6.117
     },
     {
       "code": "cue_timing_policy",
@@ -7840,9 +7840,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.72,
-      "audio_end": 4.16,
+      "audio_end": 4.105,
       "visual_end": 4.72,
-      "duration": 4.16
+      "duration": 4.105
     },
     {
       "code": "cue_timing_policy",
@@ -7854,10 +7854,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 5.265,
-      "audio_end": 5.265,
+      "original_duration": 5.285,
+      "audio_end": 5.285,
       "visual_end": 3.92,
-      "duration": 5.265
+      "duration": 5.285
     },
     {
       "code": "cue_timing_policy",
@@ -7869,10 +7869,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 7.16,
-      "audio_end": 7.16,
+      "original_duration": 6.975,
+      "audio_end": 6.975,
       "visual_end": 4.305,
-      "duration": 7.16
+      "duration": 6.975
     },
     {
       "code": "cue_timing_policy",
@@ -7899,10 +7899,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 7.01,
-      "audio_end": 7.01,
+      "original_duration": 7.07,
+      "audio_end": 7.07,
       "visual_end": 5.32,
-      "duration": 7.01
+      "duration": 7.07
     },
     {
       "code": "cue_timing_policy",
@@ -7914,10 +7914,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 4.294,
-      "audio_end": 4.294,
+      "original_duration": 4.064,
+      "audio_end": 4.064,
       "visual_end": 3.3,
-      "duration": 4.294
+      "duration": 4.064
     },
     {
       "code": "cue_timing_policy",
@@ -7929,10 +7929,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.815,
-      "audio_end": 6.815,
+      "original_duration": 6.995,
+      "audio_end": 6.995,
       "visual_end": 4.48,
-      "duration": 6.815
+      "duration": 6.995
     },
     {
       "code": "cue_timing_policy",
@@ -7944,10 +7944,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.58,
-      "audio_end": 6.58,
+      "original_duration": 6.37,
+      "audio_end": 6.37,
       "visual_end": 4.72,
-      "duration": 6.58
+      "duration": 6.37
     },
     {
       "code": "cue_timing_policy",
@@ -7959,10 +7959,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.25,
-      "audio_end": 6.25,
+      "original_duration": 6.34,
+      "audio_end": 6.34,
       "visual_end": 0.0,
-      "duration": 6.25
+      "duration": 6.34
     },
     {
       "code": "cue_timing_policy",
@@ -8005,9 +8005,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.255,
-      "audio_end": 4.095,
+      "audio_end": 3.95,
       "visual_end": 4.255,
-      "duration": 4.095
+      "duration": 3.95
     },
     {
       "code": "cue_timing_policy",
@@ -8019,10 +8019,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 2.72,
-      "audio_end": 2.72,
+      "original_duration": 2.735,
+      "audio_end": 2.735,
       "visual_end": 0.0,
-      "duration": 2.72
+      "duration": 2.735
     },
     {
       "code": "cue_timing_policy",
@@ -8034,10 +8034,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 4.445,
-      "audio_end": 4.445,
+      "original_duration": 4.455,
+      "audio_end": 4.455,
       "visual_end": 0.0,
-      "duration": 4.445
+      "duration": 4.455
     },
     {
       "code": "cue_timing_policy",
@@ -8049,10 +8049,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 11.195,
-      "audio_end": 11.195,
+      "original_duration": 11.07,
+      "audio_end": 11.07,
       "visual_end": 8.995,
-      "duration": 11.195
+      "duration": 11.07
     },
     {
       "code": "cue_timing_policy",
@@ -8064,10 +8064,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 15.83,
-      "audio_end": 15.83,
+      "original_duration": 15.885,
+      "audio_end": 15.885,
       "visual_end": 13.445,
-      "duration": 15.83
+      "duration": 15.885
     },
     {
       "code": "cue_timing_policy",
@@ -8079,10 +8079,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.114,
-      "audio_end": 8.114,
+      "original_duration": 8.079,
+      "audio_end": 8.079,
       "visual_end": 2.38,
-      "duration": 8.114
+      "duration": 8.079
     },
     {
       "code": "cue_timing_policy",
@@ -8094,10 +8094,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 7.175,
-      "audio_end": 7.175,
+      "original_duration": 7.055,
+      "audio_end": 7.055,
       "visual_end": 0.505,
-      "duration": 7.175
+      "duration": 7.055
     },
     {
       "code": "cue_timing_policy",
@@ -8109,10 +8109,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.445,
-      "audio_end": 6.445,
+      "original_duration": 6.35,
+      "audio_end": 6.35,
       "visual_end": 0.0,
-      "duration": 6.445
+      "duration": 6.35
     },
     {
       "code": "cue_timing_policy",
@@ -8124,10 +8124,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.14,
-      "audio_end": 8.14,
+      "original_duration": 7.92,
+      "audio_end": 7.92,
       "visual_end": 0.475,
-      "duration": 8.14
+      "duration": 7.92
     },
     {
       "code": "cue_timing_policy",
@@ -8139,10 +8139,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 11.975,
-      "audio_end": 11.975,
+      "original_duration": 11.93,
+      "audio_end": 11.93,
       "visual_end": 11.265,
-      "duration": 11.975
+      "duration": 11.93
     },
     {
       "code": "cue_timing_policy",
@@ -8169,10 +8169,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.854,
-      "audio_end": 8.854,
+      "original_duration": 8.589,
+      "audio_end": 8.589,
       "visual_end": 0.0,
-      "duration": 8.854
+      "duration": 8.589
     },
     {
       "code": "cue_timing_policy",
@@ -8184,10 +8184,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 12.745,
-      "audio_end": 12.745,
+      "original_duration": 12.875,
+      "audio_end": 12.875,
       "visual_end": 4.385,
-      "duration": 12.745
+      "duration": 12.875
     },
     {
       "code": "cue_timing_policy",
@@ -8199,10 +8199,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 9.652,
-      "audio_end": 9.652,
+      "original_duration": 9.662,
+      "audio_end": 9.662,
       "visual_end": 0.0,
-      "duration": 9.652
+      "duration": 9.662
     },
     {
       "code": "cue_timing_policy",
@@ -8215,9 +8215,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.41,
-      "audio_end": 3.33,
+      "audio_end": 3.23,
       "visual_end": 3.41,
-      "duration": 3.33
+      "duration": 3.23
     },
     {
       "code": "cue_timing_policy",
@@ -8229,10 +8229,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 11.375,
-      "audio_end": 11.375,
+      "original_duration": 11.35,
+      "audio_end": 11.35,
       "visual_end": 9.34,
-      "duration": 11.375
+      "duration": 11.35
     },
     {
       "code": "cue_timing_policy",
@@ -8244,10 +8244,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 12.72,
-      "audio_end": 12.72,
+      "original_duration": 12.68,
+      "audio_end": 12.68,
       "visual_end": 11.81,
-      "duration": 12.72
+      "duration": 12.68
     },
     {
       "code": "cue_timing_policy",
@@ -8259,10 +8259,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 12.199,
-      "audio_end": 12.199,
+      "original_duration": 11.994,
+      "audio_end": 11.994,
       "visual_end": 7.334,
-      "duration": 12.199
+      "duration": 11.994
     },
     {
       "code": "cue_timing_policy",
@@ -8275,7 +8275,7 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.4,
-      "audio_end": 5.56,
+      "audio_end": 5.475,
       "visual_end": 7.4,
       "duration": 7.4
     },
@@ -8289,10 +8289,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 9.255,
-      "audio_end": 9.255,
+      "original_duration": 9.23,
+      "audio_end": 9.23,
       "visual_end": 8.2,
-      "duration": 9.255
+      "duration": 9.23
     },
     {
       "code": "cue_timing_policy",
@@ -8304,10 +8304,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 12.43,
-      "audio_end": 12.43,
+      "original_duration": 12.385,
+      "audio_end": 12.385,
       "visual_end": 10.925,
-      "duration": 12.43
+      "duration": 12.385
     },
     {
       "code": "cue_timing_policy",
@@ -8319,10 +8319,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.861,
-      "audio_end": 6.861,
+      "original_duration": 6.966,
+      "audio_end": 6.966,
       "visual_end": 0.0,
-      "duration": 6.861
+      "duration": 6.966
     },
     {
       "code": "cue_timing_policy",
@@ -8334,10 +8334,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 5.105,
-      "audio_end": 5.105,
+      "original_duration": 5.075,
+      "audio_end": 5.075,
       "visual_end": 0.0,
-      "duration": 5.105
+      "duration": 5.075
     },
     {
       "code": "cue_timing_policy",
@@ -8349,10 +8349,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 4.77,
-      "audio_end": 4.77,
+      "original_duration": 4.73,
+      "audio_end": 4.73,
       "visual_end": 0.0,
-      "duration": 4.77
+      "duration": 4.73
     },
     {
       "code": "cue_timing_policy",
@@ -8364,10 +8364,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 7.339,
-      "audio_end": 7.339,
+      "original_duration": 7.359,
+      "audio_end": 7.359,
       "visual_end": 0.0,
-      "duration": 7.339
+      "duration": 7.359
     },
     {
       "code": "cue_timing_policy",
@@ -8380,9 +8380,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.37,
-      "audio_end": 3.92,
+      "audio_end": 3.815,
       "visual_end": 4.37,
-      "duration": 3.92
+      "duration": 3.815
     },
     {
       "code": "cue_timing_policy",
@@ -8394,10 +8394,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 11.685,
-      "audio_end": 11.685,
+      "original_duration": 11.6,
+      "audio_end": 11.6,
       "visual_end": 10.235,
-      "duration": 11.685
+      "duration": 11.6
     },
     {
       "code": "cue_timing_policy",
@@ -8409,10 +8409,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 7.645,
-      "audio_end": 7.645,
+      "original_duration": 7.425,
+      "audio_end": 7.425,
       "visual_end": 5.7,
-      "duration": 7.645
+      "duration": 7.425
     },
     {
       "code": "cue_timing_policy",
@@ -8424,10 +8424,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.145,
-      "audio_end": 8.145,
+      "original_duration": 8.13,
+      "audio_end": 8.13,
       "visual_end": 5.415,
-      "duration": 8.145
+      "duration": 8.13
     },
     {
       "code": "cue_timing_policy",
@@ -8439,10 +8439,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 9.187,
-      "audio_end": 9.187,
+      "original_duration": 9.192,
+      "audio_end": 9.192,
       "visual_end": 6.9,
-      "duration": 9.187
+      "duration": 9.192
     },
     {
       "code": "cue_timing_policy",
@@ -8454,10 +8454,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.11,
-      "audio_end": 6.11,
+      "original_duration": 6.085,
+      "audio_end": 6.085,
       "visual_end": 3.2,
-      "duration": 6.11
+      "duration": 6.085
     },
     {
       "code": "cue_timing_policy",
@@ -8469,10 +8469,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.685,
-      "audio_end": 8.685,
+      "original_duration": 8.52,
+      "audio_end": 8.52,
       "visual_end": 6.9,
-      "duration": 8.685
+      "duration": 8.52
     },
     {
       "code": "cue_timing_policy",
@@ -8484,10 +8484,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 11.61,
-      "audio_end": 11.61,
+      "original_duration": 11.565,
+      "audio_end": 11.565,
       "visual_end": 0.0,
-      "duration": 11.61
+      "duration": 11.565
     },
     {
       "code": "cue_timing_policy",
@@ -8499,10 +8499,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.68,
-      "audio_end": 6.68,
+      "original_duration": 6.515,
+      "audio_end": 6.515,
       "visual_end": 4.52,
-      "duration": 6.68
+      "duration": 6.515
     },
     {
       "code": "cue_timing_policy",
@@ -8514,10 +8514,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 7.707,
-      "audio_end": 7.707,
+      "original_duration": 7.807,
+      "audio_end": 7.807,
       "visual_end": 0.0,
-      "duration": 7.707
+      "duration": 7.807
     },
     {
       "code": "cue_timing_policy",
@@ -8530,9 +8530,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.34,
-      "audio_end": 4.255,
+      "audio_end": 4.205,
       "visual_end": 4.34,
-      "duration": 4.255
+      "duration": 4.205
     },
     {
       "code": "cue_timing_policy",
@@ -8544,10 +8544,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 20.649,
-      "audio_end": 20.649,
+      "original_duration": 20.679,
+      "audio_end": 20.679,
       "visual_end": 19.649,
-      "duration": 20.649
+      "duration": 20.679
     },
     {
       "code": "cue_timing_policy",
@@ -8560,9 +8560,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.98,
-      "audio_end": 3.6,
+      "audio_end": 3.32,
       "visual_end": 3.98,
-      "duration": 3.6
+      "duration": 3.32
     },
     {
       "code": "cue_timing_policy",
@@ -8574,10 +8574,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 7.595,
-      "audio_end": 7.595,
+      "original_duration": 7.68,
+      "audio_end": 7.68,
       "visual_end": 0.0,
-      "duration": 7.595
+      "duration": 7.68
     },
     {
       "code": "cue_timing_policy",
@@ -8589,10 +8589,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 9.48,
-      "audio_end": 9.48,
+      "original_duration": 9.475,
+      "audio_end": 9.475,
       "visual_end": 0.0,
-      "duration": 9.48
+      "duration": 9.475
     },
     {
       "code": "cue_timing_policy",
@@ -8604,10 +8604,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 4.23,
-      "audio_end": 4.23,
+      "original_duration": 4.25,
+      "audio_end": 4.25,
       "visual_end": 0.0,
-      "duration": 4.23
+      "duration": 4.25
     },
     {
       "code": "cue_timing_policy",
@@ -8620,9 +8620,9 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.17,
-      "audio_end": 2.47,
+      "audio_end": 2.175,
       "visual_end": 3.17,
-      "duration": 2.47
+      "duration": 2.175
     },
     {
       "code": "cue_timing_policy",
@@ -8634,10 +8634,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 5.525,
-      "audio_end": 5.525,
+      "original_duration": 5.735,
+      "audio_end": 5.735,
       "visual_end": 5.025,
-      "duration": 5.525
+      "duration": 5.735
     },
     {
       "code": "cue_timing_policy",
@@ -8649,10 +8649,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 10.98,
-      "audio_end": 10.98,
+      "original_duration": 10.93,
+      "audio_end": 10.93,
       "visual_end": 0.0,
-      "duration": 10.98
+      "duration": 10.93
     },
     {
       "code": "cue_timing_policy",
@@ -8664,10 +8664,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 17.53,
-      "audio_end": 17.53,
+      "original_duration": 17.37,
+      "audio_end": 17.37,
       "visual_end": 0.0,
-      "duration": 17.53
+      "duration": 17.37
     },
     {
       "code": "cue_timing_policy",
@@ -8679,10 +8679,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 8.655,
-      "audio_end": 8.655,
+      "original_duration": 8.8,
+      "audio_end": 8.8,
       "visual_end": 7.705,
-      "duration": 8.655
+      "duration": 8.8
     },
     {
       "code": "cue_timing_policy",
@@ -8694,10 +8694,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 12.73,
-      "audio_end": 12.73,
+      "original_duration": 12.725,
+      "audio_end": 12.725,
       "visual_end": 11.8,
-      "duration": 12.73
+      "duration": 12.725
     },
     {
       "code": "cue_timing_policy",
@@ -8709,10 +8709,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 11.234,
-      "audio_end": 11.234,
+      "original_duration": 11.199,
+      "audio_end": 11.199,
       "visual_end": 10.366,
-      "duration": 11.234
+      "duration": 11.199
     }
   ]
 }

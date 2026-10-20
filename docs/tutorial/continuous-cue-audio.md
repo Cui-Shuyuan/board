@@ -116,7 +116,7 @@ Prepare 清空上一个计划的输出缓存。输出 key 包含组索引与帧�
 | track | cue 数 | 播放块数 | 合并连续交界 | 课程时长 |
 | --- | ---: | ---: | ---: | ---: |
 | quick | 32 | 32 | 0 | 199.206 秒 |
-| full | 83 | 83 | 0 | 642.136 秒 |
+| full | 83 | 83 | 0 | 638.336 秒 |
 
 `tests/AnimationModelTests` 验证纯控制器与计划逻辑；
 `tests/CourseAudioTransportTests` 编译生产 transport，并用确定性 Unity API

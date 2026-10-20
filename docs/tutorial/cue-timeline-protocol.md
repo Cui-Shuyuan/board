@@ -69,8 +69,11 @@ slice ID 唯一；refs 必须存在；`asset` 相对于游戏内容根目录。
 时，对应 speech start/end 必须有效并落在源区间内；plan 会在 speech start
 前和 speech end 后各保留配置的 guard。裁切后的音频与
 `trailing_silence_seconds` 或 `post_speech_silence_seconds` 一起确定音频轨道
-时长。`speech_start_ref` 和 `use_measured_speech_start` 是可选扩展，用于
-保留制作期 PCM 能量测量结果。
+时长。`speech_start_ref` / `speech_end_ref` 及对应的 `use_measured_*` 是可选扩展，
+用于保留制作期 PCM 能量测量结果。full 连续 section 音频还可用
+`use_measured_source_window` 保留经过能量静音中点校正的 source window；
+此时 `start_ref` / `end_ref` 是固定的测量边界，不再由 provider word timing
+直接决定。
 
 连续边界契约示例：
 

@@ -267,11 +267,40 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                     f"{path}: use_measured_speech_start requires existing "
                     f"timing point {speech_start_ref!r}")
             speech_start = float(start_point["time"])
-            if speech_start < audio_start - 1e-9 \
-                    or speech_start > audio_end + 1e-9:
+
+        measured_source_window = bool(
+            isinstance(policy, dict)
+            and policy.get("use_measured_source_window") is True)
+        bound_start = audio_start
+        bound_end = audio_end
+        if measured_source_window:
+            source_start_ref = f"{slice_id}.start"
+            source_end_ref = f"{slice_id}.end"
+            source_start_point = existing_timing_points.get(source_start_ref)
+            source_end_point = existing_timing_points.get(source_end_ref)
+            if not isinstance(source_start_point, dict) or not isinstance(
+                    source_start_point.get("time"), (int, float)) \
+                    or not isinstance(source_end_point, dict) \
+                    or not isinstance(source_end_point.get("time"), (int, float)):
                 raise BuildError(
-                    f"{path}: measured speech start {speech_start:g} is outside "
-                    f"cue audio window [{audio_start:g}, {audio_end:g}]")
+                    f"{path}: use_measured_source_window requires existing "
+                    f"timing points {source_start_ref!r} and {source_end_ref!r}")
+            bound_start = float(source_start_point["time"])
+            bound_end = float(source_end_point["time"])
+            if bound_start < 0.0 or bound_end <= bound_start:
+                raise BuildError(
+                    f"{path}: invalid measured source window "
+                    f"[{bound_start:g}, {bound_end:g}]")
+            if bound_end > media_duration + 1e-6:
+                raise BuildError(
+                    f"{path}: measured source window ends at {bound_end:g}s, "
+                    f"beyond media duration {media_duration:g}s for {asset!r}")
+        if speech_start is not None and (
+                speech_start < bound_start - 1e-9
+                or speech_start > bound_end + 1e-9):
+            raise BuildError(
+                f"{path}: measured speech start {speech_start:g} is outside "
+                f"source window [{bound_start:g}, {bound_end:g}]")
         if measured_speech_end:
             measured_ref = f"{slice_id}.speech_end"
             measured_point = existing_timing_points.get(measured_ref)
@@ -280,56 +309,56 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                 raise BuildError(
                     f"{path}: use_measured_speech_end requires existing timing "
                     f"point {measured_ref!r}")
-            measured_value = float(measured_point["time"])
-            if measured_value < audio_start - 1e-9 \
-                    or measured_value > audio_end + 1e-9:
-                raise BuildError(
-                    f"{path}: measured speech end {measured_value:g} is outside "
-                    f"cue audio window [{audio_start:g}, {audio_end:g}]")
-            speech_end = measured_value
+            speech_end = float(measured_point["time"])
+        if speech_end is not None and (
+                speech_end < bound_start - 1e-9
+                or speech_end > bound_end + 1e-9):
+            raise BuildError(
+                f"{path}: measured speech end {speech_end:g} is outside "
+                f"source window [{bound_start:g}, {bound_end:g}]")
         if trim_to_speech_end and speech_end is None:
             raise BuildError(
                 f"{path}: trim_to_speech_end requires TTS word timings "
                 "or use_measured_speech_end")
 
-        effective_start = audio_start
-        effective_end = audio_end
-        if trim_to_speech_end:
-            # Leave a short guard after the estimated last-word end.  TTS word
-            # end timestamps are estimates too; cutting exactly there can chop
-            # the final phoneme.  The cue plan still appends its explicit
-            # trailing silence after this guarded source range.
-            guard = TITLE_TRIM_TAIL_GUARD_SECONDS
-            if isinstance(policy, dict):
-                raw_guard = policy.get("trim_tail_guard_seconds", guard)
-                if isinstance(raw_guard, (int, float)) and not isinstance(raw_guard, bool):
-                    guard = max(0.0, float(raw_guard))
-            effective_end = _round(min(audio_end, speech_end + guard))
-            # Trim policy controls the tail only.  The first-word timestamp
-            # can still be late inside the waveform, including numeric title
-            # tokens such as "2.4".  Keep the same bounded source-context lead
-            # as body cues so the title does not start inside its first
-            # syllable.  This increases the audio slice duration (and therefore
-            # the cue duration) instead of silently dropping source samples.
-            if audio_start > 0.0 and speech_end is not None:
-                trailing_silence = audio_end - speech_end
+        effective_start = bound_start
+        effective_end = bound_end
+        if not measured_source_window:
+            if trim_to_speech_end:
+                # Leave a short guard after the estimated last-word end.  TTS
+                # word end timestamps are estimates too; cutting exactly there
+                # can chop the final phoneme.  The cue plan still appends its
+                # explicit trailing silence after this guarded source range.
+                guard = TITLE_TRIM_TAIL_GUARD_SECONDS
+                if isinstance(policy, dict):
+                    raw_guard = policy.get("trim_tail_guard_seconds", guard)
+                    if isinstance(raw_guard, (int, float)) and not isinstance(raw_guard, bool):
+                        guard = max(0.0, float(raw_guard))
+                effective_end = _round(min(bound_end, speech_end + guard))
+                # Trim policy controls the tail only.  The first-word timestamp
+                # can still be late inside the waveform, including numeric title
+                # tokens such as "2.4".  Keep the same bounded source-context
+                # lead as body cues so the title does not start inside its first
+                # syllable.
+                if bound_start > 0.0 and speech_end is not None:
+                    trailing_silence = bound_end - speech_end
+                    lead = min(
+                        SOURCE_CONTEXT_LEAD_SECONDS,
+                        bound_start,
+                        max(0.0, trailing_silence),
+                    )
+                    if lead > 1e-6:
+                        effective_start = _round(bound_start - lead)
+            elif bound_start > 0.0 and speech_end is not None:
+                trailing_silence = bound_end - speech_end
                 lead = min(
                     SOURCE_CONTEXT_LEAD_SECONDS,
-                    audio_start,
+                    bound_start,
                     max(0.0, trailing_silence),
                 )
                 if lead > 1e-6:
-                    effective_start = _round(audio_start - lead)
-        elif audio_start > 0.0 and speech_end is not None:
-            trailing_silence = audio_end - speech_end
-            lead = min(
-                SOURCE_CONTEXT_LEAD_SECONDS,
-                audio_start,
-                max(0.0, trailing_silence),
-            )
-            if lead > 1e-6:
-                effective_start = _round(audio_start - lead)
-                effective_end = _round(audio_end - lead)
+                    effective_start = _round(bound_start - lead)
+                    effective_end = _round(bound_end - lead)
 
         subtitles: list[dict] = []
         for subtitle_spec in subtitle_specs:
@@ -371,9 +400,9 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                 "description": "measured speech start"}
         source_ranges.append({
             "cue": cue_id, "asset": asset,
-            "raw_start": audio_start, "raw_end": audio_end,
-            "trimmed": trim_to_speech_end,
-            "speech_end": speech_end if speech_end is not None else audio_end,
+            "raw_start": bound_start, "raw_end": bound_end,
+            "trimmed": trim_to_speech_end or measured_source_window,
+            "speech_end": speech_end if speech_end is not None else bound_end,
         })
         cue_slice = {
             "id": slice_id,

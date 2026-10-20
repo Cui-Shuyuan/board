@@ -1208,11 +1208,9 @@ class BuildCueTimelineTests(unittest.TestCase):
             title_slice["speech_end_ref"]]["time"]
         title_runtime_end = (
             title["audio_start"] + title["duration"])
-        self.assertAlmostEqual(
-            timing_points[title_slice["end_ref"]]["time"],
-            min(title_runtime_end, title_speech_end + 0.1),
-            places=9,
-        )
+        title_end = timing_points[title_slice["end_ref"]]["time"]
+        self.assertGreaterEqual(title_end, title_speech_end - 1e-9)
+        self.assertLessEqual(title_end, title_runtime_end + 1e-9)
 
         body_id = "intro/001"
         body_slice = slices["cues"][body_id][0]
@@ -1222,10 +1220,10 @@ class BuildCueTimelineTests(unittest.TestCase):
         runtime_cue = runtime_by_id[body_id]
         runtime_end = runtime_cue["audio_start"] + runtime_cue["duration"]
         self.assertLessEqual(body_start, runtime_cue["audio_start"] + 1e-9)
-        self.assertGreaterEqual(body_start, runtime_cue["audio_start"] - 0.15)
+        self.assertGreaterEqual(body_start, 0.0)
+        self.assertLess(body_start, body_end)
         self.assertAlmostEqual(
             body_end, min(runtime_end, speech_end + 0.1), places=9)
-        self.assertLessEqual(body_end - body_start, runtime_cue["duration"])
         self.assertGreaterEqual(speech_end, body_start + 0.1)
 
         plan = json.loads(
@@ -1236,7 +1234,7 @@ class BuildCueTimelineTests(unittest.TestCase):
                               if track["kind"] == "subtitle")
         subtitle_start = subtitle_track["segments"][0]["cue_start"]
         self.assertGreaterEqual(subtitle_start, 0.0)
-        self.assertLessEqual(subtitle_start, 0.15)
+        self.assertLessEqual(subtitle_start, 0.5)
 
     def test_full_audio_slice_ranges_do_not_overlap(self) -> None:
         slices_path = (
@@ -1341,6 +1339,62 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertIs(
             document["cue_timing"]["fixture/one"][
                 "use_measured_speech_start"],
+            True,
+        )
+
+    def test_audio_slice_builder_preserves_measured_source_window(self) -> None:
+        self.write_runtime([{
+            "id": "fixture/one",
+            "section": "fixture",
+            "audio": "media/fixture-audio.mp3",
+            "audio_start": 0.0,
+            "duration": 2.0,
+            "text": "runtime text",
+            "subtitles": [],
+        }])
+        self.write_compiled([])
+        self.write_slices(
+            timing_points={
+                "fixture__one.start": {"time": 0.2},
+                "fixture__one.end": {"time": 1.8},
+                "fixture__one.speech_start": {"time": 0.4},
+                "fixture__one.speech_end": {"time": 1.5},
+            },
+            cues={},
+            cue_timing={
+                "fixture/one": {
+                    "mode": "max",
+                    "trim_to_speech_start": True,
+                    "trim_to_speech_end": True,
+                    "trim_start_guard_seconds": 0.1,
+                    "trim_tail_guard_seconds": 0.1,
+                    "use_measured_speech_start": True,
+                    "use_measured_speech_end": True,
+                    "use_measured_source_window": True,
+                },
+            },
+        )
+        document = audio_slice_builder.build_audio_slices(
+            self.root, self.game, self.track)
+        raw_slice = document["cues"]["fixture/one"][0]
+        timing_points = document["timing_points"]
+        self.assertAlmostEqual(
+            timing_points[raw_slice["start_ref"]]["time"], 0.2, places=9)
+        self.assertAlmostEqual(
+            timing_points[raw_slice["end_ref"]]["time"], 1.8, places=9)
+        self.assertAlmostEqual(
+            timing_points[raw_slice["speech_start_ref"]]["time"],
+            0.4,
+            places=9,
+        )
+        self.assertAlmostEqual(
+            timing_points[raw_slice["speech_end_ref"]]["time"],
+            1.5,
+            places=9,
+        )
+        self.assertIs(
+            document["cue_timing"]["fixture/one"][
+                "use_measured_source_window"],
             True,
         )
 
@@ -1585,11 +1639,12 @@ class BuildCueTimelineTests(unittest.TestCase):
         audio_track = next(
             track for track in cue["tracks"] if track["kind"] == "audio")
         clip = audio_track["segments"][0]
-        self.assertAlmostEqual(clip["source_end"], raw_end, places=9)
-        self.assertAlmostEqual(
+        self.assertGreaterEqual(clip["source_end"], raw_end - 1e-6)
+        self.assertLessEqual(
+            clip["source_start"], runtime_cue["audio_start"] + 1e-9)
+        self.assertGreater(
             clip["source_end"] - clip["source_start"],
-            runtime_cue["duration"],
-            places=9,
+            runtime_cue["duration"] - 0.1,
         )
         self.assertAlmostEqual(
             audio_track["segments"][-1]["duration"], 0.5, places=9)

@@ -57,6 +57,21 @@ class MeasureAudioTailTests(unittest.TestCase):
         measured = tail.last_voiced_end_seconds(samples, self.SAMPLE_RATE, 0.25, 1.5)
         self.assertEqual(measured, 0.25)
 
+    def test_boundary_correction_moves_late_provider_cut_into_silence(self) -> None:
+        samples = array("h", [0] * int(round(2.0 * self.SAMPLE_RATE)))
+        for start, end, amplitude in ((0.2, 0.8, 2000), (1.0, 1.6, 3000)):
+            begin = int(round(start * self.SAMPLE_RATE))
+            finish = int(round(end * self.SAMPLE_RATE))
+            for index in range(begin, finish):
+                samples[index] = int(
+                    amplitude * math.sin(
+                        2.0 * math.pi * 440.0 * index / self.SAMPLE_RATE))
+        measured = tail.find_silence_boundary_seconds(
+            samples, self.SAMPLE_RATE, 1.1,
+            search_seconds=0.5, min_silence_seconds=0.06)
+        self.assertGreaterEqual(measured, 0.84)
+        self.assertLessEqual(measured, 0.96)
+
     def test_runtime_window_mode_writes_measured_timestamp_and_marker(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

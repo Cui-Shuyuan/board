@@ -48,6 +48,7 @@ START_PEAK_RATIO = 0.05
 START_ABS_RMS_FLOOR = 80.0
 START_MIN_RUN_WINDOWS = 3
 EPSILON = 1e-9
+TIME_COMPARE_EPSILON = 1e-6
 
 
 class MeasureError(RuntimeError):
@@ -217,6 +218,75 @@ def first_voiced_start_seconds(
     return start_seconds
 
 
+def find_silence_boundary_seconds(
+    samples: array,
+    sample_rate: int,
+    boundary_seconds: float,
+    *,
+    search_seconds: float = 0.8,
+    window_seconds: float = WINDOW_SECONDS,
+    peak_ratio: float = 0.03,
+    abs_rms_floor: float = 120.0,
+    min_silence_seconds: float = 0.06,
+) -> float:
+    """Move a provider cue boundary to the nearest comfortable silence.
+
+    TTS word-start timestamps can be late by 0.1-0.3s.  In a continuous
+    section audio, that makes the previous cue contain the next cue's first
+    syllable.  Find the silence run nearest to the provider boundary and use
+    its midpoint as the shared cue cut.
+    """
+    if sample_rate <= 0:
+        raise MeasureError("sample_rate must be positive")
+    if boundary_seconds < 0.0:
+        raise MeasureError("boundary_seconds must be >= 0")
+    audio_duration = len(samples) / float(sample_rate)
+    search_start = max(0.0, boundary_seconds - search_seconds)
+    search_end = min(audio_duration, boundary_seconds + search_seconds)
+    if search_end <= search_start:
+        return boundary_seconds
+    sample_start, window_size, rms_values = _rms_windows(
+        samples, sample_rate, search_start, search_end, window_seconds)
+    if not rms_values:
+        return boundary_seconds
+    peak = max(rms_values)
+    threshold = max(abs_rms_floor, peak * peak_ratio)
+    active = [value > threshold for value in rms_values]
+    runs: list[tuple[int, int]] = []
+    run_start: int | None = None
+    for index, is_active in enumerate(active):
+        if not is_active and run_start is None:
+            run_start = index
+        elif is_active and run_start is not None:
+            if (index - run_start) * window_seconds >= min_silence_seconds:
+                runs.append((run_start, index - 1))
+            run_start = None
+    if run_start is not None:
+        if (len(active) - run_start) * window_seconds >= min_silence_seconds:
+            runs.append((run_start, len(active) - 1))
+    if not runs:
+        return boundary_seconds
+
+    target = (boundary_seconds * sample_rate - sample_start) / window_size
+    def run_distance(run: tuple[int, int]) -> float:
+        start, end = run
+        if start <= target <= end:
+            return 0.0
+        return min(abs(target - start), abs(target - end))
+
+    def run_duration(run: tuple[int, int]) -> int:
+        return run[1] - run[0] + 1
+
+    selected = min(
+        runs,
+        key=lambda run: (run_distance(run), -run_duration(run)),
+    )
+    start, end = selected
+    measured = (
+        sample_start + (start + end + 1) * window_size / 2.0) / sample_rate
+    return min(audio_duration, max(0.0, measured))
+
+
 def _round_time(value: float) -> float:
     return round(float(value), 6)
 
@@ -247,6 +317,8 @@ def measure_timeline(
         raise MeasureError(f"{slices_path}: sample_rate must be positive")
 
     runtime_by_id: dict[str, dict] = {}
+    runtime_cues: list[dict] = []
+    adjusted_windows: dict[str, tuple[float, float]] = {}
     if runtime_windows:
         runtime_path = tutorial_dir / f"{track}.runtime.json"
         runtime = _load_json(runtime_path)
@@ -257,8 +329,38 @@ def measure_timeline(
             if not cue_id:
                 raise MeasureError(f"{runtime_path}: cue id is empty")
             runtime_by_id[cue_id] = runtime_cue
+            runtime_cues.append(runtime_cue)
 
     pcm_cache: dict[str, array] = {}
+
+    if runtime_windows:
+        for runtime_cue in runtime_cues:
+            cue_id = str(runtime_cue.get("id") or "").strip()
+            start = float(runtime_cue.get("audio_start", 0.0))
+            end = start + float(runtime_cue.get("duration", 0.0))
+            if end <= start:
+                raise MeasureError(f"cue {cue_id!r}: invalid runtime window")
+            adjusted_windows[cue_id] = (start, end)
+        for left, right in zip(runtime_cues, runtime_cues[1:]):
+            left_asset = str(left.get("audio") or "").strip()
+            right_asset = str(right.get("audio") or "").strip()
+            if not left_asset or left_asset != right_asset:
+                continue
+            boundary = float(right.get("audio_start", 0.0))
+            if left_asset not in pcm_cache:
+                pcm_cache[left_asset] = _decode_pcm(
+                    ffmpeg, game_dir / left_asset, sample_rate)
+            corrected = _round_time(find_silence_boundary_seconds(
+                pcm_cache[left_asset], sample_rate, boundary))
+            left_id = str(left.get("id") or "").strip()
+            right_id = str(right.get("id") or "").strip()
+            left_start, left_end = adjusted_windows[left_id]
+            right_start, right_end = adjusted_windows[right_id]
+            if not (left_start + 0.05 < corrected < right_end - 0.05):
+                corrected = _round_time(boundary)
+            adjusted_windows[left_id] = (left_start, corrected)
+            adjusted_windows[right_id] = (corrected, right_end)
+
     changes: list[dict] = []
     for cue_id, raw_slices in cues.items():
         if not isinstance(raw_slices, list) or not raw_slices:
@@ -289,20 +391,22 @@ def measure_timeline(
                         point.get("time"), (int, float)):
                     raise MeasureError(
                         f"cue {cue_id!r}: missing timing point {ref!r}")
+            old_source_start = float(timing_points[start_ref]["time"])
+            old_source_end = float(timing_points[end_ref]["time"])
             if runtime_windows:
-                runtime_cue = runtime_by_id.get(cue_id)
-                if runtime_cue is None:
+                window = adjusted_windows.get(cue_id)
+                if window is None:
                     raise MeasureError(
                         f"cue {cue_id!r}: missing from runtime cues")
-                source_start = float(runtime_cue.get("audio_start", 0.0))
-                source_end = source_start + float(
-                    runtime_cue.get("duration", 0.0))
+                source_start, source_end = window
                 if source_end <= source_start:
                     raise MeasureError(
-                        f"cue {cue_id!r}: invalid runtime audio window")
+                        f"cue {cue_id!r}: invalid measured source window")
+                timing_points[start_ref]["time"] = _round_time(source_start)
+                timing_points[end_ref]["time"] = _round_time(source_end)
             else:
-                source_start = float(timing_points[start_ref]["time"])
-                source_end = float(timing_points[end_ref]["time"])
+                source_start = old_source_start
+                source_end = old_source_end
             start_point = timing_points.get(speech_start_ref)
             if not isinstance(start_point, dict):
                 start_point = {"description": "measured speech start"}
@@ -354,14 +458,24 @@ def measure_timeline(
                 policy.get("use_measured_speech_end", False))
             old_start_measured = bool(
                 policy.get("use_measured_speech_start", False))
+            old_source_measured = bool(
+                policy.get("use_measured_source_window", False))
             policy["use_measured_speech_end"] = True
             policy["use_measured_speech_start"] = True
             policy["trim_to_speech_start"] = True
+            if runtime_windows:
+                policy["use_measured_source_window"] = True
             tail_preserve_changed = not old_tail_measured
             start_preserve_changed = not old_start_measured
+            source_preserve_changed = (
+                runtime_windows and not old_source_measured)
             changes.append({
                 "cue_id": cue_id,
                 "slice_id": str(raw_slice.get("id") or ""),
+                "old_source_start": old_source_start,
+                "new_source_start": _round_time(source_start),
+                "old_source_end": old_source_end,
+                "new_source_end": _round_time(source_end),
                 "old_speech_start": old_speech_start,
                 "new_speech_start": new_speech_start,
                 "old_speech_end": old_speech_end,
@@ -376,6 +490,7 @@ def measure_timeline(
                 "start_guard_changed": start_guard_changed,
                 "tail_preserve_changed": tail_preserve_changed,
                 "start_preserve_changed": start_preserve_changed,
+                "source_preserve_changed": source_preserve_changed,
             })
     return document, changes
 
@@ -414,12 +529,19 @@ def main(argv: list[str] | None = None) -> int:
 
     output_path = tutorial_dir / f"{args.track.strip()}.audio-slices.json"
     changed = any(
-        abs(change["new_speech_start"] - change["old_speech_start"]) > EPSILON
-        or abs(change["new_speech_end"] - change["old_speech_end"]) > EPSILON
+        abs(change["new_source_start"] - change["old_source_start"])
+        > TIME_COMPARE_EPSILON
+        or abs(change["new_source_end"] - change["old_source_end"])
+        > TIME_COMPARE_EPSILON
+        or abs(change["new_speech_start"] - change["old_speech_start"])
+        > TIME_COMPARE_EPSILON
+        or abs(change["new_speech_end"] - change["old_speech_end"])
+        > TIME_COMPARE_EPSILON
         or change["tail_guard_changed"]
         or change["start_guard_changed"]
         or change["tail_preserve_changed"]
         or change["start_preserve_changed"]
+        or change["source_preserve_changed"]
         for change in changes)
     for change in changes:
         notes = []
@@ -429,16 +551,21 @@ def main(argv: list[str] | None = None) -> int:
                 f"{change['guard']:.3f}; "
                 f"tail_guard {change['old_tail_guard']:.3f} -> "
                 f"{change['guard']:.3f}")
-        if change["start_preserve_changed"] or change["tail_preserve_changed"]:
+        if (change["start_preserve_changed"]
+                or change["tail_preserve_changed"]
+                or change["source_preserve_changed"]):
             notes.append("mark measured")
         note = ("  " + "; ".join(notes)) if notes else ""
         print(
             f"{change['cue_id']:35} "
-            f"start {change['old_speech_start']:7.3f} -> "
-            f"{change['new_speech_start']:7.3f}  "
-            f"end {change['old_speech_end']:7.3f} -> "
-            f"{change['new_speech_end']:7.3f}  "
-            f"tail={change['remaining_to_source_end']:6.3f}{note}")
+            f"src [{change['old_source_start']:7.3f},"
+            f"{change['old_source_end']:7.3f}] -> "
+            f"[{change['new_source_start']:7.3f},"
+            f"{change['new_source_end']:7.3f}]  "
+            f"speech {change['old_speech_start']:7.3f}-"
+            f"{change['old_speech_end']:7.3f} -> "
+            f"{change['new_speech_start']:7.3f}-"
+            f"{change['new_speech_end']:7.3f}{note}")
     if args.check:
         if changed:
             print(f"FAIL {output_path}: measured boundaries differ")
