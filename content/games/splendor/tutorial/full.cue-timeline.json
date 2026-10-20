@@ -5,7 +5,7 @@
   "track": "full",
   "course": {
     "start": 0.0,
-    "duration": 645.566
+    "duration": 642.136
   },
   "cues": [
     {
@@ -14,7 +14,7 @@
       "entry": null,
       "course": {
         "start": 0.0,
-        "duration": 2.5
+        "duration": 2.22
       },
       "tracks": [
         {
@@ -28,7 +28,7 @@
               "animation": "intro/title_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.5,
+              "source_end": 2.22,
               "after_end": "hold_last_frame"
             }
           ]
@@ -44,15 +44,15 @@
               "audio_slice_id": "intro__title_1",
               "asset": "media/tts/full/bg.intro.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.28,
               "source_end": 2.0,
-              "source_start_sample": 0,
+              "source_start_sample": 6720,
               "source_end_sample": 48000
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.0,
+              "cue_start": 1.72,
               "duration": 0.5
             }
           ]
@@ -66,7 +66,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.0,
+              "duration": 1.72,
               "text": "一，背景。"
             }
           ]
@@ -76,7 +76,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.0,
+          "duration": 1.72,
           "text": "一，背景。"
         }
       ],
@@ -91,7 +91,7 @@
       "cue_id": "intro/001",
       "entry": null,
       "course": {
-        "start": 2.5,
+        "start": 2.22,
         "duration": 15.488
       },
       "tracks": [
@@ -209,8 +209,8 @@
       "cue_id": "setup/title_2",
       "entry": null,
       "course": {
-        "start": 17.988,
-        "duration": 2.132
+        "start": 17.708,
+        "duration": 1.882
       },
       "tracks": [
         {
@@ -224,7 +224,7 @@
               "animation": "setup/title_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.132,
+              "source_end": 1.882,
               "after_end": "hold_last_frame"
             }
           ]
@@ -240,15 +240,15 @@
               "audio_slice_id": "setup__title_2",
               "asset": "media/tts/full/setup.intro.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.25,
               "source_end": 1.632,
-              "source_start_sample": 0,
+              "source_start_sample": 6000,
               "source_end_sample": 39168
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.632,
+              "cue_start": 1.382,
               "duration": 0.5
             }
           ]
@@ -262,7 +262,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.632,
+              "duration": 1.382,
               "text": "2，设置。"
             }
           ]
@@ -272,7 +272,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.632,
+          "duration": 1.382,
           "text": "2，设置。"
         }
       ],
@@ -287,8 +287,8 @@
       "cue_id": "setup_cards/title_2_1",
       "entry": null,
       "course": {
-        "start": 20.12,
-        "duration": 3.16
+        "start": 19.59,
+        "duration": 2.92
       },
       "tracks": [
         {
@@ -302,7 +302,7 @@
               "animation": "setup_cards/title_2_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.16,
+              "source_end": 2.92,
               "after_end": "hold_last_frame"
             }
           ]
@@ -318,15 +318,15 @@
               "audio_slice_id": "setup_cards__title_2_1",
               "asset": "media/tts/full/setup.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.24,
               "source_end": 2.66,
-              "source_start_sample": 0,
+              "source_start_sample": 5760,
               "source_end_sample": 63840
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.66,
+              "cue_start": 2.42,
               "duration": 0.5
             }
           ]
@@ -340,7 +340,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.66,
+              "duration": 2.42,
               "text": "2.1，发展卡牌。"
             }
           ]
@@ -350,7 +350,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.66,
+          "duration": 2.42,
           "text": "2.1，发展卡牌。"
         }
       ],
@@ -366,7 +366,7 @@
       "cue_id": "setup_cards/001.1",
       "entry": null,
       "course": {
-        "start": 23.28,
+        "start": 22.51,
         "duration": 3.16
       },
       "tracks": [
@@ -447,7 +447,7 @@
       "cue_id": "setup_cards/001.2",
       "entry": null,
       "course": {
-        "start": 26.44,
+        "start": 25.67,
         "duration": 13.185
       },
       "tracks": [
@@ -568,7 +568,7 @@
       "cue_id": "setup_cards/002.1",
       "entry": null,
       "course": {
-        "start": 39.625,
+        "start": 38.855,
         "duration": 13.235
       },
       "tracks": [
@@ -683,8 +683,8 @@
       "cue_id": "setup_gems/title_2_2",
       "entry": null,
       "course": {
-        "start": 52.86,
-        "duration": 3.25
+        "start": 52.09,
+        "duration": 2.98
       },
       "tracks": [
         {
@@ -698,7 +698,7 @@
               "animation": "setup_gems/title_2_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.25,
+              "source_end": 2.98,
               "after_end": "hold_last_frame"
             }
           ]
@@ -714,15 +714,15 @@
               "audio_slice_id": "setup_gems__title_2_2",
               "asset": "media/tts/full/setup.gems.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.27,
               "source_end": 2.75,
-              "source_start_sample": 0,
+              "source_start_sample": 6480,
               "source_end_sample": 66000
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.75,
+              "cue_start": 2.48,
               "duration": 0.5
             }
           ]
@@ -736,7 +736,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.75,
+              "duration": 2.48,
               "text": "2.2，宝石与黄金。"
             }
           ]
@@ -746,7 +746,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.75,
+          "duration": 2.48,
           "text": "2.2，宝石与黄金。"
         }
       ],
@@ -762,7 +762,7 @@
       "cue_id": "setup_gems/001.1",
       "entry": null,
       "course": {
-        "start": 56.11,
+        "start": 55.07,
         "duration": 13.905
       },
       "tracks": [
@@ -870,7 +870,7 @@
       "cue_id": "setup_gems/002",
       "entry": null,
       "course": {
-        "start": 70.015,
+        "start": 68.975,
         "duration": 6.44
       },
       "tracks": [
@@ -965,7 +965,7 @@
       "cue_id": "setup_gems/003.1",
       "entry": null,
       "course": {
-        "start": 76.455,
+        "start": 75.415,
         "duration": 19.054
       },
       "tracks": [
@@ -1098,7 +1098,7 @@
       "cue_id": "setup_gems/005.2",
       "entry": null,
       "course": {
-        "start": 95.509,
+        "start": 94.469,
         "duration": 7.24
       },
       "tracks": [
@@ -1195,8 +1195,8 @@
       "cue_id": "setup_players/title_2_3",
       "entry": null,
       "course": {
-        "start": 102.749,
-        "duration": 3.07
+        "start": 101.709,
+        "duration": 3.0
       },
       "tracks": [
         {
@@ -1210,7 +1210,7 @@
               "animation": "setup_players/title_2_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.07,
+              "source_end": 3.0,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1226,15 +1226,15 @@
               "audio_slice_id": "setup_players__title_2_3",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.07,
               "source_end": 2.57,
-              "source_start_sample": 0,
+              "source_start_sample": 1680,
               "source_end_sample": 61680
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.57,
+              "cue_start": 2.5,
               "duration": 0.5
             }
           ]
@@ -1248,7 +1248,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.57,
+              "duration": 2.5,
               "text": "2.3，贵族板块。"
             }
           ]
@@ -1258,7 +1258,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.57,
+          "duration": 2.5,
           "text": "2.3，贵族板块。"
         }
       ],
@@ -1274,7 +1274,7 @@
       "cue_id": "setup_players/nobles.001.1",
       "entry": null,
       "course": {
-        "start": 105.819,
+        "start": 104.709,
         "duration": 1.94
       },
       "tracks": [
@@ -1356,7 +1356,7 @@
       "cue_id": "setup_players/nobles.001.2",
       "entry": null,
       "course": {
-        "start": 107.759,
+        "start": 106.649,
         "duration": 9.515
       },
       "tracks": [
@@ -1451,7 +1451,7 @@
       "cue_id": "setup_players/nobles.002",
       "entry": null,
       "course": {
-        "start": 117.274,
+        "start": 116.164,
         "duration": 8.18
       },
       "tracks": [
@@ -1531,7 +1531,7 @@
       "cue_id": "setup_players/title_2_4",
       "entry": null,
       "course": {
-        "start": 125.454,
+        "start": 124.344,
         "duration": 2.12
       },
       "tracks": [
@@ -1610,7 +1610,7 @@
       "cue_id": "setup_players/starting.001.1",
       "entry": null,
       "course": {
-        "start": 127.574,
+        "start": 126.464,
         "duration": 10.579
       },
       "tracks": [
@@ -1705,7 +1705,7 @@
       "cue_id": "setup_players/starting.001.3",
       "entry": null,
       "course": {
-        "start": 138.153,
+        "start": 137.043,
         "duration": 4.94
       },
       "tracks": [
@@ -1801,7 +1801,7 @@
       "cue_id": "setup_players/title_2_5",
       "entry": null,
       "course": {
-        "start": 143.093,
+        "start": 141.983,
         "duration": 2.4
       },
       "tracks": [
@@ -1880,8 +1880,8 @@
       "cue_id": "setup_players/end.001.1",
       "entry": null,
       "course": {
-        "start": 145.493,
-        "duration": 6.312
+        "start": 144.383,
+        "duration": 6.292
       },
       "tracks": [
         {
@@ -1894,7 +1894,7 @@
               "type": "state",
               "animation": "setup_players/end.001.1",
               "cue_start": 0.0,
-              "duration": 6.312,
+              "duration": 6.292,
               "after_end": "hold_last_frame"
             }
           ]
@@ -1910,15 +1910,15 @@
               "audio_slice_id": "setup_players__end.001.1",
               "asset": "media/tts/full/setup.players.mp3",
               "cue_start": 0.0,
-              "source_start": 37.744,
+              "source_start": 37.764,
               "source_end": 43.056,
-              "source_start_sample": 905856,
+              "source_start_sample": 906336,
               "source_end_sample": 1033344
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.312,
+              "cue_start": 5.292,
               "duration": 1.0
             }
           ]
@@ -1932,13 +1932,13 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.315,
+              "duration": 2.295,
               "text": "至此，整个设置环节就大功告成了。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.105,
+              "cue_start": 3.085,
               "duration": 2.207,
               "text": "接下来可以正式开始游戏了。"
             }
@@ -1949,12 +1949,12 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.315,
+          "duration": 2.295,
           "text": "至此，整个设置环节就大功告成了。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.105,
+          "cue_start": 3.085,
           "duration": 2.207,
           "text": "接下来可以正式开始游戏了。"
         }
@@ -1974,8 +1974,8 @@
       "cue_id": "turn/title_3",
       "entry": null,
       "course": {
-        "start": 151.805,
-        "duration": 2.73
+        "start": 150.675,
+        "duration": 2.46
       },
       "tracks": [
         {
@@ -1989,7 +1989,7 @@
               "animation": "turn/title_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.73,
+              "source_end": 2.46,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2005,15 +2005,15 @@
               "audio_slice_id": "turn__title_3",
               "asset": "media/tts/full/action.turn.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.27,
               "source_end": 2.23,
-              "source_start_sample": 0,
+              "source_start_sample": 6480,
               "source_end_sample": 53520
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.23,
+              "cue_start": 1.96,
               "duration": 0.5
             }
           ]
@@ -2027,7 +2027,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.23,
+              "duration": 1.96,
               "text": "3，行动。"
             }
           ]
@@ -2037,7 +2037,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.23,
+          "duration": 1.96,
           "text": "3，行动。"
         }
       ],
@@ -2052,7 +2052,7 @@
       "cue_id": "turn/001",
       "entry": null,
       "course": {
-        "start": 154.535,
+        "start": 153.135,
         "duration": 8.295
       },
       "tracks": [
@@ -2147,7 +2147,7 @@
       "cue_id": "turn/002",
       "entry": null,
       "course": {
-        "start": 162.83,
+        "start": 161.43,
         "duration": 6.047
       },
       "tracks": [
@@ -2226,8 +2226,8 @@
       "cue_id": "take_gems/title_3_1",
       "entry": null,
       "course": {
-        "start": 168.877,
-        "duration": 4.43
+        "start": 167.477,
+        "duration": 4.16
       },
       "tracks": [
         {
@@ -2241,7 +2241,7 @@
               "animation": "take_gems/title_3_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.43,
+              "source_end": 4.16,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2257,15 +2257,15 @@
               "audio_slice_id": "take_gems__title_3_1",
               "asset": "media/tts/full/action.take.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.27,
               "source_end": 3.93,
-              "source_start_sample": 0,
+              "source_start_sample": 6480,
               "source_end_sample": 94320
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.93,
+              "cue_start": 3.66,
               "duration": 0.5
             }
           ]
@@ -2279,7 +2279,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.93,
+              "duration": 3.66,
               "text": "3.1，从宝石供应堆拿取宝石。"
             }
           ]
@@ -2289,7 +2289,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.93,
+          "duration": 3.66,
           "text": "3.1，从宝石供应堆拿取宝石。"
         }
       ],
@@ -2305,7 +2305,7 @@
       "cue_id": "take_gems/different.001",
       "entry": null,
       "course": {
-        "start": 173.307,
+        "start": 171.637,
         "duration": 5.265
       },
       "tracks": [
@@ -2387,7 +2387,7 @@
       "cue_id": "take_gems/same.001",
       "entry": null,
       "course": {
-        "start": 178.572,
+        "start": 176.902,
         "duration": 7.16
       },
       "tracks": [
@@ -2482,7 +2482,7 @@
       "cue_id": "take_gems/same.002",
       "entry": null,
       "course": {
-        "start": 185.732,
+        "start": 184.062,
         "duration": 7.19
       },
       "tracks": [
@@ -2576,7 +2576,7 @@
       "cue_id": "take_gems/draw_rule.001.1",
       "entry": null,
       "course": {
-        "start": 192.922,
+        "start": 191.252,
         "duration": 7.01
       },
       "tracks": [
@@ -2658,7 +2658,7 @@
       "cue_id": "take_gems/draw_rule.001.2",
       "entry": null,
       "course": {
-        "start": 199.932,
+        "start": 198.262,
         "duration": 4.294
       },
       "tracks": [
@@ -2740,7 +2740,7 @@
       "cue_id": "take_gems/limit.001.1",
       "entry": null,
       "course": {
-        "start": 204.226,
+        "start": 202.556,
         "duration": 6.815
       },
       "tracks": [
@@ -2836,7 +2836,7 @@
       "cue_id": "take_gems/limit.001.2",
       "entry": null,
       "course": {
-        "start": 211.041,
+        "start": 209.371,
         "duration": 6.58
       },
       "tracks": [
@@ -2919,7 +2919,7 @@
       "cue_id": "take_gems/public.001.1",
       "entry": null,
       "course": {
-        "start": 217.621,
+        "start": 215.951,
         "duration": 6.25
       },
       "tracks": [
@@ -2999,7 +2999,7 @@
       "cue_id": "take_gems/public.001.2",
       "entry": null,
       "course": {
-        "start": 223.871,
+        "start": 222.201,
         "duration": 3.378
       },
       "tracks": [
@@ -3080,8 +3080,8 @@
       "cue_id": "cards_group/title_3_2",
       "entry": null,
       "course": {
-        "start": 227.249,
-        "duration": 3.956
+        "start": 225.579,
+        "duration": 3.686
       },
       "tracks": [
         {
@@ -3111,15 +3111,15 @@
               "audio_slice_id": "cards_group__title_3_2",
               "asset": "media/tts/full/action.cards.group.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.27,
               "source_end": 3.456,
-              "source_start_sample": 0,
+              "source_start_sample": 6480,
               "source_end_sample": 82944
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.456,
+              "cue_start": 3.186,
               "duration": 0.5
             }
           ]
@@ -3133,7 +3133,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.456,
+              "duration": 3.186,
               "text": "3.2，发展卡牌与贵族。"
             }
           ]
@@ -3143,7 +3143,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.456,
+          "duration": 3.186,
           "text": "3.2，发展卡牌与贵族。"
         }
       ],
@@ -3159,8 +3159,8 @@
       "cue_id": "cards/title_3_2_1",
       "entry": null,
       "course": {
-        "start": 231.205,
-        "duration": 4.365
+        "start": 229.265,
+        "duration": 4.095
       },
       "tracks": [
         {
@@ -3174,7 +3174,7 @@
               "animation": "cards/title_3_2_1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.255,
+              "source_end": 4.095,
               "after_end": "hold_last_frame"
             }
           ]
@@ -3190,15 +3190,15 @@
               "audio_slice_id": "cards__title_3_2_1",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.27,
               "source_end": 3.865,
-              "source_start_sample": 0,
+              "source_start_sample": 6480,
               "source_end_sample": 92760
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.865,
+              "cue_start": 3.595,
               "duration": 0.5
             }
           ]
@@ -3212,7 +3212,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.865,
+              "duration": 3.595,
               "text": "3.2.1，认识发展卡牌。"
             }
           ]
@@ -3222,7 +3222,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.865,
+          "duration": 3.595,
           "text": "3.2.1，认识发展卡牌。"
         }
       ],
@@ -3239,7 +3239,7 @@
       "cue_id": "cards/intro.001",
       "entry": null,
       "course": {
-        "start": 235.57,
+        "start": 233.36,
         "duration": 2.72
       },
       "tracks": [
@@ -3320,7 +3320,7 @@
       "cue_id": "cards/cost.001.1",
       "entry": null,
       "course": {
-        "start": 238.29,
+        "start": 236.08,
         "duration": 4.445
       },
       "tracks": [
@@ -3416,7 +3416,7 @@
       "cue_id": "cards/cost.001.2",
       "entry": null,
       "course": {
-        "start": 242.735,
+        "start": 240.525,
         "duration": 11.195
       },
       "tracks": [
@@ -3513,7 +3513,7 @@
       "cue_id": "cards/market.001.1",
       "entry": null,
       "course": {
-        "start": 253.93,
+        "start": 251.72,
         "duration": 15.83
       },
       "tracks": [
@@ -3609,7 +3609,7 @@
       "cue_id": "cards/market.001.2",
       "entry": null,
       "course": {
-        "start": 269.76,
+        "start": 267.55,
         "duration": 8.114
       },
       "tracks": [
@@ -3692,7 +3692,7 @@
       "cue_id": "cards/prestige.001.1",
       "entry": null,
       "course": {
-        "start": 277.874,
+        "start": 275.664,
         "duration": 7.175
       },
       "tracks": [
@@ -3788,8 +3788,8 @@
       "cue_id": "cards/prestige.001.2",
       "entry": null,
       "course": {
-        "start": 285.049,
-        "duration": 6.455
+        "start": 282.839,
+        "duration": 6.445
       },
       "tracks": [
         {
@@ -3802,7 +3802,7 @@
               "type": "state",
               "animation": "cards/prestige.001.2",
               "cue_start": 0.0,
-              "duration": 6.455,
+              "duration": 6.445,
               "after_end": "hold_last_frame"
             }
           ]
@@ -3818,15 +3818,15 @@
               "audio_slice_id": "cards__prestige.001.2",
               "asset": "media/tts/full/action.cards.mp3",
               "cue_start": 0.0,
-              "source_start": 50.344,
+              "source_start": 50.354,
               "source_end": 56.299,
-              "source_start_sample": 1208256,
+              "source_start_sample": 1208496,
               "source_end_sample": 1351176
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 5.955,
+              "cue_start": 5.945,
               "duration": 0.5
             }
           ]
@@ -3840,13 +3840,13 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.575,
+              "duration": 2.565,
               "text": "不过并不是所有卡牌都有声望值。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.92,
+              "cue_start": 2.91,
               "duration": 3.035,
               "text": "很多一级发展卡牌都没有声望值。"
             }
@@ -3857,12 +3857,12 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.575,
+          "duration": 2.565,
           "text": "不过并不是所有卡牌都有声望值。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.92,
+          "cue_start": 2.91,
           "duration": 3.035,
           "text": "很多一级发展卡牌都没有声望值。"
         }
@@ -3883,7 +3883,7 @@
       "cue_id": "cards/discount.001",
       "entry": null,
       "course": {
-        "start": 291.504,
+        "start": 289.284,
         "duration": 8.14
       },
       "tracks": [
@@ -3965,7 +3965,7 @@
       "cue_id": "cards/discount.002.1",
       "entry": null,
       "course": {
-        "start": 299.644,
+        "start": 297.424,
         "duration": 11.975
       },
       "tracks": [
@@ -4047,7 +4047,7 @@
       "cue_id": "cards/discount.003.1",
       "entry": null,
       "course": {
-        "start": 311.619,
+        "start": 309.399,
         "duration": 8.395
       },
       "tracks": [
@@ -4129,7 +4129,7 @@
       "cue_id": "cards/discount.003.2",
       "entry": null,
       "course": {
-        "start": 320.014,
+        "start": 317.794,
         "duration": 8.854
       },
       "tracks": [
@@ -4210,7 +4210,7 @@
       "cue_id": "cards/public.001.1",
       "entry": null,
       "course": {
-        "start": 328.868,
+        "start": 326.648,
         "duration": 12.745
       },
       "tracks": [
@@ -4292,7 +4292,7 @@
       "cue_id": "cards/limit.001.1",
       "entry": null,
       "course": {
-        "start": 341.613,
+        "start": 339.393,
         "duration": 9.652
       },
       "tracks": [
@@ -4374,8 +4374,8 @@
       "cue_id": "nobles/title_3_2_2",
       "entry": null,
       "course": {
-        "start": 351.265,
-        "duration": 3.61
+        "start": 349.045,
+        "duration": 3.33
       },
       "tracks": [
         {
@@ -4389,7 +4389,7 @@
               "animation": "nobles/title_3_2_2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.41,
+              "source_end": 3.33,
               "after_end": "hold_last_frame"
             }
           ]
@@ -4405,15 +4405,15 @@
               "audio_slice_id": "nobles__title_3_2_2",
               "asset": "media/tts/full/action.nobles.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.28,
               "source_end": 3.11,
-              "source_start_sample": 0,
+              "source_start_sample": 6720,
               "source_end_sample": 74640
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.11,
+              "cue_start": 2.83,
               "duration": 0.5
             }
           ]
@@ -4427,7 +4427,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.11,
+              "duration": 2.83,
               "text": "3.2.2，贵族结算。"
             }
           ]
@@ -4437,7 +4437,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.11,
+          "duration": 2.83,
           "text": "3.2.2，贵族结算。"
         }
       ],
@@ -4454,7 +4454,7 @@
       "cue_id": "nobles/intro.001",
       "entry": null,
       "course": {
-        "start": 354.875,
+        "start": 352.375,
         "duration": 11.375
       },
       "tracks": [
@@ -4576,7 +4576,7 @@
       "cue_id": "nobles/trigger.001.1",
       "entry": null,
       "course": {
-        "start": 366.25,
+        "start": 363.75,
         "duration": 12.72
       },
       "tracks": [
@@ -4659,7 +4659,7 @@
       "cue_id": "nobles/forced.001.1",
       "entry": null,
       "course": {
-        "start": 378.97,
+        "start": 376.47,
         "duration": 12.199
       },
       "tracks": [
@@ -4754,7 +4754,7 @@
       "cue_id": "nobles/source.001",
       "entry": null,
       "course": {
-        "start": 391.169,
+        "start": 388.669,
         "duration": 7.4
       },
       "tracks": [
@@ -4837,7 +4837,7 @@
       "cue_id": "nobles/choice.001.1",
       "entry": null,
       "course": {
-        "start": 398.569,
+        "start": 396.069,
         "duration": 9.255
       },
       "tracks": [
@@ -4920,7 +4920,7 @@
       "cue_id": "nobles/repeat.001.1",
       "entry": null,
       "course": {
-        "start": 407.824,
+        "start": 405.324,
         "duration": 12.43
       },
       "tracks": [
@@ -5003,7 +5003,7 @@
       "cue_id": "nobles/repeat.001.3",
       "entry": null,
       "course": {
-        "start": 420.254,
+        "start": 417.754,
         "duration": 6.861
       },
       "tracks": [
@@ -5085,7 +5085,7 @@
       "cue_id": "nobles/summary.001.1",
       "entry": null,
       "course": {
-        "start": 427.115,
+        "start": 424.615,
         "duration": 5.105
       },
       "tracks": [
@@ -5169,7 +5169,7 @@
       "cue_id": "nobles/summary.001.2",
       "entry": null,
       "course": {
-        "start": 432.22,
+        "start": 429.72,
         "duration": 4.77
       },
       "tracks": [
@@ -5253,7 +5253,7 @@
       "cue_id": "nobles/summary.001.3",
       "entry": null,
       "course": {
-        "start": 436.99,
+        "start": 434.49,
         "duration": 7.339
       },
       "tracks": [
@@ -5337,8 +5337,8 @@
       "cue_id": "reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 444.329,
-        "duration": 4.0
+        "start": 441.829,
+        "duration": 3.92
       },
       "tracks": [
         {
@@ -5352,7 +5352,7 @@
               "animation": "reserve/title_3_3",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.0,
+              "source_end": 3.92,
               "after_end": "hold_last_frame"
             }
           ]
@@ -5368,15 +5368,15 @@
               "audio_slice_id": "reserve__title_3_3",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.08,
               "source_end": 3.5,
-              "source_start_sample": 0,
+              "source_start_sample": 1920,
               "source_end_sample": 84000
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.5,
+              "cue_start": 3.42,
               "duration": 0.5
             }
           ]
@@ -5390,7 +5390,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.5,
+              "duration": 3.42,
               "text": "3.3，保留一张发展卡牌。"
             }
           ]
@@ -5400,7 +5400,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.5,
+          "duration": 3.42,
           "text": "3.3，保留一张发展卡牌。"
         }
       ],
@@ -5416,7 +5416,7 @@
       "cue_id": "reserve/intro.001.1",
       "entry": null,
       "course": {
-        "start": 448.329,
+        "start": 445.749,
         "duration": 11.685
       },
       "tracks": [
@@ -5525,8 +5525,8 @@
       "cue_id": "reserve/gold.001",
       "entry": null,
       "course": {
-        "start": 460.014,
-        "duration": 7.675
+        "start": 457.434,
+        "duration": 7.645
       },
       "tracks": [
         {
@@ -5556,15 +5556,15 @@
               "audio_slice_id": "reserve__gold.001",
               "asset": "media/tts/full/action.reserve.mp3",
               "cue_start": 0.0,
-              "source_start": 14.685,
+              "source_start": 14.715,
               "source_end": 21.86,
-              "source_start_sample": 352440,
+              "source_start_sample": 353160,
               "source_end_sample": 524640
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 7.175,
+              "cue_start": 7.145,
               "duration": 0.5
             }
           ]
@@ -5578,13 +5578,13 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 1.95,
+              "duration": 1.92,
               "text": "黄金相当于万能宝石，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 2.315,
+              "cue_start": 2.285,
               "duration": 4.86,
               "text": "它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
             }
@@ -5595,12 +5595,12 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 1.95,
+          "duration": 1.92,
           "text": "黄金相当于万能宝石，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 2.315,
+          "cue_start": 2.285,
           "duration": 4.86,
           "text": "它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
         }
@@ -5620,7 +5620,7 @@
       "cue_id": "reserve/deck.001",
       "entry": null,
       "course": {
-        "start": 467.689,
+        "start": 465.079,
         "duration": 8.145
       },
       "tracks": [
@@ -5704,7 +5704,7 @@
       "cue_id": "reserve/notes_intro.001",
       "entry": null,
       "course": {
-        "start": 475.834,
+        "start": 473.224,
         "duration": 9.187
       },
       "tracks": [
@@ -5788,7 +5788,7 @@
       "cue_id": "reserve/limit_gold.001.2",
       "entry": null,
       "course": {
-        "start": 485.021,
+        "start": 482.411,
         "duration": 6.11
       },
       "tracks": [
@@ -5871,7 +5871,7 @@
       "cue_id": "reserve/limit_hand.001.1",
       "entry": null,
       "course": {
-        "start": 491.131,
+        "start": 488.521,
         "duration": 8.685
       },
       "tracks": [
@@ -5966,7 +5966,7 @@
       "cue_id": "reserve/private.001.1",
       "entry": null,
       "course": {
-        "start": 499.816,
+        "start": 497.206,
         "duration": 11.61
       },
       "tracks": [
@@ -6059,7 +6059,7 @@
       "cue_id": "reserve/private.002",
       "entry": null,
       "course": {
-        "start": 511.426,
+        "start": 508.816,
         "duration": 6.68
       },
       "tracks": [
@@ -6141,7 +6141,7 @@
       "cue_id": "reserve/not_purchase.001",
       "entry": null,
       "course": {
-        "start": 518.106,
+        "start": 515.496,
         "duration": 7.707
       },
       "tracks": [
@@ -6223,8 +6223,8 @@
       "cue_id": "purchase_reserved/title_3_4",
       "entry": null,
       "course": {
-        "start": 525.813,
-        "duration": 4.515
+        "start": 523.203,
+        "duration": 4.255
       },
       "tracks": [
         {
@@ -6238,7 +6238,7 @@
               "animation": "purchase_reserved/title_3_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 4.34,
+              "source_end": 4.255,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6254,15 +6254,15 @@
               "audio_slice_id": "purchase_reserved__title_3_4",
               "asset": "media/tts/full/action.purchase_reserved.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.26,
               "source_end": 4.015,
-              "source_start_sample": 0,
+              "source_start_sample": 6240,
               "source_end_sample": 96360
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 4.015,
+              "cue_start": 3.755,
               "duration": 0.5
             }
           ]
@@ -6276,7 +6276,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 4.015,
+              "duration": 3.755,
               "text": "3.4，购买保留的发展卡牌。"
             }
           ]
@@ -6286,7 +6286,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 4.015,
+          "duration": 3.755,
           "text": "3.4，购买保留的发展卡牌。"
         }
       ],
@@ -6302,7 +6302,7 @@
       "cue_id": "purchase_reserved/001",
       "entry": null,
       "course": {
-        "start": 530.328,
+        "start": 527.458,
         "duration": 20.649
       },
       "tracks": [
@@ -6449,8 +6449,8 @@
       "cue_id": "summary/title_3_5",
       "entry": null,
       "course": {
-        "start": 550.977,
-        "duration": 3.88
+        "start": 548.107,
+        "duration": 3.6
       },
       "tracks": [
         {
@@ -6464,7 +6464,7 @@
               "animation": "summary/title_3_5",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 3.88,
+              "source_end": 3.6,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6480,15 +6480,15 @@
               "audio_slice_id": "summary__title_3_5",
               "asset": "media/tts/full/action.summary.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.28,
               "source_end": 3.38,
-              "source_start_sample": 0,
+              "source_start_sample": 6720,
               "source_end_sample": 81120
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 3.38,
+              "cue_start": 3.1,
               "duration": 0.5
             }
           ]
@@ -6502,7 +6502,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 3.38,
+              "duration": 3.1,
               "text": "3.5，回合结束与循环。"
             }
           ]
@@ -6512,7 +6512,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 3.38,
+          "duration": 3.1,
           "text": "3.5，回合结束与循环。"
         }
       ],
@@ -6528,7 +6528,7 @@
       "cue_id": "summary/001",
       "entry": null,
       "course": {
-        "start": 554.857,
+        "start": 551.707,
         "duration": 7.595
       },
       "tracks": [
@@ -6624,7 +6624,7 @@
       "cue_id": "summary/002.1",
       "entry": null,
       "course": {
-        "start": 562.452,
+        "start": 559.302,
         "duration": 9.48
       },
       "tracks": [
@@ -6732,7 +6732,7 @@
       "cue_id": "summary/002.2",
       "entry": null,
       "course": {
-        "start": 571.932,
+        "start": 568.782,
         "duration": 4.23
       },
       "tracks": [
@@ -6814,8 +6814,8 @@
       "cue_id": "end/title_4",
       "entry": null,
       "course": {
-        "start": 576.162,
-        "duration": 2.75
+        "start": 573.012,
+        "duration": 2.47
       },
       "tracks": [
         {
@@ -6829,7 +6829,7 @@
               "animation": "end/title_4",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 2.75,
+              "source_end": 2.47,
               "after_end": "hold_last_frame"
             }
           ]
@@ -6845,15 +6845,15 @@
               "audio_slice_id": "end__title_4",
               "asset": "media/tts/full/endgame.mp3",
               "cue_start": 0.0,
-              "source_start": 0.0,
+              "source_start": 0.28,
               "source_end": 2.25,
-              "source_start_sample": 0,
+              "source_start_sample": 6720,
               "source_end_sample": 54000
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 2.25,
+              "cue_start": 1.97,
               "duration": 0.5
             }
           ]
@@ -6867,7 +6867,7 @@
               "id": "subtitle.0.0",
               "type": "subtitle",
               "cue_start": 0.0,
-              "duration": 2.25,
+              "duration": 1.97,
               "text": "4，游戏结束。"
             }
           ]
@@ -6877,7 +6877,7 @@
         {
           "id": "subtitle.0.0",
           "cue_start": 0.0,
-          "duration": 2.25,
+          "duration": 1.97,
           "text": "4，游戏结束。"
         }
       ],
@@ -6892,7 +6892,7 @@
       "cue_id": "end/trigger.001",
       "entry": null,
       "course": {
-        "start": 578.912,
+        "start": 575.482,
         "duration": 5.525
       },
       "tracks": [
@@ -6973,7 +6973,7 @@
       "cue_id": "end/final_rounds.001.1",
       "entry": null,
       "course": {
-        "start": 584.437,
+        "start": 581.007,
         "duration": 10.98
       },
       "tracks": [
@@ -7080,7 +7080,7 @@
       "cue_id": "end/example.001.1",
       "entry": null,
       "course": {
-        "start": 595.417,
+        "start": 591.987,
         "duration": 17.53
       },
       "tracks": [
@@ -7185,7 +7185,7 @@
       "cue_id": "end/winner.001",
       "entry": null,
       "course": {
-        "start": 612.947,
+        "start": 609.517,
         "duration": 8.655
       },
       "tracks": [
@@ -7279,7 +7279,7 @@
       "cue_id": "end/winner.002",
       "entry": null,
       "course": {
-        "start": 621.602,
+        "start": 618.172,
         "duration": 12.73
       },
       "tracks": [
@@ -7373,7 +7373,7 @@
       "cue_id": "end/winner.003",
       "entry": null,
       "course": {
-        "start": 634.332,
+        "start": 630.902,
         "duration": 11.234
       },
       "tracks": [
@@ -7476,11 +7476,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.0,
-      "audio_end": 2.5,
+      "audio_end": 2.22,
       "visual_end": 3.0,
-      "duration": 2.5
+      "duration": 2.22
     },
     {
       "code": "cue_timing_policy",
@@ -7489,6 +7491,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 15.488,
       "audio_end": 15.488,
@@ -7502,11 +7506,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.0,
-      "audio_end": 2.132,
+      "audio_end": 1.882,
       "visual_end": 3.0,
-      "duration": 2.132
+      "duration": 1.882
     },
     {
       "code": "cue_timing_policy",
@@ -7515,11 +7521,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.34,
-      "audio_end": 3.16,
+      "audio_end": 2.92,
       "visual_end": 3.34,
-      "duration": 3.16
+      "duration": 2.92
     },
     {
       "code": "cue_timing_policy",
@@ -7528,6 +7536,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.16,
       "audio_end": 3.16,
@@ -7541,6 +7551,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 13.185,
       "audio_end": 13.185,
@@ -7554,6 +7566,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 13.235,
       "audio_end": 13.235,
@@ -7567,11 +7581,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.68,
-      "audio_end": 3.25,
+      "audio_end": 2.98,
       "visual_end": 3.68,
-      "duration": 3.25
+      "duration": 2.98
     },
     {
       "code": "cue_timing_policy",
@@ -7580,6 +7596,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 13.905,
       "audio_end": 13.905,
@@ -7593,6 +7611,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.44,
       "audio_end": 6.44,
@@ -7606,6 +7626,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 19.054,
       "audio_end": 19.054,
@@ -7619,6 +7641,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 7.24,
       "audio_end": 7.24,
@@ -7632,11 +7656,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.37,
-      "audio_end": 3.07,
+      "audio_end": 3.0,
       "visual_end": 3.37,
-      "duration": 3.07
+      "duration": 3.0
     },
     {
       "code": "cue_timing_policy",
@@ -7645,6 +7671,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 1.94,
       "audio_end": 1.94,
@@ -7658,6 +7686,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 9.515,
       "audio_end": 9.515,
@@ -7671,6 +7701,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 8.18,
       "audio_end": 8.18,
@@ -7684,6 +7716,8 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 2.915,
       "audio_end": 2.12,
@@ -7697,6 +7731,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 10.579,
       "audio_end": 10.579,
@@ -7710,6 +7746,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 4.94,
       "audio_end": 4.94,
@@ -7723,6 +7761,8 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 2.845,
       "audio_end": 2.4,
@@ -7736,11 +7776,13 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
-      "original_duration": 6.312,
-      "audio_end": 6.312,
+      "original_duration": 6.292,
+      "audio_end": 6.292,
       "visual_end": 0.0,
-      "duration": 6.312
+      "duration": 6.292
     },
     {
       "code": "cue_timing_policy",
@@ -7749,11 +7791,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.16,
-      "audio_end": 2.73,
+      "audio_end": 2.46,
       "visual_end": 3.16,
-      "duration": 2.73
+      "duration": 2.46
     },
     {
       "code": "cue_timing_policy",
@@ -7762,6 +7806,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.295,
       "audio_end": 8.295,
@@ -7775,6 +7821,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 6.047,
       "audio_end": 6.047,
@@ -7788,11 +7836,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.72,
-      "audio_end": 4.43,
+      "audio_end": 4.16,
       "visual_end": 4.72,
-      "duration": 4.43
+      "duration": 4.16
     },
     {
       "code": "cue_timing_policy",
@@ -7801,6 +7851,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 5.265,
       "audio_end": 5.265,
@@ -7814,6 +7866,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.16,
       "audio_end": 7.16,
@@ -7827,6 +7881,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.19,
       "audio_end": 7.19,
@@ -7840,6 +7896,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.01,
       "audio_end": 7.01,
@@ -7853,6 +7911,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.294,
       "audio_end": 4.294,
@@ -7866,6 +7926,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.815,
       "audio_end": 6.815,
@@ -7879,6 +7941,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.58,
       "audio_end": 6.58,
@@ -7892,6 +7956,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.25,
       "audio_end": 6.25,
@@ -7905,6 +7971,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 3.378,
       "audio_end": 3.378,
@@ -7918,11 +7986,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 3.956,
-      "audio_end": 3.956,
+      "original_duration": 3.686,
+      "audio_end": 3.686,
       "visual_end": 3.0,
-      "duration": 3.956
+      "duration": 3.686
     },
     {
       "code": "cue_timing_policy",
@@ -7931,11 +8001,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 4.365,
-      "audio_end": 4.365,
+      "original_duration": 4.255,
+      "audio_end": 4.095,
       "visual_end": 4.255,
-      "duration": 4.365
+      "duration": 4.095
     },
     {
       "code": "cue_timing_policy",
@@ -7944,6 +8016,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 2.72,
       "audio_end": 2.72,
@@ -7957,6 +8031,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.445,
       "audio_end": 4.445,
@@ -7970,6 +8046,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 11.195,
       "audio_end": 11.195,
@@ -7983,6 +8061,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 15.83,
       "audio_end": 15.83,
@@ -7996,6 +8076,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.114,
       "audio_end": 8.114,
@@ -8009,6 +8091,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.175,
       "audio_end": 7.175,
@@ -8022,11 +8106,13 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 6.455,
-      "audio_end": 6.455,
+      "original_duration": 6.445,
+      "audio_end": 6.445,
       "visual_end": 0.0,
-      "duration": 6.455
+      "duration": 6.445
     },
     {
       "code": "cue_timing_policy",
@@ -8035,6 +8121,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.14,
       "audio_end": 8.14,
@@ -8048,6 +8136,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 11.975,
       "audio_end": 11.975,
@@ -8061,6 +8151,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.395,
       "audio_end": 8.395,
@@ -8074,6 +8166,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.854,
       "audio_end": 8.854,
@@ -8087,6 +8181,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 12.745,
       "audio_end": 12.745,
@@ -8100,6 +8196,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 9.652,
       "audio_end": 9.652,
@@ -8113,11 +8211,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 3.61,
-      "audio_end": 3.61,
+      "original_duration": 3.41,
+      "audio_end": 3.33,
       "visual_end": 3.41,
-      "duration": 3.61
+      "duration": 3.33
     },
     {
       "code": "cue_timing_policy",
@@ -8126,6 +8226,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 11.375,
       "audio_end": 11.375,
@@ -8139,6 +8241,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 12.72,
       "audio_end": 12.72,
@@ -8152,6 +8256,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 12.199,
       "audio_end": 12.199,
@@ -8165,6 +8271,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.4,
       "audio_end": 5.56,
@@ -8178,6 +8286,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 9.255,
       "audio_end": 9.255,
@@ -8191,6 +8301,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 12.43,
       "audio_end": 12.43,
@@ -8204,6 +8316,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.861,
       "audio_end": 6.861,
@@ -8217,6 +8331,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 5.105,
       "audio_end": 5.105,
@@ -8230,6 +8346,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.77,
       "audio_end": 4.77,
@@ -8243,6 +8361,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 7.339,
       "audio_end": 7.339,
@@ -8256,11 +8376,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 4.37,
-      "audio_end": 4.0,
+      "audio_end": 3.92,
       "visual_end": 4.37,
-      "duration": 4.0
+      "duration": 3.92
     },
     {
       "code": "cue_timing_policy",
@@ -8269,6 +8391,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 11.685,
       "audio_end": 11.685,
@@ -8282,11 +8406,13 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 7.675,
-      "audio_end": 7.675,
+      "original_duration": 7.645,
+      "audio_end": 7.645,
       "visual_end": 5.7,
-      "duration": 7.675
+      "duration": 7.645
     },
     {
       "code": "cue_timing_policy",
@@ -8295,6 +8421,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.145,
       "audio_end": 8.145,
@@ -8308,6 +8436,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 9.187,
       "audio_end": 9.187,
@@ -8321,6 +8451,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.11,
       "audio_end": 6.11,
@@ -8334,6 +8466,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.685,
       "audio_end": 8.685,
@@ -8347,6 +8481,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 11.61,
       "audio_end": 11.61,
@@ -8360,6 +8496,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 6.68,
       "audio_end": 6.68,
@@ -8373,6 +8511,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 7.707,
       "audio_end": 7.707,
@@ -8386,11 +8526,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
-      "original_duration": 4.515,
-      "audio_end": 4.515,
+      "original_duration": 4.34,
+      "audio_end": 4.255,
       "visual_end": 4.34,
-      "duration": 4.515
+      "duration": 4.255
     },
     {
       "code": "cue_timing_policy",
@@ -8399,6 +8541,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 20.649,
       "audio_end": 20.649,
@@ -8412,11 +8556,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.98,
-      "audio_end": 3.88,
+      "audio_end": 3.6,
       "visual_end": 3.98,
-      "duration": 3.88
+      "duration": 3.6
     },
     {
       "code": "cue_timing_policy",
@@ -8425,6 +8571,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 7.595,
       "audio_end": 7.595,
@@ -8438,6 +8586,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 9.48,
       "audio_end": 9.48,
@@ -8451,6 +8601,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 1.0,
       "original_duration": 4.23,
       "audio_end": 4.23,
@@ -8464,11 +8616,13 @@
       "mode": "audio",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 3.17,
-      "audio_end": 2.75,
+      "audio_end": 2.47,
       "visual_end": 3.17,
-      "duration": 2.75
+      "duration": 2.47
     },
     {
       "code": "cue_timing_policy",
@@ -8477,6 +8631,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 5.525,
       "audio_end": 5.525,
@@ -8490,6 +8646,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 10.98,
       "audio_end": 10.98,
@@ -8503,6 +8661,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 17.53,
       "audio_end": 17.53,
@@ -8516,6 +8676,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 8.655,
       "audio_end": 8.655,
@@ -8529,6 +8691,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 12.73,
       "audio_end": 12.73,
@@ -8542,6 +8706,8 @@
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
+      "trim_to_speech_start": true,
+      "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.5,
       "original_duration": 11.234,
       "audio_end": 11.234,

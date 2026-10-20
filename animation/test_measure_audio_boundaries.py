@@ -15,7 +15,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
-import measure_audio_tail as tail  # noqa: E402
+import measure_audio_boundaries as tail  # noqa: E402
 
 
 class MeasureAudioTailTests(unittest.TestCase):
@@ -42,6 +42,15 @@ class MeasureAudioTailTests(unittest.TestCase):
         measured = tail.last_voiced_end_seconds(samples, self.SAMPLE_RATE, 0.0, 1.4)
         self.assertGreaterEqual(measured, 0.98)
         self.assertLessEqual(measured, 1.02)
+
+    def test_first_voiced_start_skips_leading_silence_and_clicks(self) -> None:
+        samples = self._tone_samples(duration=1.5, start=0.7, end=1.2)
+        click = int(round(0.2 * self.SAMPLE_RATE))
+        samples[click] = 2000
+        measured = tail.first_voiced_start_seconds(
+            samples, self.SAMPLE_RATE, 0.0, 1.4)
+        self.assertGreaterEqual(measured, 0.68)
+        self.assertLessEqual(measured, 0.74)
 
     def test_silence_returns_source_start(self) -> None:
         samples = array("h", [0] * (self.SAMPLE_RATE * 2))
@@ -92,12 +101,20 @@ class MeasureAudioTailTests(unittest.TestCase):
                     tutorial, root, "full", "ffmpeg",
                     guard_seconds=0.1, runtime_windows=True)
             cue = document["cues"]["fixture/one"][0]
-            measured = document["timing_points"][cue["speech_end_ref"]]["time"]
-            self.assertGreaterEqual(measured, 1.38)
-            self.assertLessEqual(measured, 1.42)
+            measured_end = document["timing_points"][
+                cue["speech_end_ref"]]["time"]
+            measured_start = document["timing_points"][
+                cue["speech_start_ref"]]["time"]
+            self.assertGreaterEqual(measured_end, 1.38)
+            self.assertLessEqual(measured_end, 1.42)
+            self.assertGreaterEqual(measured_start, 0.78)
+            self.assertLessEqual(measured_start, 0.82)
             policy = document["cue_timing"]["fixture/one"]
             self.assertIs(policy["use_measured_speech_end"], True)
+            self.assertIs(policy["use_measured_speech_start"], True)
+            self.assertIs(policy["trim_to_speech_start"], True)
             self.assertAlmostEqual(policy["trim_tail_guard_seconds"], 0.1)
+            self.assertAlmostEqual(policy["trim_start_guard_seconds"], 0.1)
             self.assertEqual(len(changes), 1)
 
     def test_analysis_is_clamped_to_authored_source_end(self) -> None:

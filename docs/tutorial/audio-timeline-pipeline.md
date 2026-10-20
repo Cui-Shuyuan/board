@@ -41,8 +41,8 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
-| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 206.224 秒 |
-| full | section TTS 与独立父章节标题素材 | 83 | 645.566 秒 |
+| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 199.206 秒 |
+| full | section TTS 与独立父章节标题素材 | 83 | 642.136 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
 `cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
@@ -82,13 +82,13 @@ full 的切片导入器 `animation/build_audio_slices.py` 采用以下规则：
 1. 根据 runtime 的 cue 顺序、音频起点、时长和字幕窗口建立逻辑 slice。
 2. 有 word timing 且起点大于零的 slice，使用最多 0.15 秒前置上下文。
    前置量受源文件起点和当前窗口的可用尾部时长约束。
-3. 正文 slice 的起点和终点先按同一前置量移动。所有 cue 都采用
-   `trim_to_speech_end`：尾部裁到
+3. 所有 cue 的起点裁到
+   `speech_start - trim_start_guard_seconds`，终点裁到
    `speech_end + trim_tail_guard_seconds`，随后再由 plan 追加显式反应
-   停顿。full 和 quick 的 `speech_end_ref` 都来自已落盘的 PCM 能量尾部
-   时间戳；full 用 `trailing_silence_seconds` 追加固定静音，quick 用
-   `post_speech_silence_seconds` 从审查后的 speech end 补足到目标值。
-   这样 TTS 素材自身的自然尾音不会叠加到反应停顿上。
+   停顿。full 和 quick 的 `speech_start_ref` / `speech_end_ref` 都来自
+   已落盘的 PCM 能量边界时间戳；full 用 `trailing_silence_seconds` 追加
+   固定静音，quick 用 `post_speech_silence_seconds` 从审查后的 speech
+   end 补足到目标值。这样 TTS 素材自身的自然首尾音不会叠加到反应停顿上。
 4. 对原始窗口相接、上一段未显式裁尾的同源片段，统一计算共享边界。
    上一段 end 和下一段 start 相等，边界不早于上一段已知 speech end。
    两段时长按共享边界分配。若右侧 cue 需要 0.15 秒首词前置上下文，
@@ -107,39 +107,40 @@ full 的切片导入器 `animation/build_audio_slices.py` 采用以下规则：
 `source_boundary_contracts` 为可选字段；full 导入器会生成它。
 声明采样率决定固定文件的采样边界校验精度。
 
-full 标题使用 `mode: audio`、`trim_to_speech_end: true`、
-`trim_tail_guard_seconds: 0.1` 和 `trailing_silence_seconds: 0.5`。
-编译器检查有效 speech end 与非空源区间，先裁尾再追加显式 silence 段。
-`setup_players/title_2_4` 的源区间会按实测尾部保留完整音频，
+full 标题使用 `mode: audio`、`trim_to_speech_start/end: true`、
+0.1 秒首尾 guard 和 `trailing_silence_seconds: 0.5`。编译器检查有效
+speech start/end 与非空源区间，先裁首尾再追加显式 silence 段。
+`setup_players/title_2_4` 的源区间会按实测边界保留完整音频，
 再追加 0.5 秒静音。
 
-quick 标题与正文也启用 `trim_to_speech_end`，全部 cue 的 guard 为
-0.1 秒；停顿目标为普通 cue 0.5 秒、下一 cue 是章节标题时 1.0 秒。
-quick 的 cue-level ASR word end 会低估最后一个音节，不能直接当作裁尾点；
-`quick.audio-slices.json` 的 `speech_end_ref` 是制作期从 PCM 能量尾部
-生成并落盘的时间戳，策略再从该时间戳加 0.1 秒 guard 裁切，并用
-`post_speech_silence_seconds` 补足目标停顿，保证不会裁掉句尾字。
+quick 标题与正文也启用首尾裁剪，全部 cue 的 guard 为 0.1 秒；停顿
+目标为普通 cue 0.5 秒、下一 cue 是章节标题时 1.0 秒。quick 的
+cue-level ASR word 边界会低估真实语音尾部，不能直接当作裁切点；
+`quick.audio-slices.json` 的 `speech_start_ref` / `speech_end_ref` 是
+制作期从 PCM 能量边界生成并落盘的时间戳，策略再在两侧各留 0.1 秒
+guard，并用 `post_speech_silence_seconds` 补足目标停顿。
 
-### PCM 能量尾部锚点
+### PCM 能量首尾锚点
 
-TTS 的最后一个 word end 可能明显早于真实 PCM 语音尾部，full 的正文
-也有同样问题。`animation/measure_audio_tail.py` 只负责制作期测量：它把
-音频解码成 PCM，按 10ms 窗口找到 source range 内最后一个有意义能量
-窗口，把结果写成 `speech_end_ref` 时间戳，并标记
-`use_measured_speech_end`。full 重建 `audio-slices` 时会保留这个已测量
-时间戳，不会再用 TTS word end 覆盖。播放器和 `build_cue_timeline.py`
-只读这些时间戳，不在运行时或构建时解码音频。
+TTS word 边界可能明显偏离真实 PCM 语音首尾，full 的正文也有同样问题。
+`animation/measure_audio_boundaries.py` 只负责制作期测量：它把音频解码
+成 PCM，按 10ms 窗口找到 source range 内第一个持续有意义的能量窗口和
+最后一个有意义的能量窗口，分别写成 `speech_start_ref` /
+`speech_end_ref` 时间戳，并标记 `use_measured_speech_start/end`。full
+重建 `audio-slices` 时会保留这些已测量时间戳，不会再用 TTS word 边界
+覆盖。播放器和 `build_cue_timeline.py` 只读这些时间戳，不在运行时或
+构建时解码音频。
 
 ```bash
 # quick 使用 authored cue-level source windows
-python3 animation/measure_audio_tail.py \
+python3 animation/measure_audio_boundaries.py \
   --game splendor --track quick \
   --ffmpeg /path/to/ffmpeg \
   --write --guard-seconds 0.1
 python3 animation/build_cue_timeline.py --game splendor --track quick
 
 # full 使用 runtime 的原始 section audio_start/duration 窗口
-python3 animation/measure_audio_tail.py \
+python3 animation/measure_audio_boundaries.py \
   --game splendor --track full --runtime-windows \
   --ffmpeg /path/to/ffmpeg \
   --write --guard-seconds 0.1

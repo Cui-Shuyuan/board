@@ -130,24 +130,24 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
 2. 重新生成 TTS 后，把 word timing 审核写入
    `tutorial/quick.audio-slices.json` 的 `timing_points`。
 3. 每条 cue/逻辑音频只引用命名时间点：
-   `start_ref` / `end_ref` / `speech_end_ref` / `subtitle.*_ref`。
+   `start_ref` / `end_ref` / `speech_start_ref` / `speech_end_ref` / `subtitle.*_ref`。
    不要在构建脚本或 timing policy 中写 TTS 秒数。
 4. `audio-slices.json` 的 `cue_timing` 用 per-cue `mode` 控制 cue duration；
    `timing-policy.json` 提供全局 `default_mode`：
    - `max`：所有轨道都结束后再切下一 cue，动画不会被音频截断；
    - `audio`：音频轨道为准，用于标题 cue；
    - `visual`：画面为准，裁剪音频则构建失败。
-5. 所有 cue 都启用 `trim_to_speech_end: true`：先把音频尾部裁到
-   审查后的 speech end 再加 guard，然后追加显式反应停顿。章节标题和
-   普通 cue 的目标停顿为 0.5 秒；普通 cue 的下一 cue 是章节标题时为
-   1.0 秒。full 和 quick 的全部 cue 都使用 0.1 秒尾部 guard。full 用
+5. 所有 cue 都启用 `trim_to_speech_start/end: true`：起点裁到实测
+   speech start 前 0.1 秒，终点裁到实测 speech end 后 0.1 秒，然后追加
+   显式反应停顿。章节标题和普通 cue 的目标停顿为 0.5 秒；普通 cue 的
+   下一 cue 是章节标题时为 1.0 秒。full 用
    `trailing_silence_seconds` 追加固定静音；quick 用
    `post_speech_silence_seconds` 从实测 speech end 补足目标停顿。
-   full/quick 的 `speech_end_ref` 都是 PCM 能量审查后的时间戳，加
-   0.1 秒 guard 做逻辑裁切。能量测量只在制作期由
-   `animation/measure_audio_tail.py` 写入固定时间戳，播放和 plan 构建
-   不运行能量分析；full 的 measured 时间戳通过
-   `use_measured_speech_end` 在重生成 `audio-slices` 时保留。
+   full/quick 的 `speech_start_ref` / `speech_end_ref` 都是 PCM 能量
+   审查后的时间戳。能量测量只在制作期由
+   `animation/measure_audio_boundaries.py` 写入固定时间戳，播放和 plan
+   构建不运行能量分析；full 的 measured 时间戳通过
+   `use_measured_speech_start/end` 在重生成 `audio-slices` 时保留。
    full 导入器为标题与正文保留最多 0.15 秒前置上下文；如果左侧 cue
    trim 后的终点距右侧首词不足 0.15 秒，右侧起点会夹到左侧终点，避免
    音频重叠。`source_boundary_contracts` 记录并校验连续、显式裁尾和

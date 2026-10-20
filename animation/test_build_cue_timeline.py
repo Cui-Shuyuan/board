@@ -1068,7 +1068,9 @@ class BuildCueTimelineTests(unittest.TestCase):
             self.assertEqual(audio_segment["asset"], asset)
             self.assertNotEqual(
                 audio_segment["asset"], next_audio_segment["asset"])
-            self.assertEqual(audio_segment["source_start"], 0.0)
+            self.assertGreaterEqual(audio_segment["source_start"], 0.0)
+            self.assertLess(
+                audio_segment["source_start"], audio_segment["source_end"])
             self.assertAlmostEqual(
                 audio_segment["source_end"], source_end, places=9)
             audio_track = next(
@@ -1302,6 +1304,85 @@ class BuildCueTimelineTests(unittest.TestCase):
             True,
         )
 
+    def test_audio_slice_builder_honors_measured_speech_start_timestamp(self) -> None:
+        self.write_runtime([{
+            "id": "fixture/one",
+            "section": "fixture",
+            "audio": "media/fixture-audio.mp3",
+            "audio_start": 0.0,
+            "duration": 2.0,
+            "text": "runtime text",
+            "subtitles": [],
+        }])
+        self.write_compiled([])
+        self.write_slices(
+            timing_points={
+                "fixture__one.speech_start": {"time": 0.8},
+            },
+            cues={},
+            cue_timing={
+                "fixture/one": {
+                    "mode": "max",
+                    "trim_to_speech_start": True,
+                    "use_measured_speech_start": True,
+                    "trim_start_guard_seconds": 0.1,
+                },
+            },
+        )
+        document = audio_slice_builder.build_audio_slices(
+            self.root, self.game, self.track)
+        raw_slice = document["cues"]["fixture/one"][0]
+        self.assertIn("speech_start_ref", raw_slice)
+        self.assertAlmostEqual(
+            document["timing_points"][raw_slice["speech_start_ref"]]["time"],
+            0.8,
+            places=9,
+        )
+        self.assertIs(
+            document["cue_timing"]["fixture/one"][
+                "use_measured_speech_start"],
+            True,
+        )
+
+    def test_plan_trims_start_at_measured_timestamp(self) -> None:
+        raw_slice = {
+            **self.default_slice(),
+            "speech_start_ref": "fixture__one.speech_start",
+        }
+        self.write_slices(
+            timing_points={
+                "fixture__one.start": {"time": 0.0},
+                "fixture__one.end": {"time": 2.0},
+                "fixture__one.speech_start": {"time": 0.8},
+                "fixture__one.speech_end": {"time": 1.5},
+                "fixture__one.subtitle.0.start": {"time": 0.2},
+                "fixture__one.subtitle.0.end": {"time": 1.4},
+            },
+            cues={"fixture/one": [raw_slice]},
+            cue_timing={
+                "fixture/one": {
+                    "mode": "audio",
+                    "trim_to_speech_start": True,
+                    "trim_start_guard_seconds": 0.1,
+                    "trim_to_speech_end": True,
+                    "trim_tail_guard_seconds": 0.1,
+                    "trailing_silence_seconds": 0.5,
+                },
+            },
+        )
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        plan = document["cues"][0]
+        audio = self.audio_segments(plan)
+        self.assertAlmostEqual(audio[0]["source_start"], 0.7, places=9)
+        self.assertAlmostEqual(audio[0]["source_end"], 1.6, places=9)
+        subtitle = next(
+            track for track in plan["tracks"]
+            if track["kind"] == "subtitle")["segments"][0]
+        self.assertAlmostEqual(subtitle["cue_start"], 0.0, places=9)
+        self.assertAlmostEqual(subtitle["duration"], 0.7, places=9)
+        self.assertAlmostEqual(plan["course"]["duration"], 1.4, places=9)
+        self.assertIs(timeline.validate_plan_set(document), document)
+
     def test_full_audio_slice_file_matches_runtime_input(self) -> None:
         expected = audio_slice_builder.build_audio_slices(
             ROOT, "splendor", "full")
@@ -1399,7 +1480,7 @@ class BuildCueTimelineTests(unittest.TestCase):
                     speech_end_cue_local = (
                         float(clip["cue_start"])
                         + speech_end
-                        - timing_points[source_slice["start_ref"]]["time"])
+                        - float(clip["source_start"]))
                     audio_end = (
                         float(last_segment["cue_start"])
                         + float(last_segment["duration"]))
@@ -1485,7 +1566,7 @@ class BuildCueTimelineTests(unittest.TestCase):
             for segment in subtitle_track["segments"])
         speech_end = (
             slices["timing_points"][raw_slice["speech_end_ref"]]["time"]
-            - slices["timing_points"][raw_slice["start_ref"]]["time"])
+            - float(clip["source_start"]))
         self.assertGreaterEqual(subtitle_end, speech_end - 1e-9)
 
     def test_full_setup_cards_keeps_measured_blue_level_word_tail(self) -> None:

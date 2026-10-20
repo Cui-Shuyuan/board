@@ -52,6 +52,7 @@ source_time          = segment.source_start + (cue_local_time - segment.cue_star
   "asset": "media/tts/lesson.mp3",
   "start_ref": "lesson__a.start",
   "end_ref": "lesson__a.end",
+  "speech_start_ref": "lesson__a.speech_start",
   "speech_end_ref": "lesson__a.speech_end",
   "subtitles": [
     {
@@ -64,8 +65,12 @@ source_time          = segment.source_start + (cue_local_time - segment.cue_star
 ```
 
 slice ID 唯一；refs 必须存在；`asset` 相对于游戏内容根目录。
-字幕 refs 使用素材坐标。启用 `trim_to_speech_end` 时，speech end 必须有效并
-落在源区间内。裁尾后的音频与 `trailing_silence_seconds` 一起确定音频轨道时长。
+字幕 refs 使用素材坐标。启用 `trim_to_speech_start` / `trim_to_speech_end`
+时，对应 speech start/end 必须有效并落在源区间内；plan 会在 speech start
+前和 speech end 后各保留配置的 guard。裁切后的音频与
+`trailing_silence_seconds` 或 `post_speech_silence_seconds` 一起确定音频轨道
+时长。`speech_start_ref` 和 `use_measured_speech_start` 是可选扩展，用于
+保留制作期 PCM 能量测量结果。
 
 连续边界契约示例：
 

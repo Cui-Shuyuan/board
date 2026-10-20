@@ -10,224 +10,320 @@
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_intro/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_cards/title_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_cards/001.1": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_cards/001.2": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_gems/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_players/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_players/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_setup_players/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_turn/title_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_turn/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_turn/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_take_gems/title_3_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_take_gems/different.001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_take_gems/same.001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_take_gems/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_take_gems/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_cards/title_3_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_cards/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_cards/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_cards/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_reserve/title_3_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_reserve/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_reserve/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_reserve/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_gold/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_nobles/title_3_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_nobles/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_nobles/002": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_nobles/003": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 1.0,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_end/title_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
       "post_speech_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.1,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     },
     "quick_end/001": {
       "mode": "max",
       "trim_to_speech_end": true,
       "trim_tail_guard_seconds": 0.1,
       "post_speech_silence_seconds": 0.5,
-      "use_measured_speech_end": true
+      "use_measured_speech_end": true,
+      "trim_start_guard_seconds": 0.1,
+      "use_measured_speech_start": true,
+      "trim_to_speech_start": true
     }
   },
   "audio_groups": {
@@ -1026,6 +1122,134 @@
     "quick_end__001.subtitle.2.end": {
       "time": 8.44,
       "description": "subtitle end"
+    },
+    "quick_intro__title_1.speech_start": {
+      "description": "measured speech start",
+      "time": 0.18
+    },
+    "quick_intro__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_setup_cards__title_2.speech_start": {
+      "description": "measured speech start",
+      "time": 0.39
+    },
+    "quick_setup_cards__001.1.speech_start": {
+      "description": "measured speech start",
+      "time": 0.42
+    },
+    "quick_setup_cards__001.2.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_setup_gems__002.speech_start": {
+      "description": "measured speech start",
+      "time": 0.37
+    },
+    "quick_setup_players__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_setup_players__002.speech_start": {
+      "description": "measured speech start",
+      "time": 0.37
+    },
+    "quick_setup_players__003.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_turn__title_3.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_turn__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.38
+    },
+    "quick_turn__002.speech_start": {
+      "description": "measured speech start",
+      "time": 0.38
+    },
+    "quick_take_gems__title_3_1.speech_start": {
+      "description": "measured speech start",
+      "time": 0.36
+    },
+    "quick_take_gems__different.001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.34
+    },
+    "quick_take_gems__same.001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.36
+    },
+    "quick_take_gems__002.speech_start": {
+      "description": "measured speech start",
+      "time": 0.17
+    },
+    "quick_take_gems__003.speech_start": {
+      "description": "measured speech start",
+      "time": 0.37
+    },
+    "quick_cards__title_3_2.speech_start": {
+      "description": "measured speech start",
+      "time": 0.4
+    },
+    "quick_cards__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_cards__002.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_cards__003.speech_start": {
+      "description": "measured speech start",
+      "time": 0.36
+    },
+    "quick_reserve__title_3_3.speech_start": {
+      "description": "measured speech start",
+      "time": 0.39
+    },
+    "quick_reserve__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.39
+    },
+    "quick_reserve__002.speech_start": {
+      "description": "measured speech start",
+      "time": 0.36
+    },
+    "quick_reserve__003.speech_start": {
+      "description": "measured speech start",
+      "time": 0.35
+    },
+    "quick_gold__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.41
+    },
+    "quick_nobles__title_3_4.speech_start": {
+      "description": "measured speech start",
+      "time": 0.36
+    },
+    "quick_nobles__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.37
+    },
+    "quick_nobles__002.speech_start": {
+      "description": "measured speech start",
+      "time": 6.647583
+    },
+    "quick_nobles__003.speech_start": {
+      "description": "measured speech start",
+      "time": 0.17
+    },
+    "quick_end__title_4.speech_start": {
+      "description": "measured speech start",
+      "time": 0.37
+    },
+    "quick_end__001.speech_start": {
+      "description": "measured speech start",
+      "time": 0.39
     }
   },
   "cues": {
@@ -1042,7 +1266,8 @@
             "end_ref": "quick_intro__title_1.subtitle.0.end",
             "text": "一，背景。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_intro__title_1.speech_start"
       }
     ],
     "quick_intro/001": [
@@ -1063,7 +1288,8 @@
             "end_ref": "quick_intro__001.subtitle.1.end",
             "text": "所有玩家轮流行动，达到15分并完成最后一轮后，分数最高者获胜。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_intro__001.speech_start"
       }
     ],
     "quick_setup_cards/title_2": [
@@ -1079,7 +1305,8 @@
             "end_ref": "quick_setup_cards__title_2.subtitle.0.end",
             "text": "2，设置。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_cards__title_2.speech_start"
       }
     ],
     "quick_setup_cards/001.1": [
@@ -1095,7 +1322,8 @@
             "end_ref": "quick_setup_cards__001.1.subtitle.0.end",
             "text": "发展卡共90张，按背面分成三级：一级、二级、三级。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_cards__001.1.speech_start"
       }
     ],
     "quick_setup_cards/001.2": [
@@ -1111,7 +1339,8 @@
             "end_ref": "quick_setup_cards__001.2.subtitle.0.end",
             "text": "每级洗混后，翻开四张，摆成三行，组成市场。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_cards__001.2.speech_start"
       }
     ],
     "quick_setup_gems/002": [
@@ -1132,7 +1361,8 @@
             "end_ref": "quick_setup_gems__002.subtitle.1.end",
             "text": "黄金的数量和人数无关，放置五枚。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_gems__002.speech_start"
       }
     ],
     "quick_setup_players/001": [
@@ -1148,7 +1378,8 @@
             "end_ref": "quick_setup_players__001.subtitle.0.end",
             "text": "随机抽出玩家人数加一块贵族，正面朝上放在旁边；"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_players__001.speech_start"
       }
     ],
     "quick_setup_players/002": [
@@ -1164,7 +1395,8 @@
             "end_ref": "quick_setup_players__002.subtitle.0.end",
             "text": "再选出一位起始玩家，\n"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_players__002.speech_start"
       }
     ],
     "quick_setup_players/003": [
@@ -1180,7 +1412,8 @@
             "end_ref": "quick_setup_players__003.subtitle.0.end",
             "text": "并拿取起始玩家标记。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_setup_players__003.speech_start"
       }
     ],
     "quick_turn/title_3": [
@@ -1196,7 +1429,8 @@
             "end_ref": "quick_turn__title_3.subtitle.0.end",
             "text": "3，回合与行动。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_turn__title_3.speech_start"
       }
     ],
     "quick_turn/001": [
@@ -1212,7 +1446,8 @@
             "end_ref": "quick_turn__001.subtitle.0.end",
             "text": "从起始玩家开始，按顺时针顺序，所有玩家依次进行行动。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_turn__001.speech_start"
       }
     ],
     "quick_turn/002": [
@@ -1238,7 +1473,8 @@
             "end_ref": "quick_turn__002.subtitle.2.end",
             "text": "执行后轮到下一位玩家。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_turn__002.speech_start"
       }
     ],
     "quick_take_gems/title_3_1": [
@@ -1254,7 +1490,8 @@
             "end_ref": "quick_take_gems__title_3_1.subtitle.0.end",
             "text": "3.1，拿宝石。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_take_gems__title_3_1.speech_start"
       }
     ],
     "quick_take_gems/different.001": [
@@ -1270,7 +1507,8 @@
             "end_ref": "quick_take_gems__different.001.subtitle.0.end",
             "text": "拿宝石有两种方式：一是拿三枚不同颜色的宝石。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_take_gems__different.001.speech_start"
       }
     ],
     "quick_take_gems/same.001": [
@@ -1286,7 +1524,8 @@
             "end_ref": "quick_take_gems__same.001.subtitle.0.end",
             "text": "二是拿两枚相同颜色的宝石。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_take_gems__same.001.speech_start"
       }
     ],
     "quick_take_gems/002": [
@@ -1307,7 +1546,8 @@
             "end_ref": "quick_take_gems__002.subtitle.1.end",
             "text": "拿完还要至少剩两枚。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_take_gems__002.speech_start"
       }
     ],
     "quick_take_gems/003": [
@@ -1328,7 +1568,8 @@
             "end_ref": "quick_take_gems__003.subtitle.1.end",
             "text": "自己持有的宝石和已买的卡都放在面前，属于公开信息。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_take_gems__003.speech_start"
       }
     ],
     "quick_cards/title_3_2": [
@@ -1344,7 +1585,8 @@
             "end_ref": "quick_cards__title_3_2.subtitle.0.end",
             "text": "3.2，购买发展卡。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_cards__title_3_2.speech_start"
       }
     ],
     "quick_cards/001": [
@@ -1365,7 +1607,8 @@
             "end_ref": "quick_cards__001.subtitle.1.end",
             "text": "左上角是分数，右上角是永久折扣。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_cards__001.speech_start"
       }
     ],
     "quick_cards/002": [
@@ -1391,7 +1634,8 @@
             "end_ref": "quick_cards__002.subtitle.2.end",
             "text": "每回合最多买一张，但整局购买数量不限。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_cards__002.speech_start"
       }
     ],
     "quick_cards/003": [
@@ -1412,7 +1656,8 @@
             "end_ref": "quick_cards__003.subtitle.1.end",
             "text": "买卡时就少付一颗对应宝石，折扣最多让卡免费。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_cards__003.speech_start"
       }
     ],
     "quick_reserve/title_3_3": [
@@ -1428,7 +1673,8 @@
             "end_ref": "quick_reserve__title_3_3.subtitle.0.end",
             "text": "3.3，保留发展卡。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_reserve__title_3_3.speech_start"
       }
     ],
     "quick_reserve/001": [
@@ -1454,7 +1700,8 @@
             "end_ref": "quick_reserve__001.subtitle.2.end",
             "text": "再从黄金供应堆拿一枚黄金。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_reserve__001.speech_start"
       }
     ],
     "quick_reserve/002": [
@@ -1480,7 +1727,8 @@
             "end_ref": "quick_reserve__002.subtitle.2.end",
             "text": "保留的牌不提供折扣和声望，也不能给其他玩家看。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_reserve__002.speech_start"
       }
     ],
     "quick_reserve/003": [
@@ -1496,7 +1744,8 @@
             "end_ref": "quick_reserve__003.subtitle.0.end",
             "text": "保留的牌，之后可以在自己回合花钱买下。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_reserve__003.speech_start"
       }
     ],
     "quick_gold/001": [
@@ -1517,7 +1766,8 @@
             "end_ref": "quick_gold__001.subtitle.1.end",
             "text": "但玩家不能直接拿取黄金。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_gold__001.speech_start"
       }
     ],
     "quick_nobles/title_3_4": [
@@ -1533,7 +1783,8 @@
             "end_ref": "quick_nobles__title_3_4.subtitle.0.end",
             "text": "3.4，贵族。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_nobles__title_3_4.speech_start"
       }
     ],
     "quick_nobles/001": [
@@ -1554,7 +1805,8 @@
             "end_ref": "quick_nobles__001.subtitle.1.end",
             "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_nobles__001.speech_start"
       }
     ],
     "quick_nobles/002": [
@@ -1570,7 +1822,8 @@
             "end_ref": "quick_nobles__002.subtitle.0.end",
             "text": "就拿取这位贵族；"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_nobles__002.speech_start"
       }
     ],
     "quick_nobles/003": [
@@ -1586,7 +1839,8 @@
             "end_ref": "quick_nobles__003.subtitle.0.end",
             "text": "同时满足多位时，选一位拿取。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_nobles__003.speech_start"
       }
     ],
     "quick_end/title_4": [
@@ -1602,7 +1856,8 @@
             "end_ref": "quick_end__title_4.subtitle.0.end",
             "text": "4，游戏结束。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_end__title_4.speech_start"
       }
     ],
     "quick_end/001": [
@@ -1628,7 +1883,8 @@
             "end_ref": "quick_end__001.subtitle.2.end",
             "text": "分多者获胜。"
           }
-        ]
+        ],
+        "speech_start_ref": "quick_end__001.speech_start"
       }
     ]
   }

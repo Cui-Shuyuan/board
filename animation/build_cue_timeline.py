@@ -190,6 +190,9 @@ TIMING_OPTION_KEYS = frozenset({
     "trailing_silence_seconds",
     "post_speech_silence_seconds",
     "use_measured_speech_end",
+    "trim_to_speech_start",
+    "trim_start_guard_seconds",
+    "use_measured_speech_start",
 })
 TIMING_POLICY_GLOBAL_KEYS = frozenset({
     "schema",
@@ -286,6 +289,30 @@ def _normalize_cue_timing_options(
                 f"audio slices cue_timing {cue_id!r} "
                 "use_measured_speech_end must be boolean")
 
+        trim_start = option.get("trim_to_speech_start", False)
+        if not isinstance(trim_start, bool):
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "trim_to_speech_start must be boolean")
+
+        measured_start = option.get("use_measured_speech_start", False)
+        if not isinstance(measured_start, bool):
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "use_measured_speech_start must be boolean")
+
+        trim_start_guard = option.get("trim_start_guard_seconds", 0.0)
+        if isinstance(trim_start_guard, bool) or not isinstance(
+                trim_start_guard, (int, float)):
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "trim_start_guard_seconds must be numeric")
+        trim_start_guard = float(trim_start_guard)
+        if not math.isfinite(trim_start_guard) or trim_start_guard < 0.0:
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "trim_start_guard_seconds must be finite and >= 0")
+
         trim_tail_guard = option.get("trim_tail_guard_seconds", 0.0)
         if isinstance(trim_tail_guard, bool) or not isinstance(
                 trim_tail_guard, (int, float)):
@@ -329,6 +356,9 @@ def _normalize_cue_timing_options(
             "trailing_silence_seconds": trailing,
             "post_speech_silence_seconds": post_speech,
             "use_measured_speech_end": measured_end,
+            "trim_to_speech_start": trim_start,
+            "trim_start_guard_seconds": trim_start_guard,
+            "use_measured_speech_start": measured_start,
         }
     return normalized
 
@@ -411,6 +441,10 @@ def _apply_timing_policy(
             "trim_to_speech_end": bool(option.get("trim_to_speech_end", False)),
             "trim_tail_guard_seconds": float(
                 option.get("trim_tail_guard_seconds", 0.0)),
+            "trim_to_speech_start": bool(
+                option.get("trim_to_speech_start", False)),
+            "trim_start_guard_seconds": float(
+                option.get("trim_start_guard_seconds", 0.0)),
             "trailing_silence_seconds": float(
                 option.get("trailing_silence_seconds", 0.0)),
             "original_duration": round(old_duration, 9),
@@ -569,7 +603,7 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
 
             allowed_slice_keys = {
                 "id", "asset", "start_ref", "end_ref",
-                "speech_end_ref", "subtitles",
+                "speech_start_ref", "speech_end_ref", "subtitles",
             }
             unknown = sorted(set(raw_slice) - allowed_slice_keys)
             if unknown:
@@ -590,13 +624,24 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
                     raise BuildError(
                         f"{path}: audio slice {slice_id!r} {field}_ref is required")
                 _resolve_timing_ref(timing_points, ref, slice_id, field + "_ref")
-            speech_ref = raw_slice.get("speech_end_ref")
-            if speech_ref is not None:
-                if not isinstance(speech_ref, str) or not speech_ref.strip():
+            speech_end_ref = raw_slice.get("speech_end_ref")
+            if speech_end_ref is not None:
+                if not isinstance(speech_end_ref, str) \
+                        or not speech_end_ref.strip():
                     raise BuildError(
                         f"{path}: audio slice {slice_id!r} speech_end_ref must "
                         "be a non-empty string")
-                _resolve_timing_ref(timing_points, speech_ref, slice_id, "speech_end_ref")
+                _resolve_timing_ref(
+                    timing_points, speech_end_ref, slice_id, "speech_end_ref")
+            speech_start_ref = raw_slice.get("speech_start_ref")
+            if speech_start_ref is not None:
+                if not isinstance(speech_start_ref, str) \
+                        or not speech_start_ref.strip():
+                    raise BuildError(
+                        f"{path}: audio slice {slice_id!r} speech_start_ref must "
+                        "be a non-empty string")
+                _resolve_timing_ref(
+                    timing_points, speech_start_ref, slice_id, "speech_start_ref")
 
             subtitles = raw_slice.get("subtitles", [])
             if not isinstance(subtitles, list):
@@ -903,6 +948,10 @@ def _build_cue_plan_set_from_audio_slices(
         raw_slices = slice_doc["cues"][cue_id]
         option = cue_timing_options.get(cue_id, {})
         trim_to_speech_end = bool(option.get("trim_to_speech_end", False))
+        trim_to_speech_start = bool(
+            option.get("trim_to_speech_start", False))
+        trim_start_guard = float(
+            option.get("trim_start_guard_seconds", 0.0))
 
         audio_segments: list[dict] = []
         subtitle_segments: list[dict] = []
@@ -935,6 +984,30 @@ def _build_cue_plan_set_from_audio_slices(
                 raise BuildError(
                     f"audio slice {owner!r} has invalid source range "
                     f"[{start:g}, {end:g})")
+
+            speech_start: float | None = None
+            speech_start_ref = raw_slice.get("speech_start_ref")
+            if speech_start_ref is not None:
+                speech_start = _resolve_timing_ref(
+                    timing_points,
+                    _required_slice_ref(raw_slice, "speech_start", owner),
+                    owner, "speech_start_ref")
+                if speech_start < start - 1e-9 or speech_start > end + 1e-9:
+                    raise BuildError(
+                        f"audio slice {owner!r} speech_start {speech_start:g} "
+                        f"must be within source range [{start:g}, {end:g}]")
+            effective_start = start
+            if trim_to_speech_start:
+                if speech_start is None:
+                    raise BuildError(
+                        f"audio slice {owner!r} trim_to_speech_start requires "
+                        "speech_start_ref")
+                effective_start = max(start, speech_start - trim_start_guard)
+                effective_start = min(effective_start, end)
+                if effective_start >= end - 1e-9:
+                    raise BuildError(
+                        f"audio slice {owner!r} trim_to_speech_start would "
+                        "produce an empty source range")
 
             speech_end: float | None = None
             has_speech_ref = raw_slice.get("speech_end_ref") is not None
@@ -970,7 +1043,7 @@ def _build_cue_plan_set_from_audio_slices(
                 raise BuildError(
                     f"audio slice {owner!r} source_end {effective_end:g}s "
                     f"exceeds media duration {asset_duration:g}s for {asset!r}")
-            duration = effective_end - start
+            duration = effective_end - effective_start
 
             segment = {
                 "id": f"audio.slice.{slice_index}",
@@ -978,9 +1051,9 @@ def _build_cue_plan_set_from_audio_slices(
                 "audio_slice_id": owner,
                 "asset": asset,
                 "cue_start": round(cursor, 9),
-                "source_start": round(start, 9),
+                "source_start": round(effective_start, 9),
                 "source_end": round(effective_end, 9),
-                "source_start_sample": int(round(start * sample_rate)),
+                "source_start_sample": int(round(effective_start * sample_rate)),
                 "source_end_sample": int(round(effective_end * sample_rate)),
             }
             audio_segments.append(segment)
@@ -1009,15 +1082,23 @@ def _build_cue_plan_set_from_audio_slices(
                         f"audio slice {owner!r} subtitle[{subtitle_index}] "
                         f"range [{sub_start:g}, {sub_end:g}] is outside "
                         f"[{start:g}, {end:g}]")
+                display_start = max(sub_start, effective_start)
+                if sub_end <= display_start + 1e-9:
+                    continue
                 subtitle_segments.append({
                     "id": f"subtitle.{slice_index}.{subtitle_index}",
                     "type": "subtitle",
-                    "cue_start": round(cursor + (sub_start - start), 9),
-                    "duration": round(sub_end - sub_start, 9),
+                    "cue_start": round(
+                        cursor + (display_start - effective_start), 9),
+                    "duration": round(sub_end - display_start, 9),
                     "text": str(raw_subtitle.get("text") or "").strip(),
                 })
             if speech_end is not None:
-                last_speech_end = cursor + (speech_end - start)
+                if speech_end < effective_start - 1e-9:
+                    raise BuildError(
+                        f"audio slice {owner!r} speech_end {speech_end:g} is "
+                        f"before trimmed start {effective_start:g}")
+                last_speech_end = cursor + (speech_end - effective_start)
             else:
                 last_speech_end = cursor + duration
             cursor += duration

@@ -1,30 +1,31 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Measure audible-tail timestamps for fixed audio slices.
+"""Measure audible start/end timestamps for fixed audio slices.
 
-The TTS subtitle event's final word end can be earlier than the real PCM
-speech tail (observed with Doubao seed2 quick cue-level audio).  This tool
-decodes the referenced audio to PCM, measures the last meaningful energy
-window inside each authored source range, and writes the result back as the
-slice's ``speech_end_ref`` timestamp.  Playback and trim never run energy
-analysis; they only consume the stored timestamps.
+The TTS subtitle event's word boundaries can be earlier than the real PCM
+speech tail (observed with Doubao seed2 audio).  This tool decodes the
+referenced audio to PCM, measures the first and last meaningful energy windows
+inside each authored source range, and writes the results back as the slice's
+``speech_start_ref`` and ``speech_end_ref`` timestamps.  Playback and trim
+never run energy analysis; they only consume the stored timestamps.
 
 Usage:
     # quick: measure each authored cue-level source window
-    python3 animation/measure_audio_tail.py \
+    python3 animation/measure_audio_boundaries.py \
         --game splendor --track quick \
         --ffmpeg /path/to/ffmpeg \
         --write --guard-seconds 0.1
 
     # full: measure raw runtime section windows before rebuilding audio-slices
-    python3 animation/measure_audio_tail.py \
+    python3 animation/measure_audio_boundaries.py \
         --game splendor --track full --runtime-windows \
         --ffmpeg /path/to/ffmpeg \
         --write --guard-seconds 0.1
 
-The optional ``--guard-seconds`` also updates each analyzed cue's
-``trim_tail_guard_seconds`` policy.  The guard stays outside the stored
-speech-end timestamp, so the fixed timeline remains a plain timestamp file.
+The optional ``--guard-seconds`` updates both the cue's
+``trim_start_guard_seconds`` and ``trim_tail_guard_seconds`` policy.  Guards
+stay outside the stored speech timestamps, so the fixed timeline remains a
+plain timestamp file.
 """
 from __future__ import annotations
 
@@ -41,8 +42,11 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 WINDOW_SECONDS = 0.010
-PEAK_RATIO = 0.005
-ABS_RMS_FLOOR = 60.0
+TAIL_PEAK_RATIO = 0.005
+TAIL_ABS_RMS_FLOOR = 60.0
+START_PEAK_RATIO = 0.05
+START_ABS_RMS_FLOOR = 80.0
+START_MIN_RUN_WINDOWS = 3
 EPSILON = 1e-9
 
 
@@ -114,6 +118,30 @@ def _decode_pcm(
     return samples
 
 
+def _rms_windows(
+    samples: array,
+    sample_rate: int,
+    start_seconds: float,
+    end_seconds: float,
+    window_seconds: float,
+) -> tuple[int, int, list[float]]:
+    if sample_rate <= 0:
+        raise MeasureError("sample_rate must be positive")
+    if end_seconds <= start_seconds:
+        raise MeasureError("source range must be positive")
+    if window_seconds <= 0.0:
+        raise MeasureError("window_seconds must be positive")
+    sample_start = max(0, int(round(start_seconds * sample_rate)))
+    sample_end = min(len(samples), int(round(end_seconds * sample_rate)))
+    window_size = max(1, int(round(window_seconds * sample_rate)))
+    rms_values: list[float] = []
+    for offset in range(sample_start, sample_end - window_size + 1, window_size):
+        window = samples[offset:offset + window_size]
+        rms_values.append(math.sqrt(
+            sum(float(value) * float(value) for value in window) / window_size))
+    return sample_start, window_size, rms_values
+
+
 def last_voiced_end_seconds(
     samples: array,
     sample_rate: int,
@@ -121,37 +149,19 @@ def last_voiced_end_seconds(
     end_seconds: float,
     *,
     window_seconds: float = WINDOW_SECONDS,
-    peak_ratio: float = PEAK_RATIO,
-    abs_rms_floor: float = ABS_RMS_FLOOR,
+    peak_ratio: float = TAIL_PEAK_RATIO,
+    abs_rms_floor: float = TAIL_ABS_RMS_FLOOR,
 ) -> float:
-    """Return the end of the last energy-active window in a source range.
-
-    A window is active when its RMS exceeds both ``abs_rms_floor`` and
-    ``peak_ratio`` of the loudest window in the range.  The returned value is
-    clamped to the authored source range.
-    """
-    if sample_rate <= 0:
-        raise MeasureError("sample_rate must be positive")
-    if end_seconds <= start_seconds:
-        raise MeasureError("source range must be positive")
-    if window_seconds <= 0.0:
-        raise MeasureError("window_seconds must be positive")
+    """Return the end of the last energy-active window in a source range."""
     if not (0.0 <= peak_ratio <= 1.0):
         raise MeasureError("peak_ratio must be in [0, 1]")
     if abs_rms_floor < 0.0:
         raise MeasureError("abs_rms_floor must be >= 0")
-
-    sample_start = max(0, int(round(start_seconds * sample_rate)))
-    sample_end = min(len(samples), int(round(end_seconds * sample_rate)))
-    window_size = max(1, int(round(window_seconds * sample_rate)))
-    if sample_end - sample_start < window_size:
+    sample_start, window_size, rms_values = _rms_windows(
+        samples, sample_rate, start_seconds, end_seconds, window_seconds)
+    if not rms_values:
+        sample_end = min(len(samples), int(round(end_seconds * sample_rate)))
         return max(start_seconds, min(end_seconds, sample_end / sample_rate))
-
-    rms_values: list[float] = []
-    for offset in range(sample_start, sample_end - window_size + 1, window_size):
-        window = samples[offset:offset + window_size]
-        rms_values.append(math.sqrt(
-            sum(float(value) * float(value) for value in window) / window_size))
     peak = max(rms_values)
     threshold = max(abs_rms_floor, peak * peak_ratio)
     last_active: int | None = None
@@ -163,6 +173,48 @@ def last_voiced_end_seconds(
     measured = (
         sample_start + last_active * window_size + window_size) / sample_rate
     return min(end_seconds, max(start_seconds, measured))
+
+
+def first_voiced_start_seconds(
+    samples: array,
+    sample_rate: int,
+    start_seconds: float,
+    end_seconds: float,
+    *,
+    window_seconds: float = WINDOW_SECONDS,
+    peak_ratio: float = START_PEAK_RATIO,
+    abs_rms_floor: float = START_ABS_RMS_FLOOR,
+    min_run_windows: int = START_MIN_RUN_WINDOWS,
+) -> float:
+    """Return the start of the first sustained energy run in a source range.
+
+    A run is active when each 10ms window exceeds both ``abs_rms_floor`` and
+    ``peak_ratio`` of the loudest window.  Requiring a short run avoids
+    treating a single click or breath onset as speech.
+    """
+    if not (0.0 <= peak_ratio <= 1.0):
+        raise MeasureError("peak_ratio must be in [0, 1]")
+    if abs_rms_floor < 0.0:
+        raise MeasureError("abs_rms_floor must be >= 0")
+    if min_run_windows < 1:
+        raise MeasureError("min_run_windows must be >= 1")
+    sample_start, window_size, rms_values = _rms_windows(
+        samples, sample_rate, start_seconds, end_seconds, window_seconds)
+    if not rms_values:
+        return start_seconds
+    peak = max(rms_values)
+    threshold = max(abs_rms_floor, peak * peak_ratio)
+    run = 0
+    for index, value in enumerate(rms_values):
+        if value > threshold:
+            run += 1
+            if run >= min_run_windows:
+                first_index = index - run + 1
+                measured = (sample_start + first_index * window_size) / sample_rate
+                return min(end_seconds, max(start_seconds, measured))
+        else:
+            run = 0
+    return start_seconds
 
 
 def _round_time(value: float) -> float:
@@ -223,6 +275,14 @@ def measure_timeline(
             start_ref = str(raw_slice.get("start_ref") or "")
             end_ref = str(raw_slice.get("end_ref") or "")
             speech_ref = str(raw_slice.get("speech_end_ref") or "")
+            speech_start_ref = str(
+                raw_slice.get("speech_start_ref") or "").strip()
+            if not speech_start_ref:
+                slice_id = str(raw_slice.get("id") or "").strip()
+                if not slice_id:
+                    raise MeasureError(f"cue {cue_id!r}: slice id is required")
+                speech_start_ref = f"{slice_id}.speech_start"
+                raw_slice["speech_start_ref"] = speech_start_ref
             for ref in (start_ref, end_ref, speech_ref):
                 point = timing_points.get(ref)
                 if not isinstance(point, dict) or not isinstance(
@@ -243,10 +303,20 @@ def measure_timeline(
             else:
                 source_start = float(timing_points[start_ref]["time"])
                 source_end = float(timing_points[end_ref]["time"])
-            old_speech_end = float(timing_points[speech_ref]["time"])
-            measured = last_voiced_end_seconds(
+            start_point = timing_points.get(speech_start_ref)
+            if not isinstance(start_point, dict):
+                start_point = {"description": "measured speech start"}
+                timing_points[speech_start_ref] = start_point
+            old_speech_start = float(start_point.get("time", source_start))
+            measured_start = first_voiced_start_seconds(
                 pcm_cache[asset], sample_rate, source_start, source_end)
-            new_speech_end = _round_time(measured)
+            new_speech_start = _round_time(measured_start)
+            start_point["time"] = new_speech_start
+
+            old_speech_end = float(timing_points[speech_ref]["time"])
+            measured_end = last_voiced_end_seconds(
+                pcm_cache[asset], sample_rate, source_start, source_end)
+            new_speech_end = _round_time(measured_end)
             timing_points[speech_ref]["time"] = new_speech_end
 
             subtitle_changes = []
@@ -265,27 +335,47 @@ def measure_timeline(
             if not isinstance(policy, dict):
                 raise MeasureError(
                     f"cue {cue_id!r}: cue_timing must be an object")
-            guard_changed = False
-            old_guard = 0.0
+            tail_guard_changed = False
+            start_guard_changed = False
+            old_tail_guard = 0.0
+            old_start_guard = 0.0
             if guard_seconds is not None:
-                old_guard = float(policy.get("trim_tail_guard_seconds", 0.0))
+                old_tail_guard = float(
+                    policy.get("trim_tail_guard_seconds", 0.0))
+                old_start_guard = float(
+                    policy.get("trim_start_guard_seconds", 0.0))
                 policy["trim_tail_guard_seconds"] = float(guard_seconds)
-                guard_changed = abs(old_guard - float(guard_seconds)) > EPSILON
-            old_measured = bool(policy.get("use_measured_speech_end", False))
+                policy["trim_start_guard_seconds"] = float(guard_seconds)
+                tail_guard_changed = (
+                    abs(old_tail_guard - float(guard_seconds)) > EPSILON)
+                start_guard_changed = (
+                    abs(old_start_guard - float(guard_seconds)) > EPSILON)
+            old_tail_measured = bool(
+                policy.get("use_measured_speech_end", False))
+            old_start_measured = bool(
+                policy.get("use_measured_speech_start", False))
             policy["use_measured_speech_end"] = True
-            preserve_changed = not old_measured
+            policy["use_measured_speech_start"] = True
+            policy["trim_to_speech_start"] = True
+            tail_preserve_changed = not old_tail_measured
+            start_preserve_changed = not old_start_measured
             changes.append({
                 "cue_id": cue_id,
                 "slice_id": str(raw_slice.get("id") or ""),
+                "old_speech_start": old_speech_start,
+                "new_speech_start": new_speech_start,
                 "old_speech_end": old_speech_end,
                 "new_speech_end": new_speech_end,
                 "remaining_to_source_end": _round_time(
                     source_end - new_speech_end),
                 "subtitle_refs": subtitle_changes,
-                "old_guard": old_guard,
+                "old_tail_guard": old_tail_guard,
+                "old_start_guard": old_start_guard,
                 "guard": guard_seconds,
-                "guard_changed": guard_changed,
-                "preserve_changed": preserve_changed,
+                "tail_guard_changed": tail_guard_changed,
+                "start_guard_changed": start_guard_changed,
+                "tail_preserve_changed": tail_preserve_changed,
+                "start_preserve_changed": start_preserve_changed,
             })
     return document, changes
 
@@ -295,7 +385,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--game", required=True)
     parser.add_argument("--track", required=True)
     parser.add_argument("--ffmpeg", default=None)
-    parser.add_argument("--guard-seconds", type=float, default=None)
+    parser.add_argument(
+        "--guard-seconds", type=float, default=None,
+        help="guard before measured speech start and after measured speech end")
     parser.add_argument(
         "--runtime-windows",
         action="store_true",
@@ -322,28 +414,36 @@ def main(argv: list[str] | None = None) -> int:
 
     output_path = tutorial_dir / f"{args.track.strip()}.audio-slices.json"
     changed = any(
-        abs(change["new_speech_end"] - change["old_speech_end"]) > EPSILON
-        or change["guard_changed"]
-        or change["preserve_changed"]
+        abs(change["new_speech_start"] - change["old_speech_start"]) > EPSILON
+        or abs(change["new_speech_end"] - change["old_speech_end"]) > EPSILON
+        or change["tail_guard_changed"]
+        or change["start_guard_changed"]
+        or change["tail_preserve_changed"]
+        or change["start_preserve_changed"]
         for change in changes)
     for change in changes:
         notes = []
-        if change["guard_changed"]:
+        if change["start_guard_changed"] or change["tail_guard_changed"]:
             notes.append(
-                f"guard {change['old_guard']:.3f} -> {change['guard']:.3f}")
-        if change["preserve_changed"]:
+                f"start_guard {change['old_start_guard']:.3f} -> "
+                f"{change['guard']:.3f}; "
+                f"tail_guard {change['old_tail_guard']:.3f} -> "
+                f"{change['guard']:.3f}")
+        if change["start_preserve_changed"] or change["tail_preserve_changed"]:
             notes.append("mark measured")
         note = ("  " + "; ".join(notes)) if notes else ""
         print(
             f"{change['cue_id']:35} "
-            f"speech_end {change['old_speech_end']:7.3f} -> "
+            f"start {change['old_speech_start']:7.3f} -> "
+            f"{change['new_speech_start']:7.3f}  "
+            f"end {change['old_speech_end']:7.3f} -> "
             f"{change['new_speech_end']:7.3f}  "
             f"tail={change['remaining_to_source_end']:6.3f}{note}")
     if args.check:
         if changed:
-            print(f"FAIL {output_path}: measured tail anchors differ")
+            print(f"FAIL {output_path}: measured boundaries differ")
             return 1
-        print(f"OK   {output_path}: {len(changes)} tail anchors match")
+        print(f"OK   {output_path}: {len(changes)} measured boundaries match")
         return 0
 
     if changed:

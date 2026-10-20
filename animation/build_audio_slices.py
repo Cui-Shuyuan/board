@@ -254,6 +254,24 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         measured_speech_end = bool(
             isinstance(policy, dict)
             and policy.get("use_measured_speech_end") is True)
+        measured_speech_start = bool(
+            isinstance(policy, dict)
+            and policy.get("use_measured_speech_start") is True)
+        speech_start: float | None = None
+        speech_start_ref = f"{slice_id}.speech_start"
+        if measured_speech_start:
+            start_point = existing_timing_points.get(speech_start_ref)
+            if not isinstance(start_point, dict) or not isinstance(
+                    start_point.get("time"), (int, float)):
+                raise BuildError(
+                    f"{path}: use_measured_speech_start requires existing "
+                    f"timing point {speech_start_ref!r}")
+            speech_start = float(start_point["time"])
+            if speech_start < audio_start - 1e-9 \
+                    or speech_start > audio_end + 1e-9:
+                raise BuildError(
+                    f"{path}: measured speech start {speech_start:g} is outside "
+                    f"cue audio window [{audio_start:g}, {audio_end:g}]")
         if measured_speech_end:
             measured_ref = f"{slice_id}.speech_end"
             measured_point = existing_timing_points.get(measured_ref)
@@ -347,20 +365,27 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
             "description": (
                 "measured speech end" if measured_speech_end
                 else "last TTS word end")}
+        if speech_start is not None:
+            timing_points[speech_start_ref] = {
+                "time": _round(speech_start),
+                "description": "measured speech start"}
         source_ranges.append({
             "cue": cue_id, "asset": asset,
             "raw_start": audio_start, "raw_end": audio_end,
             "trimmed": trim_to_speech_end,
             "speech_end": speech_end if speech_end is not None else audio_end,
         })
-        cues[cue_id] = [{
+        cue_slice = {
             "id": slice_id,
             "asset": asset,
             "start_ref": start_ref,
             "end_ref": end_ref,
             "speech_end_ref": speech_ref,
             "subtitles": subtitles,
-        }]
+        }
+        if speech_start is not None:
+            cue_slice["speech_start_ref"] = speech_start_ref
+        cues[cue_id] = [cue_slice]
 
         group_id = str(raw_cue.get("section") or "").strip()
         if group_id:
