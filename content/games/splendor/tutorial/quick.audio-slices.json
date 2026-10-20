@@ -7,187 +7,187 @@
   "cue_timing": {
     "quick_intro/title_1": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_intro/001": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_setup_cards/title_2": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_setup_cards/001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_setup_cards/001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_setup_gems/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_setup_players/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_setup_players/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_setup_players/003": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_turn/title_3": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_turn/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_turn/002": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_take_gems/title_3_1": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_take_gems/different.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_take_gems/same.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_take_gems/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_take_gems/003": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_cards/title_3_2": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_cards/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_cards/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_cards/003": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_reserve/title_3_3": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_reserve/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_reserve/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_reserve/003": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_gold/001": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_nobles/title_3_4": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_nobles/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_nobles/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_nobles/003": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 1.0
     },
     "quick_end/title_4": {
       "mode": "audio",
-      "trailing_silence_seconds": 0.5,
-      "trim_to_speech_end": true
+      "trim_to_speech_end": true,
+      "post_speech_silence_seconds": 0.5
     },
     "quick_end/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5,
       "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.08
+      "trim_tail_guard_seconds": 0.08,
+      "post_speech_silence_seconds": 0.5
     }
   },
   "audio_groups": {
@@ -212,7 +212,7 @@
       "description": "logical slice end"
     },
     "quick_intro__title_1.speech_end": {
-      "time": 1.245,
+      "time": 1.56,
       "description": "last TTS word end"
     },
     "quick_intro__title_1.subtitle.0.start": {
@@ -220,7 +220,7 @@
       "description": "subtitle start"
     },
     "quick_intro__title_1.subtitle.0.end": {
-      "time": 1.245,
+      "time": 1.56,
       "description": "subtitle end"
     },
     "quick_intro__001.start": {
@@ -232,7 +232,7 @@
       "description": "logical slice end"
     },
     "quick_intro__001.speech_end": {
-      "time": 9.675041,
+      "time": 10.04,
       "description": "last TTS word end"
     },
     "quick_intro__001.subtitle.0.start": {
@@ -248,7 +248,7 @@
       "description": "subtitle start"
     },
     "quick_intro__001.subtitle.1.end": {
-      "time": 9.675041,
+      "time": 10.04,
       "description": "subtitle end"
     },
     "quick_setup_cards__title_2.start": {
@@ -260,7 +260,7 @@
       "description": "logical slice end"
     },
     "quick_setup_cards__title_2.speech_end": {
-      "time": 1.445,
+      "time": 1.86,
       "description": "last TTS word end"
     },
     "quick_setup_cards__title_2.subtitle.0.start": {
@@ -268,7 +268,7 @@
       "description": "subtitle start"
     },
     "quick_setup_cards__title_2.subtitle.0.end": {
-      "time": 1.445,
+      "time": 1.86,
       "description": "subtitle end"
     },
     "quick_setup_cards__001.1.start": {
@@ -280,7 +280,7 @@
       "description": "logical slice end"
     },
     "quick_setup_cards__001.1.speech_end": {
-      "time": 5.385,
+      "time": 6.25,
       "description": "last TTS word end"
     },
     "quick_setup_cards__001.1.subtitle.0.start": {
@@ -288,7 +288,7 @@
       "description": "subtitle start"
     },
     "quick_setup_cards__001.1.subtitle.0.end": {
-      "time": 5.385,
+      "time": 6.25,
       "description": "subtitle end"
     },
     "quick_setup_cards__001.2.start": {
@@ -300,7 +300,7 @@
       "description": "logical slice end"
     },
     "quick_setup_cards__001.2.speech_end": {
-      "time": 4.665,
+      "time": 5.04,
       "description": "last TTS word end"
     },
     "quick_setup_cards__001.2.subtitle.0.start": {
@@ -308,7 +308,7 @@
       "description": "subtitle start"
     },
     "quick_setup_cards__001.2.subtitle.0.end": {
-      "time": 4.665,
+      "time": 5.04,
       "description": "subtitle end"
     },
     "quick_setup_gems__002.start": {
@@ -320,7 +320,7 @@
       "description": "logical slice end"
     },
     "quick_setup_gems__002.speech_end": {
-      "time": 9.625042,
+      "time": 9.91,
       "description": "last TTS word end"
     },
     "quick_setup_gems__002.subtitle.0.start": {
@@ -336,7 +336,7 @@
       "description": "subtitle start"
     },
     "quick_setup_gems__002.subtitle.1.end": {
-      "time": 9.625042,
+      "time": 9.91,
       "description": "subtitle end"
     },
     "quick_setup_players__001.start": {
@@ -348,7 +348,7 @@
       "description": "logical slice end"
     },
     "quick_setup_players__001.speech_end": {
-      "time": 4.535,
+      "time": 4.84,
       "description": "last TTS word end"
     },
     "quick_setup_players__001.subtitle.0.start": {
@@ -356,7 +356,7 @@
       "description": "subtitle start"
     },
     "quick_setup_players__001.subtitle.0.end": {
-      "time": 4.535,
+      "time": 4.84,
       "description": "subtitle end"
     },
     "quick_setup_players__002.start": {
@@ -368,7 +368,7 @@
       "description": "logical slice end"
     },
     "quick_setup_players__002.speech_end": {
-      "time": 1.885,
+      "time": 2.26,
       "description": "last TTS word end"
     },
     "quick_setup_players__002.subtitle.0.start": {
@@ -376,7 +376,7 @@
       "description": "subtitle start"
     },
     "quick_setup_players__002.subtitle.0.end": {
-      "time": 1.885,
+      "time": 2.26,
       "description": "subtitle end"
     },
     "quick_setup_players__003.start": {
@@ -388,7 +388,7 @@
       "description": "logical slice end"
     },
     "quick_setup_players__003.speech_end": {
-      "time": 2.215,
+      "time": 2.43,
       "description": "last TTS word end"
     },
     "quick_setup_players__003.subtitle.0.start": {
@@ -396,7 +396,7 @@
       "description": "subtitle start"
     },
     "quick_setup_players__003.subtitle.0.end": {
-      "time": 2.215,
+      "time": 2.43,
       "description": "subtitle end"
     },
     "quick_turn__title_3.start": {
@@ -408,7 +408,7 @@
       "description": "logical slice end"
     },
     "quick_turn__title_3.speech_end": {
-      "time": 2.085,
+      "time": 2.43,
       "description": "last TTS word end"
     },
     "quick_turn__title_3.subtitle.0.start": {
@@ -416,7 +416,7 @@
       "description": "subtitle start"
     },
     "quick_turn__title_3.subtitle.0.end": {
-      "time": 2.085,
+      "time": 2.43,
       "description": "subtitle end"
     },
     "quick_turn__001.start": {
@@ -428,7 +428,7 @@
       "description": "logical slice end"
     },
     "quick_turn__001.speech_end": {
-      "time": 5.205,
+      "time": 5.43,
       "description": "last TTS word end"
     },
     "quick_turn__001.subtitle.0.start": {
@@ -436,7 +436,7 @@
       "description": "subtitle start"
     },
     "quick_turn__001.subtitle.0.end": {
-      "time": 5.205,
+      "time": 5.43,
       "description": "subtitle end"
     },
     "quick_turn__002.start": {
@@ -448,7 +448,7 @@
       "description": "logical slice end"
     },
     "quick_turn__002.speech_end": {
-      "time": 8.915083,
+      "time": 9.64,
       "description": "last TTS word end"
     },
     "quick_turn__002.subtitle.0.start": {
@@ -472,7 +472,7 @@
       "description": "subtitle start"
     },
     "quick_turn__002.subtitle.2.end": {
-      "time": 8.915083,
+      "time": 9.64,
       "description": "subtitle end"
     },
     "quick_take_gems__title_3_1.start": {
@@ -484,7 +484,7 @@
       "description": "logical slice end"
     },
     "quick_take_gems__title_3_1.speech_end": {
-      "time": 1.905,
+      "time": 2.25,
       "description": "last TTS word end"
     },
     "quick_take_gems__title_3_1.subtitle.0.start": {
@@ -492,7 +492,7 @@
       "description": "subtitle start"
     },
     "quick_take_gems__title_3_1.subtitle.0.end": {
-      "time": 1.905,
+      "time": 2.25,
       "description": "subtitle end"
     },
     "quick_take_gems__different.001.start": {
@@ -504,7 +504,7 @@
       "description": "logical slice end"
     },
     "quick_take_gems__different.001.speech_end": {
-      "time": 4.135,
+      "time": 4.43,
       "description": "last TTS word end"
     },
     "quick_take_gems__different.001.subtitle.0.start": {
@@ -512,7 +512,7 @@
       "description": "subtitle start"
     },
     "quick_take_gems__different.001.subtitle.0.end": {
-      "time": 4.135,
+      "time": 4.43,
       "description": "subtitle end"
     },
     "quick_take_gems__same.001.start": {
@@ -524,7 +524,7 @@
       "description": "logical slice end"
     },
     "quick_take_gems__same.001.speech_end": {
-      "time": 2.535,
+      "time": 2.77,
       "description": "last TTS word end"
     },
     "quick_take_gems__same.001.subtitle.0.start": {
@@ -532,7 +532,7 @@
       "description": "subtitle start"
     },
     "quick_take_gems__same.001.subtitle.0.end": {
-      "time": 2.535,
+      "time": 2.77,
       "description": "subtitle end"
     },
     "quick_take_gems__002.start": {
@@ -544,7 +544,7 @@
       "description": "logical slice end"
     },
     "quick_take_gems__002.speech_end": {
-      "time": 6.875042,
+      "time": 7.24,
       "description": "last TTS word end"
     },
     "quick_take_gems__002.subtitle.0.start": {
@@ -560,7 +560,7 @@
       "description": "subtitle start"
     },
     "quick_take_gems__002.subtitle.1.end": {
-      "time": 6.875042,
+      "time": 7.24,
       "description": "subtitle end"
     },
     "quick_take_gems__003.start": {
@@ -572,7 +572,7 @@
       "description": "logical slice end"
     },
     "quick_take_gems__003.speech_end": {
-      "time": 9.435041,
+      "time": 10.22,
       "description": "last TTS word end"
     },
     "quick_take_gems__003.subtitle.0.start": {
@@ -588,7 +588,7 @@
       "description": "subtitle start"
     },
     "quick_take_gems__003.subtitle.1.end": {
-      "time": 9.435041,
+      "time": 10.22,
       "description": "subtitle end"
     },
     "quick_cards__title_3_2.start": {
@@ -600,7 +600,7 @@
       "description": "logical slice end"
     },
     "quick_cards__title_3_2.speech_end": {
-      "time": 2.495,
+      "time": 2.84,
       "description": "last TTS word end"
     },
     "quick_cards__title_3_2.subtitle.0.start": {
@@ -608,7 +608,7 @@
       "description": "subtitle start"
     },
     "quick_cards__title_3_2.subtitle.0.end": {
-      "time": 2.495,
+      "time": 2.84,
       "description": "subtitle end"
     },
     "quick_cards__001.start": {
@@ -620,7 +620,7 @@
       "description": "logical slice end"
     },
     "quick_cards__001.speech_end": {
-      "time": 7.4650416,
+      "time": 8.26,
       "description": "last TTS word end"
     },
     "quick_cards__001.subtitle.0.start": {
@@ -636,7 +636,7 @@
       "description": "subtitle start"
     },
     "quick_cards__001.subtitle.1.end": {
-      "time": 7.4650416,
+      "time": 8.26,
       "description": "subtitle end"
     },
     "quick_cards__002.start": {
@@ -648,7 +648,7 @@
       "description": "logical slice end"
     },
     "quick_cards__002.speech_end": {
-      "time": 13.225082,
+      "time": 13.64,
       "description": "last TTS word end"
     },
     "quick_cards__002.subtitle.0.start": {
@@ -672,7 +672,7 @@
       "description": "subtitle start"
     },
     "quick_cards__002.subtitle.2.end": {
-      "time": 13.225082,
+      "time": 13.64,
       "description": "subtitle end"
     },
     "quick_cards__003.start": {
@@ -684,7 +684,7 @@
       "description": "logical slice end"
     },
     "quick_cards__003.speech_end": {
-      "time": 8.025042,
+      "time": 8.6,
       "description": "last TTS word end"
     },
     "quick_cards__003.subtitle.0.start": {
@@ -700,7 +700,7 @@
       "description": "subtitle start"
     },
     "quick_cards__003.subtitle.1.end": {
-      "time": 8.025042,
+      "time": 8.6,
       "description": "subtitle end"
     },
     "quick_reserve__title_3_3.start": {
@@ -712,7 +712,7 @@
       "description": "logical slice end"
     },
     "quick_reserve__title_3_3.speech_end": {
-      "time": 2.255,
+      "time": 2.43,
       "description": "last TTS word end"
     },
     "quick_reserve__title_3_3.subtitle.0.start": {
@@ -720,7 +720,7 @@
       "description": "subtitle start"
     },
     "quick_reserve__title_3_3.subtitle.0.end": {
-      "time": 2.255,
+      "time": 2.43,
       "description": "subtitle end"
     },
     "quick_reserve__001.start": {
@@ -732,7 +732,7 @@
       "description": "logical slice end"
     },
     "quick_reserve__001.speech_end": {
-      "time": 9.005083,
+      "time": 9.46,
       "description": "last TTS word end"
     },
     "quick_reserve__001.subtitle.0.start": {
@@ -756,7 +756,7 @@
       "description": "subtitle start"
     },
     "quick_reserve__001.subtitle.2.end": {
-      "time": 9.005083,
+      "time": 9.46,
       "description": "subtitle end"
     },
     "quick_reserve__002.start": {
@@ -768,7 +768,7 @@
       "description": "logical slice end"
     },
     "quick_reserve__002.speech_end": {
-      "time": 8.495084,
+      "time": 9.22,
       "description": "last TTS word end"
     },
     "quick_reserve__002.subtitle.0.start": {
@@ -792,7 +792,7 @@
       "description": "subtitle start"
     },
     "quick_reserve__002.subtitle.2.end": {
-      "time": 8.495084,
+      "time": 9.22,
       "description": "subtitle end"
     },
     "quick_reserve__003.start": {
@@ -804,7 +804,7 @@
       "description": "logical slice end"
     },
     "quick_reserve__003.speech_end": {
-      "time": 3.475,
+      "time": 3.87,
       "description": "last TTS word end"
     },
     "quick_reserve__003.subtitle.0.start": {
@@ -812,7 +812,7 @@
       "description": "subtitle start"
     },
     "quick_reserve__003.subtitle.0.end": {
-      "time": 3.475,
+      "time": 3.87,
       "description": "subtitle end"
     },
     "quick_gold__001.start": {
@@ -824,7 +824,7 @@
       "description": "logical slice end"
     },
     "quick_gold__001.speech_end": {
-      "time": 6.8650417,
+      "time": 7.65,
       "description": "last TTS word end"
     },
     "quick_gold__001.subtitle.0.start": {
@@ -840,7 +840,7 @@
       "description": "subtitle start"
     },
     "quick_gold__001.subtitle.1.end": {
-      "time": 6.8650417,
+      "time": 7.65,
       "description": "subtitle end"
     },
     "quick_nobles__title_3_4.start": {
@@ -852,7 +852,7 @@
       "description": "logical slice end"
     },
     "quick_nobles__title_3_4.speech_end": {
-      "time": 1.995,
+      "time": 2.24,
       "description": "last TTS word end"
     },
     "quick_nobles__title_3_4.subtitle.0.start": {
@@ -860,7 +860,7 @@
       "description": "subtitle start"
     },
     "quick_nobles__title_3_4.subtitle.0.end": {
-      "time": 1.995,
+      "time": 2.24,
       "description": "subtitle end"
     },
     "quick_nobles__001.start": {
@@ -872,7 +872,7 @@
       "description": "logical slice end"
     },
     "quick_nobles__001.speech_end": {
-      "time": 6.2950416,
+      "time": 6.44,
       "description": "last TTS word end"
     },
     "quick_nobles__001.subtitle.0.start": {
@@ -888,7 +888,7 @@
       "description": "subtitle start"
     },
     "quick_nobles__001.subtitle.1.end": {
-      "time": 6.2950416,
+      "time": 6.44,
       "description": "subtitle end"
     },
     "quick_nobles__002.start": {
@@ -900,7 +900,7 @@
       "description": "logical slice end"
     },
     "quick_nobles__002.speech_end": {
-      "time": 7.755083,
+      "time": 8.057583,
       "description": "last TTS word end"
     },
     "quick_nobles__002.subtitle.0.start": {
@@ -908,7 +908,7 @@
       "description": "subtitle start"
     },
     "quick_nobles__002.subtitle.0.end": {
-      "time": 7.755083,
+      "time": 8.057583,
       "description": "subtitle end"
     },
     "quick_nobles__003.start": {
@@ -920,7 +920,7 @@
       "description": "logical slice end"
     },
     "quick_nobles__003.speech_end": {
-      "time": 2.965,
+      "time": 3.23,
       "description": "last TTS word end"
     },
     "quick_nobles__003.subtitle.0.start": {
@@ -928,7 +928,7 @@
       "description": "subtitle start"
     },
     "quick_nobles__003.subtitle.0.end": {
-      "time": 2.965,
+      "time": 3.23,
       "description": "subtitle end"
     },
     "quick_end__title_4.start": {
@@ -940,7 +940,7 @@
       "description": "logical slice end"
     },
     "quick_end__title_4.speech_end": {
-      "time": 1.645,
+      "time": 1.83,
       "description": "last TTS word end"
     },
     "quick_end__title_4.subtitle.0.start": {
@@ -948,7 +948,7 @@
       "description": "subtitle start"
     },
     "quick_end__title_4.subtitle.0.end": {
-      "time": 1.645,
+      "time": 1.83,
       "description": "subtitle end"
     },
     "quick_end__001.start": {
@@ -960,7 +960,7 @@
       "description": "logical slice end"
     },
     "quick_end__001.speech_end": {
-      "time": 8.075084,
+      "time": 8.44,
       "description": "last TTS word end"
     },
     "quick_end__001.subtitle.0.start": {
@@ -984,7 +984,7 @@
       "description": "subtitle start"
     },
     "quick_end__001.subtitle.2.end": {
-      "time": 8.075084,
+      "time": 8.44,
       "description": "subtitle end"
     }
   },

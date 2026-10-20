@@ -1312,33 +1312,61 @@ class BuildCueTimelineTests(unittest.TestCase):
                 with self.subTest(track=track, cue=cue_id):
                     policy = slices["cue_timing"][cue_id]
                     self.assertIs(policy["trim_to_speech_end"], True)
+                    post_speech_target = policy.get(
+                        "post_speech_silence_seconds")
+                    trailing_target = policy.get(
+                        "trailing_silence_seconds")
+                    target = (
+                        post_speech_target
+                        if post_speech_target is not None
+                        else trailing_target)
+                    self.assertIsNotNone(target)
                     self.assertAlmostEqual(
-                        policy["trailing_silence_seconds"],
-                        expected_pause,
-                        places=9,
-                    )
+                        target, expected_pause, places=9)
                     audio_track = next(
                         item for item in cue["tracks"]
                         if item["kind"] == "audio")
                     last_segment = audio_track["segments"][-1]
                     self.assertEqual(last_segment["type"], "silence")
                     self.assertAlmostEqual(
-                        last_segment["duration"], expected_pause, places=9)
-                    self.assertAlmostEqual(
                         last_segment["cue_start"]
                         + last_segment["duration"],
                         self._audio_track_content_end(audio_track),
                         places=9,
                     )
+                    source_slice = slices["cues"][cue_id][-1]
                     clip = next(
                         segment for segment in audio_track["segments"]
                         if segment["type"] == "audio_clip"
-                        and segment["audio_slice_id"]
-                        == slices["cues"][cue_id][-1]["id"])
-                    source_slice = slices["cues"][cue_id][-1]
+                        and segment["audio_slice_id"] == source_slice["id"])
                     timing_points = slices["timing_points"]
+                    speech_end = timing_points[
+                        source_slice["speech_end_ref"]]["time"]
+                    speech_end_cue_local = (
+                        float(clip["cue_start"])
+                        + speech_end
+                        - timing_points[source_slice["start_ref"]]["time"])
+                    audio_end = (
+                        float(last_segment["cue_start"])
+                        + float(last_segment["duration"]))
+                    actual_pause = audio_end - speech_end_cue_local
+                    if post_speech_target is not None:
+                        self.assertAlmostEqual(
+                            actual_pause, post_speech_target, places=6)
+                        self.assertLessEqual(
+                            last_segment["duration"],
+                            post_speech_target + 1e-9,
+                        )
+                    else:
+                        self.assertAlmostEqual(
+                            last_segment["duration"],
+                            trailing_target,
+                            places=9,
+                        )
+                        self.assertGreaterEqual(
+                            actual_pause, trailing_target - 1e-9)
                     trim_end = (
-                        timing_points[source_slice["speech_end_ref"]]["time"]
+                        speech_end
                         + float(policy.get("trim_tail_guard_seconds", 0.0)))
                     expected_source_end = min(
                         timing_points[source_slice["end_ref"]]["time"],
@@ -1346,6 +1374,62 @@ class BuildCueTimelineTests(unittest.TestCase):
                     )
                     self.assertAlmostEqual(
                         clip["source_end"], expected_source_end, places=9)
+
+    def test_quick_speech_end_anchors_cover_measured_audio_tail(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        slices = json.loads(
+            (tutorial / "quick.audio-slices.json").read_text(
+                encoding="utf-8"))
+        timing_points = slices["timing_points"]
+        for cue_id, cue_slices in slices["cues"].items():
+            with self.subTest(cue=cue_id):
+                self.assertEqual(len(cue_slices), 1)
+                raw_slice = cue_slices[0]
+                source_end = timing_points[raw_slice["end_ref"]]["time"]
+                speech_end = timing_points[
+                    raw_slice["speech_end_ref"]]["time"]
+                # quick cue-level ASR word ends are known to under-report the
+                # last syllable.  The fixed timeline must use a reviewed
+                # energy tail anchor close to the real end of speech.
+                self.assertLessEqual(source_end - speech_end, 0.12)
+                subtitle_ends = [
+                    timing_points[subtitle["end_ref"]]["time"]
+                    for subtitle in raw_slice.get("subtitles") or []
+                ]
+                if subtitle_ends:
+                    self.assertGreaterEqual(
+                        max(subtitle_ends), speech_end - 1e-9)
+
+    def test_quick_third_level_word_is_not_trimmed(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        slices = json.loads(
+            (tutorial / "quick.audio-slices.json").read_text(
+                encoding="utf-8"))
+        plan = json.loads(
+            (tutorial / "quick.cue-timeline.json").read_text(
+                encoding="utf-8"))
+        cue_id = "quick_setup_cards/001.1"
+        raw_slice = slices["cues"][cue_id][0]
+        cue = next(item for item in plan["cues"]
+                   if item["cue_id"] == cue_id)
+        audio_track = next(
+            track for track in cue["tracks"] if track["kind"] == "audio")
+        clip = audio_track["segments"][0]
+        source_end = slices["timing_points"][raw_slice["end_ref"]]["time"]
+        self.assertAlmostEqual(clip["source_end"], source_end, places=9)
+        self.assertGreater(cue["course"]["duration"], source_end)
+        subtitle_track = next(
+            track for track in cue["tracks"]
+            if track["kind"] == "subtitle")
+        subtitle_end = max(
+            segment["cue_start"] + segment["duration"]
+            for segment in subtitle_track["segments"])
+        speech_end = (
+            slices["timing_points"][raw_slice["speech_end_ref"]]["time"]
+            - slices["timing_points"][raw_slice["start_ref"]]["time"])
+        self.assertGreaterEqual(subtitle_end, speech_end - 1e-9)
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (

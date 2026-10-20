@@ -41,7 +41,7 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
-| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 196.564 秒 |
+| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 206.224 秒 |
 | full | section TTS 与独立父章节标题素材 | 83 | 618.399 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
@@ -84,9 +84,10 @@ full 的切片导入器 `animation/build_audio_slices.py` 采用以下规则：
    前置量受源文件起点和当前窗口的可用尾部时长约束。
 3. 正文 slice 的起点和终点先按同一前置量移动。所有 cue 都采用
    `trim_to_speech_end`：尾部裁到
-   `speech_end + trim_tail_guard_seconds`，随后再由 plan 追加显式
-   `trailing_silence_seconds`。这样 TTS 素材自身的自然尾音不会叠加到
-   反应停顿上。
+   `speech_end + trim_tail_guard_seconds`，随后再由 plan 追加显式反应
+   停顿。full 用 `trailing_silence_seconds` 追加固定静音；quick 用
+   `post_speech_silence_seconds` 从审查后的 speech end 补足到目标值。
+   这样 TTS 素材自身的自然尾音不会叠加到反应停顿上。
 4. 对原始窗口相接、上一段未显式裁尾的同源片段，统一计算共享边界。
    上一段 end 和下一段 start 相等，边界不早于上一段已知 speech end。
    两段时长按共享边界分配。若右侧 cue 需要 0.15 秒首词前置上下文，
@@ -111,10 +112,12 @@ full 标题使用 `mode: audio`、`trim_to_speech_end: true`、
 `setup_players/title_2_4` 的源区间为 `[20.055, 21.385)`，
 cue 时长为 1.83 秒。
 
-quick 标题同样采用音频时长与 0.5 秒尾静音，`trim_tail_guard_seconds`
-使用默认值 0。所有正文 cue 也启用 `trim_to_speech_end`，guard 为
-0.08 秒，并统一追加 0.5 秒尾静音；如果正文 cue 的下一 cue 是章节标题，
-则追加 1.0 秒。具体值以各 track 的固定文件为准。
+quick 标题与正文也启用 `trim_to_speech_end`，标题 guard 为 0，
+正文 guard 为 0.08 秒；停顿目标为普通 cue 0.5 秒、下一 cue 是章节标题
+时 1.0 秒。quick 的 cue-level ASR word end 会低估最后一个音节，不能直接
+当作裁尾点；`quick.audio-slices.json` 的 `speech_end_ref` 使用已审查的
+PCM 能量尾部锚点，策略用 `post_speech_silence_seconds` 从该锚点补足到
+目标停顿，保证不会裁掉句尾字。具体值以各 track 的固定文件为准。
 
 ## 时长、字幕与视觉
 
