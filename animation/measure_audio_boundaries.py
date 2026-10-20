@@ -424,6 +424,8 @@ def measure_timeline(
             timing_points[speech_ref]["time"] = new_speech_end
 
             subtitle_changes = []
+            last_subtitle_ref: str | None = None
+            last_subtitle_end = -1.0
             for subtitle in raw_slice.get("subtitles") or []:
                 if not isinstance(subtitle, dict):
                     continue
@@ -432,9 +434,18 @@ def measure_timeline(
                 if not isinstance(point, dict):
                     continue
                 old_end = float(point["time"])
-                if abs(old_end - old_speech_end) <= 1e-6:
+                if old_end > last_subtitle_end:
+                    last_subtitle_end = old_end
+                    last_subtitle_ref = subtitle_end_ref
+                if abs(old_end - old_speech_end) <= 1e-6 \
+                        and abs(old_end - new_speech_end) > TIME_COMPARE_EPSILON:
                     point["time"] = new_speech_end
                     subtitle_changes.append(subtitle_end_ref)
+            if last_subtitle_ref is not None \
+                    and last_subtitle_ref not in subtitle_changes \
+                    and new_speech_end > last_subtitle_end + TIME_COMPARE_EPSILON:
+                timing_points[last_subtitle_ref]["time"] = new_speech_end
+                subtitle_changes.append(last_subtitle_ref)
             policy = cue_timing.setdefault(cue_id, {})
             if not isinstance(policy, dict):
                 raise MeasureError(
@@ -542,6 +553,7 @@ def main(argv: list[str] | None = None) -> int:
         or change["tail_preserve_changed"]
         or change["start_preserve_changed"]
         or change["source_preserve_changed"]
+        or bool(change["subtitle_refs"])
         for change in changes)
     for change in changes:
         notes = []

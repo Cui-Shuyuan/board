@@ -42,8 +42,8 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
-| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 199.206 秒 |
-| full | section TTS 与独立父章节标题素材 | 83 | 636.860 秒 |
+| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 201.168 秒 |
+| full | 全 cue 独立 TTS 素材 | 83 | 634.170 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
 `cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
@@ -159,6 +159,29 @@ python3 animation/build_cue_timeline.py --game splendor --track full
 显式测量步骤的外部工具，不属于运行时依赖；也可以通过 `FFMPEG_EXE` 或
 PATH 提供。具体值以各 track 的固定文件为准。
 
+### 自动 cue / section 间隔
+
+间隔不再逐条写进 `cue_timing`。`{track}.timing-policy.json` 提供两个全局
+字段：
+
+```json
+{
+  "inter_cue_gap_seconds": 0.5,
+  "section_end_gap_seconds": 1.0
+}
+```
+
+`build_cue_timeline.py` 按 runtime cue 顺序和 `section` 边界自动决定：
+
+- 普通 cue 尾部补足到实测 speech end 后 0.5 秒
+- section 最后一条 cue 尾部补足到 1.0 秒，再进入下一 section
+- 最终 section 的最后一条 cue 也按 1.0 秒处理
+
+这两个值是 `post_speech_silence_seconds` 的目标总间隔，不是额外叠加值。
+`cue_timing` 中仍可写 per-cue `post_speech_silence_seconds` 或
+`trailing_silence_seconds` 作为显式覆盖，但正常内容不应再写，避免逐条手工
+维护。
+
 ## 时长、字幕与视觉
 
 每条 cue 的策略位于 `audio-slices.json` 的 `cue_timing`。
@@ -186,10 +209,10 @@ PATH 提供。具体值以各 track 的固定文件为准。
 ### 独立 cue 音频覆盖
 
 连续 section TTS 用能量静音中点只能找到切分位置，不能凭空补出被切断的
-换气声。所有章节标题 cue 都必须是独立 MP3：quick 本身按 cue 生成，已经
-天然满足；full 的章节标题通过 `{track}.cue-audio-overrides.json` 指向
-单独生成的标题音频和字幕。若标题和紧随其后的正文也需要各自保留完整
-气口，可以像 intro 一样把两条 cue 都单独生成 TTS。声明格式：
+换气声。为保证换气不被硬切，现在 quick/full 的所有 cue 都各自使用独立 TTS
+音频。quick 本身按 cue-level 生成；full 通过
+`{track}.cue-audio-overrides.json` 把每条 cue 指向独立音频和字幕。full
+的 title/body 边界、正文与正文边界都不再共享同一个 MP3。声明格式：
 
 ```json
 {
@@ -209,9 +232,9 @@ PATH 提供。具体值以各 track 的固定文件为准。
 
 运行时生成器会把这些 cue 改为独立 `audio_start=0` 的音频窗口，后续
 audio-slices/plan 仍按实测首尾时间戳裁剪。这样每个 MP3 都有自己的自然
-起音、收音和换气，不再从中间切开同一个气口。Splendor full 的 16 个章节
-标题 cue 现在都有独立音频资产；quick 的 8 个章节标题 cue 也各自拥有独立
-cue-level MP3。
+起音、收音和换气，不再从中间切开同一个气口。当前 Splendor full 83 条
+cue 和 quick 32 条 cue 的 fixed audio-slices 中，每个音频资产都只被一条
+cue 引用。
 
 ## 生成与发布
 

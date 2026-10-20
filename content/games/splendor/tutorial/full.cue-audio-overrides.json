@@ -14,41 +14,265 @@
       "audio": "media/tts/full/chapters/setup_cards__title_2_1.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/setup_cards__title_2_1.b1.subtitle.json"
     },
+    "setup_cards/001.1": {
+      "audio": "media/tts/full/cues/setup_cards__001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_cards__001.1.b1.subtitle.json"
+    },
+    "setup_cards/001.2": {
+      "audio": "media/tts/full/cues/setup_cards__001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_cards__001.2.b1.subtitle.json"
+    },
+    "setup_cards/002.1": {
+      "audio": "media/tts/full/cues/setup_cards__002.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_cards__002.1.b1.subtitle.json"
+    },
     "setup_gems/title_2_2": {
       "audio": "media/tts/full/chapters/setup_gems__title_2_2.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/setup_gems__title_2_2.b1.subtitle.json"
+    },
+    "setup_gems/001.1": {
+      "audio": "media/tts/full/cues/setup_gems__001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_gems__001.1.b1.subtitle.json"
+    },
+    "setup_gems/002": {
+      "audio": "media/tts/full/cues/setup_gems__002.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_gems__002.b1.subtitle.json"
+    },
+    "setup_gems/003.1": {
+      "audio": "media/tts/full/cues/setup_gems__003.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_gems__003.1.b1.subtitle.json"
+    },
+    "setup_gems/005.2": {
+      "audio": "media/tts/full/cues/setup_gems__005.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_gems__005.2.b1.subtitle.json"
     },
     "setup_players/title_2_3": {
       "audio": "media/tts/full/chapters/setup_players__title_2_3.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/setup_players__title_2_3.b1.subtitle.json"
     },
+    "setup_players/nobles.001.1": {
+      "audio": "media/tts/full/cues/setup_players__nobles.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_players__nobles.001.1.b1.subtitle.json"
+    },
+    "setup_players/nobles.001.2": {
+      "audio": "media/tts/full/cues/setup_players__nobles.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_players__nobles.001.2.b1.subtitle.json"
+    },
+    "setup_players/nobles.002": {
+      "audio": "media/tts/full/cues/setup_players__nobles.002.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_players__nobles.002.b1.subtitle.json"
+    },
     "setup_players/title_2_4": {
       "audio": "media/tts/full/chapters/setup_players__title_2_4.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/setup_players__title_2_4.b1.subtitle.json"
+    },
+    "setup_players/starting.001.1": {
+      "audio": "media/tts/full/cues/setup_players__starting.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_players__starting.001.1.b1.subtitle.json"
+    },
+    "setup_players/starting.001.3": {
+      "audio": "media/tts/full/cues/setup_players__starting.001.3.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_players__starting.001.3.b1.subtitle.json"
     },
     "setup_players/title_2_5": {
       "audio": "media/tts/full/chapters/setup_players__title_2_5.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/setup_players__title_2_5.b1.subtitle.json"
     },
+    "setup_players/end.001.1": {
+      "audio": "media/tts/full/cues/setup_players__end.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/setup_players__end.001.1.b1.subtitle.json"
+    },
     "turn/title_3": {
       "audio": "media/tts/full/chapters/turn__title_3.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/turn__title_3.b1.subtitle.json"
+    },
+    "turn/001": {
+      "audio": "media/tts/full/cues/turn__001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/turn__001.b1.subtitle.json"
+    },
+    "turn/002": {
+      "audio": "media/tts/full/cues/turn__002.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/turn__002.b1.subtitle.json"
     },
     "take_gems/title_3_1": {
       "audio": "media/tts/full/chapters/take_gems__title_3_1.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/take_gems__title_3_1.b1.subtitle.json"
     },
+    "take_gems/different.001": {
+      "audio": "media/tts/full/cues/take_gems__different.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__different.001.b1.subtitle.json"
+    },
+    "take_gems/same.001": {
+      "audio": "media/tts/full/cues/take_gems__same.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__same.001.b1.subtitle.json"
+    },
+    "take_gems/same.002": {
+      "audio": "media/tts/full/cues/take_gems__same.002.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__same.002.b1.subtitle.json"
+    },
+    "take_gems/draw_rule.001.1": {
+      "audio": "media/tts/full/cues/take_gems__draw_rule.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__draw_rule.001.1.b1.subtitle.json"
+    },
+    "take_gems/draw_rule.001.2": {
+      "audio": "media/tts/full/cues/take_gems__draw_rule.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__draw_rule.001.2.b1.subtitle.json"
+    },
+    "take_gems/limit.001.1": {
+      "audio": "media/tts/full/cues/take_gems__limit.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__limit.001.1.b1.subtitle.json"
+    },
+    "take_gems/limit.001.2": {
+      "audio": "media/tts/full/cues/take_gems__limit.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__limit.001.2.b1.subtitle.json"
+    },
+    "take_gems/public.001.1": {
+      "audio": "media/tts/full/cues/take_gems__public.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__public.001.1.b1.subtitle.json"
+    },
+    "take_gems/public.001.2": {
+      "audio": "media/tts/full/cues/take_gems__public.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/take_gems__public.001.2.b1.subtitle.json"
+    },
     "cards/title_3_2_1": {
       "audio": "media/tts/full/chapters/cards__title_3_2_1.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/cards__title_3_2_1.b1.subtitle.json"
+    },
+    "cards/intro.001": {
+      "audio": "media/tts/full/cues/cards__intro.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__intro.001.b1.subtitle.json"
+    },
+    "cards/cost.001.1": {
+      "audio": "media/tts/full/cues/cards__cost.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__cost.001.1.b1.subtitle.json"
+    },
+    "cards/cost.001.2": {
+      "audio": "media/tts/full/cues/cards__cost.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__cost.001.2.b1.subtitle.json"
+    },
+    "cards/market.001.1": {
+      "audio": "media/tts/full/cues/cards__market.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__market.001.1.b1.subtitle.json"
+    },
+    "cards/market.001.2": {
+      "audio": "media/tts/full/cues/cards__market.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__market.001.2.b1.subtitle.json"
+    },
+    "cards/prestige.001.1": {
+      "audio": "media/tts/full/cues/cards__prestige.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__prestige.001.1.b1.subtitle.json"
+    },
+    "cards/prestige.001.2": {
+      "audio": "media/tts/full/cues/cards__prestige.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__prestige.001.2.b1.subtitle.json"
+    },
+    "cards/discount.001": {
+      "audio": "media/tts/full/cues/cards__discount.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__discount.001.b1.subtitle.json"
+    },
+    "cards/discount.002.1": {
+      "audio": "media/tts/full/cues/cards__discount.002.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__discount.002.1.b1.subtitle.json"
+    },
+    "cards/discount.003.1": {
+      "audio": "media/tts/full/cues/cards__discount.003.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__discount.003.1.b1.subtitle.json"
+    },
+    "cards/discount.003.2": {
+      "audio": "media/tts/full/cues/cards__discount.003.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__discount.003.2.b1.subtitle.json"
+    },
+    "cards/public.001.1": {
+      "audio": "media/tts/full/cues/cards__public.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__public.001.1.b1.subtitle.json"
+    },
+    "cards/limit.001.1": {
+      "audio": "media/tts/full/cues/cards__limit.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/cards__limit.001.1.b1.subtitle.json"
     },
     "nobles/title_3_2_2": {
       "audio": "media/tts/full/chapters/nobles__title_3_2_2.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/nobles__title_3_2_2.b1.subtitle.json"
     },
+    "nobles/intro.001": {
+      "audio": "media/tts/full/cues/nobles__intro.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__intro.001.b1.subtitle.json"
+    },
+    "nobles/trigger.001.1": {
+      "audio": "media/tts/full/cues/nobles__trigger.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__trigger.001.1.b1.subtitle.json"
+    },
+    "nobles/forced.001.1": {
+      "audio": "media/tts/full/cues/nobles__forced.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__forced.001.1.b1.subtitle.json"
+    },
+    "nobles/source.001": {
+      "audio": "media/tts/full/cues/nobles__source.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__source.001.b1.subtitle.json"
+    },
+    "nobles/choice.001.1": {
+      "audio": "media/tts/full/cues/nobles__choice.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__choice.001.1.b1.subtitle.json"
+    },
+    "nobles/repeat.001.1": {
+      "audio": "media/tts/full/cues/nobles__repeat.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__repeat.001.1.b1.subtitle.json"
+    },
+    "nobles/repeat.001.3": {
+      "audio": "media/tts/full/cues/nobles__repeat.001.3.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__repeat.001.3.b1.subtitle.json"
+    },
+    "nobles/summary.001.1": {
+      "audio": "media/tts/full/cues/nobles__summary.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__summary.001.1.b1.subtitle.json"
+    },
+    "nobles/summary.001.2": {
+      "audio": "media/tts/full/cues/nobles__summary.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__summary.001.2.b1.subtitle.json"
+    },
+    "nobles/summary.001.3": {
+      "audio": "media/tts/full/cues/nobles__summary.001.3.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/nobles__summary.001.3.b1.subtitle.json"
+    },
     "reserve/title_3_3": {
       "audio": "media/tts/full/chapters/reserve__title_3_3.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/reserve__title_3_3.b1.subtitle.json"
+    },
+    "reserve/intro.001.1": {
+      "audio": "media/tts/full/cues/reserve__intro.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__intro.001.1.b1.subtitle.json"
+    },
+    "reserve/gold.001": {
+      "audio": "media/tts/full/cues/reserve__gold.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__gold.001.b1.subtitle.json"
+    },
+    "reserve/deck.001": {
+      "audio": "media/tts/full/cues/reserve__deck.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__deck.001.b1.subtitle.json"
+    },
+    "reserve/notes_intro.001": {
+      "audio": "media/tts/full/cues/reserve__notes_intro.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__notes_intro.001.b1.subtitle.json"
+    },
+    "reserve/limit_gold.001.2": {
+      "audio": "media/tts/full/cues/reserve__limit_gold.001.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__limit_gold.001.2.b1.subtitle.json"
+    },
+    "reserve/limit_hand.001.1": {
+      "audio": "media/tts/full/cues/reserve__limit_hand.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__limit_hand.001.1.b1.subtitle.json"
+    },
+    "reserve/private.001.1": {
+      "audio": "media/tts/full/cues/reserve__private.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__private.001.1.b1.subtitle.json"
+    },
+    "reserve/private.002": {
+      "audio": "media/tts/full/cues/reserve__private.002.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__private.002.b1.subtitle.json"
+    },
+    "reserve/not_purchase.001": {
+      "audio": "media/tts/full/cues/reserve__not_purchase.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/reserve__not_purchase.001.b1.subtitle.json"
     },
     "purchase_reserved/title_3_4": {
       "audio": "media/tts/full/chapters/purchase_reserved__title_3_4.b1.mp3",
@@ -58,9 +282,45 @@
       "audio": "media/tts/full/chapters/summary__title_3_5.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/summary__title_3_5.b1.subtitle.json"
     },
+    "summary/001": {
+      "audio": "media/tts/full/cues/summary__001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/summary__001.b1.subtitle.json"
+    },
+    "summary/002.1": {
+      "audio": "media/tts/full/cues/summary__002.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/summary__002.1.b1.subtitle.json"
+    },
+    "summary/002.2": {
+      "audio": "media/tts/full/cues/summary__002.2.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/summary__002.2.b1.subtitle.json"
+    },
     "end/title_4": {
       "audio": "media/tts/full/chapters/end__title_4.b1.mp3",
       "subtitle_file": "media/tts/full/chapters/end__title_4.b1.subtitle.json"
+    },
+    "end/trigger.001": {
+      "audio": "media/tts/full/cues/end__trigger.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/end__trigger.001.b1.subtitle.json"
+    },
+    "end/final_rounds.001.1": {
+      "audio": "media/tts/full/cues/end__final_rounds.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/end__final_rounds.001.1.b1.subtitle.json"
+    },
+    "end/example.001.1": {
+      "audio": "media/tts/full/cues/end__example.001.1.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/end__example.001.1.b1.subtitle.json"
+    },
+    "end/winner.001": {
+      "audio": "media/tts/full/cues/end__winner.001.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/end__winner.001.b1.subtitle.json"
+    },
+    "end/winner.002": {
+      "audio": "media/tts/full/cues/end__winner.002.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/end__winner.002.b1.subtitle.json"
+    },
+    "end/winner.003": {
+      "audio": "media/tts/full/cues/end__winner.003.b1.mp3",
+      "subtitle_file": "media/tts/full/cues/end__winner.003.b1.subtitle.json"
     }
   }
 }

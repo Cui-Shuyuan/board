@@ -742,32 +742,43 @@ class BuildCueTimelineTests(unittest.TestCase):
         builder._validate_source_boundary_contracts(doc)
 
     def test_trimmed_tail_contract_rejects_source_overlap(self) -> None:
-        doc = audio_slice_builder.build_audio_slices(ROOT, "splendor", "full")
-        slices = {s["id"]: s for group in doc["cues"].values() for s in group}
-        points = doc["timing_points"]
-        pair = min(
-            (c for c in doc["source_boundary_contracts"]
-             if c["kind"] == "trimmed_tail"),
-            key=lambda c: (
-                points[slices[c["right_slice"]]["start_ref"]]["time"]
-                - points[slices[c["left_slice"]]["end_ref"]]["time"]),
-        )
-        point = points[slices[pair["right_slice"]]["start_ref"]]
-        original = point["time"]
-        point["time"] = original - 0.15
+        doc = {
+            "sample_rate": 24000,
+            "cues": {
+                "left": [{
+                    "id": "left",
+                    "asset": "media/fixture-audio.mp3",
+                    "start_ref": "left.start",
+                    "end_ref": "left.end",
+                }],
+                "right": [{
+                    "id": "right",
+                    "asset": "media/fixture-audio.mp3",
+                    "start_ref": "right.start",
+                    "end_ref": "right.end",
+                }],
+            },
+            "timing_points": {
+                "left.start": {"time": 0.0},
+                "left.end": {"time": 1.0},
+                "right.start": {"time": 1.0},
+                "right.end": {"time": 2.0},
+            },
+            "source_boundary_contracts": [{
+                "left_slice": "left",
+                "right_slice": "right",
+                "kind": "trimmed_tail",
+            }],
+        }
+        self.assertIsNone(builder._validate_source_boundary_contracts(doc))
+        doc["timing_points"]["right.start"]["time"] = 0.85
         with self.assertRaisesRegex(builder.BuildError, "violates trimmed_tail"):
             builder._validate_source_boundary_contracts(doc)
-        point["time"] = original
-        self.assertIsNone(builder._validate_source_boundary_contracts(doc))
-        # The compiler also checks resolved ranges after applying trim policy.
+        doc["timing_points"]["right.start"]["time"] = 1.0
         resolved = {
-            sid: {
-                "source_start": doc["timing_points"][s["start_ref"]]["time"],
-                "source_end": doc["timing_points"][s["end_ref"]]["time"],
-            }
-            for sid, s in slices.items()
+            "left": {"source_start": 0.0, "source_end": 1.1},
+            "right": {"source_start": 1.0, "source_end": 2.0},
         }
-        resolved[pair["left_slice"]]["source_end"] += 0.15
         with self.assertRaisesRegex(builder.BuildError, "violates trimmed_tail"):
             builder._validate_source_boundary_contracts(doc, resolved)
 
@@ -784,9 +795,7 @@ class BuildCueTimelineTests(unittest.TestCase):
             self.assertFalse(any(
                 contract["right_slice"] == raw_slice["id"]
                 for contract in doc["source_boundary_contracts"]))
-        self.assertTrue(any(
-            c["kind"] == "trimmed_tail"
-            for c in doc["source_boundary_contracts"]))
+        self.assertEqual(doc["source_boundary_contracts"], [])
 
     def test_audio_source_range_must_fit_actual_media_duration(self) -> None:
         self.audio_path.write_bytes(self.wav_bytes(0.5))
@@ -1080,8 +1089,8 @@ class BuildCueTimelineTests(unittest.TestCase):
             audio_track = next(
                 track for track in cue["tracks"] if track["kind"] == "audio")
             self.assertEqual(audio_track["segments"][-1]["type"], "silence")
-            self.assertAlmostEqual(
-                audio_track["segments"][-1]["duration"], 0.5, places=9)
+            self.assertGreater(
+                audio_track["segments"][-1]["duration"], 0.0)
             self.assertTrue(
                 (ROOT / "content" / "games" / "splendor"
                  / audio_segment["asset"]).is_file())
@@ -1450,34 +1459,61 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_all_full_title_cues_trim_at_their_own_speech_end(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
         slices = json.loads(
-            (ROOT / "content" / "games" / "splendor" / "tutorial"
-             / "full.audio-slices.json").read_text("utf-8"))
+            (tutorial / "full.audio-slices.json").read_text("utf-8"))
+        runtime = json.loads(
+            (tutorial / "full.runtime.json").read_text("utf-8"))
+        policy_document = json.loads(
+            (tutorial / "full.timing-policy.json").read_text("utf-8"))
         plan = builder.build_plan_set(ROOT, "splendor", "full")
+        section_by_id = {
+            cue["id"]: cue.get("section") for cue in runtime["cues"]
+        }
         title_cues = [
             cue for cue in plan["cues"]
             if cue["cue_id"].rsplit("/", 1)[-1].startswith("title")
         ]
         self.assertTrue(title_cues)
         for cue in title_cues:
-            policy = slices["cue_timing"][cue["cue_id"]]
+            cue_id = cue["cue_id"]
+            policy = slices["cue_timing"][cue_id]
             self.assertEqual(policy["mode"], "audio")
             self.assertIs(policy["trim_to_speech_end"], True)
-            self.assertAlmostEqual(
-                policy["trailing_silence_seconds"], 0.5, places=9)
             self.assertAlmostEqual(
                 policy["trim_tail_guard_seconds"], 0.1, places=9)
             audio_track = next(
                 track for track in cue["tracks"] if track["kind"] == "audio")
             self.assertEqual(audio_track["segments"][-1]["type"], "silence")
             self.assertAlmostEqual(
-                audio_track["segments"][-1]["duration"], 0.5, places=9)
-            self.assertAlmostEqual(
                 audio_track["segments"][-1]["cue_start"],
                 audio_track["segments"][0]["source_end"]
                 - audio_track["segments"][0]["source_start"],
                 places=9,
             )
+            next_cue = (
+                plan["cues"][plan["cues"].index(cue) + 1]
+                if plan["cues"].index(cue) + 1 < len(plan["cues"]) else None)
+            target = float(
+                policy_document["section_end_gap_seconds"]
+                if next_cue is None
+                or section_by_id[cue_id] != section_by_id[
+                    next_cue["cue_id"]]
+                else policy_document["inter_cue_gap_seconds"])
+            source_slice = slices["cues"][cue_id][-1]
+            clip = next(
+                segment for segment in audio_track["segments"]
+                if segment["type"] == "audio_clip")
+            speech_end = slices["timing_points"][
+                source_slice["speech_end_ref"]]["time"]
+            speech_end_cue_local = (
+                float(clip["cue_start"])
+                + speech_end
+                - float(clip["source_start"]))
+            audio_end = self._audio_track_content_end(audio_track)
+            self.assertAlmostEqual(
+                audio_end - speech_end_cue_local, target, places=6)
 
     def test_all_splendor_cues_end_with_requested_reaction_pause(self) -> None:
         tutorial = (
@@ -1489,33 +1525,36 @@ class BuildCueTimelineTests(unittest.TestCase):
             plan = json.loads(
                 (tutorial / f"{track}.cue-timeline.json").read_text(
                     encoding="utf-8"))
-            cue_ids = [cue["cue_id"] for cue in plan["cues"]]
-            self.assertTrue(cue_ids)
+            runtime = json.loads(
+                (tutorial / f"{track}.runtime.json").read_text(
+                    encoding="utf-8"))
+            policy_document = json.loads(
+                (tutorial / f"{track}.timing-policy.json").read_text(
+                    encoding="utf-8"))
+            inter_gap = float(policy_document["inter_cue_gap_seconds"])
+            section_end_gap = float(
+                policy_document["section_end_gap_seconds"])
+            section_by_id = {
+                cue["id"]: cue.get("section") for cue in runtime["cues"]
+            }
+            timing_points = slices["timing_points"]
             for index, cue in enumerate(plan["cues"]):
                 cue_id = cue["cue_id"]
-                local_id = cue_id.rsplit("/", 1)[-1]
-                is_chapter = local_id.startswith("title_")
-                next_is_chapter = (
-                    index + 1 < len(cue_ids)
-                    and cue_ids[index + 1].rsplit("/", 1)[-1]
-                    .startswith("title_")
-                )
-                expected_pause = (
-                    0.5 if is_chapter or not next_is_chapter else 1.0)
+                next_cue = (
+                    plan["cues"][index + 1]
+                    if index + 1 < len(plan["cues"]) else None)
+                target = (
+                    section_end_gap
+                    if next_cue is None
+                    or section_by_id[cue_id] != section_by_id[
+                        next_cue["cue_id"]]
+                    else inter_gap)
                 with self.subTest(track=track, cue=cue_id):
                     policy = slices["cue_timing"][cue_id]
                     self.assertIs(policy["trim_to_speech_end"], True)
-                    post_speech_target = policy.get(
-                        "post_speech_silence_seconds")
-                    trailing_target = policy.get(
-                        "trailing_silence_seconds")
-                    target = (
-                        post_speech_target
-                        if post_speech_target is not None
-                        else trailing_target)
-                    self.assertIsNotNone(target)
-                    self.assertAlmostEqual(
-                        target, expected_pause, places=9)
+                    self.assertNotIn(
+                        "post_speech_silence_seconds", policy)
+                    self.assertNotIn("trailing_silence_seconds", policy)
                     audio_track = next(
                         item for item in cue["tracks"]
                         if item["kind"] == "audio")
@@ -1532,7 +1571,6 @@ class BuildCueTimelineTests(unittest.TestCase):
                         segment for segment in audio_track["segments"]
                         if segment["type"] == "audio_clip"
                         and segment["audio_slice_id"] == source_slice["id"])
-                    timing_points = slices["timing_points"]
                     speech_end = timing_points[
                         source_slice["speech_end_ref"]]["time"]
                     speech_end_cue_local = (
@@ -1542,31 +1580,8 @@ class BuildCueTimelineTests(unittest.TestCase):
                     audio_end = (
                         float(last_segment["cue_start"])
                         + float(last_segment["duration"]))
-                    actual_pause = audio_end - speech_end_cue_local
-                    if post_speech_target is not None:
-                        self.assertAlmostEqual(
-                            actual_pause, post_speech_target, places=6)
-                        self.assertLessEqual(
-                            last_segment["duration"],
-                            post_speech_target + 1e-9,
-                        )
-                    else:
-                        self.assertAlmostEqual(
-                            last_segment["duration"],
-                            trailing_target,
-                            places=9,
-                        )
-                        self.assertGreaterEqual(
-                            actual_pause, trailing_target - 1e-9)
-                    trim_end = (
-                        speech_end
-                        + float(policy.get("trim_tail_guard_seconds", 0.0)))
-                    expected_source_end = min(
-                        timing_points[source_slice["end_ref"]]["time"],
-                        trim_end,
-                    )
                     self.assertAlmostEqual(
-                        clip["source_end"], expected_source_end, places=9)
+                        audio_end - speech_end_cue_local, target, places=6)
 
     def test_quick_speech_end_anchors_cover_measured_audio_tail(self) -> None:
         tutorial = (
@@ -1640,18 +1655,28 @@ class BuildCueTimelineTests(unittest.TestCase):
         raw_end = runtime_cue["audio_start"] + runtime_cue["duration"]
         cue = next(item for item in plan["cues"]
                    if item["cue_id"] == cue_id)
+        slices = json.loads(
+            (tutorial / "full.audio-slices.json").read_text(
+                encoding="utf-8"))
+        raw_slice = slices["cues"][cue_id][0]
+        timing_points = slices["timing_points"]
         audio_track = next(
             track for track in cue["tracks"] if track["kind"] == "audio")
         clip = audio_track["segments"][0]
-        self.assertGreaterEqual(clip["source_end"], raw_end - 1e-6)
-        self.assertLessEqual(
-            clip["source_start"], runtime_cue["audio_start"] + 1e-9)
-        self.assertGreater(
-            clip["source_end"] - clip["source_start"],
-            runtime_cue["duration"] - 0.1,
-        )
+        self.assertEqual(clip["asset"], raw_slice["asset"])
+        self.assertIn("/cues/setup_cards__001.2", clip["asset"])
+        speech_start = timing_points[
+            raw_slice["speech_start_ref"]]["time"]
+        speech_end = timing_points[raw_slice["speech_end_ref"]]["time"]
+        self.assertLessEqual(clip["source_start"], speech_start)
+        self.assertGreaterEqual(clip["source_end"], speech_end)
+        speech_end_cue_local = (
+            float(clip["cue_start"])
+            + speech_end
+            - float(clip["source_start"]))
+        audio_end = self._audio_track_content_end(audio_track)
         self.assertAlmostEqual(
-            audio_track["segments"][-1]["duration"], 0.5, places=9)
+            audio_end - speech_end_cue_local, 0.5, places=6)
 
     def test_full_intro_title_and_body_use_separate_audio_assets(self) -> None:
         tutorial = (
@@ -1690,6 +1715,22 @@ class BuildCueTimelineTests(unittest.TestCase):
             places=9,
         )
 
+    def test_all_splendor_cues_use_independent_audio_assets(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        for track in ("quick", "full"):
+            slices = json.loads(
+                (tutorial / f"{track}.audio-slices.json").read_text(
+                    encoding="utf-8"))
+            users: dict[str, set[str]] = {}
+            for cue_id, cue_slices in slices["cues"].items():
+                for raw_slice in cue_slices:
+                    users.setdefault(raw_slice["asset"], set()).add(cue_id)
+            for asset, cue_ids in users.items():
+                self.assertEqual(
+                    len(cue_ids), 1,
+                    f"{track} asset {asset!r} is shared by {sorted(cue_ids)}")
+
     def test_all_splendor_chapter_cues_use_independent_audio_assets(self) -> None:
         tutorial = (
             ROOT / "content" / "games" / "splendor" / "tutorial")
@@ -1715,6 +1756,71 @@ class BuildCueTimelineTests(unittest.TestCase):
                     self.assertEqual(len(assets), 1)
                     asset = next(iter(assets))
                     self.assertEqual(users[asset], {cue_id})
+
+    def test_global_gap_policy_applies_cue_and_section_defaults(self) -> None:
+        cue_defs = [
+            ("fixture/one", "s1", 0.0),
+            ("fixture/two", "s1", 1.0),
+            ("fixture/three", "s2", 2.0),
+        ]
+        self.write_runtime([
+            {
+                "id": cue_id,
+                "section": section,
+                "audio": "media/fixture-audio.mp3",
+                "audio_start": start,
+                "duration": 1.0,
+                "start": start,
+                "text": cue_id,
+                "subtitles": [],
+            }
+            for cue_id, section, start in cue_defs
+        ])
+        self.write_script([
+            {
+                "id": cue_id,
+                "section": section,
+                "beats": [{"text": cue_id}],
+            }
+            for cue_id, section, _ in cue_defs
+        ])
+        self.write_compiled([])
+        self.write_policy(extra={
+            "inter_cue_gap_seconds": 0.5,
+            "section_end_gap_seconds": 1.0,
+        })
+        timing_points = {}
+        cue_slices = {}
+        for cue_id, _, start in cue_defs:
+            safe = cue_id.replace("/", "__")
+            timing_points[f"{safe}.start"] = {"time": start}
+            timing_points[f"{safe}.end"] = {"time": start + 1.0}
+            timing_points[f"{safe}.speech_end"] = {"time": start + 0.8}
+            cue_slices[cue_id] = [{
+                "id": safe,
+                "asset": "media/fixture-audio.mp3",
+                "start_ref": f"{safe}.start",
+                "end_ref": f"{safe}.end",
+                "speech_end_ref": f"{safe}.speech_end",
+                "subtitles": [],
+            }]
+        self.write_slices(timing_points=timing_points, cues=cue_slices)
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        pauses = []
+        for cue in document["cues"]:
+            audio = next(
+                track for track in cue["tracks"] if track["kind"] == "audio")
+            self.assertEqual(audio["segments"][-1]["type"], "silence")
+            clip = audio["segments"][0]
+            # The fixture speech ends 0.2s before the authored source end.
+            speech_end_cue_local = (
+                float(clip["cue_start"])
+                + (1.0 - 0.2))
+            audio_end = (
+                float(audio["segments"][-1]["cue_start"])
+                + float(audio["segments"][-1]["duration"]))
+            pauses.append(round(audio_end - speech_end_cue_local, 9))
+        self.assertEqual(pauses, [0.5, 1.0, 1.0])
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (

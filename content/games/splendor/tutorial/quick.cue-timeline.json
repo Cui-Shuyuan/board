@@ -5,7 +5,7 @@
   "track": "quick",
   "course": {
     "start": 0.0,
-    "duration": 199.206
+    "duration": 201.168
   },
   "cues": [
     {
@@ -339,7 +339,7 @@
       "entry": null,
       "course": {
         "start": 21.27,
-        "duration": 5.29
+        "duration": 5.79
       },
       "tracks": [
         {
@@ -378,7 +378,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 4.814,
-              "duration": 0.476
+              "duration": 0.976
             }
           ]
         },
@@ -416,8 +416,8 @@
       "cue_id": "quick_setup_gems/002",
       "entry": null,
       "course": {
-        "start": 26.56,
-        "duration": 10.14
+        "start": 27.06,
+        "duration": 10.64
       },
       "tracks": [
         {
@@ -456,7 +456,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 9.642,
-              "duration": 0.498
+              "duration": 0.998
             }
           ]
         },
@@ -507,7 +507,7 @@
       "cue_id": "quick_setup_players/001",
       "entry": null,
       "course": {
-        "start": 36.7,
+        "start": 37.7,
         "duration": 5.09
       },
       "tracks": [
@@ -584,7 +584,7 @@
       "cue_id": "quick_setup_players/002",
       "entry": null,
       "course": {
-        "start": 41.79,
+        "start": 42.79,
         "duration": 2.49
       },
       "tracks": [
@@ -662,7 +662,7 @@
       "cue_id": "quick_setup_players/003",
       "entry": null,
       "course": {
-        "start": 44.28,
+        "start": 45.28,
         "duration": 3.18
       },
       "tracks": [
@@ -740,7 +740,7 @@
       "cue_id": "quick_turn/title_3",
       "entry": null,
       "course": {
-        "start": 47.46,
+        "start": 48.46,
         "duration": 2.68
       },
       "tracks": [
@@ -818,7 +818,7 @@
       "cue_id": "quick_turn/001",
       "entry": null,
       "course": {
-        "start": 50.14,
+        "start": 51.14,
         "duration": 5.65
       },
       "tracks": [
@@ -896,7 +896,7 @@
       "cue_id": "quick_turn/002",
       "entry": null,
       "course": {
-        "start": 55.79,
+        "start": 56.79,
         "duration": 10.36
       },
       "tracks": [
@@ -1000,7 +1000,7 @@
       "cue_id": "quick_take_gems/title_3_1",
       "entry": null,
       "course": {
-        "start": 66.15,
+        "start": 67.15,
         "duration": 2.49
       },
       "tracks": [
@@ -1079,7 +1079,7 @@
       "cue_id": "quick_take_gems/different.001",
       "entry": null,
       "course": {
-        "start": 68.64,
+        "start": 69.64,
         "duration": 4.824
       },
       "tracks": [
@@ -1158,7 +1158,7 @@
       "cue_id": "quick_take_gems/same.001",
       "entry": null,
       "course": {
-        "start": 73.464,
+        "start": 74.464,
         "duration": 3.24
       },
       "tracks": [
@@ -1237,7 +1237,7 @@
       "cue_id": "quick_take_gems/002",
       "entry": null,
       "course": {
-        "start": 76.704,
+        "start": 77.704,
         "duration": 7.67
       },
       "tracks": [
@@ -1329,7 +1329,7 @@
       "cue_id": "quick_take_gems/003",
       "entry": null,
       "course": {
-        "start": 84.374,
+        "start": 85.374,
         "duration": 10.95
       },
       "tracks": [
@@ -1421,7 +1421,7 @@
       "cue_id": "quick_cards/title_3_2",
       "entry": null,
       "course": {
-        "start": 95.324,
+        "start": 96.324,
         "duration": 3.04
       },
       "tracks": [
@@ -1500,7 +1500,7 @@
       "cue_id": "quick_cards/001",
       "entry": null,
       "course": {
-        "start": 98.364,
+        "start": 99.364,
         "duration": 9.264
       },
       "tracks": [
@@ -1592,7 +1592,7 @@
       "cue_id": "quick_cards/002",
       "entry": null,
       "course": {
-        "start": 107.628,
+        "start": 108.628,
         "duration": 13.89
       },
       "tracks": [
@@ -1697,7 +1697,7 @@
       "cue_id": "quick_cards/003",
       "entry": null,
       "course": {
-        "start": 121.518,
+        "start": 122.518,
         "duration": 9.34
       },
       "tracks": [
@@ -1789,7 +1789,7 @@
       "cue_id": "quick_reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 130.858,
+        "start": 131.858,
         "duration": 2.64
       },
       "tracks": [
@@ -1868,7 +1868,7 @@
       "cue_id": "quick_reserve/001",
       "entry": null,
       "course": {
-        "start": 133.498,
+        "start": 134.498,
         "duration": 9.67
       },
       "tracks": [
@@ -1973,7 +1973,7 @@
       "cue_id": "quick_reserve/002",
       "entry": null,
       "course": {
-        "start": 143.168,
+        "start": 144.168,
         "duration": 9.46
       },
       "tracks": [
@@ -2078,8 +2078,8 @@
       "cue_id": "quick_reserve/003",
       "entry": null,
       "course": {
-        "start": 152.628,
-        "duration": 4.12
+        "start": 153.628,
+        "duration": 4.62
       },
       "tracks": [
         {
@@ -2118,7 +2118,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 3.638,
-              "duration": 0.482
+              "duration": 0.982
             }
           ]
         },
@@ -2157,7 +2157,7 @@
       "cue_id": "quick_gold/001",
       "entry": null,
       "course": {
-        "start": 156.748,
+        "start": 158.248,
         "duration": 8.34
       },
       "tracks": [
@@ -2249,7 +2249,7 @@
       "cue_id": "quick_nobles/title_3_4",
       "entry": null,
       "course": {
-        "start": 165.088,
+        "start": 166.588,
         "duration": 2.48
       },
       "tracks": [
@@ -2328,7 +2328,7 @@
       "cue_id": "quick_nobles/001",
       "entry": null,
       "course": {
-        "start": 167.568,
+        "start": 169.068,
         "duration": 6.69
       },
       "tracks": [
@@ -2356,19 +2356,19 @@
             {
               "id": "audio.slice.0",
               "type": "audio_clip",
-              "audio_slice_id": "quick_nobles__001",
-              "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+              "audio_slice_id": "quick_nobles__001.b1",
+              "asset": "media/tts/quick.cues/quick_nobles__001.b1.mp3",
               "cue_start": 0.0,
-              "source_start": 0.27,
-              "source_end": 6.4475625,
-              "source_start_sample": 6480,
-              "source_end_sample": 154742
+              "source_start": 0.25,
+              "source_end": 6.432,
+              "source_start_sample": 6000,
+              "source_end_sample": 154368
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.1775625,
-              "duration": 0.4924375
+              "cue_start": 6.182,
+              "duration": 0.488
             }
           ]
         },
@@ -2380,15 +2380,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0,
-              "duration": 1.425,
+              "cue_start": 0.035,
+              "duration": 1.43,
               "text": "贵族是额外得分。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 1.9700417,
-              "duration": 4.1999583,
+              "cue_start": 1.940042,
+              "duration": 4.229958,
               "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
             }
           ]
@@ -2397,14 +2397,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0,
-          "duration": 1.425,
+          "cue_start": 0.035,
+          "duration": 1.43,
           "text": "贵族是额外得分。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 1.9700417,
-          "duration": 4.1999583,
+          "cue_start": 1.940042,
+          "duration": 4.229958,
           "text": "回合结束后，如果你的发展卡满足某位贵族下方的条件，"
         }
       ],
@@ -2420,7 +2420,7 @@
       "cue_id": "quick_nobles/002",
       "entry": null,
       "course": {
-        "start": 174.258,
+        "start": 175.758,
         "duration": 6.2
       },
       "tracks": [
@@ -2448,19 +2448,19 @@
             {
               "id": "audio.slice.0",
               "type": "audio_clip",
-              "audio_slice_id": "quick_nobles__002",
-              "asset": "media/tts/quick.cues/quick_nobles__001_002.b1.mp3",
+              "audio_slice_id": "quick_nobles__002.b1",
+              "asset": "media/tts/quick.cues/quick_nobles__002.b1.mp3",
               "cue_start": 0.0,
-              "source_start": 6.547583,
-              "source_end": 8.064,
-              "source_start_sample": 157142,
-              "source_end_sample": 193536
+              "source_start": 0.24,
+              "source_end": 1.848,
+              "source_start_sample": 5760,
+              "source_end_sample": 44352
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 1.516417,
-              "duration": 0.493583
+              "cue_start": 1.608,
+              "duration": 0.492
             }
           ]
         },
@@ -2472,8 +2472,8 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.0525004,
-              "duration": 1.4574996,
+              "cue_start": 0.025,
+              "duration": 1.575,
               "text": "就拿取这位贵族；"
             }
           ]
@@ -2482,8 +2482,8 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.0525004,
-          "duration": 1.4574996,
+          "cue_start": 0.025,
+          "duration": 1.575,
           "text": "就拿取这位贵族；"
         }
       ],
@@ -2499,7 +2499,7 @@
       "cue_id": "quick_nobles/003",
       "entry": null,
       "course": {
-        "start": 180.458,
+        "start": 181.958,
         "duration": 8.0
       },
       "tracks": [
@@ -2578,7 +2578,7 @@
       "cue_id": "quick_end/title_4",
       "entry": null,
       "course": {
-        "start": 188.458,
+        "start": 189.958,
         "duration": 2.06
       },
       "tracks": [
@@ -2656,8 +2656,8 @@
       "cue_id": "quick_end/001",
       "entry": null,
       "course": {
-        "start": 190.518,
-        "duration": 8.688
+        "start": 192.018,
+        "duration": 9.15
       },
       "tracks": [
         {
@@ -2696,7 +2696,7 @@
               "id": "audio.trailing_silence",
               "type": "silence",
               "cue_start": 8.158,
-              "duration": 0.492
+              "duration": 0.992
             }
           ]
         },
@@ -2832,10 +2832,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
-      "original_duration": 5.29,
-      "audio_end": 5.29,
+      "original_duration": 5.79,
+      "audio_end": 5.79,
       "visual_end": 3.84,
-      "duration": 5.29
+      "duration": 5.79
     },
     {
       "code": "cue_timing_policy",
@@ -2847,10 +2847,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
-      "original_duration": 10.14,
-      "audio_end": 10.14,
+      "original_duration": 10.64,
+      "audio_end": 10.64,
       "visual_end": 10.032,
-      "duration": 10.14
+      "duration": 10.64
     },
     {
       "code": "cue_timing_policy",
@@ -3132,10 +3132,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
-      "original_duration": 4.12,
-      "audio_end": 4.12,
+      "original_duration": 4.62,
+      "audio_end": 4.62,
       "visual_end": 3.563,
-      "duration": 4.12
+      "duration": 4.62
     },
     {
       "code": "cue_timing_policy",
@@ -3193,7 +3193,7 @@
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
       "original_duration": 6.2,
-      "audio_end": 2.01,
+      "audio_end": 2.1,
       "visual_end": 6.2,
       "duration": 6.2
     },
@@ -3237,10 +3237,10 @@
       "trim_to_speech_start": true,
       "trim_start_guard_seconds": 0.1,
       "trailing_silence_seconds": 0.0,
-      "original_duration": 8.688,
-      "audio_end": 8.65,
+      "original_duration": 9.15,
+      "audio_end": 9.15,
       "visual_end": 8.688,
-      "duration": 8.688
+      "duration": 9.15
     }
   ]
 }

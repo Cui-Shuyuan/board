@@ -39,10 +39,15 @@ source_time          = segment.source_start + (cue_local_time - segment.cue_star
 | `sample_rate` | 正整数，固定文件采样位置与边界契约的计算基准 |
 | `timing_points` | 命名时间点到 `{time, description?}` 的映射 |
 | `cues` | cue ID 到逻辑音频 slice 列表的映射 |
-| `cue_timing` | per-cue 时长模式、裁尾、guard 和静音策略 |
+| `cue_timing` | per-cue 时长模式、裁尾、guard 和可选静音覆盖 |
 | `audio_groups` | 共享素材的 cue/slice ID 映射与审计信息 |
 | `cue_visuals` | 可选的多段视觉映射 |
 | `source_boundary_contracts` | 可选的同源 slice 边界契约 |
+
+`timing-policy.json` 还提供自动间隔策略：
+`inter_cue_gap_seconds` 用于普通 cue 尾部，`section_end_gap_seconds` 用于
+每个 section 的最后一条 cue。plan 构建按 section 边界自动应用，不需要逐条
+写 `trailing_silence_seconds` 或 `post_speech_silence_seconds`。
 
 音频 slice：
 

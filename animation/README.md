@@ -33,10 +33,11 @@
   full 用 runtime section windows：
   `python3 animation/measure_audio_boundaries.py --game splendor --track full --runtime-windows --ffmpeg <ffmpeg> --write --guard-seconds 0.1`。
   plan 构建只读时间戳，不运行能量分析。
-  章节标题 cue 必须各有独立 TTS 音频；quick 天然按 cue 生成，full 通过
-  `{track}.cue-audio-overrides.json` 把章节标题指向独立 MP3 和字幕。
-  连续 section 音频的换气也不能硬切时，可同样用 override 把相关正文 cue
-  独立出来；运行时/audio-slices 会按 per-cue 独立窗口生成。
+  所有 cue 都使用独立 TTS 音频；quick 天然按 cue 生成，full 通过
+  `{track}.cue-audio-overrides.json` 指向每条 cue 的独立 MP3 和字幕，
+  运行时/audio-slices 会按 per-cue 独立窗口生成。
+- cue 间隔由 `timing-policy.json` 的 `inter_cue_gap_seconds`（0.5）和
+  `section_end_gap_seconds`（1.0）自动应用；不再逐条写 cue_timing 间隔。
 - Unity 按课程 DSP 时钟播放连续 PCM 块，cue 标记驱动字幕、视觉与导航。
 - [完整制作流程](../docs/tutorial/audio-timeline-pipeline.md)、
   [数据协议](../docs/tutorial/cue-timeline-protocol.md)、

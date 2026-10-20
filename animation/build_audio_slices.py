@@ -361,10 +361,16 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                     effective_end = _round(bound_end - lead)
 
         subtitles: list[dict] = []
+        last_subtitle_index = (
+            subtitle_specs[-1]["index"] if subtitle_specs else None)
         for subtitle_spec in subtitle_specs:
             subtitle_index = subtitle_spec["index"]
             start = max(float(subtitle_spec["start"]), effective_start)
             end = min(float(subtitle_spec["end"]), effective_end)
+            if (measured_speech_end
+                    and speech_end is not None
+                    and subtitle_index == last_subtitle_index):
+                end = max(end, min(speech_end, effective_end))
             if end <= start:
                 continue
             start_ref = f"{slice_id}.subtitle.{subtitle_index}.start"

@@ -204,6 +204,8 @@ TIMING_POLICY_GLOBAL_KEYS = frozenset({
     "audio_slice_manifest",
     "script_source",
     "default_mode",
+    "inter_cue_gap_seconds",
+    "section_end_gap_seconds",
 })
 VISUAL_SEGMENT_KEYS = frozenset({
     "id",
@@ -488,6 +490,15 @@ def _load_timing_policy(repo_root: Path, game: str, track: str) -> dict:
     if document.get("track") not in (None, track):
         raise BuildError(f"{path}: track mismatch")
     _validate_timing_policy_scope(document, path)
+    for key in ("inter_cue_gap_seconds", "section_end_gap_seconds"):
+        if key not in document:
+            continue
+        value = document.get(key)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise BuildError(f"{path}: {key} must be numeric")
+        number = float(value)
+        if not math.isfinite(number) or number < 0.0:
+            raise BuildError(f"{path}: {key} must be finite and >= 0")
     return document
 
 
@@ -870,6 +881,7 @@ def _build_cue_plan_set_from_audio_slices(
     runtime: dict,
     compiled: dict,
     policy_document: dict,
+    auto_post_speech_gaps: dict[str, float] | None = None,
 ) -> dict:
     """Build plans only from refs in the fixed logical audio-slice timeline.
 
@@ -1112,12 +1124,29 @@ def _build_cue_plan_set_from_audio_slices(
                 last_speech_end = cursor + duration
             cursor += duration
 
-        post_speech_target = option.get("post_speech_silence_seconds")
+        raw_options = (slice_doc.get("cue_timing") or {}).get(cue_id, {})
+        explicit_post = (
+            isinstance(raw_options, dict)
+            and "post_speech_silence_seconds" in raw_options)
+        explicit_trailing = (
+            isinstance(raw_options, dict)
+            and "trailing_silence_seconds" in raw_options)
+        if explicit_post:
+            post_speech_target = float(
+                raw_options["post_speech_silence_seconds"])
+        elif explicit_trailing:
+            post_speech_target = None
+        else:
+            post_speech_target = (
+                auto_post_speech_gaps.get(cue_id)
+                if auto_post_speech_gaps is not None else None)
         if post_speech_target is not None:
             existing_tail = max(0.0, cursor - last_speech_end)
             trailing = max(0.0, float(post_speech_target) - existing_tail)
+        elif explicit_trailing:
+            trailing = float(raw_options["trailing_silence_seconds"])
         else:
-            trailing = float(option.get("trailing_silence_seconds", 0.0))
+            trailing = 0.0
         if trailing > 0.0:
             audio_segments.append({
                 "id": "audio.trailing_silence",
@@ -1307,8 +1336,31 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
                 "audio_slice_manifest; legacy runtime timing is not a "
                 f"runtime cue-time source (got {audio_source!r})")
         default_mode = str(timing_policy.get("default_mode") or "max").strip()
+        inter_cue_gap = float(
+            timing_policy.get("inter_cue_gap_seconds", 0.0))
+        section_end_gap = float(
+            timing_policy.get("section_end_gap_seconds", 0.0))
+        runtime_cues = [
+            cue for cue in runtime.get("cues") or []
+            if isinstance(cue, dict)
+        ]
+        auto_post_speech_gaps: dict[str, float] = {}
+        for index, cue in enumerate(runtime_cues):
+            cue_id = str(cue.get("id") or "").strip()
+            if not cue_id:
+                continue
+            current_section = cue.get("section")
+            next_section = (
+                runtime_cues[index + 1].get("section")
+                if index + 1 < len(runtime_cues) else None)
+            is_section_end = (
+                index + 1 == len(runtime_cues)
+                or current_section != next_section)
+            auto_post_speech_gaps[cue_id] = (
+                section_end_gap if is_section_end else inter_cue_gap)
         document = _build_cue_plan_set_from_audio_slices(
-            repo_root, game, track, runtime, compiled, timing_policy)
+            repo_root, game, track, runtime, compiled, timing_policy,
+            auto_post_speech_gaps=auto_post_speech_gaps)
         slice_rel = str(
             timing_policy.get("audio_slice_manifest") or "").strip()
         slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)

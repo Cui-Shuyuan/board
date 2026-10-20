@@ -37,11 +37,11 @@ content/games/splendor/tutorial/{full,quick}.cue-timeline.json           课程 
   整条 plan 缺失/非法时，两端使用整轨 runtime 兼容模式。
 - `CueCoursePlaybackController` 管理课程位置，`UnityCourseAudioTransport`
   调度连续 PCM 块；cue 标记驱动字幕、视觉与章节进度。
-- full 时长 636.860 秒，音频规划为 83 个块；
-  quick 时长 199.206 秒，音频规划为 32 个块。每条 cue 先按 PCM 能量
-  首尾时间戳在两侧各留 0.1 秒 guard，再追加显式反应停顿，因此不再合并
-  跨 cue 的连续音频块。full/quick 都使用能量边界审查，避免 ASR word
-  timing 偏离首尾导致裁字。
+- full 时长 634.170 秒，音频规划为 83 个块；
+  quick 时长 201.168 秒，音频规划为 32 个块。所有 cue 都有独立 MP3，
+  不再从共享连续音频中间硬切。间隔由 timing-policy 自动应用：普通 cue
+  0.5 秒，section 最后一条 cue 1.0 秒；每条 cue 仍按 PCM 能量首尾时间戳
+  在两侧各留 0.1 秒 guard。
 - 当前编译基线：full 83 cue / 14 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令

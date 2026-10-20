@@ -6,5 +6,7 @@
   "audio_source": "audio_slice_manifest",
   "audio_slice_manifest": "tutorial/quick.audio-slices.json",
   "script_source": "tutorial/build/quick.script.json",
-  "default_mode": "max"
+  "default_mode": "max",
+  "inter_cue_gap_seconds": 0.5,
+  "section_end_gap_seconds": 1.0
 }
