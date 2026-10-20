@@ -18,12 +18,12 @@
     {
       "left_slice": "setup_cards__001.1",
       "right_slice": "setup_cards__001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_cards__001.2",
       "right_slice": "setup_cards__002.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_gems__title_2_2",
@@ -33,17 +33,17 @@
     {
       "left_slice": "setup_gems__001.1",
       "right_slice": "setup_gems__002",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_gems__002",
       "right_slice": "setup_gems__003.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_gems__003.1",
       "right_slice": "setup_gems__005.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_players__title_2_3",
@@ -53,17 +53,17 @@
     {
       "left_slice": "setup_players__nobles.001.1",
       "right_slice": "setup_players__nobles.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_players__nobles.001.2",
       "right_slice": "setup_players__nobles.002",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_players__nobles.002",
       "right_slice": "setup_players__title_2_4",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_players__title_2_4",
@@ -73,12 +73,12 @@
     {
       "left_slice": "setup_players__starting.001.1",
       "right_slice": "setup_players__starting.001.3",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_players__starting.001.3",
       "right_slice": "setup_players__title_2_5",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "setup_players__title_2_5",
@@ -93,7 +93,7 @@
     {
       "left_slice": "turn__001",
       "right_slice": "turn__002",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__title_3_1",
@@ -103,42 +103,42 @@
     {
       "left_slice": "take_gems__different.001",
       "right_slice": "take_gems__same.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__same.001",
       "right_slice": "take_gems__same.002",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__same.002",
       "right_slice": "take_gems__draw_rule.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__draw_rule.001.1",
       "right_slice": "take_gems__draw_rule.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__draw_rule.001.2",
       "right_slice": "take_gems__limit.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__limit.001.1",
       "right_slice": "take_gems__limit.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__limit.001.2",
       "right_slice": "take_gems__public.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "take_gems__public.001.1",
       "right_slice": "take_gems__public.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__title_3_2_1",
@@ -148,62 +148,62 @@
     {
       "left_slice": "cards__intro.001",
       "right_slice": "cards__cost.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__cost.001.1",
       "right_slice": "cards__cost.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__cost.001.2",
       "right_slice": "cards__market.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__market.001.1",
       "right_slice": "cards__market.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__market.001.2",
       "right_slice": "cards__prestige.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__prestige.001.1",
       "right_slice": "cards__prestige.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__prestige.001.2",
       "right_slice": "cards__discount.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__discount.001",
       "right_slice": "cards__discount.002.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__discount.002.1",
       "right_slice": "cards__discount.003.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__discount.003.1",
       "right_slice": "cards__discount.003.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__discount.003.2",
       "right_slice": "cards__public.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "cards__public.001.1",
       "right_slice": "cards__limit.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__title_3_2_2",
@@ -213,47 +213,47 @@
     {
       "left_slice": "nobles__intro.001",
       "right_slice": "nobles__trigger.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__trigger.001.1",
       "right_slice": "nobles__forced.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__forced.001.1",
       "right_slice": "nobles__source.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__source.001",
       "right_slice": "nobles__choice.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__choice.001.1",
       "right_slice": "nobles__repeat.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__repeat.001.1",
       "right_slice": "nobles__repeat.001.3",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__repeat.001.3",
       "right_slice": "nobles__summary.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__summary.001.1",
       "right_slice": "nobles__summary.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "nobles__summary.001.2",
       "right_slice": "nobles__summary.001.3",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__title_3_3",
@@ -263,42 +263,42 @@
     {
       "left_slice": "reserve__intro.001.1",
       "right_slice": "reserve__gold.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__gold.001",
       "right_slice": "reserve__deck.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__deck.001",
       "right_slice": "reserve__notes_intro.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__notes_intro.001",
       "right_slice": "reserve__limit_gold.001.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__limit_gold.001.2",
       "right_slice": "reserve__limit_hand.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__limit_hand.001.1",
       "right_slice": "reserve__private.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__private.001.1",
       "right_slice": "reserve__private.002",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "reserve__private.002",
       "right_slice": "reserve__not_purchase.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "purchase_reserved__title_3_4",
@@ -313,12 +313,12 @@
     {
       "left_slice": "summary__001",
       "right_slice": "summary__002.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "summary__002.1",
       "right_slice": "summary__002.2",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "end__title_4",
@@ -328,27 +328,27 @@
     {
       "left_slice": "end__trigger.001",
       "right_slice": "end__final_rounds.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "end__final_rounds.001.1",
       "right_slice": "end__example.001.1",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "end__example.001.1",
       "right_slice": "end__winner.001",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "end__winner.001",
       "right_slice": "end__winner.002",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     },
     {
       "left_slice": "end__winner.002",
       "right_slice": "end__winner.003",
-      "kind": "continuous"
+      "kind": "trimmed_tail"
     }
   ],
   "cue_timing": {
@@ -360,7 +360,9 @@
     },
     "intro/001": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup/title_2": {
       "mode": "audio",
@@ -376,15 +378,21 @@
     },
     "setup_cards/001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_cards/001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_cards/002.1": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_gems/title_2_2": {
       "mode": "audio",
@@ -394,19 +402,27 @@
     },
     "setup_gems/001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_gems/002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_gems/003.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_gems/005.2": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_players/title_2_3": {
       "mode": "audio",
@@ -416,15 +432,21 @@
     },
     "setup_players/nobles.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_players/nobles.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_players/nobles.002": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_players/title_2_4": {
       "mode": "audio",
@@ -434,11 +456,15 @@
     },
     "setup_players/starting.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_players/starting.001.3": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "setup_players/title_2_5": {
       "mode": "audio",
@@ -448,7 +474,9 @@
     },
     "setup_players/end.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "turn/title_3": {
       "mode": "audio",
@@ -458,11 +486,15 @@
     },
     "turn/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "turn/002": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/title_3_1": {
       "mode": "audio",
@@ -472,39 +504,57 @@
     },
     "take_gems/different.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/same.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/same.002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/draw_rule.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/draw_rule.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/limit.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/limit.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/public.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "take_gems/public.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards_group/title_3_2": {
       "mode": "audio",
@@ -520,55 +570,81 @@
     },
     "cards/intro.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/cost.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/cost.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/market.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/market.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/prestige.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/prestige.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/discount.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/discount.002.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/discount.003.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/discount.003.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/public.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "cards/limit.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/title_3_2_2": {
       "mode": "audio",
@@ -578,43 +654,63 @@
     },
     "nobles/intro.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/trigger.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/forced.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/source.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/choice.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/repeat.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/repeat.001.3": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/summary.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/summary.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "nobles/summary.001.3": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/title_3_3": {
       "mode": "audio",
@@ -624,39 +720,57 @@
     },
     "reserve/intro.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/gold.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/deck.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/notes_intro.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/limit_gold.001.2": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/limit_hand.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/private.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/private.002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "reserve/not_purchase.001": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "purchase_reserved/title_3_4": {
       "mode": "audio",
@@ -666,7 +780,9 @@
     },
     "purchase_reserved/001": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "summary/title_3_5": {
       "mode": "audio",
@@ -676,15 +792,21 @@
     },
     "summary/001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "summary/002.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "summary/002.2": {
       "mode": "max",
-      "trailing_silence_seconds": 1.0
+      "trailing_silence_seconds": 1.0,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "end/title_4": {
       "mode": "audio",
@@ -694,27 +816,39 @@
     },
     "end/trigger.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "end/final_rounds.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "end/example.001.1": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "end/winner.001": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "end/winner.002": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     },
     "end/winner.003": {
       "mode": "max",
-      "trailing_silence_seconds": 0.5
+      "trailing_silence_seconds": 0.5,
+      "trim_to_speech_end": true,
+      "trim_tail_guard_seconds": 0.08
     }
   },
   "audio_groups": {
@@ -1031,7 +1165,7 @@
       "description": "subtitle start"
     },
     "intro__001.subtitle.3.end": {
-      "time": 16.338,
+      "time": 16.035,
       "description": "subtitle end"
     },
     "intro__001.start": {
@@ -1039,7 +1173,7 @@
       "description": "logical slice start"
     },
     "intro__001.end": {
-      "time": 16.338,
+      "time": 16.035,
       "description": "logical slice end"
     },
     "intro__001.speech_end": {
@@ -1119,7 +1253,7 @@
       "description": "subtitle start"
     },
     "setup_cards__001.1.subtitle.0.end": {
-      "time": 5.17,
+      "time": 4.915,
       "description": "subtitle end"
     },
     "setup_cards__001.1.start": {
@@ -1127,7 +1261,7 @@
       "description": "logical slice start"
     },
     "setup_cards__001.1.end": {
-      "time": 5.17,
+      "time": 4.915,
       "description": "logical slice end"
     },
     "setup_cards__001.1.speech_end": {
@@ -1167,7 +1301,7 @@
       "description": "subtitle start"
     },
     "setup_cards__001.2.subtitle.3.end": {
-      "time": 17.855,
+      "time": 17.135,
       "description": "subtitle end"
     },
     "setup_cards__001.2.start": {
@@ -1175,7 +1309,7 @@
       "description": "logical slice start"
     },
     "setup_cards__001.2.end": {
-      "time": 17.855,
+      "time": 17.135,
       "description": "logical slice end"
     },
     "setup_cards__001.2.speech_end": {
@@ -1215,7 +1349,7 @@
       "description": "subtitle start"
     },
     "setup_cards__002.1.subtitle.2.end": {
-      "time": 30.09,
+      "time": 29.915,
       "description": "subtitle end"
     },
     "setup_cards__002.1.start": {
@@ -1223,7 +1357,7 @@
       "description": "logical slice start"
     },
     "setup_cards__002.1.end": {
-      "time": 30.09,
+      "time": 29.915,
       "description": "logical slice end"
     },
     "setup_cards__002.1.speech_end": {
@@ -1295,7 +1429,7 @@
       "description": "subtitle start"
     },
     "setup_gems__001.1.subtitle.2.end": {
-      "time": 16.005,
+      "time": 15.725,
       "description": "subtitle end"
     },
     "setup_gems__001.1.start": {
@@ -1303,7 +1437,7 @@
       "description": "logical slice start"
     },
     "setup_gems__001.1.end": {
-      "time": 16.005,
+      "time": 15.725,
       "description": "logical slice end"
     },
     "setup_gems__001.1.speech_end": {
@@ -1335,7 +1469,7 @@
       "description": "subtitle start"
     },
     "setup_gems__002.subtitle.1.end": {
-      "time": 21.945,
+      "time": 21.775,
       "description": "subtitle end"
     },
     "setup_gems__002.start": {
@@ -1343,7 +1477,7 @@
       "description": "logical slice start"
     },
     "setup_gems__002.end": {
-      "time": 21.945,
+      "time": 21.775,
       "description": "logical slice end"
     },
     "setup_gems__002.speech_end": {
@@ -1399,7 +1533,7 @@
       "description": "subtitle start"
     },
     "setup_gems__003.1.subtitle.4.end": {
-      "time": 40.499,
+      "time": 40.254,
       "description": "subtitle end"
     },
     "setup_gems__003.1.start": {
@@ -1407,7 +1541,7 @@
       "description": "logical slice start"
     },
     "setup_gems__003.1.end": {
-      "time": 40.499,
+      "time": 40.254,
       "description": "logical slice end"
     },
     "setup_gems__003.1.speech_end": {
@@ -1439,7 +1573,7 @@
       "description": "subtitle start"
     },
     "setup_gems__005.2.subtitle.1.end": {
-      "time": 46.77,
+      "time": 46.594,
       "description": "subtitle end"
     },
     "setup_gems__005.2.start": {
@@ -1447,7 +1581,7 @@
       "description": "logical slice start"
     },
     "setup_gems__005.2.end": {
-      "time": 46.77,
+      "time": 46.594,
       "description": "logical slice end"
     },
     "setup_gems__005.2.speech_end": {
@@ -1503,7 +1637,7 @@
       "description": "subtitle start"
     },
     "setup_players__nobles.001.1.subtitle.0.end": {
-      "time": 3.86,
+      "time": 3.695,
       "description": "subtitle end"
     },
     "setup_players__nobles.001.1.start": {
@@ -1511,7 +1645,7 @@
       "description": "logical slice start"
     },
     "setup_players__nobles.001.1.end": {
-      "time": 3.86,
+      "time": 3.695,
       "description": "logical slice end"
     },
     "setup_players__nobles.001.1.speech_end": {
@@ -1535,7 +1669,7 @@
       "description": "subtitle start"
     },
     "setup_players__nobles.001.2.subtitle.1.end": {
-      "time": 12.875,
+      "time": 12.285,
       "description": "subtitle end"
     },
     "setup_players__nobles.001.2.start": {
@@ -1543,7 +1677,7 @@
       "description": "logical slice start"
     },
     "setup_players__nobles.001.2.end": {
-      "time": 12.875,
+      "time": 12.285,
       "description": "logical slice end"
     },
     "setup_players__nobles.001.2.speech_end": {
@@ -1559,7 +1693,7 @@
       "description": "subtitle start"
     },
     "setup_players__nobles.002.subtitle.0.end": {
-      "time": 20.055,
+      "time": 19.365,
       "description": "subtitle end"
     },
     "setup_players__nobles.002.start": {
@@ -1567,7 +1701,7 @@
       "description": "logical slice start"
     },
     "setup_players__nobles.002.end": {
-      "time": 20.055,
+      "time": 19.365,
       "description": "logical slice end"
     },
     "setup_players__nobles.002.speech_end": {
@@ -1623,7 +1757,7 @@
       "description": "subtitle start"
     },
     "setup_players__starting.001.1.subtitle.1.end": {
-      "time": 31.754,
+      "time": 31.515,
       "description": "subtitle end"
     },
     "setup_players__starting.001.1.start": {
@@ -1631,7 +1765,7 @@
       "description": "logical slice start"
     },
     "setup_players__starting.001.1.end": {
-      "time": 31.754,
+      "time": 31.515,
       "description": "logical slice end"
     },
     "setup_players__starting.001.1.speech_end": {
@@ -1655,7 +1789,7 @@
       "description": "subtitle start"
     },
     "setup_players__starting.001.3.subtitle.1.end": {
-      "time": 35.694,
+      "time": 35.599,
       "description": "subtitle end"
     },
     "setup_players__starting.001.3.start": {
@@ -1663,7 +1797,7 @@
       "description": "logical slice start"
     },
     "setup_players__starting.001.3.end": {
-      "time": 35.694,
+      "time": 35.599,
       "description": "logical slice end"
     },
     "setup_players__starting.001.3.speech_end": {
@@ -1727,7 +1861,7 @@
       "description": "subtitle start"
     },
     "setup_players__end.001.1.subtitle.1.end": {
-      "time": 42.906,
+      "time": 42.85,
       "description": "subtitle end"
     },
     "setup_players__end.001.1.start": {
@@ -1735,7 +1869,7 @@
       "description": "logical slice start"
     },
     "setup_players__end.001.1.end": {
-      "time": 42.906,
+      "time": 42.85,
       "description": "logical slice end"
     },
     "setup_players__end.001.1.speech_end": {
@@ -1791,7 +1925,7 @@
       "description": "subtitle start"
     },
     "turn__001.subtitle.1.end": {
-      "time": 9.875,
+      "time": 9.565,
       "description": "subtitle end"
     },
     "turn__001.start": {
@@ -1799,7 +1933,7 @@
       "description": "logical slice start"
     },
     "turn__001.end": {
-      "time": 9.875,
+      "time": 9.565,
       "description": "logical slice end"
     },
     "turn__001.speech_end": {
@@ -1823,7 +1957,7 @@
       "description": "subtitle start"
     },
     "turn__002.subtitle.0.end": {
-      "time": 14.922,
+      "time": 14.285,
       "description": "subtitle end"
     },
     "turn__002.start": {
@@ -1831,7 +1965,7 @@
       "description": "logical slice start"
     },
     "turn__002.end": {
-      "time": 14.922,
+      "time": 14.285,
       "description": "logical slice end"
     },
     "turn__002.speech_end": {
@@ -1879,7 +2013,7 @@
       "description": "subtitle start"
     },
     "take_gems__different.001.subtitle.0.end": {
-      "time": 8.545,
+      "time": 8.315,
       "description": "subtitle end"
     },
     "take_gems__different.001.start": {
@@ -1887,7 +2021,7 @@
       "description": "logical slice start"
     },
     "take_gems__different.001.end": {
-      "time": 8.545,
+      "time": 8.315,
       "description": "logical slice end"
     },
     "take_gems__different.001.speech_end": {
@@ -1919,7 +2053,7 @@
       "description": "subtitle start"
     },
     "take_gems__same.001.subtitle.1.end": {
-      "time": 15.205,
+      "time": 15.055,
       "description": "subtitle end"
     },
     "take_gems__same.001.start": {
@@ -1927,7 +2061,7 @@
       "description": "logical slice start"
     },
     "take_gems__same.001.end": {
-      "time": 15.205,
+      "time": 15.055,
       "description": "logical slice end"
     },
     "take_gems__same.001.speech_end": {
@@ -1959,7 +2093,7 @@
       "description": "subtitle start"
     },
     "take_gems__same.002.subtitle.1.end": {
-      "time": 21.895,
+      "time": 21.685,
       "description": "subtitle end"
     },
     "take_gems__same.002.start": {
@@ -1967,7 +2101,7 @@
       "description": "logical slice start"
     },
     "take_gems__same.002.end": {
-      "time": 21.895,
+      "time": 21.685,
       "description": "logical slice end"
     },
     "take_gems__same.002.speech_end": {
@@ -1983,7 +2117,7 @@
       "description": "subtitle start"
     },
     "take_gems__draw_rule.001.1.subtitle.0.end": {
-      "time": 28.405,
+      "time": 27.755,
       "description": "subtitle end"
     },
     "take_gems__draw_rule.001.1.start": {
@@ -1991,7 +2125,7 @@
       "description": "logical slice start"
     },
     "take_gems__draw_rule.001.1.end": {
-      "time": 28.405,
+      "time": 27.755,
       "description": "logical slice end"
     },
     "take_gems__draw_rule.001.1.speech_end": {
@@ -2015,7 +2149,7 @@
       "description": "subtitle start"
     },
     "take_gems__draw_rule.001.2.subtitle.0.end": {
-      "time": 32.199,
+      "time": 31.905,
       "description": "subtitle end"
     },
     "take_gems__draw_rule.001.2.start": {
@@ -2023,7 +2157,7 @@
       "description": "logical slice start"
     },
     "take_gems__draw_rule.001.2.end": {
-      "time": 32.199,
+      "time": 31.905,
       "description": "logical slice end"
     },
     "take_gems__draw_rule.001.2.speech_end": {
@@ -2055,7 +2189,7 @@
       "description": "subtitle start"
     },
     "take_gems__limit.001.1.subtitle.1.end": {
-      "time": 38.514,
+      "time": 38.564,
       "description": "subtitle end"
     },
     "take_gems__limit.001.1.start": {
@@ -2063,7 +2197,7 @@
       "description": "logical slice start"
     },
     "take_gems__limit.001.1.end": {
-      "time": 38.514,
+      "time": 38.564,
       "description": "logical slice end"
     },
     "take_gems__limit.001.1.speech_end": {
@@ -2087,15 +2221,15 @@
       "description": "subtitle start"
     },
     "take_gems__limit.001.2.subtitle.0.end": {
-      "time": 44.594,
+      "time": 43.894,
       "description": "subtitle end"
     },
     "take_gems__limit.001.2.start": {
-      "time": 38.514,
+      "time": 38.564,
       "description": "logical slice start"
     },
     "take_gems__limit.001.2.end": {
-      "time": 44.594,
+      "time": 43.894,
       "description": "logical slice end"
     },
     "take_gems__limit.001.2.speech_end": {
@@ -2119,7 +2253,7 @@
       "description": "subtitle start"
     },
     "take_gems__public.001.1.subtitle.0.end": {
-      "time": 50.344,
+      "time": 50.354,
       "description": "subtitle end"
     },
     "take_gems__public.001.1.start": {
@@ -2127,7 +2261,7 @@
       "description": "logical slice start"
     },
     "take_gems__public.001.1.end": {
-      "time": 50.344,
+      "time": 50.354,
       "description": "logical slice end"
     },
     "take_gems__public.001.1.speech_end": {
@@ -2143,15 +2277,15 @@
       "description": "subtitle start"
     },
     "take_gems__public.001.2.subtitle.0.end": {
-      "time": 52.722,
+      "time": 52.284,
       "description": "subtitle end"
     },
     "take_gems__public.001.2.start": {
-      "time": 50.344,
+      "time": 50.354,
       "description": "logical slice start"
     },
     "take_gems__public.001.2.end": {
-      "time": 52.722,
+      "time": 52.284,
       "description": "logical slice end"
     },
     "take_gems__public.001.2.speech_end": {
@@ -2239,7 +2373,7 @@
       "description": "subtitle start"
     },
     "cards__intro.001.subtitle.0.end": {
-      "time": 5.935,
+      "time": 5.655,
       "description": "subtitle end"
     },
     "cards__intro.001.start": {
@@ -2247,7 +2381,7 @@
       "description": "logical slice start"
     },
     "cards__intro.001.end": {
-      "time": 5.935,
+      "time": 5.655,
       "description": "logical slice end"
     },
     "cards__intro.001.speech_end": {
@@ -2271,7 +2405,7 @@
       "description": "subtitle start"
     },
     "cards__cost.001.1.subtitle.1.end": {
-      "time": 9.88,
+      "time": 9.865,
       "description": "subtitle end"
     },
     "cards__cost.001.1.start": {
@@ -2279,7 +2413,7 @@
       "description": "logical slice start"
     },
     "cards__cost.001.1.end": {
-      "time": 9.88,
+      "time": 9.865,
       "description": "logical slice end"
     },
     "cards__cost.001.1.speech_end": {
@@ -2303,7 +2437,7 @@
       "description": "subtitle start"
     },
     "cards__cost.001.2.subtitle.1.end": {
-      "time": 20.575,
+      "time": 20.29,
       "description": "subtitle end"
     },
     "cards__cost.001.2.start": {
@@ -2311,7 +2445,7 @@
       "description": "logical slice start"
     },
     "cards__cost.001.2.end": {
-      "time": 20.575,
+      "time": 20.29,
       "description": "logical slice end"
     },
     "cards__cost.001.2.speech_end": {
@@ -2343,7 +2477,7 @@
       "description": "subtitle start"
     },
     "cards__market.001.1.subtitle.1.end": {
-      "time": 35.905,
+      "time": 35.705,
       "description": "subtitle end"
     },
     "cards__market.001.1.start": {
@@ -2351,7 +2485,7 @@
       "description": "logical slice start"
     },
     "cards__market.001.1.end": {
-      "time": 35.905,
+      "time": 35.705,
       "description": "logical slice end"
     },
     "cards__market.001.1.speech_end": {
@@ -2375,7 +2509,7 @@
       "description": "subtitle start"
     },
     "cards__market.001.2.subtitle.0.end": {
-      "time": 43.519,
+      "time": 42.825,
       "description": "subtitle end"
     },
     "cards__market.001.2.start": {
@@ -2383,7 +2517,7 @@
       "description": "logical slice start"
     },
     "cards__market.001.2.end": {
-      "time": 43.519,
+      "time": 42.825,
       "description": "logical slice end"
     },
     "cards__market.001.2.speech_end": {
@@ -2415,7 +2549,7 @@
       "description": "subtitle start"
     },
     "cards__prestige.001.1.subtitle.1.end": {
-      "time": 50.194,
+      "time": 50.079,
       "description": "subtitle end"
     },
     "cards__prestige.001.1.start": {
@@ -2423,7 +2557,7 @@
       "description": "logical slice start"
     },
     "cards__prestige.001.1.end": {
-      "time": 50.194,
+      "time": 50.079,
       "description": "logical slice end"
     },
     "cards__prestige.001.1.speech_end": {
@@ -2455,7 +2589,7 @@
       "description": "subtitle start"
     },
     "cards__prestige.001.2.subtitle.1.end": {
-      "time": 56.149,
+      "time": 55.869,
       "description": "subtitle end"
     },
     "cards__prestige.001.2.start": {
@@ -2463,7 +2597,7 @@
       "description": "logical slice start"
     },
     "cards__prestige.001.2.end": {
-      "time": 56.149,
+      "time": 55.869,
       "description": "logical slice end"
     },
     "cards__prestige.001.2.speech_end": {
@@ -2479,7 +2613,7 @@
       "description": "subtitle start"
     },
     "cards__discount.001.subtitle.0.end": {
-      "time": 63.789,
+      "time": 63.499,
       "description": "subtitle end"
     },
     "cards__discount.001.start": {
@@ -2487,7 +2621,7 @@
       "description": "logical slice start"
     },
     "cards__discount.001.end": {
-      "time": 63.789,
+      "time": 63.499,
       "description": "logical slice end"
     },
     "cards__discount.001.speech_end": {
@@ -2511,7 +2645,7 @@
       "description": "subtitle start"
     },
     "cards__discount.002.1.subtitle.0.end": {
-      "time": 75.264,
+      "time": 74.634,
       "description": "subtitle end"
     },
     "cards__discount.002.1.start": {
@@ -2519,7 +2653,7 @@
       "description": "logical slice start"
     },
     "cards__discount.002.1.end": {
-      "time": 75.264,
+      "time": 74.634,
       "description": "logical slice end"
     },
     "cards__discount.002.1.speech_end": {
@@ -2543,7 +2677,7 @@
       "description": "subtitle start"
     },
     "cards__discount.003.1.subtitle.0.end": {
-      "time": 83.159,
+      "time": 83.044,
       "description": "subtitle end"
     },
     "cards__discount.003.1.start": {
@@ -2551,7 +2685,7 @@
       "description": "logical slice start"
     },
     "cards__discount.003.1.end": {
-      "time": 83.159,
+      "time": 83.044,
       "description": "logical slice end"
     },
     "cards__discount.003.1.speech_end": {
@@ -2575,7 +2709,7 @@
       "description": "subtitle start"
     },
     "cards__discount.003.2.subtitle.0.end": {
-      "time": 91.513,
+      "time": 91.134,
       "description": "subtitle end"
     },
     "cards__discount.003.2.start": {
@@ -2583,7 +2717,7 @@
       "description": "logical slice start"
     },
     "cards__discount.003.2.end": {
-      "time": 91.513,
+      "time": 91.134,
       "description": "logical slice end"
     },
     "cards__discount.003.2.speech_end": {
@@ -2599,7 +2733,7 @@
       "description": "subtitle start"
     },
     "cards__public.001.1.subtitle.0.end": {
-      "time": 103.758,
+      "time": 103.078,
       "description": "subtitle end"
     },
     "cards__public.001.1.start": {
@@ -2607,7 +2741,7 @@
       "description": "logical slice start"
     },
     "cards__public.001.1.end": {
-      "time": 103.758,
+      "time": 103.078,
       "description": "logical slice end"
     },
     "cards__public.001.1.speech_end": {
@@ -2631,7 +2765,7 @@
       "description": "subtitle start"
     },
     "cards__limit.001.1.subtitle.0.end": {
-      "time": 112.41,
+      "time": 112.218,
       "description": "subtitle end"
     },
     "cards__limit.001.1.start": {
@@ -2639,7 +2773,7 @@
       "description": "logical slice start"
     },
     "cards__limit.001.1.end": {
-      "time": 112.41,
+      "time": 112.218,
       "description": "logical slice end"
     },
     "cards__limit.001.1.speech_end": {
@@ -2711,7 +2845,7 @@
       "description": "subtitle start"
     },
     "nobles__intro.001.subtitle.3.end": {
-      "time": 13.835,
+      "time": 13.245,
       "description": "subtitle end"
     },
     "nobles__intro.001.start": {
@@ -2719,7 +2853,7 @@
       "description": "logical slice start"
     },
     "nobles__intro.001.end": {
-      "time": 13.835,
+      "time": 13.245,
       "description": "logical slice end"
     },
     "nobles__intro.001.speech_end": {
@@ -2743,7 +2877,7 @@
       "description": "subtitle start"
     },
     "nobles__trigger.001.1.subtitle.0.end": {
-      "time": 26.055,
+      "time": 25.875,
       "description": "subtitle end"
     },
     "nobles__trigger.001.1.start": {
@@ -2751,7 +2885,7 @@
       "description": "logical slice start"
     },
     "nobles__trigger.001.1.end": {
-      "time": 26.055,
+      "time": 25.875,
       "description": "logical slice end"
     },
     "nobles__trigger.001.1.speech_end": {
@@ -2783,7 +2917,7 @@
       "description": "subtitle start"
     },
     "nobles__forced.001.1.subtitle.1.end": {
-      "time": 37.754,
+      "time": 37.554,
       "description": "subtitle end"
     },
     "nobles__forced.001.1.start": {
@@ -2791,7 +2925,7 @@
       "description": "logical slice start"
     },
     "nobles__forced.001.1.end": {
-      "time": 37.754,
+      "time": 37.554,
       "description": "logical slice end"
     },
     "nobles__forced.001.1.speech_end": {
@@ -2815,7 +2949,7 @@
       "description": "subtitle start"
     },
     "nobles__source.001.subtitle.0.end": {
-      "time": 42.814,
+      "time": 42.154,
       "description": "subtitle end"
     },
     "nobles__source.001.start": {
@@ -2823,7 +2957,7 @@
       "description": "logical slice start"
     },
     "nobles__source.001.end": {
-      "time": 42.814,
+      "time": 42.154,
       "description": "logical slice end"
     },
     "nobles__source.001.speech_end": {
@@ -2847,7 +2981,7 @@
       "description": "subtitle start"
     },
     "nobles__choice.001.1.subtitle.0.end": {
-      "time": 51.569,
+      "time": 51.444,
       "description": "subtitle end"
     },
     "nobles__choice.001.1.start": {
@@ -2855,7 +2989,7 @@
       "description": "logical slice start"
     },
     "nobles__choice.001.1.end": {
-      "time": 51.569,
+      "time": 51.444,
       "description": "logical slice end"
     },
     "nobles__choice.001.1.speech_end": {
@@ -2879,7 +3013,7 @@
       "description": "subtitle start"
     },
     "nobles__repeat.001.1.subtitle.0.end": {
-      "time": 63.499,
+      "time": 63.344,
       "description": "subtitle end"
     },
     "nobles__repeat.001.1.start": {
@@ -2887,7 +3021,7 @@
       "description": "logical slice start"
     },
     "nobles__repeat.001.1.end": {
-      "time": 63.499,
+      "time": 63.344,
       "description": "logical slice end"
     },
     "nobles__repeat.001.1.speech_end": {
@@ -2911,7 +3045,7 @@
       "description": "subtitle start"
     },
     "nobles__repeat.001.3.subtitle.0.end": {
-      "time": 69.86,
+      "time": 69.704,
       "description": "subtitle end"
     },
     "nobles__repeat.001.3.start": {
@@ -2919,7 +3053,7 @@
       "description": "logical slice start"
     },
     "nobles__repeat.001.3.end": {
-      "time": 69.86,
+      "time": 69.704,
       "description": "logical slice end"
     },
     "nobles__repeat.001.3.speech_end": {
@@ -2935,7 +3069,7 @@
       "description": "subtitle start"
     },
     "nobles__summary.001.1.subtitle.0.end": {
-      "time": 74.465,
+      "time": 74.394,
       "description": "subtitle end"
     },
     "nobles__summary.001.1.start": {
@@ -2943,7 +3077,7 @@
       "description": "logical slice start"
     },
     "nobles__summary.001.1.end": {
-      "time": 74.465,
+      "time": 74.394,
       "description": "logical slice end"
     },
     "nobles__summary.001.1.speech_end": {
@@ -2959,7 +3093,7 @@
       "description": "subtitle start"
     },
     "nobles__summary.001.2.subtitle.0.end": {
-      "time": 78.735,
+      "time": 78.364,
       "description": "subtitle end"
     },
     "nobles__summary.001.2.start": {
@@ -2967,7 +3101,7 @@
       "description": "logical slice start"
     },
     "nobles__summary.001.2.end": {
-      "time": 78.735,
+      "time": 78.364,
       "description": "logical slice end"
     },
     "nobles__summary.001.2.speech_end": {
@@ -2983,7 +3117,7 @@
       "description": "subtitle start"
     },
     "nobles__summary.001.3.subtitle.0.end": {
-      "time": 85.074,
+      "time": 85.045,
       "description": "subtitle end"
     },
     "nobles__summary.001.3.start": {
@@ -2991,7 +3125,7 @@
       "description": "logical slice start"
     },
     "nobles__summary.001.3.end": {
-      "time": 85.074,
+      "time": 85.045,
       "description": "logical slice end"
     },
     "nobles__summary.001.3.speech_end": {
@@ -3055,7 +3189,7 @@
       "description": "subtitle start"
     },
     "reserve__intro.001.1.subtitle.2.end": {
-      "time": 14.535,
+      "time": 13.695,
       "description": "subtitle end"
     },
     "reserve__intro.001.1.start": {
@@ -3063,7 +3197,7 @@
       "description": "logical slice start"
     },
     "reserve__intro.001.1.end": {
-      "time": 14.535,
+      "time": 13.695,
       "description": "logical slice end"
     },
     "reserve__intro.001.1.speech_end": {
@@ -3095,7 +3229,7 @@
       "description": "subtitle start"
     },
     "reserve__gold.001.subtitle.1.end": {
-      "time": 21.71,
+      "time": 21.475,
       "description": "subtitle end"
     },
     "reserve__gold.001.start": {
@@ -3103,7 +3237,7 @@
       "description": "logical slice start"
     },
     "reserve__gold.001.end": {
-      "time": 21.71,
+      "time": 21.475,
       "description": "logical slice end"
     },
     "reserve__gold.001.speech_end": {
@@ -3127,7 +3261,7 @@
       "description": "subtitle start"
     },
     "reserve__deck.001.subtitle.0.end": {
-      "time": 29.355,
+      "time": 28.695,
       "description": "subtitle end"
     },
     "reserve__deck.001.start": {
@@ -3135,7 +3269,7 @@
       "description": "logical slice start"
     },
     "reserve__deck.001.end": {
-      "time": 29.355,
+      "time": 28.695,
       "description": "logical slice end"
     },
     "reserve__deck.001.speech_end": {
@@ -3159,7 +3293,7 @@
       "description": "subtitle start"
     },
     "reserve__notes_intro.001.subtitle.0.end": {
-      "time": 38.042,
+      "time": 37.845,
       "description": "subtitle end"
     },
     "reserve__notes_intro.001.start": {
@@ -3167,7 +3301,7 @@
       "description": "logical slice start"
     },
     "reserve__notes_intro.001.end": {
-      "time": 38.042,
+      "time": 37.845,
       "description": "logical slice end"
     },
     "reserve__notes_intro.001.speech_end": {
@@ -3191,7 +3325,7 @@
       "description": "subtitle start"
     },
     "reserve__limit_gold.001.2.subtitle.0.end": {
-      "time": 43.652,
+      "time": 42.952,
       "description": "subtitle end"
     },
     "reserve__limit_gold.001.2.start": {
@@ -3199,7 +3333,7 @@
       "description": "logical slice start"
     },
     "reserve__limit_gold.001.2.end": {
-      "time": 43.652,
+      "time": 42.952,
       "description": "logical slice end"
     },
     "reserve__limit_gold.001.2.speech_end": {
@@ -3231,7 +3365,7 @@
       "description": "subtitle start"
     },
     "reserve__limit_hand.001.1.subtitle.1.end": {
-      "time": 51.837,
+      "time": 51.612,
       "description": "subtitle end"
     },
     "reserve__limit_hand.001.1.start": {
@@ -3239,7 +3373,7 @@
       "description": "logical slice start"
     },
     "reserve__limit_hand.001.1.end": {
-      "time": 51.837,
+      "time": 51.612,
       "description": "logical slice end"
     },
     "reserve__limit_hand.001.1.speech_end": {
@@ -3271,7 +3405,7 @@
       "description": "subtitle start"
     },
     "reserve__private.001.1.subtitle.1.end": {
-      "time": 62.947,
+      "time": 62.743,
       "description": "subtitle end"
     },
     "reserve__private.001.1.start": {
@@ -3279,7 +3413,7 @@
       "description": "logical slice start"
     },
     "reserve__private.001.1.end": {
-      "time": 62.947,
+      "time": 62.743,
       "description": "logical slice end"
     },
     "reserve__private.001.1.speech_end": {
@@ -3295,7 +3429,7 @@
       "description": "subtitle start"
     },
     "reserve__private.002.subtitle.0.end": {
-      "time": 69.127,
+      "time": 68.962,
       "description": "subtitle end"
     },
     "reserve__private.002.start": {
@@ -3303,7 +3437,7 @@
       "description": "logical slice start"
     },
     "reserve__private.002.end": {
-      "time": 69.127,
+      "time": 68.962,
       "description": "logical slice end"
     },
     "reserve__private.002.speech_end": {
@@ -3327,7 +3461,7 @@
       "description": "subtitle start"
     },
     "reserve__not_purchase.001.subtitle.0.end": {
-      "time": 75.834,
+      "time": 75.432,
       "description": "subtitle end"
     },
     "reserve__not_purchase.001.start": {
@@ -3335,7 +3469,7 @@
       "description": "logical slice start"
     },
     "reserve__not_purchase.001.end": {
-      "time": 75.834,
+      "time": 75.432,
       "description": "logical slice end"
     },
     "reserve__not_purchase.001.speech_end": {
@@ -3423,7 +3557,7 @@
       "description": "subtitle start"
     },
     "purchase_reserved__001.subtitle.5.end": {
-      "time": 23.514,
+      "time": 23.505,
       "description": "subtitle end"
     },
     "purchase_reserved__001.start": {
@@ -3431,7 +3565,7 @@
       "description": "logical slice start"
     },
     "purchase_reserved__001.end": {
-      "time": 23.514,
+      "time": 23.505,
       "description": "logical slice end"
     },
     "purchase_reserved__001.speech_end": {
@@ -3495,7 +3629,7 @@
       "description": "subtitle start"
     },
     "summary__001.subtitle.1.end": {
-      "time": 10.325,
+      "time": 10.125,
       "description": "subtitle end"
     },
     "summary__001.start": {
@@ -3503,7 +3637,7 @@
       "description": "logical slice start"
     },
     "summary__001.end": {
-      "time": 10.325,
+      "time": 10.125,
       "description": "logical slice end"
     },
     "summary__001.speech_end": {
@@ -3535,7 +3669,7 @@
       "description": "subtitle start"
     },
     "summary__002.1.subtitle.2.end": {
-      "time": 19.305,
+      "time": 18.425,
       "description": "subtitle end"
     },
     "summary__002.1.start": {
@@ -3543,7 +3677,7 @@
       "description": "logical slice start"
     },
     "summary__002.1.end": {
-      "time": 19.305,
+      "time": 18.425,
       "description": "logical slice end"
     },
     "summary__002.1.speech_end": {
@@ -3559,7 +3693,7 @@
       "description": "subtitle start"
     },
     "summary__002.2.subtitle.0.end": {
-      "time": 22.554,
+      "time": 22.485,
       "description": "subtitle end"
     },
     "summary__002.2.start": {
@@ -3567,7 +3701,7 @@
       "description": "logical slice start"
     },
     "summary__002.2.end": {
-      "time": 22.554,
+      "time": 22.485,
       "description": "logical slice end"
     },
     "summary__002.2.speech_end": {
@@ -3615,7 +3749,7 @@
       "description": "subtitle start"
     },
     "end__trigger.001.subtitle.0.end": {
-      "time": 7.125,
+      "time": 6.835,
       "description": "subtitle end"
     },
     "end__trigger.001.start": {
@@ -3623,7 +3757,7 @@
       "description": "logical slice start"
     },
     "end__trigger.001.end": {
-      "time": 7.125,
+      "time": 6.835,
       "description": "logical slice end"
     },
     "end__trigger.001.speech_end": {
@@ -3663,7 +3797,7 @@
       "description": "subtitle start"
     },
     "end__final_rounds.001.1.subtitle.2.end": {
-      "time": 17.605,
+      "time": 16.985,
       "description": "subtitle end"
     },
     "end__final_rounds.001.1.start": {
@@ -3671,7 +3805,7 @@
       "description": "logical slice start"
     },
     "end__final_rounds.001.1.end": {
-      "time": 17.605,
+      "time": 16.985,
       "description": "logical slice end"
     },
     "end__final_rounds.001.1.speech_end": {
@@ -3703,7 +3837,7 @@
       "description": "subtitle start"
     },
     "end__example.001.1.subtitle.2.end": {
-      "time": 34.635,
+      "time": 34.495,
       "description": "subtitle end"
     },
     "end__example.001.1.start": {
@@ -3711,7 +3845,7 @@
       "description": "logical slice start"
     },
     "end__example.001.1.end": {
-      "time": 34.635,
+      "time": 34.495,
       "description": "logical slice end"
     },
     "end__example.001.1.speech_end": {
@@ -3735,7 +3869,7 @@
       "description": "subtitle start"
     },
     "end__winner.001.subtitle.1.end": {
-      "time": 42.79,
+      "time": 42.57,
       "description": "subtitle end"
     },
     "end__winner.001.start": {
@@ -3743,7 +3877,7 @@
       "description": "logical slice start"
     },
     "end__winner.001.end": {
-      "time": 42.79,
+      "time": 42.57,
       "description": "logical slice end"
     },
     "end__winner.001.speech_end": {
@@ -3775,7 +3909,7 @@
       "description": "subtitle start"
     },
     "end__winner.002.subtitle.1.end": {
-      "time": 55.02,
+      "time": 54.82,
       "description": "subtitle end"
     },
     "end__winner.002.start": {
@@ -3783,7 +3917,7 @@
       "description": "logical slice start"
     },
     "end__winner.002.end": {
-      "time": 55.02,
+      "time": 54.82,
       "description": "logical slice end"
     },
     "end__winner.002.speech_end": {
@@ -3815,7 +3949,7 @@
       "description": "subtitle start"
     },
     "end__winner.003.subtitle.1.end": {
-      "time": 65.754,
+      "time": 65.616,
       "description": "subtitle end"
     },
     "end__winner.003.start": {
@@ -3823,7 +3957,7 @@
       "description": "logical slice start"
     },
     "end__winner.003.end": {
-      "time": 65.754,
+      "time": 65.616,
       "description": "logical slice end"
     },
     "end__winner.003.speech_end": {

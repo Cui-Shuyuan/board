@@ -121,9 +121,17 @@ def _join_source_boundaries(ranges: list[dict], points: dict, cues: dict) -> lis
             kind = "continuous"
         else:
             # Do not remove authored silence or restore an intentionally
-            # trimmed title tail. Reject overlap instead of duplicating words.
+            # trimmed tail.  A trimmed left tail can leave less than the full
+            # source-context lead before the right cue's first word; clamp the
+            # right start to the left end rather than dropping the left trim or
+            # duplicating source samples.
             if end > start + 1e-7:
-                raise BuildError(f"context lead overlaps preceding audio: {left['cue']} -> {right['cue']}")
+                if not left["trimmed"] or end > right["raw_start"] + 1e-7:
+                    raise BuildError(
+                        f"context lead overlaps preceding audio: "
+                        f"{left['cue']} -> {right['cue']}")
+                points[start_ref]["time"] = _round(end)
+                start = _round(end)
             kind = "trimmed_tail" if left["trimmed"] else "authored_gap"
         contracts.append({
             "left_slice": left_slice["id"],

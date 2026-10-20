@@ -151,9 +151,16 @@ def _track_content_end(plan: dict, kind: str) -> float:
     return end
 
 
-def _trim_visual_to_duration(plan: dict, duration: float) -> None:
+def _trim_tracks_to_duration(plan: dict, duration: float) -> None:
+    """Clip visual and subtitle presentation segments to the cue clock.
+
+    A cue tail trim can make the audio clock shorter than the source caption
+    window.  Subtitles are presentation-only, so truncating them at the final
+    cue duration is safe and keeps the plan validator's cue-local bounds true.
+    """
     for track in plan.get("tracks") or []:
-        if not isinstance(track, dict) or track.get("kind") != "visual":
+        if not isinstance(track, dict) or track.get("kind") not in (
+                "visual", "subtitle"):
             continue
         kept_segments = []
         for segment in track.get("segments") or []:
@@ -168,7 +175,7 @@ def _trim_visual_to_duration(plan: dict, duration: float) -> None:
                 source_end = float(segment["source_end"])
                 if source_end - source_start > remain:
                     segment["source_end"] = round(source_start + remain, 9)
-            elif segment.get("type") in ("hold", "state"):
+            elif segment.get("type") in ("hold", "state", "subtitle"):
                 if float(segment.get("duration", 0.0)) > remain:
                     segment["duration"] = round(remain, 9)
             kept_segments.append(segment)
@@ -370,8 +377,7 @@ def _apply_timing_policy(
         if new_duration <= 0.0:
             raise BuildError(
                 f"timing policy cue {cue_id!r} produced a non-positive duration")
-        if new_duration < visual_end - 1e-9:
-            _trim_visual_to_duration(plan, new_duration)
+        _trim_tracks_to_duration(plan, new_duration)
         for track_plan in plan.get("tracks") or []:
             if not isinstance(track_plan, dict) or track_plan.get("kind") != "visual":
                 continue
