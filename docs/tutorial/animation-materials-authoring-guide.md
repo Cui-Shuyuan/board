@@ -138,10 +138,12 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
    - `audio`：音频轨道为准，用于标题 cue；
    - `visual`：画面为准，裁剪音频则构建失败。
 5. 标题策略使用 `trim_to_speech_end: true` 和
-   `trailing_silence_seconds: 1.0`；full 的尾部 guard 为 0.08 秒，
-   quick 使用默认值 0。full 导入器为标题与正文保留最多
-   0.15 秒前置上下文，并统一相邻连续源切点。`source_boundary_contracts`
-   记录并校验连续、显式裁尾和作者留空关系。
+   `trailing_silence_seconds: 0.5`；full 的尾部 guard 为 0.08 秒，
+   quick 使用默认值 0。正文 cue 也在 `cue_timing` 中显式追加
+   `trailing_silence_seconds: 0.5`；若下一 cue 是章节标题 cue，则当前
+   正文 cue 追加 1.0 秒，让章节切换前多留一点反应时间。full 导入器为
+   标题与正文保留最多 0.15 秒前置上下文，并统一相邻连续源切点。
+   `source_boundary_contracts` 记录并校验连续、显式裁尾和作者留空关系。
 6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
    subtitle refs 生成。播放器从课程 DSP 位置派生 cue-local 时间，同步字幕、
    视觉和连续音频。

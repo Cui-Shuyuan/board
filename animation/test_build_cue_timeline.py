@@ -179,6 +179,23 @@ class BuildCueTimelineTests(unittest.TestCase):
             item for item in plan["tracks"] if item["kind"] == "audio")
         return track["segments"]
 
+    @staticmethod
+    def _audio_track_content_end(track: dict) -> float:
+        end = 0.0
+        for segment in track["segments"]:
+            cue_start = float(segment.get("cue_start", 0.0))
+            if segment["type"] == "silence":
+                content_end = cue_start + float(segment["duration"])
+            elif segment["type"] == "audio_clip":
+                content_end = (
+                    cue_start
+                    + float(segment["source_end"])
+                    - float(segment["source_start"]))
+            else:
+                continue
+            end = max(end, content_end)
+        return end
+
     # ── core build / determinism ────────────────────────────────────────
 
     def test_build_is_complete_validated_and_byte_deterministic(self) -> None:
@@ -977,7 +994,7 @@ class BuildCueTimelineTests(unittest.TestCase):
                 track for track in cue["tracks"] if track["kind"] == "audio")
             self.assertEqual(audio_track["segments"][-1]["type"], "silence")
             self.assertAlmostEqual(
-                audio_track["segments"][-1]["duration"], 1.0, places=9)
+                audio_track["segments"][-1]["duration"], 0.5, places=9)
             self.assertTrue(
                 (ROOT / "content" / "games" / "splendor"
                  / audio_segment["asset"]).is_file())
@@ -1178,20 +1195,64 @@ class BuildCueTimelineTests(unittest.TestCase):
             self.assertEqual(policy["mode"], "audio")
             self.assertIs(policy["trim_to_speech_end"], True)
             self.assertAlmostEqual(
-                policy["trailing_silence_seconds"], 1.0, places=9)
+                policy["trailing_silence_seconds"], 0.5, places=9)
             self.assertAlmostEqual(
                 policy["trim_tail_guard_seconds"], 0.08, places=9)
             audio_track = next(
                 track for track in cue["tracks"] if track["kind"] == "audio")
             self.assertEqual(audio_track["segments"][-1]["type"], "silence")
             self.assertAlmostEqual(
-                audio_track["segments"][-1]["duration"], 1.0, places=9)
+                audio_track["segments"][-1]["duration"], 0.5, places=9)
             self.assertAlmostEqual(
                 audio_track["segments"][-1]["cue_start"],
                 audio_track["segments"][0]["source_end"]
                 - audio_track["segments"][0]["source_start"],
                 places=9,
             )
+
+    def test_all_splendor_cues_end_with_requested_reaction_pause(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        for track in ("quick", "full"):
+            slices = json.loads(
+                (tutorial / f"{track}.audio-slices.json").read_text(
+                    encoding="utf-8"))
+            plan = json.loads(
+                (tutorial / f"{track}.cue-timeline.json").read_text(
+                    encoding="utf-8"))
+            cue_ids = [cue["cue_id"] for cue in plan["cues"]]
+            self.assertTrue(cue_ids)
+            for index, cue in enumerate(plan["cues"]):
+                cue_id = cue["cue_id"]
+                local_id = cue_id.rsplit("/", 1)[-1]
+                is_chapter = local_id.startswith("title_")
+                next_is_chapter = (
+                    index + 1 < len(cue_ids)
+                    and cue_ids[index + 1].rsplit("/", 1)[-1]
+                    .startswith("title_")
+                )
+                expected_pause = (
+                    0.5 if is_chapter or not next_is_chapter else 1.0)
+                with self.subTest(track=track, cue=cue_id):
+                    policy = slices["cue_timing"][cue_id]
+                    self.assertAlmostEqual(
+                        policy["trailing_silence_seconds"],
+                        expected_pause,
+                        places=9,
+                    )
+                    audio_track = next(
+                        item for item in cue["tracks"]
+                        if item["kind"] == "audio")
+                    last_segment = audio_track["segments"][-1]
+                    self.assertEqual(last_segment["type"], "silence")
+                    self.assertAlmostEqual(
+                        last_segment["duration"], expected_pause, places=9)
+                    self.assertAlmostEqual(
+                        last_segment["cue_start"]
+                        + last_segment["duration"],
+                        self._audio_track_content_end(audio_track),
+                        places=9,
+                    )
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (

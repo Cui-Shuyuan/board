@@ -355,98 +355,366 @@
     "intro/title_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "intro/001": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "setup/title_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
     },
     "setup_cards/title_2_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "setup_cards/001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_cards/001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_cards/002.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "setup_gems/title_2_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "setup_gems/001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_gems/002": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_gems/003.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_gems/005.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "setup_players/title_2_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "setup_players/nobles.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_players/nobles.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_players/nobles.002": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "setup_players/title_2_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "setup_players/starting.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "setup_players/starting.001.3": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "setup_players/title_2_5": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "setup_players/end.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "turn/title_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "turn/001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "turn/002": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "take_gems/title_3_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "take_gems/different.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/same.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/same.002": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/draw_rule.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/draw_rule.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/limit.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/limit.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/public.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "take_gems/public.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "cards_group/title_3_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
     },
     "cards/title_3_2_1": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "cards/intro.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/cost.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/cost.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/market.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/market.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/prestige.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/prestige.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/discount.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/discount.002.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/discount.003.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/discount.003.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/public.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "cards/limit.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "nobles/title_3_2_2": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "nobles/intro.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/trigger.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/forced.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/source.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/choice.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/repeat.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/repeat.001.3": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/summary.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/summary.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "nobles/summary.001.3": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "reserve/title_3_3": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "reserve/intro.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/gold.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/deck.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/notes_intro.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/limit_gold.001.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/limit_hand.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/private.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/private.002": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "reserve/not_purchase.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "purchase_reserved/title_3_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "purchase_reserved/001": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "summary/title_3_5": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "summary/001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "summary/002.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "summary/002.2": {
+      "mode": "max",
+      "trailing_silence_seconds": 1.0
     },
     "end/title_4": {
       "mode": "audio",
       "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0,
+      "trailing_silence_seconds": 0.5,
       "trim_tail_guard_seconds": 0.08
+    },
+    "end/trigger.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "end/final_rounds.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "end/example.001.1": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "end/winner.001": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "end/winner.002": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
+    },
+    "end/winner.003": {
+      "mode": "max",
+      "trailing_silence_seconds": 0.5
     }
   },
   "audio_groups": {

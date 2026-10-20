@@ -41,8 +41,8 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
-| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 197.008 秒 |
-| full | section TTS 与独立父章节标题素材 | 83 | 607.408 秒 |
+| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 204.322 秒 |
+| full | section TTS 与独立父章节标题素材 | 83 | 638.603 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
 `cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
@@ -102,13 +102,15 @@ full 的切片导入器 `animation/build_audio_slices.py` 采用以下规则：
 声明采样率决定固定文件的采样边界校验精度。
 
 full 标题使用 `mode: audio`、`trim_to_speech_end: true`、
-`trim_tail_guard_seconds: 0.08` 和 `trailing_silence_seconds: 1.0`。
+`trim_tail_guard_seconds: 0.08` 和 `trailing_silence_seconds: 0.5`。
 编译器检查有效 speech end 与非空源区间，再追加显式 silence 段。
 `setup_players/title_2_4` 的源区间为 `[20.055, 21.385)`，
-cue 时长为 2.33 秒。
+cue 时长为 1.83 秒。
 
-quick 标题同样采用音频时长与 1 秒尾静音，当前
-`trim_tail_guard_seconds` 使用默认值 0。具体值以各 track 的固定文件为准。
+quick 标题同样采用音频时长与 0.5 秒尾静音，当前
+`trim_tail_guard_seconds` 使用默认值 0。正文 cue 也在 `cue_timing`
+中统一追加 0.5 秒尾静音；如果正文 cue 的下一 cue 是章节标题，则追加
+1.0 秒。具体值以各 track 的固定文件为准。
 
 ## 时长、字幕与视觉
 
