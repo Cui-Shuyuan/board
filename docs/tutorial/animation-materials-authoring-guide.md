@@ -157,10 +157,11 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
 6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
    subtitle refs 生成。播放器从课程 DSP 位置派生 cue-local 时间，同步字幕、
    视觉和连续音频。
-7. 如果连续 section TTS 中某个标题和正文之间的换气不能被硬切，可用
-   `{track}.cue-audio-overrides.json` 把相关 cue 指向单独生成的 MP3 和
-   字幕文件；每条 cue 使用自己的 `audio_start=0`，同时仍按 PCM 能量首尾
-   时间戳裁切。
+7. 每个章节标题 cue 都应是独立 MP3。quick 本身按 cue-level TTS 生成；
+   full 的章节标题通过 `{track}.cue-audio-overrides.json` 指向单独生成的
+   标题音频和字幕。若标题后的正文换气也不能被硬切，可以像 intro 一样把
+   两条 cue 都独立成 MP3；每条 cue 使用自己的 `audio_start=0`，同时仍按
+   PCM 能量首尾时间戳裁切。
 8. 构建入口：
 
 ```bash

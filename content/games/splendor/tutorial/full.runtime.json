@@ -57,7 +57,7 @@
         "setup_cards/001.2",
         "setup_cards/002.1"
       ],
-      "duration": 30.24
+      "duration": 30.004
     },
     {
       "id": "setup_gems",
@@ -69,7 +69,7 @@
       "order": 3,
       "asset": "setup.gems",
       "audio": "media/tts/full/setup.gems.mp3",
-      "start": 48.792,
+      "start": 48.556,
       "cue_ids": [
         "setup_gems/title_2_2",
         "setup_gems/001.1",
@@ -77,7 +77,7 @@
         "setup_gems/003.1",
         "setup_gems/005.2"
       ],
-      "duration": 46.92
+      "duration": 46.618
     },
     {
       "id": "setup_players",
@@ -89,7 +89,7 @@
       "order": 4,
       "asset": "setup.players",
       "audio": "media/tts/full/setup.players.mp3",
-      "start": 95.712,
+      "start": 95.174,
       "cue_ids": [
         "setup_players/title_2_3",
         "setup_players/nobles.001.1",
@@ -101,7 +101,7 @@
         "setup_players/title_2_5",
         "setup_players/end.001.1"
       ],
-      "duration": 43.056
+      "duration": 43.926
     },
     {
       "id": "turn",
@@ -112,13 +112,13 @@
       "order": 5,
       "asset": "action.turn",
       "audio": "media/tts/full/action.turn.mp3",
-      "start": 138.768,
+      "start": 139.1,
       "cue_ids": [
         "turn/title_3",
         "turn/001",
         "turn/002"
       ],
-      "duration": 15.072
+      "duration": 14.714
     },
     {
       "id": "take_gems",
@@ -130,7 +130,7 @@
       "order": 6,
       "asset": "action.take",
       "audio": "media/tts/full/action.take.mp3",
-      "start": 153.84,
+      "start": 153.814,
       "cue_ids": [
         "take_gems/title_3_1",
         "take_gems/different.001",
@@ -143,7 +143,7 @@
         "take_gems/public.001.1",
         "take_gems/public.001.2"
       ],
-      "duration": 52.872
+      "duration": 52.83
     },
     {
       "id": "cards_group",
@@ -155,7 +155,7 @@
       "order": 7,
       "asset": "action.cards.group",
       "audio": "media/tts/full/action.cards.group.mp3",
-      "start": 206.712,
+      "start": 206.644,
       "cue_ids": [
         "cards_group/title_3_2"
       ],
@@ -172,7 +172,7 @@
       "order": 8,
       "asset": "action.cards",
       "audio": "media/tts/full/action.cards.mp3",
-      "start": 210.168,
+      "start": 210.1,
       "cue_ids": [
         "cards/title_3_2_1",
         "cards/intro.001",
@@ -189,7 +189,7 @@
         "cards/public.001.1",
         "cards/limit.001.1"
       ],
-      "duration": 112.56
+      "duration": 111.935
     },
     {
       "id": "nobles",
@@ -202,7 +202,7 @@
       "order": 9,
       "asset": "action.nobles",
       "audio": "media/tts/full/action.nobles.mp3",
-      "start": 322.728,
+      "start": 322.035,
       "cue_ids": [
         "nobles/title_3_2_2",
         "nobles/intro.001",
@@ -216,7 +216,7 @@
         "nobles/summary.001.2",
         "nobles/summary.001.3"
       ],
-      "duration": 85.224
+      "duration": 84.538
     },
     {
       "id": "reserve",
@@ -228,7 +228,7 @@
       "order": 10,
       "asset": "action.reserve",
       "audio": "media/tts/full/action.reserve.mp3",
-      "start": 407.952,
+      "start": 406.573,
       "cue_ids": [
         "reserve/title_3_3",
         "reserve/intro.001.1",
@@ -241,7 +241,7 @@
         "reserve/private.002",
         "reserve/not_purchase.001"
       ],
-      "duration": 75.984
+      "duration": 75.964
     },
     {
       "id": "purchase_reserved",
@@ -253,12 +253,12 @@
       "order": 11,
       "asset": "action.purchase_reserved",
       "audio": "media/tts/full/action.purchase_reserved.mp3",
-      "start": 483.936,
+      "start": 482.537,
       "cue_ids": [
         "purchase_reserved/title_3_4",
         "purchase_reserved/001"
       ],
-      "duration": 23.664
+      "duration": 23.129
     },
     {
       "id": "summary",
@@ -270,14 +270,14 @@
       "order": 12,
       "asset": "action.summary",
       "audio": "media/tts/full/action.summary.mp3",
-      "start": 507.6,
+      "start": 505.666,
       "cue_ids": [
         "summary/title_3_5",
         "summary/001",
         "summary/002.1",
         "summary/002.2"
       ],
-      "duration": 22.704
+      "duration": 22.564
     },
     {
       "id": "end",
@@ -288,7 +288,7 @@
       "order": 13,
       "asset": "endgame",
       "audio": "media/tts/full/endgame.mp3",
-      "start": 530.304,
+      "start": 528.23,
       "cue_ids": [
         "end/title_4",
         "end/trigger.001",
@@ -298,7 +298,7 @@
         "end/winner.002",
         "end/winner.003"
       ],
-      "duration": 65.904
+      "duration": 65.67
     }
   ],
   "cues": [
@@ -860,46 +860,46 @@
         "2.1 发展卡牌"
       ],
       "text": "2.1，发展卡牌。",
-      "audio": "media/tts/full/setup.cards.mp3",
+      "audio": "media/tts/full/chapters/setup_cards__title_2_1.b1.mp3",
       "audio_start": 0.0,
-      "duration": 2.66,
+      "duration": 2.424,
       "start": 18.552,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 2.66,
+          "t": 0.925,
+          "end": 2.245,
           "text": "2.1，发展卡牌。",
           "words": [
             {
               "word": "2.1，",
-              "start": 0.855,
-              "end": 0.885,
-              "confidence": 0.2574
+              "start": 0.925,
+              "end": 0.955,
+              "confidence": 0.2204
             },
             {
               "word": "发",
-              "start": 1.075,
-              "end": 1.335,
-              "confidence": 0.9701
+              "start": 1.235,
+              "end": 1.495,
+              "confidence": 0.9596
             },
             {
               "word": "展",
-              "start": 1.335,
-              "end": 1.485,
-              "confidence": 0.8409
+              "start": 1.495,
+              "end": 1.645,
+              "confidence": 0.8141
             },
             {
               "word": "卡",
-              "start": 1.485,
-              "end": 1.695,
-              "confidence": 0.9005
+              "start": 1.645,
+              "end": 1.855,
+              "confidence": 0.9329
             },
             {
               "word": "牌。",
-              "start": 1.695,
-              "end": 2.065,
-              "confidence": 0.9412
+              "start": 1.855,
+              "end": 2.245,
+              "confidence": 0.9118
             }
           ]
         }
@@ -922,7 +922,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 2.66,
       "duration": 2.66,
-      "start": 21.212,
+      "start": 20.976,
       "refs": [
         "<development_card>",
         "rulebook:setup"
@@ -1008,7 +1008,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 5.32,
       "duration": 12.685,
-      "start": 23.872,
+      "start": 23.636,
       "refs": [
         "<development_card>",
         "rulebook:setup"
@@ -1385,7 +1385,7 @@
       "audio": "media/tts/full/setup.cards.mp3",
       "audio_start": 18.005,
       "duration": 12.235,
-      "start": 36.557,
+      "start": 36.321,
       "refs": [
         "flow:prepare_level_1_deck",
         "flow:prepare_level_2_deck",
@@ -1759,52 +1759,52 @@
         "2.2 宝石与黄金"
       ],
       "text": "2.2，宝石与黄金。",
-      "audio": "media/tts/full/setup.gems.mp3",
+      "audio": "media/tts/full/chapters/setup_gems__title_2_2.b1.mp3",
       "audio_start": 0.0,
-      "duration": 2.75,
-      "start": 48.792,
+      "duration": 2.448,
+      "start": 48.556,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.75,
+          "end": 2.225,
           "text": "2.2，宝石与黄金。",
           "words": [
             {
               "word": "2.2，",
-              "start": 0.785,
-              "end": 0.815,
-              "confidence": 0.2035
+              "start": 0.0,
+              "end": 0.045,
+              "confidence": 0.4937
             },
             {
               "word": "宝",
-              "start": 1.125,
-              "end": 1.305,
-              "confidence": 0.9771
+              "start": 1.185,
+              "end": 1.365,
+              "confidence": 0.9725
             },
             {
               "word": "石",
-              "start": 1.305,
-              "end": 1.555,
-              "confidence": 0.9466
+              "start": 1.365,
+              "end": 1.615,
+              "confidence": 0.932
             },
             {
               "word": "与",
-              "start": 1.555,
-              "end": 1.665,
-              "confidence": 0.8868
+              "start": 1.615,
+              "end": 1.755,
+              "confidence": 0.8155
             },
             {
               "word": "黄",
-              "start": 1.665,
-              "end": 1.895,
-              "confidence": 0.9
+              "start": 1.755,
+              "end": 1.985,
+              "confidence": 0.9025
             },
             {
               "word": "金。",
-              "start": 1.895,
-              "end": 2.205,
-              "confidence": 0.9422
+              "start": 1.985,
+              "end": 2.225,
+              "confidence": 0.9553
             }
           ]
         }
@@ -1827,7 +1827,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 2.75,
       "duration": 13.405,
-      "start": 51.542,
+      "start": 51.004,
       "refs": [
         "<gem>",
         "rulebook:setup"
@@ -2185,7 +2185,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 16.155,
       "duration": 5.94,
-      "start": 64.947,
+      "start": 64.409,
       "refs": [
         "<gold>",
         "rulebook:setup"
@@ -2386,7 +2386,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 22.095,
       "duration": 18.554,
-      "start": 70.887,
+      "start": 70.349,
       "refs": [
         "flow:distribute_gems"
       ],
@@ -2955,7 +2955,7 @@
       "audio": "media/tts/full/setup.gems.mp3",
       "audio_start": 40.649,
       "duration": 6.271,
-      "start": 89.441,
+      "start": 88.903,
       "refs": [
         "<gem_supply>",
         "<gold_supply>",
@@ -3161,46 +3161,46 @@
         "2.3 贵族板块"
       ],
       "text": "2.3，贵族板块。",
-      "audio": "media/tts/full/setup.players.mp3",
+      "audio": "media/tts/full/chapters/setup_players__title_2_3.b1.mp3",
       "audio_start": 0.0,
-      "duration": 2.57,
-      "start": 95.712,
+      "duration": 2.448,
+      "start": 95.174,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 2.57,
+          "end": 2.085,
           "text": "2.3，贵族板块。",
           "words": [
             {
               "word": "2.3，",
-              "start": 0.845,
-              "end": 0.875,
-              "confidence": 0.178
+              "start": 0.0,
+              "end": 0.045,
+              "confidence": 0.4823
             },
             {
               "word": "贵",
               "start": 1.275,
-              "end": 1.445,
-              "confidence": 0.9602
+              "end": 1.455,
+              "confidence": 0.9589
             },
             {
               "word": "族",
-              "start": 1.445,
-              "end": 1.575,
-              "confidence": 0.9115
+              "start": 1.455,
+              "end": 1.615,
+              "confidence": 0.928
             },
             {
               "word": "板",
-              "start": 1.575,
-              "end": 1.745,
-              "confidence": 0.9539
+              "start": 1.615,
+              "end": 1.785,
+              "confidence": 0.9691
             },
             {
               "word": "块。",
-              "start": 1.745,
-              "end": 2.015,
-              "confidence": 0.9782
+              "start": 1.785,
+              "end": 2.085,
+              "confidence": 0.9654
             }
           ]
         }
@@ -3223,7 +3223,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 2.57,
       "duration": 1.44,
-      "start": 98.282,
+      "start": 97.622,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3298,7 +3298,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 4.01,
       "duration": 9.015,
-      "start": 99.722,
+      "start": 99.062,
       "refs": [
         "<noble>",
         "<noble_market>",
@@ -3590,7 +3590,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 13.025,
       "duration": 7.18,
-      "start": 108.737,
+      "start": 108.077,
       "refs": [
         "flow:deal_nobles"
       ],
@@ -3816,46 +3816,46 @@
         "2.4 起始玩家"
       ],
       "text": "2.4，起始玩家。",
-      "audio": "media/tts/full/setup.players.mp3",
-      "audio_start": 20.205,
-      "duration": 1.62,
-      "start": 115.917,
+      "audio": "media/tts/full/chapters/setup_players__title_2_4.b1.mp3",
+      "audio_start": 0.0,
+      "duration": 2.256,
+      "start": 115.257,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 1.62,
+          "t": 0.825,
+          "end": 1.985,
           "text": "2.4，起始玩家。",
           "words": [
             {
               "word": "2.4，",
-              "start": 0.0,
-              "end": 0.03,
-              "confidence": 0.2009
+              "start": 0.825,
+              "end": 0.855,
+              "confidence": 0.188
             },
             {
               "word": "起",
-              "start": 0.31,
-              "end": 0.54,
-              "confidence": 0.7637
+              "start": 1.135,
+              "end": 1.375,
+              "confidence": 0.7725
             },
             {
               "word": "始",
-              "start": 0.54,
-              "end": 0.68,
-              "confidence": 0.7529
+              "start": 1.375,
+              "end": 1.555,
+              "confidence": 0.7524
             },
             {
               "word": "玩",
-              "start": 0.68,
-              "end": 0.84,
-              "confidence": 0.9735
+              "start": 1.555,
+              "end": 1.715,
+              "confidence": 0.98
             },
             {
               "word": "家。",
-              "start": 0.84,
-              "end": 1.1,
-              "confidence": 0.9534
+              "start": 1.715,
+              "end": 1.985,
+              "confidence": 0.9414
             }
           ]
         }
@@ -3878,7 +3878,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 21.825,
       "duration": 10.079,
-      "start": 117.537,
+      "start": 117.513,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -4218,7 +4218,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 31.904,
       "duration": 3.94,
-      "start": 127.616,
+      "start": 127.592,
       "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
@@ -4363,46 +4363,46 @@
         "2.5 设置完成"
       ],
       "text": "2.5，设置完成。",
-      "audio": "media/tts/full/setup.players.mp3",
-      "audio_start": 35.844,
-      "duration": 1.9,
-      "start": 131.556,
+      "audio": "media/tts/full/chapters/setup_players__title_2_5.b1.mp3",
+      "audio_start": 0.0,
+      "duration": 2.256,
+      "start": 131.532,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 1.9,
+          "t": 0.875,
+          "end": 1.875,
           "text": "2.5，设置完成。",
           "words": [
             {
               "word": "2.5，",
-              "start": 0.0,
-              "end": 0.045,
-              "confidence": 0.5882
+              "start": 0.875,
+              "end": 0.905,
+              "confidence": 0.2082
             },
             {
               "word": "设",
-              "start": 0.665,
-              "end": 0.905,
-              "confidence": 0.9653
+              "start": 1.035,
+              "end": 1.295,
+              "confidence": 0.973
             },
             {
               "word": "置",
-              "start": 0.905,
-              "end": 1.025,
-              "confidence": 0.929
+              "start": 1.295,
+              "end": 1.415,
+              "confidence": 0.8634
             },
             {
               "word": "完",
-              "start": 1.025,
-              "end": 1.185,
-              "confidence": 0.9631
+              "start": 1.415,
+              "end": 1.565,
+              "confidence": 0.9779
             },
             {
               "word": "成。",
-              "start": 1.185,
-              "end": 1.505,
-              "confidence": 0.9779
+              "start": 1.565,
+              "end": 1.875,
+              "confidence": 0.9786
             }
           ]
         }
@@ -4425,7 +4425,7 @@
       "audio": "media/tts/full/setup.players.mp3",
       "audio_start": 37.744,
       "duration": 5.312,
-      "start": 133.456,
+      "start": 133.788,
       "refs": [
         "rulebook:setup",
         "flow:main_gameplay"
@@ -4616,34 +4616,34 @@
         "3 行动"
       ],
       "text": "3，行动。",
-      "audio": "media/tts/full/action.turn.mp3",
+      "audio": "media/tts/full/chapters/turn__title_3.b1.mp3",
       "audio_start": 0.0,
-      "duration": 2.23,
-      "start": 138.768,
+      "duration": 1.872,
+      "start": 139.1,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 2.23,
+          "t": 0.355,
+          "end": 1.515,
           "text": "3，行动。",
           "words": [
             {
               "word": "3，",
               "start": 0.355,
               "end": 0.385,
-              "confidence": 0.2694
+              "confidence": 0.2372
             },
             {
               "word": "行",
               "start": 0.945,
-              "end": 1.245,
-              "confidence": 0.9147
+              "end": 1.325,
+              "confidence": 0.8704
             },
             {
               "word": "动。",
-              "start": 1.245,
-              "end": 1.495,
-              "confidence": 0.9749
+              "start": 1.325,
+              "end": 1.515,
+              "confidence": 0.9789
             }
           ]
         }
@@ -4665,7 +4665,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 2.23,
       "duration": 7.795,
-      "start": 140.998,
+      "start": 140.972,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -4914,7 +4914,7 @@
       "audio": "media/tts/full/action.turn.mp3",
       "audio_start": 10.025,
       "duration": 5.047,
-      "start": 148.793,
+      "start": 148.767,
       "refs": [
         "flow:action_phase"
       ],
@@ -5098,82 +5098,82 @@
         "3.1 从宝石供应堆拿取宝石"
       ],
       "text": "3.1，从宝石供应堆拿取宝石。",
-      "audio": "media/tts/full/action.take.mp3",
+      "audio": "media/tts/full/chapters/take_gems__title_3_1.b1.mp3",
       "audio_start": 0.0,
-      "duration": 3.93,
-      "start": 153.84,
+      "duration": 3.888,
+      "start": 153.814,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 3.93,
+          "t": 1.155,
+          "end": 3.565,
           "text": "3.1，从宝石供应堆拿取宝石。",
           "words": [
             {
               "word": "3.1，",
-              "start": 0.995,
-              "end": 1.025,
-              "confidence": 0.2688
+              "start": 1.155,
+              "end": 1.185,
+              "confidence": 0.3961
             },
             {
               "word": "从",
-              "start": 1.365,
-              "end": 1.685,
-              "confidence": 0.9668
+              "start": 1.335,
+              "end": 1.695,
+              "confidence": 0.9644
             },
             {
               "word": "宝",
-              "start": 1.685,
-              "end": 1.865,
-              "confidence": 0.9812
+              "start": 1.695,
+              "end": 1.875,
+              "confidence": 0.9873
             },
             {
               "word": "石",
-              "start": 1.865,
-              "end": 2.045,
-              "confidence": 0.9688
+              "start": 1.875,
+              "end": 2.075,
+              "confidence": 0.9673
             },
             {
               "word": "供",
-              "start": 2.045,
-              "end": 2.235,
-              "confidence": 0.9591
+              "start": 2.075,
+              "end": 2.265,
+              "confidence": 0.9435
             },
             {
               "word": "应",
-              "start": 2.235,
+              "start": 2.265,
               "end": 2.385,
-              "confidence": 0.8946
+              "confidence": 0.8281
             },
             {
               "word": "堆",
               "start": 2.385,
-              "end": 2.625,
-              "confidence": 0.8181
+              "end": 2.635,
+              "confidence": 0.8593
             },
             {
               "word": "拿",
-              "start": 2.625,
-              "end": 2.805,
-              "confidence": 0.9415
+              "start": 2.695,
+              "end": 2.905,
+              "confidence": 0.9589
             },
             {
               "word": "取",
-              "start": 2.805,
-              "end": 2.955,
-              "confidence": 0.7245
+              "start": 2.905,
+              "end": 3.065,
+              "confidence": 0.7715
             },
             {
               "word": "宝",
-              "start": 2.955,
-              "end": 3.135,
-              "confidence": 0.9417
+              "start": 3.065,
+              "end": 3.235,
+              "confidence": 0.9292
             },
             {
               "word": "石。",
-              "start": 3.135,
-              "end": 3.515,
-              "confidence": 0.9582
+              "start": 3.235,
+              "end": 3.565,
+              "confidence": 0.9629
             }
           ]
         }
@@ -5196,7 +5196,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 3.93,
       "duration": 4.765,
-      "start": 157.77,
+      "start": 157.702,
       "refs": [
         "<take_gems_different>",
         "flow:player_action_turn"
@@ -5366,7 +5366,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 8.695,
       "duration": 6.66,
-      "start": 162.535,
+      "start": 162.467,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5597,7 +5597,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 15.355,
       "duration": 6.69,
-      "start": 169.195,
+      "start": 169.127,
       "refs": [
         "<take_gems_same>",
         "<gems_available_same_color>"
@@ -5828,7 +5828,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 22.045,
       "duration": 6.51,
-      "start": 175.885,
+      "start": 175.817,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -6052,7 +6052,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 28.555,
       "duration": 3.794,
-      "start": 182.395,
+      "start": 182.327,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>"
@@ -6180,7 +6180,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 32.349,
       "duration": 6.315,
-      "start": 186.189,
+      "start": 186.121,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -6406,7 +6406,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 38.664,
       "duration": 6.08,
-      "start": 192.504,
+      "start": 192.436,
       "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
@@ -6613,7 +6613,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 44.744,
       "duration": 5.75,
-      "start": 198.584,
+      "start": 198.516,
       "refs": [
         "<player_holding>"
       ],
@@ -6818,7 +6818,7 @@
       "audio": "media/tts/full/action.take.mp3",
       "audio_start": 50.494,
       "duration": 2.378,
-      "start": 204.334,
+      "start": 204.266,
       "refs": [
         "<player_holding>"
       ],
@@ -6921,7 +6921,7 @@
       "audio": "media/tts/full/action.cards.group.mp3",
       "audio_start": 0.0,
       "duration": 3.456,
-      "start": 206.712,
+      "start": 206.644,
       "refs": [],
       "subtitles": [
         {
@@ -6996,58 +6996,58 @@
         "3.2.1 认识发展卡牌"
       ],
       "text": "3.2.1，认识发展卡牌。",
-      "audio": "media/tts/full/action.cards.mp3",
+      "audio": "media/tts/full/chapters/cards__title_3_2_1.b1.mp3",
       "audio_start": 0.0,
-      "duration": 3.865,
-      "start": 210.168,
+      "duration": 3.24,
+      "start": 210.1,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.865,
+          "end": 2.855,
           "text": "3.2.1，认识发展卡牌。",
           "words": [
             {
               "word": "3.2.1，",
-              "start": 1.415,
-              "end": 1.445,
-              "confidence": 0.2903
+              "start": 0.0,
+              "end": 0.045,
+              "confidence": 0.48
             },
             {
               "word": "认",
-              "start": 1.805,
-              "end": 2.025,
-              "confidence": 0.9294
+              "start": 1.575,
+              "end": 1.795,
+              "confidence": 0.9493
             },
             {
               "word": "识",
-              "start": 2.025,
-              "end": 2.265,
-              "confidence": 0.785
+              "start": 1.795,
+              "end": 2.015,
+              "confidence": 0.9782
             },
             {
               "word": "发",
-              "start": 2.265,
-              "end": 2.485,
-              "confidence": 0.9866
+              "start": 2.015,
+              "end": 2.195,
+              "confidence": 0.9088
             },
             {
               "word": "展",
-              "start": 2.485,
-              "end": 2.615,
-              "confidence": 0.908
+              "start": 2.195,
+              "end": 2.325,
+              "confidence": 0.8944
             },
             {
               "word": "卡",
-              "start": 2.615,
-              "end": 2.825,
-              "confidence": 0.9485
+              "start": 2.325,
+              "end": 2.515,
+              "confidence": 0.9628
             },
             {
               "word": "牌。",
-              "start": 2.825,
-              "end": 3.185,
-              "confidence": 0.9392
+              "start": 2.515,
+              "end": 2.855,
+              "confidence": 0.9494
             }
           ]
         }
@@ -7071,7 +7071,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 3.865,
       "duration": 2.22,
-      "start": 214.033,
+      "start": 213.34,
       "refs": [
         "<development_card>"
       ],
@@ -7163,7 +7163,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 6.085,
       "duration": 3.945,
-      "start": 216.253,
+      "start": 215.56,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -7306,7 +7306,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 10.03,
       "duration": 10.695,
-      "start": 220.198,
+      "start": 219.505,
       "refs": [
         "<development_card>",
         "<cost>",
@@ -7641,7 +7641,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 20.725,
       "duration": 15.33,
-      "start": 230.893,
+      "start": 230.2,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -8107,7 +8107,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 36.055,
       "duration": 7.614,
-      "start": 246.223,
+      "start": 245.53,
       "refs": [
         "<card_market>",
         "<refill_market>"
@@ -8344,7 +8344,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 43.669,
       "duration": 6.675,
-      "start": 253.837,
+      "start": 253.144,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -8564,7 +8564,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 50.344,
       "duration": 5.955,
-      "start": 260.512,
+      "start": 259.819,
       "refs": [
         "<development_card>",
         "<prestige_point>"
@@ -8772,7 +8772,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 56.299,
       "duration": 7.64,
-      "start": 266.467,
+      "start": 265.774,
       "refs": [
         "<discount>"
       ],
@@ -9020,7 +9020,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 63.939,
       "duration": 11.475,
-      "start": 274.107,
+      "start": 273.414,
       "refs": [
         "<discount>"
       ],
@@ -9382,7 +9382,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 75.414,
       "duration": 7.895,
-      "start": 285.582,
+      "start": 284.889,
       "refs": [
         "<discount>"
       ],
@@ -9642,7 +9642,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 83.309,
       "duration": 8.354,
-      "start": 293.477,
+      "start": 292.784,
       "refs": [
         "<discount>"
       ],
@@ -9908,7 +9908,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 91.663,
       "duration": 12.245,
-      "start": 301.831,
+      "start": 301.138,
       "refs": [
         "<development_area>"
       ],
@@ -10288,7 +10288,7 @@
       "audio": "media/tts/full/action.cards.mp3",
       "audio_start": 103.908,
       "duration": 8.652,
-      "start": 314.076,
+      "start": 313.383,
       "refs": [
         "<purchase_development_card>",
         "<development_area>"
@@ -10570,46 +10570,46 @@
         "3.2.2 贵族结算"
       ],
       "text": "3.2.2，贵族结算。",
-      "audio": "media/tts/full/action.nobles.mp3",
+      "audio": "media/tts/full/chapters/nobles__title_3_2_2.b1.mp3",
       "audio_start": 0.0,
-      "duration": 3.11,
-      "start": 322.728,
+      "duration": 2.424,
+      "start": 322.035,
       "refs": [],
       "subtitles": [
         {
           "t": 0.0,
-          "end": 3.11,
+          "end": 2.235,
           "text": "3.2.2，贵族结算。",
           "words": [
             {
               "word": "3.2.2，",
-              "start": 0.395,
-              "end": 0.425,
-              "confidence": 0.2274
+              "start": 0.0,
+              "end": 0.045,
+              "confidence": 0.4885
             },
             {
               "word": "贵",
-              "start": 1.805,
-              "end": 2.005,
-              "confidence": 0.9583
+              "start": 1.475,
+              "end": 1.665,
+              "confidence": 0.9445
             },
             {
               "word": "族",
-              "start": 2.005,
-              "end": 2.175,
-              "confidence": 0.944
+              "start": 1.665,
+              "end": 1.805,
+              "confidence": 0.9389
             },
             {
               "word": "结",
-              "start": 2.175,
-              "end": 2.375,
-              "confidence": 0.9696
+              "start": 1.805,
+              "end": 1.985,
+              "confidence": 0.9664
             },
             {
               "word": "算。",
-              "start": 2.375,
-              "end": 2.665,
-              "confidence": 0.9743
+              "start": 1.985,
+              "end": 2.235,
+              "confidence": 0.9495
             }
           ]
         }
@@ -10633,7 +10633,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 3.11,
       "duration": 10.875,
-      "start": 325.838,
+      "start": 324.459,
       "refs": [
         "<noble>",
         "<prestige_point>"
@@ -10987,7 +10987,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 13.985,
       "duration": 12.22,
-      "start": 336.713,
+      "start": 335.334,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -11374,7 +11374,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 26.205,
       "duration": 11.699,
-      "start": 348.933,
+      "start": 347.554,
       "refs": [
         "<attract_noble>"
       ],
@@ -11737,7 +11737,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 37.904,
       "duration": 5.06,
-      "start": 360.632,
+      "start": 359.253,
       "refs": [
         "<noble_market>",
         "<attract_noble>"
@@ -11914,7 +11914,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 42.964,
       "duration": 8.755,
-      "start": 365.692,
+      "start": 364.313,
       "refs": [
         "<attract_noble>",
         "<noble>"
@@ -12205,7 +12205,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 51.719,
       "duration": 11.93,
-      "start": 374.447,
+      "start": 373.068,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12598,7 +12598,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 63.649,
       "duration": 6.361,
-      "start": 386.377,
+      "start": 384.998,
       "refs": [
         "<attract_noble>",
         "<noble_market>"
@@ -12817,7 +12817,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 70.01,
       "duration": 4.605,
-      "start": 392.738,
+      "start": 391.359,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -12984,7 +12984,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 74.615,
       "duration": 4.27,
-      "start": 397.343,
+      "start": 395.964,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13139,7 +13139,7 @@
       "audio": "media/tts/full/action.nobles.mp3",
       "audio_start": 78.885,
       "duration": 6.339,
-      "start": 401.613,
+      "start": 400.234,
       "refs": [
         "<purchase_development_card>",
         "<discount>",
@@ -13356,70 +13356,70 @@
         "3.3 保留一张发展卡牌"
       ],
       "text": "3.3，保留一张发展卡牌。",
-      "audio": "media/tts/full/action.reserve.mp3",
+      "audio": "media/tts/full/chapters/reserve__title_3_3.b1.mp3",
       "audio_start": 0.0,
-      "duration": 3.5,
-      "start": 407.952,
+      "duration": 3.48,
+      "start": 406.573,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 3.5,
+          "t": 1.315,
+          "end": 3.105,
           "text": "3.3，保留一张发展卡牌。",
           "words": [
             {
               "word": "3.3，",
-              "start": 0.985,
-              "end": 1.015,
-              "confidence": 0.1936
+              "start": 1.315,
+              "end": 1.345,
+              "confidence": 0.3791
             },
             {
               "word": "保",
-              "start": 1.265,
-              "end": 1.435,
-              "confidence": 0.9617
+              "start": 1.525,
+              "end": 1.705,
+              "confidence": 0.9645
             },
             {
               "word": "留",
-              "start": 1.435,
-              "end": 1.655,
-              "confidence": 0.9576
+              "start": 1.705,
+              "end": 1.895,
+              "confidence": 0.9567
             },
             {
               "word": "一",
-              "start": 1.655,
-              "end": 1.755,
-              "confidence": 0.879
+              "start": 1.895,
+              "end": 2.015,
+              "confidence": 0.8714
             },
             {
               "word": "张",
-              "start": 1.755,
-              "end": 2.005,
-              "confidence": 0.9423
+              "start": 2.015,
+              "end": 2.245,
+              "confidence": 0.9698
             },
             {
               "word": "发",
-              "start": 2.005,
-              "end": 2.235,
-              "confidence": 0.99
+              "start": 2.245,
+              "end": 2.455,
+              "confidence": 0.9902
             },
             {
               "word": "展",
-              "start": 2.235,
-              "end": 2.395,
-              "confidence": 0.9
+              "start": 2.455,
+              "end": 2.595,
+              "confidence": 0.8815
             },
             {
               "word": "卡",
-              "start": 2.395,
-              "end": 2.605,
-              "confidence": 0.9442
+              "start": 2.595,
+              "end": 2.795,
+              "confidence": 0.9198
             },
             {
               "word": "牌。",
-              "start": 2.605,
-              "end": 2.935,
-              "confidence": 0.9458
+              "start": 2.795,
+              "end": 3.105,
+              "confidence": 0.9335
             }
           ]
         }
@@ -13442,7 +13442,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 3.5,
       "duration": 11.185,
-      "start": 411.452,
+      "start": 410.053,
       "refs": [
         "<reserve_development_card>",
         "<gold>",
@@ -13783,7 +13783,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 14.685,
       "duration": 7.175,
-      "start": 422.637,
+      "start": 421.238,
       "refs": [
         "<gold>",
         "<purchase_development_card>"
@@ -14020,7 +14020,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 21.86,
       "duration": 7.645,
-      "start": 429.812,
+      "start": 428.413,
       "refs": [
         "<reserve_development_card>",
         "<development_deck_level_1>",
@@ -14276,7 +14276,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 29.505,
       "duration": 8.687,
-      "start": 437.457,
+      "start": 436.058,
       "refs": [
         "<reserve_development_card>",
         "<player_holding>",
@@ -14544,7 +14544,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 38.192,
       "duration": 5.61,
-      "start": 446.144,
+      "start": 444.745,
       "refs": [
         "<player_holding>",
         "<gold_available>",
@@ -14733,7 +14733,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 43.802,
       "duration": 8.185,
-      "start": 451.754,
+      "start": 450.355,
       "refs": [
         "<hand>",
         "<card_reservable>"
@@ -14994,7 +14994,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 51.987,
       "duration": 11.11,
-      "start": 459.939,
+      "start": 458.54,
       "refs": [
         "<hand>"
       ],
@@ -15362,7 +15362,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 63.097,
       "duration": 6.18,
-      "start": 471.049,
+      "start": 469.65,
       "refs": [
         "<hand>",
         "<reserve_development_card>"
@@ -15568,7 +15568,7 @@
       "audio": "media/tts/full/action.reserve.mp3",
       "audio_start": 69.277,
       "duration": 6.707,
-      "start": 477.229,
+      "start": 475.83,
       "refs": [
         "<reserve_development_card>",
         "<discount>",
@@ -15784,76 +15784,76 @@
         "3.4 购买保留的发展卡牌"
       ],
       "text": "3.4，购买保留的发展卡牌。",
-      "audio": "media/tts/full/action.purchase_reserved.mp3",
+      "audio": "media/tts/full/chapters/purchase_reserved__title_3_4.b1.mp3",
       "audio_start": 0.0,
-      "duration": 4.015,
-      "start": 483.936,
+      "duration": 3.48,
+      "start": 482.537,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 4.015,
+          "t": 0.965,
+          "end": 3.165,
           "text": "3.4，购买保留的发展卡牌。",
           "words": [
             {
               "word": "3.4，",
-              "start": 1.305,
-              "end": 1.335,
-              "confidence": 0.4331
+              "start": 0.965,
+              "end": 0.995,
+              "confidence": 0.1739
             },
             {
               "word": "购",
-              "start": 1.565,
-              "end": 1.745,
-              "confidence": 0.8735
+              "start": 1.305,
+              "end": 1.485,
+              "confidence": 0.9326
             },
             {
               "word": "买",
-              "start": 1.745,
-              "end": 1.925,
-              "confidence": 0.9653
+              "start": 1.485,
+              "end": 1.685,
+              "confidence": 0.9513
             },
             {
               "word": "保",
-              "start": 1.925,
-              "end": 2.135,
-              "confidence": 0.9672
+              "start": 1.685,
+              "end": 1.875,
+              "confidence": 0.9634
             },
             {
               "word": "留",
-              "start": 2.135,
-              "end": 2.345,
-              "confidence": 0.9783
+              "start": 1.875,
+              "end": 2.075,
+              "confidence": 0.9862
             },
             {
               "word": "的",
-              "start": 2.345,
-              "end": 2.525,
-              "confidence": 0.9151
+              "start": 2.075,
+              "end": 2.265,
+              "confidence": 0.9222
             },
             {
               "word": "发",
-              "start": 2.525,
-              "end": 2.735,
-              "confidence": 0.9743
+              "start": 2.265,
+              "end": 2.465,
+              "confidence": 0.9815
             },
             {
               "word": "展",
-              "start": 2.735,
-              "end": 2.875,
-              "confidence": 0.892
+              "start": 2.465,
+              "end": 2.605,
+              "confidence": 0.9175
             },
             {
               "word": "卡",
-              "start": 2.875,
-              "end": 3.085,
-              "confidence": 0.9115
+              "start": 2.605,
+              "end": 2.795,
+              "confidence": 0.9477
             },
             {
               "word": "牌。",
-              "start": 3.085,
-              "end": 3.445,
-              "confidence": 0.9387
+              "start": 2.795,
+              "end": 3.165,
+              "confidence": 0.9459
             }
           ]
         }
@@ -15876,7 +15876,7 @@
       "audio": "media/tts/full/action.purchase_reserved.mp3",
       "audio_start": 4.015,
       "duration": 19.649,
-      "start": 487.951,
+      "start": 486.017,
       "refs": [
         "<purchase_development_card>",
         "<hand>"
@@ -16492,64 +16492,64 @@
         "3.5 回合结束与循环"
       ],
       "text": "3.5，回合结束与循环。",
-      "audio": "media/tts/full/action.summary.mp3",
+      "audio": "media/tts/full/chapters/summary__title_3_5.b1.mp3",
       "audio_start": 0.0,
-      "duration": 3.38,
-      "start": 507.6,
+      "duration": 3.24,
+      "start": 505.666,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 3.38,
+          "t": 1.015,
+          "end": 2.835,
           "text": "3.5，回合结束与循环。",
           "words": [
             {
               "word": "3.5，",
-              "start": 1.095,
-              "end": 1.125,
-              "confidence": 0.2431
+              "start": 1.015,
+              "end": 1.045,
+              "confidence": 0.2194
             },
             {
               "word": "回",
-              "start": 1.335,
-              "end": 1.555,
-              "confidence": 0.9682
+              "start": 1.235,
+              "end": 1.475,
+              "confidence": 0.9723
             },
             {
               "word": "合",
-              "start": 1.555,
-              "end": 1.725,
-              "confidence": 0.9595
+              "start": 1.475,
+              "end": 1.655,
+              "confidence": 0.9616
             },
             {
               "word": "结",
-              "start": 1.725,
-              "end": 1.915,
-              "confidence": 0.9208
+              "start": 1.655,
+              "end": 1.845,
+              "confidence": 0.9355
             },
             {
               "word": "束",
-              "start": 1.915,
-              "end": 2.205,
-              "confidence": 0.9779
+              "start": 1.845,
+              "end": 2.185,
+              "confidence": 0.9463
             },
             {
               "word": "与",
-              "start": 2.205,
-              "end": 2.265,
-              "confidence": 0.809
+              "start": 2.185,
+              "end": 2.285,
+              "confidence": 0.8772
             },
             {
               "word": "循",
-              "start": 2.265,
-              "end": 2.505,
-              "confidence": 0.8877
+              "start": 2.285,
+              "end": 2.535,
+              "confidence": 0.8866
             },
             {
               "word": "环。",
-              "start": 2.505,
-              "end": 2.775,
-              "confidence": 0.9094
+              "start": 2.535,
+              "end": 2.835,
+              "confidence": 0.8815
             }
           ]
         }
@@ -16572,7 +16572,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 3.38,
       "duration": 7.095,
-      "start": 510.98,
+      "start": 508.906,
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -16811,7 +16811,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 10.475,
       "duration": 8.98,
-      "start": 518.075,
+      "start": 516.001,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17110,7 +17110,7 @@
       "audio": "media/tts/full/action.summary.mp3",
       "audio_start": 19.455,
       "duration": 3.249,
-      "start": 527.055,
+      "start": 524.981,
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -17229,46 +17229,46 @@
         "4 游戏结束"
       ],
       "text": "4，游戏结束。",
-      "audio": "media/tts/full/endgame.mp3",
+      "audio": "media/tts/full/chapters/end__title_4.b1.mp3",
       "audio_start": 0.0,
-      "duration": 2.25,
-      "start": 530.304,
+      "duration": 2.016,
+      "start": 528.23,
       "refs": [],
       "subtitles": [
         {
-          "t": 0.0,
-          "end": 2.25,
+          "t": 0.355,
+          "end": 1.765,
           "text": "4，游戏结束。",
           "words": [
             {
               "word": "4，",
-              "start": 0.385,
-              "end": 0.415,
-              "confidence": 0.3113
+              "start": 0.355,
+              "end": 0.385,
+              "confidence": 0.2857
             },
             {
               "word": "游",
-              "start": 0.975,
-              "end": 1.095,
-              "confidence": 0.8381
+              "start": 0.985,
+              "end": 1.135,
+              "confidence": 0.8679
             },
             {
               "word": "戏",
-              "start": 1.095,
-              "end": 1.275,
-              "confidence": 0.9707
+              "start": 1.135,
+              "end": 1.315,
+              "confidence": 0.9808
             },
             {
               "word": "结",
-              "start": 1.275,
-              "end": 1.415,
-              "confidence": 0.9621
+              "start": 1.315,
+              "end": 1.465,
+              "confidence": 0.9543
             },
             {
               "word": "束。",
-              "start": 1.415,
-              "end": 1.715,
-              "confidence": 0.9785
+              "start": 1.465,
+              "end": 1.765,
+              "confidence": 0.9567
             }
           ]
         }
@@ -17290,7 +17290,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 2.25,
       "duration": 5.025,
-      "start": 532.554,
+      "start": 530.246,
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>"
@@ -17453,7 +17453,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 7.275,
       "duration": 10.48,
-      "start": 537.579,
+      "start": 535.271,
       "refs": [
         "flow:final_turn_cycle",
         "flow:final_turns",
@@ -17793,7 +17793,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 17.755,
       "duration": 17.03,
-      "start": 548.059,
+      "start": 545.751,
       "refs": [
         "<no_remaining_players>"
       ],
@@ -18317,7 +18317,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 34.785,
       "duration": 8.155,
-      "start": 565.089,
+      "start": 562.781,
       "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>"
@@ -18559,7 +18559,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 42.94,
       "duration": 12.23,
-      "start": 573.244,
+      "start": 570.936,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"
@@ -18915,7 +18915,7 @@
       "audio": "media/tts/full/endgame.mp3",
       "audio_start": 55.17,
       "duration": 10.734,
-      "start": 585.474,
+      "start": 583.166,
       "refs": [
         "<highest_prestige_wins>",
         "<fewest_development_cards>"

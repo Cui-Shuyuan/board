@@ -771,15 +771,19 @@ class BuildCueTimelineTests(unittest.TestCase):
         with self.assertRaisesRegex(builder.BuildError, "violates trimmed_tail"):
             builder._validate_source_boundary_contracts(doc, resolved)
 
-    def test_full_numeric_title_boundaries_and_trimmed_tail_gaps(self) -> None:
+    def test_full_numeric_title_cues_use_independent_audio_assets(self) -> None:
         doc = audio_slice_builder.build_audio_slices(ROOT, "splendor", "full")
         builder._validate_source_boundary_contracts(doc)
+        users: dict[str, set[str]] = {}
+        for cue_id, slices in doc["cues"].items():
+            for raw_slice in slices:
+                users.setdefault(raw_slice["asset"], set()).add(cue_id)
         for cue_id in ("setup_players/title_2_4", "setup_players/title_2_5"):
-            sid = doc["cues"][cue_id][0]["id"]
-            contract = next(
-                c for c in doc["source_boundary_contracts"]
-                if c["right_slice"] == sid)
-            self.assertEqual(contract["kind"], "trimmed_tail")
+            raw_slice = doc["cues"][cue_id][0]
+            self.assertEqual(users[raw_slice["asset"]], {cue_id})
+            self.assertFalse(any(
+                contract["right_slice"] == raw_slice["id"]
+                for contract in doc["source_boundary_contracts"]))
         self.assertTrue(any(
             c["kind"] == "trimmed_tail"
             for c in doc["source_boundary_contracts"]))
@@ -1685,6 +1689,32 @@ class BuildCueTimelineTests(unittest.TestCase):
             body["course"]["start"],
             places=9,
         )
+
+    def test_all_splendor_chapter_cues_use_independent_audio_assets(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        for track in ("quick", "full"):
+            slices = json.loads(
+                (tutorial / f"{track}.audio-slices.json").read_text(
+                    encoding="utf-8"))
+            users: dict[str, set[str]] = {}
+            for cue_id, cue_slices in slices["cues"].items():
+                for raw_slice in cue_slices:
+                    users.setdefault(raw_slice["asset"], set()).add(cue_id)
+            title_ids = [
+                cue_id for cue_id in slices["cues"]
+                if cue_id.rsplit("/", 1)[-1].startswith("title_")
+            ]
+            self.assertTrue(title_ids)
+            for cue_id in title_ids:
+                with self.subTest(track=track, cue=cue_id):
+                    assets = {
+                        raw_slice["asset"]
+                        for raw_slice in slices["cues"][cue_id]
+                    }
+                    self.assertEqual(len(assets), 1)
+                    asset = next(iter(assets))
+                    self.assertEqual(users[asset], {cue_id})
 
     def test_full_timing_policy_is_global_only(self) -> None:
         policy_path = (
