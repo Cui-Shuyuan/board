@@ -18,6 +18,21 @@
 
 不变的是：不拆仓、不改游戏 JSON / animation / compiled 语义，Unity 仍只负责确定性播放。
 
+## 教程课程时间轴
+
+Splendor quick/full 使用共享 `cue-timeline.json`。Android 的章节、总时长与
+seek 映射读取该计划，Unity 的 `CueCoursePlaybackController` 维护课程 DSP
+位置，`UnityCourseAudioTransport` 输出连续音频块。
+
+DSP 起点到达前，Unity 状态中的 `IsPlaying` 为 false，原生进度保持当前值。
+播放、暂停、跳转、缓冲和设备恢复的状态由 Unity 回传，Android 据此更新展示。
+plan 模式由 catalog 的 `cue_timeline_tracks` 指定，并通过
+`LoadGameWithRoot` 与 `cueTimelinePlanActive` 对齐两端实际模式。
+
+- [数据协议](../../docs/tutorial/cue-timeline-protocol.md)
+- [课程音频播放器](../../docs/tutorial/continuous-cue-audio.md)
+- [2026-10-20 测试机安装与试听](../../docs/tutorial/validation/2026-10-20-cue-audio.md)
+
 ## 目录
 
 ```text

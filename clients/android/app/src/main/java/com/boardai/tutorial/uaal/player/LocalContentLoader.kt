@@ -13,6 +13,14 @@ fun interface LocalContentLoader {
      */
     fun load(game: GameCatalogEntry, trackId: String): LoadedLocalContent? =
         load(game)
+
+    /**
+     * Loads the same track with the cue-plan switch forced off.  Used when
+     * Unity reports that it rejected a plan which Android had accepted; both
+     * sides must then continue on the whole-track runtime fallback.
+     */
+    fun loadRuntimeFallback(game: GameCatalogEntry, trackId: String): LoadedLocalContent? =
+        load(game, trackId)
 }
 
 data class LoadedLocalContent(

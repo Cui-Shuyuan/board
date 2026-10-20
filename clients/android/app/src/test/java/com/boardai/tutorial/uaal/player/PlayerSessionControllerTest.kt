@@ -60,6 +60,72 @@ class PlayerSessionControllerTest {
     }
 
     @Test
+    fun unityPlanRejectionReloadsWholeTrackInRuntimeCompatibilityMode() {
+        val planLoaded = loadedPlanContent()
+        val runtimeLoaded = loadedContent("runtime-v1")
+        val loader = FakeLocalContentLoader(planLoaded, runtimeLoaded)
+        val commands = mutableListOf<Pair<String, String>>()
+        val controller = controller(
+            loader = loader,
+            onSendToUnity = { method, value -> commands += method to value }
+        )
+        val game = game("plan-mismatch")
+
+        controller.enterGame(game)
+        controller.onUnityReady()
+        assertTrue(controller.state.value.timeline!!.usesCueTimelinePlan)
+        commands.clear()
+
+        assertTrue(controller.onUnityTimelineMode(false))
+        assertFalse(controller.state.value.cueTimelinePlanActive)
+        assertFalse(controller.state.value.timeline!!.usesCueTimelinePlan)
+        assertEquals(1, loader.runtimeFallbackLoads)
+        assertTrue(
+            commands.contains(
+                "LoadGameWithRoot" to
+                    "${game.id}|${runtimeLoaded.versionRoot.absolutePath}"
+            )
+        )
+
+        // A repeated stale status must not trigger another reload.
+        assertFalse(controller.onUnityTimelineMode(false))
+        assertEquals(1, loader.runtimeFallbackLoads)
+    }
+
+    @Test
+    fun failedRuntimeFallbackUnloadsRatherThanLeavingMixedClocks() {
+        val planLoaded = loadedPlanContent()
+        val loader = FakeLocalContentLoader(planLoaded, null)
+        val commands = mutableListOf<Pair<String, String>>()
+        val controller = controller(
+            loader = loader,
+            onSendToUnity = { method, value -> commands += method to value }
+        )
+
+        controller.enterGame(game("plan-fallback-fail"))
+        controller.onUnityReady()
+        commands.clear()
+
+        assertTrue(controller.onUnityTimelineMode(false))
+        assertEquals("本地内容缺失或损坏，请重新下载", controller.state.value.playbackError)
+        assertNull(controller.state.value.selectedGame)
+        assertFalse(controller.state.value.playerActive)
+        assertTrue(commands.contains("UnloadGame" to ""))
+    }
+
+    @Test
+    fun matchingUnityPlanModeDoesNotReload() {
+        val loader = FakeLocalContentLoader(loadedPlanContent())
+        val controller = controller(loader = loader)
+
+        controller.enterGame(game("plan-ok"))
+        controller.onUnityReady()
+        assertFalse(controller.onUnityTimelineMode(true))
+        assertEquals(0, loader.runtimeFallbackLoads)
+        assertTrue(controller.state.value.timeline!!.usesCueTimelinePlan)
+    }
+
+    @Test
     fun enterGameFailureSetsPlaybackErrorRefreshesHomeAndDoesNotLoadUnity() {
         val commands = mutableListOf<Pair<String, String>>()
         val preparing = mutableListOf<String?>()
@@ -255,6 +321,80 @@ class PlayerSessionControllerTest {
             contentVersion = "v1"
         )
 
+    private fun loadedPlanContent(): LoadedLocalContent {
+        val gameRoot = temp.newFolder("plan-game")
+        val media = File(gameRoot, "media/fixture.mp3")
+        media.parentFile?.mkdirs()
+        media.writeBytes(byteArrayOf(1, 2, 3))
+        val runtimeFile = File(gameRoot, "tutorial/full.runtime.json")
+        runtimeFile.parentFile?.mkdirs()
+        runtimeFile.writeText(
+            """
+            {
+              "game_id": "testgame",
+              "track": "full",
+              "cues": [
+                {
+                  "id": "cue-1",
+                  "start": 0.0,
+                  "duration": 1.0,
+                  "text": "hello",
+                  "group_path": []
+                }
+              ]
+            }
+            """.trimIndent(),
+            Charsets.UTF_8
+        )
+        File(gameRoot, "tutorial/full.cue-timeline.json").writeText(
+            """
+            {
+              "schema": "tutorial-cue-plan-set/v1",
+              "schema_version": 1,
+              "game_id": "testgame",
+              "track": "full",
+              "course": {"start": 0.0, "duration": 1.0},
+              "cues": [
+                {
+                  "cue_id": "cue-1",
+                  "entry": null,
+                  "course": {"start": 0.0, "duration": 1.0},
+                  "text": "planned",
+                  "group_path": [],
+                  "tracks": [
+                    {
+                      "id": "audio.main",
+                      "kind": "audio",
+                      "tail_policy": "silence",
+                      "segments": [
+                        {
+                          "id": "audio.clip",
+                          "type": "audio_clip",
+                          "asset": "media/fixture.mp3",
+                          "cue_start": 0.0,
+                          "source_start": 0.0,
+                          "source_end": 1.0
+                        }
+                      ]
+                    }
+                  ],
+                  "subtitles": []
+                }
+              ]
+            }
+            """.trimIndent(),
+            Charsets.UTF_8
+        )
+        val timeline = TutorialTimeline.load(gameRoot, "full", planEnabled = true)
+        assertTrue(timeline.usesCueTimelinePlan)
+        return LoadedLocalContent(
+            version = "plan-v1",
+            versionRoot = File(gameRoot, "versions/plan-v1"),
+            timeline = timeline,
+            track = "full"
+        )
+    }
+
     private fun loadedContent(version: String = "v1"): LoadedLocalContent {
         val gameRoot = temp.newFolder("game-$version")
         val runtimeFile = File(gameRoot, "tutorial/full.runtime.json")
@@ -284,8 +424,19 @@ class PlayerSessionControllerTest {
     }
 
     private class FakeLocalContentLoader(
-        var result: LoadedLocalContent?
+        var result: LoadedLocalContent?,
+        var runtimeFallbackResult: LoadedLocalContent? = result
     ) : LocalContentLoader {
+        var runtimeFallbackLoads: Int = 0
+
         override fun load(game: GameCatalogEntry): LoadedLocalContent? = result
+
+        override fun loadRuntimeFallback(
+            game: GameCatalogEntry,
+            trackId: String
+        ): LoadedLocalContent? {
+            runtimeFallbackLoads++
+            return runtimeFallbackResult
+        }
     }
 }

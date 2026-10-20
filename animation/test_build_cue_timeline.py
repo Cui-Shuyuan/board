@@ -10,6 +10,7 @@ ranges, cue-to-slice mappings and per-cue timing policy.
 from __future__ import annotations
 
 import json
+import struct
 import sys
 import tempfile
 import unittest
@@ -42,7 +43,7 @@ class BuildCueTimelineTests(unittest.TestCase):
         self.policy_path = self.tutorial / f"{self.track}.timing-policy.json"
         self.slices_path = self.tutorial / f"{self.track}.audio-slices.json"
         self.audio_path = self.game_dir / "media" / "fixture-audio.mp3"
-        self.audio_path.write_bytes(b"fake-mp3")
+        self.audio_path.write_bytes(self.wav_bytes(120.0))
 
         self.write_runtime([{
             "id": "fixture/one",
@@ -86,6 +87,18 @@ class BuildCueTimelineTests(unittest.TestCase):
         )
 
     # ── fixture helpers ──────────────────────────────────────────────────
+
+    @staticmethod
+    def wav_bytes(duration_seconds: float, sample_rate: int = 8000) -> bytes:
+        frame_count = max(1, int(round(duration_seconds * sample_rate)))
+        data = b"\x80" * frame_count
+        fmt = struct.pack(
+            "<HHIIHH", 1, 1, sample_rate, sample_rate, 1, 8)
+        chunks = (
+            b"fmt " + struct.pack("<I", len(fmt)) + fmt
+            + b"data" + struct.pack("<I", len(data)) + data
+        )
+        return b"RIFF" + struct.pack("<I", 4 + len(chunks)) + b"WAVE" + chunks
 
     def write_runtime(self, cues: list[dict]) -> None:
         self.runtime_path.write_text(json.dumps({
@@ -514,6 +527,21 @@ class BuildCueTimelineTests(unittest.TestCase):
             places=9,
         )
 
+    def test_title_trim_tail_guard_extends_audio_before_silence(self) -> None:
+        self._configure_title()
+        slices = json.loads(self.slices_path.read_text(encoding="utf-8"))
+        slices["cue_timing"]["fixture/title"]["trim_tail_guard_seconds"] = 0.08
+        self.slices_path.write_text(json.dumps(slices), encoding="utf-8")
+        document = builder.build_plan_set(self.root, self.game, self.track)
+        plan = document["cues"][0]
+        audio = self.audio_segments(plan)
+        expected_end = 1.245 + 0.08
+        self.assertAlmostEqual(audio[0]["source_end"], expected_end, places=9)
+        self.assertAlmostEqual(audio[1]["cue_start"], expected_end, places=9)
+        self.assertAlmostEqual(audio[1]["duration"], 1.0, places=9)
+        self.assertAlmostEqual(
+            plan["course"]["duration"], expected_end + 1.0, places=9)
+
     def test_trim_without_speech_end_ref_fails_explicitly(self) -> None:
         self._configure_title()
         slices = json.loads(self.slices_path.read_text(encoding="utf-8"))
@@ -543,7 +571,142 @@ class BuildCueTimelineTests(unittest.TestCase):
         with self.assertRaisesRegex(builder.BuildError, "finite and >= 0"):
             builder.build_plan_set(self.root, self.game, self.track)
 
+    def test_title_trim_keeps_source_context_lead(self) -> None:
+        self.write_runtime([{
+            "id": "fixture/title",
+            "start": 0.0,
+            "duration": 1.656,
+            "text": "2.4 title",
+            "entry": None,
+            "audio": "media/fixture-audio.mp3",
+            "audio_start": 10.0,
+            "subtitles": [{
+                "t": 0.285,
+                "end": 1.656,
+                "text": "2.4 title",
+                "words": [
+                    {"word": "2.4,", "start": 0.0, "end": 0.03},
+                    {"word": "ti", "start": 0.31, "end": 0.54},
+                    {"word": "tle", "start": 0.54, "end": 1.10},
+                ],
+            }],
+        }])
+        self.write_script([{
+            "id": "fixture/title",
+            "beats": [{"text": "2.4 title"}],
+        }])
+        self.write_compiled([{"id": "fixture/title", "duration": 2.0}])
+        self.write_slices(
+            timing_points={},
+            cues={},
+            cue_timing={
+                "fixture/title": {
+                    "mode": "audio",
+                    "trim_to_speech_end": True,
+                    "trailing_silence_seconds": 1.0,
+                    "trim_tail_guard_seconds": 0.08,
+                },
+            },
+        )
+
+        slice_document = audio_slice_builder.build_audio_slices(
+            self.root, self.game, self.track)
+        self.slices_path.write_text(
+            json.dumps(slice_document, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        plan_document = builder.build_plan_set(
+            self.root, self.game, self.track)
+        plan = plan_document["cues"][0]
+        audio = self.audio_segments(plan)
+        self.assertAlmostEqual(audio[0]["source_start"], 9.85, places=9)
+        self.assertAlmostEqual(audio[0]["source_end"], 11.18, places=9)
+        self.assertAlmostEqual(audio[1]["cue_start"], 1.33, places=9)
+        self.assertAlmostEqual(audio[1]["duration"], 1.0, places=9)
+        self.assertAlmostEqual(plan["course"]["duration"], 2.33, places=9)
+        subtitle = next(
+            track for track in plan["tracks"]
+            if track["kind"] == "subtitle"
+        )["segments"][0]
+        self.assertAlmostEqual(subtitle["cue_start"], 0.435, places=9)
+        self.assertAlmostEqual(subtitle["duration"], 0.895, places=9)
+
     # ── release/input consistency and source boundaries ─────────────────
+
+    def test_adjacent_cues_share_boundary_even_when_available_lead_differs(self) -> None:
+        self.write_runtime([
+            {"id": "fixture/body", "audio": "media/fixture-audio.mp3",
+             "audio_start": 10.0, "start": 0.0, "duration": 2.0,
+             "subtitles": [{"t": 0.0, "end": 2.0, "text": "body",
+                            "words": [{"end": 1.95}]}]},
+            {"id": "fixture/title", "audio": "media/fixture-audio.mp3",
+             "audio_start": 12.0, "start": 2.0, "duration": 2.0,
+             "subtitles": [{"t": 0.0, "end": 2.0, "text": "title",
+                            "words": [{"end": 1.0}]}]},
+        ])
+        self.write_compiled([])
+        self.write_slices(timing_points={}, cues={}, cue_timing={
+            "fixture/title": {"mode": "audio", "trim_to_speech_end": True,
+                              "trim_tail_guard_seconds": 0.08,
+                              "trailing_silence_seconds": 1.0}})
+        doc = audio_slice_builder.build_audio_slices(self.root, self.game, self.track)
+        left = doc["cues"]["fixture/body"][0]
+        right = doc["cues"]["fixture/title"][0]
+        points = doc["timing_points"]
+        self.assertEqual(points[left["end_ref"]]["time"], points[right["start_ref"]]["time"])
+        self.assertGreaterEqual(points[left["end_ref"]]["time"], 11.95)
+        self.assertEqual(doc["source_boundary_contracts"][0]["kind"], "continuous")
+        builder._validate_source_boundary_contracts(doc)
+
+    def test_boundary_contract_rejects_gap_and_overlap_in_fixed_source_ranges(self) -> None:
+        doc = audio_slice_builder.build_audio_slices(ROOT, "splendor", "full")
+        pair = next(c for c in doc["source_boundary_contracts"] if c["kind"] == "continuous")
+        slices = {s["id"]: s for group in doc["cues"].values() for s in group}
+        point = doc["timing_points"][slices[pair["right_slice"]]["start_ref"]]
+        original = point["time"]
+        for delta in (-0.15, 0.15):
+            with self.subTest(delta=delta):
+                point["time"] = original + delta
+                with self.assertRaisesRegex(builder.BuildError, "violates continuous"):
+                    builder._validate_source_boundary_contracts(doc)
+        point["time"] = original
+        # The compiler also checks the resolved ranges after trim policies.
+        resolved = {sid: {"source_start": doc["timing_points"][s["start_ref"]]["time"],
+                          "source_end": doc["timing_points"][s["end_ref"]]["time"]}
+                    for sid, s in slices.items()}
+        resolved[pair["left_slice"]]["source_end"] -= 0.15
+        with self.assertRaisesRegex(builder.BuildError, "violates continuous"):
+            builder._validate_source_boundary_contracts(doc, resolved)
+
+    def test_full_numeric_title_boundaries_and_intentional_tail_gaps(self) -> None:
+        doc = audio_slice_builder.build_audio_slices(ROOT, "splendor", "full")
+        builder._validate_source_boundary_contracts(doc)
+        for cue_id in ("setup_players/title_2_4", "setup_players/title_2_5"):
+            sid = doc["cues"][cue_id][0]["id"]
+            contract = next(c for c in doc["source_boundary_contracts"] if c["right_slice"] == sid)
+            self.assertEqual(contract["kind"], "continuous")
+        self.assertTrue(any(c["kind"] == "trimmed_tail" for c in doc["source_boundary_contracts"]))
+
+    def test_audio_source_range_must_fit_actual_media_duration(self) -> None:
+        self.audio_path.write_bytes(self.wav_bytes(0.5))
+        with self.assertRaisesRegex(builder.BuildError, "exceeds media duration"):
+            builder.build_plan_set(self.root, self.game, self.track)
+
+    def test_audio_slice_builder_rejects_runtime_range_beyond_media(self) -> None:
+        self.audio_path.write_bytes(self.wav_bytes(0.5))
+        self.write_runtime([{
+            "id": "fixture/one",
+            "section": "fixture",
+            "start": 0.0,
+            "duration": 1.0,
+            "audio": "media/fixture-audio.mp3",
+            "audio_start": 0.0,
+            "text": "runtime text",
+            "subtitles": [],
+        }])
+        with self.assertRaisesRegex(
+                audio_slice_builder.BuildError, "beyond media duration"):
+            audio_slice_builder.build_audio_slices(
+                self.root, self.game, self.track)
 
     def test_missing_plan_audio_file_fails_build(self) -> None:
         self.audio_path.unlink()
@@ -778,12 +941,12 @@ class BuildCueTimelineTests(unittest.TestCase):
             "2，设置。": (
                 ["2 设置"],
                 "media/tts/full/setup.intro.mp3",
-                1.265,
+                1.345,
             ),
             "3.2，发展卡牌与贵族。": (
                 ["3 行动", "3.2 发展卡牌与贵族"],
                 "media/tts/full/action.cards.group.mp3",
-                3.165,
+                3.245,
             ),
         }
         for text, (group_path, asset, source_end) in expectations.items():
@@ -852,6 +1015,125 @@ class BuildCueTimelineTests(unittest.TestCase):
         ]
         self.assertEqual(set(spacings), {0.39})
 
+    def test_full_noble_anatomy_uses_independent_markers_and_labels(self) -> None:
+        compiled = json.loads(
+            (ROOT / "content" / "games" / "splendor" / "tutorial"
+             / "anim" / "v2" / "full.compiled.json").read_text(
+                 encoding="utf-8"))
+        cue = next(
+            item for item in compiled["cues"]
+            if item["id"] == "nobles/intro.001")
+        markers = {
+            clip.get("marker_key")
+            for clip in cue["clips"]
+            if clip.get("kind") in {"point", "shape"}
+        }
+        self.assertIn("noble_score_circle", markers)
+        self.assertIn("noble_condition_box", markers)
+        texts = {
+            clip.get("text")
+            for clip in cue["clips"]
+            if clip.get("kind") == "label"
+        }
+        self.assertIn("分数", texts)
+        self.assertIn("条件\n（回合结束满足条件时拿取）", texts)
+
+    def test_full_action_headers_persist_across_action_section_cues(self) -> None:
+        compiled = json.loads(
+            (ROOT / "content" / "games" / "splendor" / "tutorial"
+             / "anim" / "v2" / "full.compiled.json").read_text(
+                 encoding="utf-8"))
+        expected = {
+            "take_gems/": "hint_action_first",
+            "cards/": "hint_action_second",
+            "reserve/": "hint_action_third",
+        }
+        checked = 0
+        for cue in compiled["cues"]:
+            cue_id = cue["id"]
+            target = next(
+                (value for prefix, value in expected.items()
+                 if cue_id.startswith(prefix)), None)
+            if target is None or cue["local_id"].startswith("title"):
+                continue
+            action_labels = [
+                clip for clip in cue.get("clips", [])
+                if clip.get("kind") == "label"
+                and clip.get("overlay") == target
+                and clip.get("label_key") == "action_hint"
+                and clip.get("label_mode") == "replace"
+            ]
+            self.assertEqual(
+                len(action_labels), 1,
+                f"{cue_id} is missing its persistent action header")
+            checked += 1
+        self.assertGreaterEqual(checked, 20)
+
+    def test_authoring_animation_sources_have_no_legacy_pause_hold_fields(self) -> None:
+        legacy_keys = {"pause_after_speech_seconds", "hold_after_audio"}
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        paths = list((tutorial / "sections").rglob("*.anim.json"))
+        paths += list((tutorial / "library").rglob("*.json"))
+        self.assertTrue(paths)
+        found = []
+        def walk(value, path):
+            if isinstance(value, dict):
+                for key, child in value.items():
+                    if key in legacy_keys:
+                        found.append(f"{path}:{key}")
+                    walk(child, f"{path}/{key}")
+            elif isinstance(value, list):
+                for index, child in enumerate(value):
+                    walk(child, f"{path}/{index}")
+        for path in paths:
+            document = json.loads(path.read_text(encoding="utf-8"))
+            walk(document, str(path))
+        self.assertEqual(found, [])
+
+    def test_full_body_cues_keep_source_context_before_first_word(self) -> None:
+        tutorial = (
+            ROOT / "content" / "games" / "splendor" / "tutorial")
+        slices = json.loads(
+            (tutorial / "full.audio-slices.json").read_text(encoding="utf-8"))
+        runtime = json.loads(
+            (tutorial / "full.runtime.json").read_text(encoding="utf-8"))
+        runtime_by_id = {cue["id"]: cue for cue in runtime["cues"]}
+        timing_points = slices["timing_points"]
+
+        title = next(cue for cue in runtime["cues"]
+                     if cue["id"] == "intro/title_1")
+        title_slice = slices["cues"]["intro/title_1"][0]
+        self.assertAlmostEqual(
+            timing_points[title_slice["end_ref"]]["time"],
+            timing_points[title_slice["speech_end_ref"]]["time"] + 0.08,
+            places=9,
+        )
+
+        body_id = "intro/001"
+        body_slice = slices["cues"][body_id][0]
+        body_start = timing_points[body_slice["start_ref"]]["time"]
+        body_end = timing_points[body_slice["end_ref"]]["time"]
+        self.assertLess(body_start, runtime_by_id[body_id]["audio_start"])
+        self.assertAlmostEqual(
+            body_end - body_start,
+            runtime_by_id[body_id]["duration"],
+            places=6,
+        )
+        self.assertGreaterEqual(
+            timing_points[body_slice["speech_end_ref"]]["time"],
+            body_start + 0.1,
+        )
+
+        plan = json.loads(
+            (tutorial / "full.cue-timeline.json").read_text(encoding="utf-8"))
+        body_plan = next(cue for cue in plan["cues"]
+                         if cue["cue_id"] == body_id)
+        subtitle_track = next(track for track in body_plan["tracks"]
+                              if track["kind"] == "subtitle")
+        self.assertGreaterEqual(
+            subtitle_track["segments"][0]["cue_start"], 0.1)
+
     def test_full_audio_slice_ranges_do_not_overlap(self) -> None:
         slices_path = (
             ROOT / "content" / "games" / "splendor" / "tutorial"
@@ -897,6 +1179,8 @@ class BuildCueTimelineTests(unittest.TestCase):
             self.assertIs(policy["trim_to_speech_end"], True)
             self.assertAlmostEqual(
                 policy["trailing_silence_seconds"], 1.0, places=9)
+            self.assertAlmostEqual(
+                policy["trim_tail_guard_seconds"], 0.08, places=9)
             audio_track = next(
                 track for track in cue["tracks"] if track["kind"] == "audio")
             self.assertEqual(audio_track["segments"][-1]["type"], "silence")

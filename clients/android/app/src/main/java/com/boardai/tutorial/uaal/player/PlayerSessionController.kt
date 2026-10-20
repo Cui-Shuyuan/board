@@ -31,6 +31,7 @@ class PlayerSessionController(
     private val loadQueue = UnityLoadQueue(onSendToUnity)
 
     private var localLoadInProgress = false
+    private var runtimeFallbackInProgress = false
 
     @Volatile
     private var generation = 0
@@ -42,6 +43,7 @@ class PlayerSessionController(
             ?: game.tutorialTrack.trim()
         cancelPendingEnter()
         localLoadInProgress = true
+        runtimeFallbackInProgress = false
         onSetPreparingGame(game.id)
         clearPlaybackError()
 
@@ -82,6 +84,67 @@ class PlayerSessionController(
     }
 
     /**
+     * Reconciles the cue-timeline mode Unity actually entered with the mode
+     * Android used for its local timeline model.  A plan accepted by Android
+     * but rejected by Unity must switch the whole session back to the runtime
+     * fallback; continuing would leave the two clocks on different timelines.
+     *
+     * Returns true when a fallback reload was scheduled.
+     */
+    fun onUnityTimelineMode(planActive: Boolean): Boolean {
+        val current = _state.value
+        val game = current.selectedGame ?: return false
+        val currentTimeline = current.timeline ?: return false
+        if (!current.playerActive || !currentTimeline.usesCueTimelinePlan) return false
+        if (planActive || runtimeFallbackInProgress) return false
+        if (localLoadInProgress) return false
+
+        runtimeFallbackInProgress = true
+        val track = current.activeTrack?.trim()?.takeIf { it.isNotBlank() }
+            ?: game.tutorialTrack.trim()
+        val enteredGeneration = generation
+        runIoTask {
+            val loaded = localContentLoader.loadRuntimeFallback(game, track)
+            postToMain {
+                if (enteredGeneration != generation) {
+                    runtimeFallbackInProgress = false
+                    return@postToMain
+                }
+                if (loaded == null) {
+                    runtimeFallbackInProgress = false
+                    _state.value = PlayerSessionState(
+                        playbackError = LOCAL_CONTENT_ERROR
+                    )
+                    onSetPreparingGame(null)
+                    loadQueue.queueUnload()
+                    onRefreshHomeContentStatuses()
+                    log("Unity rejected cue timeline plan but runtime fallback failed", null)
+                    return@postToMain
+                }
+                _state.value = _state.value.copy(
+                    timeline = loaded.timeline,
+                    activeTrack = loaded.track.ifBlank { track },
+                    activeVersion = loaded.version,
+                    cueTimelinePlanActive = false,
+                    playbackError = null
+                )
+                loadQueue.queueLoad(
+                    gameId = game.id,
+                    versionRoot = loaded.versionRoot.absolutePath,
+                    track = loaded.track.ifBlank { track },
+                    cueTimelinePlanActive = false
+                )
+                runtimeFallbackInProgress = false
+                log(
+                    "Unity rejected cue timeline plan; whole track reloaded in runtime compatibility mode",
+                    null
+                )
+            }
+        }
+        return true
+    }
+
+    /**
      * Cancels any in-flight local-content selection without touching an already
      * active session.
      */
@@ -99,6 +162,7 @@ class PlayerSessionController(
 
         generation++
         localLoadInProgress = false
+        runtimeFallbackInProgress = false
         _state.value = PlayerSessionState()
         onSetPreparingGame(null)
         loadQueue.queueUnload()
@@ -129,6 +193,7 @@ class PlayerSessionController(
     fun dispose() {
         generation++
         localLoadInProgress = false
+        runtimeFallbackInProgress = false
         loadQueue.clear()
     }
 

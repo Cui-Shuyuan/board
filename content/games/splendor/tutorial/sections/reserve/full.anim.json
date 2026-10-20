@@ -44,8 +44,7 @@
           "dur": 4.37,
           "anchor": "reserve/title_3_3.start"
         }
-      ],
-      "pause_after_speech_seconds": 1.0
+      ]
     },
     {
       "id": "intro.001.1",
@@ -204,7 +203,9 @@
           "target": {
             "space": "screen",
             "id": "hint_action_third"
-          }
+          },
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "highlight",
@@ -460,6 +461,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "reserve/gold.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/gold.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "show",
@@ -764,6 +777,18 @@
       },
       "events": [
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/deck.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "create",
           "dur": 0.0,
           "setup": true,
@@ -987,6 +1012,18 @@
           "anchor": "reserve/notes_intro.001.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/notes_intro.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "take",
           "dur": 0.6,
           "quantity": 1,
@@ -1186,6 +1223,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "reserve/limit_gold.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/limit_gold.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "take",
@@ -1399,6 +1448,18 @@
           "anchor": "reserve/limit_hand.001.1.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/limit_hand.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "take",
           "dur": 0.6,
           "quantity": 1,
@@ -1592,6 +1653,18 @@
           "shot": "shot_reserved",
           "realizes": "<ontology::timing>",
           "anchor": "reserve/private.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/private.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         }
       ],
       "tree": "main"
@@ -1757,6 +1830,18 @@
           "shot": "shot_decks",
           "realizes": "<ontology::timing>",
           "anchor": "reserve/private.002.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/private.002.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "draw",
@@ -1943,6 +2028,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "reserve/not_purchase.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve/not_purchase.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         }
       ],
       "tree": "main"

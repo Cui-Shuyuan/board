@@ -121,6 +121,21 @@ class TutorialTimelineCuePlanTest {
     }
 
     @Test
+    fun qaActionSummariesReadPackagedBuildAnimationSource() {
+        val root = runtimeTree()
+        writeBuildAnimation(root)
+        val timeline = TutorialTimeline.load(
+            gameRoot = root,
+            track = TRACK,
+            planEnabled = false,
+            logger = { }
+        )
+        val actions = timeline.cueById("q/a")!!.actions
+        assertTrue(actions.isNotEmpty())
+        assertTrue(actions.any { it.contains("生成") })
+    }
+
+    @Test
     fun missingPlanFallsBackToWholeTrackCompatibilityAndLogs() {
         val root = runtimeTree()
         val logs = mutableListOf<String>()
@@ -318,6 +333,33 @@ class TutorialTimelineCuePlanTest {
             .put("cues", cues)
         File(root, "tutorial/$track.cue-timeline.json").writeText(
             document.toString(2),
+            Charsets.UTF_8
+        )
+    }
+
+    private fun writeBuildAnimation(root: File) {
+        val path = File(root, "tutorial/build/$TRACK.anim.json")
+        path.parentFile?.mkdirs()
+        path.writeText(
+            """
+            {
+              "schema": "tutorial-animation/v2",
+              "cues": [
+                {
+                  "id": "q/a",
+                  "events": [
+                    {
+                      "op": "create",
+                      "zone": "gem_supply_diamond",
+                      "template": "gem",
+                      "palette": "gem_diamond",
+                      "count": 1
+                    }
+                  ]
+                }
+              ]
+            }
+            """.trimIndent(),
             Charsets.UTF_8
         )
     }

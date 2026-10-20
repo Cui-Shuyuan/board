@@ -3,7 +3,7 @@ using System;
 // 音频/字幕/导航外壳（v2-only）。
 //
 // 动画本身由 BoardGameTutorial.Animation.TutorialAnimPlayer 提供：
-// 所有 cue 的本地时间只来自 CuePlaybackController；编译动画按该时间 Seek。
+// 所有 cue 的本地时间由 CueCoursePlaybackController 的课程时钟派生；编译动画按该时间 Seek。
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;

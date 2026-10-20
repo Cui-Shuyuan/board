@@ -32,6 +32,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import audio_probe
 import cue_timeline
 
 
@@ -178,6 +179,7 @@ VALID_TIMING_MODES = frozenset({"max", "audio", "visual"})
 TIMING_OPTION_KEYS = frozenset({
     "mode",
     "trim_to_speech_end",
+    "trim_tail_guard_seconds",
     "trailing_silence_seconds",
     "post_speech_silence_seconds",
 })
@@ -270,6 +272,18 @@ def _normalize_cue_timing_options(
                 f"audio slices cue_timing {cue_id!r} "
                 "trim_to_speech_end must be boolean")
 
+        trim_tail_guard = option.get("trim_tail_guard_seconds", 0.0)
+        if isinstance(trim_tail_guard, bool) or not isinstance(
+                trim_tail_guard, (int, float)):
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "trim_tail_guard_seconds must be numeric")
+        trim_tail_guard = float(trim_tail_guard)
+        if not math.isfinite(trim_tail_guard) or trim_tail_guard < 0.0:
+            raise BuildError(
+                f"audio slices cue_timing {cue_id!r} "
+                "trim_tail_guard_seconds must be finite and >= 0")
+
         trailing = option.get("trailing_silence_seconds", 0.0)
         if isinstance(trailing, bool) or not isinstance(trailing, (int, float)):
             raise BuildError(
@@ -297,6 +311,7 @@ def _normalize_cue_timing_options(
         normalized[cue_id] = {
             "mode": mode,
             "trim_to_speech_end": trim,
+            "trim_tail_guard_seconds": trim_tail_guard,
             "trailing_silence_seconds": trailing,
             "post_speech_silence_seconds": post_speech,
         }
@@ -380,6 +395,8 @@ def _apply_timing_policy(
             "cue_id": cue_id,
             "mode": mode,
             "trim_to_speech_end": bool(option.get("trim_to_speech_end", False)),
+            "trim_tail_guard_seconds": float(
+                option.get("trim_tail_guard_seconds", 0.0)),
             "trailing_silence_seconds": float(
                 option.get("trailing_silence_seconds", 0.0)),
             "original_duration": round(old_duration, 9),
@@ -435,6 +452,44 @@ def _normalize_game_relative_path(raw: str, game_dir: Path, game: str) -> str:
     if candidate.is_file():
         return text
     raise BuildError(f"asset file not found: {raw}")
+
+
+def _validate_source_boundary_contracts(document: dict, resolved: dict | None = None) -> None:
+    contracts = document.get("source_boundary_contracts", [])
+    if not isinstance(contracts, list):
+        raise BuildError("source_boundary_contracts must be an array")
+    slices = {s["id"]: s for group in document["cues"].values() for s in group}
+    points = document["timing_points"]
+    seen = set()
+    for contract in contracts:
+        if not isinstance(contract, dict) or set(contract) != {"left_slice", "right_slice", "kind"}:
+            raise BuildError("invalid source boundary contract")
+        left_id, right_id = contract["left_slice"], contract["right_slice"]
+        if not isinstance(left_id, str) or not isinstance(right_id, str):
+            raise BuildError("source boundary slice ids must be strings")
+        if left_id not in slices or right_id not in slices or left_id == right_id:
+            raise BuildError("source boundary references unknown or identical slices")
+        if (left_id, right_id) in seen:
+            raise BuildError("duplicate source boundary contract")
+        seen.add((left_id, right_id))
+        left, right = slices[left_id], slices[right_id]
+        if left["asset"] != right["asset"]:
+            raise BuildError("source boundary must refer to the same asset")
+        kind = contract["kind"]
+        if kind not in ("continuous", "trimmed_tail", "authored_gap"):
+            raise BuildError("unknown source boundary kind")
+        end = float(points[left["end_ref"]]["time"])
+        start = float(points[right["start_ref"]]["time"])
+        if resolved is not None:
+            if left_id not in resolved or right_id not in resolved:
+                raise BuildError("source boundary slice is absent from compiled plan")
+            end = resolved[left_id]["source_end"]
+            start = resolved[right_id]["source_start"]
+        # Half-open source intervals use the same integer sample edge.
+        delta = round(start * document["sample_rate"]) - round(end * document["sample_rate"])
+        if delta < 0 or (kind == "continuous" and delta != 0):
+            raise BuildError(f"source boundary {left_id!r} -> {right_id!r} "
+                             f"violates {kind}: gap={start - end:.9f}s")
 
 
 def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) -> dict:
@@ -559,6 +614,8 @@ def _load_audio_slices(repo_root: Path, game: str, track: str, rel_path: str) ->
                         timing_points, ref, slice_id,
                         f"subtitle[{subtitle_index}].{field}_ref")
         cue_slice_ids[cue_id] = owned_slice_ids
+
+    _validate_source_boundary_contracts(document)
 
     cue_timing = document.get("cue_timing", {})
     if not isinstance(cue_timing, dict):
@@ -845,6 +902,12 @@ def _build_cue_plan_set_from_audio_slices(
             if not asset_path.is_file():
                 raise BuildError(
                     f"audio slice {owner!r} references missing audio file: {asset}")
+            try:
+                asset_duration = audio_probe.media_duration_seconds(asset_path)
+            except audio_probe.AudioProbeError as exc:
+                raise BuildError(
+                    f"audio slice {owner!r} cannot measure media duration: {exc}"
+                ) from exc
 
             start = _resolve_timing_ref(
                 timing_points,
@@ -878,11 +941,21 @@ def _build_cue_plan_set_from_audio_slices(
                         f"audio slice {owner!r} speech_end {speech_end:g} "
                         f"must be within source range [{start:g}, {end:g}]")
 
-            effective_end = speech_end if trim_to_speech_end else end
+            effective_end = end
+            if trim_to_speech_end:
+                effective_end = min(
+                    end,
+                    speech_end + float(
+                        option.get("trim_tail_guard_seconds", 0.0)),
+                )
             if effective_end is None or effective_end <= start:
                 raise BuildError(
                     f"audio slice {owner!r} trimmed source range must be "
                     "non-empty and non-negative")
+            if effective_end > asset_duration + 1e-6:
+                raise BuildError(
+                    f"audio slice {owner!r} source_end {effective_end:g}s "
+                    f"exceeds media duration {asset_duration:g}s for {asset!r}")
             duration = effective_end - start
 
             segment = {
@@ -1141,6 +1214,12 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
         _recompute_course_timeline(
             document, [0.0] * len(document.get("cues") or []))
         cue_timeline.validate_plan_set(document)
+        _validate_source_boundary_contracts(slice_doc, {
+            segment["audio_slice_id"]: segment
+            for cue in document["cues"]
+            for audio_track in cue["tracks"] if audio_track["kind"] == "audio"
+            for segment in audio_track["segments"] if segment["type"] == "audio_clip"
+        })
     except cue_timeline.CueTimelineError as exc:
         raise BuildError(f"plan validation failed: {exc}") from exc
 

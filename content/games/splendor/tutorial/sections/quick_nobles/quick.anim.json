@@ -44,8 +44,7 @@
           "dur": 3.44,
           "anchor": "quick_nobles/title_3_4.start"
         }
-      ],
-      "pause_after_speech_seconds": 1.0
+      ]
     },
     {
       "id": "001",
@@ -193,10 +192,9 @@
       "parent": "001",
       "tree": "main",
       "demo": true,
-      "hold_after_audio": true,
       "script": {
         "story": "就拿取这位贵族；",
-        "note": "单条件拿取：承接 cue1 的4红+3黑和2蓝+2白，玩家A买下市场一级黑卡 card_l1_onyx_3（价格2蓝+1红+2白；4张红卡折扣使1红免费，实付2蓝+2白），黑卡进入发展区后凑满4红+4黑，满足 noble_1，立刻把 noble_1 从贵族供应堆拿到自己面前。主镜头玩家A区，magnifier 给贵族区实时镜头并框住 noble_1 条件；本 cue 标 hold_after_audio，动画按正常速度播完再继续口播。",
+        "note": "单条件拿取：承接 cue1 的4红+3黑和2蓝+2白，玩家A买下市场一级黑卡 card_l1_onyx_3（价格2蓝+1红+2白；4张红卡折扣使1红免费，实付2蓝+2白），黑卡进入发展区后凑满4红+4黑，满足 noble_1，立刻把 noble_1 从贵族供应堆拿到自己面前。主镜头玩家A区，magnifier 给贵族区实时镜头并框住 noble_1 条件；动画按正常速度播完，cue 时长由固定 plan 决定。",
         "enter": {
           "picture": null,
           "zones": {}
@@ -387,7 +385,6 @@
       "entry": "quick_setup_players/003",
       "tree": "main",
       "demo": true,
-      "hold_after_audio": true,
       "script": {
         "story": "同时满足多位时，选一位拿取。",
         "note": "多条件选择（参考 full choice 示例）：玩家A已有4白+4红+3黑发展卡，手里3枚红宝石；贵族市场设为 noble_1（4红+4黑）与 noble_2（4白+4黑），二者在购买前都未被满足。玩家支付3红买下三级黑卡 card_l3_onyx_74（3张黑卡折扣免3黑，4张红卡折扣后实付3红），买后4红+4黑同时满足 noble_1 与 noble_2；高亮两枚后只拿其中一枚，不说明具体拿的是哪一枚。",

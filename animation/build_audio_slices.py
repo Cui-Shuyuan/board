@@ -17,6 +17,8 @@ import json
 import math
 import re
 import sys
+
+import audio_probe
 from collections import OrderedDict
 from pathlib import Path
 from typing import Any
@@ -24,6 +26,14 @@ from typing import Any
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = "tutorial-audio-slices/v1"
 SCHEMA_VERSION = 4
+
+# Preserve a short run-in from the decoded source before a body cue.  TTS word
+# boundary estimates can be a few tens of milliseconds late; cutting exactly at
+# the reported first-word start clips the first syllable.  This is a source
+# range edit, not a runtime pre-roll: cue durations remain unchanged because the
+# same amount is removed from the trailing silence.
+SOURCE_CONTEXT_LEAD_SECONDS = 0.15
+TITLE_TRIM_TAIL_GUARD_SECONDS = 0.08
 
 
 class BuildError(RuntimeError):
@@ -77,6 +87,52 @@ def _normalize_asset(raw: Any, game_dir: Path, game: str, path: str) -> str:
     return text
 
 
+def _join_source_boundaries(ranges: list[dict], points: dict, cues: dict) -> list[dict]:
+    """Own each adjacent source boundary once, after per-cue tail policies.
+
+    A body cue must not shift its end independently of the next cue's lead.
+    Trimmed title tails are intentional edits and remain explicit contracts.
+    These contracts are checked again when compiling the fixed timeline.
+    """
+    contracts = []
+    for left, right in zip(ranges, ranges[1:]):
+        if left["asset"] != right["asset"]:
+            continue
+        raw_gap = right["raw_start"] - left["raw_end"]
+        if raw_gap < -1e-7:
+            raise BuildError(f"source windows overlap: {left['cue']} -> {right['cue']}")
+        left_slice = cues[left["cue"]][0]
+        right_slice = cues[right["cue"]][0]
+        end_ref = left_slice["end_ref"]
+        start_ref = right_slice["start_ref"]
+        end = float(points[end_ref]["time"])
+        start = float(points[start_ref]["time"])
+        if abs(raw_gap) <= 1e-7 and not left["trimmed"]:
+            # The earlier desired edge protects the next cue's context. Never
+            # move it before the preceding cue's known speech end.
+            shared = _round(max(left["speech_end"], min(end, start)))
+            if shared > right["raw_start"] + 1e-7:
+                raise BuildError(f"no safe shared source boundary: {left['cue']} -> {right['cue']}")
+            points[end_ref]["time"] = shared
+            points[start_ref]["time"] = shared
+            for subtitle in left_slice["subtitles"]:
+                ref = subtitle["end_ref"]
+                points[ref]["time"] = min(points[ref]["time"], shared)
+            kind = "continuous"
+        else:
+            # Do not remove authored silence or restore an intentionally
+            # trimmed title tail. Reject overlap instead of duplicating words.
+            if end > start + 1e-7:
+                raise BuildError(f"context lead overlaps preceding audio: {left['cue']} -> {right['cue']}")
+            kind = "trimmed_tail" if left["trimmed"] else "authored_gap"
+        contracts.append({
+            "left_slice": left_slice["id"],
+            "right_slice": right_slice["id"],
+            "kind": kind,
+        })
+    return contracts
+
+
 def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
     game_dir = repo_root / "content" / "games" / game
     tutorial_dir = game_dir / "tutorial"
@@ -114,6 +170,7 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
     groups: dict[str, dict] = OrderedDict()
     seen_cue_ids: set[str] = set()
     seen_slice_ids: set[str] = set()
+    source_ranges: list[dict] = []
 
     for index, raw_cue in enumerate(raw_cues):
         path = f"runtime.cues[{index}]"
@@ -132,12 +189,20 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         audio_end = _round(audio_start + duration)
         asset = _normalize_asset(
             raw_cue.get("audio"), game_dir, game, f"{path}.audio")
+        try:
+            media_duration = audio_probe.media_duration_seconds(game_dir / asset)
+        except audio_probe.AudioProbeError as exc:
+            raise BuildError(f"{path}.audio: {exc}") from exc
+        if audio_end > media_duration + 1e-6:
+            raise BuildError(
+                f"{path}.audio: cue source range ends at {audio_end:g}s, "
+                f"beyond media duration {media_duration:g}s for {asset!r}")
         slice_id = _slug(cue_id)
         if slice_id in seen_slice_ids:
             raise BuildError(f"{path}: duplicate generated slice id {slice_id!r}")
         seen_slice_ids.add(slice_id)
 
-        subtitles: list[dict] = []
+        subtitle_specs: list[dict] = []
         speech_end: float | None = None
         raw_subtitles = raw_cue.get("subtitles") or []
         if not isinstance(raw_subtitles, list):
@@ -155,15 +220,10 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
             if start < audio_start - 1e-9 or end > audio_end + 1e-9:
                 raise BuildError(
                     f"{sub_path}: subtitle range is outside cue audio window")
-            start_ref = f"{slice_id}.subtitle.{subtitle_index}.start"
-            end_ref = f"{slice_id}.subtitle.{subtitle_index}.end"
-            timing_points[start_ref] = {
-                "time": _round(start), "description": "subtitle start"}
-            timing_points[end_ref] = {
-                "time": _round(end), "description": "subtitle end"}
-            subtitles.append({
-                "start_ref": start_ref,
-                "end_ref": end_ref,
+            subtitle_specs.append({
+                "index": subtitle_index,
+                "start": start,
+                "end": end,
                 "text": str(raw_subtitle.get("text") or ""),
             })
             for word in raw_subtitle.get("words") or []:
@@ -176,16 +236,91 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                 speech_end = bounded if speech_end is None else max(
                     speech_end, bounded)
 
+        policy = existing_cue_timing.get(cue_id, {})
+        trim_to_speech_end = bool(
+            isinstance(policy, dict)
+            and policy.get("trim_to_speech_end") is True)
+        if trim_to_speech_end and speech_end is None:
+            raise BuildError(
+                f"{path}: trim_to_speech_end requires TTS word timings")
+
+        effective_start = audio_start
+        effective_end = audio_end
+        if trim_to_speech_end:
+            # Leave a short guard after the estimated last-word end.  TTS word
+            # end timestamps are estimates too; cutting exactly there can chop
+            # the final phoneme.  The cue plan still appends its explicit
+            # trailing silence after this guarded source range.
+            guard = TITLE_TRIM_TAIL_GUARD_SECONDS
+            if isinstance(policy, dict):
+                raw_guard = policy.get("trim_tail_guard_seconds", guard)
+                if isinstance(raw_guard, (int, float)) and not isinstance(raw_guard, bool):
+                    guard = max(0.0, float(raw_guard))
+            effective_end = _round(min(audio_end, speech_end + guard))
+            # Trim policy controls the tail only.  The first-word timestamp
+            # can still be late inside the waveform, including numeric title
+            # tokens such as "2.4".  Keep the same bounded source-context lead
+            # as body cues so the title does not start inside its first
+            # syllable.  This increases the audio slice duration (and therefore
+            # the cue duration) instead of silently dropping source samples.
+            if audio_start > 0.0 and speech_end is not None:
+                trailing_silence = audio_end - speech_end
+                lead = min(
+                    SOURCE_CONTEXT_LEAD_SECONDS,
+                    audio_start,
+                    max(0.0, trailing_silence),
+                )
+                if lead > 1e-6:
+                    effective_start = _round(audio_start - lead)
+        elif audio_start > 0.0 and speech_end is not None:
+            trailing_silence = audio_end - speech_end
+            lead = min(
+                SOURCE_CONTEXT_LEAD_SECONDS,
+                audio_start,
+                max(0.0, trailing_silence),
+            )
+            if lead > 1e-6:
+                effective_start = _round(audio_start - lead)
+                effective_end = _round(audio_end - lead)
+
+        subtitles: list[dict] = []
+        for subtitle_spec in subtitle_specs:
+            subtitle_index = subtitle_spec["index"]
+            start = max(float(subtitle_spec["start"]), effective_start)
+            end = min(float(subtitle_spec["end"]), effective_end)
+            if end <= start:
+                continue
+            start_ref = f"{slice_id}.subtitle.{subtitle_index}.start"
+            end_ref = f"{slice_id}.subtitle.{subtitle_index}.end"
+            timing_points[start_ref] = {
+                "time": _round(start), "description": "subtitle start"}
+            timing_points[end_ref] = {
+                "time": _round(end), "description": "subtitle end"}
+            subtitles.append({
+                "start_ref": start_ref,
+                "end_ref": end_ref,
+                "text": subtitle_spec["text"],
+            })
+
         start_ref = f"{slice_id}.start"
         end_ref = f"{slice_id}.end"
         speech_ref = f"{slice_id}.speech_end"
         timing_points[start_ref] = {
-            "time": _round(audio_start), "description": "logical slice start"}
+            "time": _round(effective_start),
+            "description": "logical slice start"}
         timing_points[end_ref] = {
-            "time": audio_end, "description": "logical slice end"}
+            "time": _round(effective_end),
+            "description": "logical slice end"}
         timing_points[speech_ref] = {
-            "time": _round(audio_end if speech_end is None else speech_end),
+            "time": _round(
+                effective_end if speech_end is None else min(speech_end, effective_end)),
             "description": "last TTS word end"}
+        source_ranges.append({
+            "cue": cue_id, "asset": asset,
+            "raw_start": audio_start, "raw_end": audio_end,
+            "trimmed": trim_to_speech_end,
+            "speech_end": speech_end if speech_end is not None else audio_end,
+        })
         cues[cue_id] = [{
             "id": slice_id,
             "asset": asset,
@@ -238,6 +373,7 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                     "after_end": "hold_last_frame",
                 }]
 
+    boundary_contracts = _join_source_boundaries(source_ranges, timing_points, cues)
     audio_groups: dict[str, dict] = {}
     for group_id, group in groups.items():
         if len(group["assets"]) != 1:
@@ -254,6 +390,7 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         "game_id": game,
         "track": track,
         "sample_rate": sample_rate,
+        "source_boundary_contracts": boundary_contracts,
         # Per-cue policies are authored in the fixed file and must survive
         # regeneration from runtime; otherwise title trim rules silently
         # revert to raw next-cue audio boundaries.

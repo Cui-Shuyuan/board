@@ -150,7 +150,7 @@
 
 标注增强：
 
-- `point` / `shape` 支持可选 `marker_key`：同一 target 上不同 `marker_key` 的标注互不覆盖；需要同时保留多个指示物或箭头时使用。
+- `point` / `shape` 支持可选 `marker_key`：同一 target 上不同 `marker_key` 的标注互不覆盖；需要同时保留多个指示物或箭头时使用。full 的 `nobles/intro.001` 已用该机制同时保留“声望圈”和“条件框”，并配合 `label_align=center` 在 `noble_score_hint` / `noble_condition_hint` 标注两者。
 - `arrow` 支持可选 `arrow_direction: left | right | up | down` 与 `text`：`arrow_direction` 控制指向，`text` 在箭头尾部显示说明文字。
 
 规则：
@@ -297,7 +297,12 @@ overlay 槽位，不要用 `overlay_show` 贴文字图片，也不要在 cue 里
 
 章节标题需要压暗场景时，额外发一个全屏 `overlay_show`：`overlay: "section_title_dim"`、`rect: {x:0,y:0,w:1,h:1}`、`background: "#000000"`、`dim_alpha: 0.8`。`dim_alpha` 表示遮罩透明度，0.8 即背景保留约 20% 可见度；该模式只隐藏 zone debug 层、不隐藏真实画面。
 
-章节标题和 TTS cue 需要自然停顿时，用 cue 字段 `pause_after_speech_seconds`（例如 `1.0`），不要用 `hold_after_audio` 在连续 section 音频的 cue 边界硬停。播放端会在该 cue 最后一个字幕 word 结束后暂停指定秒数，再跳到下一 cue 的 `audio_start`，避免停顿切进下一个词。
+章节标题和 TTS cue 的自然停顿在 `{track}.audio-slices.json` 的 `cue_timing`
+中声明，使用 `trim_to_speech_end`、`trim_tail_guard_seconds` 与
+`trailing_silence_seconds`。相邻连续源区间共享切点，由边界契约校验。
+播放器按课程 DSP 时钟输出连续音频块，并从课程位置派生 cue-local 时间，
+同步视觉、字幕与 cue 完成事件。具体字段见
+[音频与时间轴制作流程](../../../../../../docs/tutorial/audio-timeline-pipeline.md)。
 屏幕 `label` 支持 Unity rich text 内联标签（如 `<color=#FF2020>11</color>`），也可用可选 `"label_color": "#FF2020"` 指定整条文字颜色；未写时保持默认白色正文 + 深色描边，富文本标签不占自动换行字数。
 `label` 还支持可选 `"label_mode": "add" | "replace"`：默认 `add`，同一槽位的多条 label 会各自出现；`replace` 表示同一目标上最新开始的 label 生效。需要无缝切换时写 `replace` 并让前后两条 label 的 `dur` 轻微重叠；需要停顿间隔时保持默认 `add` 并留空档。
 `replace` 可再写可选 `"label_key": "<logical-text-id>"`，指定它要替换哪一条逻辑文本；同一 overlay 上不同 `label_key` 可以独立替换、互不影响。不写时按整个目标替换。

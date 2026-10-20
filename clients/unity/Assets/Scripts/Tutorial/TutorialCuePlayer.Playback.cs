@@ -27,6 +27,21 @@ namespace BoardGameTutorial
                 StopCoroutine(playbackRoutine);
                 playbackRoutine = null;
             }
+            // Navigation within a prepared track reuses its immutable audio
+            // plan. Cancel/Prepare is reserved for loading a different track.
+            if (cueTimelineActive && cueTimelineController != null
+                && cueTimelineController.IsPrepared
+                && cueTimelineController.PlanSet == cueTimelineTrackPlanSet
+                && index < cueTimelineTrackPlanSet.cues.Count)
+            {
+                CueTimelinePlan target = cueTimelineTrackPlanSet.cues[index];
+                if (cueTimelineController.SeekTo(target.course.start
+                    + Math.Min(Math.Max(0f, localTime), target.course.duration), startPaused))
+                {
+                    playbackFinished = false;
+                    return;
+                }
+            }
             CancelCueTimelineForSwitch();
             lastPosition = Mathf.Max(0f, localTime);
             playbackFinished = false;
@@ -103,8 +118,8 @@ namespace BoardGameTutorial
         public void SetVolume(float value)
         {
             float clamped = Mathf.Clamp01(value);
-            if (cueTimelineAudioExecutor != null)
-                cueTimelineAudioExecutor.Volume = clamped;
+            if (cueTimelineAudioTransport != null)
+                cueTimelineAudioTransport.Volume = clamped;
         }
 
         public void AdjustVolume(float delta)
@@ -144,21 +159,16 @@ namespace BoardGameTutorial
 
         public void SeekRelative(float seconds)
         {
-            if (!cueTimelineActive || cueTimelineController == null) return;
-            float target = Position + seconds;
-            if (target < 0f)
-            {
-                if (currentIndex > 0) PlayCue(currentIndex - 1, true);
-                else SeekCueTimeline(0f);
+            if (!cueTimelineActive || cueTimelineController == null
+                || cueTimelineTrackPlanSet == null
+                || cueTimelineTrackPlanSet.course == null)
                 return;
-            }
-            if (target > Duration)
-            {
-                if (currentIndex + 1 < TotalCueCount) PlayCue(currentIndex + 1, true);
-                else SeekCueTimeline(Mathf.Max(0f, Duration - 0.05f));
-                return;
-            }
-            SeekCueTimeline(target);
+            bool stayPaused = cueTimelineController.State == CuePlaybackState.Paused
+                || cueTimelineController.State == CuePlaybackState.Buffering;
+            float target = (float)cueTimelineController.CourseTime + seconds;
+            target = Mathf.Clamp(target, 0f,
+                (float)cueTimelineTrackPlanSet.course.duration);
+            SeekCueTimelineGlobal(target, stayPaused);
         }
 
         public void SeekTo(float localSeconds)
@@ -217,7 +227,11 @@ namespace BoardGameTutorial
             if (kb.rKey.wasPressedThisFrame) ReplayCurrent();
             if (kb.leftArrowKey.wasPressedThisFrame) Previous();
             if (kb.rightArrowKey.wasPressedThisFrame) Next();
-            if (kb.aKey.wasPressedThisFrame) autoAdvance = !autoAdvance;
+            if (kb.aKey.wasPressedThisFrame)
+            {
+                autoAdvance = !autoAdvance;
+                ApplyCueTimelineAdvancePolicy();
+            }
             if (kb.gKey.wasPressedThisFrame) ToggleCueAnimation();
             if (kb.bKey.wasPressedThisFrame && kb.shiftKey.isPressed)
             { inDebugJump = false; PlayCue(debugJumpReturnIndex); }
@@ -227,7 +241,11 @@ namespace BoardGameTutorial
             if (Input.GetKeyDown(KeyCode.R)) ReplayCurrent();
             if (Input.GetKeyDown(KeyCode.LeftArrow)) Previous();
             if (Input.GetKeyDown(KeyCode.RightArrow)) Next();
-            if (Input.GetKeyDown(KeyCode.A)) autoAdvance = !autoAdvance;
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                autoAdvance = !autoAdvance;
+                ApplyCueTimelineAdvancePolicy();
+            }
             if (Input.GetKeyDown(KeyCode.G)) ToggleCueAnimation();
             if (Input.GetKeyDown(KeyCode.B)) ToggleDebugJump();
 #endif

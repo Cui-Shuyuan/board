@@ -3,7 +3,7 @@
 > LLM/人编写动画前先读 [v2/LLM-ANIMATION-GUIDE.md](v2/LLM-ANIMATION-GUIDE.md)。
 > 数据模型细节与字段说明见 [v2/README.md](v2/README.md)。
 
-当前为 **section-first + reusable materials** 源模型，旧的 `script.full.json` / `anim/v2/full.anim.json` / `anim/v2/_stage/` 已删除。共享局面/动作/表现优先写 `../library/`，track 的 cue 通过 `use`/`example` 引用。
+源模型为 **section-first + reusable materials**。共享局面/动作/表现写在 `../library/`，track 的 cue 通过 `use`/`example` 引用。
 
 ## 数据链路
 
@@ -20,22 +20,25 @@ shared/stage/*.stage.json                          跨 section 的 zone / templa
 tutorial/build/{track}.{script,anim}.json          装配中间产物（不进 Git）
         │
         ▼  animation/compile_tutorial.py
-tutorial/{track}.runtime.json                      音频 / 字幕 / 时长（full legacy）
+tutorial/{track}.runtime.json                      音频 / 字幕 / 导航元数据（构建输入与整轨兼容回退）
 tutorial/anim/v2/{track}.compiled.json             Unity 只读 compiled
         │
-        ├─ quick Phase 4:
-        │   tutorial/quick.cue.tts.lrc              TTS 合成输入
-        │   tutorial/quick.audio-slices.json        唯一固定时间轴（timing points / refs / cue policy / audio groups）
-        │   tutorial/quick.timing-policy.json       仅全局流水线配置
-        │   tutorial/quick.cue-timeline.json        Android/Unity 共用 plan
+        ├─ cue-timeline (quick/full):
+        │   tutorial/{quick,full}.audio-slices.json    唯一固定时间轴
+        │   tutorial/{quick,full}.timing-policy.json   仅全局流水线配置
+        │   tutorial/{quick,full}.cue-timeline.json    Android/Unity 共用 plan
         │
         ▼  Unity TutorialCuePlayer / TutorialAnimPlayer
 ```
 
-> quick 已迁移到 cue-level TTS + 逻辑音频切片。所有时间戳、source range、
-> 字幕 refs 和 per-cue timing policy 都只在 `quick.audio-slices.json`；
-> `quick.timing-policy.json` 仅保留全局配置。Phase 4 只覆盖 quick，full 仍走
-> legacy。完整制作流程见 `docs/tutorial/audio-timeline-pipeline.md`。
+> quick 与 full 使用固定 audio-slices 和共享 cue plan。所有时间戳、
+> source range、字幕 refs、per-cue timing policy 和 visual mapping 都只在
+> `{track}.audio-slices.json`；`{track}.timing-policy.json` 仅保留全局配置。
+> source 边界契约检查连续区间与显式留空。Unity 按课程 DSP 时钟输出连续
+> 音频块，并在 cue 标记处同步字幕和视觉。
+> [制作流程](../../../../../docs/tutorial/audio-timeline-pipeline.md) ·
+> [数据协议](../../../../../docs/tutorial/cue-timeline-protocol.md) ·
+> [播放器](../../../../../docs/tutorial/continuous-cue-audio.md)
 
 ## 生产顺序
 
@@ -70,6 +73,6 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 python3 tools/ops/check_unity_scripts.py
 ```
 
-当前编译基线：full 81 cue / 12 section / 394 anchors；quick 32 cue / 11 section / 138 anchors。`check_anim_v2` / `validate_anim_rules_v2` 两轨均 0 warnings；full `audit_anim_v2` 61 cues 0 errors、quick 23 cues 0 errors。素材迁移后 compiled 与迁移前逐字段一致（除 `source_sha256`）。Phase 4 的 quick plan 只覆盖 quick，full 的时间轴迁移留待 Phase 5。
+当前编译基线以 track/section 源与 `anim/v2/{full,quick}.compiled.json` 为准；两轨均使用固定 audio-slices + 共享 plan，full 为 83 cue，quick 为 32 cue。
 
 共享素材工作流与影响范围：见 `docs/tutorial/animation-materials-authoring-guide.md`。

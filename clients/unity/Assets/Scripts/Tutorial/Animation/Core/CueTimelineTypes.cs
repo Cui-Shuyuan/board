@@ -19,6 +19,7 @@ namespace BoardGameTutorial.Animation
         Completed = 6,
         Cancelled = 7,
         Failed = 8,
+        Buffering = 9,
     }
 
     public static class CuePlaybackStateMachine
@@ -51,10 +52,16 @@ namespace BoardGameTutorial.Animation
                 case CuePlaybackState.Playing:
                     return to == CuePlaybackState.Paused
                         || to == CuePlaybackState.Seeking
+                        || to == CuePlaybackState.Buffering
                         || to == CuePlaybackState.Completed;
                 case CuePlaybackState.Paused:
                     return to == CuePlaybackState.Playing
                         || to == CuePlaybackState.Seeking;
+                case CuePlaybackState.Buffering:
+                    return to == CuePlaybackState.Playing
+                        || to == CuePlaybackState.Paused
+                        || to == CuePlaybackState.Seeking
+                        || to == CuePlaybackState.Completed;
                 case CuePlaybackState.Seeking:
                     return to == CuePlaybackState.Playing
                         || to == CuePlaybackState.Paused
@@ -219,7 +226,7 @@ namespace BoardGameTutorial.Animation
     /// <summary>
     /// Authoritative wall/dsp clock source.  The controller converts this
     /// monotonic source into its own cue-local time and freezes that time when
-    /// paused.  Phase 3 can provide a DSP-backed implementation.
+    /// paused.  Unity provides a DSP-backed implementation via UnityDspCueClock.
     /// </summary>
     public interface ICueClock
     {
@@ -424,6 +431,19 @@ namespace BoardGameTutorial.Animation
                     if (segment.type == "audio_clip" && string.IsNullOrEmpty(segment.asset))
                     {
                         error = path + ".asset must be non-empty";
+                        return false;
+                    }
+                    if (segment.source_start_sample < 0L
+                        || segment.source_end_sample < 0L)
+                    {
+                        error = path + " source sample hints must be non-negative";
+                        return false;
+                    }
+                    if ((segment.source_start_sample > 0L
+                         || segment.source_end_sample > 0L)
+                        && segment.source_end_sample < segment.source_start_sample)
+                    {
+                        error = path + " source sample hints must be increasing";
                         return false;
                     }
                     if (segment.type == "animation" || segment.type == "state")

@@ -158,7 +158,7 @@ namespace BoardGameTutorial.Animation
 
         private void CallbackFail(long generation, string message)
         {
-            Debug.LogError("[CueTimelineV1][Visual] " + message + " gen=" + generation);
+            Debug.LogError("[CueTimeline][Visual] " + message + " gen=" + generation);
             if (callback != null) callback.OnFailed(generation, message);
         }
     }

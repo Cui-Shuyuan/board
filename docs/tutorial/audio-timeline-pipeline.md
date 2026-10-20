@@ -1,66 +1,55 @@
-# Tutorial 音频/字幕时间轴制作管线（Phase 5）
+# Tutorial 音频与时间轴制作流程
 
-本文记录 Splendor `quick` 与 `full` 两条 track 的 cue-level 音频、逻辑切片、
-字幕轨道、多 visual segment、固定时间轴和内容发布流程。
+本文说明口播素材、固定时间轴、字幕、视觉轨道和课程 plan 的制作与发布。
+数据字段见 [Cue Timeline 协议](cue-timeline-protocol.md)，播放行为见
+[课程音频播放器](continuous-cue-audio.md)。
 
-相关协议与实现：
+## 文件职责
 
-- `docs/tutorial/cue-timeline-protocol.md`
-- `animation/build_cue_timeline.py`
-- `animation/cue_timeline.py`
-- `clients/unity/Assets/Scripts/Tutorial/Animation/`
-- `clients/android/app/src/main/java/com/boardai/tutorial/uaal/timeline/`
+以下路径以 `content/games/<game>/tutorial/` 为根目录。
 
-## 1. 数据流总览
+| 文件 | 职责 |
+| --- | --- |
+| `tracks/<track>.track.json` | section 顺序和 track 元信息 |
+| `sections/<id>/<track>.script.json` | 口播文字、cue 切分、beats 和 refs |
+| `sections/<id>/<track>.anim.json` | 动画事件、素材引用、镜头和 QA |
+| `build/<track>.script.json` | section 装配生成的文字与导航中间产物 |
+| `<track>.runtime.json` | TTS/字幕窗口、导航元数据；切片导入与整轨兼容加载的输入 |
+| `anim/v2/<track>.compiled.json` | 可定位到任意素材时间的编译动画 |
+| `<track>.audio-slices.json` | 固定时间点、源区间、字幕 refs、per-cue 策略和视觉映射 |
+| `<track>.timing-policy.json` | 固定文件路径、script 路径、默认时长模式等全局配置 |
+| `<track>.cue-timeline.json` | Android 和 Unity 共用的课程播放计划 |
 
-```text
-{track}.script.json
-  └─ cue/beat 文本与顺序
-      └─ {track}.audio-slices.json                 # 唯一固定时间轴
-          ├─ timing_points（所有秒数）
-          ├─ cues：cue ID -> logical audio slices
-          ├─ refs：asset/source range/subtitle
-          ├─ cue_timing：per-cue mode/silence/trim policy
-          ├─ audio_groups：cue/audio-group ID 映射
-          └─ cue_visuals：多 visual animation segment 映射
-              └─ animation/build_cue_timeline.py
-                  └─ {track}.timing-policy.json    # 仅全局配置
-                      └─ tutorial/{track}.cue-timeline.json
-                          ├─ Android TutorialTimeline
-                          └─ Unity CuePlaybackController
-
-content/catalog/splendor.json
-  └─ cue_timeline_tracks: ["quick", "full"]
-
-tools/content/build_content_manifest.py
-  └─ 打包 plan、固定时间轴、全局 timing policy 和 plan 引用的全部音频
-```
-
-## 2. 源文件职责
+口播和动画在 section 源文件中编辑，共享动作、示例与表现放在 `library/`。
+`build/` 由装配工具生成。固定时间轴以命名 ID/ref 组织秒数与映射；
+生产脚本按字段通用解析。
 
 ```text
-content/games/splendor/tutorial/build/quick.script.json
-content/games/splendor/tutorial/build/full.script.json      # cue 文本/顺序元数据（构建生成）
-content/games/splendor/tutorial/quick.audio-slices.json     # quick 唯一固定时间轴
-content/games/splendor/tutorial/full.audio-slices.json      # full 唯一固定时间轴
-content/games/splendor/tutorial/quick.timing-policy.json    # 仅全局配置
-content/games/splendor/tutorial/full.timing-policy.json     # 仅全局配置
-content/games/splendor/media/tts/quick.cues/                # quick TTS 生成物
-content/games/splendor/media/tts/full/                      # full 现有 section TTS
+section 文字、动画与共享素材
+  → TTS、runtime、compiled
+  → audio-slices（固定时间点、源区间、字幕与视觉映射）
+  → build_cue_timeline + timing-policy
+  → cue-timeline（课程起点、时长、三类轨道）
+  → content manifest
+  → Android 导航与 Unity 课程播放器
 ```
 
-- `build/{track}.script.json`：cue/beat 文本与导航元数据的编辑/装配源。
-- `{track}.audio-slices.json`：**时间、ID、source range、字幕 refs、音频组、
-  per-cue timing policy 和 visual segment 映射的唯一权威来源**。
-- `{track}.timing-policy.json`：只保留全局流水线配置（`audio_source`、固定
-  文件路径、script 路径、`default_mode`），不得出现 per-cue ID 或秒数。
-- 固定文件之外不得再散落 cue ID -> slice ID 映射、TTS 秒数或 per-cue 静音
-  配置。生产构建脚本只按 ID/ref 通用查表，不包含具体 Splendor cue ID 或
-  timing point ID。
+## 音频素材
 
-## 3. TTS 与 full 媒体
+Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
+资源 ID 为 `seed-tts-2.0`。
 
-quick 使用 seed2 cue-level TTS：
+| track | 音频组织 | cue 数 | 课程时长 |
+| --- | --- | ---: | ---: |
+| quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 197.008 秒 |
+| full | section TTS 与独立父章节标题素材 | 83 | 607.408 秒 |
+
+full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
+`cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
+一个 cue 可引用多段音频；多个 cue 可共享同一素材的连续区间。
+素材文件保持完整，plan 使用 `asset + source_start/source_end` 描述所需内容。
+
+quick TTS 生成命令：
 
 ```bash
 python animation/tts_doubao.py \
@@ -72,261 +61,130 @@ python animation/tts_doubao.py \
   --track quick --prune
 ```
 
-full 为两个父章节新增了独立标题 cue：
-
-- `setup/title_2`，文本 `2，设置。`，独立音频
-  `content/games/splendor/media/tts/full/setup.intro.mp3`；
-- `cards_group/title_3_2`，文本 `3.2，发展卡牌与贵族。`，独立音频
-  `content/games/splendor/media/tts/full/action.cards.group.mp3`。
-
-两者均使用 seed2 音色 `zh_female_vv_uranus_bigtts` / `seed-tts-2.0`
-单独生成，不复用子章节音频。其余 full cue 继续复用已有 section TTS 媒体，
-并以固定 source range 表示音频窗口。
-
-重新生成 full title cue 的入口：
+section 内容编译入口为：
 
 ```bash
-DOUBAO_TTS_PROVIDER=seed2 \
-DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts \
-DOUBAO_RESOURCE_ID=seed-tts-2.0 \
 python animation/compile_tutorial.py --game splendor --track full
 ```
 
-如果新增/修改 section TTS，必须同步更新 `full.audio-slices.json` 的
-timing points、字幕 refs、audio group 和 plan，再重新构建 manifest。
+生成 TTS 时显式配置 `DOUBAO_TTS_PROVIDER=seed2`、
+`DOUBAO_SPEAKER=zh_female_vv_uranus_bigtts`、
+`DOUBAO_RESOURCE_ID=seed-tts-2.0`。编译工具也支持 `--dry-run` 与
+`--skip-tts`，适合检查影响范围和复用已生成媒体。
 
-规则：
+## 源区间与切点
 
-- 一个 cue 可以引用一个或多个逻辑音频 slice；
-- 不复制或改写原始 TTS 文件；plan 写 asset + source range；
-- 共享音频关系只作为固定文件中的 `audio_groups` 审计/ID 映射，不再生成
-  运行时 `playback_group` 交接标记；
-- 运行时不再用 `AudioSource.isPlaying`、字幕最后 word 或标题特判决定 cue
-  完成。
+音频区间统一使用半开区间 `[start, end)`。TTS word timing 是估计值，
+审核首尾字时应结合源音频听感与波形。
 
-## 4. 固定时间轴文件 schema
+full 的切片导入器 `animation/build_audio_slices.py` 采用以下规则：
 
-当前 schema 为 `tutorial-audio-slices/v1`、`schema_version=4`：
+1. 根据 runtime 的 cue 顺序、音频起点、时长和字幕窗口建立逻辑 slice。
+2. 有 word timing 且起点大于零的 slice，使用最多 0.15 秒前置上下文。
+   前置量受源文件起点和当前窗口的可用尾部时长约束。
+3. 正文 slice 的起点和终点先按同一前置量移动。采用
+   `trim_to_speech_end` 的 slice 前移起点，尾部由
+   `speech_end + trim_tail_guard_seconds` 决定。
+4. 对原始窗口相接、上一段未显式裁尾的同源片段，统一计算共享边界。
+   上一段 end 和下一段 start 相等，边界不早于上一段已知 speech end。
+   两段时长按共享边界分配。
+5. 将连续、裁尾、作者留空关系写入 `source_boundary_contracts`。
 
-```json
-{
-  "schema": "tutorial-audio-slices/v1",
-  "schema_version": 4,
-  "game_id": "splendor",
-  "track": "quick",
-  "sample_rate": 24000,
-  "cue_timing": {
-    "<cue_id>": {
-      "mode": "audio",
-      "trim_to_speech_end": true,
-      "trailing_silence_seconds": 1.0
-    }
-  },
-  "audio_groups": {
-    "<group_id>": {
-      "cue_ids": ["<cue_id_a>", "<cue_id_b>"],
-      "slice_ids": ["<slice_id_a>", "<slice_id_b>"]
-    }
-  },
-  "timing_points": {
-    "<slice_id>.start": {"time": 0.0},
-    "<slice_id>.end": {"time": 1.656},
-    "<slice_id>.speech_end": {"time": 1.245},
-    "<slice_id>.subtitle.0.start": {"time": 0.285},
-    "<slice_id>.subtitle.0.end": {"time": 1.245}
-  },
-  "cues": {
-    "<cue_id>": [
-      {
-        "id": "<slice_id>",
-        "asset": "media/tts/quick.cues/<generated>.mp3",
-        "start_ref": "<slice_id>.start",
-        "end_ref": "<slice_id>.end",
-        "speech_end_ref": "<slice_id>.speech_end",
-        "subtitles": [
-          {
-            "start_ref": "<slice_id>.subtitle.0.start",
-            "end_ref": "<slice_id>.subtitle.0.end",
-            "text": "..."
-          }
-        ]
-      }
-    ]
-  },
-  "cue_visuals": {
-    "<cue_id>": [
-      {
-        "id": "<visual_segment_id>",
-        "animation": "<compiled_cue_id>",
-        "cue_start_ref": "<cue_id>.visual.0.start",
-        "source_start_ref": "<cue_id>.visual.0.source_start",
-        "source_end_ref": "<cue_id>.visual.0.source_end",
-        "after_end": "hold_last_frame"
-      }
-    ]
-  }
-}
-```
+边界契约在固定文件读入和计划策略应用后分别校验：
 
-`cue_visuals` 可省略；省略时兼容旧的单 compiled-cue 默认视觉段。需要多个
-animation segment 时必须显式写入固定文件。
+| kind | 约束 |
+| --- | --- |
+| `continuous` | 两侧使用同一个整数采样边界 |
+| `trimmed_tail` | 允许显式裁尾产生的空隙；区间无重叠 |
+| `authored_gap` | 允许作者声明的源区间空隙；区间无重叠 |
 
-### 命名与引用规则
+`source_boundary_contracts` 为可选字段；full 导入器会生成它。
+声明采样率决定固定文件的采样边界校验精度。
 
-```text
-{slice_id}.start
-{slice_id}.end
-{slice_id}.speech_end
-{slice_id}.subtitle.{index}.start
-{slice_id}.subtitle.{index}.end
-{cue_id}.visual.{index}.start
-{cue_id}.visual.{index}.source_start
-{cue_id}.visual.{index}.source_end
-```
+full 标题使用 `mode: audio`、`trim_to_speech_end: true`、
+`trim_tail_guard_seconds: 0.08` 和 `trailing_silence_seconds: 1.0`。
+编译器检查有效 speech end 与非空源区间，再追加显式 silence 段。
+`setup_players/title_2_4` 的源区间为 `[20.055, 21.385)`，
+cue 时长为 2.33 秒。
 
-- `id`：逻辑音频 slice / visual segment ID，必须唯一；
-- `asset`：原始音频文件，保持完整，不复制不修改；
-- `start_ref/end_ref`：source range timing point refs；
-- `speech_end_ref`：最后一个 TTS word 结束的 timing point；
-- `subtitles[].start_ref/end_ref`：字幕窗口 timing point refs；
-- `cue_timing`：cue ID -> 时间策略；
-- `audio_groups`：共享音频的 cue/slice ID 映射审计；
-- `cue_visuals`：visual segment -> compiled animation + source range。
+quick 标题同样采用音频时长与 1 秒尾静音，当前
+`trim_tail_guard_seconds` 使用默认值 0。具体值以各 track 的固定文件为准。
 
-所有时间点时刻只存在于 `timing_points`；固定时长 silence 等 per-cue 数值
-策略只存在于 `cue_timing`。缺失 ID、重复 ID、非法 ref、越界、未知 animation
-和循环引用必须显式失败。
+## 时长、字幕与视觉
 
-### trim + 固定尾静音
+每条 cue 的策略位于 `audio-slices.json` 的 `cue_timing`。
+`timing-policy.json` 提供全局 `default_mode`。
 
-`trim_to_speech_end=true` 是编译期显式 policy：
+| mode | cue 时长与轨道行为 |
+| --- | --- |
+| `max` | 使用各轨道的最晚结束时间；先结束的视觉按尾部策略保持或清空 |
+| `audio` | 使用音频轨道时长，包含显式静音；视觉超出部分裁到 cue 末尾 |
+| `visual` | 使用视觉时长；会截断音频时构建失败 |
 
-1. slice 必须有 `speech_end_ref`；
-2. timing point 必须是有限数；
-3. `start <= speech_end <= end`；
-4. trim 后 source range 非空且非负；
-5. 追加 `trailing_silence_seconds` 的 silence segment；
-6. `mode=audio` 的 cue duration 精确等于 trim 后音频长度 + silence。
+课程中的 cue 起点按最终时长累加，课程总时长等于最后一个 cue 的终点。
+字幕窗口来自 source-absolute refs，编译后转换为 cue-local
+`cue_start + duration`，作为独立 subtitle track 展示。
 
-这是固定数据中的编译策略，不是运行时按字幕最后 word 裁切。full/quick 的
-标题 cue 不再有代码级特判；任何 cue 都可显式选择该 policy。
+`cue_visuals` 可指定多个 `animation` 或 `state` 段。
+动画段引用 compiled cue 及其源时间范围；`state` 在素材时间零应用画面，
+适用于瞬发状态；编译 plan 中的 `hold` 段冻结前序画面。`after_end` 支持
+`hold_last_frame` 与 `clear`。省略视觉映射时，编译器采用对应 compiled cue
+的默认映射。
 
-## 5. cue duration 策略
+不同 compiled cue 各自使用编译好的 `start_state`。同一动画素材的多个源区间
+可以连续定位。视觉执行器使用课程位置派生的 cue-local 时间进行 Seek。
 
-per-cue mode 位于固定文件的 `cue_timing`，`{track}.timing-policy.json`
-只提供全局 `default_mode`：
+## 生成与发布
 
-```json
-{
-  "audio_source": "audio_slice_manifest",
-  "audio_slice_manifest": "tutorial/full.audio-slices.json",
-  "script_source": "tutorial/build/full.script.json",
-  "default_mode": "max"
-}
-```
-
-- `max`：等待所有 track 结束。音频先结束则动画继续；动画先结束则保持最后
-  画面等待音频。
-- `audio`：cue duration 使用完整 audio track（含显式 silence）；visual 超出
-  部分裁到 cue duration 并保持最后画面。
-- `visual`：visual 为准；若会截断音频则构建失败。
-
-cue 起点按最终 duration 顺序累加；plan set 的 `course.duration` 必须等于
-最后一条 cue 的 `start + duration`。旧 runtime duration 不再是 plan 模式的
-时间来源。
-
-## 6. 字幕与视觉轨道
-
-字幕在 plan 中是正式 track，只作展示，不参与音频裁切或 cue completion。
-
-视觉 track 支持零到多个 animation/state segment：
-
-- 每个 `animation` segment 有 id、compiled animation 引用、cue-local start、
-  source range、`after_end`；
-- 每个 `state` segment 引用一个零时长 compiled cue，在 cue 时长内加载其
-  compiled frame 并保持在 source time 0，用于瞬发 state/overlay 变更；
-- 活动 animation 按 cue-local time 映射到 `source_start + offset`；
-- `hold` 冻结前一个 animation/state 的 source time；
-- `after_end=clear`、无前序 animation 的 hold、以及 cue 开头无视觉段都表示
-  视觉空白，会清空画面；
-- 不同 compiled cue 间切换时各自使用 compiled `start_state`，状态不自动
-  继承；同一 compiled cue 的多个 source range 可以连续 seek。
-
-## 7. 生成 plan
+full 的 section TTS/runtime 更新后，依次执行：
 
 ```bash
-# section-level TTS：先重生成 runtime，再同步固定切片，最后生成 plan
-python3 animation/build_audio_slices.py --game splendor --track full
-python3 animation/build_cue_timeline.py --game splendor --track quick
-python3 animation/build_cue_timeline.py --game splendor --track full
+python animation/build_audio_slices.py --game splendor --track full
+python animation/build_cue_timeline.py --game splendor --track full
 ```
 
-`build_audio_slices.py` 从当前 `full.runtime.json` 的 cue 顺序、audio_start、
-duration 和字幕窗口重建固定文件，保证同一 source asset 上的 cue range
-严格不重叠。任何 TTS/runtime 变更后都必须先跑这一步，否则旧 source range
-可能把下一 cue 的开头重复播放。该脚本也为 duration=0 的 compiled cue 生成
-`type: "state"` visual 映射，避免瞬发画面状态丢失。
-
-产物：
-
-```text
-content/games/splendor/tutorial/quick.cue-timeline.json   # 32 cues
-content/games/splendor/tutorial/full.cue-timeline.json    # 83 cues
-```
-
-生成器会再次执行 `validate_plan_set`。固定文件改动后重新生成即可更新 plan；
-不需要修改生产脚本。连续运行两次必须逐字节一致。
-
-## 8. 内容发布
+`build_audio_slices.py` 会根据导入输入重建固定文件；人工编辑的时间点应先确认
+是否需要随新素材重新导入。quick 的固定时间轴由作者审核维护：
 
 ```bash
-python3 tools/content/build_content_manifest.py --game splendor
+python animation/build_cue_timeline.py --game splendor --track quick
 ```
 
-发布脚本把以下内容纳入 release、manifest、SHA-256 完整性校验：
+计划生成器检查引用、数值、段范围、源边界契约和课程覆盖。
+相同输入应生成逐字节一致的产物。
 
-- `tutorial/{quick,full}.cue-timeline.json`
-- `tutorial/{quick,full}.audio-slices.json`
-- `tutorial/{quick,full}.timing-policy.json`
-- plan 引用的所有音频文件
-- runtime、compiled、图片等既有运行时依赖
-
-plan 中缺失音频引用、或 manifest 收集时发现引用文件不存在，构建会失败而
-不是发布坏包。
-
-## 9. Track 开关与回退
-
-唯一 track 开关来源：
-
-```json
-"cue_timeline_tracks": ["quick", "full"]
-```
-
-- Android 解析 catalog，并决定是否请求 plan 模式；
-- Android 校验整条 plan 后，把实际模式放进 `LoadGameWithRoot` payload；
-- Unity 读取同一开关结果，加载同一份 plan，并校验 cue 覆盖/顺序、总时长、
-  visual/audio 段和音频文件存在性；
-- 正常路径下 quick/full 都使用 plan，不存在逐 cue 混合；
-- 若整条 plan 缺失/非法，Android 与 Unity 都切换到整轨兼容回退：
-  Android 使用 runtime cue start/duration；Unity 由加载适配器把同一组
-  runtime cue 时间整体转换为 plan 形状，再交给 `CuePlaybackController`。
-  这不是第二套播放调度引擎，也不会一端 plan、一端另一个播放引擎。
-
-## 10. 验证清单
+内容发布入口：
 
 ```bash
-python3 animation/build_audio_slices.py --game splendor --track full
-python3 animation/build_cue_timeline.py --game splendor --track quick
-python3 animation/build_cue_timeline.py --game splendor --track full
-python3 -m unittest animation.test_build_cue_timeline -v
-python3 -m unittest animation.test_cue_timeline -v
-python3 -m unittest discover -s animation -p 'test_*.py'
-TMPDIR="$(pwd)/.tmp-dotnet" /mnt/d/dotnet/dotnet.exe run --project tests/AnimationModelTests
-python3 tools/ops/check_unity_scripts.py --json
-cd clients/android && gradlew.bat testDebugUnitTest
-python3 tools/content/build_content_manifest.py --game splendor
+python tools/content/build_content_manifest.py --game splendor
 ```
 
-自动测试覆盖固定时间轴校验、full 83 cue、确定性、多 visual segment
-resolver、控制器暂停/seek/generation/失败/完成、Android plan loader 与两端
-总时长一致性。自动测试不能替代真机视觉/听感验收。
+manifest 包含固定时间轴、全局策略、共享 plan、plan 引用音频、runtime、
+compiled、图片，以及 Android QA 使用的 `tutorial/build/<track>.anim.json`，
+并记录 SHA-256。缺失依赖会使构建失败。
+
+## 加载与兼容模式
+
+catalog 的 `cue_timeline_tracks: ["quick", "full"]` 指定使用共享 plan 的 track。
+Android 校验计划，向 Unity 的 `LoadGameWithRoot` 下发实际模式；Unity 校验
+cue 顺序、时长、轨道与媒体，并通过 `cueTimelinePlanActive` 回报状态。
+
+计划缺失、非法或两端模式不一致时，Android 将整条会话加载为 runtime
+兼容模式。Unity 适配器将 runtime 转为课程 plan，交给
+`CueCoursePlaybackController` 执行。会话内两端使用一致的课程坐标。
+
+## 校验入口
+
+在仓库根目录执行：
+
+```powershell
+python -m unittest animation.test_build_cue_timeline animation.test_build_content_manifest animation.test_cue_timeline
+dotnet run --project tests/AnimationModelTests
+dotnet run --project tests/CourseAudioTransportTests
+```
+
+Android 单元测试入口为 `clients/android/gradlew.bat testDebugUnitTest`；
+Unity 导出和 APK 构建入口为 `clients/android/build-uaal.bat`。
+工具链路径配置见 [Android 工程说明](../../clients/android/README.md)。
+
+设备与测试结果见 [2026-10-20 验收记录](validation/2026-10-20-cue-audio.md)。

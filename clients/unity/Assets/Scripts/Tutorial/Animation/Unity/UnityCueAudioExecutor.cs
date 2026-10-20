@@ -199,7 +199,7 @@ namespace BoardGameTutorial.Animation
             if (!AcceptGeneration(generation)) return;
             paused = true;
             if (source.isPlaying) source.Pause();
-            Debug.Log("[CueTimelineV1][Audio] pause gen=" + generation
+            Debug.Log("[CueTimeline][Audio] pause gen=" + generation
                 + " cue_time=" + FormatTime(lastCueTime));
         }
 
@@ -308,7 +308,7 @@ namespace BoardGameTutorial.Animation
             if (shouldPlay)
             {
                 source.Play();
-                Debug.Log("[CueTimelineV1][Audio] play gen=" + generation
+                Debug.Log("[CueTimeline][Audio] play gen=" + generation
                     + " segment=" + segment.id
                     + " cue_time=" + FormatTime(cueTime)
                     + " source_time=" + FormatTime(sourceTime)
@@ -318,7 +318,7 @@ namespace BoardGameTutorial.Animation
             }
             else
             {
-                Debug.Log("[CueTimelineV1][Audio] seek-position gen=" + generation
+                Debug.Log("[CueTimeline][Audio] seek-position gen=" + generation
                     + " segment=" + segment.id
                     + " cue_time=" + FormatTime(cueTime)
                     + " source_time=" + FormatTime(sourceTime)
@@ -437,7 +437,7 @@ namespace BoardGameTutorial.Animation
         private void FailGeneration(long generation, string message)
         {
             if (generation != activeGeneration) return;
-            Debug.LogError("[CueTimelineV1][Audio] " + message + " gen=" + generation);
+            Debug.LogError("[CueTimeline][Audio] " + message + " gen=" + generation);
             if (callback != null) callback.OnFailed(generation, message);
         }
 

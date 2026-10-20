@@ -340,7 +340,7 @@ class TutorialTimeline private constructor(
             track: String,
             zoneBindings: Map<String, ZoneBinding>
         ): Map<String, List<String>> {
-            val animFile = File(gameRoot, "tutorial/anim/v2/$track.anim.json")
+            val animFile = File(gameRoot, "tutorial/build/$track.anim.json")
             if (!animFile.isFile) return emptyMap()
 
             return try {

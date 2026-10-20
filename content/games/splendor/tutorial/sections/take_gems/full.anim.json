@@ -44,8 +44,7 @@
           "dur": 4.72,
           "anchor": "take_gems/title_3_1.start"
         }
-      ],
-      "pause_after_speech_seconds": 1.0
+      ]
     },
     {
       "id": "different.001",
@@ -138,7 +137,9 @@
           "target": {
             "space": "screen",
             "id": "hint_action_first"
-          }
+          },
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "ensure",
@@ -371,6 +372,18 @@
           "anchor": "take_gems/same.001.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/same.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "highlight",
           "dur": 0.5,
           "peak_alpha": 0.65,
@@ -438,6 +451,18 @@
           "shot": "shot_gem_flow",
           "realizes": "<ontology::timing>",
           "anchor": "take_gems/same.002.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/same.002.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         }
       ],
       "tree": "main"
@@ -529,6 +554,18 @@
           "shot": "shot_gem_flow",
           "realizes": "<ontology::timing>",
           "anchor": "take_gems/draw_rule.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/draw_rule.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "take",
@@ -706,6 +743,18 @@
         }
       },
       "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/draw_rule.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
         {
           "op": "take",
           "dur": 0.0,
@@ -1071,6 +1120,18 @@
           "anchor": "take_gems/limit.001.1.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/limit.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "take",
           "dur": 0.6,
           "quantity": 1,
@@ -1290,6 +1351,18 @@
       },
       "events": [
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/limit.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "pay",
           "dur": 0.6,
           "quantity": 2,
@@ -1489,6 +1562,18 @@
       },
       "events": [
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/public.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "pay",
           "dur": 0.0,
           "setup": true,
@@ -1583,6 +1668,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "take_gems/public.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_gems/public.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "wait",

@@ -44,8 +44,7 @@
           "dur": 4.255,
           "anchor": "cards/title_3_2_1.start"
         }
-      ],
-      "pause_after_speech_seconds": 1.0
+      ]
     },
     {
       "id": "intro.001",
@@ -98,7 +97,9 @@
           "target": {
             "space": "screen",
             "id": "hint_action_second"
-          }
+          },
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "show",
@@ -195,6 +196,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "cards/cost.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/cost.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "show",
@@ -362,6 +375,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "cards/cost.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/cost.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "show",
@@ -601,6 +626,18 @@
         }
       },
       "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/market.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
         {
           "op": "take",
           "dur": 0.0,
@@ -933,6 +970,18 @@
           "anchor": "cards/market.001.2.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/market.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "take",
           "dur": 0.0,
           "quantity": 1,
@@ -1118,6 +1167,18 @@
       },
       "events": [
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/prestige.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "show",
           "rect": {
             "x": 0,
@@ -1199,6 +1260,18 @@
         }
       },
       "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/prestige.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
         {
           "op": "show",
           "rect": {
@@ -1299,6 +1372,18 @@
         "note": "屏幕展示 card_l1_diamond_17，用箭头指向右上角的白色宝石图案，说明折扣颜色。展示图不改变玩家实际拥有的卡牌。"
       },
       "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/discount.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
         {
           "op": "show",
           "rect": {
@@ -1550,6 +1635,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "cards/discount.002.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/discount.002.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         },
         {
           "op": "highlight",
@@ -1862,6 +1959,18 @@
           "anchor": "cards/discount.003.1.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/discount.003.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "show",
           "dur": 0.0,
           "anchor": "cards/discount.003.1.start",
@@ -1961,6 +2070,18 @@
           "shot": "shot_board",
           "realizes": "<ontology::timing>",
           "anchor": "cards/discount.003.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/discount.003.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
         }
       ],
       "tree": "main",
@@ -1994,6 +2115,18 @@
           "anchor": "cards/public.001.1.start"
         },
         {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/public.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
           "op": "camera",
           "dur": 0.0,
           "shot": "shot_board",
@@ -2019,7 +2152,20 @@
         "story": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限",
         "note": "保持五张发展卡的桌面，说明单回合购买数量与累计持有数量是两个不同限制。本条没有新事件；后续贵族介绍通过 entry 回到另一个示例入口。"
       },
-      "events": [],
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "cards/limit.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        }
+      ],
       "tree": "main",
       "qa": [
         "璀璨宝石。玩家每回合只能购买一张发展卡牌，但整局游戏能购买的发展卡牌总数没有上限。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"

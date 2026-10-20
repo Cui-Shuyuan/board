@@ -337,6 +337,27 @@ class MainActivity : UnityPlayerGameActivity() {
                             }
                         }
 
+                        // Android and Unity must agree on the whole-track
+                        // timing source.  If Unity rejected the plan Android
+                        // accepted, reload the complete track in runtime
+                        // compatibility mode instead of mixing two timelines.
+                        LaunchedEffect(
+                            status?.unityReady,
+                            status?.cueTotal,
+                            status?.cueTimelinePlanActive,
+                            playerState.cueTimelinePlanActive,
+                            playerState.activeTrack
+                        ) {
+                            val current = status ?: return@LaunchedEffect
+                            if (current.unityReady &&
+                                current.cueTotal > 0 &&
+                                playerState.cueTimelinePlanActive &&
+                                !current.cueTimelinePlanActive
+                            ) {
+                                playerSession.onUnityTimelineMode(false)
+                            }
+                        }
+
                         // The Pause command is asynchronous.  Once Unity
                         // confirms the same cue is paused, use that
                         // authoritative position for the exact resume command.

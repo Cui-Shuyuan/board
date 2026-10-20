@@ -458,7 +458,15 @@ namespace UnityEngine
     }
     public static class AudioSettings
     {
+        public delegate void AudioConfigurationChangeHandler(bool deviceWasChanged);
+        public static event AudioConfigurationChangeHandler OnAudioConfigurationChanged;
         public static double dspTime => 0.0;
+        public static int outputSampleRate => 48000;
+        public static void GetDSPBufferSize(out int bufferLength, out int numBuffers)
+        {
+            bufferLength = 1024;
+            numBuffers = 2;
+        }
     }
 
     public class TextAsset : Object { public string text; public byte[] bytes; }

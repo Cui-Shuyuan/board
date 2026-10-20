@@ -1323,6 +1323,752 @@ internal static class Program
             "load failure cannot auto-advance as if the cue completed");
     }
 
+
+    private static CueTimelineSegment AudioClip(string id, double cueStart,
+        string asset, double sourceStart, double sourceEnd, int sampleRate = 0)
+    {
+        return new CueTimelineSegment
+        {
+            id = id,
+            type = "audio_clip",
+            cue_start = cueStart,
+            asset = asset,
+            source_start = sourceStart,
+            source_end = sourceEnd,
+            source_start_sample = sampleRate > 0
+                ? (long)Math.Round(sourceStart * sampleRate) : 0L,
+            source_end_sample = sampleRate > 0
+                ? (long)Math.Round(sourceEnd * sampleRate) : 0L,
+        };
+    }
+
+    private static CueTimelineSegment AudioSilence(string id, double cueStart,
+        double duration)
+    {
+        return new CueTimelineSegment
+        {
+            id = id,
+            type = "silence",
+            cue_start = cueStart,
+            duration = duration,
+        };
+    }
+
+    private static CueTimelinePlan AudioOnlyPlan(string cueId, double start,
+        double duration, params CueTimelineSegment[] segments)
+    {
+        var plan = new CueTimelinePlan
+        {
+            schema = "tutorial-cue-plan/v1",
+            cue_id = cueId,
+            entry = cueId,
+            course = new CueTimelineCourse { start = start, duration = duration },
+            tracks = new List<CueTimelineTrack>
+            {
+                new CueTimelineTrack
+                {
+                    id = "audio.main",
+                    kind = "audio",
+                    tail_policy = "silence",
+                    segments = new List<CueTimelineSegment>(segments),
+                },
+            },
+        };
+        return plan;
+    }
+
+    private static CueTimelinePlanSet AudioPlanSet(double duration,
+        params CueTimelinePlan[] cues)
+    {
+        return new CueTimelinePlanSet
+        {
+            schema = CueTimelinePlanSetValidator.Schema,
+            schema_version = CueTimelinePlanSetValidator.SchemaVersion,
+            game_id = "fixture",
+            track = "quick",
+            course = new CueTimelineCourse { start = 0.0, duration = duration },
+            cues = new List<CueTimelinePlan>(cues),
+        };
+    }
+
+    private static CueAudioAssetFormatMap FormatMap(params CueAudioAssetFormat[] formats)
+    {
+        var map = new CueAudioAssetFormatMap();
+        for (int i = 0; i < formats.Length; i++) map.Add(formats[i]);
+        return map;
+    }
+
+    private static void CheckFloatArrayEqual(float[] expected, float[] actual,
+        string message)
+    {
+        if (expected == null || actual == null)
+        {
+            Check(expected == null && actual == null, message + " (null mismatch)");
+            return;
+        }
+        if (expected.Length != actual.Length)
+        {
+            Check(false, message + " (length expected " + expected.Length
+                + ", got " + actual.Length + ")");
+            return;
+        }
+        for (int i = 0; i < expected.Length; i++)
+        {
+            if (expected[i] != actual[i])
+            {
+                Check(false, message + " (sample " + i + " expected "
+                    + expected[i] + ", got " + actual[i] + ")");
+                return;
+            }
+        }
+        Check(true, message);
+    }
+
+    private static float[] ConstantPcm(int frames, int channels)
+    {
+        var pcm = new float[frames * channels];
+        for (int frame = 0; frame < frames; frame++)
+        {
+            for (int channel = 0; channel < channels; channel++)
+                pcm[frame * channels + channel] = 0.1f + frame * 0.000001f
+                    + channel * 0.01f;
+        }
+        return pcm;
+    }
+
+    private static void TestCueAudioPlannerMergesContiguousSourceAndCourse()
+    {
+        const int rate = 24000;
+        var first = AudioOnlyPlan("fixture/a", 0.0, 2.0,
+            AudioClip("a.clip", 0.0, "shared.mp3", 0.0, 2.0, rate));
+        var second = AudioOnlyPlan("fixture/b", 2.0, 2.0,
+            AudioClip("b.clip", 0.0, "shared.mp3", 2.0, 4.0, rate));
+        CueTimelinePlanSet set = AudioPlanSet(4.0, first, second);
+        CueAudioTimelinePlan planned = CueAudioTimelinePlanner.Build(set,
+            FormatMap(new CueAudioAssetFormat("shared.mp3", rate, 1, 1.0)),
+            new CueAudioPlannerOptions());
+
+        Check(planned.Blocks.Count == 1, "continuous cues merge to one output block");
+        CueAudioOutputBlock block = planned.Blocks[0];
+        Check(block.SourceStartFrame == 0L && block.SourceEndFrame == 4L * rate,
+            "merged block preserves the full source frame range");
+        Check(block.CueMarkers.Count == 2, "merged block still records both cue markers");
+        Check(planned.Boundaries.Count >= 1
+              && planned.Boundaries[0].Kind == CueAudioBoundaryKind.Continuous
+              && planned.Boundaries[0].Merged,
+            "continuous boundary is classified and merged");
+        Check(block.FadeInFrames == 0 && block.FadeOutFrames == 0,
+            "continuous outer edges do not get invented fades");
+
+        float[] sourcePcm = ConstantPcm(4 * rate, 1);
+        float[] rendered = CueAudioPcmRenderer.Render(block, sourcePcm, 1);
+        Check(rendered.Length == sourcePcm.Length,
+            "continuous merged PCM keeps source frame count");
+        CheckFloatArrayEqual(sourcePcm, rendered,
+            "continuous merged PCM is bit-identical to the source range");
+    }
+
+    private static void TestCuePartitionDoesNotChangeContinuousPcm()
+    {
+        const int rate = 24000;
+        const int frames = 4 * rate;
+        var oneCue = AudioOnlyPlan("fixture/one", 0.0, 4.0,
+            AudioClip("one.clip", 0.0, "shared.mp3", 0.0, 4.0, rate));
+        var splitA = AudioOnlyPlan("fixture/split.a", 0.0, 1.3,
+            AudioClip("split.a.clip", 0.0, "shared.mp3", 0.0, 1.3, rate));
+        var splitB = AudioOnlyPlan("fixture/split.b", 1.3, 2.7,
+            AudioClip("split.b.clip", 0.0, "shared.mp3", 1.3, 4.0, rate));
+        var map = FormatMap(new CueAudioAssetFormat("shared.mp3", rate, 1, 1.0));
+        CueAudioTimelinePlan whole = CueAudioTimelinePlanner.Build(
+            AudioPlanSet(4.0, oneCue), map, new CueAudioPlannerOptions());
+        CueAudioTimelinePlan split = CueAudioTimelinePlanner.Build(
+            AudioPlanSet(4.0, splitA, splitB), map, new CueAudioPlannerOptions());
+
+        float[] sourcePcm = ConstantPcm(frames, 1);
+        float[] wholePcm = CueAudioPcmRenderer.Render(whole.Blocks[0], sourcePcm, 1);
+        float[] splitPcm = CueAudioPcmRenderer.Render(split.Blocks[0], sourcePcm, 1);
+        CheckFloatArrayEqual(wholePcm, splitPcm,
+            "changing cue partition does not change continuous PCM output");
+    }
+
+    private static void TestExplicitSilenceAndRealCutsAreNotMerged()
+    {
+        const int rate = 24000;
+        var first = AudioOnlyPlan("fixture/gap.a", 0.0, 2.0,
+            AudioClip("gap.a.clip", 0.0, "shared.mp3", 0.0, 1.0, rate),
+            AudioSilence("gap.a.silence", 1.0, 1.0));
+        var second = AudioOnlyPlan("fixture/gap.b", 2.0, 1.0,
+            AudioClip("gap.b.clip", 0.0, "shared.mp3", 1.0, 2.0, rate));
+        CueAudioTimelinePlan planned = CueAudioTimelinePlanner.Build(
+            AudioPlanSet(3.0, first, second),
+            FormatMap(new CueAudioAssetFormat("shared.mp3", rate, 1, 1.0)),
+            new CueAudioPlannerOptions());
+
+        Check(planned.Blocks.Count == 2, "explicit silence keeps two audio output blocks");
+        Check(planned.Boundaries.Count >= 2,
+            "planner records silence boundary and following clip start");
+        bool foundSilenceBoundary = false;
+        for (int i = 0; i < planned.Boundaries.Count; i++)
+            if (planned.Boundaries[i].Kind == CueAudioBoundaryKind.SilenceGap)
+                foundSilenceBoundary = true;
+        Check(foundSilenceBoundary, "silence gap remains a discontinuity");
+        Check(planned.Blocks[0].SourceEndFrame == rate,
+            "silence does not consume or alter the preceding source range");
+        Check(planned.Blocks[1].SourceStartFrame == rate,
+            "post-silence block resolves its own half-open source range");
+    }
+
+    private static void TestSameAssetSourceCutGetsEdgeFadesOnly()
+    {
+        const int rate = 24000;
+        var first = AudioOnlyPlan("fixture/cut.a", 0.0, 1.0,
+            AudioClip("cut.a.clip", 0.0, "shared.mp3", 0.0, 1.0, rate));
+        var second = AudioOnlyPlan("fixture/cut.b", 1.0, 1.0,
+            AudioClip("cut.b.clip", 0.0, "shared.mp3", 3.0, 4.0, rate));
+        CueAudioTimelinePlan planned = CueAudioTimelinePlanner.Build(
+            AudioPlanSet(2.0, first, second),
+            FormatMap(new CueAudioAssetFormat("shared.mp3", rate, 1, 1.0)),
+            new CueAudioPlannerOptions { EdgeFadeMilliseconds = 4 });
+
+        Check(planned.Blocks.Count == 2,
+            "same asset with skipped source range is a real cut");
+        Check(planned.Boundaries[0].Kind == CueAudioBoundaryKind.SourceCut
+              && !planned.Boundaries[0].Merged,
+            "source cut boundary is not merged");
+        Check(planned.Blocks[0].FadeOutFrames > 0
+              && planned.Blocks[1].FadeInFrames > 0,
+            "real cut gets sample-space edge fades");
+        Check(planned.Blocks[0].SourceEndFrame == rate
+              && planned.Blocks[1].SourceStartFrame == 3L * rate,
+            "real cut keeps the authored skipped source frames");
+
+        CueAudioTimelinePlan clamped = CueAudioTimelinePlanner.ClampTo(
+            planned, 1.5, new CueAudioPlannerOptions());
+        Check(clamped.Blocks.Count == 2,
+            "clamping keeps blocks that start before the playback limit");
+        Check(clamped.Blocks[1].CourseEnd <= 1.5 + 1e-9,
+            "clamped plan cannot leak samples past the boundary limit");
+        Check(clamped.Blocks[1].FadeOutFrames > 0,
+            "clamped playback limit receives an edge fade");
+    }
+
+    private static void TestFormatsChannelsShortClipsAndEnvelopeBounds()
+    {
+        var first = AudioOnlyPlan("fixture/fmt.a", 0.0, 1.0,
+            AudioClip("fmt.a.clip", 0.0, "voice-24k-mono.mp3", 0.0, 1.0));
+        var second = AudioOnlyPlan("fixture/fmt.b", 1.0, 0.5,
+            AudioClip("fmt.b.clip", 0.0, "voice-48k-stereo.mp3", 10.0, 10.5));
+        var shortCue = AudioOnlyPlan("fixture/fmt.short", 1.5, 0.01,
+            AudioClip("fmt.short.clip", 0.0, "short.mp3", 0.0, 0.01));
+        var formats = FormatMap(
+            new CueAudioAssetFormat("voice-24k-mono.mp3", 24000, 1, 1.0),
+            new CueAudioAssetFormat("voice-48k-stereo.mp3", 48000, 2, 1.0),
+            new CueAudioAssetFormat("short.mp3", 24000, 1, 1.0));
+        CueAudioTimelinePlan planned = CueAudioTimelinePlanner.Build(
+            AudioPlanSet(1.51, first, second, shortCue), formats,
+            new CueAudioPlannerOptions { EdgeFadeMilliseconds = 4 });
+
+        Check(planned.Blocks.Count == 3, "different formats remain separate blocks");
+        Check(planned.Blocks[0].SampleRate == 24000
+              && planned.Blocks[0].Channels == 1,
+            "first block keeps 24k mono format");
+        Check(planned.Blocks[1].SampleRate == 48000
+              && planned.Blocks[1].Channels == 2,
+            "second block keeps 48k stereo format");
+        CueAudioOutputBlock shortBlock = planned.Blocks[2];
+        Check(shortBlock.FrameCount == 240,
+            "short clip keeps its own decoded frame count");
+        Check(shortBlock.FadeInFrames >= 0 && shortBlock.FadeOutFrames >= 0
+              && shortBlock.FadeInFrames + shortBlock.FadeOutFrames
+                  <= shortBlock.FrameCount,
+            "short clip fades are bounded by available frames");
+
+        float[] mono = ConstantPcm(24000, 1);
+        float[] renderedShort = CueAudioPcmRenderer.Render(shortBlock, mono, 1);
+        Check(renderedShort.Length == shortBlock.FrameCount,
+            "fade application does not change rendered frame count");
+        for (int i = 0; i < renderedShort.Length; i++)
+            Check(!float.IsNaN(renderedShort[i]) && !float.IsInfinity(renderedShort[i]),
+                "fade output stays finite");
+    }
+
+    private static void TestPlanSampleHintsDoNotOverrideDecodedFormat()
+    {
+        var plan = AudioOnlyPlan("fixture/hint", 0.0, 1.0,
+            AudioClip("hint.clip", 0.0, "decoded-24k.mp3", 0.0, 1.0, 48000));
+        CueAudioTimelinePlan planned = CueAudioTimelinePlanner.Build(
+            AudioPlanSet(1.0, plan),
+            FormatMap(new CueAudioAssetFormat("decoded-24k.mp3", 24000, 1, 1.0)),
+            new CueAudioPlannerOptions());
+
+        Check(planned.Blocks.Count == 1, "decoded format sample plans one block");
+        Check(planned.Blocks[0].SampleRate == 24000
+              && planned.Blocks[0].SourceEndFrame == 24000L,
+            "decoded 24k format wins over mismatched plan sample hints");
+        Check(planned.Diagnostics.Count == 1
+              && planned.Diagnostics[0].Code == "source_sample_hint_mismatch",
+            "mismatched sample hints are reported as diagnostics, not used");
+    }
+
+    private static void TestCourseClockAnchorPauseAndResumeNoDrift()
+    {
+        var manual = new ManualCueClock();
+        manual.Advance(10.0);
+        var clock = new CueCoursePlaybackClock(manual);
+        clock.SetMaximumCourseTime(20.0);
+        clock.AnchorAt(2.0, manual.NowSeconds + 0.5);
+
+        CheckClose(2.0, clock.CourseTime, 1e-9,
+            "course time stays frozen before scheduled DSP start");
+        manual.Advance(0.5);
+        CheckClose(2.0, clock.CourseTime, 1e-9,
+            "course time begins exactly at the scheduled DSP epoch");
+        manual.Advance(1.25);
+        CheckClose(3.25, clock.CourseTime, 1e-9,
+            "course clock advances from the DSP anchor");
+
+        clock.Freeze(3.25);
+        manual.Advance(5.0);
+        CheckClose(3.25, clock.CourseTime, 1e-9,
+            "pause freezes the single course clock");
+        clock.AnchorAt(3.25, manual.NowSeconds + 0.1);
+        manual.Advance(0.1);
+        manual.Advance(0.75);
+        CheckClose(4.0, clock.CourseTime, 1e-9,
+            "resume rebases without accumulating pause time");
+    }
+
+    private sealed class FakeCourseAudioTransport : ICourseAudioTransport
+    {
+        public bool AutoPrepare = true;
+        public readonly List<string> Calls = new List<string>();
+        public ICourseAudioTransportCallback StoredCallback;
+        public CueTimelinePlanSet PlanSet;
+        public long StoredGeneration;
+        public int ScheduleCount;
+        public long LastScheduleGeneration;
+        public double LastAnchorCourseTime = -1.0;
+        public double LastAnchorDspTime = -1.0;
+        public bool LastPlay;
+        public double LastPlaybackEnd;
+        public int SyncCount;
+        public bool FailOnSchedule;
+        public double CommitDelay;
+        public int DeviceInvalidations;
+
+        public void Prepare(CueTimelinePlanSet set, long generation,
+            double startCourseTime, double playbackEndCourseTime,
+            ICourseAudioTransportCallback callback)
+        {
+            PlanSet = set;
+            StoredGeneration = generation;
+            StoredCallback = callback;
+            Calls.Add("transport.prepare:" + generation + ":"
+                + Fmt(startCourseTime) + ":" + Fmt(playbackEndCourseTime));
+            if (AutoPrepare) callback.OnPrepared(generation);
+        }
+
+        public double Schedule(long generation, double anchorCourseTime,
+            double anchorDspTime, bool play, double playbackEndCourseTime)
+        {
+            ScheduleCount++;
+            LastScheduleGeneration = generation;
+            LastAnchorCourseTime = anchorCourseTime;
+            LastAnchorDspTime = anchorDspTime;
+            LastPlay = play;
+            LastPlaybackEnd = playbackEndCourseTime;
+            Calls.Add("transport.schedule:" + generation + ":"
+                + Fmt(anchorCourseTime) + ":" + Fmt(anchorDspTime) + ":"
+                + (play ? "play" : "paused") + ":" + Fmt(playbackEndCourseTime));
+            if (FailOnSchedule) StoredCallback.OnFailed(generation, "schedule fixture failure");
+            return anchorDspTime + CommitDelay;
+        }
+
+        public void InvalidateDeviceResources() { DeviceInvalidations++; }
+
+        public void Pause(long generation)
+        {
+            Calls.Add("transport.pause:" + generation);
+        }
+
+        public void Stop(long generation)
+        {
+            Calls.Add("transport.stop:" + generation);
+        }
+
+        public void Cancel(long generation)
+        {
+            Calls.Add("transport.cancel:" + generation);
+        }
+
+        public void SyncToCourseTime(long generation, double courseTime)
+        {
+            SyncCount++;
+            Calls.Add("transport.sync:" + generation + ":" + Fmt(courseTime));
+        }
+
+        public void CompletePreparation(long generation)
+        {
+            if (StoredCallback != null) StoredCallback.OnPrepared(generation);
+        }
+
+        public void Fail(long generation, string message)
+        {
+            if (StoredCallback != null) StoredCallback.OnFailed(generation, message);
+        }
+
+        public void Underrun(long generation, double courseTime, string message)
+        {
+            if (StoredCallback != null)
+                StoredCallback.OnUnderrun(generation, courseTime, message);
+        }
+    }
+
+    private static CueTimelinePlanSet TwoCueAudioSet()
+    {
+        var first = AudioOnlyPlan("fixture/course.a", 0.0, 2.0,
+            AudioClip("course.a.clip", 0.0, "course.mp3", 0.0, 2.0, 24000));
+        var second = AudioOnlyPlan("fixture/course.b", 2.0, 2.0,
+            AudioClip("course.b.clip", 0.0, "course.mp3", 2.0, 4.0, 24000));
+        return AudioPlanSet(4.0, first, second);
+    }
+
+    private static void TestCourseControllerCrossesCueWithoutReschedulingAudio()
+    {
+        var manual = new ManualCueClock();
+        var transport = new FakeCourseAudioTransport();
+        var controller = new CueCoursePlaybackController(
+            manual, transport, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0.0;
+        int cueChanges = 0;
+        int cueCompletions = 0;
+        CueCourseCueEvent lastCueEvent = null;
+        controller.CueChanged += delegate(CueCourseCueEvent cueEvent)
+        {
+            cueChanges++;
+            lastCueEvent = cueEvent;
+        };
+        controller.CueCompleted += delegate { cueCompletions++; };
+        CueTimelinePlanSet set = TwoCueAudioSet();
+
+        Check(controller.Prepare(set, 0.0, false), "course controller prepares whole set");
+        Check(controller.State == CuePlaybackState.Playing,
+            "course controller starts after transport prepared");
+        Check(transport.ScheduleCount == 1,
+            "course start performs one audio transport schedule");
+        long transportGeneration = controller.TransportGeneration;
+        long cueGeneration = controller.CueGeneration;
+
+        manual.Advance(2.25);
+        controller.Tick();
+        Check(controller.CurrentCueIndex == 1,
+            "tick crosses cue boundary using course time");
+        Check(cueChanges == 2, "initial cue and next cue each emit one change event");
+        Check(lastCueEvent != null && lastCueEvent.CueIndex == 1
+              && lastCueEvent.Plan != null
+              && lastCueEvent.Plan.cue_id == "fixture/course.b",
+            "cue-change event carries the new cue plan");
+        Check(cueCompletions == 1, "cue A completion emits exactly once");
+        Check(controller.TransportGeneration == transportGeneration,
+            "sequential cue crossing does not invalidate transport generation");
+        Check(controller.CueGeneration > cueGeneration,
+            "sequential cue crossing advances only cue generation");
+        Check(transport.ScheduleCount == 1,
+            "sequential cue crossing does not reschedule/restart audio");
+        Check(transport.SyncCount > 0,
+            "audio transport sync uses authoritative course time");
+    }
+
+    private static void TestCourseSubtitleAndCueLocalTimeShareOneClock()
+    {
+        var first = AudioOnlyPlan("fixture/sub.a", 0.0, 2.0,
+            AudioClip("sub.a.clip", 0.0, "course.mp3", 0.0, 2.0, 24000));
+        first.tracks.Add(new CueTimelineTrack
+        {
+            id = "subtitle.a", kind = "subtitle", tail_policy = "clear",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "subtitle.a.seg", type = "subtitle",
+                    cue_start = 0.0, duration = 2.0, text = "A",
+                },
+            },
+        });
+        var second = AudioOnlyPlan("fixture/sub.b", 2.0, 2.0,
+            AudioClip("sub.b.clip", 0.0, "course.mp3", 2.0, 4.0, 24000));
+        second.tracks.Add(new CueTimelineTrack
+        {
+            id = "subtitle.b", kind = "subtitle", tail_policy = "clear",
+            segments = new List<CueTimelineSegment>
+            {
+                new CueTimelineSegment
+                {
+                    id = "subtitle.b.seg", type = "subtitle",
+                    cue_start = 0.0, duration = 2.0, text = "B",
+                },
+            },
+        });
+        CueTimelinePlanSet set = AudioPlanSet(4.0, first, second);
+
+        var manual = new ManualCueClock();
+        var transport = new FakeCourseAudioTransport();
+        var controller = new CueCoursePlaybackController(
+            manual, transport, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0.0;
+        Check(controller.Prepare(set, 0.0, false),
+            "subtitle sample prepares course");
+        manual.Advance(0.5);
+        controller.Tick();
+        Check(controller.CurrentSubtitle.Visible
+              && controller.CurrentSubtitle.Text == "A",
+            "subtitle A is selected from course time");
+        CheckClose(0.5, controller.LocalTime, 1e-9,
+            "cue-local time is derived from course time");
+
+        manual.Advance(1.75);
+        controller.Tick();
+        Check(controller.CurrentCueIndex == 1,
+            "course time crosses to the second cue");
+        CheckClose(2.25, controller.CourseTime, 1e-9,
+            "course time remains the single advancing position");
+        CheckClose(0.25, controller.LocalTime, 1e-9,
+            "cue-local time is course time minus cue start");
+        Check(controller.CurrentSubtitle.Visible
+              && controller.CurrentSubtitle.Text == "B",
+            "subtitle B follows the same course position");
+    }
+
+    private static void TestCoursePauseResumeAndSeekGeneration()
+    {
+        var manual = new ManualCueClock();
+        var transport = new FakeCourseAudioTransport();
+        var controller = new CueCoursePlaybackController(
+            manual, transport, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0.0;
+        CueTimelinePlanSet set = TwoCueAudioSet();
+
+        Check(controller.Prepare(set, 0.0, false), "pause/resume sample prepare");
+        manual.Advance(1.0);
+        controller.Tick();
+        CheckClose(1.0, controller.CourseTime, 1e-9, "course time before pause");
+        int scheduleBeforePause = transport.ScheduleCount;
+        Check(controller.Pause(), "pause course controller");
+        manual.Advance(5.0);
+        controller.Tick();
+        CheckClose(1.0, controller.CourseTime, 1e-9,
+            "course time is frozen while paused");
+        Check(controller.Resume(), "resume course controller");
+        Check(transport.ScheduleCount == scheduleBeforePause + 1,
+            "resume reschedules audio from the frozen course position");
+        manual.Advance(0.5);
+        controller.Tick();
+        CheckClose(1.5, controller.CourseTime, 1e-9,
+            "resume continues without pause-time drift");
+
+        long beforeSeek = controller.TransportGeneration;
+        int schedulesBeforeSeek = transport.ScheduleCount;
+        Check(controller.SeekTo(3.0, true), "paused seek accepted");
+        Check(controller.State == CuePlaybackState.Paused,
+            "paused seek stays paused");
+        Check(controller.TransportGeneration > beforeSeek,
+            "explicit seek advances transport generation");
+        Check(transport.ScheduleCount == schedulesBeforeSeek + 1
+              && transport.LastScheduleGeneration == controller.TransportGeneration,
+            "explicit seek schedules only the new transport generation");
+        Check(!transport.LastPlay, "paused seek schedules no sound");
+        CheckClose(3.0, controller.CourseTime, 1e-9,
+            "paused seek commits the requested course position");
+        Check(controller.CurrentCueIndex == 1,
+            "paused seek resolves the target cue from course position");
+
+        ICourseAudioTransportCallback oldCallback = transport.StoredCallback;
+        long oldGeneration = controller.TransportGeneration;
+        Check(controller.SeekTo(1.25, false), "rapid seek during playback accepted");
+        oldCallback.OnUnderrun(oldGeneration, 0.0, "stale underrun");
+        oldCallback.OnFailed(oldGeneration, "stale failure");
+        Check(controller.State == CuePlaybackState.Playing,
+            "stale transport callbacks cannot alter the new seek");
+        Check(controller.TransportGeneration > oldGeneration,
+            "rapid seek rejects old generation callbacks");
+    }
+
+    private static void TestCourseBoundaryStopAndCompletionAreExactlyOnce()
+    {
+        var manual = new ManualCueClock();
+        var transport = new FakeCourseAudioTransport();
+        var controller = new CueCoursePlaybackController(
+            manual, transport, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0.0;
+        controller.SetAdvancePolicy(false, false);
+        CueTimelinePlanSet set = TwoCueAudioSet();
+        int cueCompletions = 0;
+        int courseCompletions = 0;
+        controller.CueCompleted += delegate { cueCompletions++; };
+        controller.Completed += delegate { courseCompletions++; };
+
+        Check(controller.Prepare(set, 0.0, false), "boundary-stop course prepares");
+        CheckClose(2.0, transport.LastPlaybackEnd, 1e-9,
+            "autoAdvance-off schedules audio only through current cue end");
+        manual.Advance(2.1);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Paused,
+            "autoAdvance-off stops at cue boundary instead of leaking next cue");
+        Check(controller.CurrentCueIndex == 0,
+            "boundary stop keeps the completed cue selected");
+        Check(cueCompletions == 1, "boundary stop emits one cue completion");
+        Check(courseCompletions == 0, "boundary stop is not course completion");
+        Check(!controller.Resume(),
+            "generic resume at an autoAdvance-off boundary does not leak next cue");
+        Check(controller.State == CuePlaybackState.Paused,
+            "boundary remains paused until explicit next/seek");
+        controller.Tick();
+        controller.Tick();
+        Check(cueCompletions == 1, "repeated ticks do not repeat boundary completion");
+
+        Check(controller.SeekTo(3.5, false), "seek to final cue after boundary stop");
+        controller.SetAdvancePolicy(true, false);
+        manual.Advance(0.6);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed,
+            "course ends only at the declared course duration");
+        Check(courseCompletions == 1, "course completion emits exactly once");
+        controller.Tick();
+        controller.Tick();
+        Check(courseCompletions == 1, "repeated ticks do not duplicate course completion");
+    }
+
+    private static void TestCoursePrepareStaleGenerationIsIgnored()
+    {
+        var manual = new ManualCueClock();
+        var transport = new FakeCourseAudioTransport { AutoPrepare = false };
+        var controller = new CueCoursePlaybackController(
+            manual, transport, new CueTimelineSubtitleExecutor());
+        CueTimelinePlanSet set = TwoCueAudioSet();
+
+        Check(controller.Prepare(set, 0.0, false),
+            "first asynchronous course prepare accepted");
+        long generationA = controller.TransportGeneration;
+        ICourseAudioTransportCallback callbackA = transport.StoredCallback;
+        Check(controller.State == CuePlaybackState.Preparing,
+            "asynchronous course prepare waits for transport");
+
+        Check(controller.Prepare(set, 2.5, false),
+            "second course prepare replaces the first");
+        long generationB = controller.TransportGeneration;
+        ICourseAudioTransportCallback callbackB = transport.StoredCallback;
+        Check(generationB > generationA,
+            "new course prepare advances transport generation");
+        Check(HasCall(transport.Calls, "transport.cancel:" + generationA),
+            "new course prepare cancels old transport generation");
+
+        callbackA.OnPrepared(generationA);
+        callbackA.OnFailed(generationA, "stale prepare failure");
+        callbackA.OnUnderrun(generationA, 0.5, "stale underrun");
+        Check(controller.State == CuePlaybackState.Preparing,
+            "stale prepare callbacks cannot start or fail the new prepare");
+        Check(controller.CurrentCueIndex == 1,
+            "stale callbacks cannot move the pending target cue");
+
+        callbackB.OnPrepared(generationB);
+        Check(controller.State == CuePlaybackState.Playing,
+            "current transport prepare starts the course");
+        Check(transport.LastScheduleGeneration == generationB,
+            "current prepare schedules only its current transport generation");
+    }
+
+    private static void TestCourseUnderrunFreezesClockAndLateFramesDoNotRestart()
+    {
+        var manual = new ManualCueClock();
+        var transport = new FakeCourseAudioTransport();
+        var controller = new CueCoursePlaybackController(
+            manual, transport, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0.0;
+        int underruns = 0;
+        controller.Underrun += delegate { underruns++; };
+        Check(controller.Prepare(TwoCueAudioSet(), 0.0, false),
+            "underrun sample prepares");
+        long generation = controller.TransportGeneration;
+        int schedules = transport.ScheduleCount;
+        manual.Advance(0.75);
+        controller.Tick();
+        transport.Underrun(generation, controller.CourseTime, "fixture underrun");
+        Check(controller.State == CuePlaybackState.Buffering,
+            "underrun enters explicit buffering state");
+        Check(underruns == 1, "underrun event recorded");
+        double frozen = controller.CourseTime;
+        manual.Advance(1.0);
+        controller.Tick();
+        CheckClose(frozen, controller.CourseTime, 1e-9,
+            "course clock stays frozen during buffering");
+        Check(transport.ScheduleCount == schedules + 1,
+            "buffering retries once from the frozen unheard position");
+        CheckClose(frozen, transport.LastAnchorCourseTime, 1e-9,
+            "buffer recovery never consumes unheard speech");
+    }
+
+    private static void TestCourseScheduleCommitAndDeviceRecovery()
+    {
+        var manual = new ManualCueClock();
+        var audio = new FakeCourseAudioTransport { CommitDelay = 0.5 };
+        var controller = new CueCoursePlaybackController(manual, audio, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0.0;
+        Check(controller.Prepare(TwoCueAudioSet(), 0, false), "delayed schedule prepares");
+        manual.Advance(0.25);
+        CheckClose(0, controller.CourseTime, 1e-9, "clock uses returned DSP commit epoch");
+        Check(!controller.HasStarted, "scheduled start is not reported as audible playback");
+        manual.Advance(1.0);
+        controller.Tick();
+        CheckClose(0.75, controller.CourseTime, 1e-9, "audio epoch controls elapsed course time");
+        Check(controller.HasStarted, "audible state begins at committed epoch");
+        manual.Advance(100);
+        Check(controller.RebaseAfterDeviceChange(), "device recovery prepares course again");
+        Check(audio.DeviceInvalidations == 1, "device change invalidates generated audio");
+        CheckClose(0.75, controller.CourseTime, 1e-9, "device recovery uses last observed position, not changed DSP clock");
+
+        audio.FailOnSchedule = true;
+        Check(!controller.SeekTo(1.5, false), "synchronous Schedule failure rejects seek");
+        Check(controller.State == CuePlaybackState.Failed, "failed callback cannot be overwritten by Playing");
+        double frozen = controller.CourseTime;
+        manual.Advance(5);
+        CheckClose(frozen, controller.CourseTime, 1e-9, "failed state freezes progress");
+
+        audio = new FakeCourseAudioTransport { AutoPrepare = false };
+        controller = new CueCoursePlaybackController(manual, audio, new CueTimelineSubtitleExecutor());
+        controller.Prepare(TwoCueAudioSet(), 1.0, false);
+        long stale = controller.TransportGeneration;
+        controller.Pause();
+        Check(controller.RebaseAfterDeviceChange(), "device reset during preparation reloads resources");
+        audio.CompletePreparation(stale);
+        Check(controller.State == CuePlaybackState.Preparing, "old device preparation cannot restart playback");
+        audio.CompletePreparation(controller.TransportGeneration);
+        Check(controller.State == CuePlaybackState.Paused, "device recovery preserves pending pause intent");
+        controller.Resume();
+        manual.Advance(5);
+        controller.Tick();
+        Check(controller.State == CuePlaybackState.Completed, "device fixture reaches course end");
+        Check(!controller.RebaseAfterDeviceChange() && !controller.IsPrepared
+            && controller.State == CuePlaybackState.Completed,
+            "device reset at course end invalidates resources without replaying completion");
+    }
+
+    private static void TestCourseRecoveryRetriesAreBounded()
+    {
+        var manual = new ManualCueClock();
+        var audio = new FakeCourseAudioTransport();
+        var controller = new CueCoursePlaybackController(manual, audio, new CueTimelineSubtitleExecutor());
+        controller.ScheduleLeadSeconds = 0;
+        controller.Prepare(TwoCueAudioSet(), 0, false);
+        for (int i = 0; i < 4; i++)
+        {
+            audio.Underrun(controller.TransportGeneration, 0, "persistent missed appointment");
+            manual.Advance(0.2);
+            controller.Tick();
+        }
+        Check(controller.State == CuePlaybackState.Failed, "persistent underrun ends after bounded recovery attempts");
+        Check(audio.ScheduleCount == 4, "at most three automatic retries after initial schedule");
+    }
+
     private sealed class SubtitleWindow
     {
         public double Start;
@@ -1737,6 +2483,21 @@ internal static class Program
         TestSampleControllerSequences();
         TestAnimationLongerThanAudioUsesPlanDuration();
         TestFailureCannotAutoAdvance();
+        TestCueAudioPlannerMergesContiguousSourceAndCourse();
+        TestCuePartitionDoesNotChangeContinuousPcm();
+        TestExplicitSilenceAndRealCutsAreNotMerged();
+        TestSameAssetSourceCutGetsEdgeFadesOnly();
+        TestFormatsChannelsShortClipsAndEnvelopeBounds();
+        TestPlanSampleHintsDoNotOverrideDecodedFormat();
+        TestCourseClockAnchorPauseAndResumeNoDrift();
+        TestCourseControllerCrossesCueWithoutReschedulingAudio();
+        TestCourseSubtitleAndCueLocalTimeShareOneClock();
+        TestCoursePauseResumeAndSeekGeneration();
+        TestCourseBoundaryStopAndCompletionAreExactlyOnce();
+        TestCoursePrepareStaleGenerationIsIgnored();
+        TestCourseUnderrunFreezesClockAndLateFramesDoNotRestart();
+        TestCourseScheduleCommitAndDeviceRecovery();
+        TestCourseRecoveryRetriesAreBounded();
 
         if (failures == 0)
         {

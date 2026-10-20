@@ -10,10 +10,12 @@ recursively copying the game directory.  Unity reads:
 
   * tutorial/{track}.runtime.json
   * tutorial/anim/v2/{track}.compiled.json
-  * tutorial/{track}.cue-timeline.json when the track has a Phase 4 plan
+  * tutorial/{track}.cue-timeline.json when the track has a cue plan
   * tutorial/{track}.audio-slices.json and tutorial/{track}.timing-policy.json
-    for a packaged Phase 4 plan, so the release retains the exact fixed timing
-    inputs used to generate that plan
+    for a packaged plan, so the release retains the exact fixed timing inputs
+    used to generate that plan
+  * tutorial/build/{track}.anim.json so Android QA can summarize semantic
+    source events instead of silently receiving an empty action list
   * media paths referenced by those JSON documents (TTS mp3, card scans,
     marker scans, etc.)
 
@@ -276,6 +278,17 @@ def collect_runtime_files(game_dir: Path) -> list[Path]:
         package[compiled_relative] = compiled_path
 
         source_paths = [runtime_path, compiled_path]
+
+        # Android's QA action-summary reader consumes the generated build
+        # animation source (semantic events), not the compiled clip graph.
+        # Package it with the same track so the device does not silently load
+        # an empty action list.
+        build_anim_relative = f"tutorial/build/{track}.anim.json"
+        build_anim_path = game_dir / build_anim_relative
+        if build_anim_path.is_file():
+            package[build_anim_relative] = build_anim_path
+            source_paths.append(build_anim_path)
+
         plan_relative = f"tutorial/{track}.cue-timeline.json"
         plan_path = game_dir / plan_relative
         if plan_path.is_file():
@@ -285,15 +298,20 @@ def collect_runtime_files(game_dir: Path) -> list[Path]:
             # Keep the fixed timing inputs next to the generated plan in the
             # immutable release.  They are not read by the runtime player, but
             # they make the shipped plan auditable against the exact refs,
-            # source ranges and per-cue policy that produced it.
+            # source ranges and per-cue policy that produced it.  A shipped
+            # plan without these files is not auditable, so fail closed.
             for timing_name in (
                 f"{track}.audio-slices.json",
                 f"{track}.timing-policy.json",
             ):
                 timing_relative = f"tutorial/{timing_name}"
                 timing_path = game_dir / timing_relative
-                if timing_path.is_file():
-                    package[timing_relative] = timing_path
+                if not timing_path.is_file():
+                    raise FileNotFoundError(
+                        f"cue timeline plan {plan_relative} requires fixed "
+                        f"timing file {timing_relative}"
+                    )
+                package[timing_relative] = timing_path
 
         for source_path in source_paths:
             try:

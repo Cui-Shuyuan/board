@@ -79,6 +79,13 @@ class BuildContentManifestTest(unittest.TestCase):
         path = self.root / "content" / "manifests" / f"{self.game}.json"
         return json.loads(path.read_text(encoding="utf-8"))
 
+    def write_fixed_timing_files(self) -> None:
+        tutorial = self.game_dir / "tutorial"
+        (tutorial / "full.audio-slices.json").write_text(
+            '{"schema":"tutorial-audio-slices/v1"}', encoding="utf-8")
+        (tutorial / "full.timing-policy.json").write_text(
+            '{"schema":"tutorial-cue-timing-policy/v1"}', encoding="utf-8")
+
     def publish(self) -> dict:
         return bcm.publish(self.game, self.root)
 
@@ -142,6 +149,7 @@ class BuildContentManifestTest(unittest.TestCase):
 
     def test_cue_timeline_plan_is_packaged_and_hashed(self) -> None:
         first = self.publish()
+        self.write_fixed_timing_files()
         plan = self.game_dir / "tutorial" / "full.cue-timeline.json"
         plan.write_text(
             json.dumps({
@@ -203,6 +211,7 @@ class BuildContentManifestTest(unittest.TestCase):
         self.assertTrue(audio.is_file())
 
     def test_missing_audio_referenced_only_by_plan_fails_loudly(self) -> None:
+        self.write_fixed_timing_files()
         plan = self.game_dir / "tutorial" / "full.cue-timeline.json"
         plan.write_text(json.dumps({
             "schema": "tutorial-cue-plan-set/v1",
@@ -226,6 +235,30 @@ class BuildContentManifestTest(unittest.TestCase):
 
         with self.assertRaises(FileNotFoundError):
             self.publish()
+
+    def test_build_animation_source_is_packaged_for_android_qa_actions(self) -> None:
+        build_anim = self.game_dir / "tutorial" / "build" / "full.anim.json"
+        build_anim.parent.mkdir(parents=True, exist_ok=True)
+        build_anim.write_text(
+            '{"schema":"tutorial-animation/v2","cues":[]}',
+            encoding="utf-8",
+        )
+        manifest = self.publish()
+        paths = [entry["path"] for entry in manifest["files"]]
+        self.assertIn("tutorial/build/full.anim.json", paths)
+
+    def test_plan_without_fixed_timing_files_fails_closed(self) -> None:
+        plan = self.game_dir / "tutorial" / "full.cue-timeline.json"
+        plan.write_text(json.dumps({
+            "schema": "tutorial-cue-plan-set/v1",
+            "schema_version": 1,
+            "game_id": self.game,
+            "track": "full",
+            "course": {"start": 0.0, "duration": 1.0},
+            "cues": [],
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(FileNotFoundError, "requires fixed timing file"):
+            bcm.build_manifest(self.game, self.root)
 
     def test_editing_runtime_bytes_changes_version(self) -> None:
         first = self.publish()

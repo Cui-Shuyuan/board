@@ -2,7 +2,7 @@ using System;
 // BoardGameTutorial
 // 音频/字幕/导航外壳（cue-plan-only）。
 //
-// All cue playback is driven by CuePlaybackController's cue-local clock.  The
+// All cue playback is driven by the course-level DSP-anchored clock.  The
 // runtime document is cue-order/navigation metadata plus the input for the
 // whole-track compatibility loader; it is never a second duration source.
 using System.Collections;
@@ -139,7 +139,7 @@ namespace BoardGameTutorial
             get
             {
                 return cueTimelineActive && cueTimelineController != null
-                    && cueTimelineController.State == CuePlaybackState.Playing;
+                    && cueTimelineController.HasStarted;
             }
         }
         public TutorialCueDoc Document => doc;
@@ -149,21 +149,22 @@ namespace BoardGameTutorial
             get
             {
                 if (cueTimelineActive && cueTimelineController != null)
-                    return cueTimelineController.State == CuePlaybackState.Paused;
+                    return cueTimelineController.State == CuePlaybackState.Paused
+                        || cueTimelineController.State == CuePlaybackState.Buffering;
                 return isPaused;
             }
         }
         public int CurrentCueIndex => currentIndex;
         public int TotalCueCount => doc != null && doc.cues != null ? doc.cues.Count : 0;
-        public float Volume => cueTimelineAudioExecutor != null
-            ? cueTimelineAudioExecutor.Volume : 1f;
+        public float Volume => cueTimelineAudioTransport != null
+            ? cueTimelineAudioTransport.Volume : 1f;
 
         public float Position
         {
             get
             {
                 if (cueTimelineActive && cueTimelineController != null)
-                    return Mathf.Max(0f, (float)cueTimelineController.CueTime);
+                    return Mathf.Max(0f, (float)cueTimelineController.LocalTime);
                 return playbackFinished ? Mathf.Max(0f, lastPosition) : 0f;
             }
         }
@@ -250,6 +251,11 @@ namespace BoardGameTutorial
 
             if (!LoadAndPlay())
                 Debug.LogWarning("[TutorialCuePlayer] ReloadGame could not load the new content root.");
+        }
+
+        private void OnDestroy()
+        {
+            DisposeCueTimeline();
         }
 
         /// <summary>

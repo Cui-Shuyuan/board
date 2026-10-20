@@ -120,26 +120,31 @@ content/games/<game>/tutorial/
 - 所有 cue 最终时长必须由 `{track}.audio-slices.json` 的固定时间轴和 plan duration 决定；不能另起一套动画时钟。
 - 连续播放、跳 cue、回退、重播、问答打断恢复必须得到同一逻辑状态和画面；素材不能依赖“必须先播放过一次”。
 
-### 5.1 Phase 4：cue-level TTS、逻辑音频切片与字幕轨道
+### 5.1 音频、逻辑切片与字幕轨道
 
-quick track 现在不再只用 section 级共享 MP3。音频/字幕的制作流程是：
+quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
+音频/字幕的制作流程：
 
-1. `tutorial/quick.cue.tts.lrc` 按 beat 写 TTS 合成行；需要保持连续语气的多条串行
-   cue 可以通过 `quick.timing-policy.json` 的 `audio_groups` 合并成一次 TTS。
+1. `tutorial/quick.cue.tts.lrc` 按 beat 写 TTS 合成行。多条 cue 可引用同一素材
+   的连续源区间，共享映射记录在 `audio-slices.json` 的 `audio_groups`。
 2. 重新生成 TTS 后，把 word timing 审核写入
    `tutorial/quick.audio-slices.json` 的 `timing_points`。
 3. 每条 cue/逻辑音频只引用命名时间点：
    `start_ref` / `end_ref` / `speech_end_ref` / `subtitle.*_ref`。
    不要在构建脚本或 timing policy 中写 TTS 秒数。
-4. `quick.timing-policy.json` 用 per-cue `mode` 控制 cue duration：
+4. `audio-slices.json` 的 `cue_timing` 用 per-cue `mode` 控制 cue duration；
+   `timing-policy.json` 提供全局 `default_mode`：
    - `max`：所有轨道都结束后再切下一 cue，动画不会被音频截断；
    - `audio`：音频轨道为准，用于标题 cue；
-   - `visual`：画面为准，裁剪音频则构建失败；
-   - `runtime`：legacy duration 为准。
-5. 标题 cue 的逻辑音频 `end_ref` 指向 `speech_end`，截掉 TTS 自带尾静音，再由
-   `trailing_silence_seconds: 1.0` 追加完整 1 秒。
+   - `visual`：画面为准，裁剪音频则构建失败。
+5. 标题策略使用 `trim_to_speech_end: true` 和
+   `trailing_silence_seconds: 1.0`；full 的尾部 guard 为 0.08 秒，
+   quick 使用默认值 0。full 导入器为标题与正文保留最多
+   0.15 秒前置上下文，并统一相邻连续源切点。`source_boundary_contracts`
+   记录并校验连续、显式裁尾和作者留空关系。
 6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
-   subtitle refs 生成，不再用整条 cue 文本生成超长字幕。
+   subtitle refs 生成。播放器从课程 DSP 位置派生 cue-local 时间，同步字幕、
+   视觉和连续音频。
 7. 构建入口：
 
 ```bash
@@ -147,7 +152,8 @@ python3 animation/build_cue_timeline.py --game splendor --track quick
 python3 tools/content/build_content_manifest.py --game splendor
 ```
 
-完整字段、命令和故障排查见 `docs/tutorial/audio-timeline-pipeline.md`。
+完整字段与命令见 [音频与时间轴制作流程](audio-timeline-pipeline.md)，
+运行时行为见 [课程音频播放器](continuous-cue-audio.md)。
 
 ## 6. 作者标绳：每一步都跑确定性检查
 

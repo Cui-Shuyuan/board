@@ -11,7 +11,19 @@ class DefaultLocalContentLoader(
     override fun load(game: GameCatalogEntry): LoadedLocalContent? =
         load(game, game.tutorialTrack)
 
-    override fun load(game: GameCatalogEntry, trackId: String): LoadedLocalContent? {
+    override fun load(game: GameCatalogEntry, trackId: String): LoadedLocalContent? =
+        loadInternal(game, trackId, forceRuntime = false)
+
+    override fun loadRuntimeFallback(
+        game: GameCatalogEntry,
+        trackId: String
+    ): LoadedLocalContent? = loadInternal(game, trackId, forceRuntime = true)
+
+    private fun loadInternal(
+        game: GameCatalogEntry,
+        trackId: String,
+        forceRuntime: Boolean
+    ): LoadedLocalContent? {
         val track = trackId.trim().ifBlank { game.tutorialTrack.trim() }
         if (!game.tutorialReady || track.isBlank()) return null
 
@@ -22,7 +34,7 @@ class DefaultLocalContentLoader(
         val timeline = loadTimeline(
             gameRoot = gameRoot,
             track = track,
-            planEnabled = track in game.cueTimelineTracks
+            planEnabled = !forceRuntime && track in game.cueTimelineTracks
         ) ?: return null
         return LoadedLocalContent(
             version = active.version,
