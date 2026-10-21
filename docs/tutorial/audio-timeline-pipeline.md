@@ -11,7 +11,7 @@
 | 文件 | 职责 |
 | --- | --- |
 | `tracks/<track>.track.json` | section 顺序和 track 元信息 |
-| `{track}.cue-audio-overrides.json` | 可选的 cue 到独立 TTS 音频与字幕映射；full 覆盖全部 cue |
+| `{track}.cue-audio-overrides.json` | 可选的 cue 到 TTS 音频、字幕与源窗口映射；full 覆盖全部 cue |
 | `sections/<id>/<track>.script.json` | 口播文字、cue 切分、beats 和 refs |
 | `sections/<id>/<track>.anim.json` | 动画事件、素材引用、镜头和 QA |
 | `build/<track>.script.json` | section 装配生成的文字与导航中间产物 |
@@ -43,7 +43,7 @@ Splendor 的音频素材采用 seed2 音色 `zh_female_vv_uranus_bigtts`，
 | track | 音频组织 | cue 数 | 课程时长 |
 | --- | --- | ---: | ---: |
 | quick | cue-level TTS；逻辑 slice 引用素材区间 | 32 | 201.168 秒 |
-| full | 全 cue 独立 TTS 素材 | 83 | 634.170 秒 |
+| full | 默认独立 TTS；同句跨 cue 共享连续源 | 83 | 632.095 秒 |
 
 full 的 `setup/title_2` 使用 `media/tts/full/setup.intro.mp3`，
 `cards_group/title_3_2` 使用 `media/tts/full/action.cards.group.mp3`。
@@ -78,7 +78,9 @@ python animation/compile_tutorial.py --game splendor --track full
 音频区间统一使用半开区间 `[start, end)`。TTS word timing 是估计值，
 审核首尾字时应结合源音频听感与波形。
 
-当前 quick/full 的每条 cue 使用独立素材窗口。制作流程如下：
+quick/full 默认每条 cue 使用独立素材窗口；如果同一句按 cue 切分，则允许
+相邻 cue 共享同一素材的连续窗口，并通过 `continuous` 边界和 0 间隔播放。
+制作流程如下：
 
 1. runtime 声明素材、音频起点、时长和字幕窗口；full 切片导入器据此建立
    `audio-slices.json` 中的逻辑 slice。
@@ -195,11 +197,15 @@ cue 时长计算，较长视觉可能延长课程中的实际停留。
 不同 compiled cue 各自使用编译好的 `start_state`。同一动画素材的多个源区间
 可以连续定位。视觉执行器使用课程位置派生的 cue-local 时间进行 Seek。
 
-### 独立 cue 音频覆盖
+### 独立 cue 音频覆盖与连续共享源
 
-quick/full 的每条 cue 使用独立 TTS 音频，素材包含本条口播的起音、收音与
-换气。quick 按 cue-level 生成；full 使用
-`{track}.cue-audio-overrides.json` 声明音频与字幕映射。格式如下：
+quick/full 默认每条 cue 使用独立 TTS 音频，素材包含本条口播的起音、收音与
+换气。仅当同一句被拆到相邻 cue 时，才允许共享一条完整 TTS 源：两条 cue
+分别声明同一 `audio` 的连续 `[audio_start, audio_start+duration)` 窗口，
+字幕切分也按该源窗口 offset；构建后该边界必须为 `continuous`，且
+`build_cue_timeline.py` 不为它补默认 cue 间隔。quick 按 cue-level 生成；
+full 使用 `{track}.cue-audio-overrides.json` 声明音频、字幕和可选源窗口。
+格式如下：
 
 ```json
 {
@@ -212,14 +218,30 @@ quick/full 的每条 cue 使用独立 TTS 音频，素材包含本条口播的�
     "intro/001": {
       "audio": "media/tts/full/intro.body.mp3",
       "subtitle_file": "media/tts/full/intro.body.subtitle.json"
+    },
+    "take_gems/public.001.1": {
+      "audio": "media/tts/full/cues/take_gems__public.001.b1.mp3",
+      "audio_start": 0.0,
+      "duration": 5.625,
+      "subtitle_file": "media/tts/full/cues/take_gems__public.001.1.b1.subtitle.json"
+    },
+    "take_gems/public.001.2": {
+      "audio": "media/tts/full/cues/take_gems__public.001.b1.mp3",
+      "audio_start": 5.625,
+      "duration": 2.415,
+      "subtitle_file": "media/tts/full/cues/take_gems__public.001.2.b1.subtitle.json"
     }
   }
 }
 ```
 
-runtime 生成器为这些 cue 写入独立 `audio_start=0` 的源窗口，后续
-audio-slices/plan 按实测首尾时间戳裁剪。当前 Splendor full 83 条 cue 和
-quick 32 条 cue 的固定时间轴中，每个音频资产由一条 cue 引用。
+runtime 生成器默认写入独立 `audio_start=0` 的源窗口；声明
+`audio_start`/`duration` 时写入指定源窗口。同一句的第二个 cue 从上一 cue
+的 `audio_end` 开始，`build_audio_slices.py` 生成 `continuous` 契约，
+`build_cue_timeline.py` 据此跳过默认间隔。后续
+audio-slices/plan 按实测首尾时间戳裁剪。当前 Splendor full 中只有
+`take_gems/public.001.1` 与 `public.001.2` 共享一条完整 TTS 源的连续窗口
+（边界为 `continuous`，不补 cue 间隔）；其余音频资产由单条 cue 引用。
 
 ## 生成与发布
 

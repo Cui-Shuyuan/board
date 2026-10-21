@@ -16,7 +16,9 @@
 - 标注原语 `point` / `shape` / `label` 统一编译为 `FrameState.Annotations`，显式区分 `world` / `screen` 锚定。
 - `label` 可用 `size` 单独指定字号（1080p 参考像素）；Splendor 的章节标题 cue 使用居中 `section_title` overlay + `size: 136`，普通说明仍沿用统一默认字号。
 - `overlay_show` 可用 `dim_alpha` 做全屏压暗：`dim_alpha: 0.8` 时背景保留约 20% 可见度；该模式保留真实场景、隐藏 zone debug 层，适合章节标题卡。
-- quick 与 full 使用固定时间轴和共享 plan，每条 cue 使用独立 TTS 音频。
+- quick 与 full 使用固定时间轴和共享 plan；默认每条 cue 使用独立 TTS 音频。
+  同一句被拆到相邻 cue 时，允许显式共享一条连续 TTS 源，并通过
+  `continuous` 源边界与 0 间隔播放，避免句中被 TTS 重新起音。
   full 的素材与字幕映射由 `full.cue-audio-overrides.json` 声明。
 - 固定文件是 timing points、source range、字幕 refs、per-cue policy 和
   visual segment 映射的唯一来源；`{track}.timing-policy.json` 只保留全局配置。
@@ -33,9 +35,12 @@
   full 用 runtime 中各 cue 的源窗口：
   `python3 animation/measure_audio_boundaries.py --game splendor --track full --runtime-windows --ffmpeg <ffmpeg> --write --guard-seconds 0.1`。
   plan 构建只读时间戳，不运行能量分析。
-  所有 cue 都使用独立 TTS 音频；quick 天然按 cue 生成，full 通过
-  `{track}.cue-audio-overrides.json` 指向每条 cue 的独立 MP3 和字幕，
-  运行时/audio-slices 会按 per-cue 独立窗口生成。
+  默认每条 cue 使用独立 TTS 音频；quick 天然按 cue 生成，full 通过
+  `{track}.cue-audio-overrides.json` 指向每条 cue 的 MP3、字幕和可选
+  `audio_start`/`duration` 源窗口。仅当同一句跨 cue 时必须共享一条连续
+  源：right cue 的 `audio_start` 接在 left cue 的 `audio_end` 上，
+  `source_boundary_contracts` 标记为 `continuous`，构建器不为该边界补默认
+  cue 间隔。
 - cue 间隔由 `timing-policy.json` 的 `inter_cue_gap_seconds`（0.5）和
   `section_end_gap_seconds`（1.0）按 section 边界应用，per-cue 策略可显式覆盖。
 - Unity 按课程 DSP 时钟播放连续 PCM 块，cue 标记驱动字幕、视觉与导航。

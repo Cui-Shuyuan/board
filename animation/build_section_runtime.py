@@ -281,21 +281,48 @@ def build_section_runtime(
                 if not cue_audio_path.is_file():
                     raise SystemExit(
                         f"cue audio override missing file: {cue_audio_path}")
+                try:
+                    override_audio_start = float(
+                        override.get("audio_start", 0.0) or 0.0)
+                except (TypeError, ValueError) as exc:
+                    raise SystemExit(
+                        f"cue {cue_id!r}: override audio_start must be numeric"
+                    ) from exc
+                if override_audio_start < 0.0:
+                    raise SystemExit(
+                        f"cue {cue_id!r}: override audio_start must be >= 0")
                 override_duration = override.get("duration")
-                if override_duration is None:
+                needs_media_duration = (
+                    override_duration is None or override_audio_start > 0.0)
+                media_duration: float | None = None
+                if needs_media_duration:
                     try:
-                        cue_duration = float(
+                        media_duration = float(
                             audio_probe.media_duration_seconds(cue_audio_path))
                     except audio_probe.AudioProbeError as exc:
                         raise SystemExit(
                             f"cue audio override cannot be measured: {exc}"
                         ) from exc
+                if override_duration is None:
+                    if media_duration is None:
+                        raise SystemExit(
+                            f"cue {cue_id!r}: override duration is required")
+                    cue_duration = media_duration - override_audio_start
                 else:
                     cue_duration = float(override_duration)
                 if cue_duration <= 0.0:
                     raise SystemExit(
                         f"cue {cue_id!r}: override duration must be positive")
-                cue_audio_start = 0.0
+                if media_duration is not None and (
+                        override_audio_start >= media_duration
+                        or override_audio_start + cue_duration
+                        > media_duration + 1e-6):
+                    raise SystemExit(
+                        f"cue {cue_id!r}: override source window "
+                        f"[{override_audio_start:g}, "
+                        f"{override_audio_start + cue_duration:g}] exceeds "
+                        f"media duration {media_duration:g}")
+                cue_audio_start = override_audio_start
                 subtitle_override = override.get("subtitle_file")
                 if subtitle_override:
                     subtitle_path = game_dir / normalize_relative(

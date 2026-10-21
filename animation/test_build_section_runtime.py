@@ -174,6 +174,39 @@ class SectionRuntimePipelineTests(unittest.TestCase):
             self.assertGreaterEqual(
                 second["audio_start"], first["audio_start"])
 
+    def test_cue_audio_override_supports_source_window(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = self._fixture(root)
+            tutorial = root / "content" / "games" / "fake" / "tutorial"
+            overrides = {
+                "schema": "tutorial-cue-audio-overrides/v1",
+                "track": "full",
+                "cues": {
+                    "a/001": {
+                        "audio": "media/tts/full/sec.a.mp3",
+                        "audio_start": 1.0,
+                        "duration": 2.0,
+                    },
+                },
+            }
+            (tutorial / "full.cue-audio-overrides.json").write_text(
+                json.dumps(overrides, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8")
+            with mock.patch.object(bsr, "ROOT", root), \
+                 mock.patch.object(btr, "ROOT", root), \
+                 mock.patch.object(section_source, "ROOT", root), \
+                 mock.patch.object(
+                     bsr.audio_probe, "media_duration_seconds",
+                     return_value=4.0):
+                out = bsr.build_section_runtime(
+                    "fake", "full", force=True, manifest=manifest)
+            runtime = json.loads(out.read_text(encoding="utf-8"))
+            second = runtime["cues"][1]
+            self.assertEqual(second["audio_start"], 1.0)
+            self.assertEqual(second["duration"], 2.0)
+            self.assertEqual(second["animation"], None)
+
 
 if __name__ == "__main__":
     unittest.main()

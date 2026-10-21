@@ -1344,26 +1344,45 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
             cue for cue in runtime.get("cues") or []
             if isinstance(cue, dict)
         ]
+        slice_rel = str(
+            timing_policy.get("audio_slice_manifest") or "").strip()
+        slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)
+        continuous_boundaries = {
+            (str(contract.get("left_slice") or ""),
+             str(contract.get("right_slice") or ""))
+            for contract in slice_doc.get("source_boundary_contracts", [])
+            if isinstance(contract, dict)
+            and contract.get("kind") == "continuous"
+        }
         auto_post_speech_gaps: dict[str, float] = {}
         for index, cue in enumerate(runtime_cues):
             cue_id = str(cue.get("id") or "").strip()
             if not cue_id:
                 continue
             current_section = cue.get("section")
-            next_section = (
-                runtime_cues[index + 1].get("section")
+            next_cue = (
+                runtime_cues[index + 1]
                 if index + 1 < len(runtime_cues) else None)
+            next_section = next_cue.get("section") if next_cue else None
             is_section_end = (
-                index + 1 == len(runtime_cues)
+                next_cue is None
                 or current_section != next_section)
+            continuous_to_next = False
+            if next_cue is not None:
+                current_slices = slice_doc["cues"].get(cue_id) or []
+                next_cue_id = str(next_cue.get("id") or "").strip()
+                next_slices = slice_doc["cues"].get(next_cue_id) or []
+                if current_slices and next_slices:
+                    continuous_to_next = (
+                        str(current_slices[-1].get("id") or ""),
+                        str(next_slices[0].get("id") or ""),
+                    ) in continuous_boundaries
             auto_post_speech_gaps[cue_id] = (
-                section_end_gap if is_section_end else inter_cue_gap)
+                0.0 if continuous_to_next
+                else (section_end_gap if is_section_end else inter_cue_gap))
         document = _build_cue_plan_set_from_audio_slices(
             repo_root, game, track, runtime, compiled, timing_policy,
             auto_post_speech_gaps=auto_post_speech_gaps)
-        slice_rel = str(
-            timing_policy.get("audio_slice_manifest") or "").strip()
-        slice_doc = _load_audio_slices(repo_root, game, track, slice_rel)
         cue_timing_options = _normalize_cue_timing_options(
             slice_doc, default_mode)
         _apply_timing_policy(document, cue_timing_options, default_mode)

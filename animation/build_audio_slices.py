@@ -107,7 +107,7 @@ def _join_source_boundaries(ranges: list[dict], points: dict, cues: dict) -> lis
         start_ref = right_slice["start_ref"]
         end = float(points[end_ref]["time"])
         start = float(points[start_ref]["time"])
-        if abs(raw_gap) <= 1e-7 and not left["trimmed"]:
+        if abs(raw_gap) <= 1e-7 and not left["tail_trimmed"]:
             # The earlier desired edge protects the next cue's context. Never
             # move it before the preceding cue's known speech end.
             shared = _round(max(left["speech_end"], min(end, start)))
@@ -132,7 +132,7 @@ def _join_source_boundaries(ranges: list[dict], points: dict, cues: dict) -> lis
                         f"{left['cue']} -> {right['cue']}")
                 points[start_ref]["time"] = _round(end)
                 start = _round(end)
-            kind = "trimmed_tail" if left["trimmed"] else "authored_gap"
+            kind = "trimmed_tail" if left["tail_trimmed"] else "authored_gap"
         contracts.append({
             "left_slice": left_slice["id"],
             "right_slice": right_slice["id"],
@@ -182,6 +182,8 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
     seen_cue_ids: set[str] = set()
     seen_slice_ids: set[str] = set()
     source_ranges: list[dict] = []
+    previous_asset: str | None = None
+    previous_audio_end: float | None = None
 
     for index, raw_cue in enumerate(raw_cues):
         path = f"runtime.cues[{index}]"
@@ -200,6 +202,10 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         audio_end = _round(audio_start + duration)
         asset = _normalize_asset(
             raw_cue.get("audio"), game_dir, game, f"{path}.audio")
+        continuous_from_previous = (
+            previous_asset == asset
+            and previous_audio_end is not None
+            and abs(audio_start - previous_audio_end) <= 1e-7)
         try:
             media_duration = audio_probe.media_duration_seconds(game_dir / asset)
         except audio_probe.AudioProbeError as exc:
@@ -349,7 +355,8 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
                     )
                     if lead > 1e-6:
                         effective_start = _round(bound_start - lead)
-            elif bound_start > 0.0 and speech_end is not None:
+            elif (not continuous_from_previous
+                    and bound_start > 0.0 and speech_end is not None):
                 trailing_silence = bound_end - speech_end
                 lead = min(
                     SOURCE_CONTEXT_LEAD_SECONDS,
@@ -408,6 +415,7 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
             "cue": cue_id, "asset": asset,
             "raw_start": bound_start, "raw_end": bound_end,
             "trimmed": trim_to_speech_end or measured_source_window,
+            "tail_trimmed": trim_to_speech_end,
             "speech_end": speech_end if speech_end is not None else bound_end,
         })
         cue_slice = {
@@ -421,6 +429,8 @@ def build_audio_slices(repo_root: Path, game: str, track: str) -> dict:
         if speech_start is not None:
             cue_slice["speech_start_ref"] = speech_start_ref
         cues[cue_id] = [cue_slice]
+        previous_asset = asset
+        previous_audio_end = audio_end
 
         group_id = str(raw_cue.get("section") or "").strip()
         if group_id:

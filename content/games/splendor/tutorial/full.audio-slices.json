@@ -4,7 +4,13 @@
   "game_id": "splendor",
   "track": "full",
   "sample_rate": 24000,
-  "source_boundary_contracts": [],
+  "source_boundary_contracts": [
+    {
+      "left_slice": "take_gems__public.001.1",
+      "right_slice": "take_gems__public.001.2",
+      "kind": "continuous"
+    }
+  ],
   "cue_timing": {
     "intro/title_1": {
       "mode": "audio",
@@ -328,23 +334,11 @@
     },
     "take_gems/public.001.1": {
       "mode": "max",
-      "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.1,
-      "trim_start_guard_seconds": 0.1,
-      "use_measured_speech_end": true,
-      "use_measured_speech_start": true,
-      "trim_to_speech_start": true,
-      "use_measured_source_window": true
+      "post_speech_silence_seconds": 0.0
     },
     "take_gems/public.001.2": {
       "mode": "max",
-      "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.1,
-      "trim_start_guard_seconds": 0.1,
-      "use_measured_speech_end": true,
-      "use_measured_speech_start": true,
-      "trim_to_speech_start": true,
-      "use_measured_source_window": true
+      "post_speech_silence_seconds": 1.0
     },
     "cards_group/title_3_2": {
       "mode": "audio",
@@ -1101,7 +1095,7 @@
       "description": "visual source start"
     },
     "setup_cards__001.2.visual.source_end": {
-      "time": 10.72,
+      "time": 10.63,
       "description": "visual source end"
     },
     "setup_cards__002.1.subtitle.0.start": {
@@ -1153,7 +1147,7 @@
       "description": "visual source start"
     },
     "setup_cards__002.1.visual.source_end": {
-      "time": 8.055,
+      "time": 8.47,
       "description": "visual source end"
     },
     "setup_gems__title_2_2.subtitle.0.start": {
@@ -1241,7 +1235,7 @@
       "description": "visual source start"
     },
     "setup_gems__001.1.visual.source_end": {
-      "time": 9.84,
+      "time": 9.7,
       "description": "visual source end"
     },
     "setup_gems__002.subtitle.0.start": {
@@ -1285,7 +1279,7 @@
       "description": "visual source start"
     },
     "setup_gems__002.visual.source_end": {
-      "time": 5.225,
+      "time": 5.4,
       "description": "visual source end"
     },
     "setup_gems__003.1.subtitle.0.start": {
@@ -1353,7 +1347,7 @@
       "description": "visual source start"
     },
     "setup_gems__003.1.visual.source_end": {
-      "time": 12.514,
+      "time": 12.965,
       "description": "visual source end"
     },
     "setup_gems__005.2.subtitle.0.start": {
@@ -1397,7 +1391,7 @@
       "description": "visual source start"
     },
     "setup_gems__005.2.visual.source_end": {
-      "time": 2.76,
+      "time": 3.28,
       "description": "visual source end"
     },
     "setup_players__title_2_3.subtitle.0.start": {
@@ -1657,7 +1651,7 @@
       "description": "visual source start"
     },
     "setup_players__starting.001.3.visual.source_end": {
-      "time": 2.77,
+      "time": 3.18,
       "description": "visual source end"
     },
     "setup_players__title_2_5.subtitle.0.start": {
@@ -1809,7 +1803,7 @@
       "description": "visual source start"
     },
     "turn__001.visual.source_end": {
-      "time": 1.215,
+      "time": 1.52,
       "description": "visual source end"
     },
     "turn__002.subtitle.0.start": {
@@ -1909,7 +1903,7 @@
       "description": "visual source start"
     },
     "take_gems__different.001.visual.source_end": {
-      "time": 3.92,
+      "time": 4.25,
       "description": "visual source end"
     },
     "take_gems__same.001.subtitle.0.start": {
@@ -1953,7 +1947,7 @@
       "description": "visual source start"
     },
     "take_gems__same.001.visual.source_end": {
-      "time": 4.305,
+      "time": 4.51,
       "description": "visual source end"
     },
     "take_gems__same.002.subtitle.0.start": {
@@ -2033,7 +2027,7 @@
       "description": "visual source start"
     },
     "take_gems__draw_rule.001.1.visual.source_end": {
-      "time": 5.32,
+      "time": 5.605,
       "description": "visual source end"
     },
     "take_gems__draw_rule.001.2.subtitle.0.start": {
@@ -2069,7 +2063,7 @@
       "description": "visual source start"
     },
     "take_gems__draw_rule.001.2.visual.source_end": {
-      "time": 3.3,
+      "time": 3.575,
       "description": "visual source end"
     },
     "take_gems__limit.001.1.subtitle.0.start": {
@@ -2113,7 +2107,7 @@
       "description": "visual source start"
     },
     "take_gems__limit.001.1.visual.source_end": {
-      "time": 4.48,
+      "time": 5.02,
       "description": "visual source end"
     },
     "take_gems__limit.001.2.subtitle.0.start": {
@@ -2157,15 +2151,15 @@
       "description": "visual source start"
     },
     "take_gems__limit.001.2.visual.source_end": {
-      "time": 4.72,
+      "time": 5.025,
       "description": "visual source end"
     },
     "take_gems__public.001.1.subtitle.0.start": {
-      "time": 0.275,
+      "time": 0.0,
       "description": "subtitle start"
     },
     "take_gems__public.001.1.subtitle.0.end": {
-      "time": 6.03,
+      "time": 5.485,
       "description": "subtitle end"
     },
     "take_gems__public.001.1.start": {
@@ -2173,44 +2167,36 @@
       "description": "logical slice start"
     },
     "take_gems__public.001.1.end": {
-      "time": 6.048,
+      "time": 5.625,
       "description": "logical slice end"
     },
     "take_gems__public.001.1.speech_end": {
-      "time": 6.03,
-      "description": "measured speech end"
-    },
-    "take_gems__public.001.1.speech_start": {
-      "time": 0.35,
-      "description": "measured speech start"
+      "time": 5.485,
+      "description": "last TTS word end"
     },
     "take_gems__public.001.1.visual.cue_start": {
       "time": 0.0,
       "description": "visual cue-local start"
     },
     "take_gems__public.001.2.subtitle.0.start": {
-      "time": 0.285,
+      "time": 5.765,
       "description": "subtitle start"
     },
     "take_gems__public.001.2.subtitle.0.end": {
-      "time": 3.05,
+      "time": 7.235,
       "description": "subtitle end"
     },
     "take_gems__public.001.2.start": {
-      "time": 0.0,
+      "time": 5.625,
       "description": "logical slice start"
     },
     "take_gems__public.001.2.end": {
-      "time": 3.072,
+      "time": 8.04,
       "description": "logical slice end"
     },
     "take_gems__public.001.2.speech_end": {
-      "time": 3.05,
-      "description": "measured speech end"
-    },
-    "take_gems__public.001.2.speech_start": {
-      "time": 0.24,
-      "description": "measured speech start"
+      "time": 7.235,
+      "description": "last TTS word end"
     },
     "take_gems__public.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2221,7 +2207,7 @@
       "description": "visual source start"
     },
     "take_gems__public.001.2.visual.source_end": {
-      "time": 0.835,
+      "time": 0.735,
       "description": "visual source end"
     },
     "cards_group__title_3_2.subtitle.0.start": {
@@ -2461,7 +2447,7 @@
       "description": "visual source start"
     },
     "cards__market.001.1.visual.source_end": {
-      "time": 13.445,
+      "time": 13.975,
       "description": "visual source end"
     },
     "cards__market.001.2.subtitle.0.start": {
@@ -2505,7 +2491,7 @@
       "description": "visual source start"
     },
     "cards__market.001.2.visual.source_end": {
-      "time": 2.38,
+      "time": 2.655,
       "description": "visual source end"
     },
     "cards__prestige.001.1.subtitle.0.start": {
@@ -2549,7 +2535,7 @@
       "description": "visual source start"
     },
     "cards__prestige.001.1.visual.source_end": {
-      "time": 0.505,
+      "time": 0.78,
       "description": "visual source end"
     },
     "cards__prestige.001.2.subtitle.0.start": {
@@ -2629,7 +2615,7 @@
       "description": "visual source start"
     },
     "cards__discount.001.visual.source_end": {
-      "time": 0.475,
+      "time": 0.78,
       "description": "visual source end"
     },
     "cards__discount.002.1.subtitle.0.start": {
@@ -2689,7 +2675,7 @@
       "description": "visual source start"
     },
     "cards__discount.002.1.visual.source_end": {
-      "time": 11.265,
+      "time": 11.465,
       "description": "visual source end"
     },
     "cards__discount.003.1.subtitle.0.start": {
@@ -2733,7 +2719,7 @@
       "description": "visual source start"
     },
     "cards__discount.003.1.visual.source_end": {
-      "time": 8.2,
+      "time": 7.685,
       "description": "visual source end"
     },
     "cards__discount.003.2.subtitle.0.start": {
@@ -2821,7 +2807,7 @@
       "description": "visual source start"
     },
     "cards__public.001.1.visual.source_end": {
-      "time": 4.385,
+      "time": 4.705,
       "description": "visual source end"
     },
     "cards__limit.001.1.subtitle.0.start": {
@@ -2953,7 +2939,7 @@
       "description": "visual source start"
     },
     "nobles__intro.001.visual.source_end": {
-      "time": 9.34,
+      "time": 9.625,
       "description": "visual source end"
     },
     "nobles__trigger.001.1.subtitle.0.start": {
@@ -3005,7 +2991,7 @@
       "description": "visual source start"
     },
     "nobles__trigger.001.1.visual.source_end": {
-      "time": 11.81,
+      "time": 12.045,
       "description": "visual source end"
     },
     "nobles__forced.001.1.subtitle.0.start": {
@@ -3057,7 +3043,7 @@
       "description": "visual source start"
     },
     "nobles__forced.001.1.visual.source_end": {
-      "time": 7.334,
+      "time": 7.665,
       "description": "visual source end"
     },
     "nobles__source.001.subtitle.0.start": {
@@ -3205,7 +3191,7 @@
       "description": "visual source start"
     },
     "nobles__repeat.001.1.visual.source_end": {
-      "time": 10.925,
+      "time": 11.24,
       "description": "visual source end"
     },
     "nobles__repeat.001.3.subtitle.0.start": {
@@ -3517,7 +3503,7 @@
       "description": "visual source start"
     },
     "reserve__deck.001.visual.source_end": {
-      "time": 5.415,
+      "time": 5.7,
       "description": "visual source end"
     },
     "reserve__notes_intro.001.subtitle.0.start": {
@@ -4093,7 +4079,7 @@
       "description": "visual source start"
     },
     "end__trigger.001.visual.source_end": {
-      "time": 5.025,
+      "time": 5.232,
       "description": "visual source end"
     },
     "end__final_rounds.001.1.subtitle.0.start": {
@@ -4225,7 +4211,7 @@
       "description": "visual source start"
     },
     "end__winner.001.visual.source_end": {
-      "time": 7.705,
+      "time": 8.345,
       "description": "visual source end"
     },
     "end__winner.002.subtitle.0.start": {
@@ -4277,7 +4263,7 @@
       "description": "visual source start"
     },
     "end__winner.002.visual.source_end": {
-      "time": 11.8,
+      "time": 12.615,
       "description": "visual source end"
     },
     "end__winner.003.subtitle.0.start": {
@@ -4329,7 +4315,7 @@
       "description": "visual source start"
     },
     "end__winner.003.visual.source_end": {
-      "time": 10.366,
+      "time": 11.175,
       "description": "visual source end"
     }
   },
@@ -5021,7 +5007,7 @@
     "take_gems/public.001.1": [
       {
         "id": "take_gems__public.001.1",
-        "asset": "media/tts/full/cues/take_gems__public.001.1.b1.mp3",
+        "asset": "media/tts/full/cues/take_gems__public.001.b1.mp3",
         "start_ref": "take_gems__public.001.1.start",
         "end_ref": "take_gems__public.001.1.end",
         "speech_end_ref": "take_gems__public.001.1.speech_end",
@@ -5029,16 +5015,15 @@
           {
             "start_ref": "take_gems__public.001.1.subtitle.0.start",
             "end_ref": "take_gems__public.001.1.subtitle.0.end",
-            "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，\n"
+            "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，"
           }
-        ],
-        "speech_start_ref": "take_gems__public.001.1.speech_start"
+        ]
       }
     ],
     "take_gems/public.001.2": [
       {
         "id": "take_gems__public.001.2",
-        "asset": "media/tts/full/cues/take_gems__public.001.2.b1.mp3",
+        "asset": "media/tts/full/cues/take_gems__public.001.b1.mp3",
         "start_ref": "take_gems__public.001.2.start",
         "end_ref": "take_gems__public.001.2.end",
         "speech_end_ref": "take_gems__public.001.2.speech_end",
@@ -5048,8 +5033,7 @@
             "end_ref": "take_gems__public.001.2.subtitle.0.end",
             "text": "所有人都能清楚看到的地方。"
           }
-        ],
-        "speech_start_ref": "take_gems__public.001.2.speech_start"
+        ]
       }
     ],
     "cards_group/title_3_2": [

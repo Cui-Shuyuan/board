@@ -122,7 +122,8 @@ content/games/<game>/tutorial/
 
 ### 5.1 音频、逻辑切片与字幕轨道
 
-quick/full 的每条 cue 使用独立 TTS 音频；full 的素材映射由
+quick/full 默认每条 cue 使用独立 TTS 音频；仅当同一句被 cue 边界切开时，
+相邻 cue 才共享一条完整 TTS 源的连续区间。full 的素材映射由
 `full.cue-audio-overrides.json` 声明。
 音频/字幕的制作流程：
 
@@ -147,9 +148,13 @@ quick/full 的每条 cue 使用独立 TTS 音频；full 的素材映射由
 6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
    subtitle refs 生成。播放器从课程 DSP 位置派生 cue-local 时间，同步字幕、
    视觉和连续音频。
-7. 每个 cue 都应是独立 MP3。quick 本身按 cue-level TTS 生成；full 通过
-   `{track}.cue-audio-overrides.json` 指向每条 cue 的独立音频和字幕。
-   每条 cue 使用自己的 `audio_start=0` 源窗口，plan 按 PCM 首尾时间戳裁切。
+7. 默认每个 cue 使用独立 MP3。quick 本身按 cue-level TTS 生成；full 通过
+   `{track}.cue-audio-overrides.json` 指向每条 cue 的音频和字幕。若同一句
+   被 cue 边界切开，允许相邻 cue 共享同一 MP3 的连续源区间：第二个 cue
+   的 `audio_start` 等于上一 cue 的源窗口终点，字幕按切点重定基准；
+   `source_boundary_contracts` 必须为 `continuous`，构建器跳过该边界的默认
+   停顿。其他 cue 仍使用自己的 `audio_start=0` 源窗口，plan 按 PCM 首尾
+   时间戳裁切。
 8. cue 间隔默认使用 `timing-policy.json` 的
    `inter_cue_gap_seconds: 0.5` 和 `section_end_gap_seconds: 1.0`
    会由 `build_cue_timeline.py` 按 section 边界自动应用：
