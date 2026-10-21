@@ -47,7 +47,10 @@ class QaVoiceControllerTest {
 
         controller.replayAnswer(message())
         advanceUntilIdle()
-        assertEquals(message().timestamp, controller.state.value.playingMessageId)
+        assertEquals(
+            QaPlaybackState.Playing(message().timestamp),
+            controller.state.value.playback
+        )
         val stopCallsBeforeToggle = player.stopCalls
 
         controller.setAutoTtsEnabled(false)
@@ -56,7 +59,7 @@ class QaVoiceControllerTest {
         assertEquals(1, store.setCalls)
         assertFalse(controller.state.value.autoTtsEnabled)
         assertEquals(stopCallsBeforeToggle + 1, player.stopCalls)
-        assertNull(controller.state.value.playingMessageId)
+        assertEquals(QaPlaybackState.Idle, controller.state.value.playback)
     }
 
     @Test
@@ -72,8 +75,8 @@ class QaVoiceControllerTest {
         assertEquals(1, tts.callCount)
         assertEquals(1, player.playCalls)
         assertEquals(ttsFile, player.playedFiles.single())
-        assertFalse(controller.state.value.ttsBusy)
-        assertNull(controller.state.value.voiceStatus)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
+        assertNull(controller.state.value.notice)
     }
 
     @Test
@@ -121,15 +124,15 @@ class QaVoiceControllerTest {
         controller.onAssistantReply(message())
         runCurrent()
         assertEquals(1, tts.callCount)
-        assertEquals("正在合成语音…", controller.state.value.voiceStatus)
+        assertEquals(QaTtsState.SYNTHESIZING, controller.state.value.tts)
 
         controller.startNewSession()
         deferred.complete(Result.success(ttsFile))
         advanceUntilIdle()
 
         assertEquals(0, player.playCalls)
-        assertNull(controller.state.value.voiceStatus)
-        assertFalse(controller.state.value.ttsBusy)
+        assertNull(controller.state.value.notice)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
     }
 
     @Test
@@ -145,8 +148,8 @@ class QaVoiceControllerTest {
         deferred.complete(Result.failure(IOException("stale-tap")))
         advanceUntilIdle()
 
-        assertNotEquals("语音合成失败，已保留文字回答", controller.state.value.voiceStatus)
-        assertFalse(controller.state.value.ttsBusy)
+        assertNotEquals(QaVoiceNotice.SPEECH_SYNTHESIS_FAILED, controller.state.value.notice)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
     }
 
     @Test
@@ -201,7 +204,7 @@ class QaVoiceControllerTest {
         advanceUntilIdle()
 
         assertTrue(recognized.isEmpty())
-        assertTrue(controller.state.value.isRecording)
+        assertEquals(QaRecordingState.RECORDING, controller.state.value.recording)
     }
 
     @Test
@@ -219,15 +222,15 @@ class QaVoiceControllerTest {
 
         controller.onAssistantReply(message())
         runCurrent()
-        assertEquals("正在合成语音…", controller.state.value.voiceStatus)
+        assertEquals(QaTtsState.SYNTHESIZING, controller.state.value.tts)
 
         controller.onPttDown()
         deferred.complete(Result.success(ttsFile))
         advanceUntilIdle()
 
         assertEquals(0, player.playCalls)
-        assertFalse(controller.state.value.ttsBusy)
-        assertTrue(controller.state.value.isRecording)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
+        assertEquals(QaRecordingState.RECORDING, controller.state.value.recording)
     }
 
     @Test
@@ -256,13 +259,13 @@ class QaVoiceControllerTest {
 
         assertEquals(QaPttStartResult.NEED_PERMISSION, controller.onPttDown())
         assertEquals(0, recorder.startCalls)
-        assertEquals("需要麦克风权限", controller.state.value.voiceStatus)
+        assertEquals(QaVoiceNotice.PERMISSION_REQUIRED, controller.state.value.notice)
 
         controller.onPermissionResult(true)
-        assertEquals("权限已授予，请再次按住说话", controller.state.value.voiceStatus)
+        assertEquals(QaVoiceNotice.PERMISSION_GRANTED, controller.state.value.notice)
 
         controller.onPermissionResult(false)
-        assertEquals("未授予麦克风权限，可键盘输入", controller.state.value.voiceStatus)
+        assertEquals(QaVoiceNotice.PERMISSION_DENIED, controller.state.value.notice)
     }
 
     @Test
@@ -280,8 +283,8 @@ class QaVoiceControllerTest {
         )
 
         assertEquals(QaPttStartResult.STARTED, controller.onPttDown())
-        assertTrue(controller.state.value.isRecording)
-        assertEquals("正在聆听…", controller.state.value.voiceStatus)
+        assertEquals(QaRecordingState.RECORDING, controller.state.value.recording)
+        assertEquals(QaRecordingState.RECORDING, controller.state.value.recording)
 
         controller.onPttUp()
         advanceUntilIdle()
@@ -289,8 +292,8 @@ class QaVoiceControllerTest {
         assertEquals(1, recorder.stopCalls)
         assertEquals(listOf(recording), asr.files)
         assertEquals(listOf("hello"), recognized)
-        assertFalse(controller.state.value.isRecording)
-        assertNull(controller.state.value.voiceStatus)
+        assertEquals(QaRecordingState.IDLE, controller.state.value.recording)
+        assertNull(controller.state.value.notice)
     }
 
     @Test
@@ -311,7 +314,111 @@ class QaVoiceControllerTest {
         controller.onPttUp()
         advanceUntilIdle()
 
-        assertEquals("识别失败，可键盘输入", controller.state.value.voiceStatus)
+        assertEquals(QaVoiceNotice.RECOGNITION_FAILED, controller.state.value.notice)
+    }
+
+    @Test
+    fun cancelRecognitionDropsLateAsrResultAndDoesNotAutoSend() = runTest {
+        val recording = tempFile("cancel-recognition")
+        val recorder = FakeAudioRecorder().apply { stopResult = recording }
+        val deferred = CompletableDeferred<Result<String>>()
+        val asr = FakeAsrEngine().apply { suspendCall = deferred }
+        val recognized = mutableListOf<String>()
+        val controller = createController(
+            scope = this,
+            recorder = recorder,
+            asr = asr,
+            hasPermission = { true },
+            onRecognizedText = { recognized += it }
+        )
+
+        controller.onPttDown()
+        controller.onPttUp()
+        runCurrent()
+        assertEquals(QaAsrState.RECOGNIZING, controller.state.value.asr)
+
+        controller.cancelRecognition()
+        deferred.complete(Result.success("late transcript"))
+        advanceUntilIdle()
+
+        assertTrue(recognized.isEmpty())
+        assertEquals(QaAsrState.IDLE, controller.state.value.asr)
+        assertEquals(QaVoiceNotice.RECORDING_CANCELLED, controller.state.value.notice)
+        assertTrue(asr.cancelCalls > 0)
+    }
+
+    @Test
+    fun disablingAutoTtsDuringSynthesisNeverAutoPlaysCompletedAudio() = runTest {
+        val ttsFile = tempFile("late-success")
+        val deferred = CompletableDeferred<Result<File>>()
+        val tts = FakeTtsEngine().apply { suspendCall = deferred }
+        val player = FakeAnswerPlayer()
+        val controller = createController(scope = this, tts = tts, player = player)
+
+        controller.onAssistantReply(message())
+        runCurrent()
+        assertEquals(QaTtsState.SYNTHESIZING, controller.state.value.tts)
+
+        controller.setAutoTtsEnabled(false)
+        deferred.complete(Result.success(ttsFile))
+        advanceUntilIdle()
+
+        assertEquals(0, player.playCalls)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
+        assertFalse(controller.state.value.autoTtsEnabled)
+    }
+
+    @Test
+    fun closingPanelCancelsAudioWorkStopsPlaybackAndDeletesCachedAnswerFiles() = runTest {
+        val ttsFile = tempFile("close-cleanup")
+        val tts = FakeTtsEngine().apply { nextResult = Result.success(ttsFile) }
+        val player = FakeAnswerPlayer()
+        val recorder = FakeAudioRecorder()
+        val asr = FakeAsrEngine()
+        val controller = createController(
+            scope = this,
+            recorder = recorder,
+            asr = asr,
+            tts = tts,
+            player = player
+        )
+
+        controller.replayAnswer(message())
+        advanceUntilIdle()
+        assertTrue(ttsFile.exists())
+        assertEquals(1, player.playCalls)
+
+        controller.close()
+
+        assertTrue(recorder.cancelCalls > 0)
+        assertTrue(asr.cancelCalls > 0)
+        assertTrue(tts.cancelCalls > 0)
+        assertTrue(player.stopCalls > 0)
+        assertFalse(ttsFile.exists())
+        assertEquals(QaRecordingState.IDLE, controller.state.value.recording)
+        assertEquals(QaAsrState.IDLE, controller.state.value.asr)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
+        assertEquals(QaPlaybackState.Idle, controller.state.value.playback)
+        assertNull(controller.state.value.notice)
+    }
+
+    @Test
+    fun staleTtsFromPreviousSessionDoesNotPlayAfterNewSession() = runTest {
+        val ttsFile = tempFile("old-session-tts")
+        val deferred = CompletableDeferred<Result<File>>()
+        val tts = FakeTtsEngine().apply { suspendCall = deferred }
+        val player = FakeAnswerPlayer()
+        val controller = createController(scope = this, tts = tts, player = player)
+
+        controller.onAssistantReply(message())
+        runCurrent()
+        controller.startNewSession()
+        deferred.complete(Result.success(ttsFile))
+        advanceUntilIdle()
+
+        assertEquals(0, player.playCalls)
+        assertEquals(QaPlaybackState.Idle, controller.state.value.playback)
+        assertEquals(QaTtsState.IDLE, controller.state.value.tts)
     }
 
     private fun createController(

@@ -70,6 +70,103 @@ public sealed class ChatOrchestratorServiceTests
     }
 
     [Fact]
+    public void TryNormalizeToolResult_InvalidJsonIsFailureAndValidArrayIsNotMistakenForAnError()
+    {
+        Assert.True(ChatToolProtocol.TryNormalizeToolResult(
+            "not-json", out var normalized, out var errorText));
+        Assert.Contains("不是合法 JSON", errorText);
+
+        using (var normalizedDoc = JsonDocument.Parse(normalized))
+        {
+            Assert.Equal(
+                errorText,
+                normalizedDoc.RootElement.GetProperty("error").GetString());
+        }
+
+        Assert.False(ChatToolProtocol.TryNormalizeToolResult(
+            "[{\"concept_id\":\"widget\"}]", out var validArray, out _));
+        Assert.Equal("[{\"concept_id\":\"widget\"}]", validArray);
+
+        var serializedError = ChatToolProtocol.SerializeToolError(
+            "引号\"、Windows 路径 C:\\tmp\\a 与换行\n均必须保真");
+        Assert.True(ChatToolProtocol.TryGetToolError(serializedError, out var parsedError));
+        Assert.Equal("引号\"、Windows 路径 C:\\tmp\\a 与换行\n均必须保真", parsedError);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_DynamicToolErrorWithJsonSpecialCharacters_StaysParseableAndCountsAsConsecutiveFailures()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        List<ChatMessage>? summaryMessages = null;
+        var conceptId = "missing\"concept\\C:\\rules\\card\nnext";
+        var arguments = JsonSerializer.Serialize(new { concept_id = conceptId });
+        var llm = new FakeLLMService(call =>
+        {
+            if (call.HasTools)
+                return Task.FromResult(ToolCallResponse(arguments, call.Index, "get_concept"));
+
+            summaryMessages = call.Messages;
+            return Task.FromResult(FinalResponse("FINAL"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(
+            maxToolRounds: 10,
+            maxRepeatedFailures: 3));
+
+        var reply = await sut.ProcessAsync("testgame", History());
+
+        Assert.Equal("FINAL", reply);
+        Assert.Equal(3, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+        Assert.NotNull(summaryMessages);
+        var toolMessages = summaryMessages!
+            .Where(message => message.Role == "tool")
+            .ToList();
+        Assert.Equal(3, toolMessages.Count);
+        foreach (var toolMessage in toolMessages)
+        {
+            using var doc = JsonDocument.Parse(toolMessage.Content!);
+            Assert.Equal(
+                $"Concept '{conceptId}' not found",
+                doc.RootElement.GetProperty("error").GetString());
+        }
+    }
+
+    [Fact]
+    public async Task ProcessAsync_UnknownToolNameWithSpecialCharacters_ReturnsSerializedErrorAndStopsAtBudget()
+    {
+        using var fixture = new RulesFixture();
+        using var rules = fixture.CreateService();
+        List<ChatMessage>? summaryMessages = null;
+        var unknownTool = "unknown\"tool\\C:\\tmp\nnext";
+        var llm = new FakeLLMService(call =>
+        {
+            if (call.HasTools)
+                return Task.FromResult(ToolCallResponse("{}", call.Index, unknownTool));
+
+            summaryMessages = call.Messages;
+            return Task.FromResult(FinalResponse("FINAL"));
+        });
+        var sut = CreateService(llm, rules, CreateOptions(
+            maxToolRounds: 10,
+            maxRepeatedFailures: 1));
+
+        var reply = await sut.ProcessAsync("testgame", History());
+
+        Assert.Equal("FINAL", reply);
+        Assert.Equal(1, llm.ToolCallCount);
+        Assert.Equal(1, llm.SummaryCount);
+        Assert.NotNull(summaryMessages);
+        var toolMessage = Assert.Single(
+            summaryMessages!,
+            message => message.Role == "tool");
+        using var doc = JsonDocument.Parse(toolMessage.Content!);
+        Assert.Equal(
+            $"Unknown tool '{unknownTool}'",
+            doc.RootElement.GetProperty("error").GetString());
+    }
+
+    [Fact]
     public async Task ProcessAsync_WhenSingleRoundExceedsToolCallLimit_OnlyExecutesLimitAndSummarizes()
     {
         using var fixture = new RulesFixture();
@@ -349,7 +446,10 @@ public sealed class ChatOrchestratorServiceTests
     private static List<ChatMessage> History() =>
         new() { new ChatMessage { Role = "user", Content = "测试问题" } };
 
-    private static LLMChatResponse ToolCallResponse(string arguments, int index)
+    private static LLMChatResponse ToolCallResponse(
+        string arguments,
+        int index,
+        string toolName = "execute_plan")
         => new()
         {
             Choices = new List<LLMChoice>
@@ -366,7 +466,7 @@ public sealed class ChatOrchestratorServiceTests
                                 Id = $"call_{index}",
                                 Function = new FunctionCall
                                 {
-                                    Name = "execute_plan",
+                                    Name = toolName,
                                     Arguments = arguments
                                 }
                             }

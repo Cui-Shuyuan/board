@@ -55,13 +55,22 @@ public class RulesController : ControllerBase
     }
 
     [HttpGet("games/{game}/search")]
-    public async Task<IActionResult> Search(string game, [FromQuery] string q)
+    public async Task<IActionResult> Search(
+        string game,
+        [FromQuery] string q,
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(q))
         {
             return BadRequest(new { error = "q parameter is required" });
         }
-        return Ok(await _rulesService.SearchConceptsAsync(game, q));
+
+        // A direct search API request also gets a bounded request scope, so its
+        // query vector/keyword work can be reused within that request and is
+        // released when the action completes or the client disconnects.
+        using var requestScope = _rulesService.BeginRequestScope(game);
+        return Ok(await _rulesService.SearchConceptsAsync(
+            game, q, cancellationToken: cancellationToken));
     }
 
     /// <summary>
@@ -69,7 +78,10 @@ public class RulesController : ControllerBase
     /// Body: { "question": "客人原话", "plan": { "queries": [{ "relation": "...", "entity": "..." }] } }
     /// </summary>
     [HttpPost("games/{game}/execute-plan")]
-    public async Task<IActionResult> ExecutePlan(string game, [FromBody] JsonElement body)
+    public async Task<IActionResult> ExecutePlan(
+        string game,
+        [FromBody] JsonElement body,
+        CancellationToken cancellationToken)
     {
         if (body.ValueKind != JsonValueKind.Object ||
             !body.TryGetProperty("plan", out var plan) ||
@@ -80,7 +92,10 @@ public class RulesController : ControllerBase
         var question = body.TryGetProperty("question", out var qp) && qp.ValueKind == JsonValueKind.String
             ? qp.GetString() ?? ""
             : "";
-        return Ok(await _rulesService.ExecutePlanAsync(game, plan, question));
+
+        using var requestScope = _rulesService.BeginRequestScope(game);
+        return Ok(await _rulesService.ExecutePlanAsync(
+            game, plan, question, cancellationToken));
     }
 
     /// <summary>

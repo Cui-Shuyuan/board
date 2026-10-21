@@ -24,7 +24,7 @@ public sealed class QueryResultContractTests
         Assert.Empty(item.Omissions);
 
         using var serialized = JsonDocument.Parse(JsonSerializer.Serialize(item));
-        var evidence = ChatOrchestratorService.ParseQueryEvidence(serialized.RootElement, result.RulesVersion);
+        var evidence = AnswerEvidenceCollector.ParseQueryEvidence(serialized.RootElement, result.RulesVersion);
         Assert.True(evidence.HasData);
         Assert.Contains(QueryPayloadTypes.CatalogPage, evidence.PayloadTypes);
     }
@@ -133,7 +133,7 @@ public sealed class QueryResultContractTests
         }
         """);
 
-        var evidence = ChatOrchestratorService.ParseQueryEvidence(doc.RootElement, "rules-v1");
+        var evidence = AnswerEvidenceCollector.ParseQueryEvidence(doc.RootElement, "rules-v1");
 
         Assert.Equal("unsupported", evidence.Status);
         Assert.Equal(QueryResolutionStatuses.Unsupported, evidence.Resolution);

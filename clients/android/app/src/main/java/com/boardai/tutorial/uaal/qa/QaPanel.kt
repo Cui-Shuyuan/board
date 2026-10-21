@@ -1,6 +1,5 @@
 package com.boardai.tutorial.uaal.qa
 
-import android.os.SystemClock
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.RepeatMode
@@ -48,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,7 +74,6 @@ import com.boardai.tutorial.uaal.voice.AnswerAudioPlayer
 import com.boardai.tutorial.uaal.voice.AsrRepository
 import com.boardai.tutorial.uaal.voice.AudioRecorder
 import com.boardai.tutorial.uaal.voice.TtsRepository
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -147,6 +146,7 @@ fun QaPanel(
     debugInfoEnabled: Boolean = false
 ) {
     val currentContext = buildQaContext(game, status, timeline)
+    val latestContext = rememberUpdatedState(currentContext)
     val session = QaSessionHolder.sessionState.value
     val messages = session?.messages.orEmpty()
     val listState = rememberLazyListState()
@@ -154,14 +154,25 @@ fun QaPanel(
     val appContext = LocalContext.current.applicationContext
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val activeChatJob = remember { mutableStateOf<Job?>(null) }
 
     val audioRecorder = remember { AudioRecorder(appContext) }
     val answerPlayer = remember { AnswerAudioPlayer() }
+    val voiceControllerHolder = remember { arrayOfNulls<QaVoiceController>(1) }
+    val coordinator = remember {
+        QaConversationCoordinator(
+            scope = scope,
+            chatGateway = repository,
+            onAssistantReply = { message ->
+                // The coordinator owns reply decision/appending; voice only
+                // receives the already committed assistant turn.
+                voiceControllerHolder[0]?.onAssistantReply(message)
+            },
+            log = { message -> Log.d(QA_VOICE_TAG, message) }
+        )
+    }
 
     var input by remember { mutableStateOf("") }
-    var autoSendText by remember { mutableStateOf<String?>(null) }
-    var sendState by remember { mutableStateOf<QaSendState>(QaSendState.Idle) }
+    val sendState by coordinator.sendState.collectAsState()
     val sending = sendState is QaSendState.Sending
 
     val voiceController = remember {
@@ -174,15 +185,19 @@ fun QaPanel(
             autoTtsStore = SharedPrefsQaAutoTtsStore(appContext),
             hasRecordPermission = hasRecordPermission,
             onRecognizedText = { recognized ->
-                // Voice input is sent directly. Keep any text draft intact so
-                // the user can switch back to the keyboard without losing it.
-                autoSendText = recognized
+                // Voice input is sent directly. The keyboard draft is deliberately
+                // left untouched so switching back does not lose text.
+                coordinator.sendQuestion(recognized, latestContext.value)
             },
             log = { message -> Log.d(QA_VOICE_TAG, message) }
         )
     }
+    voiceControllerHolder[0] = voiceController
+
     val voiceState by voiceController.state.collectAsState()
-    val recognizing = isAsrRecognizing(voiceState.voiceStatus)
+    val recognizing = voiceState.asr == QaAsrState.RECOGNIZING
+    val recording = voiceState.recording == QaRecordingState.RECORDING
+    val playingMessageId = (voiceState.playback as? QaPlaybackState.Playing)?.messageId
 
     LaunchedEffect(game?.id) {
         if (game != null) {
@@ -198,16 +213,18 @@ fun QaPanel(
         }
     }
 
-    LaunchedEffect(voiceState.voiceStatus) {
-        when (voiceState.voiceStatus) {
-            "已取消" -> {
+    LaunchedEffect(voiceState.notice) {
+        when (val notice = voiceState.notice) {
+            QaVoiceNotice.RECORDING_CANCELLED -> {
                 delay(3_000)
-                voiceController.clearVoiceStatus()
+                voiceController.clearVoiceNotice(notice)
             }
-            "识别失败，可键盘输入" -> {
-                Toast.makeText(appContext, voiceState.voiceStatus, Toast.LENGTH_SHORT).show()
-                voiceController.clearVoiceStatus()
+            QaVoiceNotice.RECOGNITION_FAILED -> {
+                val text = qaVoiceNoticeText(notice) ?: return@LaunchedEffect
+                Toast.makeText(appContext, text, Toast.LENGTH_SHORT).show()
+                voiceController.clearVoiceNotice(notice)
             }
+            else -> Unit
         }
     }
 
@@ -223,109 +240,33 @@ fun QaPanel(
 
     DisposableEffect(Unit) {
         onDispose {
-            activeChatJob.value?.cancel()
-            activeChatJob.value = null
-            repository.cancelActiveRequests()
+            coordinator.close()
             voiceController.close()
+        }
+    }
+
+    fun submitQuestion(question: String, clearDraft: Boolean) {
+        val accepted = coordinator.sendQuestion(
+            question = question,
+            context = buildQaContext(game, status, timeline)
+        )
+        if (accepted && clearDraft) {
+            input = ""
         }
     }
 
     fun startNewSession() {
         val context = buildQaContext(game, status, timeline)
-        QaSessionHolder.startNewSession(context)
-        activeChatJob.value?.cancel()
-        activeChatJob.value = null
-        repository.cancelActiveRequests()
+        coordinator.startNewSession(context)
         voiceController.startNewSession()
         input = ""
-        autoSendText = null
-        sendState = QaSendState.Idle
-    }
-
-    fun sendQuestion(questionOverride: String? = null) {
-        val question = (questionOverride ?: input).trim()
-        if (question.isBlank() || sending) return
-        val context = buildQaContext(game, status, timeline)
-        val activeSession = QaSessionHolder.ensureSession(context)
-        val sessionGeneration = activeSession.generation
-        val userMessage = QaMessage(
-            role = QaMessage.ROLE_USER,
-            content = question
-        )
-        if (!QaSessionHolder.appendMessage(userMessage, context, sessionGeneration)) {
-            Log.d(QA_VOICE_TAG, "chat send ignored: session changed while composing")
-            return
-        }
-        if (questionOverride == null) {
-            input = ""
-        }
-        sendState = QaSendState.Sending
-        val history = QaSessionHolder.session
-            ?.takeIf { it.generation == sessionGeneration }
-            ?.messages
-            .orEmpty()
-
-        activeChatJob.value = scope.launch {
-            val startedAtMs = SystemClock.elapsedRealtime()
-            val result = repository.send(
-                gameId = activeSession.gameId.ifBlank { context.gameId },
-                messages = history,
-                context = context
-            )
-            if (!QaSessionHolder.isCurrent(sessionGeneration)) {
-                Log.d(QA_VOICE_TAG, "stale chat result ignored: session changed")
-                return@launch
-            }
-
-            result.onSuccess { chat ->
-                val replyText = chat.reply.trim().ifBlank { "（未收到回答）" }
-                val evidence = chat.evidence
-                val debugSummary = qaAnswerDebugSummary(
-                    chat,
-                    SystemClock.elapsedRealtime() - startedAtMs
-                )
-                Log.i(QA_VOICE_TAG, debugSummary)
-                val replyMessage = QaMessage(
-                    role = QaMessage.ROLE_ASSISTANT,
-                    content = replyText,
-                    evidence = evidence,
-                    debugSummary = debugSummary
-                )
-                if (!QaSessionHolder.appendMessage(replyMessage, context, sessionGeneration)) {
-                    Log.d(QA_VOICE_TAG, "stale chat reply ignored: session changed")
-                    return@onSuccess
-                }
-                sendState = QaSendState.Idle
-                voiceController.onAssistantReply(replyMessage)
-            }.onFailure { error ->
-                if (error is kotlinx.coroutines.CancellationException) {
-                    return@onFailure
-                }
-                val errorMessage = QaMessage(
-                    role = QaMessage.ROLE_ASSISTANT,
-                    content = QA_NETWORK_ERROR_MESSAGE
-                )
-                if (!QaSessionHolder.appendMessage(errorMessage, context, sessionGeneration)) {
-                    Log.d(QA_VOICE_TAG, "stale chat failure ignored: session changed")
-                    return@onFailure
-                }
-                sendState = QaSendState.Error(QA_NETWORK_ERROR_MESSAGE)
-            }
-        }
-    }
-
-    LaunchedEffect(autoSendText) {
-        val pending = autoSendText ?: return@LaunchedEffect
-        autoSendText = null
-        if (pending.isNotBlank()) {
-            sendQuestion(pending)
-        }
     }
 
     val panelColor = if (isStandalone) QaPanelOpaqueColor else QaPanelColor
 
     fun closePanel() {
-        voiceController.stopPlayback()
+        coordinator.close()
+        voiceController.close()
         onClose()
     }
 
@@ -381,9 +322,9 @@ fun QaPanel(
                     items(messages) { message ->
                         QaMessageBubble(
                             message = message,
-                            isPlaying = voiceState.playingMessageId == message.timestamp,
+                            isPlaying = playingMessageId == message.timestamp,
                             canReplay = message.role == QaMessage.ROLE_ASSISTANT &&
-                                !voiceState.ttsBusy &&
+                                voiceState.tts != QaTtsState.SYNTHESIZING &&
                                 message.content.isNotBlank(),
                             debugInfoEnabled = debugInfoEnabled,
                             onReplay = { voiceController.replayAnswer(message) }
@@ -404,8 +345,8 @@ fun QaPanel(
                 autoTtsEnabled = voiceState.autoTtsEnabled,
                 onAutoTtsEnabledChange = { voiceController.setAutoTtsEnabled(it) },
                 sending = sending,
-                errorMessage = (sendState as? QaSendState.Error)?.message,
-                recording = voiceState.isRecording,
+                errorMessage = qaSendErrorMessage(sendState),
+                recording = recording,
                 onStartListening = {
                     when (voiceController.onPttDown()) {
                         QaPttStartResult.NEED_PERMISSION -> {
@@ -418,7 +359,7 @@ fun QaPanel(
                 },
                 onStopListening = { voiceController.onPttUp() },
                 onCancelListening = { voiceController.cancelRecording() },
-                onSend = { sendQuestion() }
+                onSend = { submitQuestion(input, clearDraft = true) }
             )
         }
     }

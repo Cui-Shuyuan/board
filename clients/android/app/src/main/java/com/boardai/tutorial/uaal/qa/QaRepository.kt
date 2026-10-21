@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class QaRepository(
     baseUrl: String = BuildConfig.BOARD_API_BASE_URL
-) {
+) : QaChatGateway {
     private val baseUrl = baseUrl.trimEnd('/')
     private val activeConnections = ConcurrentHashMap.newKeySet<HttpURLConnection>()
 
@@ -29,7 +29,7 @@ class QaRepository(
     private var cancelGeneration = 0L
 
     /** Disconnect any in-flight request so new sessions cannot receive stale replies. */
-    fun cancelActiveRequests() {
+    override fun cancelActiveRequests() {
         cancelGeneration += 1
         activeConnections.toList().forEach { connection ->
             runCatching { connection.disconnect() }
@@ -43,7 +43,7 @@ class QaRepository(
      * can invoke it from a main-dispatcher Compose coroutine and update UI in the
      * returned continuation on the main thread.
      */
-    suspend fun send(
+    override suspend fun send(
         gameId: String,
         messages: List<QaMessage>,
         context: QaContext

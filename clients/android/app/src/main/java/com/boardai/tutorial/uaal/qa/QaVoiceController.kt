@@ -47,16 +47,18 @@ class QaVoiceController(
     private var ttsJob: Job? = null
 
     fun onPttDown(): QaPttStartResult {
-        log("PTT down: isRecording=${_state.value.isRecording}")
-        if (_state.value.isRecording) return QaPttStartResult.ALREADY_RECORDING
+        log("PTT down: recording=${_state.value.recording}")
+        if (_state.value.recording == QaRecordingState.RECORDING) {
+            return QaPttStartResult.ALREADY_RECORDING
+        }
         stopPlayback()
         cancelAsrRequest()
         cancelTtsRequest()
-        setVoiceStatus(null)
+        clearVoiceNotice()
 
         if (!hasRecordPermission()) {
             log("PTT down without RECORD_AUDIO permission")
-            setVoiceStatus("需要麦克风权限")
+            setVoiceNotice(QaVoiceNotice.PERMISSION_REQUIRED)
             return QaPttStartResult.NEED_PERMISSION
         }
 
@@ -65,20 +67,20 @@ class QaVoiceController(
     }
 
     fun onPermissionResult(granted: Boolean) {
-        setVoiceStatus(
+        setVoiceNotice(
             if (granted) {
-                "权限已授予，请再次按住说话"
+                QaVoiceNotice.PERMISSION_GRANTED
             } else {
-                "未授予麦克风权限，可键盘输入"
+                QaVoiceNotice.PERMISSION_DENIED
             }
         )
     }
 
     fun onPttUp() {
-        log("PTT up: isRecording=${_state.value.isRecording}")
-        if (!_state.value.isRecording) return
+        log("PTT up: recording=${_state.value.recording}")
+        if (_state.value.recording != QaRecordingState.RECORDING) return
         log("PTT recording stopping")
-        setRecording(false)
+        setRecordingState(QaRecordingState.IDLE)
         recordingToken += 1
         handleRecorded(recorder.stop())
     }
@@ -88,12 +90,22 @@ class QaVoiceController(
      * Discard the recording before [handleRecorded] can start an ASR request.
      */
     fun cancelRecording() {
-        log("PTT cancelled before recognition: isRecording=${_state.value.isRecording}")
-        if (!_state.value.isRecording) return
+        log("PTT cancelled before recognition: recording=${_state.value.recording}")
+        if (_state.value.recording != QaRecordingState.RECORDING) return
         recordingToken += 1
         recorder.cancel()
-        setRecording(false)
-        setVoiceStatus("已取消")
+        setRecordingState(QaRecordingState.IDLE)
+        setVoiceNotice(QaVoiceNotice.RECORDING_CANCELLED)
+    }
+
+    /**
+     * Cancel an already released recording that is waiting for ASR. The
+     * generation bump guarantees a late transcription cannot auto-send.
+     */
+    fun cancelRecognition() {
+        log("ASR recognition cancelled")
+        cancelAsrRequest()
+        setVoiceNotice(QaVoiceNotice.RECORDING_CANCELLED)
     }
 
     fun setAutoTtsEnabled(enabled: Boolean) {
@@ -131,29 +143,32 @@ class QaVoiceController(
         cancelAsrRequest()
         cancelTtsRequest()
         recorder.cancel()
-        setRecording(false)
+        setRecordingState(QaRecordingState.IDLE)
         stopPlayback()
         clearAnswerAudioFiles()
-        setVoiceStatus(null)
+        clearVoiceNotice()
         log("new QA voice session started")
     }
 
     fun stopPlayback() {
         player.stop()
-        setPlayingMessageId(null)
+        setPlaybackState(QaPlaybackState.Idle)
     }
 
-    fun clearVoiceStatus() {
-        setVoiceStatus(null)
+    fun clearVoiceNotice(expected: QaVoiceNotice? = null) {
+        if (expected == null || _state.value.notice == expected) {
+            setVoiceNotice(null)
+        }
     }
 
     fun close() {
         cancelAsrRequest()
         cancelTtsRequest()
         recorder.cancel()
-        setRecording(false)
+        setRecordingState(QaRecordingState.IDLE)
         stopPlayback()
         clearAnswerAudioFiles()
+        clearVoiceNotice()
     }
 
     private fun cancelAsrRequest() {
@@ -161,9 +176,7 @@ class QaVoiceController(
         asrJob?.cancel()
         asrJob = null
         asr.cancelActiveRequests()
-        if (_state.value.voiceStatus == "识别中…") {
-            setVoiceStatus(null)
-        }
+        setAsrState(QaAsrState.IDLE)
     }
 
     private fun cancelTtsRequest() {
@@ -173,9 +186,9 @@ class QaVoiceController(
         activeTtsRequestId = null
         ttsMessageInFlight = null
         tts.cancelActiveRequests()
-        setTtsBusy(false)
-        if (isTtsVoiceStatus(_state.value.voiceStatus)) {
-            setVoiceStatus(null)
+        setTtsState(QaTtsState.IDLE)
+        if (isTtsNotice(_state.value.notice)) {
+            setVoiceNotice(null)
         }
     }
 
@@ -185,15 +198,17 @@ class QaVoiceController(
     }
 
     private fun beginRecording(): QaPttStartResult {
-        log("beginRecording requested, isRecording=${_state.value.isRecording}")
-        if (_state.value.isRecording) return QaPttStartResult.ALREADY_RECORDING
+        log("beginRecording requested, recording=${_state.value.recording}")
+        if (_state.value.recording == QaRecordingState.RECORDING) {
+            return QaPttStartResult.ALREADY_RECORDING
+        }
         stopPlayback()
 
         val token = recordingToken + 1
         recordingToken = token
         val started = recorder.start { file ->
             if (recordingToken == token) {
-                setRecording(false)
+                setRecordingState(QaRecordingState.IDLE)
                 recordingToken += 1
                 handleRecorded(file)
             }
@@ -201,11 +216,11 @@ class QaVoiceController(
         log("audioRecorder.start returned started=$started")
 
         return if (started) {
-            setRecording(true)
-            setVoiceStatus("正在聆听…")
+            setRecordingState(QaRecordingState.RECORDING)
+            setVoiceNotice(null)
             QaPttStartResult.STARTED
         } else {
-            setVoiceStatus("录音启动失败，请重试")
+            setVoiceNotice(QaVoiceNotice.RECORDING_START_FAILED)
             QaPttStartResult.START_FAILED
         }
     }
@@ -213,12 +228,13 @@ class QaVoiceController(
     private fun handleRecorded(file: File?) {
         if (file == null) {
             log("recording dropped: too short or invalid")
-            setVoiceStatus("录音太短，请按住多说一会儿")
+            setVoiceNotice(QaVoiceNotice.RECORDING_TOO_SHORT)
             return
         }
 
         log("ASR request starting, wavBytes=${file.length()}")
-        setVoiceStatus("识别中…")
+        setAsrState(QaAsrState.RECOGNIZING)
+        setVoiceNotice(null)
         val requestGeneration = asrGeneration
         asrJob = scope.launch {
             try {
@@ -228,14 +244,14 @@ class QaVoiceController(
                         return@onSuccess
                     }
 
+                    setAsrState(QaAsrState.IDLE)
                     val text = recognized.trim()
                     if (text.isBlank()) {
                         log("ASR success but text blank")
-                        setVoiceStatus("没有识别到内容，请重试")
+                        setVoiceNotice(QaVoiceNotice.RECOGNITION_EMPTY)
                     } else {
                         log("ASR success: textLength=${text.length}")
                         onRecognizedText(text)
-                        setVoiceStatus(null)
                     }
                 }.onFailure { error ->
                     if (requestGeneration != asrGeneration) {
@@ -243,8 +259,9 @@ class QaVoiceController(
                         return@onFailure
                     }
 
+                    setAsrState(QaAsrState.IDLE)
                     log("ASR failed: ${error.javaClass.simpleName}: ${error.message}")
-                    setVoiceStatus("识别失败，可键盘输入")
+                    setVoiceNotice(QaVoiceNotice.RECOGNITION_FAILED)
                 }
             } finally {
                 val deleted = file.delete()
@@ -255,19 +272,21 @@ class QaVoiceController(
 
     private fun playAnswerFile(message: QaMessage, file: File) {
         stopPlayback()
-        setPlayingMessageId(message.timestamp)
+        setPlaybackState(QaPlaybackState.Playing(message.timestamp))
         player.play(
             file = file,
             onCompletion = {
-                if (_state.value.playingMessageId == message.timestamp) {
-                    setPlayingMessageId(null)
+                if (_state.value.playback == QaPlaybackState.Playing(message.timestamp)) {
+                    setPlaybackState(QaPlaybackState.Idle)
                 }
             },
             onError = {
-                if (_state.value.playingMessageId == message.timestamp) {
-                    setPlayingMessageId(null)
+                if (_state.value.playback == QaPlaybackState.Playing(message.timestamp)) {
+                    setPlaybackState(QaPlaybackState.Idle)
+                    setVoiceNotice(QaVoiceNotice.SPEECH_PLAYBACK_FAILED)
+                } else {
+                    log("stale playback error ignored: messageId=${message.timestamp}")
                 }
-                setVoiceStatus("语音播放失败，已保留文字回答")
             }
         )
     }
@@ -294,8 +313,8 @@ class QaVoiceController(
         val requestGeneration = ttsGeneration
         activeTtsRequestId = requestId
         ttsMessageInFlight = message.timestamp
-        setTtsBusy(true)
-        setVoiceStatus("正在合成语音…")
+        setTtsState(QaTtsState.SYNTHESIZING)
+        setVoiceNotice(null)
         if (autoPlay) {
             log("auto TTS request starting, textLength=${message.content.length}")
         }
@@ -312,11 +331,8 @@ class QaVoiceController(
                 if (isOwner) {
                     activeTtsRequestId = null
                     ttsMessageInFlight = null
-                    setTtsBusy(false)
                     ttsJob = null
-                    if (_state.value.voiceStatus == "正在合成语音…") {
-                        setVoiceStatus(null)
-                    }
+                    setTtsState(QaTtsState.IDLE)
                 }
 
                 if (isOwner && generationCurrent) {
@@ -330,7 +346,8 @@ class QaVoiceController(
                 } else {
                     val deleted = file.delete()
                     log(
-                        "stale TTS synthesis ignored: autoPlay=$autoPlay owner=$isOwner generationCurrent=$generationCurrent deleted=$deleted"
+                        "stale TTS synthesis ignored: autoPlay=$autoPlay owner=$isOwner " +
+                            "generationCurrent=$generationCurrent deleted=$deleted"
                     )
                 }
             }.onFailure {
@@ -339,39 +356,43 @@ class QaVoiceController(
                 if (isOwner) {
                     activeTtsRequestId = null
                     ttsMessageInFlight = null
-                    setTtsBusy(false)
                     ttsJob = null
+                    setTtsState(QaTtsState.IDLE)
                 }
 
                 if (isOwner && requestGeneration == ttsGeneration) {
-                    setVoiceStatus("语音合成失败，已保留文字回答")
+                    setVoiceNotice(QaVoiceNotice.SPEECH_SYNTHESIS_FAILED)
                 } else {
                     log(
-                        "stale TTS failure ignored: owner=$isOwner generationCurrent=${requestGeneration == ttsGeneration}"
+                        "stale TTS failure ignored: owner=$isOwner " +
+                            "generationCurrent=${requestGeneration == ttsGeneration}"
                     )
                 }
             }
         }
     }
 
-    private fun setVoiceStatus(value: String?) {
-        _state.value = _state.value.copy(voiceStatus = value)
+    private fun isTtsNotice(notice: QaVoiceNotice?): Boolean =
+        notice == QaVoiceNotice.SPEECH_SYNTHESIS_FAILED ||
+            notice == QaVoiceNotice.SPEECH_PLAYBACK_FAILED
+
+    private fun setVoiceNotice(value: QaVoiceNotice?) {
+        _state.value = _state.value.copy(notice = value)
     }
 
-    private fun setRecording(value: Boolean) {
-        _state.value = _state.value.copy(isRecording = value)
+    private fun setRecordingState(value: QaRecordingState) {
+        _state.value = _state.value.copy(recording = value)
     }
 
-    private fun setTtsBusy(value: Boolean) {
-        _state.value = _state.value.copy(ttsBusy = value)
+    private fun setAsrState(value: QaAsrState) {
+        _state.value = _state.value.copy(asr = value)
     }
 
-    private fun setPlayingMessageId(value: Long?) {
-        _state.value = _state.value.copy(playingMessageId = value)
+    private fun setTtsState(value: QaTtsState) {
+        _state.value = _state.value.copy(tts = value)
     }
 
-    private fun isTtsVoiceStatus(text: String?): Boolean =
-        text == "正在合成语音…" ||
-            text == "语音合成失败，已保留文字回答" ||
-            text == "语音播放失败，已保留文字回答"
+    private fun setPlaybackState(value: QaPlaybackState) {
+        _state.value = _state.value.copy(playback = value)
+    }
 }

@@ -86,7 +86,7 @@ public sealed class AnswerEvidenceRecoveryTests
     [Fact]
     public void SameCandidateWithMatchingIntent_ResolvesOnlyTheMatchingPendingQuery()
     {
-        var collector = new ChatOrchestratorService.AnswerEvidenceCollector();
+        var collector = new AnswerEvidenceCollector();
         collector.Queries.Add(new QueryEvidence
         {
             Relation = "explain", Entity = "贵族", Intent = "设置时如何选择",
@@ -116,7 +116,7 @@ public sealed class AnswerEvidenceRecoveryTests
     [Fact]
     public void NearIdenticalIntentWithClearMargin_AssociatesExactConfirmation()
     {
-        var collector = new ChatOrchestratorService.AnswerEvidenceCollector();
+        var collector = new AnswerEvidenceCollector();
         collector.Queries.Add(new QueryEvidence
         {
             Relation = "explain", Entity = "贵族", Intent = "开局设置时贵族怎么选、放几张",
@@ -162,9 +162,9 @@ public sealed class AnswerEvidenceRecoveryTests
         Assert.Equal(1, evidence.Queries[0].ResolvedByQueryIndex);
     }
 
-    private static ChatOrchestratorService.AnswerEvidenceCollector Collector(string first, string later)
+    private static AnswerEvidenceCollector Collector(string first, string later)
     {
-        var collector = new ChatOrchestratorService.AnswerEvidenceCollector();
+        var collector = new AnswerEvidenceCollector();
         collector.Queries.Add(new QueryEvidence
         {
             Relation = first, Entity = "白色组件", Status = "unresolved", RulesVersion = "v1",

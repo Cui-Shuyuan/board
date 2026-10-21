@@ -16,9 +16,10 @@ import sqlite3
 from collections import defaultdict
 from pathlib import Path
 
-import rebuild_index as index
+import index_extraction as index
 
 ROOT = index.BOARD_ROOT
+DEFAULT_MODEL_DIR = ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5-fp32"
 INSTRUCTION = "为这个句子生成表示以用于检索相关文章："
 
 
@@ -239,7 +240,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--questions", type=Path, default=ROOT / "tools/qa/retrieval_questions.jsonl")
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--model", type=Path, default=index.MODEL_DIR)
+    parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_DIR)
     parser.add_argument("--reranker", type=Path)
     parser.add_argument("--cache", type=Path, help="Optional shared experiment cache; never a production index")
     parser.add_argument("--validate-only", action="store_true")

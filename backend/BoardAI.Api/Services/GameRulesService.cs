@@ -79,6 +79,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         string game, string query, string searchMode = "full", CancellationToken cancellationToken = default)
     {
         using var scope = UseSnapshot(game);
+        using var retrievalScope = RetrievalRequestContext.EnterIfAbsent();
         return await _searchService.SearchConceptsAsync(game, query, searchMode, cancellationToken);
     }
 
@@ -140,6 +141,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         string game, JsonElement plan, string question = "", CancellationToken cancellationToken = default)
     {
         using var scope = UseSnapshot(game);
+        using var retrievalScope = RetrievalRequestContext.EnterIfAbsent();
         return await _planService.ExecutePlanAsync(game, plan, question, cancellationToken);
     }
 
@@ -159,9 +161,16 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 
 
     /// <summary>
-    /// 将一次上层请求（如一轮 Chat）绑定到同一规则版本；内部嵌套同游戏调用会复用该 scope。
+    /// 将一次上层请求（如一轮 Chat 或直接 search/execute-plan API 调用）绑定到同一规则
+    /// 版本和同一检索复用上下文；内部嵌套同游戏调用会复用外层 scope。请求结束时释放
+    /// 对 snapshot 与检索缓存的引用。
     /// </summary>
-    public IDisposable BeginRequestScope(string game) => UseSnapshot(game);
+    public IDisposable BeginRequestScope(string game)
+    {
+        var snapshotScope = UseSnapshot(game);
+        var retrievalScope = RetrievalRequestContext.EnterIfAbsent();
+        return new CompositeScope(retrievalScope, snapshotScope);
+    }
 
 
     /// <summary>测试注入：将规则文档放入 content store 的内存快照源。</summary>
@@ -183,5 +192,28 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     {
         public static readonly NoopDisposable Instance = new();
         public void Dispose() { }
+    }
+
+
+    /// <summary>按进入的逆序释放，确保检索上下文先结束，再恢复外层规则快照。</summary>
+    private sealed class CompositeScope : IDisposable
+    {
+        private readonly IDisposable _retrievalScope;
+        private readonly IDisposable _snapshotScope;
+        private bool _disposed;
+
+        public CompositeScope(IDisposable retrievalScope, IDisposable snapshotScope)
+        {
+            _retrievalScope = retrievalScope;
+            _snapshotScope = snapshotScope;
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _retrievalScope.Dispose();
+            _snapshotScope.Dispose();
+            _disposed = true;
+        }
     }
 }

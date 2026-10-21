@@ -146,7 +146,9 @@ public class VectorSearchService : IDisposable
         var collection = await ResolveCollectionNameAsync(
             gameId, searchMode == "name", cancellationToken);
 
-        var queryVec = _embedder.Embed(query);
+        // 文本到向量的计算与 collection 查询分离：同一请求内相同文本和
+        // embedding 配置复用一次推理；full/name collection 仍各自执行后续查询。
+        var queryVec = await EmbedQueryAsync(query, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
 
         try
@@ -154,7 +156,7 @@ public class VectorSearchService : IDisposable
             await VerifyEmbeddingProfileAsync(collection, cancellationToken);
             var results = await _client.SearchAsync(
                 collection,
-                queryVec.ToArray(),
+                queryVec.Span.ToArray(),
                 limit: (ulong)topK,
                 scoreThreshold: threshold ?? RecallThreshold,
                 cancellationToken: cancellationToken);
@@ -194,6 +196,25 @@ public class VectorSearchService : IDisposable
                 gameId, query, collection);
             return Array.Empty<SearchResult>();
         }
+    }
+
+    /// <summary>
+    /// 只负责把原始查询文本转换为查询向量。请求内复用由 RetrievalRequestContext
+    /// 负责；调用方仍按原逻辑分别完成 profile 校验、阈值、topK 和 collection 查询。
+    /// </summary>
+    internal async Task<ReadOnlyMemory<float>> EmbedQueryAsync(
+        string query,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var context = RetrievalRequestContext.Current;
+        if (context != null)
+            return await context.GetOrCreateQueryEmbeddingAsync(_embedder, query, cancellationToken);
+
+        var queryVec = _embedder.Embed(query);
+        cancellationToken.ThrowIfCancellationRequested();
+        return new ReadOnlyMemory<float>(queryVec);
     }
 
     private async Task<bool> PrepareCollectionAsync(

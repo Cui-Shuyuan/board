@@ -47,10 +47,25 @@ class QaPanelModeTest {
     }
 
     @Test
-    fun asrRecognizingStatusControlsTemporaryBubble() {
-        assertTrue(isAsrRecognizing("识别中…"))
-        assertFalse(isAsrRecognizing("识别失败，可键盘输入"))
-        assertFalse(isAsrRecognizing(null))
+    fun typedVoiceStateControlsTemporaryRecognizingBubble() {
+        assertEquals(
+            QaAsrState.RECOGNIZING,
+            QaVoiceState(asr = QaAsrState.RECOGNIZING).asr
+        )
+        assertEquals(
+            QaAsrState.IDLE,
+            QaVoiceState(asr = QaAsrState.IDLE).asr
+        )
+    }
+
+    @Test
+    fun voiceAndSendErrorsMapToDisplayCopyOnlyInUiLayer() {
+        assertEquals(
+            "识别失败，可键盘输入",
+            qaVoiceNoticeText(QaVoiceNotice.RECOGNITION_FAILED)
+        )
+        assertEquals(QA_NETWORK_ERROR_MESSAGE, qaSendErrorMessage(QaSendState.NetworkError))
+        assertEquals(null, qaSendErrorMessage(QaSendState.Idle))
     }
 
     @Test

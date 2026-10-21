@@ -173,37 +173,124 @@ public sealed class RulesSearchService
     }
 
 
-    private Task<List<(ConceptSummary Summary, float Score)>> KeywordSearchWithScoreAsync(
+    private async Task<List<(ConceptSummary Summary, float Score)>> KeywordSearchWithScoreAsync(
         string game, string query, CancellationToken cancellationToken)
     {
-        // 关键词通道是同步内存扫描；Task.Run 能响应调度前的取消，扫描中途无法强制中断，
-        // 但每个子查询通常很小。若以后关键词集合继续增长，应把 Token 深入扫描循环。
-        return Task.Run(() =>
+        var context = RetrievalRequestContext.Current;
+        var snapshot = RulesSnapshotScope.Current;
+        if (context != null && snapshot != null && snapshot.Game == game)
+        {
+            // full/name 两条检索路径及同一请求的后续工具轮次，对相同游戏、规则快照和
+            // 原始查询文本只执行一次关键词扫描。工厂使用 None，单个调用方取消时会由
+            // WaitAsync 遵守该调用方 token，而不会污染其他并行调用方共享的计算。
+            var cached = await context.GetOrCreateKeywordScanAsync(
+                game,
+                snapshot.Version,
+                query,
+                () => Task.Run<IReadOnlyList<KeywordScanHit>>(
+                    () => ComputeKeywordScan(game, query).ToArray(),
+                    CancellationToken.None),
+                cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            return MaterializeKeywordScan(cached);
+        }
+
+        // 没有请求上下文时保持原路径：关键词通道是同步内存扫描；Task.Run 能响应
+        // 调度前的取消，扫描中途无法强制中断，但每个子查询通常很小。若以后关键词
+        // 集合继续增长，应把 Token 深入扫描循环。
+        return await Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var results = KeywordSearch(game, query);
+            var hits = ComputeKeywordScan(game, query);
             cancellationToken.ThrowIfCancellationRequested();
-            return results.Select(r =>
-            {
-                // 关键词匹配只作小幅加成，不主导排序（2026-08-16 实测：内容命中 0.90 的
-                // 固定分把「描述里提到该词」的无关概念顶上榜首，盖过向量语义分）。
-                // 向量语义分是排序主体；关键词加成只用于打破同分与弱向量时的微调。
-                var terms = Tokenize(query).ToList();
-                var detail = _catalog.GetConcept(game, string.IsNullOrEmpty(r.Path) ? r.Id : r.Path);
-                // 完整查询要求每个词在同一概念中出现；子词的部分命中另行留账。
-                if (!terms.All(t => MatchesSummary(r, t)
-                    || (detail.HasValue && ContainsTerm(detail.Value, t))))
-                    return (r, 0f);
-                float score;
-                if (terms.Any(t => r.Id.Equals(t, StringComparison.InvariantCultureIgnoreCase)))
-                    score = 0.5f;
-                else if (terms.Any(t => r.Name.Contains(t, StringComparison.InvariantCultureIgnoreCase)))
-                    score = 0.3f;
-                else
-                    score = 0.05f;
-                return (r, score);
-            }).Where(x => x.Item2 > 0).ToList();
+            return MaterializeKeywordScan(hits);
         }, cancellationToken);
+    }
+
+
+    /// <summary>
+    /// 关键词扫描/评分的纯计算部分。只返回不可变值快照，不返回会在后续排序或
+    /// description 补全中被修改的 ConceptSummary 实例。
+    /// </summary>
+    private List<KeywordScanHit> ComputeKeywordScan(string game, string query)
+    {
+        var results = KeywordSearch(game, query);
+        var terms = Tokenize(query).ToList();
+        var hits = new List<KeywordScanHit>(results.Count);
+
+        foreach (var r in results)
+        {
+            // 关键词匹配只作小幅加成，不主导排序（2026-08-16 实测：内容命中 0.90 的
+            // 固定分把「描述里提到该词」的无关概念顶上榜首，盖过向量语义分）。
+            // 向量语义分是排序主体；关键词加成只用于打破同分与弱向量时的微调。
+            var detail = _catalog.GetConcept(game, string.IsNullOrEmpty(r.Path) ? r.Id : r.Path);
+            // 完整查询要求每个词在同一概念中出现；子词的部分命中另行留账。
+            if (!terms.All(t => MatchesSummary(r, t)
+                || (detail.HasValue && ContainsTerm(detail.Value, t))))
+                continue;
+
+            float score;
+            if (terms.Any(t => r.Id.Equals(t, StringComparison.InvariantCultureIgnoreCase)))
+                score = 0.5f;
+            else if (terms.Any(t => r.Name.Contains(t, StringComparison.InvariantCultureIgnoreCase)))
+                score = 0.3f;
+            else
+                score = 0.05f;
+
+            if (score <= 0)
+                continue;
+
+            hits.Add(new KeywordScanHit(
+                r.Id,
+                r.Path,
+                r.Name,
+                r.Type,
+                r.Description,
+                SnapshotMedia(r.Media),
+                score));
+        }
+
+        return hits;
+    }
+
+
+    private static List<(ConceptSummary Summary, float Score)> MaterializeKeywordScan(
+        IReadOnlyList<KeywordScanHit> hits)
+    {
+        var results = new List<(ConceptSummary Summary, float Score)>(hits.Count);
+        foreach (var hit in hits)
+        {
+            results.Add((new ConceptSummary
+            {
+                Id = hit.Id,
+                Path = hit.Path,
+                Name = hit.Name,
+                Type = hit.Type,
+                Description = hit.Description,
+                Media = CloneMedia(hit.Media)
+            }, hit.Score));
+        }
+        return results;
+    }
+
+
+    private static IReadOnlyDictionary<string, JsonElement>? SnapshotMedia(
+        IReadOnlyDictionary<string, JsonElement>? media)
+    {
+        return media?.ToDictionary(
+            pair => pair.Key,
+            pair => pair.Value.Clone(),
+            StringComparer.Ordinal);
+    }
+
+
+    private static Dictionary<string, JsonElement>? CloneMedia(
+        IReadOnlyDictionary<string, JsonElement>? media)
+    {
+        return media?.ToDictionary(
+            pair => pair.Key,
+            pair => pair.Value.Clone(),
+            StringComparer.Ordinal);
     }
 
 
