@@ -122,13 +122,14 @@ content/games/<game>/tutorial/
 
 ### 5.1 音频、逻辑切片与字幕轨道
 
-quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
+quick/full 的每条 cue 使用独立 TTS 音频；full 的素材映射由
+`full.cue-audio-overrides.json` 声明。
 音频/字幕的制作流程：
 
 1. `tutorial/quick.cue.tts.lrc` 按 beat 写 TTS 合成行。多条 cue 可引用同一素材
    的连续源区间，共享映射记录在 `audio-slices.json` 的 `audio_groups`。
-2. 重新生成 TTS 后，把 word timing 审核写入
-   `tutorial/quick.audio-slices.json` 的 `timing_points`。
+2. 重新生成 TTS 后，用 `animation/measure_audio_boundaries.py` 测量
+   PCM 首尾边界，审核后写入固定文件的 `timing_points`；字幕使用对应字幕 refs。
 3. 每条 cue/逻辑音频只引用命名时间点：
    `start_ref` / `end_ref` / `speech_start_ref` / `speech_end_ref` / `subtitle.*_ref`。
    不要在构建脚本或 timing policy 中写 TTS 秒数。
@@ -137,35 +138,26 @@ quick 使用 cue-level TTS，full 使用 section TTS 和独立标题素材。
    - `max`：所有轨道都结束后再切下一 cue，动画不会被音频截断；
    - `audio`：音频轨道为准，用于标题 cue；
    - `visual`：画面为准，裁剪音频则构建失败。
-5. 所有 cue 都启用 `trim_to_speech_start/end: true`：起点裁到实测
-   speech start 前 0.1 秒，终点裁到实测 speech end 后 0.1 秒，然后追加
-   显式反应停顿。章节标题和普通 cue 的目标停顿为 0.5 秒；普通 cue 的
-   下一 cue 是章节标题时为 1.0 秒。full 用
-   `trailing_silence_seconds` 追加固定静音；quick 用
-   `post_speech_silence_seconds` 从实测 speech end 补足目标停顿。
-   full/quick 的 `speech_start_ref` / `speech_end_ref` 都是 PCM 能量
-   审查后的时间戳。full 连续 section 音频还要用能量静音中点校正相邻
-   cue 的 provider 边界；校正后的 source window 通过
-   `use_measured_source_window` 保留。能量测量只在制作期由
-   `animation/measure_audio_boundaries.py` 写入固定时间戳，播放和 plan
-   构建不运行能量分析；full 的 measured 时间戳通过
-   `use_measured_speech_start/end` 在重生成 `audio-slices` 时保留。
-   full 导入器为标题与正文保留最多 0.15 秒前置上下文；如果左侧 cue
-   trim 后的终点距右侧首词不足 0.15 秒，右侧起点会夹到左侧终点，避免
-   音频重叠。`source_boundary_contracts` 记录并校验连续、显式裁尾和
-   作者留空关系。
+5. 所有 cue 启用 `trim_to_speech_start: true` 与 `trim_to_speech_end: true`，
+   首尾各保留最多 0.1 秒 guard，范围受源窗口限制。
+   `use_measured_speech_start`、`use_measured_speech_end` 和
+   `use_measured_source_window` 控制导入时保留的测量结果。
+   共享素材的内容可使用 `source_boundary_contracts` 校验连续、显式裁尾和
+   作者留空关系。能量测量在制作期执行，plan 与播放器消费固定时间点。
 6. 字幕是独立 `kind: "subtitle"` track，窗口由 `quick.audio-slices.json` 的
    subtitle refs 生成。播放器从课程 DSP 位置派生 cue-local 时间，同步字幕、
    视觉和连续音频。
 7. 每个 cue 都应是独立 MP3。quick 本身按 cue-level TTS 生成；full 通过
    `{track}.cue-audio-overrides.json` 指向每条 cue 的独立音频和字幕。
-   每条 cue 使用自己的 `audio_start=0`，同时仍按 PCM 能量首尾时间戳裁切。
-8. cue 间隔不逐条写 `cue_timing`。`timing-policy.json` 的
+   每条 cue 使用自己的 `audio_start=0` 源窗口，plan 按 PCM 首尾时间戳裁切。
+8. cue 间隔默认使用 `timing-policy.json` 的
    `inter_cue_gap_seconds: 0.5` 和 `section_end_gap_seconds: 1.0`
    会由 `build_cue_timeline.py` 按 section 边界自动应用：
    - 普通 cue 尾部补足到实测 speech end 后 0.5 秒
    - section 最后一条 cue 补足到 1.0 秒
-   如需特殊覆盖，才在单条 cue 写 `post_speech_silence_seconds`。
+   已保留的源音频尾部计入间隔目标，silence 补足剩余长度。
+   特殊覆盖可在单条 cue 写 `post_speech_silence_seconds`；
+   `mode: max` 的视觉轨道可延长实际课程停留。
 9. 构建入口：
 
 ```bash

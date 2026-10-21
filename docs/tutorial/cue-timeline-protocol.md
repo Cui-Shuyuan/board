@@ -46,8 +46,8 @@ source_time          = segment.source_start + (cue_local_time - segment.cue_star
 
 `timing-policy.json` 还提供自动间隔策略：
 `inter_cue_gap_seconds` 用于普通 cue 尾部，`section_end_gap_seconds` 用于
-每个 section 的最后一条 cue。plan 构建按 section 边界自动应用，不需要逐条
-写 `trailing_silence_seconds` 或 `post_speech_silence_seconds`。
+每个 section 的最后一条 cue。plan 构建按 section 边界应用默认目标；
+per-cue `post_speech_silence_seconds` 或 `trailing_silence_seconds` 提供显式覆盖。
 
 音频 slice：
 
@@ -75,10 +75,9 @@ slice ID 唯一；refs 必须存在；`asset` 相对于游戏内容根目录。
 前和 speech end 后各保留配置的 guard。裁切后的音频与
 `trailing_silence_seconds` 或 `post_speech_silence_seconds` 一起确定音频轨道
 时长。`speech_start_ref` / `speech_end_ref` 及对应的 `use_measured_*` 是可选扩展，
-用于保留制作期 PCM 能量测量结果。full 连续 section 音频还可用
+用于保留制作期 PCM 能量测量结果。共享源素材可用
 `use_measured_source_window` 保留经过能量静音中点校正的 source window；
-此时 `start_ref` / `end_ref` 是固定的测量边界，不再由 provider word timing
-直接决定。
+此时 `start_ref` / `end_ref` 保存固定的测量边界。
 
 连续边界契约示例：
 

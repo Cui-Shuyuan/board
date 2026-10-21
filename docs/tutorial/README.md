@@ -27,9 +27,8 @@ content/games/splendor/tutorial/{full,quick}.cue-timeline.json           课程 
 ```
 
 - `build/` 是 `section_source.py` 生成的装配中间产物；编辑入口为 section 与共享素材。
-- `quick` 与 `full` 使用固定时间轴和共享 plan。`quick` 使用 cue-level TTS；
-  `full` 使用 section TTS，以及 `setup/title_2`、
-  `cards_group/title_3_2` 的独立标题音频。
+- `quick` 与 `full` 使用固定时间轴和共享 plan，每条 cue 引用独立 TTS 音频。
+  full 的素材映射由 `full.cue-audio-overrides.json` 声明。
 - 一个 cue 可包含多个逻辑 MP3 slice，也可通过固定文件中的 visual segment
   引用多个 compiled animation segment。所有秒数、source range、字幕 refs、
   per-cue timing policy 和 visual mapping 都只在该固定文件中。
@@ -38,10 +37,9 @@ content/games/splendor/tutorial/{full,quick}.cue-timeline.json           课程 
 - `CueCoursePlaybackController` 管理课程位置，`UnityCourseAudioTransport`
   调度连续 PCM 块；cue 标记驱动字幕、视觉与章节进度。
 - full 时长 634.170 秒，音频规划为 83 个块；
-  quick 时长 201.168 秒，音频规划为 32 个块。所有 cue 都有独立 MP3，
-  不再从共享连续音频中间硬切。间隔由 timing-policy 自动应用：普通 cue
-  0.5 秒，section 最后一条 cue 1.0 秒；每条 cue 仍按 PCM 能量首尾时间戳
-  在两侧各留 0.1 秒 guard。
+  quick 时长 201.168 秒，音频规划为 32 个块。间隔由 timing-policy
+  按 section 边界应用：普通 cue 目标 0.5 秒，section 最后一条目标 1.0 秒。
+  每条 cue 按 PCM 能量首尾时间戳在两侧各留最多 0.1 秒 guard。
 - 当前编译基线：full 83 cue / 14 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
