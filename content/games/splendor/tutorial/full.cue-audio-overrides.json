@@ -119,11 +119,15 @@
       "subtitle_file": "media/tts/full/cues/take_gems__draw_rule.001.2.b1.subtitle.json"
     },
     "take_gems/limit.001.1": {
-      "audio": "media/tts/full/cues/take_gems__limit.001.1.b1.mp3",
+      "audio": "media/tts/full/cues/take_gems__limit.001.b1.mp3",
+      "audio_start": 0.0,
+      "duration": 6.375,
       "subtitle_file": "media/tts/full/cues/take_gems__limit.001.1.b1.subtitle.json"
     },
     "take_gems/limit.001.2": {
-      "audio": "media/tts/full/cues/take_gems__limit.001.2.b1.mp3",
+      "audio": "media/tts/full/cues/take_gems__limit.001.b1.mp3",
+      "audio_start": 6.375,
+      "duration": 5.9,
       "subtitle_file": "media/tts/full/cues/take_gems__limit.001.2.b1.subtitle.json"
     },
     "take_gems/public.001.1": {

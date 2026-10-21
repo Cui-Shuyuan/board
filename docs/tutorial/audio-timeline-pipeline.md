@@ -239,9 +239,10 @@ runtime 生成器默认写入独立 `audio_start=0` 的源窗口；声明
 `audio_start`/`duration` 时写入指定源窗口。同一句的第二个 cue 从上一 cue
 的 `audio_end` 开始，`build_audio_slices.py` 生成 `continuous` 契约，
 `build_cue_timeline.py` 据此跳过默认间隔。后续
-audio-slices/plan 按实测首尾时间戳裁剪。当前 Splendor full 中只有
-`take_gems/public.001.1` 与 `public.001.2` 共享一条完整 TTS 源的连续窗口
-（边界为 `continuous`，不补 cue 间隔）；其余音频资产由单条 cue 引用。
+audio-slices/plan 按实测首尾时间戳裁剪。当前 Splendor full 中
+`take_gems/limit.001.1` 与 `limit.001.2`、`take_gems/public.001.1` 与
+`public.001.2` 两组同句 cue 共享一条完整 TTS 源的连续窗口（边界为
+`continuous`，不补 cue 间隔）；其余音频资产由单条 cue 引用。
 
 ## 生成与发布
 

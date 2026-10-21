@@ -6,6 +6,11 @@
   "sample_rate": 24000,
   "source_boundary_contracts": [
     {
+      "left_slice": "take_gems__limit.001.1",
+      "right_slice": "take_gems__limit.001.2",
+      "kind": "continuous"
+    },
+    {
       "left_slice": "take_gems__public.001.1",
       "right_slice": "take_gems__public.001.2",
       "kind": "continuous"
@@ -314,23 +319,11 @@
     },
     "take_gems/limit.001.1": {
       "mode": "max",
-      "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.1,
-      "trim_start_guard_seconds": 0.1,
-      "use_measured_speech_end": true,
-      "use_measured_speech_start": true,
-      "trim_to_speech_start": true,
-      "use_measured_source_window": true
+      "post_speech_silence_seconds": 0.0
     },
     "take_gems/limit.001.2": {
       "mode": "max",
-      "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.1,
-      "trim_start_guard_seconds": 0.1,
-      "use_measured_speech_end": true,
-      "use_measured_speech_start": true,
-      "trim_to_speech_start": true,
-      "use_measured_source_window": true
+      "post_speech_silence_seconds": 0.5
     },
     "take_gems/public.001.1": {
       "mode": "max",
@@ -2067,19 +2060,19 @@
       "description": "visual source end"
     },
     "take_gems__limit.001.1.subtitle.0.start": {
-      "time": 0.295,
+      "time": 0.075,
       "description": "subtitle start"
     },
     "take_gems__limit.001.1.subtitle.0.end": {
-      "time": 3.495,
+      "time": 3.145,
       "description": "subtitle end"
     },
     "take_gems__limit.001.1.subtitle.1.start": {
-      "time": 3.98,
+      "time": 3.64,
       "description": "subtitle start"
     },
     "take_gems__limit.001.1.subtitle.1.end": {
-      "time": 6.83,
+      "time": 6.275,
       "description": "subtitle end"
     },
     "take_gems__limit.001.1.start": {
@@ -2087,16 +2080,12 @@
       "description": "logical slice start"
     },
     "take_gems__limit.001.1.end": {
-      "time": 6.84,
+      "time": 6.375,
       "description": "logical slice end"
     },
     "take_gems__limit.001.1.speech_end": {
-      "time": 6.83,
-      "description": "measured speech end"
-    },
-    "take_gems__limit.001.1.speech_start": {
-      "time": 0.35,
-      "description": "measured speech start"
+      "time": 6.275,
+      "description": "last TTS word end"
     },
     "take_gems__limit.001.1.visual.cue_start": {
       "time": 0.0,
@@ -2107,40 +2096,36 @@
       "description": "visual source start"
     },
     "take_gems__limit.001.1.visual.source_end": {
-      "time": 5.02,
+      "time": 4.68,
       "description": "visual source end"
     },
     "take_gems__limit.001.2.subtitle.0.start": {
-      "time": 0.305,
+      "time": 6.46,
       "description": "subtitle start"
     },
     "take_gems__limit.001.2.subtitle.0.end": {
-      "time": 3.835,
+      "time": 9.895,
       "description": "subtitle end"
     },
     "take_gems__limit.001.2.subtitle.1.start": {
-      "time": 4.34,
+      "time": 10.28,
       "description": "subtitle start"
     },
     "take_gems__limit.001.2.subtitle.1.end": {
-      "time": 6.44,
+      "time": 11.835,
       "description": "subtitle end"
     },
     "take_gems__limit.001.2.start": {
-      "time": 0.0,
+      "time": 6.375,
       "description": "logical slice start"
     },
     "take_gems__limit.001.2.end": {
-      "time": 6.456,
+      "time": 12.275,
       "description": "logical slice end"
     },
     "take_gems__limit.001.2.speech_end": {
-      "time": 6.44,
-      "description": "measured speech end"
-    },
-    "take_gems__limit.001.2.speech_start": {
-      "time": 0.38,
-      "description": "measured speech start"
+      "time": 11.835,
+      "description": "last TTS word end"
     },
     "take_gems__limit.001.2.visual.cue_start": {
       "time": 0.0,
@@ -2151,7 +2136,7 @@
       "description": "visual source start"
     },
     "take_gems__limit.001.2.visual.source_end": {
-      "time": 5.025,
+      "time": 4.805,
       "description": "visual source end"
     },
     "take_gems__public.001.1.subtitle.0.start": {
@@ -4963,7 +4948,7 @@
     "take_gems/limit.001.1": [
       {
         "id": "take_gems__limit.001.1",
-        "asset": "media/tts/full/cues/take_gems__limit.001.1.b1.mp3",
+        "asset": "media/tts/full/cues/take_gems__limit.001.b1.mp3",
         "start_ref": "take_gems__limit.001.1.start",
         "end_ref": "take_gems__limit.001.1.end",
         "speech_end_ref": "take_gems__limit.001.1.speech_end",
@@ -4976,16 +4961,15 @@
           {
             "start_ref": "take_gems__limit.001.1.subtitle.1.start",
             "end_ref": "take_gems__limit.001.1.subtitle.1.end",
-            "text": "任何时候当持有数量超过上限时，\n"
+            "text": "任何时候当持有数量超过上限时，"
           }
-        ],
-        "speech_start_ref": "take_gems__limit.001.1.speech_start"
+        ]
       }
     ],
     "take_gems/limit.001.2": [
       {
         "id": "take_gems__limit.001.2",
-        "asset": "media/tts/full/cues/take_gems__limit.001.2.b1.mp3",
+        "asset": "media/tts/full/cues/take_gems__limit.001.b1.mp3",
         "start_ref": "take_gems__limit.001.2.start",
         "end_ref": "take_gems__limit.001.2.end",
         "speech_end_ref": "take_gems__limit.001.2.speech_end",
@@ -5000,8 +4984,7 @@
             "end_ref": "take_gems__limit.001.2.subtitle.1.end",
             "text": "直到恰好剩下10个为止。"
           }
-        ],
-        "speech_start_ref": "take_gems__limit.001.2.speech_start"
+        ]
       }
     ],
     "take_gems/public.001.1": [

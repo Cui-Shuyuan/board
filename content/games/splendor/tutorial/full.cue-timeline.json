@@ -5,7 +5,7 @@
   "track": "full",
   "course": {
     "start": 0.0,
-    "duration": 632.095
+    "duration": 630.69
   },
   "cues": [
     {
@@ -2780,7 +2780,7 @@
       "entry": null,
       "course": {
         "start": 201.71,
-        "duration": 7.08
+        "duration": 6.375
       },
       "tracks": [
         {
@@ -2794,7 +2794,7 @@
               "animation": "take_gems/limit.001.1",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 5.02,
+              "source_end": 4.68,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2808,18 +2808,12 @@
               "id": "audio.slice.0",
               "type": "audio_clip",
               "audio_slice_id": "take_gems__limit.001.1",
-              "asset": "media/tts/full/cues/take_gems__limit.001.1.b1.mp3",
+              "asset": "media/tts/full/cues/take_gems__limit.001.b1.mp3",
               "cue_start": 0.0,
-              "source_start": 0.25,
-              "source_end": 6.84,
-              "source_start_sample": 6000,
-              "source_end_sample": 164160
-            },
-            {
-              "id": "audio.trailing_silence",
-              "type": "silence",
-              "cue_start": 6.59,
-              "duration": 0.49
+              "source_start": 0.0,
+              "source_end": 6.375,
+              "source_start_sample": 0,
+              "source_end_sample": 153000
             }
           ]
         },
@@ -2831,15 +2825,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.045,
-              "duration": 3.2,
+              "cue_start": 0.075,
+              "duration": 3.07,
               "text": "玩家持有的宝石和黄金总数上限为10个。"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 3.73,
-              "duration": 2.85,
+              "cue_start": 3.64,
+              "duration": 2.635,
               "text": "任何时候当持有数量超过上限时，"
             }
           ]
@@ -2848,14 +2842,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.045,
-          "duration": 3.2,
+          "cue_start": 0.075,
+          "duration": 3.07,
           "text": "玩家持有的宝石和黄金总数上限为10个。"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 3.73,
-          "duration": 2.85,
+          "cue_start": 3.64,
+          "duration": 2.635,
           "text": "任何时候当持有数量超过上限时，"
         }
       ],
@@ -2875,8 +2869,8 @@
       "cue_id": "take_gems/limit.001.2",
       "entry": null,
       "course": {
-        "start": 208.79,
-        "duration": 6.66
+        "start": 208.085,
+        "duration": 5.96
       },
       "tracks": [
         {
@@ -2890,7 +2884,7 @@
               "animation": "take_gems/limit.001.2",
               "cue_start": 0.0,
               "source_start": 0.0,
-              "source_end": 5.025,
+              "source_end": 4.805,
               "after_end": "hold_last_frame"
             }
           ]
@@ -2904,18 +2898,18 @@
               "id": "audio.slice.0",
               "type": "audio_clip",
               "audio_slice_id": "take_gems__limit.001.2",
-              "asset": "media/tts/full/cues/take_gems__limit.001.2.b1.mp3",
+              "asset": "media/tts/full/cues/take_gems__limit.001.b1.mp3",
               "cue_start": 0.0,
-              "source_start": 0.28,
-              "source_end": 6.456,
-              "source_start_sample": 6720,
-              "source_end_sample": 154944
+              "source_start": 6.375,
+              "source_end": 12.275,
+              "source_start_sample": 153000,
+              "source_end_sample": 294600
             },
             {
               "id": "audio.trailing_silence",
               "type": "silence",
-              "cue_start": 6.176,
-              "duration": 0.484
+              "cue_start": 5.9,
+              "duration": 0.06
             }
           ]
         },
@@ -2927,15 +2921,15 @@
             {
               "id": "subtitle.0.0",
               "type": "subtitle",
-              "cue_start": 0.025,
-              "duration": 3.53,
+              "cue_start": 0.085,
+              "duration": 3.435,
               "text": "必须挑选一定数量的宝石或黄金回到供应堆，"
             },
             {
               "id": "subtitle.0.1",
               "type": "subtitle",
-              "cue_start": 4.06,
-              "duration": 2.1,
+              "cue_start": 3.905,
+              "duration": 1.555,
               "text": "直到恰好剩下10个为止。"
             }
           ]
@@ -2944,14 +2938,14 @@
       "subtitles": [
         {
           "id": "subtitle.0.0",
-          "cue_start": 0.025,
-          "duration": 3.53,
+          "cue_start": 0.085,
+          "duration": 3.435,
           "text": "必须挑选一定数量的宝石或黄金回到供应堆，"
         },
         {
           "id": "subtitle.0.1",
-          "cue_start": 4.06,
-          "duration": 2.1,
+          "cue_start": 3.905,
+          "duration": 1.555,
           "text": "直到恰好剩下10个为止。"
         }
       ],
@@ -2971,7 +2965,7 @@
       "cue_id": "take_gems/public.001.1",
       "entry": null,
       "course": {
-        "start": 215.45,
+        "start": 214.045,
         "duration": 5.625
       },
       "tracks": [
@@ -3045,7 +3039,7 @@
       "cue_id": "take_gems/public.001.2",
       "entry": null,
       "course": {
-        "start": 221.075,
+        "start": 219.67,
         "duration": 2.61
       },
       "tracks": [
@@ -3126,7 +3120,7 @@
       "cue_id": "cards_group/title_3_2",
       "entry": null,
       "course": {
-        "start": 223.685,
+        "start": 222.28,
         "duration": 4.18
       },
       "tracks": [
@@ -3205,7 +3199,7 @@
       "cue_id": "cards/title_3_2_1",
       "entry": null,
       "course": {
-        "start": 227.865,
+        "start": 226.46,
         "duration": 3.47
       },
       "tracks": [
@@ -3285,7 +3279,7 @@
       "cue_id": "cards/intro.001",
       "entry": null,
       "course": {
-        "start": 231.335,
+        "start": 229.93,
         "duration": 2.67
       },
       "tracks": [
@@ -3366,7 +3360,7 @@
       "cue_id": "cards/cost.001.1",
       "entry": null,
       "course": {
-        "start": 234.005,
+        "start": 232.6,
         "duration": 4.47
       },
       "tracks": [
@@ -3462,7 +3456,7 @@
       "cue_id": "cards/cost.001.2",
       "entry": null,
       "course": {
-        "start": 238.475,
+        "start": 237.07,
         "duration": 10.71
       },
       "tracks": [
@@ -3559,7 +3553,7 @@
       "cue_id": "cards/market.001.1",
       "entry": null,
       "course": {
-        "start": 249.185,
+        "start": 247.78,
         "duration": 15.86
       },
       "tracks": [
@@ -3681,7 +3675,7 @@
       "cue_id": "cards/market.001.2",
       "entry": null,
       "course": {
-        "start": 265.045,
+        "start": 263.64,
         "duration": 7.69
       },
       "tracks": [
@@ -3777,7 +3771,7 @@
       "cue_id": "cards/prestige.001.1",
       "entry": null,
       "course": {
-        "start": 272.735,
+        "start": 271.33,
         "duration": 7.28
       },
       "tracks": [
@@ -3873,7 +3867,7 @@
       "cue_id": "cards/prestige.001.2",
       "entry": null,
       "course": {
-        "start": 280.015,
+        "start": 278.61,
         "duration": 6.46
       },
       "tracks": [
@@ -3968,7 +3962,7 @@
       "cue_id": "cards/discount.001",
       "entry": null,
       "course": {
-        "start": 286.475,
+        "start": 285.07,
         "duration": 7.41
       },
       "tracks": [
@@ -4063,7 +4057,7 @@
       "cue_id": "cards/discount.002.1",
       "entry": null,
       "course": {
-        "start": 293.885,
+        "start": 292.48,
         "duration": 11.86
       },
       "tracks": [
@@ -4184,7 +4178,7 @@
       "cue_id": "cards/discount.003.1",
       "entry": null,
       "course": {
-        "start": 305.745,
+        "start": 304.34,
         "duration": 8.08
       },
       "tracks": [
@@ -4279,7 +4273,7 @@
       "cue_id": "cards/discount.003.2",
       "entry": null,
       "course": {
-        "start": 313.825,
+        "start": 312.42,
         "duration": 8.09
       },
       "tracks": [
@@ -4373,7 +4367,7 @@
       "cue_id": "cards/public.001.1",
       "entry": null,
       "course": {
-        "start": 321.915,
+        "start": 320.51,
         "duration": 12.5
       },
       "tracks": [
@@ -4481,7 +4475,7 @@
       "cue_id": "cards/limit.001.1",
       "entry": null,
       "course": {
-        "start": 334.415,
+        "start": 333.01,
         "duration": 9.53
       },
       "tracks": [
@@ -4576,7 +4570,7 @@
       "cue_id": "nobles/title_3_2_2",
       "entry": null,
       "course": {
-        "start": 343.945,
+        "start": 342.54,
         "duration": 2.66
       },
       "tracks": [
@@ -4656,7 +4650,7 @@
       "cue_id": "nobles/intro.001",
       "entry": null,
       "course": {
-        "start": 346.605,
+        "start": 345.2,
         "duration": 10.91
       },
       "tracks": [
@@ -4778,7 +4772,7 @@
       "cue_id": "nobles/trigger.001.1",
       "entry": null,
       "course": {
-        "start": 357.515,
+        "start": 356.11,
         "duration": 12.53
       },
       "tracks": [
@@ -4887,7 +4881,7 @@
       "cue_id": "nobles/forced.001.1",
       "entry": null,
       "course": {
-        "start": 370.045,
+        "start": 368.64,
         "duration": 12.08
       },
       "tracks": [
@@ -4995,7 +4989,7 @@
       "cue_id": "nobles/source.001",
       "entry": null,
       "course": {
-        "start": 382.125,
+        "start": 380.72,
         "duration": 7.4
       },
       "tracks": [
@@ -5078,7 +5072,7 @@
       "cue_id": "nobles/choice.001.1",
       "entry": null,
       "course": {
-        "start": 389.525,
+        "start": 388.12,
         "duration": 8.92
       },
       "tracks": [
@@ -5187,7 +5181,7 @@
       "cue_id": "nobles/repeat.001.1",
       "entry": null,
       "course": {
-        "start": 398.445,
+        "start": 397.04,
         "duration": 12.27
       },
       "tracks": [
@@ -5309,7 +5303,7 @@
       "cue_id": "nobles/repeat.001.3",
       "entry": null,
       "course": {
-        "start": 410.715,
+        "start": 409.31,
         "duration": 6.88
       },
       "tracks": [
@@ -5404,7 +5398,7 @@
       "cue_id": "nobles/summary.001.1",
       "entry": null,
       "course": {
-        "start": 417.595,
+        "start": 416.19,
         "duration": 5.07
       },
       "tracks": [
@@ -5488,7 +5482,7 @@
       "cue_id": "nobles/summary.001.2",
       "entry": null,
       "course": {
-        "start": 422.665,
+        "start": 421.26,
         "duration": 4.46
       },
       "tracks": [
@@ -5572,7 +5566,7 @@
       "cue_id": "nobles/summary.001.3",
       "entry": null,
       "course": {
-        "start": 427.125,
+        "start": 425.72,
         "duration": 7.41
       },
       "tracks": [
@@ -5669,7 +5663,7 @@
       "cue_id": "reserve/title_3_3",
       "entry": null,
       "course": {
-        "start": 434.535,
+        "start": 433.13,
         "duration": 3.82
       },
       "tracks": [
@@ -5748,7 +5742,7 @@
       "cue_id": "reserve/intro.001.1",
       "entry": null,
       "course": {
-        "start": 438.355,
+        "start": 436.95,
         "duration": 11.29
       },
       "tracks": [
@@ -5870,7 +5864,7 @@
       "cue_id": "reserve/gold.001",
       "entry": null,
       "course": {
-        "start": 449.645,
+        "start": 448.24,
         "duration": 6.87
       },
       "tracks": [
@@ -5965,7 +5959,7 @@
       "cue_id": "reserve/deck.001",
       "entry": null,
       "course": {
-        "start": 456.515,
+        "start": 455.11,
         "duration": 8.07
       },
       "tracks": [
@@ -6062,7 +6056,7 @@
       "cue_id": "reserve/notes_intro.001",
       "entry": null,
       "course": {
-        "start": 464.585,
+        "start": 463.18,
         "duration": 8.9
       },
       "tracks": [
@@ -6172,7 +6166,7 @@
       "cue_id": "reserve/limit_gold.001.2",
       "entry": null,
       "course": {
-        "start": 473.485,
+        "start": 472.08,
         "duration": 5.87
       },
       "tracks": [
@@ -6255,7 +6249,7 @@
       "cue_id": "reserve/limit_hand.001.1",
       "entry": null,
       "course": {
-        "start": 479.355,
+        "start": 477.95,
         "duration": 8.67
       },
       "tracks": [
@@ -6350,7 +6344,7 @@
       "cue_id": "reserve/private.001.1",
       "entry": null,
       "course": {
-        "start": 488.025,
+        "start": 486.62,
         "duration": 11.5
       },
       "tracks": [
@@ -6456,7 +6450,7 @@
       "cue_id": "reserve/private.002",
       "entry": null,
       "course": {
-        "start": 499.525,
+        "start": 498.12,
         "duration": 6.22
       },
       "tracks": [
@@ -6538,7 +6532,7 @@
       "cue_id": "reserve/not_purchase.001",
       "entry": null,
       "course": {
-        "start": 505.745,
+        "start": 504.34,
         "duration": 7.76
       },
       "tracks": [
@@ -6633,7 +6627,7 @@
       "cue_id": "purchase_reserved/title_3_4",
       "entry": null,
       "course": {
-        "start": 513.505,
+        "start": 512.1,
         "duration": 3.67
       },
       "tracks": [
@@ -6712,7 +6706,7 @@
       "cue_id": "purchase_reserved/001",
       "entry": null,
       "course": {
-        "start": 517.175,
+        "start": 515.77,
         "duration": 20.63
       },
       "tracks": [
@@ -6859,7 +6853,7 @@
       "cue_id": "summary/title_3_5",
       "entry": null,
       "course": {
-        "start": 537.805,
+        "start": 536.4,
         "duration": 3.46
       },
       "tracks": [
@@ -6938,7 +6932,7 @@
       "cue_id": "summary/001",
       "entry": null,
       "course": {
-        "start": 541.265,
+        "start": 539.86,
         "duration": 7.49
       },
       "tracks": [
@@ -7034,7 +7028,7 @@
       "cue_id": "summary/002.1",
       "entry": null,
       "course": {
-        "start": 548.755,
+        "start": 547.35,
         "duration": 9.64
       },
       "tracks": [
@@ -7142,7 +7136,7 @@
       "cue_id": "summary/002.2",
       "entry": null,
       "course": {
-        "start": 558.395,
+        "start": 556.99,
         "duration": 3.99
       },
       "tracks": [
@@ -7224,7 +7218,7 @@
       "cue_id": "end/title_4",
       "entry": null,
       "course": {
-        "start": 562.385,
+        "start": 560.98,
         "duration": 2.24
       },
       "tracks": [
@@ -7302,7 +7296,7 @@
       "cue_id": "end/trigger.001",
       "entry": null,
       "course": {
-        "start": 564.625,
+        "start": 563.22,
         "duration": 5.43
       },
       "tracks": [
@@ -7383,7 +7377,7 @@
       "cue_id": "end/final_rounds.001.1",
       "entry": null,
       "course": {
-        "start": 570.055,
+        "start": 568.65,
         "duration": 10.49
       },
       "tracks": [
@@ -7477,7 +7471,7 @@
       "cue_id": "end/example.001.1",
       "entry": null,
       "course": {
-        "start": 580.545,
+        "start": 579.14,
         "duration": 17.04
       },
       "tracks": [
@@ -7595,7 +7589,7 @@
       "cue_id": "end/winner.001",
       "entry": null,
       "course": {
-        "start": 597.585,
+        "start": 596.18,
         "duration": 8.9
       },
       "tracks": [
@@ -7689,7 +7683,7 @@
       "cue_id": "end/winner.002",
       "entry": null,
       "course": {
-        "start": 606.485,
+        "start": 605.08,
         "duration": 13.22
       },
       "tracks": [
@@ -7796,7 +7790,7 @@
       "cue_id": "end/winner.003",
       "entry": null,
       "course": {
-        "start": 619.705,
+        "start": 618.3,
         "duration": 12.39
       },
       "tracks": [
@@ -8360,30 +8354,30 @@
       "severity": "info",
       "cue_id": "take_gems/limit.001.1",
       "mode": "max",
-      "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.1,
-      "trim_to_speech_start": true,
-      "trim_start_guard_seconds": 0.1,
+      "trim_to_speech_end": false,
+      "trim_tail_guard_seconds": 0.0,
+      "trim_to_speech_start": false,
+      "trim_start_guard_seconds": 0.0,
       "trailing_silence_seconds": 0.0,
-      "original_duration": 7.08,
-      "audio_end": 7.08,
-      "visual_end": 5.02,
-      "duration": 7.08
+      "original_duration": 6.375,
+      "audio_end": 6.375,
+      "visual_end": 4.68,
+      "duration": 6.375
     },
     {
       "code": "cue_timing_policy",
       "severity": "info",
       "cue_id": "take_gems/limit.001.2",
       "mode": "max",
-      "trim_to_speech_end": true,
-      "trim_tail_guard_seconds": 0.1,
-      "trim_to_speech_start": true,
-      "trim_start_guard_seconds": 0.1,
+      "trim_to_speech_end": false,
+      "trim_tail_guard_seconds": 0.0,
+      "trim_to_speech_start": false,
+      "trim_start_guard_seconds": 0.0,
       "trailing_silence_seconds": 0.0,
-      "original_duration": 6.66,
-      "audio_end": 6.66,
-      "visual_end": 5.025,
-      "duration": 6.66
+      "original_duration": 5.96,
+      "audio_end": 5.96,
+      "visual_end": 4.805,
+      "duration": 5.96
     },
     {
       "code": "cue_timing_policy",
