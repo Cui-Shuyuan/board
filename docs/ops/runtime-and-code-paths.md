@@ -81,3 +81,17 @@ D:\board\
   - `GET /api/content/games/splendor/manifest` 返回 200；
   - versioned content file 返回 200；
   - 两次 `search?q=贵族` 结果一致，第二次命中内存缓存。
+
+## 2026-10-23 cleanup
+
+- `D:\board\tmp` was reduced from about 11 GB to empty. Build caches, old
+  worktrees, duplicate model copies, Gradle homes, device packages, TTS probes,
+  screenshots and old checkout copies were deleted because they are rebuildable
+  or reproducible from Git.
+- Historical raw CA/eval outputs referenced by review reports were compressed to
+  `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`
+  (about 321 MB) rather than silently discarded. If historical raw evidence is
+  no longer needed, that single archive can be deleted.
+- Legacy `D:\board\build\dotnet\api-*`/diagnostics/test output directories
+  were removed; only `build/dotnet/bin` and `build/dotnet/obj` remain for the
+  current SDK artifacts layout.
