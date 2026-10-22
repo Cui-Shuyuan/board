@@ -5,7 +5,7 @@
 ```bash
 dotnet run --project tools/diagnostics/RespondPackProbe -- \
   /mnt/d/workspace/board agricola \
-  "收获阶段的喂养是怎么结算的？" .tmp/pack.json .tmp/respond.json
+  "收获阶段的喂养是怎么结算的？" $BOARD_RUNTIME_ROOT/tmp/pack.json $BOARD_RUNTIME_ROOT/tmp/respond.json
 ```
 
 它复用生产代码中的 `BuildRespondMessages` 与 `submit_answer` schema，不运行 Understand、不补充检索。

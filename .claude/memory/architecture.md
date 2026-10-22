@@ -14,7 +14,7 @@ L0 本体层：content/ontology/concepts.json + content/ontology/flow.json
 L1 游戏规则层：content/games/{game}/concepts.json + flow.json + instances.json
 L2 Runtime 层：backend/BoardAI.Api（Chat + Rules + Catalog + Content + ASR/TTS）
 L3 动画源：tutorial/tracks/*.track.json + sections/<id>/{track}.{anim,script}.json + shared/stage/*.stage.json
-L4 运行产物：tutorial/{track}.runtime.json + tutorial/anim/v2/{track}.compiled.json + TTS 音频 + content manifests
+L4 运行产物：tutorial/{track}.runtime.json + tutorial/anim/v2/{track}.compiled.json + TTS 音频 + runtime manifests
 L5 客户端：Android UaaL 原生壳（Kotlin + Compose） + Unity as a Library
 ```
 
@@ -105,7 +105,7 @@ Understand（一次结构化理解）
 - `POST /api/rules/admin/rebuild-index/{game}`
 - `POST /api/rules/admin/rebuild-all`
 - `GET /api/catalog/games`（读取 `content/catalog/*.json`，Android 首页游戏目录）
-- `GET /api/content/games/{game}/manifest`（读取 `content/manifests/{game}.json`）
+- `GET /api/content/games/{game}/manifest`（读取 `$BOARD_RUNTIME_ROOT/content/manifests/{game}.json`）
 - `GET /api/content/games/{game}/files/{version}/{**filePath}`（版本化内容文件）
 - `GET /api/content/games/{game}/files/{**filePath}`（旧客户端兼容路由）
 - `POST /api/asr/once`（一次性 WAV 转文字）
@@ -132,6 +132,7 @@ Understand（一次结构化理解）
 
 ### 配置与缓存
 
+- 运行时数据根目录：`BOARD_RUNTIME_ROOT`（本机 `D:\board`，WSL `/mnt/d/board`）。.NET artifacts、模型、Qdrant、搜索缓存、manifest/release、日志、运行 `.env` 均在该根下；规则与内容 source 仍在 checkout。详见 `docs/ops/runtime-and-code-paths.md`。
 - system prompt 分路径配置：`appsettings.json` 的 `LLM:LegacySystemPrompt` 与 `LLM:ProgramSystemPrompt`，均支持 `{game_name}`；`OrchestrationMode` 只接受 `legacy`/`program`，非法值启动失败。legacy 基线提示从 `a992cfe` 原文恢复，运行时记录模式、提示/配置指纹和规则版本，不打印密钥。
 - API key 只走环境变量，不写仓库。
 - `RulesDocumentStore` 以文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务。
@@ -143,7 +144,7 @@ Understand（一次结构化理解）
 ## 4. 检索架构
 
 - Qdrant：独立 Windows 进程，按游戏分版本化 collection `board_{gameId}__v{version}[_name]`，查询走 alias `board_{gameId}__active[_name]`；重建失败/中断不会破坏旧 alias。
-- Embedding：`bge-base-zh-v1.5` fp32 ONNX，768 维，默认 CLS pooling + L2 归一化；`Embedding:Pooling` / `Embedding__Pooling` 可设 mean 回滚。CLS profile=`模型目录名/cls-v1`，mean 保留旧目录名；版本哈希包括 profile，查询核查物理 collection 的 profile，不能混用向量坐标。C# CLS 超长输入保留末尾分隔 token，与 Python 512 token 截断对齐；模型目录 `ml_models/` 不进 Git。
+- Embedding：`bge-base-zh-v1.5` fp32 ONNX，768 维，默认 CLS pooling + L2 归一化；`Embedding:Pooling` / `Embedding__Pooling` 可设 mean 回滚。CLS profile=`模型目录名/cls-v1`，mean 保留旧目录名；版本哈希包括 profile，查询核查物理 collection 的 profile，不能混用向量坐标。C# CLS 超长输入保留末尾分隔 token，与 Python 512 token 截断对齐；模型目录 `$BOARD_RUNTIME_ROOT/models/` 不进 Git。
 - 索引内容：ontology 概念、游戏 concepts、flow 递归节点、合法局部槽位；显式槽位元数据（id/name/material）不生成索引键。
 - 身份路径：全局概念 = `concept_id`；局部槽位 = `<owner_concept_path>.<slot_id>`。Point ID、版本行和 payload 均使用该路径，同名全局概念/局部槽位不会静默覆盖。
 - 重建：`tools/indexing/rebuild_index.py`，先构建临时 collection 并精确校验 count，再原子切换 alias；Python CLI 与 C# API 的版本 hash 已对九款真实规则数据回归对齐。

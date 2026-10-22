@@ -2,12 +2,16 @@
 
 本目录用于比较同一规则数据、同一模型配置下的旧/新 Board API 端到端表现。
 
+> 运行时路径统一使用 `BOARD_RUNTIME_ROOT`（本机 Windows `D:\board`，WSL `/mnt/d/board`）。
+> 所有命令中的 `$BOARD_RUNTIME_ROOT/tmp/...` 是新的 scratch 路径；历史 `.tmp/...` 原始产物已压缩到
+> `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`，详见 `docs/ops/runtime-and-code-paths.md`。
+
 ## 历史耗时归因
 
 已有 `runs.jsonl` 和带请求 ID 的两版 API 日志时，可以离线对齐，无需重发模型请求：
 
 ```powershell
-python tools/eval/analyze_chat_latency.py --runs .tmp/comprehensive-eval/main/runs.jsonl --old-log .tmp/eval-old-api.log --new-log .tmp/eval-new-api.log --out .tmp/comprehensive-eval/latency-audit
+python tools/eval/analyze_chat_latency.py --runs $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/runs.jsonl --old-log $BOARD_RUNTIME_ROOT/tmp/eval-old-api.log --new-log $BOARD_RUNTIME_ROOT/tmp/eval-new-api.log --out $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/latency-audit
 python -m unittest discover -s tools/eval -p test_analyze_chat_latency.py
 ```
 
@@ -21,13 +25,13 @@ python -m unittest discover -s tools/eval -p test_analyze_chat_latency.py
 python3 tools/eval/run_protocol_variant.py \
   --questions tools/qa/program_evidence_repair_dev_questions.jsonl \
   --api http://localhost:5002 --label C2-thinking-disabled-required \
-  --thinking disabled --tool-choice required --out .tmp/protocol-comparison/C2
+  --thinking disabled --tool-choice required --out $BOARD_RUNTIME_ROOT/tmp/protocol-comparison/C2
 
 python3 tools/eval/analyze_protocol_variants.py \
-  --variant A=.tmp/protocol-comparison/A-thinking-low \
-  --variant B=.tmp/protocol-comparison/B-thinking-disabled \
-  --variant C2=.tmp/protocol-comparison/C2 \
-  --out .tmp/protocol-comparison/summary.json
+  --variant A=$BOARD_RUNTIME_ROOT/tmp/protocol-comparison/A-thinking-low \
+  --variant B=$BOARD_RUNTIME_ROOT/tmp/protocol-comparison/B-thinking-disabled \
+  --variant C2=$BOARD_RUNTIME_ROOT/tmp/protocol-comparison/C2 \
+  --out $BOARD_RUNTIME_ROOT/tmp/protocol-comparison/summary.json
 ```
 
 汇总把 plain final、非法终态校验失败、实际协议修复调用、token、延迟和时间线自耗时分开记录；它不判断答案质量。`runs.jsonl` 没有结构化 continuation handle，因此 continuation 次数仍需人工核对原始日志。
@@ -43,8 +47,8 @@ python3 tools/eval/analyze_protocol_variants.py \
 建议用 git worktree 分开构建：
 
 ```bash
-git worktree add --force .tmp/eval-old 36e4dbf
-cd .tmp/eval-old
+git worktree add --force $BOARD_RUNTIME_ROOT/tmp/eval-old 36e4dbf
+cd $BOARD_RUNTIME_ROOT/tmp/eval-old
 dotnet build backend/BoardAI.Api/BoardAI.Api.csproj --nologo
 ```
 
@@ -66,23 +70,23 @@ set Embedding__ModelDir=D:\board\models\bge-base-zh-v1.5-fp32
 python3 tools/eval/build_question_ground_truth.py \
   --questions tools/qa/comprehensive_eval_questions.jsonl \
   --api http://172.17.208.1:5002 \
-  --out .tmp/program-eval/regression_ground_truth.json
+  --out $BOARD_RUNTIME_ROOT/tmp/program-eval/regression_ground_truth.json
 python3 tools/eval/merge_question_sets.py \
   --main-questions tools/qa/comprehensive_eval_questions.jsonl \
-  --main-ground-truth .tmp/program-eval/regression_ground_truth.json \
+  --main-ground-truth $BOARD_RUNTIME_ROOT/tmp/program-eval/regression_ground_truth.json \
   --holdout-questions tools/qa/program_orchestration_holdout.jsonl \
-  --out-questions .tmp/program-eval/questions_all.jsonl \
-  --out-ground-truth .tmp/program-eval/question_ground_truth.json
+  --out-questions $BOARD_RUNTIME_ROOT/tmp/program-eval/questions_all.jsonl \
+  --out-ground-truth $BOARD_RUNTIME_ROOT/tmp/program-eval/question_ground_truth.json
 ```
 
 然后运行：
 
 ```bash
 python3 tools/eval/compare_versions.py \
-  --questions .tmp/program-eval/questions_all.jsonl \
+  --questions $BOARD_RUNTIME_ROOT/tmp/program-eval/questions_all.jsonl \
   --old-api http://172.17.208.1:5001 \
   --new-api http://172.17.208.1:5002 \
-  --out .tmp/program-eval/main \
+  --out $BOARD_RUNTIME_ROOT/tmp/program-eval/main \
   --repeats 3 \
   --pair-workers 2
 ```
@@ -90,7 +94,7 @@ python3 tools/eval/compare_versions.py \
 - 每条问题两版各重复 3 次。
 - 运行器将两版请求成对发出，并随机化提交顺序。
 - `--pair-workers 2` 表示同时有两对 old/new 请求在跑；两版承受相同并发负载。
-- 原始响应、evidence、延迟、确定性命中写入 `.tmp/.../runs.jsonl`。
+- 原始响应、evidence、延迟、确定性命中写入 `$BOARD_RUNTIME_ROOT/tmp/.../runs.jsonl`。
 - 网络错误最多重试一次，重试次数会留档；不会因回答不好而重试。
 - 如果任务中断，给同一命令加 `--resume`，已完成的 `run_id` 会跳过。
 
@@ -102,22 +106,22 @@ python3 tools/eval/compare_versions.py \
 python3 tools/eval/build_question_ground_truth.py \
   --questions tools/qa/comprehensive_eval_questions.jsonl \
   --api http://172.17.208.1:5002 \
-  --out .tmp/program-eval/regression_ground_truth.json
+  --out $BOARD_RUNTIME_ROOT/tmp/program-eval/regression_ground_truth.json
 python3 tools/eval/merge_question_sets.py \
   --main-questions tools/qa/comprehensive_eval_questions.jsonl \
-  --main-ground-truth .tmp/program-eval/regression_ground_truth.json \
+  --main-ground-truth $BOARD_RUNTIME_ROOT/tmp/program-eval/regression_ground_truth.json \
   --holdout-questions tools/qa/program_orchestration_holdout.jsonl \
-  --out-questions .tmp/program-eval/questions_all.jsonl \
-  --out-ground-truth .tmp/program-eval/question_ground_truth.json
+  --out-questions $BOARD_RUNTIME_ROOT/tmp/program-eval/questions_all.jsonl \
+  --out-ground-truth $BOARD_RUNTIME_ROOT/tmp/program-eval/question_ground_truth.json
 ```
 
 再从运行结果获取 matched/related 概念的补充描述和结构化费用/目标/条件字段：
 
 ```bash
 python3 tools/eval/fetch_rule_details.py \
-  --runs .tmp/program-eval/main/runs.jsonl \
+  --runs $BOARD_RUNTIME_ROOT/tmp/program-eval/main/runs.jsonl \
   --api http://172.17.208.1:5002 \
-  --out .tmp/program-eval/main/rule_details.json
+  --out $BOARD_RUNTIME_ROOT/tmp/program-eval/main/rule_details.json
 ```
 
 `rule_details.json` 现在保留 `structured_evidence`（cost/target/content/score 等嵌套正式字段），盲评提示会把这些字段和 description 一起注入；否则像 `play_bird` 的蛋费来源只存在于嵌套 cost 树里，会被 judge 误判为无依据。
@@ -148,27 +152,27 @@ D:\Python\Python312\python.exe tools\eval\judge_answers.py ^
 
 ```bash
 python3 tools/eval/combine_judges.py \
-  --judge .tmp/program-eval/main/judge.jsonl \
-  --judge .tmp/program-eval/main/judge-deepseek-chat.jsonl \
-  --out .tmp/program-eval/main/judge-consensus.jsonl \
-  --summary .tmp/program-eval/main/judge-consensus-summary.json
+  --judge $BOARD_RUNTIME_ROOT/tmp/program-eval/main/judge.jsonl \
+  --judge $BOARD_RUNTIME_ROOT/tmp/program-eval/main/judge-deepseek-chat.jsonl \
+  --out $BOARD_RUNTIME_ROOT/tmp/program-eval/main/judge-consensus.jsonl \
+  --summary $BOARD_RUNTIME_ROOT/tmp/program-eval/main/judge-consensus-summary.json
 ```
 
 ## 4. 分析
 
 ```bash
 python3 tools/eval/analyze_compare.py \
-  --runs .tmp/program-eval/main/runs.jsonl \
-  --judge .tmp/program-eval/main/judge-consensus.jsonl \
-  --out-dir .tmp/program-eval/main/analysis-consensus
+  --runs $BOARD_RUNTIME_ROOT/tmp/program-eval/main/runs.jsonl \
+  --judge $BOARD_RUNTIME_ROOT/tmp/program-eval/main/judge-consensus.jsonl \
+  --out-dir $BOARD_RUNTIME_ROOT/tmp/program-eval/main/analysis-consensus
 
 # 从服务日志统计 legacy 基线的真实模型调用数（新版也可交叉核对）
 python3 tools/eval/analyze_model_calls.py \
-  --baseline-log .tmp/program-eval/baseline-api.log \
-  --new-log .tmp/program-eval/new-api.log \
+  --baseline-log $BOARD_RUNTIME_ROOT/tmp/program-eval/baseline-api.log \
+  --new-log $BOARD_RUNTIME_ROOT/tmp/program-eval/new-api.log \
   --baseline-start-utc <manifest-baseline-start> \
   --new-start-utc <manifest-new-start> \
-  --out .tmp/program-eval/main/model-calls.json
+  --out $BOARD_RUNTIME_ROOT/tmp/program-eval/main/model-calls.json
 ```
 
 输出：
@@ -183,4 +187,4 @@ python3 tools/eval/analyze_model_calls.py \
 - 新增留出集：`tools/qa/program_orchestration_holdout.jsonl`（16 条，含 slot、未知对象、必要澄清、多问题、同对象不同动作）。
 - 主实验合并后 133 题，两版各 3 次，共 798 次聊天。
 - 题集不存放生成答案；规则事实由运行库快照、规则 id 和盲评 rubric 分别验证。
-- 原始 runs、judge 输出均为 QA 留档，默认放 `.tmp/`，不提交 Git。
+- 原始 runs、judge 输出均为 QA 留档，默认放 `$BOARD_RUNTIME_ROOT/tmp/`，不提交 Git。

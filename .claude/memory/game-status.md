@@ -30,7 +30,7 @@ metadata:
 - QA 与 cue 同置：问题优先写 cue 的 `qa` 字段；外置历史问题放 `sections/<id>/qa.json`，由 `qa_anim_ask.py` 合并发送。
 - 发展卡身份保真（方案 B）已主体完成：28 个 face-up 卡位各有独立真卡模板/扫描。
 - 当前下一步：quick 精修收尾与视觉验收；full 81 cue 从头重审（章节标题、市场/贵族/预留/购买真卡画面、宝石数量复位、终局示例双发展区与贵族）。
-- catalog + manifest 已生成：`content/catalog/splendor.json` 入 Git；`content/manifests/splendor.json` 为生成物，不入 Git；当前 quick 改动尚未重新 build manifest。
+- catalog + manifest 已生成：`content/catalog/splendor.json` 入 Git；`$BOARD_RUNTIME_ROOT/content/manifests/splendor.json` 为生成物，不入 Git；当前 quick 改动尚未重新 build manifest。
 - 路径：`content/games/splendor/`。
 
 ## Civolution
@@ -93,5 +93,5 @@ metadata:
 
 ## 全局待办
 
-- 其余 8 款游戏补 `content/catalog/{game}.json` 与 `content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已完成 v1（manifest 生成物不入 Git）。
+- 其余 8 款游戏补 `content/catalog/{game}.json` 与 `$BOARD_RUNTIME_ROOT/content/manifests/{game}.json`，让 Android 首页/内容更新覆盖全部游戏；Splendor 已完成 v1（manifest 生成物不入 Git）。
 - 新增游戏或补 catalog / manifest 时按 `tools.md` 的索引/校验/QA/内容流程走，并记录“从开始到首次可问答”的耗时，作为平台边际成本的基准。

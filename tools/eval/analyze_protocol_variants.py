@@ -182,7 +182,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--variant", action="append", type=parse_variant, required=True,
-        metavar="NAME=PATH", help="e.g. A=.tmp/protocol-comparison/A-thinking-low",
+        metavar="NAME=PATH", help="e.g. A=$BOARD_RUNTIME_ROOT/tmp/protocol-comparison/A-thinking-low",
     )
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()

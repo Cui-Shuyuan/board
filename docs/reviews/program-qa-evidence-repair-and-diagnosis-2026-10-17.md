@@ -1,3 +1,5 @@
+> 历史路径说明（2026-10-23）：本文保留当时本地 scratch 路径 `.tmp/...`，这些不是当前运行依赖。新实验请使用 `$BOARD_RUNTIME_ROOT/tmp/...`；2026-10-23 之前的原始 agent/eval 产物已压缩到 `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`，需要时解压后按原相对路径读取。
+
 # Program 问答第二轮：事实包修复、基线隔离与分阶段诊断
 
 日期：2026-10-17。执行对象：DeepSeek V4.1 Flash。对应计划：`archive/plans/2026-10-17/program-qa-evidence-repair-and-diagnosis-plan.md`。

@@ -38,7 +38,7 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
 3. **内容分发**
    - catalog + runtime-only manifest 驱动 Android 首页、内容下载、增量更新、断点续传。
    - `tools/content/build_content_manifest.py` 只按 Unity/Android 运行依赖白名单打包，不包含 QA 日志、动画源、文档、脚本、`.pyc`、`.lrc` 等非运行文件；version 只由 package 内 `path + sha256` 决定。
-   - manifest 指向运行时的 `content/releases/{game}/{version}/` 不可变发布目录；已发布的同 version URL 永不改变字节。
+   - manifest 指向 `$BOARD_RUNTIME_ROOT/content/releases/{game}/{version}/` 不可变发布目录；已发布的同 version URL 永不改变字节。
    - manifest、release、构建输出、模型、Qdrant 数据和缓存都属于运行时数据，默认放在仓库外的 `BOARD_RUNTIME_ROOT`（本机 `D:\board`）。生产 API 主机必须用 `BOARD_RUNTIME_ROOT=D:\board python3 tools/content/build_content_manifest.py --game <game>` 生成这些目录，或单独部署已校验的发布目录；只同步代码不能发布新内容。
    - 后端只读提供 `/api/catalog/games`、`/api/content/games/{game}/manifest` 与版本化文件接口。
    - catalog 显式声明 `rules_ready` / `tutorial_ready` / `tutorial_tracks`；规则-only 游戏不提供教程下载/播放入口，但可从首页直接进入规则问答。
@@ -125,7 +125,8 @@ D:\board/                  运行时根目录（BOARD_RUNTIME_ROOT，独立于 G
   config/.env              本机运行凭证
   logs/                    运行日志
   local-doc/               规则 PDF、扫描页、研究材料
-  tmp/                     临时产物与历史 scratch
+  tmp/                     可丢弃 scratch（当前为空）
+  archive/                 历史 agent/eval 证据压缩包
 ```
 
 ## 快速开始

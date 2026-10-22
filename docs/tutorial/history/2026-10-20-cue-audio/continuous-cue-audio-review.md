@@ -1,3 +1,5 @@
+> 历史路径说明（2026-10-23）：本文保留当时本地 scratch 路径 `.tmp/...`，这些不是当前运行依赖。新实验请使用 `$BOARD_RUNTIME_ROOT/tmp/...`；2026-10-23 之前的原始 agent/eval 产物已压缩到 `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`，需要时解压后按原相对路径读取。
+
 # 连续 cue 音频实现验收记录
 
 日期：2026-10-20。范围：当前工作区新增课程音频规划器、时钟、控制器、Unity transport，以及 TutorialCuePlayer 接入。未修改生产代码。

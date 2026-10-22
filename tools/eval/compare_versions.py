@@ -11,7 +11,7 @@ Usage:
     --questions tools/qa/comprehensive_eval_questions.jsonl \
     --old-api http://localhost:5001 \
     --new-api http://localhost:5002 \
-    --out .tmp/comprehensive-eval/run-20261017 \
+    --out $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/run-20261017 \
     --repeats 3
 """
 from __future__ import annotations

@@ -46,4 +46,5 @@
 - 纯介绍/纯展示、不涉及规则断言的 cue 可显式写 `qa_exempt: true`，门禁跳过该 cue 的必需问题校验；默认 false，不继承给后续 cue。
 - `offstage` / 可见性隐藏只用于引擎确实需要的隐藏，不得用来掩盖非法棋盘状态；隐藏后每色宝石、黄金、卡牌实物总数仍必须守恒。
 - 每次动画调整（game / section / cue / 修改前 / 期望 / 原因 / 实际 / commit）必须追加到 `docs/animation-change-log/entries.jsonl`，并用 `python3 tools/ops/check_animation_change_log.py` 校验。偏好归纳先不做，等 entries 积累到一定量后再归纳。
+- 运行产物统一写 `BOARD_RUNTIME_ROOT`（本机 `D:\board`，WSL `/mnt/d/board`）：包括 .NET bin/obj、模型、Qdrant 数据、规则缓存、manifest/release、运行 `.env`、Unity/Android 生成目录和 scratch。不要写回 checkout；旧 `.tmp` 证据压缩在 `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`。
 - 生成物、QA 留档、模型/音频/原始扫描、manifest/release 不入 Git。

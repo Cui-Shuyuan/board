@@ -4,7 +4,7 @@
 
 ```bash
 dotnet run --project tools/diagnostics/EvidencePackDump -- \
-  /mnt/d/workspace/board agricola .tmp/plan.json .tmp/pack.json 60000
+  /mnt/d/workspace/board agricola $BOARD_RUNTIME_ROOT/tmp/plan.json $BOARD_RUNTIME_ROOT/tmp/pack.json 60000
 ```
 
 `plan.json` 是 `[{ "question_id": "q1", "entity": "...", "relation": "...", "intent": "..." }]`。

@@ -7,6 +7,8 @@ metadata:
 
 # 工具与命令
 
+> 运行时路径统一使用 `BOARD_RUNTIME_ROOT`（本机 `D:\board` / WSL `/mnt/d/board`）。下文临时产物写在 `$BOARD_RUNTIME_ROOT/tmp/`，模型在 `$BOARD_RUNTIME_ROOT/models/`，生成 manifest/release 在 `$BOARD_RUNTIME_ROOT/content/`。
+
 ## 1. 本地服务
 
 ### BoardAI.Api
@@ -18,7 +20,7 @@ dotnet run --urls "http://0.0.0.0:5000"
 
 - API key 只走环境变量：推荐 `LLM__ApiKey`，兼容 `DEEPSEEK_API_KEY`。
 - 规则 JSON 由 `RulesDocumentStore` 按 `Length + LastWriteTimeUtc` 自动 freshness；改规则文件无需重启。
-- 语义检索仍需重建 Qdrant 索引；`content/catalog/*.json`、`content/manifests/*.json` 每次请求读取，无需重启。
+- 语义检索仍需重建 Qdrant 索引；`content/catalog/*.json` 与 `$BOARD_RUNTIME_ROOT/content/manifests/*.json` 每次请求读取，无需重启。
 
 ### Qdrant
 
@@ -66,7 +68,7 @@ python3 tools/indexing/rebuild_index.py --all --pooling cls --no-switch
 
 - 每次构建生成 `board_{game}__v{version}` / `...__name` 两个具体 collection，校验点数后原子切换 `board_{game}__active[_name]`；失败保留旧 alias。
 - Python CLI 与 C# `IndexContract` 共用身份路径：普通概念 `concept_id`，局部槽位 `<owner>.<slot_id>`。`id/name/material` 只作元数据。
-- 模型目录 `backend/BoardAI.Api/ml_models/`（gitignore）；当前 `bge-base-zh-v1.5-fp32`，默认 CLS、L2 归一化；换 pooling 必须重建索引。
+- 模型目录 `$BOARD_RUNTIME_ROOT/models/`（运行时目录，不入 Git）；当前 `bge-base-zh-v1.5-fp32`，默认 CLS、L2 归一化；换 pooling 必须重建索引。
 - API 等价入口：`POST /api/rules/admin/rebuild-index/{game}`、`POST /api/rules/admin/rebuild-all`。
 
 ## 4. 检索评测
@@ -74,9 +76,9 @@ python3 tools/indexing/rebuild_index.py --all --pooling cls --no-switch
 ```bash
 python3 tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_gold.jsonl --api http://localhost:5000
 python3 tools/indexing/eval_retrieval.py --gold tools/qa/retrieval_regressions.jsonl --api http://localhost:5000
-python3 tools/indexing/eval_query_intent.py --api http://localhost:5000 --out .tmp/query-intent-after
-python3 tools/indexing/eval_natural_retrieval.py --api http://localhost:5000 --out .tmp/live-natural
-python3 tools/indexing/retrieval_lab.py --out .tmp/retrieval-lab --reranker backend/BoardAI.Api/ml_models/bge-reranker-base
+python3 tools/indexing/eval_query_intent.py --api http://localhost:5000 --out $BOARD_RUNTIME_ROOT/tmp/query-intent-after
+python3 tools/indexing/eval_natural_retrieval.py --api http://localhost:5000 --out $BOARD_RUNTIME_ROOT/tmp/live-natural
+python3 tools/indexing/retrieval_lab.py --out $BOARD_RUNTIME_ROOT/tmp/retrieval-lab --reranker $BOARD_RUNTIME_ROOT/models/bge-reranker-base
 ```
 
 - Gold：`retrieval_gold.jsonl` 85 条、`retrieval_regressions.jsonl` 7 条、`retrieval_questions.jsonl` 53 条自然问句、`query_intent_regressions.jsonl` 13 行 / 14 个子查询；事实答案要求见 `rule_fact_regressions.jsonl`。
@@ -101,12 +103,12 @@ gradlew.bat testDebugUnitTest --no-daemon --console=plain
 ## 4.1 新旧版本全面对比
 
 ```bash
-python3 tools/eval/compare_versions.py --questions tools/qa/comprehensive_eval_questions.jsonl   --old-api http://172.17.208.1:5001 --new-api http://172.17.208.1:5002   --out .tmp/comprehensive-eval/main --repeats 3
-python3 tools/eval/build_question_ground_truth.py --questions tools/qa/comprehensive_eval_questions.jsonl   --api http://172.17.208.1:5002 --out .tmp/comprehensive-eval/question_ground_truth.json
-python3 tools/eval/fetch_rule_details.py --runs .tmp/comprehensive-eval/main/runs.jsonl   --api http://172.17.208.1:5002 --out .tmp/comprehensive-eval/main/rule_details.json
+python3 tools/eval/compare_versions.py --questions tools/qa/comprehensive_eval_questions.jsonl   --old-api http://172.17.208.1:5001 --new-api http://172.17.208.1:5002   --out $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main --repeats 3
+python3 tools/eval/build_question_ground_truth.py --questions tools/qa/comprehensive_eval_questions.jsonl   --api http://172.17.208.1:5002 --out $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/question_ground_truth.json
+python3 tools/eval/fetch_rule_details.py --runs $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/runs.jsonl   --api http://172.17.208.1:5002 --out $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/rule_details.json
 # judge 在具备 DeepSeek key 的环境运行，见 tools/eval/README.md
-python3 tools/eval/combine_judges.py --judge .tmp/comprehensive-eval/main/judge.jsonl   --judge .tmp/comprehensive-eval/main/judge-deepseek-chat.jsonl   --out .tmp/comprehensive-eval/main/judge-consensus.jsonl   --summary .tmp/comprehensive-eval/main/judge-consensus-summary.json
-python3 tools/eval/analyze_compare.py --runs .tmp/comprehensive-eval/main/runs.jsonl   --judge .tmp/comprehensive-eval/main/judge-consensus.jsonl   --out-dir .tmp/comprehensive-eval/main/analysis-consensus
+python3 tools/eval/combine_judges.py --judge $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/judge.jsonl   --judge $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/judge-deepseek-chat.jsonl   --out $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/judge-consensus.jsonl   --summary $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/judge-consensus-summary.json
+python3 tools/eval/analyze_compare.py --runs $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/runs.jsonl   --judge $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/judge-consensus.jsonl   --out-dir $BOARD_RUNTIME_ROOT/tmp/comprehensive-eval/main/analysis-consensus
 ```
 
 最近一次报告：`docs/reviews/version-comparison-2026-10-17.md`。完整操作见 `tools/eval/README.md`。
@@ -114,7 +116,7 @@ python3 tools/eval/analyze_compare.py --runs .tmp/comprehensive-eval/main/runs.j
 ## 5. 语音桥
 
 - ASR 默认由 `BoardAI.Api` 进程内 C# `VolcengineAsrClient` 处理；`tools/voice/asr_once.py` 是 `Voice:AsrMode=python` 回退/自检脚本。TTS 仍走 `tools/voice/tts_once.py`；两者由 `POST /api/asr/once`、`POST /api/tts` 暴露。
-- 火山凭证只写根目录 `.env`（git-ignored）；默认 TTS provider `standard`，可切 `seed2`。
+- 火山凭证只写 `$BOARD_RUNTIME_ROOT/config/.env`（运行时目录，不入 Git）；默认 TTS provider `standard`，可切 `seed2`。
 - 配置与自检见 `tools/voice/README.md`、`docs/ops/start-services.md`。
 
 ## 6. 讲规动画
@@ -157,11 +159,11 @@ python3 tools/ops/check_unity_scripts.py
 ## 7. Content / Catalog / Manifest
 
 - `content/catalog/{game}.json`：当前只有 Splendor，入 Git；显式 `rules_ready` / `tutorial_ready` / `tutorial_tracks`，旧 `tutorial_track` 仅兼容。Splendor 默认 quick。
-- `content/manifests/{game}.json` 与 `content/releases/{game}/{version}/`：生成物，不入 Git；version 只由 package 内 `path + sha256` 决定。
+- `$BOARD_RUNTIME_ROOT/content/manifests/{game}.json` 与 `$BOARD_RUNTIME_ROOT/content/releases/{game}/{version}/`：生成物，不入 Git；version 只由 package 内 `path + sha256` 决定。
 - 构建：
 
 ```bash
-python3 tools/content/build_content_manifest.py --game splendor
+BOARD_RUNTIME_ROOT=/mnt/d/board python3 tools/content/build_content_manifest.py --game splendor
 ```
 
 builder 只收集 runtime/compiled 及实际引用媒体，排除 QA/文档/脚本/pyc/lrc/动画源；发布通过 `{version}.tmp` 校验后原子 rename，versioned URL 只读 release。

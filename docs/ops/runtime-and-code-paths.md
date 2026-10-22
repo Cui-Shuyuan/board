@@ -40,7 +40,8 @@ D:\board\
   config\.env                   运行凭证（已从仓库根移出）
   logs\                         运行日志
   local-doc\                    规则书、扫描页、历史研究材料
-  tmp\                          scratch / 历史迁移产物
+  tmp\                          可丢弃 scratch（当前为空）
+  archive\                      历史 agent/eval 证据压缩包
 ```
 
 ## 配置入口
@@ -54,6 +55,15 @@ D:\board\
 - `backend/BoardAI.Api/start.bat` 和 `tools/ops/start_api.sh` 会设置上述 runtime 环境变量。
 
 `.gitignore` 中的 bin/obj、storage、media 等规则保留作为防护，避免误用默认输出路径时把生成物提交进 Git；不代表它们仍应位于仓库内。
+
+## 历史 `.tmp` 路径映射
+
+- 当前 scratch / 新实验输出：`$BOARD_RUNTIME_ROOT/tmp/...`。
+- 历史报告和 JSON 里写的 `.tmp/...` 是当时 checkout 内的本地路径，不代表文件仍在原处。
+- 2026-10-23 清理前的历史原始 agent/eval 产物统一压缩在：
+  `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`。
+  需要复现旧报告时先解压，再按归档内的原相对路径使用。
+- `.gitignore` 中的 `.tmp/` 规则保留，用于防止未来脚本误写回新 checkout。
 
 ## 本次实际迁移
 
