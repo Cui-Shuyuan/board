@@ -50,7 +50,7 @@
   `0 < TargetWatermark < HighWatermark <= 1`、预算为正。
 - 预算单位是估算缓存占用，不是进程硬内存上限，也不代表淘汰后进程 RSS 立即下降。
 - `Directory` 为空时默认使用
-  `$BOARD_RUNTIME_ROOT/cache/rules-derived-cache`（本机 `D:\board/cache/...`）。
+  `$BOARD_RUNTIME_ROOT/cache/rules-derived-cache`。
   也可配置绝对目录，或相对 `BOARD_RUNTIME_ROOT` 的目录。
 
 ## 内存所有权与估算

@@ -3,8 +3,8 @@
 # README commands reference these keys as %KEY% (Windows) or $KEY (WSL).
 
 # Local runtime root (models, build output, Qdrant, cache, logs, generated content)
-BOARD_RUNTIME_ROOT_WIN=<runtime root, e.g. D:\board>
-BOARD_RUNTIME_ROOT_WSL=<runtime root visible from WSL, e.g. /mnt/d/board>
+BOARD_RUNTIME_ROOT_WIN=<absolute runtime root outside the repository>
+BOARD_RUNTIME_ROOT_WSL=<same runtime root as seen from WSL>
 
 # Repository roots
 BOARD_WORKSPACE_WIN=<Windows path to this repository>
@@ -22,4 +22,4 @@ ADB_WSL=<adb executable path visible from WSL>
 
 # Local external tools
 QDRANT_HOME_WIN=<Qdrant directory>
-EMBEDDING_MODEL_DIR_WIN=<runtime root>\models\bge-base-zh-v1.5-fp32
+EMBEDDING_MODEL_DIR_WIN=<absolute runtime root>\models\bge-base-zh-v1.5-fp32

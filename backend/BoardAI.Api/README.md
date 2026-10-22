@@ -28,7 +28,7 @@ dotnet run --urls "http://0.0.0.0:5000"
 2. 否则从 `AppContext.BaseDirectory` 向上查找同时包含 `content/games` 和 `backend` 的仓库根；
 3. 否则回退到 `Directory.GetCurrentDirectory()`。
 
-运行时数据通过 `BOARD_RUNTIME_ROOT` 解析（`start.bat` 默认 `D:\board`）：
+运行时数据通过 `BOARD_RUNTIME_ROOT` 解析（`start.bat` 从 git-ignored `config/local.properties` 读取）：
 
 - `Rules:BasePath` 可选覆盖规则源码仓库根；为空时使用 checkout root。
 - `Rules:DiskCache:Directory` 为空时使用 `$BOARD_RUNTIME_ROOT/cache/rules-derived-cache`。

@@ -132,7 +132,7 @@ Understand（一次结构化理解）
 
 ### 配置与缓存
 
-- 运行时数据根目录：`BOARD_RUNTIME_ROOT`（本机 `D:\board`，WSL `/mnt/d/board`）。.NET artifacts、模型、Qdrant、搜索缓存、manifest/release、日志、运行 `.env` 均在该根下；规则与内容 source 仍在 checkout。详见 `docs/ops/runtime-and-code-paths.md`。
+- 运行时数据根目录：`BOARD_RUNTIME_ROOT`（具体值由 git-ignored 本地配置赋值）。.NET artifacts、模型、Qdrant、搜索缓存、manifest/release、日志、运行 `.env` 均在该根下；规则与内容 source 仍在 checkout。详见 `docs/ops/runtime-and-code-paths.md`。
 - system prompt 分路径配置：`appsettings.json` 的 `LLM:LegacySystemPrompt` 与 `LLM:ProgramSystemPrompt`，均支持 `{game_name}`；`OrchestrationMode` 只接受 `legacy`/`program`，非法值启动失败。legacy 基线提示从 `a992cfe` 原文恢复，运行时记录模式、提示/配置指纹和规则版本，不打印密钥。
 - API key 只走环境变量，不写仓库。
 - `RulesDocumentStore` 以文件 `Length + LastWriteTimeUtc` 自动失效；改规则 JSON 无需重新启动 API 服务。

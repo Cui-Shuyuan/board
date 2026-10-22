@@ -2,9 +2,9 @@
 
 本目录用于比较同一规则数据、同一模型配置下的旧/新 Board API 端到端表现。
 
-> 运行时路径统一使用 `BOARD_RUNTIME_ROOT`（本机 Windows `D:\board`，WSL `/mnt/d/board`）。
+> 运行时路径统一使用 `BOARD_RUNTIME_ROOT`；具体值在 git-ignored 的 `config/local.properties` 中赋值。
 > 所有命令中的 `$BOARD_RUNTIME_ROOT/tmp/...` 是新的 scratch 路径；历史 `.tmp/...` 原始产物已压缩到
-> `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`，详见 `docs/ops/runtime-and-code-paths.md`。
+> `$BOARD_RUNTIME_ROOT/archive/agent-workspace-evidence-20261023-004025.tar.zst`，详见 `docs/ops/runtime-and-code-paths.md`。
 
 ## 历史耗时归因
 
@@ -55,9 +55,10 @@ dotnet build backend/BoardAI.Api/BoardAI.Api.csproj --nologo
 两个服务必须使用同一份规则内容和同一个 Qdrant 索引。启动时显式指定：
 
 ```bat
-set Rules__BasePath=D:\workspace\board
-set BOARD_RUNTIME_ROOT=D:\board
-set Embedding__ModelDir=D:\board\models\bge-base-zh-v1.5-fp32
+rem Values come from git-ignored config/local.properties
+set Rules__BasePath=%BOARD_WORKSPACE_WIN%
+set BOARD_RUNTIME_ROOT=%BOARD_RUNTIME_ROOT_WIN%
+set Embedding__ModelDir=%BOARD_RUNTIME_ROOT%\models\bge-base-zh-v1.5-fp32
 ```
 
 旧版和新版分别运行在 `5001` / `5002`，启动后先做健康检查。基线 `a992cfe` 使用旧自由工具循环；当前实现默认仍为 `LLM:OrchestrationMode=legacy`，做 program 对照时必须显式把新实例设为 `program`。

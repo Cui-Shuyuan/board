@@ -5,8 +5,18 @@ set "SCRIPT_DIR=%~dp0"
 for %%I in ("%SCRIPT_DIR%..\..") do set "BOARD_BASE_PATH=%%~fI"
 
 rem Runtime-owned data (models, build output, Qdrant, cache, logs, manifests,
-rem releases, secrets) lives outside the source checkout.
-if not defined BOARD_RUNTIME_ROOT set "BOARD_RUNTIME_ROOT=D:\board"
+rem releases, secrets) lives outside the source checkout. The absolute runtime
+rem root is assigned in the git-ignored config/local.properties file.
+if not defined BOARD_RUNTIME_ROOT if exist "%BOARD_BASE_PATH%\config\local.properties" (
+  for /F "usebackq tokens=1,* delims==" %%A in ("%BOARD_BASE_PATH%\config\local.properties") do (
+    if /I "%%A"=="BOARD_RUNTIME_ROOT_WIN" set "BOARD_RUNTIME_ROOT=%%B"
+  )
+)
+if not defined BOARD_RUNTIME_ROOT (
+  echo ERROR: BOARD_RUNTIME_ROOT is not configured.
+  echo Set BOARD_RUNTIME_ROOT_WIN in the git-ignored config\local.properties.
+  exit /b 2
+)
 if not defined BOARD_API_URLS set "BOARD_API_URLS=http://0.0.0.0:5000"
 if not defined DOTNET_EXE set "DOTNET_EXE=dotnet"
 if not defined QDRANT_EXE set "QDRANT_EXE=qdrant.exe"

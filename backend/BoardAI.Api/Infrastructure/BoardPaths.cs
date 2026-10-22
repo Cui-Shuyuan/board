@@ -21,7 +21,8 @@ public static class BoardPaths
     /// <summary>
     /// Machine-local runtime root for build outputs, models, Qdrant data,
     /// cache and logs. It is intentionally outside the source checkout when
-    /// BOARD_RUNTIME_ROOT is configured (start.bat sets it to D:\board).
+    /// BOARD_RUNTIME_ROOT is configured (start.bat reads it from the ignored
+    /// config/local.properties file).
     /// </summary>
     public static string GetRuntimeRoot() => ResolvedRuntimeRoot.Value;
 

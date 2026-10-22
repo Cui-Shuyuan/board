@@ -2,7 +2,7 @@
 
 仓库路径示例：Windows `D:\workspace\board`；WSL `/mnt/d/workspace/board`。以下命令以仓库根为工作目录。
 
-运行时根目录：`BOARD_RUNTIME_ROOT`，本机为 Windows `D:\board` / WSL `/mnt/d/board`。模型、Qdrant 数据、构建产物、manifest/release、缓存、日志和运行 `.env` 都在这里，不在 checkout 内。
+运行时根目录：`BOARD_RUNTIME_ROOT`，由 git-ignored 的 `config/local.properties` 赋值。模型、Qdrant 数据、构建产物、manifest/release、缓存、日志和运行 `.env` 都在这里，不在 checkout 内。
 
 
 ## 1. Qdrant
@@ -10,9 +10,9 @@
 启动 Windows 原生 Qdrant，数据目录放到 runtime root：
 
 ```powershell
-set BOARD_RUNTIME_ROOT=D:\board
+rem 先在 git-ignored config/local.properties 配置 BOARD_RUNTIME_ROOT_WIN
 set QDRANT__STORAGE__STORAGE_PATH=%BOARD_RUNTIME_ROOT%\qdrant\data
-cd D:\qdrant
+cd %QDRANT_HOME_WIN%
 qdrant.exe
 ```
 
@@ -34,7 +34,7 @@ python3 tools/indexing/rebuild_index.py --all --no-switch
 
 ## 3. 启动 BoardAI.Api
 
-推荐直接运行仓库脚本，它会设置 runtime 环境变量并从 `D:\board\config\.env` 读取凭证：
+推荐直接运行仓库脚本，它会设置 runtime 环境变量并从 `$BOARD_RUNTIME_ROOT\config\.env` 读取凭证：
 
 ```bat
 backend\BoardAI.Api\start.bat
@@ -44,7 +44,7 @@ backend\BoardAI.Api\start.bat
 
 ```bash
 cd backend/BoardAI.Api
-export BOARD_RUNTIME_ROOT=/mnt/d/board
+# 先设置 BOARD_RUNTIME_ROOT（或在 shell 中加载本地配置）
 export Embedding__ModelDir="$BOARD_RUNTIME_ROOT/models/bge-base-zh-v1.5-fp32"
 export Rules__DiskCache__Directory="$BOARD_RUNTIME_ROOT/cache/rules-derived-cache"
 export Content__ManifestDirectory="$BOARD_RUNTIME_ROOT/content/manifests"
@@ -72,10 +72,11 @@ curl -X POST http://localhost:5000/api/chat \
 
 ## 4. 内容发布（不可变 manifest / release）
 
-manifest、release 属于运行时数据，默认写到 `BOARD_RUNTIME_ROOT`（本机 `D:\board`）：
+manifest、release 属于运行时数据，写入 `BOARD_RUNTIME_ROOT`：
 
 ```bash
-BOARD_RUNTIME_ROOT=/mnt/d/board python3 tools/content/build_content_manifest.py --game <game_name>
+# 先设置本地配置中的 BOARD_RUNTIME_ROOT
+python3 tools/content/build_content_manifest.py --game <game_name>
 ```
 
 生成：
@@ -119,7 +120,7 @@ DOUBAO_RESOURCE_ID=seed-tts-2.0
 自检：
 
 ```bash
-export BOARD_RUNTIME_ROOT=/mnt/d/board
+# 先设置本地配置中的 BOARD_RUNTIME_ROOT
 PYTHONPATH=. python3 tools/voice/tts_once.py \
   --text "这是一次语音测试" \
   --out-file /tmp/tts-test.mp3

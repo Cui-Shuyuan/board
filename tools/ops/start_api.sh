@@ -2,7 +2,16 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-RUNTIME_ROOT="${BOARD_RUNTIME_ROOT:-/mnt/d/board}"
+CONFIG_FILE="$REPO/config/local.properties"
+RUNTIME_ROOT="${BOARD_RUNTIME_ROOT:-}"
+if [ -z "$RUNTIME_ROOT" ] && [ -f "$CONFIG_FILE" ]; then
+  RUNTIME_ROOT="$(sed -n 's/^BOARD_RUNTIME_ROOT_WSL=//p' "$CONFIG_FILE" | tail -1)"
+fi
+if [ -z "$RUNTIME_ROOT" ]; then
+  echo "ERROR: BOARD_RUNTIME_ROOT is not configured." >&2
+  echo "Set BOARD_RUNTIME_ROOT or BOARD_RUNTIME_ROOT_WSL in git-ignored config/local.properties." >&2
+  exit 2
+fi
 TOOL_DIR="$REPO/.tools"
 DOTNET="$TOOL_DIR/dotnet/dotnet"
 

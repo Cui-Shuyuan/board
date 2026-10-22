@@ -7,7 +7,7 @@ metadata:
 
 # 工具与命令
 
-> 运行时路径统一使用 `BOARD_RUNTIME_ROOT`（本机 `D:\board` / WSL `/mnt/d/board`）。下文临时产物写在 `$BOARD_RUNTIME_ROOT/tmp/`，模型在 `$BOARD_RUNTIME_ROOT/models/`，生成 manifest/release 在 `$BOARD_RUNTIME_ROOT/content/`。
+> 运行时路径统一使用 `BOARD_RUNTIME_ROOT`（具体值由 git-ignored 本地配置赋值）。下文临时产物写在 `$BOARD_RUNTIME_ROOT/tmp/`，模型在 `$BOARD_RUNTIME_ROOT/models/`，生成 manifest/release 在 `$BOARD_RUNTIME_ROOT/content/`。
 
 ## 1. 本地服务
 
@@ -163,7 +163,8 @@ python3 tools/ops/check_unity_scripts.py
 - 构建：
 
 ```bash
-BOARD_RUNTIME_ROOT=/mnt/d/board python3 tools/content/build_content_manifest.py --game splendor
+# BOARD_RUNTIME_ROOT 来自本地配置
+python3 tools/content/build_content_manifest.py --game splendor
 ```
 
 builder 只收集 runtime/compiled 及实际引用媒体，排除 QA/文档/脚本/pyc/lrc/动画源；发布通过 `{version}.tmp` 校验后原子 rename，versioned URL 只读 release。

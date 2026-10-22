@@ -39,7 +39,7 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
    - catalog + runtime-only manifest 驱动 Android 首页、内容下载、增量更新、断点续传。
    - `tools/content/build_content_manifest.py` 只按 Unity/Android 运行依赖白名单打包，不包含 QA 日志、动画源、文档、脚本、`.pyc`、`.lrc` 等非运行文件；version 只由 package 内 `path + sha256` 决定。
    - manifest 指向 `$BOARD_RUNTIME_ROOT/content/releases/{game}/{version}/` 不可变发布目录；已发布的同 version URL 永不改变字节。
-   - manifest、release、构建输出、模型、Qdrant 数据和缓存都属于运行时数据，默认放在仓库外的 `BOARD_RUNTIME_ROOT`（本机 `D:\board`）。生产 API 主机必须用 `BOARD_RUNTIME_ROOT=D:\board python3 tools/content/build_content_manifest.py --game <game>` 生成这些目录，或单独部署已校验的发布目录；只同步代码不能发布新内容。
+   - manifest、release、构建输出、模型、Qdrant 数据和缓存都属于运行时数据，默认放在仓库外的 `BOARD_RUNTIME_ROOT`（由本地配置赋值）。生产 API 主机必须先在本地配置中设置 `BOARD_RUNTIME_ROOT`，再运行 `python3 tools/content/build_content_manifest.py --game <game>` 生成这些目录，或单独部署已校验的发布目录；只同步代码不能发布新内容。
    - 后端只读提供 `/api/catalog/games`、`/api/content/games/{game}/manifest` 与版本化文件接口。
    - catalog 显式声明 `rules_ready` / `tutorial_ready` / `tutorial_tracks`；规则-only 游戏不提供教程下载/播放入口，但可从首页直接进入规则问答。
 
@@ -114,7 +114,7 @@ protocol/                协议资料
 .claude/memory/           新会话必读的项目记忆与当前状态
 .claude/archive/          历史归档，默认不读
 
-D:\board/                  运行时根目录（BOARD_RUNTIME_ROOT，独立于 Git）
+$BOARD_RUNTIME_ROOT/                  运行时根目录（BOARD_RUNTIME_ROOT，独立于 Git）
   build/dotnet/            .NET bin/obj/artifacts
   models/                  本地 ONNX / tokenizer 模型
   qdrant/                  Qdrant 数据与快照
@@ -131,7 +131,7 @@ D:\board/                  运行时根目录（BOARD_RUNTIME_ROOT，独立于 G
 
 ## 快速开始
 
-> 本机绝对路径统一配置在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）。源码仓库只放代码、规则/内容源真值和测试；运行产物放 `BOARD_RUNTIME_ROOT`（本机 `D:\board`）。下文 `%BOARD_WORKSPACE_WIN%`、`%BOARD_RUNTIME_ROOT_WIN%`、`%QDRANT_HOME_WIN%`、`%ADB_WIN%` 等均引用该文件中的同名键。
+> 本机绝对路径统一配置在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）。源码仓库只放代码、规则/内容源真值和测试；运行产物放 `BOARD_RUNTIME_ROOT`（由本地配置赋值）。下文 `%BOARD_WORKSPACE_WIN%`、`%BOARD_RUNTIME_ROOT_WIN%`、`%QDRANT_HOME_WIN%`、`%ADB_WIN%` 等均引用该文件中的同名键。
 
 ### 1. 环境依赖
 
@@ -141,7 +141,7 @@ D:\board/                  运行时根目录（BOARD_RUNTIME_ROOT，独立于 G
 | Python 3.10+ | 规则校验 / 索引 / 动画工具 / 语音桥 | 建议 3.12 |
 | Qdrant 1.18.x | 向量检索 | 本地独立进程，默认 gRPC `6334` |
 | DeepSeek / LLM API Key | 规则问答语言层 | 只走环境变量，不进仓库 |
-| 火山引擎语音凭证 | ASR / TTS | 只写在 `D:\board\config\.env`（运行目录，不入 Git） |
+| 火山引擎语音凭证 | ASR / TTS | 只写在 `$BOARD_RUNTIME_ROOT\config\.env`（运行目录，不入 Git） |
 | Unity 6000.5.x + Android SDK/NDK | 构建 UaaL 客户端 | 仅客户端开发需要 |
 
 ### 2. 启动 Qdrant

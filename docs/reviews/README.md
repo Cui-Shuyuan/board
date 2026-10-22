@@ -2,7 +2,7 @@
 
 > 历史路径说明（2026-10-23）：历史报告中的 `.tmp/...` 是当时的本地 scratch 路径，不是当前运行依赖。
 > 新实验统一写 `$BOARD_RUNTIME_ROOT/tmp/...`；旧原始 agent/eval 产物已压缩到
-> `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`。
+> `$BOARD_RUNTIME_ROOT/archive/agent-workspace-evidence-20261023-004025.tar.zst`。
 
 ## 报告
 

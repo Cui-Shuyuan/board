@@ -1,4 +1,4 @@
-> 历史路径说明（2026-10-23）：本文保留当时本地 scratch 路径 `.tmp/...`，这些不是当前运行依赖。新实验请使用 `$BOARD_RUNTIME_ROOT/tmp/...`；2026-10-23 之前的原始 agent/eval 产物已压缩到 `D:\board\archive\agent-workspace-evidence-20261023-004025.tar.zst`，需要时解压后按原相对路径读取。
+> 历史路径说明（2026-10-23）：本文保留当时本地 scratch 路径 `.tmp/...`，这些不是当前运行依赖。新实验请使用 `$BOARD_RUNTIME_ROOT/tmp/...`；2026-10-23 之前的原始 agent/eval 产物已压缩到 `$BOARD_RUNTIME_ROOT/archive/agent-workspace-evidence-20261023-004025.tar.zst`，需要时解压后按原相对路径读取。
 
 > 后续复核发现并已修复 R1–R6；以 `docs/tutorial/animation-reuse-review-response-20261017.md` 为准。本报告保留首版迁移记录。
 
