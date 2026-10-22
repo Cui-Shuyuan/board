@@ -34,7 +34,7 @@ public class Program
             {
                 try
                 {
-                    options.Cache.Validate();
+                    options.Validate();
                     return true;
                 }
                 catch

@@ -25,7 +25,7 @@ public sealed class RulesContentStore : IDisposable
     private const int StripedLoadLockCount = 64;
 
     private readonly string _basePath;
-    private readonly RulesCacheOptions _cacheOptions;
+    private readonly RulesMemoryCacheOptions _cacheOptions;
     private readonly RulesCacheTelemetry _telemetry = new();
     private readonly ILogger? _logger;
     private readonly Action? _onDocumentChanged;
@@ -66,9 +66,9 @@ public sealed class RulesContentStore : IDisposable
         TimeProvider? timeProvider = null)
     {
         ArgumentNullException.ThrowIfNull(options);
-        options.Cache.Validate();
+        options.MemoryCache.Validate();
         _basePath = Path.GetFullPath(basePath);
-        _cacheOptions = options.Cache;
+        _cacheOptions = options.MemoryCache;
         _onDocumentChanged = onDocumentChanged;
         _logger = logger;
         _ = timeProvider ?? TimeProvider.System;
@@ -119,7 +119,7 @@ public sealed class RulesContentStore : IDisposable
             var elapsed = Stopwatch.GetElapsedTime(started);
             _telemetry.RecordRebuild(elapsed);
 
-            if (!_cacheOptions.MemoryCache.Enabled)
+            if (!_cacheOptions.Enabled)
                 return snapshot;
 
             lock (_gate)
@@ -213,12 +213,13 @@ public sealed class RulesContentStore : IDisposable
     {
         lock (_gate)
         {
+            _estimatedManagedBytes = RecalculateManagedBytesLocked();
             var derived = _games.Values.Sum(g => g.Snapshot.DerivedCacheEntryCount);
             if (_ontology != null)
                 derived += _ontology.Snapshot.DerivedCacheEntryCount;
 
             return _telemetry.ToStats(
-                _cacheOptions.MemoryCache,
+                _cacheOptions,
                 _estimatedManagedBytes,
                 _games.Count,
                 _ontology == null ? 0 : 1,
@@ -302,8 +303,8 @@ public sealed class RulesContentStore : IDisposable
                 docs[1],
                 docs[2],
                 rawBytes,
-                _cacheOptions.MemoryCache.MaxDerivedEntriesPerGame,
-                delta => OnDerivedSizeAdded(game, delta));
+                _cacheOptions.MaxDerivedEntriesPerGame,
+                (source, _) => OnDerivedSizeAdded(source));
             return (snapshot, combinedSignature);
         }
     }
@@ -343,34 +344,30 @@ public sealed class RulesContentStore : IDisposable
                 builtSignature,
                 docs[0]!,
                 docs[1],
-                _cacheOptions.MemoryCache.MaxDerivedEntriesPerGame,
-                delta => OnOntologyDerivedSizeAdded(delta));
+                _cacheOptions.MaxDerivedEntriesPerGame,
+                (source, _) => OnOntologyDerivedSizeAdded(source));
 
-            if (!_cacheOptions.MemoryCache.Enabled)
+            if (!_cacheOptions.Enabled)
                 return snapshot;
 
             lock (_gate)
             {
                 ThrowIfDisposed();
                 var old = _ontology;
-                if (old != null)
-                {
-                    _estimatedManagedBytes -= old.Snapshot.EstimatedBytes;
-                    if (!ReferenceEquals(old.Snapshot, snapshot))
-                        EvictGamesForOntologyChangeLocked(old.Snapshot);
-                }
+                if (old != null && !ReferenceEquals(old.Snapshot, snapshot))
+                    EvictGamesForOntologyChangeLocked(old.Snapshot);
 
                 _ontology = new OntologyCacheEntry(snapshot, builtSignature);
-                _estimatedManagedBytes += snapshot.EstimatedBytes;
 
-                if (snapshot.EstimatedBytes > _cacheOptions.MemoryCache.BudgetBytes)
+                if (snapshot.EstimatedBytes > _cacheOptions.BudgetBytes)
                 {
                     _telemetry.RecordOversizeRejected();
-                    _estimatedManagedBytes -= snapshot.EstimatedBytes;
                     _ontology = null;
+                    _estimatedManagedBytes = RecalculateManagedBytesLocked();
                 }
                 else
                 {
+                    _estimatedManagedBytes = RecalculateManagedBytesLocked();
                     EnforceMemoryBudgetLocked();
                 }
             }
@@ -381,7 +378,7 @@ public sealed class RulesContentStore : IDisposable
 
     private void CacheGameSnapshotLocked(string game, RulesGameSnapshot snapshot, string signature)
     {
-        if (snapshot.EstimatedBytes > _cacheOptions.MemoryCache.BudgetBytes
+        if (snapshot.EstimatedBytes > _cacheOptions.BudgetBytes
             || _ontology == null
             || !ReferenceEquals(_ontology.Snapshot, snapshot.OntologySnapshot))
         {
@@ -392,10 +389,8 @@ public sealed class RulesContentStore : IDisposable
             return;
         }
 
-
         if (_games.TryGetValue(game, out var old))
         {
-            _estimatedManagedBytes -= old.Snapshot.EstimatedBytes;
             if (old.Node.List != null)
                 _gameLru.Remove(old.Node);
         }
@@ -403,30 +398,56 @@ public sealed class RulesContentStore : IDisposable
         var entry = new GameCacheEntry(snapshot, signature);
         entry.Node = _gameLru.AddLast(entry);
         _games[game] = entry;
-        _estimatedManagedBytes += snapshot.EstimatedBytes;
+        _estimatedManagedBytes = RecalculateManagedBytesLocked();
         EnforceMemoryBudgetLocked();
     }
 
-    private void OnDerivedSizeAdded(string game, long delta)
+    /// <summary>
+    /// Derived-cache growth must be attributed to the exact snapshot that grew.
+    /// An evicted/in-flight old snapshot may still be used by a request, but its
+    /// late growth must not alter the accounting of a newer snapshot for the
+    /// same game (or trigger eviction of unrelated work).
+    /// </summary>
+    private void OnDerivedSizeAdded(RulesGameSnapshot source)
     {
-        if (!_cacheOptions.MemoryCache.Enabled || delta <= 0) return;
+        if (!_cacheOptions.Enabled) return;
         lock (_gate)
         {
-            if (!_games.TryGetValue(game, out _)) return;
-            _estimatedManagedBytes += delta;
+            if (!_games.TryGetValue(source.Game, out var entry)
+                || !ReferenceEquals(entry.Snapshot, source))
+            {
+                return;
+            }
+
+            _estimatedManagedBytes = RecalculateManagedBytesLocked();
             EnforceMemoryBudgetLocked();
         }
     }
 
-    private void OnOntologyDerivedSizeAdded(long delta)
+    private void OnOntologyDerivedSizeAdded(RulesOntologySnapshot source)
     {
-        if (!_cacheOptions.MemoryCache.Enabled || delta <= 0) return;
+        if (!_cacheOptions.Enabled) return;
         lock (_gate)
         {
-            if (_ontology == null) return;
-            _estimatedManagedBytes += delta;
+            if (_ontology == null || !ReferenceEquals(_ontology.Snapshot, source))
+                return;
+
+            _estimatedManagedBytes = RecalculateManagedBytesLocked();
             EnforceMemoryBudgetLocked();
         }
+    }
+
+    /// <summary>
+    /// Recomputes the managed-cache estimate from the objects actually retained
+    /// by the cache. This makes derived-cache growth and eviction use the same
+    /// authoritative snapshot sizes instead of independently accumulated deltas.
+    /// </summary>
+    private long RecalculateManagedBytesLocked()
+    {
+        var total = _ontology?.Snapshot.EstimatedBytes ?? 0;
+        foreach (var entry in _games.Values)
+            total += entry.Snapshot.EstimatedBytes;
+        return total;
     }
 
     private void EvictGamesForOntologyChangeLocked(RulesOntologySnapshot oldOntology)
@@ -441,9 +462,10 @@ public sealed class RulesContentStore : IDisposable
             if (!_games.Remove(game, out var entry)) continue;
             if (entry.Node.List != null)
                 _gameLru.Remove(entry.Node);
-            _estimatedManagedBytes -= entry.Snapshot.EstimatedBytes;
             _telemetry.RecordEviction();
         }
+
+        _estimatedManagedBytes = RecalculateManagedBytesLocked();
     }
 
     /// <summary>
@@ -453,9 +475,10 @@ public sealed class RulesContentStore : IDisposable
     /// </summary>
     private void EnforceMemoryBudgetLocked()
     {
-        var options = _cacheOptions.MemoryCache;
+        var options = _cacheOptions;
         if (!options.Enabled) return;
 
+        _estimatedManagedBytes = RecalculateManagedBytesLocked();
         var high = options.BudgetBytes * options.HighWatermark;
         if (_estimatedManagedBytes <= high) return;
         var target = options.BudgetBytes * options.TargetWatermark;
@@ -467,16 +490,16 @@ public sealed class RulesContentStore : IDisposable
             oldest.Node = null!;
             if (_games.Remove(oldest.Snapshot.Game))
             {
-                _estimatedManagedBytes -= oldest.Snapshot.EstimatedBytes;
                 _telemetry.RecordEviction();
             }
+            _estimatedManagedBytes = RecalculateManagedBytesLocked();
         }
 
         if (_estimatedManagedBytes > target && _ontology != null)
         {
-            _estimatedManagedBytes -= _ontology.Snapshot.EstimatedBytes;
             _ontology = null;
             _telemetry.RecordEviction();
+            _estimatedManagedBytes = RecalculateManagedBytesLocked();
         }
     }
 

@@ -35,7 +35,7 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
         ILoggerFactory? loggerFactory = null)
     {
         ArgumentNullException.ThrowIfNull(options);
-        options.Value.Cache.Validate();
+        options.Value.Validate();
 
         // Rules:BasePath is an optional override; when empty, resolve the
         // repository root with the same portable logic used by the API host.
@@ -44,10 +44,10 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
             basePath,
             options.Value,
             logger: loggerFactory?.CreateLogger<RulesContentStore>());
-        _diskCache = options.Value.Cache.DiskCache.Enabled
+        _diskCache = options.Value.DiskCache.Enabled
             ? new RulesDerivedDiskCache(
                 basePath,
-                options.Value.Cache.DiskCache,
+                options.Value.DiskCache,
                 loggerFactory?.CreateLogger<RulesDerivedDiskCache>())
             : null;
         _factService = new RulesFactService(_content);

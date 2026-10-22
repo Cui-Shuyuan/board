@@ -22,4 +22,8 @@
     <ProjectReference Include="..\BoardAI.Api\BoardAI.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
 </Project>

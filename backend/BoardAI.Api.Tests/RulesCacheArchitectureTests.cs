@@ -1,12 +1,81 @@
 using System.Text.Json;
 using BoardAI.Api.Models;
 using BoardAI.Api.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Tests;
 
 public sealed class RulesCacheArchitectureTests
 {
+    [Fact]
+    public void CacheConfiguration_BindsFromDocumentedRulesSection()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Rules:MemoryCache:Enabled"] = "false",
+                ["Rules:MemoryCache:BudgetBytes"] = (1024 * 1024).ToString(),
+                ["Rules:MemoryCache:HighWatermark"] = "0.9",
+                ["Rules:MemoryCache:TargetWatermark"] = "0.7",
+                ["Rules:DiskCache:Enabled"] = "false",
+                ["Rules:DiskCache:BudgetBytes"] = (2 * 1024 * 1024).ToString(),
+                ["Rules:DiskCache:Directory"] = "cache-under-test"
+            })
+            .Build();
+
+        var services = new ServiceCollection();
+        services.AddOptions<RulesOptions>()
+            .Bind(configuration.GetSection("Rules"))
+            .Validate(options =>
+            {
+                try
+                {
+                    options.Validate();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            });
+        using var provider = services.BuildServiceProvider();
+        var options = provider.GetRequiredService<IOptions<RulesOptions>>().Value;
+
+        Assert.False(options.MemoryCache.Enabled);
+        Assert.Equal(1024 * 1024, options.MemoryCache.BudgetBytes);
+        Assert.Equal(0.9, options.MemoryCache.HighWatermark);
+        Assert.Equal(0.7, options.MemoryCache.TargetWatermark);
+        Assert.False(options.DiskCache.Enabled);
+        Assert.Equal(2 * 1024 * 1024, options.DiskCache.BudgetBytes);
+        Assert.Equal("cache-under-test", options.DiskCache.Directory);
+    }
+
+    [Fact]
+    public void GrowthFromEvictedSnapshot_DoesNotPolluteCurrentSnapshotAccountingOrEvictIt()
+    {
+        using var fixture = new RulesFixture();
+        var options = TestOptions(fixture.Root, memoryEnabled: true, diskEnabled: false);
+        using var content = new RulesContentStore(fixture.Root, options);
+
+        var oldSnapshot = content.GetSnapshot("testgame");
+        fixture.WriteGameConcepts("新版小装置", "使用新版小装置");
+        File.SetLastWriteTimeUtc(fixture.GameConceptsPath, DateTime.UtcNow.AddMinutes(1));
+        var currentSnapshot = content.GetSnapshot("testgame");
+        Assert.NotSame(oldSnapshot, currentSnapshot);
+
+        var before = content.GetMemoryStats();
+        var staleDerivedBytes = options.MemoryCache.BudgetBytes * 2;
+        oldSnapshot.GetOrAdd("stale-derived", () => new object(), _ => staleDerivedBytes);
+
+        var after = content.GetMemoryStats();
+        Assert.Equal(1, after.CachedGameCount);
+        Assert.Equal(before.EstimatedManagedBytes, after.EstimatedManagedBytes);
+        Assert.Equal(before.Evictions, after.Evictions);
+        Assert.Same(currentSnapshot, content.GetSnapshot("testgame"));
+    }
+
     [Fact]
     public async Task QaSearch_SecondCall_UsesMemoryCache_AndReturnsSameResults()
     {
@@ -49,7 +118,7 @@ public sealed class RulesCacheArchitectureTests
     {
         using var root = new MultiGameFixture();
         var probeOptions = TestOptions(root.Path, memoryEnabled: true, diskEnabled: false);
-        probeOptions.Cache.MemoryCache.BudgetBytes = 1024L * 1024 * 1024;
+        probeOptions.MemoryCache.BudgetBytes = 1024L * 1024 * 1024;
         long ontologyBytes;
         long gameBytes;
 
@@ -63,9 +132,9 @@ public sealed class RulesCacheArchitectureTests
         // Target holds exactly two games; adding the third must evict the oldest.
         var budget = (long)Math.Ceiling((ontologyBytes + 2.0 * gameBytes) / 0.80);
         var options = TestOptions(root.Path, memoryEnabled: true, diskEnabled: false);
-        options.Cache.MemoryCache.BudgetBytes = budget;
-        options.Cache.MemoryCache.HighWatermark = 0.90;
-        options.Cache.MemoryCache.TargetWatermark = 0.80;
+        options.MemoryCache.BudgetBytes = budget;
+        options.MemoryCache.HighWatermark = 0.90;
+        options.MemoryCache.TargetWatermark = 0.80;
 
         using var content = new RulesContentStore(root.Path, options);
         content.GetSnapshot("a");
@@ -94,9 +163,9 @@ public sealed class RulesCacheArchitectureTests
     {
         using var fixture = new RulesFixture();
         var options = TestOptions(fixture.Root, memoryEnabled: true, diskEnabled: true);
-        options.Cache.DiskCache.Directory = Path.Combine(fixture.Root, "rules-cache");
-        options.Cache.DiskCache.FlushIntervalSeconds = 3600;
-        options.Cache.DiskCache.ShutdownFlushTimeoutMilliseconds = 5_000;
+        options.DiskCache.Directory = Path.Combine(fixture.Root, "rules-cache");
+        options.DiskCache.FlushIntervalSeconds = 3600;
+        options.DiskCache.ShutdownFlushTimeoutMilliseconds = 5_000;
 
         SearchConceptsResult first;
         using (var firstProcess = new GameRulesService(Options.Create(options), vectorSearch: null))
@@ -105,7 +174,7 @@ public sealed class RulesCacheArchitectureTests
         }
 
         var writtenFiles = Directory.GetFiles(
-            options.Cache.DiskCache.Directory,
+            options.DiskCache.Directory,
             "*.json",
             SearchOption.AllDirectories);
         Assert.NotEmpty(writtenFiles);
@@ -126,21 +195,18 @@ public sealed class RulesCacheArchitectureTests
         return new RulesOptions
         {
             BasePath = basePath,
-            Cache = new RulesCacheOptions
+            MemoryCache = new RulesMemoryCacheOptions
             {
-                MemoryCache = new RulesMemoryCacheOptions
-                {
-                    Enabled = memoryEnabled,
-                    BudgetBytes = 256L * 1024 * 1024,
-                    HighWatermark = 0.80,
-                    TargetWatermark = 0.60
-                },
-                DiskCache = new RulesDiskCacheOptions
-                {
-                    Enabled = diskEnabled,
-                    FlushIntervalSeconds = 3600,
-                    ShutdownFlushTimeoutMilliseconds = 2_000
-                }
+                Enabled = memoryEnabled,
+                BudgetBytes = 256L * 1024 * 1024,
+                HighWatermark = 0.80,
+                TargetWatermark = 0.60
+            },
+            DiskCache = new RulesDiskCacheOptions
+            {
+                Enabled = diskEnabled,
+                FlushIntervalSeconds = 3600,
+                ShutdownFlushTimeoutMilliseconds = 2_000
             }
         };
     }

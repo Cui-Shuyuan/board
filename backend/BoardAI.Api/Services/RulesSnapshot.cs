@@ -15,7 +15,7 @@ public sealed class RulesOntologySnapshot
 {
     private readonly ConcurrentDictionary<string, Lazy<CacheValue>> _cache = new(StringComparer.Ordinal);
     private readonly int _maxEntries;
-    private readonly Action<long>? _onDerivedSizeAdded;
+    private readonly Action<RulesOntologySnapshot, long>? _onDerivedSizeAdded;
     private long _derivedEstimatedBytes;
 
     internal RulesOntologySnapshot(
@@ -23,7 +23,7 @@ public sealed class RulesOntologySnapshot
         JsonDocument ontology,
         JsonDocument? ontologyFlow,
         int maxEntries,
-        Action<long>? onDerivedSizeAdded)
+        Action<RulesOntologySnapshot, long>? onDerivedSizeAdded)
     {
         Signature = signature;
         Ontology = ontology;
@@ -56,7 +56,7 @@ public sealed class RulesOntologySnapshot
                     var estimated = estimator?.Invoke(value)
                                      ?? RulesCacheSizeEstimator.EstimateObject(value);
                     Interlocked.Add(ref _derivedEstimatedBytes, estimated);
-                    _onDerivedSizeAdded?.Invoke(estimated);
+                    _onDerivedSizeAdded?.Invoke(this, estimated);
                     return new CacheValue(value, estimated);
                 },
                 LazyThreadSafetyMode.ExecutionAndPublication));
@@ -86,7 +86,7 @@ public sealed class RulesGameSnapshot
 {
     private readonly ConcurrentDictionary<string, Lazy<CacheValue>> _cache = new(StringComparer.Ordinal);
     private readonly int _maxDerivedEntries;
-    private readonly Action<long>? _onDerivedSizeAdded;
+    private readonly Action<RulesGameSnapshot, long>? _onDerivedSizeAdded;
     private long _derivedEstimatedBytes;
 
     /// <summary>
@@ -131,7 +131,7 @@ public sealed class RulesGameSnapshot
         JsonDocument? gameFlow,
         long rawGameDocumentBytes,
         int maxDerivedEntries,
-        Action<long>? onDerivedSizeAdded)
+        Action<RulesGameSnapshot, long>? onDerivedSizeAdded)
     {
         Game = game;
         Revision = revision;
@@ -179,7 +179,7 @@ public sealed class RulesGameSnapshot
                     var estimated = estimator?.Invoke(value)
                                      ?? RulesCacheSizeEstimator.EstimateObject(value);
                     Interlocked.Add(ref _derivedEstimatedBytes, estimated);
-                    _onDerivedSizeAdded?.Invoke(estimated);
+                    _onDerivedSizeAdded?.Invoke(this, estimated);
                     return new CacheValue(value, estimated);
                 },
                 LazyThreadSafetyMode.ExecutionAndPublication));

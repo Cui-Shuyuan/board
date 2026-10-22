@@ -1,22 +1,5 @@
 namespace BoardAI.Api.Models;
 
-/// <summary>
-/// Bounded, process-local caches for rule data and derived search materials.
-/// These budgets are cache budgets, not process memory limits. In-flight
-/// requests keep their own snapshot references even after cache eviction.
-/// </summary>
-public sealed class RulesCacheOptions
-{
-    public RulesMemoryCacheOptions MemoryCache { get; set; } = new();
-    public RulesDiskCacheOptions DiskCache { get; set; } = new();
-
-    public void Validate()
-    {
-        MemoryCache.Validate();
-        DiskCache.Validate();
-    }
-}
-
 public sealed class RulesMemoryCacheOptions
 {
     /// <summary>When false, no snapshot or derived material survives the request scope.</summary>
