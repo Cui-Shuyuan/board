@@ -7,6 +7,7 @@ public sealed class RulesSearchService
 {
     private readonly IRulesConceptCatalog _catalog;
     private readonly VectorSearchService? _vectorSearch;
+    private readonly string _corpusCacheKey = "keyword-corpus:" + Guid.NewGuid().ToString("N");
 
     public RulesSearchService(
         IRulesConceptCatalog catalog,
@@ -319,7 +320,33 @@ public sealed class RulesSearchService
 
         var (ns, localQuery) = RulesTextUtils.ParseNamespace(query);
         var localTerms = Tokenize(localQuery).ToList();
+        if (!string.IsNullOrEmpty(ns) && ns != "ontology")
+            return Array.Empty<ConceptSummary>();
 
+        var snapshot = RulesSnapshotScope.Current;
+        var corpus = snapshot != null && snapshot.Game == game
+            ? snapshot.GetOrAdd(_corpusCacheKey + ":" + ns,
+                () => new Lazy<KeywordCorpusEntry[]>(() => BuildKeywordCorpus(game, ns),
+                    LazyThreadSafetyMode.ExecutionAndPublication)).Value
+            : BuildKeywordCorpus(game, ns);
+        var activeTerms = localTerms.Count > 0 ? localTerms : terms;
+        var results = new List<ConceptSummary>();
+        foreach (var entry in corpus)
+        {
+            if (!activeTerms.Any(t => entry.Id.Contains(t, StringComparison.InvariantCultureIgnoreCase)
+                || entry.Name.Contains(t, StringComparison.InvariantCultureIgnoreCase)
+                || entry.Text.Any(value => value.Contains(t, StringComparison.InvariantCultureIgnoreCase))))
+                continue;
+            // Never expose cached mutable summaries or media dictionaries to ranking/callers.
+            results.Add(new ConceptSummary { Id = entry.Id, Path = entry.Path,
+                Name = entry.Name, Type = entry.Type, Description = entry.Description,
+                Media = CloneMedia(entry.Media) });
+        }
+        return results;
+    }
+
+    private KeywordCorpusEntry[] BuildKeywordCorpus(string game, string? ns)
+    {
         var all = new List<ConceptSummary>();
         if (string.IsNullOrEmpty(ns) || ns == "ontology")
             all.AddRange(_catalog.ListConcepts(game, "ontology"));
@@ -341,26 +368,35 @@ public sealed class RulesSearchService
             all.AddRange(_catalog.ListConcepts(game, "flow"));
         }
 
-        var activeTerms = localTerms.Count > 0 ? localTerms : terms;
-        var results = new List<ConceptSummary>();
-        foreach (var summary in all)
+        return all.Select(summary =>
         {
-            if (activeTerms.Any(t => MatchesSummary(summary, t)))
-            {
-                results.Add(summary);
-                continue;
-            }
-
+            // Preserve the existing ID lookup semantics, including namespace collisions.
             var detail = _catalog.GetConcept(game, summary.Id);
-            if (detail.HasValue && activeTerms.Any(t => ContainsTerm(detail.Value, t)))
-            {
-                results.Add(summary);
-            }
-        }
-
-        return results;
+            var text = new List<string>();
+            if (detail.HasValue) CollectText(detail.Value, text);
+            return new KeywordCorpusEntry(summary.Id, summary.Path, summary.Name, summary.Type,
+                summary.Description, SnapshotMedia(summary.Media), text.ToArray());
+        }).ToArray();
     }
 
+    private static void CollectText(JsonElement element, List<string> text)
+    {
+        switch (element.ValueKind)
+        {
+            case JsonValueKind.String:
+                text.Add(element.GetString()!);
+                break;
+            case JsonValueKind.Object:
+                foreach (var property in element.EnumerateObject()) CollectText(property.Value, text);
+                break;
+            case JsonValueKind.Array:
+                foreach (var item in element.EnumerateArray()) CollectText(item, text);
+                break;
+        }
+    }
+
+    private sealed record KeywordCorpusEntry(string Id, string Path, string Name, string Type,
+        string? Description, IReadOnlyDictionary<string, JsonElement>? Media, string[] Text);
 
     private static IEnumerable<string> Tokenize(string query)
     {
