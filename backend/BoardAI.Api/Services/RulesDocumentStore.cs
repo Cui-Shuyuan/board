@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using BoardAI.Api.Models;
 
 namespace BoardAI.Api.Services;
 
@@ -16,16 +17,23 @@ public sealed class RulesDocumentStore : IDisposable
     private const int ReadRetryDelayMilliseconds = 10;
 
     private readonly Action? _onDocumentChanged;
+    private readonly RulesMemoryCacheOptions _cacheOptions;
     private readonly object _gate = new();
     private readonly Dictionary<string, Entry> _documents = new(StringComparer.Ordinal);
+    private readonly LinkedList<Entry> _lru = new();
     private readonly Queue<JsonDocument> _retired = new();
     private readonly HashSet<string> _syntheticPaths = new(StringComparer.Ordinal);
     private long _revision;
+    private long _estimatedBytes;
     private bool _disposed;
 
-    public RulesDocumentStore(Action? onDocumentChanged = null)
+    public RulesDocumentStore(
+        Action? onDocumentChanged = null,
+        RulesMemoryCacheOptions? cacheOptions = null)
     {
         _onDocumentChanged = onDocumentChanged;
+        _cacheOptions = cacheOptions ?? new RulesMemoryCacheOptions();
+        _cacheOptions.Validate();
     }
 
     /// <summary>当前内容代次；任何已缓存文档的首次加载/替换/删除都会推进。</summary>
@@ -81,13 +89,17 @@ public sealed class RulesDocumentStore : IDisposable
             ThrowIfDisposed();
 
             if (_syntheticPaths.Contains(absolutePath) && _documents.TryGetValue(absolutePath, out var synthetic))
+            {
+                TouchLocked(synthetic);
                 return synthetic.Document;
+            }
 
             var info = new FileInfo(absolutePath);
             if (!info.Exists)
             {
-                if (_documents.Remove(absolutePath, out var removed))
+                if (_documents.TryGetValue(absolutePath, out var removed))
                 {
+                    RemoveFromCacheLocked(removed);
                     Retire(removed.Document);
                     _revision++;
                     _onDocumentChanged?.Invoke();
@@ -125,15 +137,18 @@ public sealed class RulesDocumentStore : IDisposable
             ThrowIfDisposed();
             var document = ParseDocument(json);
             if (_documents.TryGetValue(absolutePath, out var old))
+            {
+                RemoveFromCacheLocked(old);
                 Retire(old.Document);
+            }
 
-            _documents[absolutePath] = new Entry
+            AddToCacheLocked(new Entry
             {
                 Path = absolutePath,
                 Length = System.Text.Encoding.UTF8.GetByteCount(json),
                 LastWriteTimeUtc = DateTime.UtcNow,
                 Document = document
-            };
+            });
             _syntheticPaths.Add(absolutePath);
             _revision++;
             _onDocumentChanged?.Invoke();
@@ -143,7 +158,10 @@ public sealed class RulesDocumentStore : IDisposable
     private JsonDocument GetDocumentCore(string absolutePath)
     {
         if (_syntheticPaths.Contains(absolutePath) && _documents.TryGetValue(absolutePath, out var synthetic))
+        {
+            TouchLocked(synthetic);
             return synthetic.Document;
+        }
 
         var info = new FileInfo(absolutePath);
         if (!info.Exists)
@@ -155,12 +173,16 @@ public sealed class RulesDocumentStore : IDisposable
     private JsonDocument GetDocumentCore(string absolutePath, FileInfo info)
     {
         if (_syntheticPaths.Contains(absolutePath) && _documents.TryGetValue(absolutePath, out var synthetic))
+        {
+            TouchLocked(synthetic);
             return synthetic.Document;
+        }
 
         if (_documents.TryGetValue(absolutePath, out var cached)
             && info.Length == cached.Length
             && info.LastWriteTimeUtc == cached.LastWriteTimeUtc)
         {
+            TouchLocked(cached);
             return cached.Document;
         }
 
@@ -168,20 +190,64 @@ public sealed class RulesDocumentStore : IDisposable
 
         var replaced = _documents.TryGetValue(absolutePath, out var old);
         if (replaced)
+        {
+            RemoveFromCacheLocked(old!);
             Retire(old!.Document);
+        }
 
-        _documents[absolutePath] = new Entry
+        AddToCacheLocked(new Entry
         {
             Path = absolutePath,
             Length = loaded.Length,
             LastWriteTimeUtc = loaded.LastWriteTimeUtc,
             Document = loaded.Document
-        };
+        });
         _revision++;
         if (replaced)
             _onDocumentChanged?.Invoke();
 
         return loaded.Document;
+    }
+
+    private void AddToCacheLocked(Entry entry)
+    {
+        var estimated = RulesCacheSizeEstimator.EstimateDocument(entry.Document) + 128;
+        if (estimated > _cacheOptions.BudgetBytes)
+            return;
+
+        entry.EstimatedBytes = estimated;
+        entry.Node = _lru.AddLast(entry);
+        _documents[entry.Path] = entry;
+        _estimatedBytes += estimated;
+
+        var high = _cacheOptions.BudgetBytes * _cacheOptions.HighWatermark;
+        if (_estimatedBytes <= high) return;
+        var target = _cacheOptions.BudgetBytes * _cacheOptions.TargetWatermark;
+        while (_estimatedBytes > target && _lru.First != null)
+        {
+            var oldest = _lru.First.Value;
+            _lru.RemoveFirst();
+            oldest.Node = null!;
+            if (!_documents.Remove(oldest.Path, out var removed)) continue;
+            _estimatedBytes -= removed.EstimatedBytes;
+            Retire(removed.Document);
+        }
+    }
+
+    private void TouchLocked(Entry entry)
+    {
+        if (entry.Node.List == null) return;
+        _lru.Remove(entry.Node);
+        _lru.AddLast(entry.Node);
+    }
+
+    private void RemoveFromCacheLocked(Entry entry)
+    {
+        if (entry.Node.List != null)
+            _lru.Remove(entry.Node);
+        entry.Node = null!;
+        _estimatedBytes -= entry.EstimatedBytes;
+        _documents.Remove(entry.Path);
     }
 
     private static JsonDocument ParseDocument(string json)
@@ -270,5 +336,7 @@ public sealed class RulesDocumentStore : IDisposable
         public long Length;
         public DateTime LastWriteTimeUtc;
         public JsonDocument Document = null!;
+        public long EstimatedBytes;
+        public LinkedListNode<Entry> Node = null!;
     }
 }

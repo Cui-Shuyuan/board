@@ -34,6 +34,21 @@ dotnet run --urls "http://0.0.0.0:5000"
 - `Embedding:ModelDir` 为空时默认使用 `{仓库根}/backend/BoardAI.Api/ml_models/bge-base-zh-v1.5-fp32`；相对路径按仓库根解析，绝对路径原样使用。
 - `ContentController`、`Program.cs`、`GameRulesService` 共用同一套解析逻辑。
 
+## 规则问答缓存
+
+规则问答有两层可丢弃缓存，正式真值仍是规则 JSON：
+
+- `Rules:MemoryCache`：按游戏 LRU 的有界快照缓存，公共 ontology 单独共享并只计一次。
+  默认预算 256 MiB、高水位 80%、目标水位 60%。
+- `Rules:DiskCache`：只持久化显式 DTO（当前为关键词搜索材料），默认预算 512 MiB，
+  每 300 秒后台刷写一次，正常关闭有 5 秒上限的尽力刷写，默认目录为
+  `backend/BoardAI.Api/storage/rules-derived-cache`（Git 忽略）。
+
+同时关闭 `Rules:MemoryCache:Enabled` 和 `Rules:DiskCache:Enabled` 可得到不使用跨请求
+计算结果的模式。诊断接口：`GET /api/rules/cache/stats`。这些预算是估算缓存占用，
+不是进程内存硬上限。详细失效、淘汰和故障降级说明见
+`docs/reviews/qa-backend-cache-architecture-2026-10-22.md`。
+
 本机路径统一记录在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）。按该文件设置以下变量后运行：
 
 ```bat
@@ -80,6 +95,7 @@ Android 教程播放器还会在请求里带可选 `context`（`cue_id` / `cue_i
 
 ```text
 GET  /api/rules/games
+GET  /api/rules/cache/stats
 GET  /api/rules/games/{game}/types
 GET  /api/rules/games/{game}/concepts?type=...
 GET  /api/rules/games/{game}/concepts/{id}

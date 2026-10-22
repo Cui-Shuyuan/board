@@ -21,6 +21,16 @@ public class RulesController : ControllerBase
         return Ok(_rulesService.GetGames());
     }
 
+    /// <summary>
+    /// Testable cache diagnostics. Budget fields describe managed cache estimates,
+    /// not a process memory hard limit; managed heap/working set are separate.
+    /// </summary>
+    [HttpGet("cache/stats")]
+    public IActionResult GetCacheStats()
+    {
+        return Ok(_rulesService.GetCacheStats());
+    }
+
     [HttpGet("games/{game}/types")]
     public IActionResult GetTypes(string game)
     {

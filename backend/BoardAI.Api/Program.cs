@@ -28,8 +28,21 @@ public class Program
 
         builder.Services.Configure<LLMOptions>(
             builder.Configuration.GetSection("LLM"));
-        builder.Services.Configure<RulesOptions>(
-            builder.Configuration.GetSection("Rules"));
+        builder.Services.AddOptions<RulesOptions>()
+            .Bind(builder.Configuration.GetSection("Rules"))
+            .Validate(options =>
+            {
+                try
+                {
+                    options.Cache.Validate();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }, "Rules cache configuration is invalid: check thresholds, budgets and flush settings.")
+            .ValidateOnStart();
         builder.Services.Configure<VoiceOptions>(
             builder.Configuration.GetSection("Voice"));
 

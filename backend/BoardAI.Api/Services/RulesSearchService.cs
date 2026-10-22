@@ -5,16 +5,20 @@ namespace BoardAI.Api.Services;
 
 public sealed class RulesSearchService
 {
+    private const string CorpusCacheKeyPrefix = "keyword-corpus:v1:";
+
     private readonly IRulesConceptCatalog _catalog;
     private readonly VectorSearchService? _vectorSearch;
-    private readonly string _corpusCacheKey = "keyword-corpus:" + Guid.NewGuid().ToString("N");
+    private readonly RulesDerivedDiskCache? _diskCache;
 
     public RulesSearchService(
         IRulesConceptCatalog catalog,
-        VectorSearchService? vectorSearch)
+        VectorSearchService? vectorSearch,
+        RulesDerivedDiskCache? diskCache = null)
     {
         _catalog = catalog;
         _vectorSearch = vectorSearch;
+        _diskCache = diskCache;
     }
 
     public async Task<SearchConceptsResult> SearchConceptsAsync(
@@ -325,10 +329,11 @@ public sealed class RulesSearchService
 
         var snapshot = RulesSnapshotScope.Current;
         var corpus = snapshot != null && snapshot.Game == game
-            ? snapshot.GetOrAdd(_corpusCacheKey + ":" + ns,
-                () => new Lazy<KeywordCorpusEntry[]>(() => BuildKeywordCorpus(game, ns),
-                    LazyThreadSafetyMode.ExecutionAndPublication)).Value
-            : BuildKeywordCorpus(game, ns);
+            ? snapshot.GetOrAdd(
+                CorpusCacheKeyPrefix + (ns ?? "<all>"),
+                () => BuildKeywordCorpus(game, ns, snapshot),
+                EstimateCorpusBytes)
+            : BuildKeywordCorpus(game, ns, snapshot: null);
         var activeTerms = localTerms.Count > 0 ? localTerms : terms;
         var results = new List<ConceptSummary>();
         foreach (var entry in corpus)
@@ -345,8 +350,20 @@ public sealed class RulesSearchService
         return results;
     }
 
-    private KeywordCorpusEntry[] BuildKeywordCorpus(string game, string? ns)
+    private KeywordCorpusEntry[] BuildKeywordCorpus(string game, string? ns, RulesGameSnapshot? snapshot)
     {
+        // Disk restore is lazy and happens only after the caller has already
+        // built/bound a content snapshot. The snapshot Version is a SHA-256 over
+        // every relevant rule document, including "<missing>" states, so a cache
+        // identity mismatch can never silently reuse material after rule changes.
+        if (snapshot != null
+            && _diskCache != null
+            && _diskCache.TryGetKeywordCorpus(game, snapshot.Version, ns, out var cachedDto)
+            && cachedDto != null)
+        {
+            return MaterializeCorpus(cachedDto);
+        }
+
         var all = new List<ConceptSummary>();
         if (string.IsNullOrEmpty(ns) || ns == "ontology")
             all.AddRange(_catalog.ListConcepts(game, "ontology"));
@@ -368,7 +385,7 @@ public sealed class RulesSearchService
             all.AddRange(_catalog.ListConcepts(game, "flow"));
         }
 
-        return all.Select(summary =>
+        var entries = all.Select(summary =>
         {
             // Preserve the existing ID lookup semantics, including namespace collisions.
             var detail = _catalog.GetConcept(game, summary.Id);
@@ -377,6 +394,68 @@ public sealed class RulesSearchService
             return new KeywordCorpusEntry(summary.Id, summary.Path, summary.Name, summary.Type,
                 summary.Description, SnapshotMedia(summary.Media), text.ToArray());
         }).ToArray();
+
+        if (snapshot != null && _diskCache != null)
+            _diskCache.QueueKeywordCorpus(game, snapshot.Version, ns, ToCacheDto(entries));
+
+        return entries;
+    }
+
+    private static long EstimateCorpusBytes(KeywordCorpusEntry[] entries)
+    {
+        long total = 256;
+        foreach (var entry in entries)
+        {
+            total += RulesCacheSizeEstimator.EstimateString(entry.Id)
+                     + RulesCacheSizeEstimator.EstimateString(entry.Path)
+                     + RulesCacheSizeEstimator.EstimateString(entry.Name)
+                     + RulesCacheSizeEstimator.EstimateString(entry.Type)
+                     + RulesCacheSizeEstimator.EstimateString(entry.Description);
+            if (entry.Media != null)
+            {
+                foreach (var (key, value) in entry.Media)
+                    total += RulesCacheSizeEstimator.EstimateString(key)
+                             + RulesCacheSizeEstimator.EstimateObject(value);
+            }
+            foreach (var text in entry.Text)
+                total += RulesCacheSizeEstimator.EstimateString(text);
+        }
+        return total;
+    }
+
+    private static RulesKeywordCorpusCacheDto ToCacheDto(KeywordCorpusEntry[] entries)
+    {
+        return new RulesKeywordCorpusCacheDto
+        {
+            Entries = entries.Select(entry => new RulesKeywordCorpusEntryDto
+            {
+                Id = entry.Id,
+                Path = entry.Path,
+                Name = entry.Name,
+                Type = entry.Type,
+                Description = entry.Description,
+                Media = entry.Media?.ToDictionary(
+                    pair => pair.Key,
+                    pair => pair.Value.Clone(),
+                    StringComparer.Ordinal),
+                Text = entry.Text.ToList()
+            }).ToList()
+        };
+    }
+
+    private static KeywordCorpusEntry[] MaterializeCorpus(RulesKeywordCorpusCacheDto dto)
+    {
+        return dto.Entries.Select(entry => new KeywordCorpusEntry(
+            entry.Id,
+            entry.Path,
+            entry.Name,
+            entry.Type,
+            entry.Description,
+            entry.Media?.ToDictionary(
+                pair => pair.Key,
+                pair => pair.Value.Clone(),
+                StringComparer.Ordinal),
+            entry.Text.ToArray())).ToArray();
     }
 
     private static void CollectText(JsonElement element, List<string> text)
@@ -394,9 +473,6 @@ public sealed class RulesSearchService
                 break;
         }
     }
-
-    private sealed record KeywordCorpusEntry(string Id, string Path, string Name, string Type,
-        string? Description, IReadOnlyDictionary<string, JsonElement>? Media, string[] Text);
 
     private static IEnumerable<string> Tokenize(string query)
     {

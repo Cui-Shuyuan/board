@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Text.Json;
 using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BoardAI.Api.Services;
@@ -8,6 +10,7 @@ namespace BoardAI.Api.Services;
 public partial class GameRulesService : IRulesConceptCatalog, IDisposable
 {
     private readonly RulesContentStore _content;
+    private readonly RulesDerivedDiskCache? _diskCache;
 
     private readonly RulesFactService _factService;
 
@@ -26,19 +29,34 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     private readonly RulesPlanService _planService;
 
 
-    public GameRulesService(IOptions<RulesOptions> options, VectorSearchService? vectorSearch = null)
+    public GameRulesService(
+        IOptions<RulesOptions> options,
+        VectorSearchService? vectorSearch = null,
+        ILoggerFactory? loggerFactory = null)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        options.Value.Cache.Validate();
+
         // Rules:BasePath is an optional override; when empty, resolve the
         // repository root with the same portable logic used by the API host.
         var basePath = BoardPaths.ResolveBasePath(options.Value.BasePath);
-        _content = new RulesContentStore(basePath);
+        _content = new RulesContentStore(
+            basePath,
+            options.Value,
+            logger: loggerFactory?.CreateLogger<RulesContentStore>());
+        _diskCache = options.Value.Cache.DiskCache.Enabled
+            ? new RulesDerivedDiskCache(
+                basePath,
+                options.Value.Cache.DiskCache,
+                loggerFactory?.CreateLogger<RulesDerivedDiskCache>())
+            : null;
         _factService = new RulesFactService(_content);
         _flowService = new RulesFlowService(_content);
         _catalog = new RulesConceptCatalog(_content);
         _nameIndex = new RulesNameIndexService(_catalog, _content);
         _referenceService = new RulesReferenceService(_catalog, _nameIndex);
         _indexService = new RulesIndexService(_catalog, _content, vectorSearch);
-        _searchService = new RulesSearchService(_catalog, vectorSearch);
+        _searchService = new RulesSearchService(_catalog, vectorSearch, _diskCache);
         _planService = new RulesPlanService(
             _catalog,
             _searchService,
@@ -50,7 +68,36 @@ public partial class GameRulesService : IRulesConceptCatalog, IDisposable
     }
 
 
-    public void Dispose() => _content.Dispose();
+    public RulesCacheStats GetCacheStats()
+    {
+        using var process = Process.GetCurrentProcess();
+        return new RulesCacheStats(
+            _content.GetMemoryStats(),
+            _diskCache?.GetStats() ?? new RulesDiskCacheStats(
+                Enabled: false,
+                Directory: string.Empty,
+                BudgetBytes: 0,
+                DiskUsageBytes: 0,
+                Hits: 0,
+                Misses: 0,
+                ExpiredEntries: 0,
+                CorruptEntries: 0,
+                ReadFailures: 0,
+                WriteFailures: 0,
+                WriteSuccesses: 0,
+                CleanupDeletes: 0,
+                PendingWrites: 0,
+                PendingBytes: 0,
+                OversizeEntriesRejected: 0),
+            GC.GetTotalMemory(forceFullCollection: false),
+            process.WorkingSet64);
+    }
+
+    public void Dispose()
+    {
+        _content.Dispose();
+        _diskCache?.Dispose();
+    }
 
 
     public string AnnotateReferences(string text, string game)
