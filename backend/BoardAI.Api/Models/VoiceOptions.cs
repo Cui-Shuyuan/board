@@ -4,10 +4,10 @@ namespace BoardAI.Api.Models;
 /// Configuration for Volcengine speech services.
 ///
 /// ASR defaults to the in-process C# client; setting AsrMode to "python"
-/// keeps the legacy short-lived Python bridge fallback. TTS still uses the
-/// Python bridge. Relative script paths are resolved against the repository
-/// root by BoardPaths so the API can run from bin/ without machine-specific
-/// paths.
+/// keeps the legacy short-lived Python bridge fallback. Q&amp;A TTS is also
+/// native in the API process; TtsScript remains only for offline scripts.
+/// Relative script paths are resolved against the repository root by
+/// BoardPaths so the API can run from bin/ without machine-specific paths.
 /// </summary>
 public class VoiceOptions
 {
@@ -27,6 +27,9 @@ public class VoiceOptions
     /// <summary>Standard small-model default voice used when Android omits voice.</summary>
     public string DefaultTtsVoice { get; set; } = "BV700_streaming";
 
-    /// <summary>Passed to tts_once.py as --provider; standard is the default small model.</summary>
+    /// <summary>
+    /// Native Q&amp;A TTS provider: standard (v1 small-model WebSocket) or
+    /// seed2 (speech synthesis 2.0 bidirectional WebSocket).
+    /// </summary>
     public string TtsProvider { get; set; } = "standard";
 }

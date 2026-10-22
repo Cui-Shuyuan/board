@@ -52,7 +52,7 @@ metadata:
 - LLM：`ILLMService` 抽象，当前 DeepSeek 兼容接口；system prompt 配置在 `appsettings.json`。
 - 检索：Qdrant 独立进程 + `bge-base-zh-v1.5` fp32 ONNX。
 - TTS：默认火山豆包标准语音合成小模型 v1（`standard`）；旧语音合成 2.0 通过 `--provider seed2` / `DOUBAO_TTS_PROVIDER=seed2` 兼容。
-- 语音：ASR 默认由 .NET API 进程内直连火山（`Voice:AsrMode=native`）；`tools/voice/asr_once.py` 作为 `Voice:AsrMode=python` 回退；TTS 仍走 Python 短进程（`tools/voice/tts_once.py`）。Android 不直接接触火山凭证。
+- 语音：ASR 与问答 TTS 默认由 .NET API 进程内直连火山（ASR `Voice:AsrMode=native`，TTS `VolcengineTtsClient`）；`tools/voice/asr_once.py` 作为 ASR 的 Python 回退，`tools/voice/tts_once.py` 仅用于离线自检/教学动画批量音频。Android 不直接接触火山凭证。
 - 部署：Windows 本地主机 + 店内内网；模型、音频、视频、PDF、原始照片、内容 manifest 生成物不进 Git。
 
 ## 开发阶段

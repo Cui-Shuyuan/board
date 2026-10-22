@@ -170,6 +170,12 @@ public sealed class RulesSearchService
         {
             throw;
         }
+        catch (EmbeddingQueueFullException)
+        {
+            // Overload is an explicit, retryable condition. Do not silently
+            // degrade a failed inference into an empty vector channel.
+            throw;
+        }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Vector search failed for '{query}': {ex.Message}");

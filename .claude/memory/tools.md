@@ -115,7 +115,7 @@ python3 tools/eval/analyze_compare.py --runs $BOARD_RUNTIME_ROOT/tmp/comprehensi
 
 ## 5. 语音桥
 
-- ASR 默认由 `BoardAI.Api` 进程内 C# `VolcengineAsrClient` 处理；`tools/voice/asr_once.py` 是 `Voice:AsrMode=python` 回退/自检脚本。TTS 仍走 `tools/voice/tts_once.py`；两者由 `POST /api/asr/once`、`POST /api/tts` 暴露。
+- ASR 默认由 `BoardAI.Api` 进程内 C# `VolcengineAsrClient` 处理；`tools/voice/asr_once.py` 是 `Voice:AsrMode=python` 回退/自检脚本。问答 TTS 由 `BoardAI.Api` 的 `VolcengineTtsClient` 进程内直连火山；`tools/voice/tts_once.py` 只保留给离线自检和教学动画批量音频。两者分别由 `POST /api/asr/once`、`POST /api/tts` 暴露。
 - 火山凭证只写 `$BOARD_RUNTIME_ROOT/config/.env`（运行时目录，不入 Git）；默认 TTS provider `standard`，可切 `seed2`。
 - 配置与自检见 `tools/voice/README.md`、`docs/ops/start-services.md`。
 

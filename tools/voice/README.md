@@ -1,9 +1,10 @@
-# Voice bridge (ASR fallback + TTS)
+# Voice bridge (ASR fallback + offline TTS self-test)
 
 `BoardAI.Api` 的 ASR 默认已经改为在 .NET API 进程内直连火山 WebSocket
 （`Voice:AsrMode=native`），不再为每次识别启动 Python 子进程。本目录的
-`asr_once.py` 保留为离线自检 / 回退路径（`Voice:AsrMode=python`）；TTS 仍默认
-通过本目录的 Python 短进程桥接。
+`asr_once.py` 保留为离线自检 / 回退路径（`Voice:AsrMode=python`）。问答 TTS
+已迁移为 `BoardAI.Api` 进程内 C# 直连火山 WebSocket；本目录的 `tts_once.py`
+继续用于离线自检和教学动画/批量音频生成，不再是 `/api/tts` 的运行时依赖。
 
 Android 始终只调用 `BoardAI.Api`，不直接接触火山凭证，APK 中不包含密钥。
 

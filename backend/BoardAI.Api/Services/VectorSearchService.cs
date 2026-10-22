@@ -20,6 +20,7 @@ public class VectorSearchService : IDisposable
     private readonly ILogger<VectorSearchService> _logger;
     private const int BatchSize = 100;
     private readonly ConcurrentDictionary<string, bool> _verifiedProfiles = new();
+    private readonly string _aliasCacheKey;
 
     // 召回门槛随编码坐标变化；它只决定候选是否展示，不代表实体已确认。
     public float RecallThreshold => _embedder.Pooling == "cls" ? 0.50f : 0.55f;
@@ -32,6 +33,7 @@ public class VectorSearchService : IDisposable
         _client = new QdrantClient(host, port);
         _embedder = embedder;
         _logger = logger;
+        _aliasCacheKey = $"{host}:{port}";
     }
 
     /// <summary>
@@ -212,7 +214,7 @@ public class VectorSearchService : IDisposable
         if (context != null)
             return await context.GetOrCreateQueryEmbeddingAsync(_embedder, query, cancellationToken);
 
-        var queryVec = _embedder.Embed(query);
+        var queryVec = await _embedder.EmbedAsync(query, cancellationToken).ConfigureAwait(false);
         cancellationToken.ThrowIfCancellationRequested();
         return new ReadOnlyMemory<float>(queryVec);
     }
@@ -337,10 +339,14 @@ public class VectorSearchService : IDisposable
         var alias = IndexContract.ActiveAlias(gameId, nameOnly);
         try
         {
-            var aliases = await _client.ListAliasesAsync(cancellationToken);
-            var active = aliases.FirstOrDefault(a => a.AliasName == alias);
-            if (active != null)
-                return active.CollectionName; // pin the immutable collection while checking its profile
+            var aliases = await GetAliasSnapshotAsync(cancellationToken).ConfigureAwait(false);
+            if (aliases.TryGetValue(alias, out var collectionName) &&
+                !string.IsNullOrWhiteSpace(collectionName))
+            {
+                // Pin the immutable concrete collection while checking its
+                // embedding profile and running the search.
+                return collectionName;
+            }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -354,10 +360,51 @@ public class VectorSearchService : IDisposable
         catch (Exception ex)
         {
             _logger.LogWarning(ex,
-                "Could not resolve index alias '{Alias}; falling back to legacy collection", alias);
+                "Could not resolve index alias '{Alias}', falling back to legacy collection", alias);
         }
 
         return IndexContract.LegacyCollectionName(gameId, nameOnly);
+    }
+
+    /// <summary>
+    /// Within one retrieval request, full and name-index searches share one
+    /// ListAliasesAsync operation and one parsed alias map. Outside a request
+    /// context this performs a fresh fetch, preserving existing fallback
+    /// behavior for CLI and other unscoped callers.
+    /// </summary>
+    private async Task<IReadOnlyDictionary<string, string>> GetAliasSnapshotAsync(
+        CancellationToken cancellationToken)
+    {
+        var context = RetrievalRequestContext.Current;
+        if (context == null)
+            return await FetchAliasSnapshotAsync(cancellationToken).ConfigureAwait(false);
+
+        return await context.GetOrCreateAliasSnapshotAsync(
+            _aliasCacheKey,
+            FetchAliasSnapshotAsync,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<IReadOnlyDictionary<string, string>> FetchAliasSnapshotAsync(
+        CancellationToken cancellationToken)
+    {
+        var started = System.Diagnostics.Stopwatch.StartNew();
+        var aliases = await _client.ListAliasesAsync(cancellationToken).ConfigureAwait(false);
+        var byAlias = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var entry in aliases)
+        {
+            if (!string.IsNullOrWhiteSpace(entry.AliasName) &&
+                !string.IsNullOrWhiteSpace(entry.CollectionName))
+            {
+                byAlias[entry.AliasName] = entry.CollectionName;
+            }
+        }
+
+        _logger.LogInformation(
+            "Qdrant alias snapshot fetched: aliases={AliasCount}, elapsed_ms={ElapsedMs:F1}",
+            byAlias.Count,
+            started.Elapsed.TotalMilliseconds);
+        return byAlias;
     }
 
     private async Task VerifyEmbeddingProfileAsync(string collection, CancellationToken cancellationToken)

@@ -49,7 +49,7 @@ LLM 负责语言层，程序负责事实、规则和确定性播放。
    - 支持播放、字幕、分段跳转、问答打断后精确恢复到进入问答时的 cue 内位置。
 
 5. **语音链路**
-   - ASR 默认由 .NET API 进程直连火山引擎；TTS 仍通过 Python 短进程桥接。Android 不接触服务密钥；`Voice:AsrMode=python` 可回退 ASR Python 桥。
+   - ASR 默认由 .NET API 进程直连火山引擎；问答 TTS 也由 .NET 进程直连火山标准 v1 / seed2 WebSocket，完整音频生成后返回。Android 不接触服务密钥；`Voice:AsrMode=python` 仅回退 ASR Python 桥，Python TTS 脚本保留给离线/教学动画链路。
    - Android 端已有 PTT、识别文本回填、回答 TTS、重播/继续播放；继续播放会先停回答音频，再按记录的 cueId + 位置精确恢复。完整真机验收待复测。
 
 6. **Flow Guide（下一步）**
@@ -107,7 +107,7 @@ tools/
   media/                  素材处理
   ops/                    环境与脚本检查
   qa/                     QA / 检索 gold set
-  voice/                  ASR fallback / TTS Python 桥
+  voice/                  ASR fallback / 离线 TTS 自检桥
 docs/                     运维与专题文档
 assets/                  图标与通用资源
 protocol/                协议资料

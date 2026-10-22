@@ -1,3 +1,5 @@
+using BoardAI.Api.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using Tokenizers.HuggingFace.Tokenizer;
@@ -12,6 +14,7 @@ public class EmbeddingService : IDisposable
     private readonly InferenceSession _session;
     private readonly Tokenizer _tokenizer;
     private readonly int _dimension;
+    private readonly BoundedEmbeddingScheduler _queryScheduler;
     public string Pooling { get; }
     public string ModelDirectoryName { get; }
     private const int MaxLength = 512;
@@ -19,8 +22,15 @@ public class EmbeddingService : IDisposable
     /// <summary>部署侧模型目录名，用于索引版本元数据（同一目录名意味着同一发布模型）。</summary>
     public string ModelId { get; }
 
-    public EmbeddingService(string modelDir, string pooling = "mean")
+    public EmbeddingService(
+        string modelDir,
+        string pooling = "mean",
+        EmbeddingOptions? options = null,
+        ILogger<EmbeddingService>? logger = null)
     {
+        options ??= new EmbeddingOptions();
+        options.Validate();
+
         Pooling = EmbeddingProfile.NormalizePooling(pooling);
         var onnxPath = Path.Combine(modelDir, "model.onnx");
         var tokenizerPath = Path.Combine(modelDir, "tokenizer.json");
@@ -30,7 +40,16 @@ public class EmbeddingService : IDisposable
         if (!File.Exists(tokenizerPath))
             throw new FileNotFoundException($"Tokenizer not found: {tokenizerPath}");
 
-        _session = new InferenceSession(onnxPath);
+        var sessionOptions = new Microsoft.ML.OnnxRuntime.SessionOptions
+        {
+            IntraOpNumThreads = options.IntraOpThreads,
+            InterOpNumThreads = options.InterOpThreads,
+        };
+        _session = new InferenceSession(onnxPath, sessionOptions);
+        _queryScheduler = new BoundedEmbeddingScheduler(
+            options.MaxConcurrentInference,
+            options.MaxPendingInference,
+            logger);
         ModelDirectoryName = Path.GetFileName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(modelDir)));
         ModelId = EmbeddingProfile.ModelId(ModelDirectoryName, Pooling);
 
@@ -41,13 +60,38 @@ public class EmbeddingService : IDisposable
     }
 
     /// <summary>
-    /// 把文本转成语义向量（L2 归一化）。
+    /// 查询向量推理的统一异步入口：先通过有界调度器等待并发槽位，再把同步
+    /// ONNX CPU 推理放到已获准的线程池工作中执行。队列满会抛出
+    /// <see cref="EmbeddingQueueFullException"/>，不会伪造向量或静默丢任务。
+    /// 已开始的同步推理无法取消，取消只会阻止尚未开始的排队任务。
+    /// </summary>
+    public async Task<float[]> EmbedAsync(
+        string text,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return new float[_dimension];
+
+        return await _queryScheduler.RunAsync(
+            () => EmbedCore(text),
+            text.Length,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// 同步嵌入入口，仅供索引重建等不经过查询调度器的离线/管理路径使用。
+    /// 在线查询必须使用 <see cref="EmbedAsync"/>。
     /// </summary>
     public float[] Embed(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
             return new float[_dimension];
 
+        return EmbedCore(text);
+    }
+
+    private float[] EmbedCore(string text)
+    {
         // Tokenize (with special tokens: [CLS] ... [SEP])
         var encodings = _tokenizer.Encode(text, true);
         var encoding = encodings.First();
@@ -132,6 +176,7 @@ public class EmbeddingService : IDisposable
 
     public void Dispose()
     {
+        _queryScheduler.Dispose();
         _session.Dispose();
     }
 }

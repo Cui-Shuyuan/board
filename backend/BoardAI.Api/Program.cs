@@ -45,6 +45,21 @@ public class Program
             .ValidateOnStart();
         builder.Services.Configure<VoiceOptions>(
             builder.Configuration.GetSection("Voice"));
+        builder.Services.AddOptions<EmbeddingOptions>()
+            .Bind(builder.Configuration.GetSection("Embedding"))
+            .Validate(options =>
+            {
+                try
+                {
+                    options.Validate();
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }, "Embedding ONNX thread/concurrency configuration is invalid.")
+            .ValidateOnStart();
 
         var boardBase = BoardPaths.GetBasePath();
         var rulesBasePath = BoardPaths.ResolveBasePath(
@@ -56,9 +71,16 @@ public class Program
         var modelDir = BoardPaths.ResolveModelDir(
             builder.Configuration.GetValue<string>("Embedding:ModelDir"),
             boardBase);
-        var embedder = new EmbeddingService(modelDir,
-            builder.Configuration.GetValue<string>("Embedding:Pooling") ?? "mean");
-        builder.Services.AddSingleton(embedder);
+        var embeddingPooling = builder.Configuration.GetValue<string>("Embedding:Pooling") ?? "mean";
+        builder.Services.AddSingleton(sp =>
+        {
+            var embeddingOptions = sp.GetRequiredService<IOptions<EmbeddingOptions>>().Value;
+            return new EmbeddingService(
+                modelDir,
+                embeddingPooling,
+                embeddingOptions,
+                sp.GetRequiredService<ILogger<EmbeddingService>>());
+        });
 
         var qdrantHost = builder.Configuration.GetValue<string>("Qdrant:Host") ?? "localhost";
         var qdrantPort = builder.Configuration.GetValue<int?>("Qdrant:Port") ?? 6334;
@@ -70,11 +92,12 @@ public class Program
         builder.Services.AddSingleton<GameRulesService>();
         builder.Services.AddScoped<ChatOrchestratorService>();
 
-        // Voice: ASR defaults to an in-process C# Volcengine client; the
-        // legacy Python bridge remains available through Voice:AsrMode=python.
-        // TTS still uses the bridge for now.
+        // Voice: ASR and Q&A TTS both call Volcengine directly from the API
+        // process. VoiceProcessRunner remains only for the explicit ASR
+        // Python fallback (Voice:AsrMode=python).
         builder.Services.AddSingleton<VoiceProcessRunner>();
         builder.Services.AddSingleton<VolcengineAsrClient>();
+        builder.Services.AddSingleton<VolcengineTtsClient>();
         builder.Services.AddScoped<AsrService>();
         builder.Services.AddScoped<TtsService>();
 
@@ -165,12 +188,18 @@ public class Program
         var modelDir = BoardPaths.ResolveModelDir(
             config.GetValue<string>("Embedding:ModelDir"),
             boardBase);
-        var embedder = new EmbeddingService(modelDir,
-            config.GetValue<string>("Embedding:Pooling") ?? "mean");
+        var embeddingOptions = config.GetSection("Embedding").Get<EmbeddingOptions>()
+            ?? new EmbeddingOptions();
+        embeddingOptions.Validate();
+        var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
+        var embedder = new EmbeddingService(
+            modelDir,
+            config.GetValue<string>("Embedding:Pooling") ?? "mean",
+            embeddingOptions,
+            loggerFactory.CreateLogger<EmbeddingService>());
 
         var qdrantHost = config.GetValue<string>("Qdrant:Host") ?? "localhost";
         var qdrantPort = config.GetValue<int?>("Qdrant:Port") ?? 6334;
-        var loggerFactory = LoggerFactory.Create(b => b.AddConsole());
         var vectorSearch = new VectorSearchService(qdrantHost, qdrantPort, embedder,
             loggerFactory.CreateLogger<VectorSearchService>());
 

@@ -8,14 +8,18 @@ namespace BoardAI.Api.Services;
 /// 因而并行任务共享同一份缓存，不同请求之间互不影响；请求作用域结束时只丢弃
 /// 对上下文的引用，不把请求数据写入任何 singleton 服务或长期规则快照。
 ///
-/// 这里不缓存 Qdrant 查询结果，只缓存可安全复用的中间计算结果：
-/// 原始查询文本对应的查询向量，以及关键词扫描/评分的不可变快照。
+/// 这里缓存可安全复用的中间计算结果：原始查询文本对应的查询向量、Qdrant
+/// 别名快照，以及关键词扫描/评分的不可变快照。别名快照只在当前请求内有效，
+/// 下一次问答会重新获取，以便及时看到索引别名切换。
 /// </summary>
 internal sealed class RetrievalRequestContext
 {
     private static readonly AsyncLocal<RetrievalRequestContext?> CurrentContext = new();
 
-    private readonly ConcurrentDictionary<QueryEmbeddingKey, Lazy<Task<ReadOnlyMemory<float>>>> _queryEmbeddings =
+    private readonly ConcurrentDictionary<QueryEmbeddingKey, SharedRequestOperation<ReadOnlyMemory<float>>> _queryEmbeddings =
+        new();
+
+    private readonly ConcurrentDictionary<AliasSnapshotKey, SharedRequestOperation<IReadOnlyDictionary<string, string>>> _aliasSnapshots =
         new();
 
     private readonly ConcurrentDictionary<KeywordScanKey, Lazy<Task<IReadOnlyList<KeywordScanHit>>>> _keywordScans =
@@ -41,25 +45,51 @@ internal sealed class RetrievalRequestContext
     /// <summary>
     /// 同一原始查询文本 + 实际 embedding 配置只运行一次推理。
     /// 不进行 lower-case、去标点等规范化；查询文本按 Ordinal 精确参与键比较。
+    /// 多个同时到达的等待者共享同一个实际推理任务；单个等待者取消只影响
+    /// 自己，所有等待者都取消时尚未开始的推理会被取消。
     /// 返回只读内存，调用方查询 collection 时再复制得到独立数组。
     /// </summary>
-    public async Task<ReadOnlyMemory<float>> GetOrCreateQueryEmbeddingAsync(
+    public Task<ReadOnlyMemory<float>> GetOrCreateQueryEmbeddingAsync(
         EmbeddingService embedder,
         string query,
         CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(embedder);
         cancellationToken.ThrowIfCancellationRequested();
 
         // ModelId 已包含部署模型目录名和 pooling profile；这里再把 pooling 与维度
         // 显式放进键中，保证未来即使同进程切换 embedder 也不会混用向量坐标。
         var key = new QueryEmbeddingKey(query, embedder.ModelId, embedder.Pooling, embedder.Dimension);
-        var lazy = _queryEmbeddings.GetOrAdd(
+        return GetOrCreateSharedAsync(
+            _queryEmbeddings,
             key,
-            _ => new Lazy<Task<ReadOnlyMemory<float>>>(
-                () => ExecuteAsync(() => Task.FromResult(new ReadOnlyMemory<float>(embedder.Embed(query)))),
-                LazyThreadSafetyMode.ExecutionAndPublication));
+            async token =>
+            {
+                var vector = await embedder.EmbedAsync(query, token).ConfigureAwait(false);
+                return new ReadOnlyMemory<float>(vector);
+            },
+            cancellationToken);
+    }
 
-        return await AwaitSharedAsync(_queryEmbeddings, key, lazy, cancellationToken).ConfigureAwait(false);
+    /// <summary>
+    /// 同一次请求内共享 Qdrant 别名列表。全文和 name 索引使用同一个 cacheKey，
+    /// 因此并行搜索会合并到一次 ListAliasesAsync 调用。Qdrant 服务实例通过
+    /// endpoint key 区分；成功结果只保留到当前请求结束。
+    /// </summary>
+    public Task<IReadOnlyDictionary<string, string>> GetOrCreateAliasSnapshotAsync(
+        string cacheKey,
+        Func<CancellationToken, Task<IReadOnlyDictionary<string, string>>> fetch,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(cacheKey);
+        ArgumentNullException.ThrowIfNull(fetch);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return GetOrCreateSharedAsync(
+            _aliasSnapshots,
+            new AliasSnapshotKey(cacheKey),
+            fetch,
+            cancellationToken);
     }
 
     /// <summary>
@@ -83,6 +113,98 @@ internal sealed class RetrievalRequestContext
                 LazyThreadSafetyMode.ExecutionAndPublication));
 
         return await AwaitSharedAsync(_keywordScans, key, lazy, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<T> GetOrCreateSharedAsync<TKey, T>(
+        ConcurrentDictionary<TKey, SharedRequestOperation<T>> cache,
+        TKey key,
+        Func<CancellationToken, Task<T>> start,
+        CancellationToken cancellationToken)
+        where TKey : notnull
+    {
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (cache.TryGetValue(key, out var existing))
+            {
+                if (existing.TryAddWaiter())
+                    return await AwaitOperationAsync(cache, key, existing, cancellationToken).ConfigureAwait(false);
+
+                // A faulted/cancelled operation is never kept as a reusable
+                // result. Remove it and let this caller attempt one fresh
+                // start, still inside the same request.
+                RemoveIfSame(cache, key, existing);
+                continue;
+            }
+
+            var candidate = new SharedRequestOperation<T>(start);
+            if (!cache.TryAdd(key, candidate))
+            {
+                // Another caller won the creation race. Its waiter is already
+                // responsible for starting the operation.
+                continue;
+            }
+
+            if (!candidate.TryAddWaiter())
+            {
+                RemoveIfSame(cache, key, candidate);
+                continue;
+            }
+
+            // If a failed/cancelled shared operation is abandoned after its
+            // last waiter leaves, remove it from the request cache as soon as
+            // it reaches a terminal non-success state.
+            _ = candidate.Task.ContinueWith(
+                completed =>
+                {
+                    if (!completed.IsCompletedSuccessfully)
+                        RemoveIfSame(cache, key, candidate);
+                    if (completed.IsFaulted)
+                        _ = completed.Exception;
+                },
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+
+            return await AwaitOperationAsync(cache, key, candidate, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private static async Task<T> AwaitOperationAsync<TKey, T>(
+        ConcurrentDictionary<TKey, SharedRequestOperation<T>> cache,
+        TKey key,
+        SharedRequestOperation<T> operation,
+        CancellationToken cancellationToken)
+        where TKey : notnull
+    {
+        try
+        {
+            var result = await operation.Task.WaitAsync(cancellationToken).ConfigureAwait(false);
+            // 命中已完成缓存时也必须遵守调用方当前取消状态。
+            cancellationToken.ThrowIfCancellationRequested();
+            return result;
+        }
+        catch
+        {
+            // Do not evict a still-running shared inference merely because
+            // this one waiter was cancelled; other waiters may still need it.
+            if (operation.Task.IsCompleted && !operation.Task.IsCompletedSuccessfully)
+                RemoveIfSame(cache, key, operation);
+            throw;
+        }
+        finally
+        {
+            // This only cancels the shared operation when this was the last
+            // interested waiter and the inference/fetch has not completed.
+            operation.ReleaseWaiter();
+        }
+    }
+
+    private static async Task<T> ExecuteAsync<T>(Func<Task<T>> factory)
+    {
+        // async 状态机会把 factory 在首个 await 前抛出的异常捕获为 faulted task。
+        return await factory().ConfigureAwait(false);
     }
 
     private static async Task<T> AwaitSharedAsync<TKey, T>(
@@ -139,10 +261,14 @@ internal sealed class RetrievalRequestContext
         }
     }
 
-    private static async Task<T> ExecuteAsync<T>(Func<Task<T>> factory)
+    private static void RemoveIfSame<TKey, T>(
+        ConcurrentDictionary<TKey, SharedRequestOperation<T>> cache,
+        TKey key,
+        SharedRequestOperation<T> operation)
+        where TKey : notnull
     {
-        // async 状态机会把 factory 在首个 await 前抛出的异常捕获为 faulted task。
-        return await factory().ConfigureAwait(false);
+        ((ICollection<KeyValuePair<TKey, SharedRequestOperation<T>>>)cache)
+            .Remove(new KeyValuePair<TKey, SharedRequestOperation<T>>(key, operation));
     }
 
     private static void RemoveIfSame<TKey, T>(
@@ -165,10 +291,131 @@ internal sealed class RetrievalRequestContext
         string Pooling,
         int Dimension);
 
+    private readonly record struct AliasSnapshotKey(string SourceKey);
+
     private readonly record struct KeywordScanKey(
         string Game,
         string RulesVersion,
         string Query);
+
+    /// <summary>
+    /// Shared one-request operation with reference-counted cancellation. The
+    /// first waiter starts it; a caller cancellation only removes that waiter.
+    /// When no waiter remains before completion the underlying operation token
+    /// is cancelled. Once a synchronous ONNX inference has started, however,
+    /// it cannot be stopped; its eventual result is simply no longer awaited.
+    /// </summary>
+    private sealed class SharedRequestOperation<T>
+    {
+        private readonly object _gate = new();
+        private readonly CancellationTokenSource _cancellation = new();
+        private readonly TaskCompletionSource<T> _completion =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private readonly Func<CancellationToken, Task<T>> _start;
+        private int _waiters;
+        private bool _started;
+        private bool _closed;
+
+        public SharedRequestOperation(Func<CancellationToken, Task<T>> start)
+        {
+            _start = start;
+
+            // Observe a faulted task when every waiter has already gone away.
+            _ = _completion.Task.ContinueWith(
+                completed =>
+                {
+                    if (completed.IsFaulted)
+                        _ = completed.Exception;
+                },
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+        }
+
+        public Task<T> Task => _completion.Task;
+
+        public bool TryAddWaiter()
+        {
+            var shouldStart = false;
+            lock (_gate)
+            {
+                // Closing is atomic with waiter registration. Once the last
+                // waiter decides to cancel, no new waiter may join this
+                // operation between that decision and the actual Cancel call.
+                if (_closed)
+                    return false;
+
+                // Successfully completed results may be reused by later calls
+                // in the same request. Faulted/cancelled tasks are evicted by
+                // the caller and replaced with a fresh attempt.
+                if (_completion.Task.IsCompleted && !_completion.Task.IsCompletedSuccessfully)
+                    return false;
+                if (_cancellation.IsCancellationRequested)
+                    return false;
+
+                _waiters++;
+                if (!_started)
+                {
+                    _started = true;
+                    shouldStart = true;
+                }
+            }
+
+            if (shouldStart)
+                _ = RunAsync();
+
+            return true;
+        }
+
+        public void ReleaseWaiter()
+        {
+            var cancel = false;
+            lock (_gate)
+            {
+                if (_waiters > 0)
+                    _waiters--;
+
+                if (_waiters == 0 && !_completion.Task.IsCompleted)
+                {
+                    // Mark closed while still holding the lock, then cancel
+                    // outside it. A caller arriving after this point must
+                    // create a fresh shared operation instead of joining a
+                    // task whose cancellation is already in progress.
+                    _closed = true;
+                    cancel = true;
+                }
+            }
+
+            if (!cancel) return;
+
+            try
+            {
+                _cancellation.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // The operation has already completed and can no longer need
+                // waiter-based cancellation.
+            }
+        }
+
+        private async Task RunAsync()
+        {
+            try
+            {
+                var result = await _start(_cancellation.Token).ConfigureAwait(false);
+                _completion.TrySetResult(result);
+            }
+            catch (OperationCanceledException) when (_cancellation.IsCancellationRequested)
+            {
+                _completion.TrySetCanceled(_cancellation.Token);
+            }
+            catch (Exception ex)
+            {
+                _completion.TrySetException(ex);
+            }
+        }
+    }
 
     private sealed class NoopScope : IDisposable
     {

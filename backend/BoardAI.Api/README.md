@@ -5,7 +5,7 @@
 1. **Chat 接口**：接收 `game_id` 和完整 `messages`（可带 Android 播放 context），LLM 生成 `execute_plan`，服务端执行规则查询并返回 TTS 友好回答。
 2. **Rules 接口**：读取 `content/ontology/` 与 `content/games/` 下的结构化规则，提供类型 / 概念 / 检索 / action 条件 / 查询计划 / 索引重建。
 3. **Catalog / Content 接口**：提供 Android 首页游戏目录，以及 manifest 驱动的版本化内容下载、缓存与断点续传。
-4. **ASR / TTS 接口**：ASR 默认在 API 进程内通过 C# `ClientWebSocket` 直连火山引擎；TTS 仍通过 `tools/voice/` Python 短进程桥接。Android 不接触服务密钥，`Voice:AsrMode=python` 可回退 ASR Python 桥。
+4. **ASR / TTS 接口**：ASR 和问答 TTS 默认都在 API 进程内通过 C# `ClientWebSocket` 直连火山引擎；问答 TTS 一次生成完整 MP3 后返回，不再启动 Python。`Voice:AsrMode=python` 仅回退 ASR Python 桥，`tools/voice/` 的 TTS 脚本继续服务离线/教学动画链路。Android 不接触服务密钥。
 
 ## 运行
 
@@ -36,6 +36,16 @@ dotnet run --urls "http://0.0.0.0:5000"
 - `Embedding:ModelDir` 为空时使用 `$BOARD_RUNTIME_ROOT/models/bge-base-zh-v1.5-fp32`。
 - 服务凭证从 `$BOARD_RUNTIME_ROOT/config/.env` 读取，兼容旧仓库根 `.env`。
 - .NET 构建输出通过仓库根 `Directory.Build.props` + git-ignored `runtime.local.props` 重定向到 `$BOARD_RUNTIME_ROOT/build/dotnet`。
+
+## 本地 ONNX 查询向量推理
+
+`Embedding:IntraOpThreads` / `InterOpThreads` 是 ONNX Runtime 的内部推理线程数；
+`MaxConcurrentInference` 限制同时在跑的查询推理数，`MaxPendingInference` 限制等待
+槽位的查询数；设为 `0` 表示不排队，有空闲槽位时仍立即执行，忙时返回明确错误。
+默认 `IntraOpThreads=6`、`InterOpThreads=1`、`MaxConcurrentInference=2`、
+`MaxPendingInference=16`，基于目标主机少量代表性查询的并发保护取舍选取，不是
+“越多越快”的提速配置。排队已满会返回明确错误，不会伪造向量；请求内相同查询
+仍共享一次计算。
 
 ## 规则问答缓存
 
@@ -241,7 +251,8 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 - `Services/ChatOrchestratorService.cs`：查询计划循环与回答组织
 - `Services/VectorSearchService.cs` / `Services/EmbeddingService.cs`：Qdrant / ONNX 检索
 - `Services/AsrService.cs` / `Services/VolcengineAsrClient.cs`：ASR 服务入口与进程内火山 WebSocket 客户端
-- `Services/TtsService.cs` / `Services/VoiceProcessRunner.cs`：TTS Python 短进程桥（兼容 ASR 回退）
+- `Services/TtsService.cs` / `Services/VolcengineTtsClient.cs`：问答 TTS 文本校验与火山 WebSocket 直连；`Services/VoiceProcessRunner.cs` 仅保留给 ASR Python 回退
+- 问答 TTS 默认 provider 为 `standard`（v1 小模型 WebSocket，MP3）；设置 `Voice:TtsProvider=seed2` 可切到语音合成 2.0。服务凭证和 endpoint/voice 等仍通过 `$BOARD_RUNTIME_ROOT/config/.env` 或环境变量读取。
 - `Infrastructure/DotEnvLoader.cs`：为进程内 ASR 读取 `$BOARD_RUNTIME_ROOT/config/.env`，兼容旧仓库根 `.env`
 - `Models/`：请求/响应/配置模型
 

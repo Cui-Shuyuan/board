@@ -88,9 +88,9 @@ python3 tools/content/build_content_manifest.py --game <game_name>
 
 ## 5. 语音服务配置
 
-语音服务默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**；需要 `seed-tts-2.0` 双向流式接口时设置 `DOUBAO_TTS_PROVIDER=seed2`。
+问答语音服务默认使用火山引擎**标准语音合成（小模型 v1 WebSocket）**；需要 `seed-tts-2.0` 双向流式接口时，API 侧设置 `Voice__TtsProvider=seed2`（或 `appsettings.json` 的 `Voice:TtsProvider`）。离线 Python 工具仍识别 `DOUBAO_TTS_PROVIDER=seed2`。
 
-ASR 默认在 `BoardAI.Api` 进程内直连火山，不再启动 Python 子进程；只有显式设置 `Voice__AsrMode=python`（或 `appsettings` 中 `Voice:AsrMode=python`）时才回退 `tools/voice/asr_once.py`。
+ASR 默认在 `BoardAI.Api` 进程内直连火山，不再启动 Python 子进程；只有显式设置 `Voice__AsrMode=python`（或 `appsettings` 中 `Voice:AsrMode=python`）时才回退 `tools/voice/asr_once.py`。问答 TTS 也已迁移到 API 进程内 C# 直连，完整生成 MP3 后返回；不再为 `/api/tts` 启动 Python。`tools/voice/tts_once.py` 保留给离线自检和教学动画批量音频。
 
 `$BOARD_RUNTIME_ROOT/config/.env` 建议：
 
