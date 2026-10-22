@@ -1,0 +1,12 @@
+{
+  "id": "setup_cards_deck_title",
+  "title": "设置：发展卡构成",
+  "group_path": [
+    "2 设置",
+    "2.1 发展卡牌"
+  ],
+  "order": 3,
+  "tree": "main",
+  "entry": "setup_intro/title_2",
+  "tts_asset": "title.setup_cards_deck"
+}

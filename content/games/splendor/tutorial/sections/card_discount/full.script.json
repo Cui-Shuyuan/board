@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "card_discount",
+  "cues": [
+    {
+      "id": "discount.001",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "card_discount/discount.001.b1",
+          "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。"
+        }
+      ],
+      "section": "card_discount"
+    },
+    {
+      "id": "discount.002.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "card_discount/discount.002.1.b1",
+          "text": "举个例子：现在我已经购买了一张白宝石牌，那么下一回合我想购买这张牌时，"
+        },
+        {
+          "id": "card_discount/discount.002.1.b2",
+          "text": "只需要支付二枚白宝石、一枚蓝宝石和一枚黑宝石即可。"
+        }
+      ],
+      "section": "card_discount"
+    },
+    {
+      "id": "discount.003.1",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "card_discount/discount.003.1.b1",
+          "text": "如果我已经购买了二张白宝石牌和二张红宝石牌，那么我购买这张牌时无需支付任何宝石。"
+        }
+      ],
+      "section": "card_discount"
+    },
+    {
+      "id": "discount.003.2",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "refs": [
+        "<discount>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "card_discount/discount.003.2.b1",
+          "text": "但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，"
+        },
+        {
+          "id": "card_discount/discount.003.2.b2",
+          "text": "折扣的上限就是免费。"
+        }
+      ],
+      "section": "card_discount"
+    }
+  ]
+}

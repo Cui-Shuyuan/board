@@ -1,0 +1,346 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "gems_public",
+  "cues": [
+    {
+      "id": "public.001.1",
+      "parent": "gems_hand_limit/limit.001.2",
+      "timing": [
+        {
+          "key": "保持玩家区特写",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前",
+        "note": "静默归还两枚蓝、两枚红与一枚黑宝石，将玩家 A 持有量调为五枚，作为公开信息讲解的画面前提。保留持有区可见，让观众看清宝石放在玩家面前。",
+        "enter": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 4
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "gems_public/public.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "pay",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "gems_public/public.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "gems_public/public.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "gems_public/public.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。脚本用 setup transfer 把演示手牌从10枚切回5枚：玩家A持有白1、蓝1、红1、绿2；供应堆钻石3、蓝宝石3、红宝石3、绿宝石2、黑宝石4；玩家B没有宝石。这个局面合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
+        }
+      ],
+      "tree": "main",
+      "section": "gems_public"
+    },
+    {
+      "id": "public.001.2",
+      "parent": "gems_public/public.001.1",
+      "timing": [
+        {
+          "key": "拉回整桌",
+          "text": "1.60"
+        }
+      ],
+      "script": {
+        "story": "所有人都能清楚看到的地方",
+        "note": "镜头回到全桌，展示玩家持有的宝石与公共供应区的位置关系。公开信息规则由口播说明，不改变持有数量。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "gems_public/public.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "gems_public/public.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "wait",
+          "dur": 0.0,
+          "anchor": "gems_public/public.001.2.b1.end",
+          "offset": -0.875
+        }
+      ],
+      "tree": "main",
+      "demo": false,
+      "section": "gems_public"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "gems_public/public.001.1.start",
+      "cue": "public.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "gems_public/public.001.1.end",
+      "cue": "public.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "gems_public/public.001.1.b1.start",
+      "cue": "public.001.1",
+      "beat": "gems_public/public.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "gems_public/public.001.1.b1.end",
+      "cue": "public.001.1",
+      "beat": "gems_public/public.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "gems_public/public.001.2.start",
+      "cue": "public.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "gems_public/public.001.2.end",
+      "cue": "public.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "gems_public/public.001.2.b1.start",
+      "cue": "public.001.2",
+      "beat": "gems_public/public.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "gems_public/public.001.2.b1.end",
+      "cue": "public.001.2",
+      "beat": "gems_public/public.001.2.b1",
+      "edge": "end"
+    }
+  ]
+}

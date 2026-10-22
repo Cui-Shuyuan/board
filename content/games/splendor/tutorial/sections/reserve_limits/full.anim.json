@@ -1,0 +1,744 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "reserve_limits",
+  "cues": [
+    {
+      "id": "notes_intro.001",
+      "parent": "reserve_deck_privacy/deck.001",
+      "timing": [
+        {
+          "key": "演示前提：A 已有 10 枚各色宝石",
+          "text": "0.00"
+        },
+        {
+          "key": "保留一张牌 + 拿一枚黄金",
+          "text": "1.80-3.00"
+        },
+        {
+          "key": "超上限，放回 1 枚宝石",
+          "text": "6.40"
+        }
+      ],
+      "script": {
+        "story": "注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止",
+        "note": "从 action.reserve.deck.001 分支做超限 demo：静默归还原有黄金，并准备五色各两枚、共十枚宝石。保留一张牌并拿一枚黄金后持有量变为十一枚，再归还一枚白宝石回到十枚。下一条从 deck 示例另行分支，不沿用本条终态。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 2
+            },
+            "gem_supply_onyx": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 10
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 2
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_emerald": {
+              "count": 2
+            },
+            "gem_supply_onyx": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 10
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "pay",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "reserve_limits/notes_intro.001.start",
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "reserve_limits/notes_intro.001.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby",
+              "gem_supply_emerald",
+              "gem_supply_onyx"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "reserve_limits/notes_intro.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve_limits/notes_intro.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "take",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "reserve_limits/notes_intro.001.start",
+          "offset": 1.8,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.5,
+          "quantity": 1,
+          "over_limit_demo": true,
+          "anchor": "reserve_limits/notes_intro.001.start",
+          "offset": 2.5,
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "reserve_limits/notes_intro.001.start",
+          "offset": 6.4,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        }
+      ],
+      "tree": "main",
+      "demo": true,
+      "section": "reserve_limits"
+    },
+    {
+      "id": "limit_gold.001.2",
+      "parent": "reserve_deck_privacy/deck.001",
+      "timing": [
+        {
+          "key": "整桌镜头 / 从牌堆顶保留",
+          "text": "整句"
+        }
+      ],
+      "script": {
+        "story": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金",
+        "note": "从 action.reserve.deck.001 分支，静默把供应堆四枚黄金移到玩家 B 持有区，准备黄金耗尽的 demo。玩家 A 仍朝下保留牌堆顶一张卡，但不领取黄金。后续 limit_hand 示例通过 entry 回到 deck 示例。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 0
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_b_holding": {
+              "count": 4
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 1
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 2
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 34
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 0
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_b_holding": {
+              "count": 4
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 1
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 4,
+          "anchor": "reserve_limits/limit_gold.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_b_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "reserve_limits/limit_gold.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve_limits/limit_gold.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "take",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "reserve_limits/limit_gold.001.2.start",
+          "offset": 2.6,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
+        }
+      ],
+      "tree": "main",
+      "demo": true,
+      "section": "reserve_limits"
+    },
+    {
+      "id": "limit_hand.001.1",
+      "parent": "reserve_limits/limit_gold.001.2",
+      "timing": [
+        {
+          "key": "保留区已 3 张（演示前提）",
+          "text": "0.00"
+        },
+        {
+          "key": "尝试保留第 4 张",
+          "text": "4.40"
+        },
+        {
+          "key": "禁止标记",
+          "text": "6.90"
+        }
+      ],
+      "script": {
+        "story": "每位玩家最多同时保留 3 张发展卡牌；已经保留 3 张时，就不能再保留，必须选择其他行动",
+        "note": "从 action.reserve.deck.001 分支，静默准备合法保留三张及对应黄金奖励的前提，并补回市场。再把 card_l2_diamond_55 朝下拿入保留区的第四个演示槽，显示禁止标记。第四张只作为错误示范留到本条结束，下一条静默收回市场。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 3
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 11
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 3
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 2
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_reserved": {
+              "count": 4
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "reserve_limits/limit_hand.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "reserve_limits/limit_hand.001.1.start",
+          "order": 6,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "reserve_limits/limit_hand.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gold_supply",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "reserve_limits/limit_hand.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "reserve_limits/limit_hand.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "flip",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_down",
+          "anchor": "reserve_limits/limit_hand.001.1.start",
+          "offset": 4.4,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_reserved"
+          },
+          "axis": "long",
+          "direction": "ccw"
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "forbid",
+          "anchor": "reserve_limits/limit_hand.001.1.start",
+          "offset": 6.9,
+          "target": {
+            "space": "entity",
+            "zone": "player_reserved",
+            "template": "card_l2_diamond_55",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        }
+      ],
+      "tree": "main",
+      "entry": "reserve_deck_privacy/deck.001",
+      "demo": true,
+      "section": "reserve_limits"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "reserve_limits/notes_intro.001.start",
+      "cue": "notes_intro.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "reserve_limits/notes_intro.001.end",
+      "cue": "notes_intro.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "reserve_limits/notes_intro.001.b1.start",
+      "cue": "notes_intro.001",
+      "beat": "reserve_limits/notes_intro.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "reserve_limits/notes_intro.001.b1.end",
+      "cue": "notes_intro.001",
+      "beat": "reserve_limits/notes_intro.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "reserve_limits/limit_gold.001.2.start",
+      "cue": "limit_gold.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "reserve_limits/limit_gold.001.2.end",
+      "cue": "limit_gold.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "reserve_limits/limit_gold.001.2.b1.start",
+      "cue": "limit_gold.001.2",
+      "beat": "reserve_limits/limit_gold.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "reserve_limits/limit_gold.001.2.b1.end",
+      "cue": "limit_gold.001.2",
+      "beat": "reserve_limits/limit_gold.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "reserve_limits/limit_hand.001.1.start",
+      "cue": "limit_hand.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "reserve_limits/limit_hand.001.1.end",
+      "cue": "limit_hand.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "reserve_limits/limit_hand.001.1.b1.start",
+      "cue": "limit_hand.001.1",
+      "beat": "reserve_limits/limit_hand.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "reserve_limits/limit_hand.001.1.b1.end",
+      "cue": "limit_hand.001.1",
+      "beat": "reserve_limits/limit_hand.001.1.b1",
+      "edge": "end"
+    }
+  ]
+}

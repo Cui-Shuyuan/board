@@ -1,0 +1,63 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "setup_complete",
+  "cues": [
+    {
+      "id": "end.001.1",
+      "parent": "setup_starting_player/starting.001.3",
+      "timing": [
+        {
+          "key": "两 cue 合并，全景不切镜头",
+          "text": "整条 cue"
+        }
+      ],
+      "script": {
+        "story": "至此，整个设置环节就大功告成了；接下来可以正式开始游戏了",
+        "note": "保持完成设置后的全桌画面，结束设置介绍并转入回合行动。本条没有新事件。"
+      },
+      "events": [],
+      "tree": "main",
+      "demo": false,
+      "qa_exempt": true,
+      "section": "setup_complete"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "setup_complete/end.001.1.start",
+      "cue": "end.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_complete/end.001.1.end",
+      "cue": "end.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_complete/end.001.1.b1.start",
+      "cue": "end.001.1",
+      "beat": "setup_complete/end.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_complete/end.001.1.b1.end",
+      "cue": "end.001.1",
+      "beat": "setup_complete/end.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup_complete/end.001.1.b2.start",
+      "cue": "end.001.1",
+      "beat": "setup_complete/end.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "setup_complete/end.001.1.b2.end",
+      "cue": "end.001.1",
+      "beat": "setup_complete/end.001.1.b2",
+      "edge": "end"
+    }
+  ]
+}

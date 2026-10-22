@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "intro_title",
+  "cues": [
+    {
+      "id": "title_1",
+      "group": "1 背景",
+      "group_path": [
+        "1 背景"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "intro_title/title_1.b1",
+          "text": "一，背景。"
+        }
+      ],
+      "section": "intro_title"
+    }
+  ]
+}

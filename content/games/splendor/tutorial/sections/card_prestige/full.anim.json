@@ -1,0 +1,294 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_prestige",
+  "cues": [
+    {
+      "id": "prestige.001.1",
+      "parent": "card_market_refill/market.001.1",
+      "timing": [
+        {
+          "key": "镜头给样本卡",
+          "text": "0.00"
+        },
+        {
+          "key": "红色箭头固定指向左上角声望点数",
+          "text": "0.80-结束"
+        }
+      ],
+      "script": {
+        "story": "左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值",
+        "note": "屏幕展示二级红卡 card_l2_ruby_69，用箭头指向左上角的两点声望。只讲解卡面，不把展示图加入玩家发展区。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_prestige/prestige.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
+          },
+          "dur": 0.0,
+          "anchor": "card_prestige/prestige.001.1.start",
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.24,
+            "y": 0.11,
+            "w": 0.24,
+            "h": 0.68
+          },
+          "dur": 0.0,
+          "anchor": "card_prestige/prestige.001.1.start",
+          "image": "media/card/二级发展卡_红_69_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "prestige",
+          "anchor": "card_prestige/prestige.001.1.b1.start",
+          "offset": 0.505,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          },
+          "style": {
+            "gap": 65
+          }
+        }
+      ],
+      "tree": "main",
+      "section": "card_prestige"
+    },
+    {
+      "id": "prestige.001.2",
+      "parent": "card_prestige/prestige.001.1",
+      "timing": [
+        {
+          "key": "二级红卡与箭头继承/保持",
+          "text": "0.00"
+        },
+        {
+          "key": "一级白卡与箭头同时出现",
+          "text": "0.00"
+        },
+        {
+          "key": "扫市场一级行",
+          "text": "3.40-4.00"
+        }
+      ],
+      "script": {
+        "story": "不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值",
+        "note": "并排展示有两点声望的 card_l2_ruby_69 与无声望的 card_l1_diamond_17，分别指向左上角，帮助观众辨认有分与无分的卡面。",
+        "enter": {
+          "picture": null,
+          "zones": {}
+        },
+        "exit": {
+          "picture": null,
+          "zones": {}
+        }
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_prestige/prestige.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
+          },
+          "dur": 0.0,
+          "anchor": "card_prestige/prestige.001.2.start",
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.24,
+            "y": 0.11,
+            "w": 0.24,
+            "h": 0.68
+          },
+          "dur": 0.0,
+          "anchor": "card_prestige/prestige.001.2.start",
+          "image": "media/card/二级发展卡_红_69_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.52,
+            "y": 0.11,
+            "w": 0.24,
+            "h": 0.68
+          },
+          "dur": 0.0,
+          "anchor": "card_prestige/prestige.001.2.start",
+          "image": "media/card/一级发展卡_白_17_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "prestige",
+          "anchor": "card_prestige/prestige.001.2.start",
+          "target": {
+            "space": "screen",
+            "id": "sample_red"
+          },
+          "style": {
+            "gap": 65
+          }
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "arrow",
+          "part": "prestige",
+          "anchor": "card_prestige/prestige.001.2.start",
+          "target": {
+            "space": "screen",
+            "id": "sample_white"
+          },
+          "style": {
+            "gap": 65
+          }
+        }
+      ],
+      "tree": "main",
+      "section": "card_prestige"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "card_prestige/prestige.001.1.start",
+      "cue": "prestige.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_prestige/prestige.001.1.end",
+      "cue": "prestige.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_prestige/prestige.001.1.b1.start",
+      "cue": "prestige.001.1",
+      "beat": "card_prestige/prestige.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_prestige/prestige.001.1.b1.end",
+      "cue": "prestige.001.1",
+      "beat": "card_prestige/prestige.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_prestige/prestige.001.1.b2.start",
+      "cue": "prestige.001.1",
+      "beat": "card_prestige/prestige.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_prestige/prestige.001.1.b2.end",
+      "cue": "prestige.001.1",
+      "beat": "card_prestige/prestige.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "card_prestige/prestige.001.2.start",
+      "cue": "prestige.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_prestige/prestige.001.2.end",
+      "cue": "prestige.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_prestige/prestige.001.2.b1.start",
+      "cue": "prestige.001.2",
+      "beat": "card_prestige/prestige.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_prestige/prestige.001.2.b1.end",
+      "cue": "prestige.001.2",
+      "beat": "card_prestige/prestige.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_prestige/prestige.001.2.b2.start",
+      "cue": "prestige.001.2",
+      "beat": "card_prestige/prestige.001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_prestige/prestige.001.2.b2.end",
+      "cue": "prestige.001.2",
+      "beat": "card_prestige/prestige.001.2.b2",
+      "edge": "end"
+    }
+  ]
+}

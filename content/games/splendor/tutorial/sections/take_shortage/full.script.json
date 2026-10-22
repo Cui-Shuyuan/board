@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "take_shortage",
+  "cues": [
+    {
+      "id": "draw_rule.001.1",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "<take_gems_same>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "take_shortage/draw_rule.001.1.b1",
+          "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。"
+        }
+      ],
+      "section": "take_shortage"
+    },
+    {
+      "id": "draw_rule.001.2",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "<take_gems_same>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "take_shortage/draw_rule.001.2.b1",
+          "text": "当供应堆宝石不足时，尽可能拿取宝石。"
+        }
+      ],
+      "section": "take_shortage"
+    }
+  ]
+}

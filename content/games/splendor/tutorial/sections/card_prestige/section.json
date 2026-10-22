@@ -1,0 +1,13 @@
+{
+  "id": "card_prestige",
+  "title": "发展卡声望",
+  "group_path": [
+    "3 行动",
+    "3.2 发展卡牌与贵族",
+    "3.2.1 认识发展卡牌"
+  ],
+  "order": 25,
+  "tree": "main",
+  "entry": "card_cost_purchase/cost.001.2",
+  "tts_asset": "card_prestige"
+}

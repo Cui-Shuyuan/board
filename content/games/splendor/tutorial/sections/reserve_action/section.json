@@ -1,0 +1,12 @@
+{
+  "id": "reserve_action",
+  "title": "保留行动",
+  "group_path": [
+    "3 行动",
+    "3.3 保留一张发展卡牌"
+  ],
+  "order": 36,
+  "tree": "main",
+  "entry": "reserve_action_title/title_3_3",
+  "tts_asset": "reserve_action"
+}

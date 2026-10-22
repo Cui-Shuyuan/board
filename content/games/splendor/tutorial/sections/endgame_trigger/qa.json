@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "endgame_trigger",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。脚本要演一个前提：我已经买过一批发展卡，现在再补一张三级的发展卡到我面前（假设我早就买下它）。这个前提合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+      "cue": "trigger.001"
+    }
+  ]
+}

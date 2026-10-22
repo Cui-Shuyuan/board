@@ -1,0 +1,11 @@
+{
+  "id": "endgame_trigger_title",
+  "title": "终局触发与补完当前轮",
+  "group_path": [
+    "4 游戏结束"
+  ],
+  "order": 44,
+  "tree": "main",
+  "entry": "turn_end_loop/002.2",
+  "tts_asset": "title.endgame_trigger"
+}

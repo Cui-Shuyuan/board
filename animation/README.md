@@ -9,7 +9,7 @@
 - Unity 播放器：`clients/unity/Assets/Scripts/Tutorial/`
 - 本目录只放跨游戏动画工具，不放 Unity 工程，也不放 per-game 动画数据。
 
-当前 Splendor：full 83 cue / 14 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。两轨引用同一批 `library/` 素材。`check_materials.py` 是 `compile_tutorial.py` 的构建门禁，失败时保留上一次 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
+当前 Splendor：full 83 cue / 47 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。full 的 15 个章节标题 cue 各自独立成一个 section 并使用 section MP3；标题之外的正文 cue 使用 cue 级音频覆盖，并允许同句相邻 cue 共享一条连续 MP3。字幕文本中的数字/符号先转写成中文 spoken form，再去除标点作为字幕展示。两轨引用同一批 `library/` 素材。`check_materials.py` 是 `compile_tutorial.py` 的构建门禁，失败时保留上一次 compiled。非卡牌夹具 `tests/fixtures/worker_toy/` 验证机制无关性与同事实不同节奏。
 
 ## 原语与检查
 
@@ -60,7 +60,7 @@ python3 animation/material_cli.py impact --game splendor --material splendor.act
 python3 animation/material_cli.py expand-cue --game splendor --track quick --cue quick_nobles/001 --anchors
 python3 animation/check_materials.py --game splendor --track quick
 python3 animation/check_materials.py --game splendor --strict-timing
-# 严格模式当前已知例外：nobles/source.001 两个无 hold 动作超音频窗口，见 round2 response
+# 严格模式当前已知例外：noble_restrictions/source.001 两个无 hold 动作超音频窗口，见 round2 response
 ```
 
 quick/full plan 构建：

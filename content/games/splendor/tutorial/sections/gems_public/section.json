@@ -1,0 +1,12 @@
+{
+  "id": "gems_public",
+  "title": "宝石公开信息",
+  "group_path": [
+    "3 行动",
+    "3.1 从宝石供应堆拿取宝石"
+  ],
+  "order": 21,
+  "tree": "main",
+  "entry": "gems_hand_limit/limit.001.2",
+  "tts_asset": "gems_public"
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "action_summary",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。玩家已购买发展卡左上角的声望，和已经获得的贵族板块左上角的声望，都会累计成玩家的总分。这样理解合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+      "expect": "合法",
+      "cue": "summary.001.3"
+    }
+  ]
+}

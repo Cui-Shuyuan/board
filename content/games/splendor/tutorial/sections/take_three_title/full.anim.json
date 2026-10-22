@@ -1,0 +1,75 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "take_three_title",
+  "cues": [
+    {
+      "id": "title_3_1",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.1 从宝石供应堆拿取宝石",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "take_three_title/title_3_1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.1 从宝石供应堆拿取宝石",
+          "label_align": "center",
+          "anchor": "take_three_title/title_3_1.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 4.72,
+          "anchor": "take_three_title/title_3_1.start"
+        }
+      ],
+      "section": "take_three_title"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "take_three_title/title_3_1.start",
+      "cue": "title_3_1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "take_three_title/title_3_1.end",
+      "cue": "title_3_1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "take_three_title/title_3_1.b1.start",
+      "cue": "title_3_1",
+      "beat": "take_three_title/title_3_1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "take_three_title/title_3_1.b1.end",
+      "cue": "title_3_1",
+      "beat": "take_three_title/title_3_1.b1",
+      "edge": "end"
+    }
+  ]
+}

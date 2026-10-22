@@ -1,0 +1,14 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "reserve_limits",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石，两人局。玩家A面前已经保留了3张发展卡；他又从市场拿了一张发展卡，想作为第4张保留。这个操作合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+      "expect": "不允许",
+      "cue": "limit_hand.001.1"
+    }
+  ]
+}

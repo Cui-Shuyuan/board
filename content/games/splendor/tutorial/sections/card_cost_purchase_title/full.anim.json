@@ -1,0 +1,75 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_cost_purchase_title",
+  "cues": [
+    {
+      "id": "title_3_2_1",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.2.1 认识发展卡牌",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "card_cost_purchase_title/title_3_2_1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.2.1 认识发展卡牌",
+          "label_align": "center",
+          "anchor": "card_cost_purchase_title/title_3_2_1.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 4.255,
+          "anchor": "card_cost_purchase_title/title_3_2_1.start"
+        }
+      ],
+      "section": "card_cost_purchase_title"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "card_cost_purchase_title/title_3_2_1.start",
+      "cue": "title_3_2_1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_cost_purchase_title/title_3_2_1.end",
+      "cue": "title_3_2_1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_cost_purchase_title/title_3_2_1.b1.start",
+      "cue": "title_3_2_1",
+      "beat": "card_cost_purchase_title/title_3_2_1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_cost_purchase_title/title_3_2_1.b1.end",
+      "cue": "title_3_2_1",
+      "beat": "card_cost_purchase_title/title_3_2_1.b1",
+      "edge": "end"
+    }
+  ]
+}

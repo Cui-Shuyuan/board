@@ -1,0 +1,75 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "noble_anatomy_title",
+  "cues": [
+    {
+      "id": "title_3_2_2",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.2.2 贵族结算",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "noble_anatomy_title/title_3_2_2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.2.2 贵族结算",
+          "label_align": "center",
+          "anchor": "noble_anatomy_title/title_3_2_2.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.41,
+          "anchor": "noble_anatomy_title/title_3_2_2.start"
+        }
+      ],
+      "section": "noble_anatomy_title"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "noble_anatomy_title/title_3_2_2.start",
+      "cue": "title_3_2_2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "noble_anatomy_title/title_3_2_2.end",
+      "cue": "title_3_2_2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "noble_anatomy_title/title_3_2_2.b1.start",
+      "cue": "title_3_2_2",
+      "beat": "noble_anatomy_title/title_3_2_2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "noble_anatomy_title/title_3_2_2.b1.end",
+      "cue": "title_3_2_2",
+      "beat": "noble_anatomy_title/title_3_2_2.b1",
+      "edge": "end"
+    }
+  ]
+}

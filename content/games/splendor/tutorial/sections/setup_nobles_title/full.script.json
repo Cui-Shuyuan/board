@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "setup_nobles_title",
+  "cues": [
+    {
+      "id": "title_2_3",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_nobles_title/title_2_3.b1",
+          "text": "二点三，贵族板块。"
+        }
+      ],
+      "section": "setup_nobles_title"
+    }
+  ]
+}

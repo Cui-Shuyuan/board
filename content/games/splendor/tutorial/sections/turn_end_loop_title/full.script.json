@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "turn_end_loop_title",
+  "cues": [
+    {
+      "id": "title_3_5",
+      "group": "3.5 回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "turn_end_loop_title/title_3_5.b1",
+          "text": "三点五，回合结束与循环。"
+        }
+      ],
+      "section": "turn_end_loop_title"
+    }
+  ]
+}

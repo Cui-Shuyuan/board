@@ -446,6 +446,28 @@ def measure_timeline(
                     and new_speech_end > last_subtitle_end + TIME_COMPARE_EPSILON:
                 timing_points[last_subtitle_ref]["time"] = new_speech_end
                 subtitle_changes.append(last_subtitle_ref)
+            # Measured source windows can be shorter than the provider's
+            # original subtitle windows.  Clamp every subtitle to the final
+            # slice range so the plan builder never receives out-of-range refs.
+            for subtitle in raw_slice.get("subtitles") or []:
+                if not isinstance(subtitle, dict):
+                    continue
+                start_ref = str(subtitle.get("start_ref") or "")
+                end_ref = str(subtitle.get("end_ref") or "")
+                start_point = timing_points.get(start_ref)
+                end_point = timing_points.get(end_ref)
+                if not isinstance(start_point, dict) or not isinstance(end_point, dict):
+                    continue
+                old_start = float(start_point.get("time", source_start))
+                old_end = float(end_point.get("time", old_start))
+                clamped_start = min(source_end, max(source_start, old_start))
+                clamped_end = min(source_end, max(clamped_start, old_end))
+                if abs(clamped_start - old_start) > TIME_COMPARE_EPSILON:
+                    start_point["time"] = _round_time(clamped_start)
+                    subtitle_changes.append(start_ref)
+                if abs(clamped_end - old_end) > TIME_COMPARE_EPSILON:
+                    end_point["time"] = _round_time(clamped_end)
+                    subtitle_changes.append(end_ref)
             policy = cue_timing.setdefault(cue_id, {})
             if not isinstance(policy, dict):
                 raise MeasureError(

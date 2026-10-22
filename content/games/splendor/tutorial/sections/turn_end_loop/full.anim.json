@@ -1,0 +1,135 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "turn_end_loop",
+  "cues": [
+    {
+      "id": "001",
+      "parent": "purchase_reserved/001",
+      "timing": [],
+      "script": {
+        "story": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌",
+        "note": "用全桌镜头回顾拿宝石、买卡与保留卡三种行动。本条不再执行这些行动，也没有依次指示区域的事件。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "turn_end_loop/001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "本回合可选择以下行动之一：\n第1个行动：拿取宝石\n第2个行动：购买1张发展卡牌\n第3个行动：保留1张发展卡牌",
+          "anchor": "turn_end_loop/001.start",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_summary"
+          }
+        }
+      ],
+      "tree": "main",
+      "section": "turn_end_loop"
+    },
+    {
+      "id": "002.1",
+      "parent": "turn_end_loop/001",
+      "timing": [],
+      "script": {
+        "story": "一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合",
+        "note": "保持上一条全桌画面，由口播说明每回合选择一种行动及随后轮到下一位玩家。本条没有新事件，不实际移动标记或模拟轮转。"
+      },
+      "events": [],
+      "tree": "main",
+      "section": "turn_end_loop"
+    },
+    {
+      "id": "002.2",
+      "parent": "turn_end_loop/002.1",
+      "timing": [
+        {
+          "key": "镜头回整桌",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "就这样一直循环，直到整局游戏结束",
+        "note": "保持全桌画面，用口播结束行动循环说明，过渡到游戏结束条件。本条没有新事件。"
+      },
+      "events": [],
+      "tree": "main",
+      "section": "turn_end_loop"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "turn_end_loop/001.start",
+      "cue": "001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "turn_end_loop/001.end",
+      "cue": "001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "turn_end_loop/001.b1.start",
+      "cue": "001",
+      "beat": "turn_end_loop/001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "turn_end_loop/001.b1.end",
+      "cue": "001",
+      "beat": "turn_end_loop/001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "turn_end_loop/002.1.start",
+      "cue": "002.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "turn_end_loop/002.1.end",
+      "cue": "002.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "turn_end_loop/002.1.b1.start",
+      "cue": "002.1",
+      "beat": "turn_end_loop/002.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "turn_end_loop/002.1.b1.end",
+      "cue": "002.1",
+      "beat": "turn_end_loop/002.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "turn_end_loop/002.2.start",
+      "cue": "002.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "turn_end_loop/002.2.end",
+      "cue": "002.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "turn_end_loop/002.2.b2.start",
+      "cue": "002.2",
+      "beat": "turn_end_loop/002.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "turn_end_loop/002.2.b2.end",
+      "cue": "002.2",
+      "beat": "turn_end_loop/002.2.b2",
+      "edge": "end"
+    }
+  ]
+}

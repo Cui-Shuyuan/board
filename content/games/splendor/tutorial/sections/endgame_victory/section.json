@@ -1,0 +1,11 @@
+{
+  "id": "endgame_victory",
+  "title": "胜负判定",
+  "group_path": [
+    "4 游戏结束"
+  ],
+  "order": 46,
+  "tree": "main",
+  "entry": "endgame_trigger/example.001.1",
+  "tts_asset": "endgame_victory"
+}

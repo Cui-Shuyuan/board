@@ -1,0 +1,142 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_public",
+  "cues": [
+    {
+      "id": "public.001.1",
+      "parent": "card_discount/discount.003.2",
+      "timing": [
+        {
+          "key": "镜头给发展区",
+          "text": "0.00"
+        },
+        {
+          "key": "镜头回整桌",
+          "text": "第二句"
+        }
+      ],
+      "script": {
+        "story": "已购买的发展卡牌属于公开信息",
+        "note": "镜头看玩家 A 发展区，说明已购买卡牌属于公开信息。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_development",
+          "realizes": "<ontology::timing>",
+          "anchor": "card_public/public.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_public/public.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。玩家已经购买的发展卡牌属于公开信息，必须摊开放在自己面前，所有玩家都能清楚看到。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ],
+      "section": "card_public"
+    },
+    {
+      "id": "public.001.2",
+      "parent": "card_public/public.001.1",
+      "timing": [
+        {
+          "key": "镜头给发展区",
+          "text": "0.00"
+        },
+        {
+          "key": "镜头回整桌",
+          "text": "第二句"
+        }
+      ],
+      "script": {
+        "story": "每位玩家都需要将已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到。",
+        "note": "镜头回到全桌，展示公开摆放的发展卡牌。"
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_public/public.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "card_public/public.001.2.start"
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。玩家已经购买的发展卡牌属于公开信息，必须摊开放在自己面前，所有玩家都能清楚看到。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ],
+      "section": "card_public"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "card_public/public.001.1.start",
+      "cue": "public.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_public/public.001.1.end",
+      "cue": "public.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_public/public.001.1.b1.start",
+      "cue": "public.001.1",
+      "beat": "card_public/public.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_public/public.001.1.b1.end",
+      "cue": "public.001.1",
+      "beat": "card_public/public.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_public/public.001.2.start",
+      "cue": "public.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_public/public.001.2.end",
+      "cue": "public.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_public/public.001.2.b1.start",
+      "cue": "public.001.2",
+      "beat": "card_public/public.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_public/public.001.2.b1.end",
+      "cue": "public.001.2",
+      "beat": "card_public/public.001.2.b1",
+      "edge": "end"
+    }
+  ]
+}

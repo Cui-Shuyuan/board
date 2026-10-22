@@ -1,0 +1,373 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "gold_as_wild",
+  "cues": [
+    {
+      "id": "gold.001",
+      "parent": "reserve_action/intro.001.1",
+      "timing": [
+        {
+          "key": "点持有区（黄金）",
+          "text": "0.80"
+        },
+        {
+          "key": "点保留的牌",
+          "text": "2.60"
+        }
+      ],
+      "script": {
+        "story": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代",
+        "note": "静默为玩家 A 补三枚黑宝石，配合已持有的一枚黄金，购买标价四黑的 card_l1_emerald_32。框出屏幕展示图价格，用文字说明黄金替代一黑；三枚黑宝石逐枚归还，再归还黄金，拿入绿卡并补位。示例结束时保留牌仍在保留区。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 36
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 1
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "count": 4
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 1
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 35
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 4
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_sapphire": {
+              "count": 4
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 0
+            },
+            "player_b_development": {
+              "count": 0
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 1
+            },
+            "player_holding": {
+              "count": 0
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 1
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 3,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "gold_as_wild/gold.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第3个行动：保留1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_third"
+          },
+          "anchor": "gold_as_wild/gold.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 2.3,
+          "rect": {
+            "x": 0.04,
+            "y": 0.42,
+            "w": 0.22,
+            "h": 0.5
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "dur": 0.0,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 2.3,
+          "rect": {
+            "x": 0.04,
+            "y": 0.42,
+            "w": 0.22,
+            "h": 0.5
+          },
+          "image": "media/card/一级发展卡_绿_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_1",
+          "dur": 0.0,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 3.1,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "这里用1枚黄金代替了1枚黑宝石",
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 3.55,
+          "target": {
+            "space": "screen",
+            "id": "hint_gold_substitute"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 3,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 3.6,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          },
+          "stagger": 0.12
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 1,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 3.9,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gold"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gold_supply"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.7,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 4.3,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_emerald_32",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "order": 0,
+          "anchor": "gold_as_wild/gold.001.start",
+          "offset": 5.1,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "template": "card_l1_onyx_3",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        }
+      ],
+      "tree": "main",
+      "section": "gold_as_wild"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "gold_as_wild/gold.001.start",
+      "cue": "gold.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "gold_as_wild/gold.001.end",
+      "cue": "gold.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "gold_as_wild/gold.001.b1.start",
+      "cue": "gold.001",
+      "beat": "gold_as_wild/gold.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "gold_as_wild/gold.001.b1.end",
+      "cue": "gold.001",
+      "beat": "gold_as_wild/gold.001.b1",
+      "edge": "end"
+    }
+  ]
+}

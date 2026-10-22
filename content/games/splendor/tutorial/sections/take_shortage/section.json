@@ -1,0 +1,12 @@
+{
+  "id": "take_shortage",
+  "title": "宝石不足与不能少拿",
+  "group_path": [
+    "3 行动",
+    "3.1 从宝石供应堆拿取宝石"
+  ],
+  "order": 19,
+  "tree": "main",
+  "entry": "take_two_same/same.002",
+  "tts_asset": "take_shortage"
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "setup_gems_supply",
+  "cues": [
+    {
+      "id": "003.1",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "flow:distribute_gems"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_gems_supply/003.1.b1",
+          "text": "我们需要根据玩家人数拿取对应数量的宝石。"
+        },
+        {
+          "id": "setup_gems_supply/003.1.b2",
+          "text": "二人游戏时，每种宝石拿取四枚。"
+        },
+        {
+          "id": "setup_gems_supply/003.1.b3",
+          "text": "三人游戏时，拿取五枚。"
+        },
+        {
+          "id": "setup_gems_supply/003.1.b4",
+          "text": "四人游戏时则使用全部的七枚宝石。"
+        },
+        {
+          "id": "setup_gems_supply/003.1.b5",
+          "text": "将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。"
+        }
+      ],
+      "section": "setup_gems_supply"
+    },
+    {
+      "id": "005.2",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem_supply>",
+        "<gold_supply>",
+        "flow:distribute_gems",
+        "flow:distribute_gold"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_gems_supply/005.2.b1",
+          "text": "将全部五枚黄金也放在一旁，成为黄金供应堆。"
+        },
+        {
+          "id": "setup_gems_supply/005.2.b2",
+          "text": "其余的宝石放回盒子。"
+        }
+      ],
+      "section": "setup_gems_supply"
+    }
+  ]
+}

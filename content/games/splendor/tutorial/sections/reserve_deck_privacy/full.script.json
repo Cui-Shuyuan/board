@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "reserve_deck_privacy",
+  "cues": [
+    {
+      "id": "deck.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<development_deck_level_1>",
+        "<development_deck_level_2>",
+        "<development_deck_level_3>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_deck_privacy/deck.001.b1",
+          "text": "除了供应堆的十二张卡牌外，玩家也可以从三摞牌堆顶选择一张未被翻开的发展卡牌保留。"
+        }
+      ],
+      "section": "reserve_deck_privacy"
+    },
+    {
+      "id": "private.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_deck_privacy/private.001.1.b1",
+          "text": "已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。"
+        }
+      ],
+      "story": "【已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看】",
+      "section": "reserve_deck_privacy"
+    },
+    {
+      "id": "private.002",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>",
+        "<reserve_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_deck_privacy/private.002.b1",
+          "text": "如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。"
+        }
+      ],
+      "section": "reserve_deck_privacy"
+    },
+    {
+      "id": "not_purchase.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<discount>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_deck_privacy/not_purchase.001.b1",
+          "text": "保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。"
+        }
+      ],
+      "section": "reserve_deck_privacy"
+    }
+  ]
+}

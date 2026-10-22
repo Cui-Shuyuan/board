@@ -43,6 +43,7 @@ import anim_schema_v2 as schema  # noqa: E402
 import compile_animation_v2 as animation_compiler  # noqa: E402
 import lrc as lrc_utils  # noqa: E402
 import section_source  # noqa: E402
+import tutorial_text  # noqa: E402
 import qa_anim_ask  # noqa: E402
 import validate_anim_rules_v2 as rule_ledger  # noqa: E402
 from build_tutorial_runtime import build_runtime  # noqa: E402
@@ -816,7 +817,10 @@ def build_section_tts_entries(track_source) -> list[dict]:
         cues = cues_by_section.get(sec.id) or []
         if not cues:
             raise SystemExit(f"section {sec.id!r} has no script cues")
-        text = "".join(cue_text(c) for c in cues)
+        text = "".join(
+            tutorial_text.to_tts_text(cue_text(c))
+            for c in cues
+        )
         if not text.strip():
             raise SystemExit(f"section {sec.id!r} has empty TTS text")
         asset = _valid_tts_asset_name(sec.meta.get("tts_asset") or sec.id)

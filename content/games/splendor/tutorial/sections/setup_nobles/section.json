@@ -1,0 +1,12 @@
+{
+  "id": "setup_nobles",
+  "title": "设置：贵族",
+  "group_path": [
+    "2 设置",
+    "2.3 贵族板块"
+  ],
+  "order": 10,
+  "tree": "main",
+  "entry": "setup_nobles_title/title_2_3",
+  "tts_asset": "setup_nobles"
+}

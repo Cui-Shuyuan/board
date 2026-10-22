@@ -1354,6 +1354,28 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
             if isinstance(contract, dict)
             and contract.get("kind") == "continuous"
         }
+        timing_points = slice_doc["timing_points"]
+        first_speech_lead: dict[str, float] = {}
+        for cue_id, raw_slices in (slice_doc.get("cues") or {}).items():
+            if not raw_slices:
+                continue
+            first_slice = raw_slices[0]
+            start_ref = str(first_slice.get("start_ref") or "").strip()
+            speech_start_ref = str(
+                first_slice.get("speech_start_ref") or "").strip()
+            if not start_ref or not speech_start_ref:
+                first_speech_lead[str(cue_id)] = 0.0
+                continue
+            start_point = timing_points.get(start_ref)
+            speech_point = timing_points.get(speech_start_ref)
+            if not isinstance(start_point, dict) \
+                    or not isinstance(speech_point, dict):
+                first_speech_lead[str(cue_id)] = 0.0
+                continue
+            start = float(start_point.get("time", 0.0) or 0.0)
+            speech_start = float(speech_point.get("time", start) or start)
+            first_speech_lead[str(cue_id)] = max(0.0, speech_start - start)
+
         auto_post_speech_gaps: dict[str, float] = {}
         for index, cue in enumerate(runtime_cues):
             cue_id = str(cue.get("id") or "").strip()
@@ -1368,18 +1390,32 @@ def build_plan_set(repo_root: Path, game: str, track: str) -> dict:
                 next_cue is None
                 or current_section != next_section)
             continuous_to_next = False
+            next_cue_id = ""
             if next_cue is not None:
-                current_slices = slice_doc["cues"].get(cue_id) or []
                 next_cue_id = str(next_cue.get("id") or "").strip()
+                current_slices = slice_doc["cues"].get(cue_id) or []
                 next_slices = slice_doc["cues"].get(next_cue_id) or []
                 if current_slices and next_slices:
                     continuous_to_next = (
                         str(current_slices[-1].get("id") or ""),
                         str(next_slices[0].get("id") or ""),
                     ) in continuous_boundaries
-            auto_post_speech_gaps[cue_id] = (
-                0.0 if continuous_to_next
-                else (section_end_gap if is_section_end else inter_cue_gap))
+            if continuous_to_next:
+                gap = 0.0
+            elif is_section_end and next_cue_id:
+                # Make the *audible* section gap equal section_end_gap, not
+                # just the distance to the next cue's file start.  The next
+                # cue may have leading silence before its first voiced word.
+                gap = max(
+                    0.0,
+                    section_end_gap
+                    - float(first_speech_lead.get(next_cue_id, 0.0)),
+                )
+            elif is_section_end:
+                gap = section_end_gap
+            else:
+                gap = inter_cue_gap
+            auto_post_speech_gaps[cue_id] = gap
         document = _build_cue_plan_set_from_audio_slices(
             repo_root, game, track, runtime, compiled, timing_policy,
             auto_post_speech_gaps=auto_post_speech_gaps)

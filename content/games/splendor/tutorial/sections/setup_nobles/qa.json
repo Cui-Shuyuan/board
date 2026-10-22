@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "setup_nobles",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。两人局要摆几块贵族？我摆了 3 块。对吗？只回答「合法」或「有问题」，再给一句话理由。",
+      "cue": "nobles.001.2"
+    }
+  ]
+}

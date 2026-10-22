@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "reserve_limits",
+  "cues": [
+    {
+      "id": "notes_intro.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<player_holding>",
+        "<gold_available>",
+        "<discard_excess_gems>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_limits/notes_intro.001.b1",
+          "text": "拿取黄金后，如果已持有的宝石和黄金总数超过十枚，也需要弃至还剩十个为止。"
+        }
+      ],
+      "story": "【注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过 10 枚，也需要弃至还剩 10 个为止】",
+      "section": "reserve_limits"
+    },
+    {
+      "id": "limit_gold.001.2",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<player_holding>",
+        "<gold_available>",
+        "<discard_excess_gems>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_limits/limit_gold.001.2.b1",
+          "text": "如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。"
+        }
+      ],
+      "section": "reserve_limits"
+    },
+    {
+      "id": "limit_hand.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<hand>",
+        "<card_reservable>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_limits/limit_hand.001.1.b1",
+          "text": "每位玩家最多同时保留三张发展卡牌；已经保留三张时，就不能再保留，必须选择其他行动。"
+        }
+      ],
+      "story": "【每位玩家最多同时保留 3 张发展卡牌；已经保留 3 张时，就不能再保留，必须选择其他行动】",
+      "section": "reserve_limits"
+    }
+  ]
+}

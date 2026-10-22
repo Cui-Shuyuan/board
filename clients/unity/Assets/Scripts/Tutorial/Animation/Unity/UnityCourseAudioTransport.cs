@@ -45,7 +45,14 @@ namespace BoardGameTutorial.Animation
         private bool courseScheduling;
         private bool disposed;
         private Coroutine prepareRoutine;
-        private UnityWebRequest activeRequest;
+        private const int AudioLoadConcurrency = 4;
+        private readonly List<PendingAudioLoad> activeLoads = new List<PendingAudioLoad>();
+
+        private sealed class PendingAudioLoad
+        {
+            public string Asset;
+            public UnityWebRequest Request;
+        }
         private double anchorCourseTime;
         private double anchorDspTime;
         private double playbackEndCourseTime;
@@ -214,12 +221,7 @@ namespace BoardGameTutorial.Animation
                 coroutineHost.StopCoroutine(prepareRoutine);
                 prepareRoutine = null;
             }
-            if (activeRequest != null)
-            {
-                SafeAbortRequest(activeRequest);
-                SafeDisposeRequest(activeRequest);
-                activeRequest = null;
-            }
+            ClearActiveLoads();
             StopCourseSources();
             coursePlanSet = null;
             courseAudioPlan = null;
@@ -299,73 +301,57 @@ namespace BoardGameTutorial.Animation
         private IEnumerator PrepareRoutine(long generation,
             double startCourseTime, double stopCourseTime)
         {
+            var timer = System.Diagnostics.Stopwatch.StartNew();
             List<string> assets = CollectAssets(coursePlanSet);
-            for (int i = 0; i < assets.Count; i++)
+            int next = 0;
+            int loaded = 0;
+            // Independent local files may decode concurrently. Waiting once per
+            // file serialized IO/decoder latency and coroutine frame overhead.
+            while (next < assets.Count || activeLoads.Count > 0)
             {
-                string asset = assets[i];
                 if (generation != courseGeneration) yield break;
-
-                AudioClip clip;
-                if (sourceClipCache.TryGetValue(asset, out clip) && clip != null)
+                while (next < assets.Count && activeLoads.Count < AudioLoadConcurrency)
                 {
-                    if (!ValidateAssetRange(coursePlanSet, asset, clip, generation))
+                    string asset = assets[next++];
+                    AudioClip cached;
+                    if (sourceClipCache.TryGetValue(asset, out cached) && cached != null)
                     {
-                        FailGeneration(generation,
-                            "audio source range exceeds clip: " + asset);
+                        if (!ValidateAssetRange(coursePlanSet, asset, cached, generation))
+                        {
+                            FailGeneration(generation, "audio source range exceeds clip: " + asset);
+                            yield break;
+                        }
+                        continue;
+                    }
+                    string error = StartAudioLoad(asset);
+                    if (error != null)
+                    {
+                        FailGeneration(generation, error);
                         yield break;
                     }
-                    continue;
+                    loaded++;
                 }
-
-                string path = ResolveAssetPath(asset);
-                if (string.IsNullOrEmpty(path))
+                for (int i = activeLoads.Count - 1; i >= 0; i--)
                 {
-                    FailGeneration(generation,
-                        "audio asset path is empty: " + asset);
-                    yield break;
+                    PendingAudioLoad pending = activeLoads[i];
+                    if (!pending.Request.isDone) continue;
+                    activeLoads.RemoveAt(i);
+                    string error = CompleteAudioLoad(pending, generation);
+                    if (error != null)
+                    {
+                        FailGeneration(generation, error);
+                        yield break;
+                    }
                 }
-
-                UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(
-                    FilePathToUri(path), AudioTypeForPath(path));
-                request.timeout = 60;
-                activeRequest = request;
-                yield return request.SendWebRequest();
-
-                if (generation != courseGeneration)
-                {
-                    SafeDisposeRequest(request);
-                    activeRequest = null;
-                    yield break;
-                }
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    string message = "audio load failed: " + asset + " "
-                        + request.error;
-                    SafeDisposeRequest(request);
-                    activeRequest = null;
-                    FailGeneration(generation, message);
-                    yield break;
-                }
-
-                clip = DownloadHandlerAudioClip.GetContent(request);
-                SafeDisposeRequest(request);
-                activeRequest = null;
-                if (clip == null)
-                {
-                    FailGeneration(generation,
-                        "audio decode returned null: " + asset);
-                    yield break;
-                }
-                sourceClipCache[asset] = clip;
-                if (!ValidateAssetRange(coursePlanSet, asset, clip, generation))
-                {
-                    FailGeneration(generation,
-                        "audio source range exceeds clip: " + asset);
-                    yield break;
-                }
+                // Refill completed slots immediately; yield only when all
+                // available slots are occupied or only pending work remains.
+                if (activeLoads.Count > 0 &&
+                    (activeLoads.Count == AudioLoadConcurrency || next == assets.Count))
+                    yield return null;
             }
 
             if (generation != courseGeneration) yield break;
+            long loadMilliseconds = timer.ElapsedMilliseconds;
             try
             {
                 var formats = new CueAudioAssetFormatMap();
@@ -409,12 +395,58 @@ namespace BoardGameTutorial.Animation
             coursePrepared = true;
             Debug.Log("[CueTimeline][AudioCourse] prepared gen=" + generation
                 + " assets=" + assets.Count
+                + " loaded=" + loaded
+                + " load_ms=" + loadMilliseconds
+                + " plan_prewarm_ms=" + (timer.ElapsedMilliseconds - loadMilliseconds)
+                + " total_ms=" + timer.ElapsedMilliseconds
                 + " entries=" + courseAudioPlan.Entries.Count
                 + " blocks=" + courseAudioPlan.Blocks.Count
                 + " start=" + FormatTime(startCourseTime)
                 + " end=" + FormatTime(stopCourseTime));
             if (courseCallback != null)
                 courseCallback.OnPrepared(generation);
+        }
+
+        private string StartAudioLoad(string asset)
+        {
+            try
+            {
+                string path = ResolveAssetPath(asset);
+                if (string.IsNullOrEmpty(path)) return "audio asset path is empty: " + asset;
+                var request = UnityWebRequestMultimedia.GetAudioClip(
+                    FilePathToUri(path), AudioTypeForPath(path));
+                activeLoads.Add(new PendingAudioLoad { Asset = asset, Request = request });
+                request.timeout = 60;
+                request.SendWebRequest();
+                return null;
+            }
+            catch (Exception ex) { return "audio load failed: " + asset + " " + ex.Message; }
+        }
+
+        private string CompleteAudioLoad(PendingAudioLoad pending, long generation)
+        {
+            try
+            {
+                if (pending.Request.result != UnityWebRequest.Result.Success)
+                    return "audio load failed: " + pending.Asset + " " + pending.Request.error;
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(pending.Request);
+                if (clip == null) return "audio decode returned null: " + pending.Asset;
+                sourceClipCache[pending.Asset] = clip;
+                return ValidateAssetRange(coursePlanSet, pending.Asset, clip, generation)
+                    ? null : "audio source range exceeds clip: " + pending.Asset;
+            }
+            catch (Exception ex) { return "audio decode failed: " + pending.Asset + " " + ex.Message; }
+            finally { SafeDisposeRequest(pending.Request); }
+        }
+
+        private void ClearActiveLoads()
+        {
+            foreach (PendingAudioLoad pending in activeLoads)
+            {
+                SafeAbortRequest(pending.Request);
+                SafeDisposeRequest(pending.Request);
+            }
+            activeLoads.Clear();
         }
 
         private void PrewarmCourseClips(double startCourseTime,
@@ -694,6 +726,7 @@ namespace BoardGameTutorial.Animation
         private void FailGeneration(long generation, string message)
         {
             if (generation != courseGeneration) return;
+            ClearActiveLoads();
             Debug.LogError("[CueTimeline][AudioCourse] " + message
                 + " gen=" + generation);
             coursePrepared = false;

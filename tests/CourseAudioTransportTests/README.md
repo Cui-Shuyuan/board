@@ -18,6 +18,9 @@ boundaries, bit-identical continuous PCM, device cache invalidation, audio-threa
 release across buffers, stereo gains, rapid seeks, and the actual quick/full plans.
 It also checks mixed-rate mono/stereo rendering, cross-plan cache identity, and
 byte-budget eviction after repeated seeks within an 80-second source.
+Cold preparation also uses manually completed in-memory requests to check bounded
+parallel loading, out-of-order completion, cache reuse, cancellation and failure
+cleanup. These doubles never access the network or decode real media.
 The model suite also checks failure callbacks and bounded recovery retries.
 
 These checks do not implement a Unity mixer, decoder, OS audio buffers, or device

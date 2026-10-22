@@ -1,0 +1,12 @@
+{
+  "id": "setup_starting_player_title",
+  "title": "设置：起始玩家",
+  "group_path": [
+    "2 设置",
+    "2.4 起始玩家"
+  ],
+  "order": 11,
+  "tree": "main",
+  "entry": "setup_nobles/nobles.002",
+  "tts_asset": "title.setup_starting_player"
+}

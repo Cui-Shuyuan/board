@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "take_three",
+  "cues": [
+    {
+      "id": "different.001",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_different>",
+        "flow:player_action_turn"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "take_three/different.001.b1",
+          "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。"
+        }
+      ],
+      "section": "take_three"
+    }
+  ]
+}

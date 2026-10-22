@@ -1,0 +1,12 @@
+{
+  "id": "setup_complete",
+  "title": "设置完成",
+  "group_path": [
+    "2 设置",
+    "2.4 起始玩家"
+  ],
+  "order": 13,
+  "tree": "main",
+  "entry": "setup_starting_player/starting.001.3",
+  "tts_asset": "setup_complete"
+}

@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "take_three",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。我手上还没有宝石。现在我从白、蓝、红三种颜色的供应堆各拿 1 颗（一次共拿 3 颗不同颜色）。这样拿合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+      "cue": "different.001"
+    }
+  ]
+}

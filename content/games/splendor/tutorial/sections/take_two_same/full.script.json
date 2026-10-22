@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "take_two_same",
+  "cues": [
+    {
+      "id": "same.001",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_same>",
+        "<gems_available_same_color>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "take_two_same/same.001.b1",
+          "text": "当某种宝石在供应堆中的数量大于等于四时，也可以改为拿取这种宝石两枚。"
+        }
+      ],
+      "section": "take_two_same"
+    },
+    {
+      "id": "same.002",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<take_gems_same>",
+        "<gems_available_same_color>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "take_two_same/same.002.b1",
+          "text": "拿取之后必须保证这种宝石在供应堆中至少剩下二枚，否则就不能这样拿取。"
+        }
+      ],
+      "section": "take_two_same"
+    }
+  ]
+}

@@ -1,0 +1,1467 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "endgame_victory",
+  "cues": [
+    {
+      "id": "winner.001",
+      "parent": "endgame_trigger/example.001.1",
+      "timing": [
+        {
+          "key": "点发展区",
+          "text": "0.60"
+        },
+        {
+          "key": "点贵族",
+          "text": "1.60"
+        }
+      ],
+      "script": {
+        "story": "第一种情况：声望值最高的玩家获得胜利",
+        "note": "用 shot_endgame_compare 同时框住两名玩家发展区。静默准备玩家 B 十张卡、十四点声望；玩家 A 保持十四张卡、十七点声望。分别圈出两人有声望的卡牌，并用文字显示 A 分高获胜。双方贵族区为空，且均未满足市场贵族条件。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "deck_peek": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 1
+            },
+            "player_b_development": {
+              "count": 10
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 14
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "deck_peek": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 1
+            },
+            "player_b_development": {
+              "count": 10
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 14
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "shot": "shot_endgame_compare"
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_ruby_69",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_ruby_34",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_ruby_87",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_sapphire_78",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_901",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_902",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_903",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_onyx_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 1,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_diamond_17",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "layer": 1
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 0,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "layer": 0
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 24,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_ruby_69",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "layer": 0
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 25,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_ruby_34",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "layer": 1
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 26,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_ruby_87",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "layer": 2
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 8,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_sapphire_78",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "layer": 0
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 9,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_901",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "layer": 1
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 10,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_902",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "layer": 2
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 11,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_903",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "layer": 3
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 32,
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_onyx_1",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "layer": 3
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_ruby_40",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l2_ruby_70",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_ruby_88",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l2_onyx_45",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l2_sapphire_49",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_sapphire_77",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_diamond_80",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l2_ruby_69",
+            "palette": "card_level_2",
+            "concept": "development_card_level_2",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_ruby_87",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "point",
+          "dur": 0.0,
+          "indicator": "circle",
+          "part": "prestige",
+          "anchor": "endgame_victory/winner.001.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_sapphire_78",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "part_w": 0.41904761904761906,
+          "part_h": 0.3,
+          "size": 80
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "① 分高者胜：A 17 分 > B 14 分",
+          "anchor": "endgame_victory/winner.001.b1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "hint_endgame"
+          }
+        },
+        {
+          "op": "wait",
+          "anchor": "endgame_victory/winner.001.b1.end",
+          "offset": 0.0
+        }
+      ],
+      "tree": "main",
+      "section": "endgame_victory"
+    },
+    {
+      "id": "winner.002",
+      "parent": "endgame_victory/winner.001",
+      "timing": [
+        {
+          "key": "点发展区",
+          "text": "0.60"
+        },
+        {
+          "key": "点贵族",
+          "text": "1.60"
+        }
+      ],
+      "script": {
+        "story": "第二种情况：同分时，买牌少者胜",
+        "note": "沿用双人比较镜头，静默把玩家 B 的一张零分蓝卡换成三分黑卡，使 B 仍为十张卡、但达到十七点声望。A 仍是十四张、十七点声望；用文字说明同分时 B 因发展卡更少获胜。本条不重复圈声望。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "deck_peek": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 1
+            },
+            "player_b_development": {
+              "count": 10
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 14
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "deck_peek": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 1
+            },
+            "player_b_development": {
+              "count": 10
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 14
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "anchor": "endgame_victory/winner.002.start",
+          "offset": 0.0,
+          "shot": "shot_endgame_compare"
+        },
+        {
+          "op": "create",
+          "setup": true,
+          "to": "face_up",
+          "anchor": "endgame_victory/winner.002.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_onyx_71",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 33,
+          "anchor": "endgame_victory/winner.002.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l3_onyx_71",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "layer": 4
+        },
+        {
+          "op": "destroy",
+          "setup": true,
+          "count": 1,
+          "anchor": "endgame_victory/winner.002.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_b_development",
+            "template": "card_l1_sapphire_903",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "② 同分：两人都是 17 分；A 14 张 > B 10 张 → B 胜",
+          "anchor": "endgame_victory/winner.002.b1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "hint_endgame"
+          }
+        },
+        {
+          "op": "wait",
+          "anchor": "endgame_victory/winner.002.b1.end",
+          "offset": 0.0
+        }
+      ],
+      "tree": "main",
+      "section": "endgame_victory"
+    },
+    {
+      "id": "winner.003",
+      "parent": "endgame_victory/winner.002",
+      "timing": [
+        {
+          "key": "点发展区",
+          "text": "0.60"
+        },
+        {
+          "key": "点贵族",
+          "text": "1.60"
+        }
+      ],
+      "script": {
+        "story": "第三种情况：同分同牌，共享胜利",
+        "note": "沿用双人比较镜头，静默移除玩家 A 四张零分卡并整理剩余卡的排列，使两人都为十张发展卡、十七点声望。用文字说明同分且牌数相同则共享胜利。本条不重复圈声望。",
+        "enter": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "deck_peek": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 1
+            },
+            "player_b_development": {
+              "count": 10
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 10
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_1": {
+              "count": 20
+            },
+            "deck_level_2": {
+              "count": 25
+            },
+            "deck_level_3": {
+              "count": 15
+            },
+            "deck_peek": {
+              "count": 0
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gold_supply": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "offstage": {
+              "count": 1
+            },
+            "player_b_development": {
+              "count": 10
+            },
+            "player_b_holding": {
+              "count": 0
+            },
+            "player_b_nobles": {
+              "count": 0
+            },
+            "player_development": {
+              "count": 10
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "player_nobles": {
+              "count": 0
+            },
+            "player_reserved": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "shot": "shot_endgame_compare"
+        },
+        {
+          "op": "destroy",
+          "setup": true,
+          "count": 1,
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_18",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "destroy",
+          "setup": true,
+          "count": 1,
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_20",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "destroy",
+          "setup": true,
+          "count": 1,
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_22",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "destroy",
+          "setup": true,
+          "count": 1,
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_sapphire_15",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          }
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 0,
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l1_diamond_24",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "layer": 3
+        },
+        {
+          "op": "set_order",
+          "setup": true,
+          "slot": 9,
+          "anchor": "endgame_victory/winner.003.start",
+          "offset": 0.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_development",
+            "template": "card_l3_sapphire_77",
+            "palette": "card_level_3",
+            "concept": "development_card_level_3",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "layer": 6
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "③ 同分同牌：两人都是 17 分、10 张 → 共享胜利",
+          "anchor": "endgame_victory/winner.003.b1.start",
+          "offset": 0.0,
+          "target": {
+            "space": "screen",
+            "id": "hint_endgame"
+          }
+        },
+        {
+          "op": "wait",
+          "anchor": "endgame_victory/winner.003.b1.end",
+          "offset": 0.0
+        }
+      ],
+      "tree": "main",
+      "section": "endgame_victory"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "endgame_victory/winner.001.start",
+      "cue": "winner.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame_victory/winner.001.end",
+      "cue": "winner.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame_victory/winner.001.b1.start",
+      "cue": "winner.001",
+      "beat": "endgame_victory/winner.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame_victory/winner.001.b1.end",
+      "cue": "winner.001",
+      "beat": "endgame_victory/winner.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame_victory/winner.002.start",
+      "cue": "winner.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame_victory/winner.002.end",
+      "cue": "winner.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame_victory/winner.002.b1.start",
+      "cue": "winner.002",
+      "beat": "endgame_victory/winner.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame_victory/winner.002.b1.end",
+      "cue": "winner.002",
+      "beat": "endgame_victory/winner.002.b1",
+      "edge": "end"
+    },
+    {
+      "id": "endgame_victory/winner.003.start",
+      "cue": "winner.003",
+      "edge": "cue_start"
+    },
+    {
+      "id": "endgame_victory/winner.003.end",
+      "cue": "winner.003",
+      "edge": "cue_end"
+    },
+    {
+      "id": "endgame_victory/winner.003.b1.start",
+      "cue": "winner.003",
+      "beat": "endgame_victory/winner.003.b1",
+      "edge": "start"
+    },
+    {
+      "id": "endgame_victory/winner.003.b1.end",
+      "cue": "winner.003",
+      "beat": "endgame_victory/winner.003.b1",
+      "edge": "end"
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 {
   "id": "purchase_reserved",
-  "title": "购买保留的发展卡",
+  "title": "购买保留卡",
   "group_path": [
     "3 行动",
     "3.4 购买保留的发展卡牌"
   ],
-  "order": 9,
+  "order": 41,
   "tree": "main",
-  "entry": "reserve/not_purchase.001",
+  "entry": "purchase_reserved_title/title_3_4",
   "tts_asset": "action.purchase_reserved"
 }

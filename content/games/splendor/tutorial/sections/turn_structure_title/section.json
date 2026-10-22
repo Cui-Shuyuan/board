@@ -1,0 +1,11 @@
+{
+  "id": "turn_structure_title",
+  "title": "回合与行动",
+  "group_path": [
+    "3 行动"
+  ],
+  "order": 14,
+  "tree": "main",
+  "entry": "setup_complete/end.001.1",
+  "tts_asset": "title.turn_structure"
+}

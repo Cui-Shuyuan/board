@@ -1,0 +1,12 @@
+{
+  "id": "setup_cards_market",
+  "title": "设置：洗牌与市场发牌",
+  "group_path": [
+    "2 设置",
+    "2.1 发展卡牌"
+  ],
+  "order": 5,
+  "tree": "main",
+  "entry": "setup_cards_deck/001.2",
+  "tts_asset": "setup_cards_market"
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "noble_anatomy",
+  "cues": [
+    {
+      "id": "intro.001",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble>",
+        "<prestige_point>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "noble_anatomy/intro.001.b1",
+          "text": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。"
+        }
+      ],
+      "section": "noble_anatomy"
+    }
+  ]
+}

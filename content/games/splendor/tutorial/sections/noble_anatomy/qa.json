@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "noble_anatomy",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。贵族只能通过满足条件后从贵族供应堆自动获得，不能从其他玩家面前拿走。这个规则对吗？只回答「合法」或「有问题」，再给一句话理由。",
+      "cue": "intro.001"
+    }
+  ]
+}

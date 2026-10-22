@@ -1,0 +1,75 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "setup_cards_deck_title",
+  "cues": [
+    {
+      "id": "title_2_1",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "2.1 发展卡牌",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "setup_cards_deck_title/title_2_1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "2.1 发展卡牌",
+          "label_align": "center",
+          "anchor": "setup_cards_deck_title/title_2_1.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.34,
+          "anchor": "setup_cards_deck_title/title_2_1.start"
+        }
+      ],
+      "section": "setup_cards_deck_title"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "setup_cards_deck_title/title_2_1.start",
+      "cue": "title_2_1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_cards_deck_title/title_2_1.end",
+      "cue": "title_2_1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_cards_deck_title/title_2_1.b1.start",
+      "cue": "title_2_1",
+      "beat": "setup_cards_deck_title/title_2_1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_cards_deck_title/title_2_1.b1.end",
+      "cue": "title_2_1",
+      "beat": "setup_cards_deck_title/title_2_1.b1",
+      "edge": "end"
+    }
+  ]
+}

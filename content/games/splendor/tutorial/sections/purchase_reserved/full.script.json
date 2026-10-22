@@ -5,22 +5,6 @@
   "section": "purchase_reserved",
   "cues": [
     {
-      "id": "title_3_4",
-      "group": "3.4 购买保留的发展卡牌",
-      "group_path": [
-        "3 行动",
-        "3.4 购买保留的发展卡牌"
-      ],
-      "refs": [],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "purchase_reserved/title_3_4.b1",
-          "text": "3.4，购买保留的发展卡牌。"
-        }
-      ]
-    },
-    {
       "id": "001",
       "group": "3.4 购买保留的发展卡牌",
       "group_path": [
@@ -45,7 +29,8 @@
           "id": "purchase_reserved/001.002.2.b1",
           "text": "正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。"
         }
-      ]
+      ],
+      "section": "purchase_reserved"
     }
   ]
 }

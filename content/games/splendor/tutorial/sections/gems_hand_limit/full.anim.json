@@ -1,0 +1,599 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "gems_hand_limit",
+  "cues": [
+    {
+      "id": "limit.001.1",
+      "parent": "take_shortage/draw_rule.001.1",
+      "timing": [
+        {
+          "key": "演示前提：玩家A已有9枚宝石",
+          "text": "0.00"
+        },
+        {
+          "key": "合法拿3枚不同 → 12枚，超过上限",
+          "text": "4.20-4.80"
+        },
+        {
+          "key": "屏幕提示（提前约2.7s）",
+          "text": "约1.5s-结束"
+        }
+      ],
+      "script": {
+        "story": "玩家持有的宝石和黄金总数上限为 10 个。任何时候当持有数量超过上限时",
+        "note": "静默准备玩家 A 已持有九枚宝石的前提，再拿白、蓝、红各一枚，持有量暂时变为十二枚。用供应区与持有区同框展示超限；下一条继续演示归还。",
+        "enter": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 3
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 3
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "gems_hand_limit/limit.001.1.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 2,
+          "anchor": "gems_hand_limit/limit.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 1,
+          "anchor": "gems_hand_limit/limit.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_onyx",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "gems_hand_limit/limit.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "gems_hand_limit/limit.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "take",
+          "dur": 0.6,
+          "quantity": 1,
+          "over_limit_demo": true,
+          "anchor": "gems_hand_limit/limit.001.1.b2.start",
+          "offset": 0.2,
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_diamond",
+              "gem_supply_sapphire",
+              "gem_supply_ruby"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "现在是这位玩家的回合，他选择拿取3枚不同宝石",
+          "anchor": "gems_hand_limit/limit.001.1.b1.start",
+          "offset": 1.2,
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          }
+        }
+      ],
+      "qa": [
+        {
+          "q": "璀璨宝石，两人局。演示前提：玩家A持有白2枚、蓝2枚、红2枚、绿2枚、黑1枚，共9枚；供应堆剩白2、蓝2、红2、绿2、黑3；玩家B没有宝石。这个局面合法吗？只回答「合法」或「有问题」，再给一句话理由。",
+          "expect": "合法"
+        },
+        {
+          "q": "璀璨宝石，两人局。玩家A手上已有9枚宝石和黄金（上限10枚），现在从白、蓝、红三种供应堆各拿1枚，变成12枚，超过上限；规则要求他随即把超出部分放回。这个拿取动作本身合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+          "expect": "允许"
+        }
+      ],
+      "tree": "main",
+      "section": "gems_hand_limit"
+    },
+    {
+      "id": "limit.001.2",
+      "parent": "gems_hand_limit/limit.001.1",
+      "timing": [
+        {
+          "key": "放回2枚钻石，恰好剩10枚",
+          "text": "4.00-4.86"
+        },
+        {
+          "key": "屏幕提示（提前约2.7s）",
+          "text": "约1.57s-结束"
+        }
+      ],
+      "script": {
+        "story": "必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下 10 个为止",
+        "note": "承接十二枚的超限结果，归还两枚白宝石，使玩家 A 持有量回到十枚，并用文字提示对应数量。归还是当前行动的上限结算，不是额外选择一次行动。",
+        "enter": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 3
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "gem_supply_diamond": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 3
+                }
+              ]
+            },
+            "gem_supply_sapphire": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_ruby": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "gem_supply_onyx": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 3
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "gems_hand_limit/limit.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "gems_hand_limit/limit.001.2.b1.start",
+          "offset": 4.0,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "现在他总计拥有12枚宝石，因此他必须选择2枚宝石返回供应堆",
+          "anchor": "gems_hand_limit/limit.001.2.b1.start",
+          "offset": 1.3,
+          "target": {
+            "space": "screen",
+            "id": "hint_limit"
+          }
+        }
+      ],
+      "qa": [
+        "两人局。玩家A当前持有12枚宝石：白3、蓝3、红3、绿2、黑1。他选择把2枚钻石还回钻石供应堆，使持有数降到上限10，供应堆钻石从1枚变回3枚。这个行动是否合法？"
+      ],
+      "tree": "main",
+      "section": "gems_hand_limit"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "gems_hand_limit/limit.001.1.start",
+      "cue": "limit.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.1.end",
+      "cue": "limit.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.1.b1.start",
+      "cue": "limit.001.1",
+      "beat": "gems_hand_limit/limit.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.1.b1.end",
+      "cue": "limit.001.1",
+      "beat": "gems_hand_limit/limit.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.1.b2.start",
+      "cue": "limit.001.1",
+      "beat": "gems_hand_limit/limit.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.1.b2.end",
+      "cue": "limit.001.1",
+      "beat": "gems_hand_limit/limit.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.2.start",
+      "cue": "limit.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.2.end",
+      "cue": "limit.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.2.b1.start",
+      "cue": "limit.001.2",
+      "beat": "gems_hand_limit/limit.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "gems_hand_limit/limit.001.2.b1.end",
+      "cue": "limit.001.2",
+      "beat": "gems_hand_limit/limit.001.2.b1",
+      "edge": "end"
+    }
+  ]
+}

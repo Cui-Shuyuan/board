@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "endgame_trigger",
+  "cues": [
+    {
+      "id": "trigger.001",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<enter_endgame>",
+        "<reach_15_prestige>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_trigger/trigger.001.b1",
+          "text": "当一位玩家的声望值达到十五或更多时，触发游戏结束。"
+        }
+      ],
+      "section": "endgame_trigger"
+    },
+    {
+      "id": "final_rounds.001.1",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "flow:final_turn_cycle",
+        "flow:final_turns",
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_trigger/final_rounds.001.1.b1",
+          "text": "为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。"
+        }
+      ],
+      "section": "endgame_trigger"
+    },
+    {
+      "id": "example.001.1",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<no_remaining_players>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_trigger/example.001.1.b1",
+          "text": "以四人局为例：如果起始玩家的声望值达到十五，剩下三位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到十五，就没有人可以行动了，游戏立刻结束。"
+        }
+      ],
+      "section": "endgame_trigger"
+    }
+  ]
+}

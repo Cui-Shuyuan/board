@@ -1,0 +1,539 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_cost_purchase",
+  "cues": [
+    {
+      "id": "intro.001",
+      "parent": "gems_public/public.001.2",
+      "tree": "main",
+      "transition": "overlay",
+      "timing": [
+        {
+          "key": "镜头对准一张牌面",
+          "text": "0.00"
+        },
+        {
+          "key": "牌面出现",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "我们介绍一下发展卡牌",
+        "note": "用深色屏幕背景展示一级红卡 card_l1_ruby_38 的正面，开始介绍卡面。purchase_card 是展示图，真实市场卡牌仍保留在桌面状态中。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "card_cost_purchase/intro.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "anchor": "card_cost_purchase/intro.001.start",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
+          },
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/intro.001.start",
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.028,
+            "y": 0.1,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/intro.001.start",
+          "image": "media/card/一级发展卡_红_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        }
+      ],
+      "demo": true,
+      "section": "card_cost_purchase"
+    },
+    {
+      "id": "cost.001.1",
+      "parent": "card_cost_purchase/intro.001",
+      "timing": [
+        {
+          "key": "镜头回到单样本近景",
+          "text": "0.00"
+        },
+        {
+          "key": "卡面信息固定在屏幕左侧",
+          "text": "0.60 / 1.80"
+        }
+      ],
+      "script": {
+        "story": "左下角是这张牌的价格。要想购买这张牌",
+        "note": "保持红卡展示图，用 cost_2 方框标出左下角价格。静默为玩家 A 补一枚白与一枚红，准备下一条支付两白、两红；本条还未付款或拿牌。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "player_holding": {
+              "count": 7
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            },
+            "player_holding": {
+              "count": 7
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "card_cost_purchase/cost.001.1.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_cost_purchase/cost.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 1,
+            "h": 1
+          },
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/cost.001.1.start",
+          "background": "#1E2126",
+          "layer": 0,
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.028,
+            "y": 0.1,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/cost.001.1.start",
+          "image": "media/card/一级发展卡_红_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_2",
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/cost.001.1.start",
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "card_cost_purchase/cost.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_diamond",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "card_cost_purchase/cost.001.1.start",
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_ruby",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        }
+      ],
+      "transition": "overlay",
+      "demo": true,
+      "tree": "main",
+      "section": "card_cost_purchase"
+    },
+    {
+      "id": "cost.001.2",
+      "parent": "card_cost_purchase/cost.001.1",
+      "timing": [
+        {
+          "key": "玩家持有区已有 2 红 + 2 钻",
+          "text": "0.00-3.60"
+        },
+        {
+          "key": "宝石回供应堆（可见飞行）",
+          "text": "3.60-4.35"
+        },
+        {
+          "key": "拿取这张牌并放置到发展区",
+          "text": "7.60-9.00"
+        }
+      ],
+      "script": {
+        "story": "玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前",
+        "note": "保持左侧价格展示，先归还两枚红与两枚白宝石，再把真实 card_l1_ruby_38 从市场移到玩家 A 发展区。用实际支付与卡牌归属变化说明购买流程；本条未演示市场补位。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "player_holding": {
+              "count": 7
+            },
+            "gem_supply_diamond": {
+              "count": 2
+            },
+            "gem_supply_ruby": {
+              "count": 2
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 11
+            },
+            "player_development": {
+              "items": [
+                {
+                  "template": "card_l1_ruby_38",
+                  "palette": "card_level_1",
+                  "count": 1,
+                  "face": "up"
+                }
+              ]
+            },
+            "player_holding": {
+              "count": 3
+            },
+            "gem_supply_diamond": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "card_cost_purchase/cost.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_cost_purchase/cost.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.028,
+            "y": 0.1,
+            "w": 0.28,
+            "h": 0.64
+          },
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/cost.001.2.start",
+          "image": "media/card/一级发展卡_红_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "shape",
+          "shape": "box",
+          "part": "cost_2",
+          "dur": 0.0,
+          "anchor": "card_cost_purchase/cost.001.2.start",
+          "target": {
+            "space": "screen",
+            "id": "purchase_card"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 2,
+          "anchor": "card_cost_purchase/cost.001.2.start",
+          "offset": 3.6,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.5,
+          "quantity": 2,
+          "anchor": "card_cost_purchase/cost.001.2.start",
+          "offset": 3.85,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_diamond"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 1.4,
+          "quantity": 1,
+          "anchor": "card_cost_purchase/cost.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_ruby_38",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          },
+          "offset": 7.595
+        }
+      ],
+      "tree": "main",
+      "demo": true,
+      "section": "card_cost_purchase"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "card_cost_purchase/intro.001.start",
+      "cue": "intro.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_cost_purchase/intro.001.end",
+      "cue": "intro.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_cost_purchase/intro.001.b1.start",
+      "cue": "intro.001",
+      "beat": "card_cost_purchase/intro.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_cost_purchase/intro.001.b1.end",
+      "cue": "intro.001",
+      "beat": "card_cost_purchase/intro.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.1.start",
+      "cue": "cost.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.1.end",
+      "cue": "cost.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.1.b1.start",
+      "cue": "cost.001.1",
+      "beat": "card_cost_purchase/cost.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.1.b1.end",
+      "cue": "cost.001.1",
+      "beat": "card_cost_purchase/cost.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.1.b2.start",
+      "cue": "cost.001.1",
+      "beat": "card_cost_purchase/cost.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.1.b2.end",
+      "cue": "cost.001.1",
+      "beat": "card_cost_purchase/cost.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.2.start",
+      "cue": "cost.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.2.end",
+      "cue": "cost.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.2.b1.start",
+      "cue": "cost.001.2",
+      "beat": "card_cost_purchase/cost.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.2.b1.end",
+      "cue": "cost.001.2",
+      "beat": "card_cost_purchase/cost.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.2.b2.start",
+      "cue": "cost.001.2",
+      "beat": "card_cost_purchase/cost.001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_cost_purchase/cost.001.2.b2.end",
+      "cue": "cost.001.2",
+      "beat": "card_cost_purchase/cost.001.2.b2",
+      "edge": "end"
+    }
+  ]
+}

@@ -5,57 +5,6 @@
   "section": "intro",
   "cues": [
     {
-      "id": "title_1",
-      "tree": "box",
-      "qa_exempt": true,
-      "script": {
-        "story": "1 背景",
-        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。",
-        "enter": {
-          "picture": "media/box.png",
-          "zones": {}
-        },
-        "exit": {
-          "picture": "media/box.png",
-          "zones": {}
-        }
-      },
-      "events": [
-        {
-          "op": "overlay_show",
-          "overlay": "section_title_dim",
-          "rect": {
-            "x": 0.0,
-            "y": 0.0,
-            "w": 1.0,
-            "h": 1.0
-          },
-          "background": "#000000",
-          "dim_alpha": 0.8,
-          "layer": 40,
-          "anchor": "intro/title_1.start"
-        },
-        {
-          "op": "label",
-          "dur": 0.0,
-          "size": 136,
-          "text": "1 背景",
-          "label_align": "center",
-          "anchor": "intro/title_1.start",
-          "target": {
-            "space": "screen",
-            "id": "section_title"
-          }
-        },
-        {
-          "op": "wait",
-          "dur": 3.0,
-          "anchor": "intro/title_1.start"
-        }
-      ],
-      "entry": "initial"
-    },
-    {
       "id": "001",
       "tree": "box",
       "qa_exempt": true,
@@ -86,7 +35,8 @@
           "anchor": "intro/001.start"
         }
       ],
-      "parent": "title_1"
+      "parent": "intro_title/title_1",
+      "section": "intro"
     }
   ],
   "time_anchors": [
@@ -99,28 +49,6 @@
       "id": "intro/001.end",
       "cue": "001",
       "edge": "cue_end"
-    },
-    {
-      "id": "intro/title_1.start",
-      "cue": "title_1",
-      "edge": "cue_start"
-    },
-    {
-      "id": "intro/title_1.end",
-      "cue": "title_1",
-      "edge": "cue_end"
-    },
-    {
-      "id": "intro/title_1.b1.start",
-      "cue": "title_1",
-      "beat": "intro/title_1.b1",
-      "edge": "start"
-    },
-    {
-      "id": "intro/title_1.b1.end",
-      "cue": "title_1",
-      "beat": "intro/title_1.b1",
-      "edge": "end"
     }
   ]
 }

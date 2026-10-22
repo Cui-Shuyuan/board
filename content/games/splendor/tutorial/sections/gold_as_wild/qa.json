@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "gold_as_wild",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。我手上已经有1颗黄金，现在又有3颗黑宝石；我要买一张绿色的一级发展卡，它的价格是黑4颗。我付3颗黑宝石，再用1颗黄金当作第4颗黑宝石支付。这笔购买合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+      "cue": "gold.001"
+    }
+  ]
+}

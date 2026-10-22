@@ -1,0 +1,13 @@
+{
+  "id": "card_purchase_limit",
+  "title": "购买数量限制",
+  "group_path": [
+    "3 行动",
+    "3.2 发展卡牌与贵族",
+    "3.2.1 认识发展卡牌"
+  ],
+  "order": 29,
+  "tree": "main",
+  "entry": "card_public/public.001.2",
+  "tts_asset": "card_purchase_limit"
+}

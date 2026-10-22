@@ -2,7 +2,7 @@
 using System.Collections;
 namespace UnityEngine {
  public class Object { public static void Destroy(Object obj) {} }
- public class Coroutine {}
+ public class Coroutine { public IEnumerator Routine; }
  public class Transform { public void SetParent(Transform parent,bool worldPositionStays) {} }
  public class GameObject : Object {
   public Transform transform=new(); private readonly Dictionary<Type,Component> components=new();
@@ -15,7 +15,17 @@ namespace UnityEngine {
   public Transform transform=>gameObject.transform;
   public T GetComponent<T>() where T:Component => gameObject.GetComponent<T>();
  }
- public class MonoBehaviour : Component { public Coroutine StartCoroutine(IEnumerator routine) { while(routine.MoveNext()) {} return new Coroutine(); } public void StopCoroutine(Coroutine c) {} }
+ public class MonoBehaviour : Component {
+  public bool Manual; public readonly List<Coroutine> Running=new();
+  public Coroutine StartCoroutine(IEnumerator routine) {
+   var c=new Coroutine {Routine=routine};
+   if(Manual) { if(routine.MoveNext()) Running.Add(c); }
+   else { while(routine.MoveNext()) {} }
+   return c;
+  }
+  public void StopCoroutine(Coroutine c) {Running.Remove(c);}
+  public void Step() {foreach(var c in Running.ToArray()) if(!c.Routine.MoveNext()) Running.Remove(c);}
+ }
  public static class AudioSettings {
   public static double dspTime;
   public static int outputSampleRate = 48000;
@@ -40,7 +50,14 @@ namespace UnityEngine {
  }
 }
 namespace UnityEngine.Networking {
- public class UnityWebRequest { public enum Result { Success }; public Result result; public string error; public int timeout; public object SendWebRequest()=>throw new NotSupportedException("Network must not be used"); public void Abort() {} public void Dispose() {} }
- public static class UnityWebRequestMultimedia { public static UnityWebRequest GetAudioClip(string path,UnityEngine.AudioType t)=>throw new NotSupportedException("All test assets must be injected"); }
- public static class DownloadHandlerAudioClip { public static UnityEngine.AudioClip GetContent(UnityWebRequest r)=>throw new NotSupportedException(); }
+ public class UnityWebRequest {
+  public enum Result { Success, ConnectionError }; public Result result; public string error; public int timeout;
+  public bool isDone, Aborted, Disposed; public UnityEngine.AudioClip Clip;
+  public object SendWebRequest()=>null; public void Abort() {Aborted=true;} public void Dispose() {Disposed=true;}
+ }
+ public static class UnityWebRequestMultimedia {
+  public static Func<string,UnityWebRequest> Factory;
+  public static UnityWebRequest GetAudioClip(string path,UnityEngine.AudioType t)=>Factory?.Invoke(path)??throw new NotSupportedException("All test assets must be injected");
+ }
+ public static class DownloadHandlerAudioClip { public static UnityEngine.AudioClip GetContent(UnityWebRequest r)=>r.Clip; }
 }

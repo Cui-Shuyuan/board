@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "reserve_action",
+  "cues": [
+    {
+      "id": "intro.001.1",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<reserve_development_card>",
+        "<gold>",
+        "<gold_supply>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "reserve_action/intro.001.1.b1",
+          "text": "除购买外，玩家也可以不支付费用，把一张发展卡牌从供应堆拿走，正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。"
+        }
+      ],
+      "story": "【除购买外，玩家也可以选择不支付费用，把一张发展卡牌从供应堆拿走、朝下放在自己面前，并从黄金供应堆拿一枚黄金】",
+      "section": "reserve_action"
+    }
+  ]
+}

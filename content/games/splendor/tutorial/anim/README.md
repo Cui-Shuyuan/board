@@ -73,6 +73,6 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 python3 tools/ops/check_unity_scripts.py
 ```
 
-当前编译基线以 track/section 源与 `anim/v2/{full,quick}.compiled.json` 为准；两轨均使用固定 audio-slices + 共享 plan，full 为 83 cue，quick 为 32 cue。
+当前编译基线以 track/section 源与 `anim/v2/{full,quick}.compiled.json` 为准；两轨均使用固定 audio-slices + 共享 plan，full 为 83 cue / 47 section；15 个章节标题 cue 各自独立成 section 并使用 section MP3，正文 cue 可独立或共享 MP3。quick 为 32 cue / 11 section。
 
 共享素材工作流与影响范围：见 `docs/tutorial/animation-materials-authoring-guide.md`。

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "turn_structure",
+  "cues": [
+    {
+      "id": "001",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "refs": [
+        "flow:turn_cycle",
+        "flow:player_turns",
+        "flow:player_turn"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "turn_structure/001.b1",
+          "text": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。"
+        }
+      ],
+      "section": "turn_structure"
+    },
+    {
+      "id": "002",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "refs": [
+        "flow:action_phase"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "turn_structure/002.b1",
+          "text": "玩家在自己回合内可以从如下几种行动中选择其中一种进行："
+        }
+      ],
+      "section": "turn_structure"
+    }
+  ]
+}

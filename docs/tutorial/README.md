@@ -36,11 +36,11 @@ content/games/splendor/tutorial/{full,quick}.cue-timeline.json           课程 
   整条 plan 缺失/非法时，两端使用整轨 runtime 兼容模式。
 - `CueCoursePlaybackController` 管理课程位置，`UnityCourseAudioTransport`
   调度连续 PCM 块；cue 标记驱动字幕、视觉与章节进度。
-- full 时长 634.170 秒，音频规划为 83 个块；
+- full 时长 630.664 秒；15 个章节标题 cue 各自独立成 section 并使用 section 音频，正文 cue 使用 cue 级或同句共享 MP3，plan 保留 83 个 cue 视觉切点；
   quick 时长 201.168 秒，音频规划为 32 个块。间隔由 timing-policy
   按 section 边界应用：普通 cue 目标 0.5 秒，section 最后一条目标 1.0 秒。
   每条 cue 按 PCM 能量首尾时间戳在两侧各留最多 0.1 秒 guard。
-- 当前编译基线：full 83 cue / 14 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。
+- 当前编译基线：full 83 cue / 47 section / 402 anchors；quick 32 cue / 11 section / 138 anchors。
 
 ## 常用命令
 
@@ -80,6 +80,7 @@ python3 animation/check_card_identity_v2.py --game splendor --track quick
 
 ## 入口
 
+- [从口播与扫描件到 full/quick：制作流程与 agent prompts（试行版）](production/README.md)
 - [音频与时间轴制作流程](audio-timeline-pipeline.md)
 - [Cue Timeline 数据协议](cue-timeline-protocol.md)
 - [课程音频播放器](continuous-cue-audio.md)

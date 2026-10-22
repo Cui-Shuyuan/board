@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "noble_restrictions",
+  "cues": [
+    {
+      "id": "source.001",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<noble_market>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "noble_restrictions/source.001.b1",
+          "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。"
+        }
+      ],
+      "section": "noble_restrictions"
+    },
+    {
+      "id": "choice.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "noble_restrictions/choice.001.1.b1",
+          "text": "当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，"
+        },
+        {
+          "id": "noble_restrictions/choice.001.1.b2",
+          "text": "他必须从这些贵族板块中挑选一个拿取。"
+        }
+      ],
+      "section": "noble_restrictions"
+    },
+    {
+      "id": "repeat.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "noble_restrictions/repeat.001.1.b1",
+          "text": "当他的下一个回合结束时，不管这回合他做了什么行动，"
+        },
+        {
+          "id": "noble_restrictions/repeat.001.1.b2",
+          "text": "只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。"
+        }
+      ],
+      "section": "noble_restrictions"
+    },
+    {
+      "id": "repeat.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<attract_noble>",
+        "<noble_market>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "noble_restrictions/repeat.001.3.b1",
+          "text": "就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。"
+        }
+      ],
+      "section": "noble_restrictions"
+    }
+  ]
+}

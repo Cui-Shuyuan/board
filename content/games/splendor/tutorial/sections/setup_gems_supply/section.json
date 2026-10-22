@@ -1,0 +1,12 @@
+{
+  "id": "setup_gems_supply",
+  "title": "设置：按人数准备供应堆",
+  "group_path": [
+    "2 设置",
+    "2.2 宝石与黄金"
+  ],
+  "order": 8,
+  "tree": "main",
+  "entry": "setup_gems_identity/002",
+  "tts_asset": "setup_gems_supply"
+}

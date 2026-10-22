@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "turn_structure_title",
+  "cues": [
+    {
+      "id": "title_3",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "turn_structure_title/title_3.b1",
+          "text": "三，行动。"
+        }
+      ],
+      "section": "turn_structure_title"
+    }
+  ]
+}

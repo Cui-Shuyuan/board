@@ -28,6 +28,7 @@ class Program {
   return (t,c,a,b);
  }
  static void Main() {
+  CheckParallelPreparation();
   var s=Set(("a",1)); var x=Setup(s,_=>990);
   int errors=0;x.controller.Failed+=_=>errors++;
   var accepted=x.controller.Prepare(s,0,false);
@@ -151,5 +152,39 @@ class Program {
   }
   Console.WriteLine(failures==0 ? "OK CourseAudioTransportTests: all checks passed" : $"FAILED {failures} checks");
   Environment.ExitCode=failures==0?0:1;
+ }
+
+ static void CheckParallelPreparation() {
+  var requests=new List<UnityEngine.Networking.UnityWebRequest>();
+  UnityEngine.Networking.UnityWebRequestMultimedia.Factory=_=> {
+   var r=new UnityEngine.Networking.UnityWebRequest {Clip=AudioClip.Create("loaded",1000,1,1000,false)};
+   requests.Add(r); return r;
+  };
+  var host=new MonoBehaviour {Manual=true};
+  var transport=new UnityCourseAudioTransport(host,new AudioSource(),new AudioSource(),"D:/review");
+  var controller=new CueCoursePlaybackController(new DspClock(),transport,new CueTimelineSubtitleExecutor());
+  var set=Set(Enumerable.Range(0,9).Select(i=>("asset"+i,1.0)).ToArray());
+  controller.Prepare(set,0,false);
+  Check(requests.Count==4 && controller.State!=CuePlaybackState.Playing,"cold prepare overlaps four loads but waits for readiness");
+  // Complete out of order. The freed slot must refill while others remain pending.
+  requests[2].isDone=true; host.Step();
+  Check(requests.Count==5 && requests[2].Disposed,"out-of-order completion refills an available slot");
+  int steps=0;
+  while(host.Running.Count>0 && steps++<10) {
+   foreach(var r in requests.ToArray())r.isDone=true;
+   host.Step();
+   Check(requests.Count(r=>!r.Disposed)<=4,"in-flight decode concurrency stays bounded");
+  }
+  Check(requests.Count==9 && requests.All(r=>r.Disposed) && controller.State==CuePlaybackState.Playing,"cold prepare validates all assets then starts playback");
+  int count=requests.Count;controller.Prepare(set,0,false);
+  Check(requests.Count==count && controller.State==CuePlaybackState.Playing,"warm prepare uses cached clips without new requests");
+  transport.InvalidateDeviceResources(); requests.Clear();
+  controller.Prepare(set,0,false);transport.Cancel(0);
+  Check(requests.Count==4 && requests.All(r=>r.Aborted && r.Disposed) && host.Running.Count==0,"cancel aborts every outstanding load");
+  requests.Clear();controller.Prepare(set,0,false);
+  requests[0].result=UnityEngine.Networking.UnityWebRequest.Result.ConnectionError;requests[0].error="missing";requests[0].isDone=true;
+  host.Step();
+  Check(controller.State==CuePlaybackState.Failed && requests.All(r=>r.Disposed),"load failure fails preparation and releases sibling requests");
+  transport.Dispose();UnityEngine.Networking.UnityWebRequestMultimedia.Factory=null;
  }
 }

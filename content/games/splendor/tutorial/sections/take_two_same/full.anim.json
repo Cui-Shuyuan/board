@@ -1,0 +1,207 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "take_two_same",
+  "cues": [
+    {
+      "id": "same.001",
+      "parent": "turn_structure/002",
+      "timing": [
+        {
+          "key": "全景：宝石供应区 + 玩家A宝石区",
+          "text": "0.00"
+        },
+        {
+          "key": "点绿宝石堆",
+          "text": "0.60"
+        },
+        {
+          "key": "拿两枚",
+          "text": "3.00"
+        },
+        {
+          "key": "点玩家持有",
+          "text": "4.20"
+        }
+      ],
+      "script": {
+        "story": "当某种宝石在供应堆中的数量大于等于 4 时，也可以改为拿取这种宝石两枚",
+        "note": "从 action.turn.002 的入口单独演示同色拿取：绿色供应堆有四枚，拿两枚到玩家 A 持有区，供应堆剩两枚。镜头同时保留供应区与持有区，高亮对应区域以便比较前后数量。",
+        "exit": {
+          "zones": {
+            "gem_supply_emerald": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 2
+                }
+              ]
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "take_two_same/same.001.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_two_same/same.001.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "take_two_same/same.001.b1.start",
+          "offset": 0.305,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.6,
+          "quantity": 2,
+          "stagger": 0.25,
+          "anchor": "take_two_same/same.001.b1.start",
+          "offset": 2.705,
+          "target": {
+            "space": "entity",
+            "zone": "gem_supply_emerald",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "take_two_same/same.001.b1.end",
+          "offset": -2.475,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding"
+          }
+        }
+      ],
+      "tree": "main",
+      "section": "take_two_same"
+    },
+    {
+      "id": "same.002",
+      "parent": "take_two_same/same.001",
+      "timing": [
+        {
+          "key": "全景：宝石供应区 + 玩家A宝石区",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "拿取之后必须保证这种宝石在供应堆中至少剩下 2 枚，否则就不能这样拿取",
+        "note": "保持上一条拿走两枚绿色后的桌面，用 shot_gem_flow 展示供应堆剩两枚的结果。限制条件由口播解释，本条不执行另一笔拿取。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_gem_flow",
+          "realizes": "<ontology::timing>",
+          "anchor": "take_two_same/same.002.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第1个行动：拿取3枚不同颜色的宝石\n或拿取2枚相同颜色的宝石",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_first"
+          },
+          "anchor": "take_two_same/same.002.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        }
+      ],
+      "tree": "main",
+      "section": "take_two_same"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "take_two_same/same.001.start",
+      "cue": "same.001",
+      "edge": "cue_start"
+    },
+    {
+      "id": "take_two_same/same.001.end",
+      "cue": "same.001",
+      "edge": "cue_end"
+    },
+    {
+      "id": "take_two_same/same.001.b1.start",
+      "cue": "same.001",
+      "beat": "take_two_same/same.001.b1",
+      "edge": "start"
+    },
+    {
+      "id": "take_two_same/same.001.b1.end",
+      "cue": "same.001",
+      "beat": "take_two_same/same.001.b1",
+      "edge": "end"
+    },
+    {
+      "id": "take_two_same/same.002.start",
+      "cue": "same.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "take_two_same/same.002.end",
+      "cue": "same.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "take_two_same/same.002.b1.start",
+      "cue": "same.002",
+      "beat": "take_two_same/same.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "take_two_same/same.002.b1.end",
+      "cue": "same.002",
+      "beat": "take_two_same/same.002.b1",
+      "edge": "end"
+    }
+  ]
+}

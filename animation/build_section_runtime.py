@@ -22,6 +22,7 @@ sys.path.insert(0, str(ROOT / "animation"))
 from section_source import load_track_source  # noqa: E402
 from build_tutorial_runtime import load_subtitles, normalize_relative  # noqa: E402
 import audio_probe  # noqa: E402
+from tutorial_text import to_subtitle_text  # noqa: E402
 
 
 def key_text(text: str) -> str:
@@ -250,13 +251,14 @@ def build_section_runtime(
             cue_end = max(cue_start + 0.001, local_end)
             cue_duration = max(0.001, cue_end - cue_start)
             text = cue_texts[index]
+            display_text = to_subtitle_text(text)
             subtitles = _slice_subtitles(events, cue_start, cue_end)
             if not subtitles:
                 subtitles = [{
                     "t": 0.0,
                     "end": round(cue_duration, 3),
-                    "text": text,
-                    "words": _pseudo_words(text, cue_duration),
+                    "text": display_text,
+                    "words": _pseudo_words(display_text, cue_duration),
                 }]
             else:
                 subtitles[0]["t"] = 0.0
@@ -271,6 +273,13 @@ def build_section_runtime(
                     )
 
             cue_id = str(source_cue.get("id"))
+            subtitles = [
+                subtitle for subtitle in subtitles
+                if str(subtitle.get("text") or "").strip()
+            ]
+            for subtitle in subtitles:
+                subtitle["text"] = to_subtitle_text(subtitle.get("text") or "")
+            subtitles = [subtitle for subtitle in subtitles if subtitle["text"]]
             cue_audio_rel = audio_rel
             cue_audio_start = cue_start
             override = cue_audio_overrides.get(cue_id)
@@ -333,10 +342,16 @@ def build_section_runtime(
                     subtitles = [{
                         "t": 0.0,
                         "end": round(cue_duration, 3),
-                        "text": text,
-                        "words": _pseudo_words(text, cue_duration),
+                        "text": display_text,
+                        "words": _pseudo_words(display_text, cue_duration),
                     }]
+                subtitles = [
+                    subtitle for subtitle in subtitles
+                    if str(subtitle.get("text") or "").strip()
+                ]
                 for subtitle in subtitles:
+                    subtitle["text"] = to_subtitle_text(
+                        subtitle.get("text") or "")
                     subtitle["t"] = max(
                         0.0, min(cue_duration,
                                  float(subtitle.get("t", 0.0) or 0.0)))
@@ -344,6 +359,7 @@ def build_section_runtime(
                         float(subtitle["t"]),
                         min(cue_duration,
                             float(subtitle.get("end", 0.0) or 0.0)))
+                subtitles = [subtitle for subtitle in subtitles if subtitle["text"]]
 
             group = source_cue.get("group") or section.meta.get("title") or section.id
             group_path = (
@@ -361,7 +377,7 @@ def build_section_runtime(
                 "cue_index": global_index,
                 "group": group,
                 "group_path": list(group_path),
-                "text": text,
+                "text": display_text,
                 "audio": cue_audio_rel,
                 "audio_start": round(cue_audio_start, 3),
                 "duration": round(cue_duration, 3),

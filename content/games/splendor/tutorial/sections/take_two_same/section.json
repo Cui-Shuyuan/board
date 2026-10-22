@@ -1,0 +1,12 @@
+{
+  "id": "take_two_same",
+  "title": "拿同色两枚",
+  "group_path": [
+    "3 行动",
+    "3.1 从宝石供应堆拿取宝石"
+  ],
+  "order": 18,
+  "tree": "main",
+  "entry": "take_three/different.001",
+  "tts_asset": "take_two_same"
+}

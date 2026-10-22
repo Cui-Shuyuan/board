@@ -1,0 +1,77 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_purchase_limit",
+  "cues": [
+    {
+      "id": "limit.001.1",
+      "parent": "card_public/public.001.2",
+      "timing": [
+        {
+          "key": "安静展示桌面",
+          "text": "整条 cue"
+        }
+      ],
+      "script": {
+        "story": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限",
+        "note": "保持五张发展卡的桌面，说明单回合购买数量与累计持有数量是两个不同限制。本条没有新事件；后续贵族介绍通过 entry 回到另一个示例入口。"
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_purchase_limit/limit.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。玩家每回合只能购买一张发展卡牌，但整局游戏能购买的发展卡牌总数没有上限。这个理解合法吗？只回答「允许」或「不允许」，再给一句话理由。"
+      ],
+      "section": "card_purchase_limit"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "card_purchase_limit/limit.001.1.start",
+      "cue": "limit.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_purchase_limit/limit.001.1.end",
+      "cue": "limit.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_purchase_limit/limit.001.1.b1.start",
+      "cue": "limit.001.1",
+      "beat": "card_purchase_limit/limit.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_purchase_limit/limit.001.1.b1.end",
+      "cue": "limit.001.1",
+      "beat": "card_purchase_limit/limit.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_purchase_limit/limit.001.1.b2.start",
+      "cue": "limit.001.1",
+      "beat": "card_purchase_limit/limit.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_purchase_limit/limit.001.1.b2.end",
+      "cue": "limit.001.1",
+      "beat": "card_purchase_limit/limit.001.1.b2",
+      "edge": "end"
+    }
+  ]
+}

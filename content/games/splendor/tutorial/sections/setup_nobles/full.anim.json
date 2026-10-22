@@ -1,0 +1,309 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "setup_nobles",
+  "cues": [
+    {
+      "id": "nobles.001.1",
+      "qa_exempt": true,
+      "parent": "setup_gems_supply/005.2",
+      "tree": "main",
+      "transition": "overlay",
+      "timing": [
+        {
+          "key": "展示三块贵族样例",
+          "text": "屏幕展示；不建立贵族供应堆"
+        }
+      ],
+      "script": {
+        "story": "这些是贵族板块",
+        "note": "用深色屏幕背景并排展示三块贵族板块样例，让观众先识别外观。真实贵族供应堆、抽取和摆放动作放在下一 cue 的桌面实拍中处理。"
+      },
+      "events": [
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#1E2126",
+          "layer": 0,
+          "dur": 0.0,
+          "anchor": "setup_nobles/nobles.001.1.start",
+          "target": {
+            "space": "screen",
+            "id": "scene_backdrop"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.07,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.533
+          },
+          "dur": 0.0,
+          "anchor": "setup_nobles/nobles.001.1.start",
+          "image": "media/card/贵族_0001_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_intro_1"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.38,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.533
+          },
+          "dur": 0.0,
+          "anchor": "setup_nobles/nobles.001.1.start",
+          "image": "media/card/贵族_0004_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_intro_2"
+          }
+        },
+        {
+          "op": "show",
+          "rect": {
+            "x": 0.69,
+            "y": 0.2335,
+            "w": 0.24,
+            "h": 0.533
+          },
+          "dur": 0.0,
+          "anchor": "setup_nobles/nobles.001.1.start",
+          "image": "media/card/贵族_0005_cutout.png",
+          "layer": 10,
+          "target": {
+            "space": "screen",
+            "id": "noble_intro_3"
+          }
+        }
+      ],
+      "section": "setup_nobles"
+    },
+    {
+      "id": "nobles.001.2",
+      "parent": "setup_nobles/nobles.001.1",
+      "timing": [
+        {
+          "key": "实拍桌面贵族区",
+          "text": "镜头shot_nobles；三块贵族落位为供应堆"
+        }
+      ],
+      "script": {
+        "story": "从所有的贵族板块中随机抽出玩家数量+1块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子",
+        "note": "切到桌面贵族区实拍，镜头对准桌面的一部分：建立本局选出的三块贵族并正面朝上放置为贵族供应堆；其余贵族板块放回盒子。",
+        "exit": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble_1",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_4",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_5",
+                  "palette": "noble",
+                  "count": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "tree": "main",
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_nobles",
+          "realizes": "<ontology::timing>",
+          "anchor": "setup_nobles/nobles.001.2.start"
+        }
+      ],
+      "use": [
+        {
+          "ref": "splendor.action.seed_noble_market",
+          "timing": {
+            "show": {
+              "anchor": "start"
+            }
+          },
+          "insert_at": 1
+        }
+      ],
+      "section": "setup_nobles"
+    },
+    {
+      "id": "nobles.002",
+      "parent": "setup_nobles/nobles.001.2",
+      "tree": "main",
+      "timing": [
+        {
+          "key": "镜头推近贵族",
+          "text": "0.00"
+        }
+      ],
+      "script": {
+        "story": "这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块",
+        "note": "镜头回到贵族供应区，展示本局选出的三块贵族。口播说明下一局需要重新抽取，本条不执行重新洗混或抽取。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble_1",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_4",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_5",
+                  "palette": "noble",
+                  "count": 1
+                }
+              ]
+            },
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_3": {
+              "count": 16
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "noble_market": {
+              "items": [
+                {
+                  "template": "noble_1",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_4",
+                  "palette": "noble",
+                  "count": 1
+                },
+                {
+                  "template": "noble_5",
+                  "palette": "noble",
+                  "count": 1
+                }
+              ]
+            },
+            "card_market": {
+              "count": 12
+            },
+            "deck_level_3": {
+              "count": 16
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_nobles",
+          "realizes": "<ontology::timing>",
+          "anchor": "setup_nobles/nobles.002.start"
+        }
+      ],
+      "section": "setup_nobles"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "setup_nobles/nobles.001.1.start",
+      "cue": "nobles.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_nobles/nobles.001.1.end",
+      "cue": "nobles.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_nobles/nobles.001.1.b1.start",
+      "cue": "nobles.001.1",
+      "beat": "setup_nobles/nobles.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_nobles/nobles.001.1.b1.end",
+      "cue": "nobles.001.1",
+      "beat": "setup_nobles/nobles.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup_nobles/nobles.001.2.start",
+      "cue": "nobles.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_nobles/nobles.001.2.end",
+      "cue": "nobles.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_nobles/nobles.001.2.b1.start",
+      "cue": "nobles.001.2",
+      "beat": "setup_nobles/nobles.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_nobles/nobles.001.2.b1.end",
+      "cue": "nobles.001.2",
+      "beat": "setup_nobles/nobles.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "setup_nobles/nobles.002.start",
+      "cue": "nobles.002",
+      "edge": "cue_start"
+    },
+    {
+      "id": "setup_nobles/nobles.002.end",
+      "cue": "nobles.002",
+      "edge": "cue_end"
+    },
+    {
+      "id": "setup_nobles/nobles.002.b1.start",
+      "cue": "nobles.002",
+      "beat": "setup_nobles/nobles.002.b1",
+      "edge": "start"
+    },
+    {
+      "id": "setup_nobles/nobles.002.b1.end",
+      "cue": "nobles.002",
+      "beat": "setup_nobles/nobles.002.b1",
+      "edge": "end"
+    }
+  ]
+}

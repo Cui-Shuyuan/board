@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "endgame_victory",
+  "cues": [
+    {
+      "id": "winner.001",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<highest_prestige_wins>",
+        "<prestige_highest>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_victory/winner.001.b1",
+          "text": "我们介绍一下如何决出胜者。第一种情况：声望值最高的玩家获得胜利。比如玩家A有十七分，玩家B有十四分，A获胜。"
+        }
+      ],
+      "section": "endgame_victory"
+    },
+    {
+      "id": "winner.002",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<highest_prestige_wins>",
+        "<fewest_development_cards>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_victory/winner.002.b1",
+          "text": "第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是十七分，A有十四张牌，B只有十张牌，所以B获胜。"
+        }
+      ],
+      "section": "endgame_victory"
+    },
+    {
+      "id": "winner.003",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [
+        "<highest_prestige_wins>",
+        "<fewest_development_cards>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_victory/winner.003.b1",
+          "text": "第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。"
+        }
+      ],
+      "section": "endgame_victory"
+    }
+  ]
+}

@@ -5,21 +5,6 @@
   "section": "intro",
   "cues": [
     {
-      "id": "title_1",
-      "group": "1 背景",
-      "group_path": [
-        "1 背景"
-      ],
-      "refs": [],
-      "pause_after": 0.0,
-      "beats": [
-        {
-          "id": "intro/title_1.b1",
-          "text": "一，背景。"
-        }
-      ]
-    },
-    {
       "id": "001",
       "group": "1 背景",
       "group_path": [
@@ -38,7 +23,8 @@
           "id": "intro/001.b2",
           "text": "玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。"
         }
-      ]
+      ],
+      "section": "intro"
     }
   ]
 }

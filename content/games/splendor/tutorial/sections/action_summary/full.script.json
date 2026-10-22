@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "action_summary",
+  "cues": [
+    {
+      "id": "summary.001.1",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action_summary/summary.001.1.b1",
+          "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，"
+        }
+      ],
+      "section": "action_summary"
+    },
+    {
+      "id": "summary.001.2",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action_summary/summary.001.2.b1",
+          "text": "已购买的发展卡牌会为玩家带来声望值和折扣。"
+        }
+      ],
+      "section": "action_summary"
+    },
+    {
+      "id": "summary.001.3",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "action_summary/summary.001.3.b1",
+          "text": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。"
+        }
+      ],
+      "section": "action_summary"
+    }
+  ]
+}

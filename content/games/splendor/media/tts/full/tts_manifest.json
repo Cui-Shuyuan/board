@@ -10,19 +10,35 @@
   "generator": "animation/tts_doubao.py",
   "cues": [
     {
-      "id": "intro",
-      "asset": "bg.intro",
-      "text": "一，背景。璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。",
+      "id": "intro_title",
+      "asset": "title.intro",
+      "text": "一，背景。",
       "group": "1 背景",
       "group_path": [
         "1 背景"
       ],
       "cue_ids": [
-        "intro/title_1",
-        "intro/001"
+        "intro_title/title_1"
       ],
       "start": 0.0,
-      "duration": 16.488,
+      "duration": 1.224,
+      "file": "content/games/splendor/media/tts/full/title.intro.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.intro.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "intro",
+      "asset": "bg.intro",
+      "text": "璀璨宝石是一款支持二到四人的游戏，主题是丝绸之路。玩家将扮演一位丝路商人，在宝石贸易中积累财富与声望，结识各地的贵族，最终成为最负盛名的贸易商人。",
+      "group": "1 背景",
+      "group_path": [
+        "1 背景"
+      ],
+      "cue_ids": [
+        "intro/001"
+      ],
+      "start": 1.224,
+      "duration": 14.472,
       "file": "content/games/splendor/media/tts/full/bg.intro.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/bg.intro.subtitle.json",
       "refs": [
@@ -30,44 +46,79 @@
       ]
     },
     {
-      "id": "setup",
-      "asset": "setup.intro",
-      "text": "2，设置。",
+      "id": "setup_intro",
+      "asset": "setup_intro",
+      "text": "二，设置。",
       "group": "2 设置",
       "group_path": [
         "2 设置"
       ],
       "cue_ids": [
-        "setup/title_2"
+        "setup_intro/title_2"
       ],
-      "start": 16.488,
-      "duration": 1.632,
-      "file": "content/games/splendor/media/tts/full/setup.intro.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/setup.intro.subtitle.json",
+      "start": 15.696,
+      "duration": 1.224,
+      "file": "content/games/splendor/media/tts/full/setup_intro.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_intro.subtitle.json",
       "refs": []
     },
     {
-      "id": "setup_cards",
-      "asset": "setup.cards",
-      "text": "2.1，发展卡牌。这是发展卡牌，共90张。根据背面可以将所有发展卡牌分为三类，分别是40张绿色的一级发展卡牌、30张黄色的二级发展卡牌，和20张蓝色的三级发展卡牌。将这三类牌分别洗混后按顺序摆成一列。从每摞牌上方分别翻开四张牌，在一侧摆成一行。最终组成一个3乘4的发展卡牌供应堆。",
+      "id": "setup_cards_deck_title",
+      "asset": "title.setup_cards_deck",
+      "text": "二点一，发展卡牌。",
       "group": "2.1 发展卡牌",
       "group_path": [
         "2 设置",
         "2.1 发展卡牌"
       ],
       "cue_ids": [
-        "setup_cards/title_2_1",
-        "setup_cards/001.1",
-        "setup_cards/001.2",
-        "setup_cards/002.1"
+        "setup_cards_deck_title/title_2_1"
       ],
-      "start": 18.12,
-      "duration": 30.24,
-      "file": "content/games/splendor/media/tts/full/setup.cards.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/setup.cards.subtitle.json",
+      "start": 16.92,
+      "duration": 2.04,
+      "file": "content/games/splendor/media/tts/full/title.setup_cards_deck.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.setup_cards_deck.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "setup_cards_deck",
+      "asset": "setup_cards_deck",
+      "text": "这是发展卡牌，共九十张。根据背面可以将所有发展卡牌分为三类，分别是四十张绿色的一级发展卡牌、三十张黄色的二级发展卡牌，和二十张蓝色的三级发展卡牌。",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "cue_ids": [
+        "setup_cards_deck/001.1",
+        "setup_cards_deck/001.2"
+      ],
+      "start": 18.96,
+      "duration": 14.688,
+      "file": "content/games/splendor/media/tts/full/setup_cards_deck.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_cards_deck.subtitle.json",
       "refs": [
         "<development_card>",
-        "rulebook:setup",
+        "rulebook:setup"
+      ]
+    },
+    {
+      "id": "setup_cards_market",
+      "asset": "setup_cards_market",
+      "text": "将这三类牌分别洗混后按顺序摆成一列。从每摞牌上方分别翻开四张牌，在一侧摆成一行。最终组成一个三乘四的发展卡牌供应堆。",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "cue_ids": [
+        "setup_cards_market/002.1"
+      ],
+      "start": 33.648,
+      "duration": 12.432,
+      "file": "content/games/splendor/media/tts/full/setup_cards_market.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_cards_market.subtitle.json",
+      "refs": [
         "flow:prepare_level_1_deck",
         "flow:prepare_level_2_deck",
         "flow:prepare_level_3_deck",
@@ -80,29 +131,64 @@
       ]
     },
     {
-      "id": "setup_gems",
-      "asset": "setup.gems",
-      "text": "2.2，宝石与黄金。这些是标记，后续称之为宝石。宝石分为5种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。后续我们就直接以颜色称呼它们了。这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石。我们需要根据玩家人数拿取对应数量的宝石。2人游戏时，每种宝石拿取4枚。3人游戏时，拿取5枚。4人游戏时则使用全部的7枚宝石。将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。将全部5枚黄金也放在一旁，成为黄金供应堆。其余的宝石放回盒子。",
+      "id": "setup_gems_identity_title",
+      "asset": "title.setup_gems_identity",
+      "text": "二点二，宝石与黄金。",
       "group": "2.2 宝石与黄金",
       "group_path": [
         "2 设置",
         "2.2 宝石与黄金"
       ],
       "cue_ids": [
-        "setup_gems/title_2_2",
-        "setup_gems/001.1",
-        "setup_gems/002",
-        "setup_gems/003.1",
-        "setup_gems/005.2"
+        "setup_gems_identity_title/title_2_2"
       ],
-      "start": 48.36,
-      "duration": 46.92,
-      "file": "content/games/splendor/media/tts/full/setup.gems.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/setup.gems.subtitle.json",
+      "start": 46.08,
+      "duration": 2.04,
+      "file": "content/games/splendor/media/tts/full/title.setup_gems_identity.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.setup_gems_identity.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "setup_gems_identity",
+      "asset": "setup_gems_identity",
+      "text": "这些是标记，后续称之为宝石。宝石分为五种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。后续我们就直接以颜色称呼它们了。这是黄金，黄金不属于宝石。我们所说的宝石指的就是这五种宝石。",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "cue_ids": [
+        "setup_gems_identity/001.1",
+        "setup_gems_identity/002"
+      ],
+      "start": 48.12,
+      "duration": 19.056,
+      "file": "content/games/splendor/media/tts/full/setup_gems_identity.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_gems_identity.subtitle.json",
       "refs": [
         "<gem>",
         "rulebook:setup",
-        "<gold>",
+        "<gold>"
+      ]
+    },
+    {
+      "id": "setup_gems_supply",
+      "asset": "setup_gems_supply",
+      "text": "我们需要根据玩家人数拿取对应数量的宝石。二人游戏时，每种宝石拿取四枚。三人游戏时，拿取五枚。四人游戏时则使用全部的七枚宝石。将对应数量的宝石放在所有玩家都方便拿取的地方，成为宝石供应堆。将全部五枚黄金也放在一旁，成为黄金供应堆。其余的宝石放回盒子。",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "cue_ids": [
+        "setup_gems_supply/003.1",
+        "setup_gems_supply/005.2"
+      ],
+      "start": 67.176,
+      "duration": 24.696,
+      "file": "content/games/splendor/media/tts/full/setup_gems_supply.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_gems_supply.subtitle.json",
+      "refs": [
         "flow:distribute_gems",
         "<gem_supply>",
         "<gold_supply>",
@@ -110,57 +196,142 @@
       ]
     },
     {
-      "id": "setup_players",
-      "asset": "setup.players",
-      "text": "2.3，贵族板块。这些是贵族板块。从所有的贵族板块中随机抽出玩家数量+1块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。2.4，起始玩家。现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家。这是起始玩家标记。起始玩家获得这枚标记。2.5，设置完成。至此，整个设置环节就大功告成了。接下来可以正式开始游戏了。",
+      "id": "setup_nobles_title",
+      "asset": "title.setup_nobles",
+      "text": "二点三，贵族板块。",
       "group": "2.3 贵族板块",
       "group_path": [
         "2 设置",
         "2.3 贵族板块"
       ],
       "cue_ids": [
-        "setup_players/title_2_3",
-        "setup_players/nobles.001.1",
-        "setup_players/nobles.001.2",
-        "setup_players/nobles.002",
-        "setup_players/title_2_4",
-        "setup_players/starting.001.1",
-        "setup_players/starting.001.3",
-        "setup_players/title_2_5",
-        "setup_players/end.001.1"
+        "setup_nobles_title/title_2_3"
       ],
-      "start": 95.28,
-      "duration": 43.056,
-      "file": "content/games/splendor/media/tts/full/setup.players.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/setup.players.subtitle.json",
+      "start": 91.872,
+      "duration": 2.04,
+      "file": "content/games/splendor/media/tts/full/title.setup_nobles.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.setup_nobles.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "setup_nobles",
+      "asset": "setup_nobles",
+      "text": "这些是贵族板块。从所有的贵族板块中随机抽出玩家数量加一块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "cue_ids": [
+        "setup_nobles/nobles.001.1",
+        "setup_nobles/nobles.001.2",
+        "setup_nobles/nobles.002"
+      ],
+      "start": 93.912,
+      "duration": 17.496,
+      "file": "content/games/splendor/media/tts/full/setup_nobles.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_nobles.subtitle.json",
       "refs": [
         "<noble>",
         "<noble_market>",
-        "flow:deal_nobles",
+        "flow:deal_nobles"
+      ]
+    },
+    {
+      "id": "setup_starting_player_title",
+      "asset": "title.setup_starting_player",
+      "text": "二点四，起始玩家。",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "cue_ids": [
+        "setup_starting_player_title/title_2_4"
+      ],
+      "start": 111.408,
+      "duration": 2.064,
+      "file": "content/games/splendor/media/tts/full/title.setup_starting_player.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.setup_starting_player.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "setup_starting_player",
+      "asset": "setup_starting_player",
+      "text": "现在需要决定起始玩家。规则书中规定最年轻的玩家作为起始玩家，也可以使用所有人都认可的方式决定谁是起始玩家。这是起始玩家标记。起始玩家获得这枚标记。",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "cue_ids": [
+        "setup_starting_player/starting.001.1",
+        "setup_starting_player/starting.001.3"
+      ],
+      "start": 113.472,
+      "duration": 14.064,
+      "file": "content/games/splendor/media/tts/full/setup_starting_player.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_starting_player.subtitle.json",
+      "refs": [
         "flow:choose_starting_player",
         "flow:give_starting_player_marker",
-        "<starting_player_marker>",
+        "<starting_player_marker>"
+      ]
+    },
+    {
+      "id": "setup_complete",
+      "asset": "setup_complete",
+      "text": "至此，整个设置环节就大功告成了。接下来可以正式开始游戏了。",
+      "group": "2.4 起始玩家",
+      "group_path": [
+        "2 设置",
+        "2.4 起始玩家"
+      ],
+      "cue_ids": [
+        "setup_complete/end.001.1"
+      ],
+      "start": 127.536,
+      "duration": 5.256,
+      "file": "content/games/splendor/media/tts/full/setup_complete.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/setup_complete.subtitle.json",
+      "refs": [
         "rulebook:setup",
         "flow:main_gameplay"
       ]
     },
     {
-      "id": "turn",
-      "asset": "action.turn",
-      "text": "3，行动。整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。玩家在自己回合内可以从如下几种行动中选择其中一种进行：",
+      "id": "turn_structure_title",
+      "asset": "title.turn_structure",
+      "text": "三，行动。",
       "group": "3 行动",
       "group_path": [
         "3 行动"
       ],
       "cue_ids": [
-        "turn/title_3",
-        "turn/001",
-        "turn/002"
+        "turn_structure_title/title_3"
       ],
-      "start": 138.336,
-      "duration": 15.072,
-      "file": "content/games/splendor/media/tts/full/action.turn.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.turn.subtitle.json",
+      "start": 132.792,
+      "duration": 1.464,
+      "file": "content/games/splendor/media/tts/full/title.turn_structure.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.turn_structure.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "turn_structure",
+      "asset": "turn_structure",
+      "text": "整场游戏将持续若干个回合，从起始玩家开始，按顺时针顺序所有玩家依次进行行动。玩家在自己回合内可以从如下几种行动中选择其中一种进行：",
+      "group": "3 行动",
+      "group_path": [
+        "3 行动"
+      ],
+      "cue_ids": [
+        "turn_structure/001",
+        "turn_structure/002"
+      ],
+      "start": 134.256,
+      "duration": 12.864,
+      "file": "content/games/splendor/media/tts/full/turn_structure.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/turn_structure.subtitle.json",
       "refs": [
         "flow:turn_cycle",
         "flow:player_turns",
@@ -169,44 +340,136 @@
       ]
     },
     {
-      "id": "take_gems",
-      "asset": "action.take",
-      "text": "3.1，从宝石供应堆拿取宝石。玩家可以选择拿取除黄金之外的三种不同宝石各一枚。当某种宝石在供应堆中的数量大于等于4时，也可以改为拿取这种宝石两枚。拿取之后必须保证这种宝石在供应堆中至少剩下2枚，否则就不能这样拿取。请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。当供应堆宝石不足时，尽可能拿取宝石。玩家持有的宝石和黄金总数上限为10个。任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下10个为止。宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。",
+      "id": "take_three_title",
+      "asset": "title.take_three",
+      "text": "三点一，从宝石供应堆拿取宝石。",
       "group": "3.1 从宝石供应堆拿取宝石",
       "group_path": [
         "3 行动",
         "3.1 从宝石供应堆拿取宝石"
       ],
       "cue_ids": [
-        "take_gems/title_3_1",
-        "take_gems/different.001",
-        "take_gems/same.001",
-        "take_gems/same.002",
-        "take_gems/draw_rule.001.1",
-        "take_gems/draw_rule.001.2",
-        "take_gems/limit.001.1",
-        "take_gems/limit.001.2",
-        "take_gems/public.001.1",
-        "take_gems/public.001.2"
+        "take_three_title/title_3_1"
       ],
-      "start": 153.408,
-      "duration": 52.872,
-      "file": "content/games/splendor/media/tts/full/action.take.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.take.subtitle.json",
+      "start": 147.12,
+      "duration": 3.84,
+      "file": "content/games/splendor/media/tts/full/title.take_three.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.take_three.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "take_three",
+      "asset": "take_three",
+      "text": "玩家可以选择拿取除黄金之外的三种不同宝石各一枚。",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "cue_ids": [
+        "take_three/different.001"
+      ],
+      "start": 150.96,
+      "duration": 4.824,
+      "file": "content/games/splendor/media/tts/full/take_three.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/take_three.subtitle.json",
       "refs": [
         "<take_gems_different>",
-        "flow:player_action_turn",
+        "flow:player_action_turn"
+      ]
+    },
+    {
+      "id": "take_two_same",
+      "asset": "take_two_same",
+      "text": "当某种宝石在供应堆中的数量大于等于四时，也可以改为拿取这种宝石两枚。拿取之后必须保证这种宝石在供应堆中至少剩下二枚，否则就不能这样拿取。",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "cue_ids": [
+        "take_two_same/same.001",
+        "take_two_same/same.002"
+      ],
+      "start": 155.784,
+      "duration": 13.272,
+      "file": "content/games/splendor/media/tts/full/take_two_same.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/take_two_same.subtitle.json",
+      "refs": [
         "<take_gems_same>",
-        "<gems_available_same_color>",
+        "<gems_available_same_color>"
+      ]
+    },
+    {
+      "id": "take_shortage",
+      "asset": "take_shortage",
+      "text": "请大家注意：除非供应堆中已经没有三个种类的宝石，否则玩家不能故意少拿。当供应堆宝石不足时，尽可能拿取宝石。",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "cue_ids": [
+        "take_shortage/draw_rule.001.1",
+        "take_shortage/draw_rule.001.2"
+      ],
+      "start": 169.056,
+      "duration": 10.056,
+      "file": "content/games/splendor/media/tts/full/take_shortage.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/take_shortage.subtitle.json",
+      "refs": [
+        "<take_gems_different>",
+        "<take_gems_same>"
+      ]
+    },
+    {
+      "id": "gems_hand_limit",
+      "asset": "gems_hand_limit",
+      "text": "玩家持有的宝石和黄金总数上限为十个。任何时候当持有数量超过上限时，必须挑选一定数量的宝石或黄金回到供应堆，直到恰好剩下十个为止。",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "cue_ids": [
+        "gems_hand_limit/limit.001.1",
+        "gems_hand_limit/limit.001.2"
+      ],
+      "start": 179.112,
+      "duration": 12.672,
+      "file": "content/games/splendor/media/tts/full/gems_hand_limit.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/gems_hand_limit.subtitle.json",
+      "refs": [
         "<player_holding>",
         "<discard_excess_gems>",
         "<exceed_gem_limit>"
       ]
     },
     {
+      "id": "gems_public",
+      "asset": "gems_public",
+      "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，所有人都能清楚看到的地方。",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "cue_ids": [
+        "gems_public/public.001.1",
+        "gems_public/public.001.2"
+      ],
+      "start": 191.784,
+      "duration": 8.016,
+      "file": "content/games/splendor/media/tts/full/gems_public.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/gems_public.subtitle.json",
+      "refs": [
+        "<player_holding>"
+      ]
+    },
+    {
       "id": "cards_group",
       "asset": "action.cards.group",
-      "text": "3.2，发展卡牌与贵族。",
+      "text": "三点二，发展卡牌与贵族。",
       "group": "3.2 发展卡牌与贵族",
       "group_path": [
         "3 行动",
@@ -215,16 +478,16 @@
       "cue_ids": [
         "cards_group/title_3_2"
       ],
-      "start": 206.28,
-      "duration": 3.456,
+      "start": 199.8,
+      "duration": 3.072,
       "file": "content/games/splendor/media/tts/full/action.cards.group.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.cards.group.subtitle.json",
       "refs": []
     },
     {
-      "id": "cards",
-      "asset": "action.cards",
-      "text": "3.2.1，认识发展卡牌。我们介绍一下发展卡牌。左下角是这张牌的价格。要想购买这张牌，玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。玩家只可以从被翻开的12张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值。不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值。右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。举个例子：现在我已经购买了1张白宝石牌，那么下一回合我想购买这张牌时，只需要支付2枚白宝石、1枚蓝宝石和1枚黑宝石即可。如果我已经购买了2张白宝石牌和2张红宝石牌，那么我购买这张牌时无需支付任何宝石。但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
+      "id": "card_cost_purchase_title",
+      "asset": "title.card_cost_purchase",
+      "text": "三点二点一，认识发展卡牌。",
       "group": "3.2.1 认识发展卡牌",
       "group_path": [
         "3 行动",
@@ -232,40 +495,157 @@
         "3.2.1 认识发展卡牌"
       ],
       "cue_ids": [
-        "cards/title_3_2_1",
-        "cards/intro.001",
-        "cards/cost.001.1",
-        "cards/cost.001.2",
-        "cards/market.001.1",
-        "cards/market.001.2",
-        "cards/prestige.001.1",
-        "cards/prestige.001.2",
-        "cards/discount.001",
-        "cards/discount.002.1",
-        "cards/discount.003.1",
-        "cards/discount.003.2",
-        "cards/public.001.1",
-        "cards/limit.001.1"
+        "card_cost_purchase_title/title_3_2_1"
       ],
-      "start": 209.736,
-      "duration": 112.56,
-      "file": "content/games/splendor/media/tts/full/action.cards.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.cards.subtitle.json",
+      "start": 202.872,
+      "duration": 3.048,
+      "file": "content/games/splendor/media/tts/full/title.card_cost_purchase.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.card_cost_purchase.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "card_cost_purchase",
+      "asset": "card_cost_purchase",
+      "text": "我们介绍一下发展卡牌。左下角是这张牌的价格。要想购买这张牌，玩家需要将这里标注的宝石种类和数量返回宝石供应堆，之后才可以从卡牌供应堆中拿取这张牌，并放置在自己面前。",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "cue_ids": [
+        "card_cost_purchase/intro.001",
+        "card_cost_purchase/cost.001.1",
+        "card_cost_purchase/cost.001.2"
+      ],
+      "start": 205.92,
+      "duration": 16.44,
+      "file": "content/games/splendor/media/tts/full/card_cost_purchase.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/card_cost_purchase.subtitle.json",
       "refs": [
         "<development_card>",
         "<cost>",
-        "<purchase_development_card>",
+        "<purchase_development_card>"
+      ]
+    },
+    {
+      "id": "card_prestige",
+      "asset": "card_prestige",
+      "text": "左上角是这张牌的声望值。玩家购买发展卡牌后，立即获得对应的声望值。不过并不是所有卡牌都有声望值。很多一级发展卡牌都没有声望值。",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "cue_ids": [
+        "card_prestige/prestige.001.1",
+        "card_prestige/prestige.001.2"
+      ],
+      "start": 222.36,
+      "duration": 11.88,
+      "file": "content/games/splendor/media/tts/full/card_prestige.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/card_prestige.subtitle.json",
+      "refs": [
+        "<development_card>",
+        "<prestige_point>"
+      ]
+    },
+    {
+      "id": "card_discount",
+      "asset": "card_discount",
+      "text": "右上角这颗宝石图案，代表玩家购买这张牌后，再购买其他卡牌的时候可以享受的折扣。举个例子：现在我已经购买了一张白宝石牌，那么下一回合我想购买这张牌时，只需要支付二枚白宝石、一枚蓝宝石和一枚黑宝石即可。如果我已经购买了二张白宝石牌和二张红宝石牌，那么我购买这张牌时无需支付任何宝石。但如果我已购买更多的发展卡牌，也不可以反过来从供应堆中拿取宝石，折扣的上限就是免费。",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "cue_ids": [
+        "card_discount/discount.001",
+        "card_discount/discount.002.1",
+        "card_discount/discount.003.1",
+        "card_discount/discount.003.2"
+      ],
+      "start": 234.24,
+      "duration": 33.936,
+      "file": "content/games/splendor/media/tts/full/card_discount.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/card_discount.subtitle.json",
+      "refs": [
+        "<discount>"
+      ]
+    },
+    {
+      "id": "card_market_refill",
+      "asset": "card_market_refill",
+      "text": "玩家只可以从被翻开的十二张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位，除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏。",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "cue_ids": [
+        "card_market_refill/market.001.1",
+        "card_market_refill/market.001.2"
+      ],
+      "start": 268.176,
+      "duration": 22.272,
+      "file": "content/games/splendor/media/tts/full/card_market_refill.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/card_market_refill.subtitle.json",
+      "refs": [
         "<card_market>",
-        "<refill_market>",
-        "<prestige_point>",
-        "<discount>",
+        "<refill_market>"
+      ]
+    },
+    {
+      "id": "card_public",
+      "asset": "card_public",
+      "text": "和宝石相同，已购买的发展卡牌也属于公开信息，每位玩家都需要将自己已购买的发展卡牌摊开放在自己面前，所有人都能清楚看到的地方。",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "cue_ids": [
+        "card_public/public.001.1",
+        "card_public/public.001.2"
+      ],
+      "start": 290.448,
+      "duration": 11.88,
+      "file": "content/games/splendor/media/tts/full/card_public.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/card_public.subtitle.json",
+      "refs": [
         "<development_area>"
       ]
     },
     {
-      "id": "nobles",
-      "asset": "action.nobles",
-      "text": "3.2.2，贵族结算。我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
+      "id": "card_purchase_limit",
+      "asset": "card_purchase_limit",
+      "text": "和宝石不同的是，玩家一回合只能购买一张发展卡牌，但玩家总计可以购买的发展卡牌数量没有上限。",
+      "group": "3.2.1 认识发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.1 认识发展卡牌"
+      ],
+      "cue_ids": [
+        "card_purchase_limit/limit.001.1"
+      ],
+      "start": 302.328,
+      "duration": 9.096,
+      "file": "content/games/splendor/media/tts/full/card_purchase_limit.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/card_purchase_limit.subtitle.json",
+      "refs": [
+        "<purchase_development_card>",
+        "<development_area>"
+      ]
+    },
+    {
+      "id": "noble_anatomy_title",
+      "asset": "title.noble_anatomy",
+      "text": "三点二点二，贵族结算。",
       "group": "3.2.2 贵族结算",
       "group_path": [
         "3 行动",
@@ -273,88 +653,260 @@
         "3.2.2 贵族结算"
       ],
       "cue_ids": [
-        "nobles/title_3_2_2",
-        "nobles/intro.001",
-        "nobles/trigger.001.1",
-        "nobles/forced.001.1",
-        "nobles/source.001",
-        "nobles/choice.001.1",
-        "nobles/repeat.001.1",
-        "nobles/repeat.001.3",
-        "nobles/summary.001.1",
-        "nobles/summary.001.2",
-        "nobles/summary.001.3"
+        "noble_anatomy_title/title_3_2_2"
       ],
-      "start": 322.296,
-      "duration": 85.224,
-      "file": "content/games/splendor/media/tts/full/action.nobles.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.nobles.subtitle.json",
+      "start": 311.424,
+      "duration": 2.28,
+      "file": "content/games/splendor/media/tts/full/title.noble_anatomy.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.noble_anatomy.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "noble_anatomy",
+      "asset": "noble_anatomy",
+      "text": "我们再介绍一下贵族板块。左上角是这位贵族的声望值，下方则是结识这位贵族所需要的条件，也就是已购买的卡牌数量。",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "cue_ids": [
+        "noble_anatomy/intro.001"
+      ],
+      "start": 313.704,
+      "duration": 10.248,
+      "file": "content/games/splendor/media/tts/full/noble_anatomy.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/noble_anatomy.subtitle.json",
       "refs": [
         "<noble>",
-        "<prestige_point>",
-        "<attract_noble>",
-        "<noble_market>",
-        "<purchase_development_card>",
-        "<discount>"
+        "<prestige_point>"
       ]
     },
     {
-      "id": "reserve",
-      "asset": "action.reserve",
-      "text": "3.3，保留一张发展卡牌。除购买外，玩家也可以不支付费用，把一张发展卡牌从供应堆拿走，正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。除了供应堆的12张卡牌外，玩家也可以从3摞牌堆顶选择一张未被翻开的发展卡牌保留。注意事项如下：拿取黄金后，如果已持有的宝石和黄金总数超过10枚，也需要弃至还剩10个为止。如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。每位玩家最多同时保留3张发展卡牌；已经保留3张时，就不能再保留，必须选择其他行动。已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
+      "id": "noble_claim",
+      "asset": "noble_claim",
+      "text": "当玩家结束自己的回合后，如果他这一回合购买的发展卡牌恰好满足了一位贵族的条件，他必须立即拿取这张贵族板块，并立刻获得其声望值。请注意，拿取贵族板块并非一个独立行动，而是购买一张发展卡牌之后的附加行动。并且这个行动是强制性的，玩家不可以选择跳过。",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "cue_ids": [
+        "noble_claim/trigger.001.1",
+        "noble_claim/forced.001.1"
+      ],
+      "start": 323.952,
+      "duration": 22.872,
+      "file": "content/games/splendor/media/tts/full/noble_claim.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/noble_claim.subtitle.json",
+      "refs": [
+        "<attract_noble>",
+        "<noble>"
+      ]
+    },
+    {
+      "id": "noble_restrictions",
+      "asset": "noble_restrictions",
+      "text": "玩家只能从供应堆中拿取贵族，不可以从其他人那里拿取。当玩家购买一张发展卡牌后，如果同时满足了多名贵族的条件，他必须从这些贵族板块中挑选一个拿取。当他的下一个回合结束时，不管这回合他做了什么行动，只要供应堆中还保留着其他满足条件的贵族，他必须再从这些贵族板块中挑选一个拿取。就这样一直循环，直到某一回合结束时，供应堆中没有满足条件的贵族为止。",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "cue_ids": [
+        "noble_restrictions/source.001",
+        "noble_restrictions/choice.001.1",
+        "noble_restrictions/repeat.001.1",
+        "noble_restrictions/repeat.001.3"
+      ],
+      "start": 346.824,
+      "duration": 32.064,
+      "file": "content/games/splendor/media/tts/full/noble_restrictions.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/noble_restrictions.subtitle.json",
+      "refs": [
+        "<noble_market>",
+        "<attract_noble>",
+        "<noble>"
+      ]
+    },
+    {
+      "id": "action_summary",
+      "asset": "action_summary",
+      "text": "我们做个总结：玩家可以花费费用购买一张发展卡牌，已购买的发展卡牌会为玩家带来声望值和折扣。当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值。",
+      "group": "3.2.2 贵族结算",
+      "group_path": [
+        "3 行动",
+        "3.2 发展卡牌与贵族",
+        "3.2.2 贵族结算"
+      ],
+      "cue_ids": [
+        "action_summary/summary.001.1",
+        "action_summary/summary.001.2",
+        "action_summary/summary.001.3"
+      ],
+      "start": 378.888,
+      "duration": 15.672,
+      "file": "content/games/splendor/media/tts/full/action_summary.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/action_summary.subtitle.json",
+      "refs": [
+        "<purchase_development_card>",
+        "<discount>",
+        "<prestige_point>",
+        "<attract_noble>"
+      ]
+    },
+    {
+      "id": "reserve_action_title",
+      "asset": "title.reserve_action",
+      "text": "三点三，保留一张发展卡牌。",
       "group": "3.3 保留一张发展卡牌",
       "group_path": [
         "3 行动",
         "3.3 保留一张发展卡牌"
       ],
       "cue_ids": [
-        "reserve/title_3_3",
-        "reserve/intro.001.1",
-        "reserve/gold.001",
-        "reserve/deck.001",
-        "reserve/notes_intro.001",
-        "reserve/limit_gold.001.2",
-        "reserve/limit_hand.001.1",
-        "reserve/private.001.1",
-        "reserve/private.002",
-        "reserve/not_purchase.001"
+        "reserve_action_title/title_3_3"
       ],
-      "start": 407.52,
-      "duration": 75.984,
-      "file": "content/games/splendor/media/tts/full/action.reserve.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.reserve.subtitle.json",
+      "start": 394.56,
+      "duration": 3.24,
+      "file": "content/games/splendor/media/tts/full/title.reserve_action.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.reserve_action.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "reserve_action",
+      "asset": "reserve_action",
+      "text": "除购买外，玩家也可以不支付费用，把一张发展卡牌从供应堆拿走，正面朝下放在自己面前，再从黄金供应堆拿一枚黄金。",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "cue_ids": [
+        "reserve_action/intro.001.1"
+      ],
+      "start": 397.8,
+      "duration": 11.088,
+      "file": "content/games/splendor/media/tts/full/reserve_action.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/reserve_action.subtitle.json",
       "refs": [
         "<reserve_development_card>",
         "<gold>",
-        "<gold_supply>",
-        "<purchase_development_card>",
+        "<gold_supply>"
+      ]
+    },
+    {
+      "id": "gold_as_wild",
+      "asset": "gold_as_wild",
+      "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "cue_ids": [
+        "gold_as_wild/gold.001"
+      ],
+      "start": 408.888,
+      "duration": 6.264,
+      "file": "content/games/splendor/media/tts/full/gold_as_wild.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/gold_as_wild.subtitle.json",
+      "refs": [
+        "<gold>",
+        "<purchase_development_card>"
+      ]
+    },
+    {
+      "id": "reserve_deck_privacy",
+      "asset": "reserve_deck_privacy",
+      "text": "除了供应堆的十二张卡牌外，玩家也可以从三摞牌堆顶选择一张未被翻开的发展卡牌保留。已保留的发展卡牌属于个人信息，只有保留这张卡的玩家才可以确认卡牌内容；不可以给其他玩家看，其他玩家也不可以主动去查看。如果选择从牌堆顶保留卡牌，在保留之前不可以查看那张卡牌的信息。保留不是购买，玩家保留一张发展卡牌时，不能获得它带来的折扣和声望值。",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "cue_ids": [
+        "reserve_deck_privacy/deck.001",
+        "reserve_deck_privacy/private.001.1",
+        "reserve_deck_privacy/private.002",
+        "reserve_deck_privacy/not_purchase.001"
+      ],
+      "start": 415.152,
+      "duration": 30.288,
+      "file": "content/games/splendor/media/tts/full/reserve_deck_privacy.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/reserve_deck_privacy.subtitle.json",
+      "refs": [
+        "<reserve_development_card>",
         "<development_deck_level_1>",
         "<development_deck_level_2>",
         "<development_deck_level_3>",
-        "<player_holding>",
-        "<gold_available>",
-        "<discard_excess_gems>",
         "<hand>",
-        "<card_reservable>",
         "<discount>",
         "<prestige_point>"
       ]
     },
     {
-      "id": "purchase_reserved",
-      "asset": "action.purchase_reserved",
-      "text": "3.4，购买保留的发展卡牌。不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
+      "id": "reserve_limits",
+      "asset": "reserve_limits",
+      "text": "拿取黄金后，如果已持有的宝石和黄金总数超过十枚，也需要弃至还剩十个为止。如果供应堆中没有黄金了，也可以选择保留卡牌，但不拿取黄金。每位玩家最多同时保留三张发展卡牌；已经保留三张时，就不能再保留，必须选择其他行动。",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "cue_ids": [
+        "reserve_limits/notes_intro.001",
+        "reserve_limits/limit_gold.001.2",
+        "reserve_limits/limit_hand.001.1"
+      ],
+      "start": 445.44,
+      "duration": 21.264,
+      "file": "content/games/splendor/media/tts/full/reserve_limits.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/reserve_limits.subtitle.json",
+      "refs": [
+        "<reserve_development_card>",
+        "<player_holding>",
+        "<gold_available>",
+        "<discard_excess_gems>",
+        "<hand>",
+        "<card_reservable>"
+      ]
+    },
+    {
+      "id": "purchase_reserved_title",
+      "asset": "title.purchase_reserved",
+      "text": "三点四，购买保留的发展卡牌。",
       "group": "3.4 购买保留的发展卡牌",
       "group_path": [
         "3 行动",
         "3.4 购买保留的发展卡牌"
       ],
       "cue_ids": [
-        "purchase_reserved/title_3_4",
+        "purchase_reserved_title/title_3_4"
+      ],
+      "start": 466.704,
+      "duration": 3.072,
+      "file": "content/games/splendor/media/tts/full/title.purchase_reserved.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.purchase_reserved.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "purchase_reserved",
+      "asset": "action.purchase_reserved",
+      "text": "不仅是供应堆，玩家也可以从自己保留的卡牌中选择一张购买。按照之前介绍过的规则，支付费用，将一张被保留的，背面朝上的卡牌翻面，正常结算它的声望值，查看是否满足贵族条件，并在后续的回合中适用它所带来的折扣。",
+      "group": "3.4 购买保留的发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.4 购买保留的发展卡牌"
+      ],
+      "cue_ids": [
         "purchase_reserved/001"
       ],
-      "start": 483.504,
-      "duration": 23.664,
+      "start": 469.776,
+      "duration": 18.888,
       "file": "content/games/splendor/media/tts/full/action.purchase_reserved.mp3",
       "subtitle_file": "content/games/splendor/media/tts/full/action.purchase_reserved.subtitle.json",
       "refs": [
@@ -363,24 +915,41 @@
       ]
     },
     {
-      "id": "summary",
-      "asset": "action.summary",
-      "text": "3.5，回合结束与循环。以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
+      "id": "turn_end_loop_title",
+      "asset": "title.turn_end_loop",
+      "text": "三点五，回合结束与循环。",
       "group": "3.5 回合结束与循环",
       "group_path": [
         "3 行动",
         "3.5 回合结束与循环"
       ],
       "cue_ids": [
-        "summary/title_3_5",
-        "summary/001",
-        "summary/002.1",
-        "summary/002.2"
+        "turn_end_loop_title/title_3_5"
       ],
-      "start": 507.168,
-      "duration": 22.704,
-      "file": "content/games/splendor/media/tts/full/action.summary.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/action.summary.subtitle.json",
+      "start": 488.664,
+      "duration": 3.072,
+      "file": "content/games/splendor/media/tts/full/title.turn_end_loop.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.turn_end_loop.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "turn_end_loop",
+      "asset": "turn_end_loop",
+      "text": "以上就是玩家在回合内可以选择的行动，分别为拿取宝石、购买卡牌和保留卡牌。一个回合内，只能选择一种行动进行，随后回合立刻结束，按照顺时针顺序，左手边的玩家开始他的回合。就这样一直循环，直到整局游戏结束。",
+      "group": "3.5 回合结束与循环",
+      "group_path": [
+        "3 行动",
+        "3.5 回合结束与循环"
+      ],
+      "cue_ids": [
+        "turn_end_loop/001",
+        "turn_end_loop/002.1",
+        "turn_end_loop/002.2"
+      ],
+      "start": 491.736,
+      "duration": 19.896,
+      "file": "content/games/splendor/media/tts/full/turn_end_loop.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/turn_end_loop.subtitle.json",
       "refs": [
         "<take_gems_different>",
         "<take_gems_same>",
@@ -392,32 +961,65 @@
       ]
     },
     {
-      "id": "end",
-      "asset": "endgame",
-      "text": "4，游戏结束。当一位玩家的声望值达到15或更多时，触发游戏结束。为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。以4人局为例：如果起始玩家的声望值达到15，剩下3位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到15，就没有人可以行动了，游戏立刻结束。第一种情况：声望值最高的玩家获得胜利。比如玩家A有17分，玩家B有14分，A获胜。第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是17分，A有14张牌，B只有10张牌，所以B获胜。第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。现在两人都是17分、10张牌，共享胜利。",
+      "id": "endgame_trigger_title",
+      "asset": "title.endgame_trigger",
+      "text": "四，游戏结束。",
       "group": "4 游戏结束",
       "group_path": [
         "4 游戏结束"
       ],
       "cue_ids": [
-        "end/title_4",
-        "end/trigger.001",
-        "end/final_rounds.001.1",
-        "end/example.001.1",
-        "end/winner.001",
-        "end/winner.002",
-        "end/winner.003"
+        "endgame_trigger_title/title_4"
       ],
-      "start": 529.872,
-      "duration": 65.904,
-      "file": "content/games/splendor/media/tts/full/endgame.mp3",
-      "subtitle_file": "content/games/splendor/media/tts/full/endgame.subtitle.json",
+      "start": 511.632,
+      "duration": 1.632,
+      "file": "content/games/splendor/media/tts/full/title.endgame_trigger.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/title.endgame_trigger.subtitle.json",
+      "refs": []
+    },
+    {
+      "id": "endgame_trigger",
+      "asset": "endgame_trigger",
+      "text": "当一位玩家的声望值达到十五或更多时，触发游戏结束。为了让所有玩家都进行相同数量的回合，游戏会继续进行，直到起始玩家右手边的玩家结束他的回合时，整场游戏结束。以四人局为例：如果起始玩家的声望值达到十五，剩下三位玩家各自还有最后一回合可以行动，之后游戏才结束。但如果是起始玩家左手边的玩家声望值达到十五，就没有人可以行动了，游戏立刻结束。",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "cue_ids": [
+        "endgame_trigger/trigger.001",
+        "endgame_trigger/final_rounds.001.1",
+        "endgame_trigger/example.001.1"
+      ],
+      "start": 513.264,
+      "duration": 32.328,
+      "file": "content/games/splendor/media/tts/full/endgame_trigger.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/endgame_trigger.subtitle.json",
       "refs": [
         "<enter_endgame>",
         "<reach_15_prestige>",
         "flow:final_turn_cycle",
         "flow:final_turns",
-        "<no_remaining_players>",
+        "<no_remaining_players>"
+      ]
+    },
+    {
+      "id": "endgame_victory",
+      "asset": "endgame_victory",
+      "text": "我们介绍一下如何决出胜者。第一种情况：声望值最高的玩家获得胜利。比如玩家A有十七分，玩家B有十四分，A获胜。第二种情况：如果声望值相同，购买发展卡牌最少的那名玩家获得胜利。现在两人都是十七分，A有十四张牌，B只有十张牌，所以B获胜。第三种情况：如果声望值和购买发展卡牌数量都相同，则这些玩家共享胜利。",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "cue_ids": [
+        "endgame_victory/winner.001",
+        "endgame_victory/winner.002",
+        "endgame_victory/winner.003"
+      ],
+      "start": 545.592,
+      "duration": 29.496,
+      "file": "content/games/splendor/media/tts/full/endgame_victory.mp3",
+      "subtitle_file": "content/games/splendor/media/tts/full/endgame_victory.subtitle.json",
+      "refs": [
         "<highest_prestige_wins>",
         "<prestige_highest>",
         "<fewest_development_cards>"

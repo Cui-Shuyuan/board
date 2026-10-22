@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "setup_gems_identity",
+  "cues": [
+    {
+      "id": "001.1",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gem>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_gems_identity/001.1.b1",
+          "text": "这些是标记，后续称之为宝石。"
+        },
+        {
+          "id": "setup_gems_identity/001.1.b2",
+          "text": "宝石分为五种颜色，分别是钻石、蓝宝石、红宝石、翡翠和缟玛瑙。"
+        },
+        {
+          "id": "setup_gems_identity/001.1.b3",
+          "text": "后续我们就直接以颜色称呼它们了。"
+        }
+      ],
+      "section": "setup_gems_identity"
+    },
+    {
+      "id": "002",
+      "group": "2.2 宝石与黄金",
+      "group_path": [
+        "2 设置",
+        "2.2 宝石与黄金"
+      ],
+      "refs": [
+        "<gold>",
+        "rulebook:setup"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_gems_identity/002.b1",
+          "text": "这是黄金，黄金不属于宝石。"
+        },
+        {
+          "id": "setup_gems_identity/002.b2",
+          "text": "我们所说的宝石指的就是这五种宝石。"
+        }
+      ],
+      "section": "setup_gems_identity"
+    }
+  ]
+}

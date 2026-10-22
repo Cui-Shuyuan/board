@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "gems_public",
+  "cues": [
+    {
+      "id": "public.001.1",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<player_holding>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "gems_public/public.001.1.b1",
+          "text": "宝石属于公开信息，每位玩家都需要将自己持有的宝石放在自己面前，"
+        }
+      ],
+      "section": "gems_public"
+    },
+    {
+      "id": "public.001.2",
+      "group": "3.1 从宝石供应堆拿取宝石",
+      "group_path": [
+        "3 行动",
+        "3.1 从宝石供应堆拿取宝石"
+      ],
+      "refs": [
+        "<player_holding>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "gems_public/public.001.2.b1",
+          "text": "所有人都能清楚看到的地方。"
+        }
+      ],
+      "section": "gems_public"
+    }
+  ]
+}

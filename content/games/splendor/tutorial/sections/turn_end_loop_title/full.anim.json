@@ -1,0 +1,76 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "turn_end_loop_title",
+  "cues": [
+    {
+      "id": "title_3_5",
+      "tree": "main",
+      "qa_exempt": true,
+      "script": {
+        "story": "3.5 回合结束与循环",
+        "note": "章节标题纯展示：居中大字，不改变棋盘状态；录音口播为章节名。"
+      },
+      "events": [
+        {
+          "op": "overlay_show",
+          "overlay": "section_title_dim",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "w": 1.0,
+            "h": 1.0
+          },
+          "background": "#000000",
+          "dim_alpha": 0.8,
+          "layer": 40,
+          "anchor": "turn_end_loop_title/title_3_5.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "size": 136,
+          "text": "3.5 回合结束与循环",
+          "label_align": "center",
+          "anchor": "turn_end_loop_title/title_3_5.start",
+          "target": {
+            "space": "screen",
+            "id": "section_title"
+          }
+        },
+        {
+          "op": "wait",
+          "dur": 3.98,
+          "anchor": "turn_end_loop_title/title_3_5.start"
+        }
+      ],
+      "demo": true,
+      "section": "turn_end_loop_title"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "turn_end_loop_title/title_3_5.start",
+      "cue": "title_3_5",
+      "edge": "cue_start"
+    },
+    {
+      "id": "turn_end_loop_title/title_3_5.end",
+      "cue": "title_3_5",
+      "edge": "cue_end"
+    },
+    {
+      "id": "turn_end_loop_title/title_3_5.b1.start",
+      "cue": "title_3_5",
+      "beat": "turn_end_loop_title/title_3_5.b1",
+      "edge": "start"
+    },
+    {
+      "id": "turn_end_loop_title/title_3_5.b1.end",
+      "cue": "title_3_5",
+      "beat": "turn_end_loop_title/title_3_5.b1",
+      "edge": "end"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "setup_nobles",
+  "cues": [
+    {
+      "id": "nobles.001.1",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [
+        "<noble>",
+        "<noble_market>",
+        "flow:deal_nobles"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_nobles/nobles.001.1.b1",
+          "text": "这些是贵族板块。"
+        }
+      ],
+      "section": "setup_nobles"
+    },
+    {
+      "id": "nobles.001.2",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [
+        "<noble>",
+        "<noble_market>",
+        "flow:deal_nobles"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_nobles/nobles.001.2.b1",
+          "text": "从所有的贵族板块中随机抽出玩家数量加一块，正面朝上放置在一旁成为贵族供应堆，其余的放回盒子。"
+        }
+      ],
+      "section": "setup_nobles"
+    },
+    {
+      "id": "nobles.002",
+      "group": "2.3 贵族板块",
+      "group_path": [
+        "2 设置",
+        "2.3 贵族板块"
+      ],
+      "refs": [
+        "flow:deal_nobles"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_nobles/nobles.002.b1",
+          "text": "需要注意的是，这一局结束之后，下一局设置时还需要重新混洗并抽取贵族板块。"
+        }
+      ],
+      "section": "setup_nobles"
+    }
+  ]
+}

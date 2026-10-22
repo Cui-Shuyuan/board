@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "gold_as_wild",
+  "cues": [
+    {
+      "id": "gold.001",
+      "group": "3.3 保留一张发展卡牌",
+      "group_path": [
+        "3 行动",
+        "3.3 保留一张发展卡牌"
+      ],
+      "refs": [
+        "<gold>",
+        "<purchase_development_card>"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "gold_as_wild/gold.001.b1",
+          "text": "黄金相当于万能宝石，它可以在玩家购买发展卡牌时成为任意一种宝石的替代。"
+        }
+      ],
+      "section": "gold_as_wild"
+    }
+  ]
+}

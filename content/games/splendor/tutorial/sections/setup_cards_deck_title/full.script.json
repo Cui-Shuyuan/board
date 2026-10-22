@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "setup_cards_deck_title",
+  "cues": [
+    {
+      "id": "title_2_1",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_cards_deck_title/title_2_1.b1",
+          "text": "二点一，发展卡牌。"
+        }
+      ],
+      "section": "setup_cards_deck_title"
+    }
+  ]
+}

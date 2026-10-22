@@ -1,0 +1,739 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_market_refill",
+  "cues": [
+    {
+      "id": "market.001.1",
+      "parent": "card_cost_purchase/cost.001.2",
+      "timing": [
+        {
+          "key": "镜头推近市场",
+          "text": "0.00"
+        },
+        {
+          "key": "前提：玩家已有 8 枚宝石（白1蓝2红1绿3黑1）",
+          "text": "0.00"
+        },
+        {
+          "key": "整块市场高亮一次",
+          "text": "0.77"
+        },
+        {
+          "key": "点要买的那张",
+          "text": "7.67"
+        },
+        {
+          "key": "付 1蓝2绿1红1黑",
+          "text": "8.57~9.11"
+        },
+        {
+          "key": "搬到玩家发展区",
+          "text": "9.11"
+        },
+        {
+          "key": "翻牌补位",
+          "text": "11.71"
+        },
+        {
+          "key": "点补上的新牌",
+          "text": "13.11"
+        }
+      ],
+      "script": {
+        "story": "玩家只可以从被翻开的 12 张发展卡牌中选择一张购买，并且在任何时间，只要卡牌被玩家买走，卡牌供应堆出现了空位，玩家必须从对应行翻出一张新的卡牌填补这个空位",
+        "note": "从 action.take.public.001.2 分支，静默补齐购买所需的持有宝石。先高亮市场与 slot 2 的 card_l1_diamond_18，再支付一蓝、两绿、一红、一黑，把卡移入发展区，最后从一级牌堆翻出 card_l1_onyx_3 填回 slot 2。用一次完整购买说明从公开市场选牌与同级补位。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "player_development": {
+              "count": 0
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 2
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_ruby",
+                  "count": 1
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 3
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_onyx",
+                  "count": 1
+                }
+              ]
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 1
+            }
+          }
+        },
+        "exit": {
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 3
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "player_holding": {
+              "items": [
+                {
+                  "template": "gem",
+                  "palette": "gem_diamond",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_sapphire",
+                  "count": 1,
+                  "face": "down"
+                },
+                {
+                  "template": "gem",
+                  "palette": "gem_emerald",
+                  "count": 1,
+                  "face": "down"
+                }
+              ]
+            },
+            "player_development": {
+              "count": 1
+            },
+            "deck_level_1": {
+              "count": 35
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_market_refill/market.001.1.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.1.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_onyx",
+              "gem_supply_sapphire",
+              "gem_supply_emerald"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "card_market_refill/market.001.1.b1.start",
+          "offset": 0.505,
+          "target": {
+            "space": "entity",
+            "zone": "card_market"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "card_market_refill/market.001.1.b2.start",
+          "offset": 1.005,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.1.b2.start",
+          "offset": 1.905,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "card_market_refill/market.001.1.b2.end",
+          "offset": -1.715,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.1.b2.end",
+          "offset": -1.515,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.1.b2.end",
+          "offset": -1.315,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.1.b2.end",
+          "offset": -1.215,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<diamond>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        },
+        {
+          "op": "draw",
+          "dur": 0.6,
+          "quantity": 1,
+          "to": "face_up",
+          "anchor": "card_market_refill/market.001.1.b3.start",
+          "offset": 0.925,
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1",
+            "parts": [
+              {
+                "key": "bonus",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "card_market"
+          },
+          "order": 2
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "card_market_refill/market.001.1.b3.start",
+          "offset": 2.325,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        }
+      ],
+      "tree": "main",
+      "entry": "gems_public/public.001.2",
+      "demo": false,
+      "section": "card_market_refill"
+    },
+    {
+      "id": "market.001.2",
+      "parent": "card_cost_purchase/cost.001.2",
+      "timing": [
+        {
+          "key": "demo 前提：1 级牌堆为空",
+          "text": "0.00"
+        },
+        {
+          "key": "玩家 A 再买一次那张一级白",
+          "text": "0.10-2.40"
+        },
+        {
+          "key": "买走后空位不补",
+          "text": "约 2.40-结束"
+        }
+      ],
+      "script": {
+        "story": "除非这一行所有卡牌都已经耗尽，此时不再填补，而是用剩余的发展卡牌继续游戏",
+        "note": "从 action.take.public.001.2 分支，静默把一级牌堆的剩余三十六张移到 offstage，准备该级牌堆耗尽的 demo。按相同费用购买 card_l1_diamond_18 后，slot 2 留空，不再补位；这是耗尽前提下的局部示例。",
+        "enter": {
+          "picture": null,
+          "zones": {
+            "card_market": {
+              "count": 12
+            },
+            "offstage": {
+              "count": 36
+            },
+            "player_holding": {
+              "count": 8
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_onyx": {
+              "count": 3
+            },
+            "gem_supply_ruby": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 2
+            },
+            "gem_supply_emerald": {
+              "count": 1
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "deck_level_1": {
+              "count": 0
+            }
+          }
+        },
+        "exit": {
+          "picture": null,
+          "zones": {
+            "player_development": {
+              "count": 1
+            },
+            "card_market": {
+              "count": 11
+            },
+            "offstage": {
+              "count": 36
+            },
+            "player_holding": {
+              "count": 3
+            },
+            "gold_supply": {
+              "count": 5
+            },
+            "gem_supply_onyx": {
+              "count": 4
+            },
+            "gem_supply_ruby": {
+              "count": 4
+            },
+            "noble_market": {
+              "count": 3
+            },
+            "player_marker": {
+              "count": 1
+            },
+            "gem_supply_diamond": {
+              "count": 3
+            },
+            "gem_supply_emerald": {
+              "count": 3
+            },
+            "gem_supply_sapphire": {
+              "count": 3
+            },
+            "deck_level_2": {
+              "count": 26
+            },
+            "deck_level_3": {
+              "count": 16
+            },
+            "deck_level_1": {
+              "count": 0
+            }
+          }
+        }
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "card_market_refill/market.001.2.start"
+        },
+        {
+          "op": "label",
+          "dur": 0.0,
+          "text": "第2个行动：购买1张发展卡牌",
+          "target": {
+            "space": "screen",
+            "id": "hint_action_second"
+          },
+          "anchor": "card_market_refill/market.001.2.start",
+          "label_mode": "replace",
+          "label_key": "action_hint"
+        },
+        {
+          "op": "take",
+          "dur": 0.0,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.2.start",
+          "target": {
+            "space": "entity",
+            "zones": [
+              "gem_supply_onyx",
+              "gem_supply_sapphire",
+              "gem_supply_emerald"
+            ],
+            "concept": "gem"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_holding"
+          },
+          "setup": true
+        },
+        {
+          "op": "transfer",
+          "dur": 0.0,
+          "setup": true,
+          "quantity": 36,
+          "anchor": "card_market_refill/market.001.2.start",
+          "target": {
+            "space": "entity",
+            "zone": "deck_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "offstage"
+          }
+        },
+        {
+          "op": "highlight",
+          "dur": 0.5,
+          "peak_alpha": 0.65,
+          "anchor": "card_market_refill/market.001.2.b1.start",
+          "offset": 0.1,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "order": 2
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.2.b1.start",
+          "offset": 0.5,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<sapphire>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_sapphire"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 2,
+          "anchor": "card_market_refill/market.001.2.b1.start",
+          "offset": 0.78,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<emerald>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_emerald"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.2.b1.start",
+          "offset": 1.04,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<ruby>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_ruby"
+          }
+        },
+        {
+          "op": "pay",
+          "dur": 0.6,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.2.b1.start",
+          "offset": 1.28,
+          "target": {
+            "space": "entity",
+            "zone": "player_holding",
+            "concept": "gem",
+            "parts": [
+              {
+                "key": "color",
+                "value": "<onyx>"
+              }
+            ]
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "gem_supply_onyx"
+          }
+        },
+        {
+          "op": "take",
+          "dur": 0.8,
+          "quantity": 1,
+          "anchor": "card_market_refill/market.001.2.b1.start",
+          "offset": 1.58,
+          "target": {
+            "space": "entity",
+            "zone": "card_market",
+            "template": "card_l1_diamond_18",
+            "palette": "card_level_1",
+            "concept": "development_card_level_1"
+          },
+          "destination": {
+            "space": "entity",
+            "zone": "player_development"
+          }
+        }
+      ],
+      "tree": "main",
+      "entry": "gems_public/public.001.2",
+      "demo": true,
+      "section": "card_market_refill"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "card_market_refill/market.001.1.start",
+      "cue": "market.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_market_refill/market.001.1.end",
+      "cue": "market.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_market_refill/market.001.1.b1.start",
+      "cue": "market.001.1",
+      "beat": "card_market_refill/market.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_market_refill/market.001.1.b1.end",
+      "cue": "market.001.1",
+      "beat": "card_market_refill/market.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_market_refill/market.001.1.b2.start",
+      "cue": "market.001.1",
+      "beat": "card_market_refill/market.001.1.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_market_refill/market.001.1.b2.end",
+      "cue": "market.001.1",
+      "beat": "card_market_refill/market.001.1.b2",
+      "edge": "end"
+    },
+    {
+      "id": "card_market_refill/market.001.1.b3.start",
+      "cue": "market.001.1",
+      "beat": "card_market_refill/market.001.1.b3",
+      "edge": "start"
+    },
+    {
+      "id": "card_market_refill/market.001.1.b3.end",
+      "cue": "market.001.1",
+      "beat": "card_market_refill/market.001.1.b3",
+      "edge": "end"
+    },
+    {
+      "id": "card_market_refill/market.001.2.start",
+      "cue": "market.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "card_market_refill/market.001.2.end",
+      "cue": "market.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "card_market_refill/market.001.2.b1.start",
+      "cue": "market.001.2",
+      "beat": "card_market_refill/market.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "card_market_refill/market.001.2.b1.end",
+      "cue": "market.001.2",
+      "beat": "card_market_refill/market.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "card_market_refill/market.001.2.b2.start",
+      "cue": "market.001.2",
+      "beat": "card_market_refill/market.001.2.b2",
+      "edge": "start"
+    },
+    {
+      "id": "card_market_refill/market.001.2.b2.end",
+      "cue": "market.001.2",
+      "beat": "card_market_refill/market.001.2.b2",
+      "edge": "end"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "gems_hand_limit",
+  "title": "宝石持有上限",
+  "group_path": [
+    "3 行动",
+    "3.1 从宝石供应堆拿取宝石"
+  ],
+  "order": 20,
+  "tree": "main",
+  "entry": "take_shortage/draw_rule.001.2",
+  "tts_asset": "gems_hand_limit"
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "endgame_trigger_title",
+  "cues": [
+    {
+      "id": "title_4",
+      "group": "4 游戏结束",
+      "group_path": [
+        "4 游戏结束"
+      ],
+      "refs": [],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "endgame_trigger_title/title_4.b1",
+          "text": "四，游戏结束。"
+        }
+      ],
+      "section": "endgame_trigger_title"
+    }
+  ]
+}

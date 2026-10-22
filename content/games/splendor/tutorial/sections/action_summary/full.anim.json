@@ -1,0 +1,131 @@
+{
+  "schema": "tutorial-section-anim/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "action_summary",
+  "cues": [
+    {
+      "id": "summary.001.1",
+      "parent": "noble_restrictions/repeat.001.3",
+      "timing": [],
+      "script": {
+        "story": "我们做个总结：玩家可以花费费用购买一张发展卡牌",
+        "note": "保持当前桌面，用口播回顾支付费用购买发展卡。本条没有新事件，不执行另一笔购买。"
+      },
+      "events": [],
+      "tree": "main",
+      "section": "action_summary"
+    },
+    {
+      "id": "summary.001.2",
+      "parent": "action_summary/summary.001.1",
+      "timing": [],
+      "script": {
+        "story": "已购买的发展卡牌会为玩家带来声望值和折扣",
+        "note": "镜头看玩家 A 发展区，展示已购买的十二张发展卡，配合口播总结声望与折扣。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_development",
+          "realizes": "<ontology::timing>",
+          "anchor": "action_summary/summary.001.2.start"
+        }
+      ],
+      "tree": "main",
+      "section": "action_summary"
+    },
+    {
+      "id": "summary.001.3",
+      "parent": "action_summary/summary.001.2",
+      "timing": [],
+      "script": {
+        "story": "当满足贵族开出的条件后，玩家将会结识这名贵族并获得他带来的声望值",
+        "note": "镜头回到全桌，展示十二张发展卡与两块已结识的贵族。该终态也是 endgame.trigger.001 的显式入口。"
+      },
+      "events": [
+        {
+          "op": "camera",
+          "dur": 0.0,
+          "shot": "shot_board",
+          "realizes": "<ontology::timing>",
+          "anchor": "action_summary/summary.001.3.start"
+        }
+      ],
+      "tree": "main",
+      "qa": [
+        "璀璨宝石。玩家已购买发展卡左上角的声望，和已经获得的贵族板块左上角的声望，都会累计成玩家的总分。这样理解合法吗？只回答「合法」或「有问题」，再给一句话理由。"
+      ],
+      "section": "action_summary"
+    }
+  ],
+  "time_anchors": [
+    {
+      "id": "action_summary/summary.001.1.start",
+      "cue": "summary.001.1",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action_summary/summary.001.1.end",
+      "cue": "summary.001.1",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action_summary/summary.001.1.b1.start",
+      "cue": "summary.001.1",
+      "beat": "action_summary/summary.001.1.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action_summary/summary.001.1.b1.end",
+      "cue": "summary.001.1",
+      "beat": "action_summary/summary.001.1.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action_summary/summary.001.2.start",
+      "cue": "summary.001.2",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action_summary/summary.001.2.end",
+      "cue": "summary.001.2",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action_summary/summary.001.2.b1.start",
+      "cue": "summary.001.2",
+      "beat": "action_summary/summary.001.2.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action_summary/summary.001.2.b1.end",
+      "cue": "summary.001.2",
+      "beat": "action_summary/summary.001.2.b1",
+      "edge": "end"
+    },
+    {
+      "id": "action_summary/summary.001.3.start",
+      "cue": "summary.001.3",
+      "edge": "cue_start"
+    },
+    {
+      "id": "action_summary/summary.001.3.end",
+      "cue": "summary.001.3",
+      "edge": "cue_end"
+    },
+    {
+      "id": "action_summary/summary.001.3.b1.start",
+      "cue": "summary.001.3",
+      "beat": "action_summary/summary.001.3.b1",
+      "edge": "start"
+    },
+    {
+      "id": "action_summary/summary.001.3.b1.end",
+      "cue": "summary.001.3",
+      "beat": "action_summary/summary.001.3.b1",
+      "edge": "end"
+    }
+  ]
+}

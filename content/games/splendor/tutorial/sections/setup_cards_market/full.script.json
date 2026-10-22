@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "game_id": "splendor",
+  "track": "full",
+  "section": "setup_cards_market",
+  "cues": [
+    {
+      "id": "002.1",
+      "group": "2.1 发展卡牌",
+      "group_path": [
+        "2 设置",
+        "2.1 发展卡牌"
+      ],
+      "refs": [
+        "flow:prepare_level_1_deck",
+        "flow:prepare_level_2_deck",
+        "flow:prepare_level_3_deck",
+        "flow:shuffle_level_1_deck",
+        "flow:shuffle_level_2_deck",
+        "flow:shuffle_level_3_deck",
+        "flow:deal_card_market_level_1",
+        "flow:deal_card_market_level_2",
+        "flow:deal_card_market_level_3"
+      ],
+      "pause_after": 0.0,
+      "beats": [
+        {
+          "id": "setup_cards_market/002.1.b1",
+          "text": "将这三类牌分别洗混后按顺序摆成一列。"
+        },
+        {
+          "id": "setup_cards_market/002.1.b2",
+          "text": "从每摞牌上方分别翻开四张牌，在一侧摆成一行。"
+        },
+        {
+          "id": "setup_cards_market/002.1.b3",
+          "text": "最终组成一个三乘四的发展卡牌供应堆。"
+        }
+      ],
+      "section": "setup_cards_market"
+    }
+  ]
+}

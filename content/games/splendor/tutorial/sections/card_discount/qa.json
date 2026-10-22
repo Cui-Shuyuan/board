@@ -1,0 +1,13 @@
+{
+  "schema": "tutorial-section-qa/v1",
+  "game": "splendor",
+  "track": "full",
+  "section": "card_discount",
+  "note": "手写的 cue 合法性问句；cue 为 section 内 local_id。",
+  "asks": [
+    {
+      "q": "璀璨宝石。我已经购买的发展卡提供的折扣可以叠加；如果一张发展卡的费用被已有折扣全部抵消，购买它时应付宝石可以降到 0。这样合法吗？只回答「允许」或「不允许」，再给一句话理由。",
+      "cue": "discount.003.1"
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {
   "id": "intro",
-  "title": "开始",
+  "title": "背景",
   "group_path": [
     "1 背景"
   ],
-  "order": 0,
+  "order": 1,
   "tree": "box",
-  "entry": "initial",
+  "entry": "intro_title/title_1",
   "tts_asset": "bg.intro"
 }
