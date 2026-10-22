@@ -1,0 +1,17 @@
+<Project>
+  <!--
+    Machine-local runtime root. runtime.local.props is ignored by Git and may
+    set <BoardRuntimeRoot>D:\board</BoardRuntimeRoot>. On CI or a fresh clone,
+    `BOARD_RUNTIME_ROOT` can be supplied through the environment. When neither
+    is set, the SDK keeps its normal in-checkout bin/obj behavior.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)runtime.local.props"
+          Condition="Exists('$(MSBuildThisFileDirectory)runtime.local.props')" />
+  <PropertyGroup Condition="'$(BoardRuntimeRoot)' == '' and '$(BOARD_RUNTIME_ROOT)' != ''">
+    <BoardRuntimeRoot>$(BOARD_RUNTIME_ROOT)</BoardRuntimeRoot>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(BoardRuntimeRoot)' != ''">
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(BoardRuntimeRoot)\build\dotnet</ArtifactsPath>
+  </PropertyGroup>
+</Project>

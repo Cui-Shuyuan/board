@@ -11,10 +11,19 @@ namespace BoardAI.Api.Infrastructure;
 public static class BoardPaths
 {
     public const string BasePathEnvironmentVariable = "BOARD_BASE_PATH";
+    public const string RuntimeRootEnvironmentVariable = "BOARD_RUNTIME_ROOT";
 
     private static readonly Lazy<string> ResolvedBasePath = new(FindBasePath);
+    private static readonly Lazy<string> ResolvedRuntimeRoot = new(FindRuntimeRoot);
 
     public static string GetBasePath() => ResolvedBasePath.Value;
+
+    /// <summary>
+    /// Machine-local runtime root for build outputs, models, Qdrant data,
+    /// cache and logs. It is intentionally outside the source checkout when
+    /// BOARD_RUNTIME_ROOT is configured (start.bat sets it to D:\board).
+    /// </summary>
+    public static string GetRuntimeRoot() => ResolvedRuntimeRoot.Value;
 
     /// <summary>
     /// Resolves an optional config override.  Absolute overrides stay as-is;
@@ -33,14 +42,37 @@ public static class BoardPaths
     }
 
     /// <summary>
-    /// Resolves Embedding:ModelDir.  Empty configuration uses the standard
-    /// repository model directory; relative paths are resolved against the
-    /// repository root.
+    /// Resolves a runtime-owned path. Relative paths are resolved against the
+    /// runtime root; empty configuration uses the provided runtime-relative
+    /// default. This keeps generated manifests, releases and caches out of the
+    /// repository while preserving existing absolute overrides.
+    /// </summary>
+    public static string ResolveRuntimePath(string? configuredPath, string runtimeRelativeDefault)
+    {
+        if (string.IsNullOrWhiteSpace(configuredPath))
+            return Path.GetFullPath(Path.Combine(GetRuntimeRoot(), runtimeRelativeDefault));
+
+        var value = configuredPath.Trim();
+        return Path.GetFullPath(
+            Path.IsPathRooted(value)
+                ? value
+                : Path.Combine(GetRuntimeRoot(), value));
+    }
+
+    /// <summary>
+    /// Resolves Embedding:ModelDir. Empty configuration uses the runtime model
+    /// directory; relative overrides are resolved against the runtime root.
+    /// The legacy repository path is retained only as a fallback for an
+    /// existing checkout while the model is being migrated.
     /// </summary>
     public static string ResolveModelDir(string? configuredModelDir, string? basePath = null)
     {
         var root = string.IsNullOrWhiteSpace(basePath) ? GetBasePath() : basePath!;
-        var defaultModelDir = Path.Combine(
+        var runtimeModelDir = Path.Combine(
+            GetRuntimeRoot(),
+            "models",
+            "bge-base-zh-v1.5-fp32");
+        var legacyModelDir = Path.Combine(
             root,
             "backend",
             "BoardAI.Api",
@@ -48,13 +80,28 @@ public static class BoardPaths
             "bge-base-zh-v1.5-fp32");
 
         if (string.IsNullOrWhiteSpace(configuredModelDir))
-            return Path.GetFullPath(defaultModelDir);
+        {
+            if (Directory.Exists(runtimeModelDir) || !Directory.Exists(legacyModelDir))
+                return Path.GetFullPath(runtimeModelDir);
+            return Path.GetFullPath(legacyModelDir);
+        }
 
         var value = configuredModelDir.Trim();
         return Path.GetFullPath(
             Path.IsPathRooted(value)
                 ? value
-                : Path.Combine(root, value));
+                : Path.Combine(GetRuntimeRoot(), value));
+    }
+
+    private static string FindRuntimeRoot()
+    {
+        var configured = Environment.GetEnvironmentVariable(RuntimeRootEnvironmentVariable);
+        if (!string.IsNullOrWhiteSpace(configured))
+            return Path.GetFullPath(configured.Trim());
+
+        // Safe fallback for direct development runs that do not go through
+        // start.bat: keep it ignored and clearly separate from source.
+        return Path.GetFullPath(Path.Combine(GetBasePath(), ".runtime"));
     }
 
     private static string FindBasePath()

@@ -23,9 +23,12 @@ from PIL import Image
 
 
 def load_env():
-    """Load .env from project root if present."""
-    env_path = Path(__file__).resolve().parent.parent.parent / ".env"
-    if env_path.exists():
+    """Load runtime .env, falling back to the legacy repository-root file."""
+    repo_root = Path(__file__).resolve().parent.parent.parent
+    runtime_root = Path(os.environ.get("BOARD_RUNTIME_ROOT", str(repo_root / ".runtime")))
+    for env_path in (runtime_root / "config" / ".env", repo_root / ".env"):
+        if not env_path.exists():
+            continue
         with open(env_path, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()

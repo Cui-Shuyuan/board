@@ -26,7 +26,7 @@ from ``*.runtime.json``; ``*.lrc`` is an authoring artefact only.
 
 Publication is a two-phase atomic operation:
 
-  1. ``content/releases/{game}/{version}/`` is staged as
+  1. ``$BOARD_RUNTIME_ROOT/content/releases/{game}/{version}/`` is staged as
      ``{version}.tmp`` and verified file-by-file;
   2. the verified directory is renamed into place, then the manifest is
      written through ``{game}.json.tmp`` + atomic rename.
@@ -418,8 +418,14 @@ def build_manifest(game: str, repo_root: Path) -> dict:
     }
 
 
+def _runtime_content_root(repo_root: Path) -> Path:
+    configured = os.environ.get("BOARD_RUNTIME_ROOT", "").strip()
+    runtime_root = Path(configured).resolve() if configured else repo_root / ".runtime"
+    return runtime_root / "content"
+
+
 def _release_root(repo_root: Path, game: str) -> Path:
-    return repo_root / "content" / "releases" / game
+    return _runtime_content_root(repo_root) / "releases" / game
 
 
 def _release_dir(repo_root: Path, game: str, version: str) -> Path:
@@ -510,7 +516,7 @@ def publish_release(
 
 
 def _write_manifest_atomic(repo_root: Path, game: str, manifest: dict) -> Path:
-    output = repo_root / "content" / "manifests" / f"{game}.json"
+    output = _runtime_content_root(repo_root) / "manifests" / f"{game}.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     temp = output.with_name(output.name + ".tmp")
 
@@ -636,9 +642,9 @@ def main() -> int:
 
     output = Path(manifest["_manifest_path"])
     print(
-        f"wrote {output.relative_to(repo_root)} "
+        f"wrote {output} "
         f"version={manifest['version']} files={len(manifest['files'])} "
-        f"release={Path('content') / 'releases' / game / manifest['version']}"
+        f"release={_runtime_content_root(repo_root) / 'releases' / game / manifest['version']}"
     )
     return 0
 

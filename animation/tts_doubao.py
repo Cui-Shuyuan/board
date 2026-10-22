@@ -27,7 +27,7 @@ LRC-like 口播稿 -> 豆包语音合成音频。
       --input content/games/splendor/tutorial/full.lrc \
       --out-dir content/games/splendor/media/tts/full
 
-环境变量（从仓库根目录 .env 读取，或设置到 shell）：
+环境变量（优先 $BOARD_RUNTIME_ROOT/config/.env，兼容仓库根 .env，或设置到 shell）：
     VOLCENGINE_API_KEY              # 新版控制台共享 API Key（推荐）
     DOUBAO_TTS_PROVIDER             # standard（默认）/ seed2
     DOUBAO_TTS_VOICE                # 标准音色，默认 BV700_streaming
@@ -560,6 +560,8 @@ def print_dry_run(cues: list[dict[str, Any]], args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    runtime_root = Path(os.environ.get("BOARD_RUNTIME_ROOT", str(ROOT / ".runtime")))
+    load_dotenv(runtime_root / "config" / ".env")
     load_dotenv(ROOT / ".env")
     parser = argparse.ArgumentParser(description="LRC-like 口播稿 -> 豆包语音合成音频（默认标准小模型）")
     parser.add_argument("--input", type=Path, default=ROOT / "content/games/splendor/tutorial/full.lrc")

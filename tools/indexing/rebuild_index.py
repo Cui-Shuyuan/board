@@ -46,7 +46,15 @@ from index_extraction import (
 )
 
 # ---- 基础设施配置 ----
-MODEL_DIR = BOARD_ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5-fp32"
+RUNTIME_ROOT = Path(
+    os.environ.get("BOARD_RUNTIME_ROOT", str(BOARD_ROOT / ".runtime"))
+).resolve()
+MODEL_DIR = Path(
+    os.environ.get(
+        "EMBEDDING_MODEL_DIR",
+        str(RUNTIME_ROOT / "models" / "bge-base-zh-v1.5-fp32"),
+    )
+).resolve()
 QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333").rstrip("/")
 BATCH_SIZE = 100
 POOLING = "mean"  # import-only callers keep the legacy version contract

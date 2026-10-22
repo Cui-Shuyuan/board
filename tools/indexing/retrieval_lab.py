@@ -19,7 +19,15 @@ from pathlib import Path
 import index_extraction as index
 
 ROOT = index.BOARD_ROOT
-DEFAULT_MODEL_DIR = ROOT / "backend" / "BoardAI.Api" / "ml_models" / "bge-base-zh-v1.5-fp32"
+RUNTIME_ROOT = Path(
+    os.environ.get("BOARD_RUNTIME_ROOT", str(ROOT / ".runtime"))
+).resolve()
+DEFAULT_MODEL_DIR = Path(
+    os.environ.get(
+        "EMBEDDING_MODEL_DIR",
+        str(RUNTIME_ROOT / "models" / "bge-base-zh-v1.5-fp32"),
+    )
+).resolve()
 INSTRUCTION = "为这个句子生成表示以用于检索相关文章："
 
 

@@ -54,6 +54,8 @@ except (ImportError, SystemExit) as exc:  # pragma: no cover - dependency check
 
 
 def parse_args() -> argparse.Namespace:
+    runtime_root = Path(os.environ.get("BOARD_RUNTIME_ROOT", str(REPO_ROOT / ".runtime")))
+    load_dotenv(runtime_root / "config" / ".env")
     load_dotenv(REPO_ROOT / ".env")
 
     parser = argparse.ArgumentParser(description="Volcengine one-shot TTS bridge")

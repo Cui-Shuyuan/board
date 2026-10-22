@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BoardAI.Api.Infrastructure;
 using BoardAI.Api.Models;
 using Microsoft.Extensions.Logging;
 
@@ -73,12 +74,11 @@ public sealed class RulesDerivedDiskCache : IDisposable
         _logger = logger;
         _timeProvider = timeProvider ?? TimeProvider.System;
 
-        var configured = string.IsNullOrWhiteSpace(options.Directory)
-            ? Path.Combine(basePath, "backend", "BoardAI.Api", "storage", "rules-derived-cache")
-            : options.Directory;
-        _root = Path.GetFullPath(Path.IsPathRooted(configured)
-            ? configured
-            : Path.Combine(basePath, configured));
+        _root = string.IsNullOrWhiteSpace(options.Directory)
+            ? BoardPaths.ResolveRuntimePath(null, "cache/rules-derived-cache")
+            : Path.GetFullPath(Path.IsPathRooted(options.Directory)
+                ? options.Directory
+                : Path.Combine(BoardPaths.GetRuntimeRoot(), options.Directory));
         _keywordCorpusDirectory = RulesPathSafety.ResolveWithinRoot(
             _root,
             Path.Combine(_root, "keyword-corpus"));

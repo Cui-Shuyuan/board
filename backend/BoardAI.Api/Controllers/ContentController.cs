@@ -20,13 +20,21 @@ public class ContentController : ControllerBase
     private static readonly FileExtensionContentTypeProvider MimeTypes = new();
 
     private readonly string _contentRoot;
+    private readonly string _manifestDirectory;
+    private readonly string _releaseDirectory;
 
     public ContentController(IConfiguration configuration)
     {
-        // Use the exact same portable resolution as Program.cs and
-        // GameRulesService.  Rules:BasePath remains an optional override.
+        // Rule source and static game media stay in the checkout; generated
+        // manifests/releases are runtime-owned and live outside Git by default.
         _contentRoot = BoardPaths.ResolveBasePath(
             configuration.GetValue<string>("Rules:BasePath"));
+        _manifestDirectory = BoardPaths.ResolveRuntimePath(
+            configuration.GetValue<string>("Content:ManifestDirectory"),
+            Path.Combine("content", "manifests"));
+        _releaseDirectory = BoardPaths.ResolveRuntimePath(
+            configuration.GetValue<string>("Content:ReleaseDirectory"),
+            Path.Combine("content", "releases"));
     }
 
     [HttpGet("manifest")]
@@ -35,7 +43,7 @@ public class ContentController : ControllerBase
         if (!TryValidateGame(game, out var gameError))
             return BadRequest(new { message = gameError });
 
-        var manifestPath = Path.Combine(_contentRoot, "content", "manifests", $"{game}.json");
+        var manifestPath = Path.Combine(_manifestDirectory, $"{game}.json");
         if (!System.IO.File.Exists(manifestPath))
         {
             return NotFound(new
@@ -216,7 +224,7 @@ public class ContentController : ControllerBase
         error = "";
         manifestMissing = false;
 
-        var manifestPath = Path.Combine(_contentRoot, "content", "manifests", $"{game}.json");
+        var manifestPath = Path.Combine(_manifestDirectory, $"{game}.json");
         if (!System.IO.File.Exists(manifestPath))
         {
             manifestMissing = true;
@@ -279,7 +287,7 @@ public class ContentController : ControllerBase
         out string error)
     {
         var releaseRoot = Path.GetFullPath(
-            Path.Combine(_contentRoot, "content", "releases", game, version));
+            Path.Combine(_releaseDirectory, game, version));
         return TryResolveFile(releaseRoot, filePath, "release content directory", out fullPath, out error);
     }
 

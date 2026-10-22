@@ -530,15 +530,18 @@ def write_delta_lrc(path: Path, cues: list[dict], refs_by_id: dict, game: str, t
 
 
 def _load_dotenv_if_present() -> None:
-    env_path = ROOT / ".env"
-    if not env_path.exists():
-        return
-    for raw in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#") or "=" not in line:
+    runtime_root = Path(os.environ.get("BOARD_RUNTIME_ROOT", str(ROOT / ".runtime")))
+    for env_path in (runtime_root / "config" / ".env", ROOT / ".env"):
+        if not env_path.exists():
             continue
-        key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        for raw in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        if os.environ.get("VOLCENGINE_API_KEY"):
+            break
 
 
 def _looks_like_standard_voice(voice: str | None) -> bool:

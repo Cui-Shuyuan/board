@@ -25,7 +25,9 @@ public sealed class RulesMemoryCacheOptions
 
 public sealed class RulesDiskCacheOptions
 {
-    public bool Enabled { get; set; } = true;
+    // appsettings.json enables this in production. Programmatic defaults keep
+    // tests and one-off tooling from writing to the machine-wide runtime cache.
+    public bool Enabled { get; set; }
 
     /// <summary>Absolute directory, or empty for the default ignored storage directory.</summary>
     public string Directory { get; set; } = string.Empty;

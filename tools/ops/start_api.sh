@@ -2,11 +2,17 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+RUNTIME_ROOT="${BOARD_RUNTIME_ROOT:-/mnt/d/board}"
 TOOL_DIR="$REPO/.tools"
 DOTNET="$TOOL_DIR/dotnet/dotnet"
 
-# Load local .env (ignored by git) so DEEPSEEK_API_KEY etc. are available.
-if [ -f "$REPO/.env" ]; then
+# Load runtime secrets first; keep repo-root .env as a migration fallback.
+if [ -f "$RUNTIME_ROOT/config/.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . "$RUNTIME_ROOT/config/.env"
+  set +a
+elif [ -f "$REPO/.env" ]; then
   set -a
   # shellcheck disable=SC1091
   . "$REPO/.env"
@@ -39,8 +45,12 @@ export NUGET_PACKAGES="$TOOL_DIR/nuget"
 export DOTNET_ROLL_FORWARD=Major
 
 # Migration-friendly config for the Linux/WSL layout.
+export BOARD_RUNTIME_ROOT="$RUNTIME_ROOT"
 export Rules__BasePath="$REPO"
-export Embedding__ModelDir="$REPO/backend/BoardAI.Api/ml_models/bge-base-zh-v1.5-fp32"
+export Embedding__ModelDir="$RUNTIME_ROOT/models/bge-base-zh-v1.5-fp32"
+export Rules__DiskCache__Directory="$RUNTIME_ROOT/cache/rules-derived-cache"
+export Content__ManifestDirectory="$RUNTIME_ROOT/content/manifests"
+export Content__ReleaseDirectory="$RUNTIME_ROOT/content/releases"
 export Qdrant__Host="$QDRANT_HOST"
 
 mkdir -p "$DOTNET_CLI_HOME"

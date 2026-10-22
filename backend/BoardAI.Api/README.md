@@ -28,11 +28,14 @@ dotnet run --urls "http://0.0.0.0:5000"
 2. 否则从 `AppContext.BaseDirectory` 向上查找同时包含 `content/games` 和 `backend` 的仓库根；
 3. 否则回退到 `Directory.GetCurrentDirectory()`。
 
-然后：
+运行时数据通过 `BOARD_RUNTIME_ROOT` 解析（`start.bat` 默认 `D:\board`）：
 
-- `Rules:BasePath` 是可选的显式覆盖；为空时使用上面的仓库根。相对路径按仓库根解析。
-- `Embedding:ModelDir` 为空时默认使用 `{仓库根}/backend/BoardAI.Api/ml_models/bge-base-zh-v1.5-fp32`；相对路径按仓库根解析，绝对路径原样使用。
-- `ContentController`、`Program.cs`、`GameRulesService` 共用同一套解析逻辑。
+- `Rules:BasePath` 可选覆盖规则源码仓库根；为空时使用 checkout root。
+- `Rules:DiskCache:Directory` 为空时使用 `$BOARD_RUNTIME_ROOT/cache/rules-derived-cache`。
+- `Content:ManifestDirectory` / `Content:ReleaseDirectory` 为空时使用 `$BOARD_RUNTIME_ROOT/content/{manifests,releases}`。
+- `Embedding:ModelDir` 为空时使用 `$BOARD_RUNTIME_ROOT/models/bge-base-zh-v1.5-fp32`。
+- 服务凭证从 `$BOARD_RUNTIME_ROOT/config/.env` 读取，兼容旧仓库根 `.env`。
+- .NET 构建输出通过仓库根 `Directory.Build.props` + git-ignored `runtime.local.props` 重定向到 `$BOARD_RUNTIME_ROOT/build/dotnet`。
 
 ## 规则问答缓存
 
@@ -42,18 +45,19 @@ dotnet run --urls "http://0.0.0.0:5000"
   默认预算 256 MiB、高水位 80%、目标水位 60%。
 - `Rules:DiskCache`：只持久化显式 DTO（当前为关键词搜索材料），默认预算 512 MiB，
   每 300 秒后台刷写一次，正常关闭有 5 秒上限的尽力刷写，默认目录为
-  `backend/BoardAI.Api/storage/rules-derived-cache`（Git 忽略）。
+  `$BOARD_RUNTIME_ROOT/cache/rules-derived-cache`（运行目录，不入 Git）。
 
 同时关闭 `Rules:MemoryCache:Enabled` 和 `Rules:DiskCache:Enabled` 可得到不使用跨请求
 计算结果的模式。诊断接口：`GET /api/rules/cache/stats`。这些预算是估算缓存占用，
 不是进程内存硬上限。详细失效、淘汰和故障降级说明见
 `docs/reviews/qa-backend-cache-architecture-2026-10-22.md`。
 
-本机路径统一记录在仓库根目录 `config/local.properties`（已 gitignore，模板为 `config/local.properties.example`）。按该文件设置以下变量后运行：
+本机路径记录在 `config/local.properties`（已 gitignore）。`start.bat` 会设置 runtime 环境变量；直接运行时可手动设置：
 
 ```bat
 set BOARD_BASE_PATH=%BOARD_WORKSPACE_WIN%
-set Embedding__ModelDir=%EMBEDDING_MODEL_DIR_WIN%
+set BOARD_RUNTIME_ROOT=%BOARD_RUNTIME_ROOT_WIN%
+set Embedding__ModelDir=%BOARD_RUNTIME_ROOT%\models\bge-base-zh-v1.5-fp32
 dotnet run --urls "http://0.0.0.0:5000"
 ```
 
@@ -214,7 +218,7 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 ```
 
 - `manifest` 与旧文件 URL 返回 `Cache-Control: no-cache, must-revalidate` + ETag，支持 `If-None-Match` 304。
-- `files/{version}/...` 是 versioned URL：version 必须与当前 manifest.version 一致，否则返回 `409 Conflict` 并提示重新拉 manifest。文件从 `content/releases/{game}/{version}/` 不可变目录读取，缺文件返回 404，绝不回退到可修改的 `content/games/{game}`。成功返回 `Cache-Control: public, max-age=31536000, immutable` + ETag，可长期缓存/接 CDN。
+- `files/{version}/...` 是 versioned URL：version 必须与当前 manifest.version 一致，否则返回 `409 Conflict` 并提示重新拉 manifest。文件从 `$BOARD_RUNTIME_ROOT/content/releases/{game}/{version}/` 不可变目录读取，缺文件返回 404，绝不回退到可修改的 `content/games/{game}`。成功返回 `Cache-Control: public, max-age=31536000, immutable` + ETag，可长期缓存/接 CDN。
 - 旧 `/files/{**filePath}` 路由保留给旧客户端兼容，仍从 `content/games` 实时读取，继续使用 `no-cache, must-revalidate`，不提供不可变承诺，后续版本可删除。
 
 `GET /api/catalog/games` 在 catalog JSON 基础上补齐能力字段：
@@ -238,7 +242,7 @@ GET /api/content/games/{game}/files/{**filePath}   # 兼容旧 URL，未来可�
 - `Services/VectorSearchService.cs` / `Services/EmbeddingService.cs`：Qdrant / ONNX 检索
 - `Services/AsrService.cs` / `Services/VolcengineAsrClient.cs`：ASR 服务入口与进程内火山 WebSocket 客户端
 - `Services/TtsService.cs` / `Services/VoiceProcessRunner.cs`：TTS Python 短进程桥（兼容 ASR 回退）
-- `Infrastructure/DotEnvLoader.cs`：为进程内 ASR 读取仓库根 `.env`
+- `Infrastructure/DotEnvLoader.cs`：为进程内 ASR 读取 `$BOARD_RUNTIME_ROOT/config/.env`，兼容旧仓库根 `.env`
 - `Models/`：请求/响应/配置模型
 
 ## 后续扩展方向

@@ -202,7 +202,9 @@ public sealed class CatalogControllerTests : IDisposable
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Rules:BasePath"] = _root
+                ["Rules:BasePath"] = _root,
+                ["Content:ManifestDirectory"] = Path.Combine(_root, "content", "manifests"),
+                ["Content:ReleaseDirectory"] = Path.Combine(_root, "content", "releases")
             })
             .Build();
         return new CatalogController(configuration, NullLogger<CatalogController>.Instance)

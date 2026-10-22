@@ -54,20 +54,18 @@ curl -X POST http://localhost:5000/api/chat \
 
 ## 4. 内容发布（不可变 manifest / release）
 
-`content/manifests/*.json` 与 `content/releases/` 是生成物，不入 Git；`tools/ops/sync_workspaces.sh` 只搬 Git 提交，不会同步这两个目录。
-
-生产 API 主机在内容源更新后必须执行：
+manifest、release 属于运行时数据，默认写到 `BOARD_RUNTIME_ROOT`（本机 `D:\board`）：
 
 ```bash
-python3 tools/content/build_content_manifest.py --game <game_name>
+BOARD_RUNTIME_ROOT=/mnt/d/board python3 tools/content/build_content_manifest.py --game <game_name>
 ```
 
 生成：
 
-- `content/manifests/{game}.json`
-- `content/releases/{game}/{version}/`
+- `$BOARD_RUNTIME_ROOT/content/manifests/{game}.json`
+- `$BOARD_RUNTIME_ROOT/content/releases/{game}/{version}/`
 
-版本化接口只读取 release 目录；只同步代码不会让客户端拿到新内容。若生产机不方便运行构建，必须把已校验的 manifest 和 release 目录单独部署到 API 仓库根目录下。
+版本化接口只读取 release 目录；只同步代码不会让客户端拿到新内容。若生产机不方便运行构建，必须把已校验的 manifest 和 release 目录单独部署到同一 runtime root。
 
 ## 5. 语音服务配置
 

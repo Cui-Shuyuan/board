@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -21,6 +22,11 @@ class BuildContentManifestTest(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
+        self.runtime_root = self.root / "runtime"
+        self.env_patch = mock.patch.dict(
+            os.environ, {"BOARD_RUNTIME_ROOT": str(self.runtime_root)})
+        self.env_patch.start()
+        self.addCleanup(self.env_patch.stop)
         self.game = "testgame"
         self.game_dir = self.root / "content" / "games" / self.game
         self.write_runtime_tree()
@@ -76,7 +82,7 @@ class BuildContentManifestTest(unittest.TestCase):
         self.compiled_path.write_text(json.dumps(compiled, ensure_ascii=False), encoding="utf-8")
 
     def manifest(self) -> dict:
-        path = self.root / "content" / "manifests" / f"{self.game}.json"
+        path = self.runtime_root / "content" / "manifests" / f"{self.game}.json"
         return json.loads(path.read_text(encoding="utf-8"))
 
     def write_fixed_timing_files(self) -> None:
@@ -90,7 +96,7 @@ class BuildContentManifestTest(unittest.TestCase):
         return bcm.publish(self.game, self.root)
 
     def release_dir(self, version: str) -> Path:
-        return self.root / "content" / "releases" / self.game / version
+        return self.runtime_root / "content" / "releases" / self.game / version
 
     def test_package_contains_only_explicit_runtime_dependencies(self) -> None:
         first = self.publish()
@@ -279,7 +285,7 @@ class BuildContentManifestTest(unittest.TestCase):
     def test_failed_publish_preserves_old_manifest_and_release(self) -> None:
         first = self.publish()
         version = first["version"]
-        manifest_path = self.root / "content" / "manifests" / f"{self.game}.json"
+        manifest_path = self.runtime_root / "content" / "manifests" / f"{self.game}.json"
         manifest_before = manifest_path.read_bytes()
         release_file = self.release_dir(version) / "media" / "tts" / "full" / "one.mp3"
         release_before = release_file.read_bytes()
@@ -292,12 +298,12 @@ class BuildContentManifestTest(unittest.TestCase):
 
         self.assertEqual(manifest_before, manifest_path.read_bytes())
         self.assertEqual(release_before, release_file.read_bytes())
-        self.assertFalse((self.root / "content" / "manifests" / f"{self.game}.json.tmp").exists())
+        self.assertFalse((self.runtime_root / "content" / "manifests" / f"{self.game}.json.tmp").exists())
 
     def test_republish_with_mismatched_existing_release_fails(self) -> None:
         first = self.publish()
         version = first["version"]
-        manifest_path = self.root / "content" / "manifests" / f"{self.game}.json"
+        manifest_path = self.runtime_root / "content" / "manifests" / f"{self.game}.json"
         manifest_before = manifest_path.read_bytes()
 
         tampered = self.release_dir(version) / "media" / "tts" / "full" / "one.mp3"

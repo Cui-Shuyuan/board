@@ -52,7 +52,8 @@ dotnet build backend/BoardAI.Api/BoardAI.Api.csproj --nologo
 
 ```bat
 set Rules__BasePath=D:\workspace\board
-set Embedding__ModelDir=D:\workspace\board\backend\BoardAI.Api\ml_models\bge-base-zh-v1.5-fp32
+set BOARD_RUNTIME_ROOT=D:\board
+set Embedding__ModelDir=D:\board\models\bge-base-zh-v1.5-fp32
 ```
 
 旧版和新版分别运行在 `5001` / `5002`，启动后先做健康检查。基线 `a992cfe` 使用旧自由工具循环；当前实现默认仍为 `LLM:OrchestrationMode=legacy`，做 program 对照时必须显式把新实例设为 `program`。

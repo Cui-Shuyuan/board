@@ -25,12 +25,16 @@ public class CatalogController : ControllerBase
     };
 
     private readonly string _contentRoot;
+    private readonly string _manifestDirectory;
     private readonly ILogger<CatalogController> _logger;
 
     public CatalogController(IConfiguration configuration, ILogger<CatalogController> logger)
     {
         _contentRoot = BoardPaths.ResolveBasePath(
             configuration.GetValue<string>("Rules:BasePath"));
+        _manifestDirectory = BoardPaths.ResolveRuntimePath(
+            configuration.GetValue<string>("Content:ManifestDirectory"),
+            Path.Combine("content", "manifests"));
         _logger = logger;
     }
 
@@ -171,7 +175,7 @@ public class CatalogController : ControllerBase
     }
 
     /// <summary>
-    /// Reads content/manifests/{gameId}.json on every request and exposes the
+    /// Reads the runtime manifest content/manifests/{gameId}.json on every request and exposes the
     /// version, total byte size and file count.  A missing/invalid manifest
     /// leaves the three fields null and never fails the whole catalog.
     ///
@@ -186,8 +190,7 @@ public class CatalogController : ControllerBase
             return;
         }
 
-        var manifestPath = Path.Combine(
-            _contentRoot, "content", "manifests", $"{game.Id}.json");
+        var manifestPath = Path.Combine(_manifestDirectory, $"{game.Id}.json");
 
         if (!System.IO.File.Exists(manifestPath))
         {

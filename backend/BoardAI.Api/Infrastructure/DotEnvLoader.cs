@@ -22,8 +22,13 @@ public static class DotEnvLoader
 
             try
             {
-                var path = Path.Combine(BoardPaths.GetBasePath(), ".env");
-                if (!File.Exists(path)) return;
+                var candidates = new[]
+                {
+                    Path.Combine(BoardPaths.GetRuntimeRoot(), "config", ".env"),
+                    Path.Combine(BoardPaths.GetBasePath(), ".env")
+                };
+                var path = candidates.FirstOrDefault(File.Exists);
+                if (path == null) return;
 
                 foreach (var rawLine in File.ReadLines(path))
                 {

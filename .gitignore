@@ -11,6 +11,7 @@ Thumbs.db
 
 # Local scratch (temporary compile projects, generated probes)
 .tmp/
+.runtime/
 
 # Node / Python / C#
 node_modules/
@@ -25,6 +26,7 @@ obj/
 
 # Machine-specific absolute paths (template: config/local.properties.example)
 config/local.properties
+runtime.local.props
 
 # Qdrant runtime data
 backend/BoardAI.Api/storage/

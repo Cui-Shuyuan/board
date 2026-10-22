@@ -218,6 +218,8 @@ def collect_text(payload: dict[str, Any] | None) -> str:
 
 
 async def recognize(input_path: Path) -> dict[str, str]:
+    runtime_root = Path(os.environ.get("BOARD_RUNTIME_ROOT", str(REPO_ROOT / ".runtime")))
+    load_dotenv(runtime_root / "config" / ".env")
     load_dotenv(REPO_ROOT / ".env")
 
     api_key = os.environ.get("VOLCENGINE_API_KEY", "").strip()
